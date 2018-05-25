@@ -47,12 +47,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public static readonly Byte[] ValidDays = 1.To( 31 ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
-        public Day( Byte value ) : this() {
-            if ( !ValidDays.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
-
-            this.Value = value;
-        }
-
         public static Day Maximum { get; } = new Day( MaximumValue );
 
         /// <summary>should be 31</summary>
@@ -65,6 +59,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [JsonProperty]
         public Byte Value { get; }
+
+        public Day( Byte value ) : this() {
+            if ( !ValidDays.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
+
+            this.Value = value;
+        }
 
         public static explicit operator SByte( Day value ) => ( SByte )value.Value;
 

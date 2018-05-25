@@ -41,7 +41,7 @@ namespace Librainian.Maths {
     public static class Constants {
 
         /// <summary>
-        ///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
+        ///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
         /// </summary>
         public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 

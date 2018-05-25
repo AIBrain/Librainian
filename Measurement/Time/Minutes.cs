@@ -83,6 +83,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Minutes Zero = new Minutes( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Minutes( Decimal value ) => this.Value = value;
 
         public Minutes( BigRational value ) => this.Value = value;
@@ -90,9 +93,6 @@ namespace Librainian.Measurement.Time {
         public Minutes( Int64 value ) => this.Value = value;
 
         public Minutes( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 

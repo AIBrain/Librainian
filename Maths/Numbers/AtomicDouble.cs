@@ -49,13 +49,13 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         private Double _value;
 
-        public AtomicDouble( Double value ) : this() => this.Value = value;
-
         public Double Value {
             get => Interlocked.Exchange( ref this._value, this._value );
 
             set => Interlocked.Exchange( ref this._value, value );
         }
+
+        public AtomicDouble( Double value ) : this() => this.Value = value;
 
         public static implicit operator Double( AtomicDouble special ) => special.Value;
 

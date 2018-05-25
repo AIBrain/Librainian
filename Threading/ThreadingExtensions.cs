@@ -678,7 +678,7 @@ namespace Librainian.Threading {
         public static async Task<Boolean> Until( this Task task, TimeSpan timeout ) {
             var delay = Task.Delay( timeout );
 
-            var whichTaskFinished = await Task.WhenAny( task, delay );
+            var whichTaskFinished = await Task.WhenAny( task, delay ).NoUI();
 
             var didOurTaskFinish = whichTaskFinished == task;
 
@@ -691,7 +691,7 @@ namespace Librainian.Threading {
         /// <param name="task">   </param>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout );
+        public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout ).NoUI();
 
         /// <summary>
         ///     “I have an async operation that’s not cancelable. How do I cancel it?”
@@ -707,9 +707,9 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<Boolean>();
 
             using ( cancellationToken.Register( o => ( ( TaskCompletionSource<Boolean> )o ).TrySetResult( true ), tcs ) ) {
-                if ( task != await Task.WhenAny( task, tcs.Task ) ) { throw new OperationCanceledException( cancellationToken ); }
+                if ( task != await Task.WhenAny( task, tcs.Task ).NoUI() ) { throw new OperationCanceledException( cancellationToken ); }
 
-                return await task;
+                return await task.NoUI();
             }
         }
 
@@ -722,9 +722,24 @@ namespace Librainian.Threading {
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public static async Task<T> WithCancellation<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
-            var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) );
+            var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) ).NoUI();
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            if ( t != task ) { throw new TimeoutException(); }
+
+            return task.Result;
+        }
+
+        /// <summary>
+        ///     "you can even have a timeout using the following simple extension method"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="task">             </param>
+        /// <param name="timeout">          </param>
+        /// <returns></returns>
+        public static async Task<T> WithCancellation<T>( this Task<T> task, TimeSpan timeout ) {
+            var t = await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI();
 
             if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
 
@@ -737,10 +752,10 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
+        public static async Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
             if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
 
-            return Task.Run( selector );
+            return await Task.Run( selector ).NoUI();
         }
 
         /// <summary>
@@ -751,10 +766,10 @@ namespace Librainian.Threading {
         /// <param name="selector"></param>
         /// <param name="input">   </param>
         /// <returns></returns>
-        public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
+        public static async Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
             if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
 
-            return Task.Run( () => selector( input ) );
+            return await Task.Run( () => selector( input ) ).NoUI();
         }
 
         /// <summary>

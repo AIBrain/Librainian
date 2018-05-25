@@ -40,13 +40,6 @@ namespace Librainian.ComputerSystems.FileSystem {
         [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
         public class Node : IEquatable<Node>, IComparable<Node> {
 
-            public Node( String data ) => this.Data = data;
-
-            public Node( String data, Node parent ) {
-                this.Data = data;
-                this.Parent = parent;
-            }
-
             [JsonProperty]
             public String Data { get; }
 
@@ -57,6 +50,13 @@ namespace Librainian.ComputerSystems.FileSystem {
 
             [JsonProperty]
             public List<Node> SubFolders { get; } = new List<Node>();
+
+            public Node( String data ) => this.Data = data;
+
+            public Node( String data, Node parent ) {
+                this.Data = data;
+                this.Parent = parent;
+            }
 
             /// <summary>
             ///     Static equality check

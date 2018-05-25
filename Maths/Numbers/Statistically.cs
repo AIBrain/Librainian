@@ -51,8 +51,6 @@ namespace Librainian.Maths.Numbers {
 
         public static Statistically Undecided = new Statistically( 0.5, 0.5 );
 
-        public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
-
         [JsonProperty]
         public Double Downs { get; private set; }
 
@@ -67,6 +65,8 @@ namespace Librainian.Maths.Numbers {
 
         [JsonProperty]
         public Double Ups { get; private set; }
+
+        public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
 
         public static Statistically Combine( Statistically value1, Statistically value2 ) => new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
 

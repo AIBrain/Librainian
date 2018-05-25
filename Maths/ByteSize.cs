@@ -70,14 +70,6 @@ namespace Librainian.Maths {
         public static readonly ByteSize MaxValue = FromBits( Int64.MaxValue );
         public static readonly ByteSize MinValue = FromBits( 0 );
 
-        public ByteSize( Double byteSize ) : this() {
-
-            // Get ceiling because bits are whole units
-            this.Bits = ( Int64 )Math.Ceiling( byteSize * BitsInByte );
-
-            this.Bytes = byteSize;
-        }
-
         public Int64 Bits { get; }
 
         public Double Bytes { get; }
@@ -131,6 +123,14 @@ namespace Librainian.Maths {
         public Double PetaBytes => this.Bytes / BytesInPetaByte;
 
         public Double TeraBytes => this.Bytes / BytesInTeraByte;
+
+        public ByteSize( Double byteSize ) : this() {
+
+            // Get ceiling because bits are whole units
+            this.Bits = ( Int64 )Math.Ceiling( byteSize * BitsInByte );
+
+            this.Bytes = byteSize;
+        }
 
         public static ByteSize FromBits( Int64 value ) => new ByteSize( value / ( Double )BitsInByte );
 

@@ -80,6 +80,103 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Span Zero = new Span( planckTimes: 0 );
 
+        internal PlanckTimes TotalPlanckTimes { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Attoseconds Attoseconds { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Days" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Days Days { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Femtoseconds Femtoseconds { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Hours" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Hours Hours { get; }
+
+        /// <summary>
+        ///     <para>
+        ///         A microsecond is an SI unit of time equal to one millionth (10−6 or 1/1,000,000) of a second.
+        ///     </para>
+        ///     <para>Its symbol is μs.</para>
+        /// </summary>
+        /// <trivia>One microsecond is to one second as one second is to 11.574 days.</trivia>
+        [JsonProperty]
+        public Microseconds Microseconds { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Milliseconds" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Milliseconds Milliseconds { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Minutes" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Minutes Minutes { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Months" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Months Months { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Nanoseconds Nanoseconds { get; }
+
+        /// <summary>
+        ///     A picosecond is an SI unit of time equal to 10E−12 of a second.
+        /// </summary>
+        /// <see cref="http://wikipedia.org/wiki/Picosecond" />
+        [JsonProperty]
+        public Picoseconds Picoseconds { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public PlanckTimes PlanckTimes { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Seconds" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Seconds Seconds { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Weeks" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Weeks Weeks { get; }
+
+        /// <summary>
+        ///     How many <seealso cref="Years" /> does this <seealso cref="Span" /> span?
+        /// </summary>
+        [JsonProperty]
+        public Years Years { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Yoctoseconds Yoctoseconds { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Zeptoseconds Zeptoseconds { get; }
+
         public Span( BigInteger planckTimes ) {
             planckTimes.Should().BeGreaterOrEqualTo( BigInteger.Zero );
 
@@ -271,103 +368,6 @@ namespace Librainian.Measurement.Time {
 
             this.TotalPlanckTimes = this.CalcTotalPlanckTimes();
         }
-
-        internal PlanckTimes TotalPlanckTimes { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Attoseconds Attoseconds { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Days" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Days Days { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Femtoseconds Femtoseconds { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Hours" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Hours Hours { get; }
-
-        /// <summary>
-        ///     <para>
-        ///         A microsecond is an SI unit of time equal to one millionth (10−6 or 1/1,000,000) of a second.
-        ///     </para>
-        ///     <para>Its symbol is μs.</para>
-        /// </summary>
-        /// <trivia>One microsecond is to one second as one second is to 11.574 days.</trivia>
-        [JsonProperty]
-        public Microseconds Microseconds { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Milliseconds" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Milliseconds Milliseconds { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Minutes" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Minutes Minutes { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Months" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Months Months { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Nanoseconds Nanoseconds { get; }
-
-        /// <summary>
-        ///     A picosecond is an SI unit of time equal to 10E−12 of a second.
-        /// </summary>
-        /// <see cref="http://wikipedia.org/wiki/Picosecond" />
-        [JsonProperty]
-        public Picoseconds Picoseconds { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public PlanckTimes PlanckTimes { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Seconds" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Seconds Seconds { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Weeks" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Weeks Weeks { get; }
-
-        /// <summary>
-        ///     How many <seealso cref="Years" /> does this <seealso cref="Span" /> span?
-        /// </summary>
-        [JsonProperty]
-        public Years Years { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Yoctoseconds Yoctoseconds { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Zeptoseconds Zeptoseconds { get; }
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /><see cref="Span" />,</para>
@@ -615,6 +615,8 @@ namespace Librainian.Measurement.Time {
             return obj is Span span && Equals( this, span );
         }
 
+        public Boolean Equals( Span obj ) => Equals( this, obj );
+
         /// <summary>
         ///     <para>Return a <see cref="TimeSpan" />'s worth of <see cref="Milliseconds" />.</para>
         ///     <para>
@@ -694,8 +696,6 @@ namespace Librainian.Measurement.Time {
 
             return bob.ToStrings( ", ", ", and " );
         }
-
-        public Boolean Equals( Span obj ) => Equals( this, obj );
 
         Boolean IEquatable<Span>.Equals( Span other ) => this.Equals( other );
 

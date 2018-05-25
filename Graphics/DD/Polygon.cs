@@ -41,11 +41,11 @@ namespace Librainian.Graphics.DD {
 
     public struct Polygon : IEnumerable<PointF> {
 
-        public Polygon( PointF[] points ) : this() => this.Points = points;
-
         public PointF[] Points { get; set; }
 
         public Int32 Length => this.Points.Length;
+
+        public Polygon( PointF[] points ) : this() => this.Points = points;
 
         public PointF this[Int32 index] {
             get => this.Points[index];

@@ -75,6 +75,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Weeks Zero = new Weeks( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Weeks( Decimal weeks ) => this.Value = weeks;
 
         public Weeks( BigRational weeks ) => this.Value = weeks;
@@ -82,9 +85,6 @@ namespace Librainian.Measurement.Time {
         public Weeks( Int64 value ) => this.Value = value;
 
         public Weeks( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( left.Value + right.Value );
 

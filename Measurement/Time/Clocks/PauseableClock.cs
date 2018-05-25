@@ -51,23 +51,6 @@ namespace Librainian.Measurement.Time.Clocks {
         private volatile Boolean _isPaused;
 
         /// <summary>
-        ///     Default to year 0.
-        /// </summary>
-        public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Zero ) { }
-
-        public PauseableClock( Date date, Time time ) {
-            this.Year = date.Year;
-            this.Month = date.Month;
-            this.Day = date.Day;
-            this.Hour = time.Hour;
-            this.Minute = time.Minute;
-            this.Second = time.Second;
-            this.Millisecond = time.Millisecond;
-            this.Timer.Elapsed += this.OnTimerElapsed;
-            this.Resume();
-        }
-
-        /// <summary>
         /// </summary>
         [NotNull]
         private Timer Timer { get; } = new Timer( interval: ( Double )Milliseconds.One.Value ) { AutoReset = false };
@@ -121,6 +104,23 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [JsonProperty]
         public Year Year { get; private set; }
+
+        /// <summary>
+        ///     Default to year 0.
+        /// </summary>
+        public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Zero ) { }
+
+        public PauseableClock( Date date, Time time ) {
+            this.Year = date.Year;
+            this.Month = date.Month;
+            this.Day = date.Day;
+            this.Hour = time.Hour;
+            this.Minute = time.Minute;
+            this.Second = time.Second;
+            this.Millisecond = time.Millisecond;
+            this.Timer.Elapsed += this.OnTimerElapsed;
+            this.Resume();
+        }
 
         private Boolean DaysTocked( Boolean fireEvents ) {
             this.Day = this.Day.Next( out var tocked );

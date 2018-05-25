@@ -41,9 +41,9 @@ namespace Librainian.Linguistics.PoS {
     [JsonObject]
     public class Noun : Word, ITaggedWord {
 
-        public Noun( String word ) : base( word ) { }
-
         public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
+
+        public Noun( String word ) : base( word ) { }
 
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.

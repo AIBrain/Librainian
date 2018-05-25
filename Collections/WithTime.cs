@@ -34,13 +34,13 @@ namespace Librainian.Collections {
     [JsonObject]
     public class WithTime<T> {
 
-        public WithTime( T item ) => this.Item = item;
-
         [JsonProperty]
         public T Item { get; }
 
         [JsonProperty]
         public DateTime TimeStamp { get; } = DateTime.UtcNow;
+
+        public WithTime( T item ) => this.Item = item;
 
         public override String ToString() => $"{this.Item} @ {this.TimeStamp:s}";
     }

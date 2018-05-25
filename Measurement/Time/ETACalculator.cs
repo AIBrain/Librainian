@@ -64,8 +64,6 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         private Timer _timer;
 
-        public EtaCalculator() => this.Reset( Seconds.One );
-
         /// <summary>
         ///     <para>The value to be updated to a value between 0 and 1 when possible.</para>
         /// </summary>
@@ -82,6 +80,8 @@ namespace Librainian.Measurement.Time {
                 this._progress = value;
             }
         }
+
+        public EtaCalculator() => this.Reset( Seconds.One );
 
         /// <summary>
         ///     <para>Returns True when there is enough data to calculate the ETA.</para>

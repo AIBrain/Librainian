@@ -47,6 +47,11 @@ namespace Librainian.ComputerSystems.Devices {
         private IntPtr _deviceInfoSet;
 
         /// <summary>
+        ///     Gets the device class's guid.
+        /// </summary>
+        public Guid ClassGuid => this._classGuid;
+
+        /// <summary>
         ///     Initializes a new instance of the DeviceClass class.
         /// </summary>
         /// <param name="classGuid"> A device class Guid.</param>
@@ -65,11 +70,6 @@ namespace Librainian.ComputerSystems.Devices {
         }
 
         protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
-
-        /// <summary>
-        ///     Gets the device class's guid.
-        /// </summary>
-        public Guid ClassGuid => this._classGuid;
 
         protected virtual Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
             new Device( deviceClass, deviceInfoData, path, index, disknum );

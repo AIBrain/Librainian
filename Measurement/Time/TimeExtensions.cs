@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Time {
     using JetBrains.Annotations;
     using Maths;
     using Parsing;
-    using Constants = Measurement.Constants;
+    using Constants = Constants;
 
     public static class TimeExtensions {
 

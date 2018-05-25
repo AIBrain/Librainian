@@ -53,6 +53,12 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
+        [NotNull]
+        [JsonProperty]
+        private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
+
+        public static Page Empty { get; } = new Page();
+
         private Page() { }
 
         public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
@@ -60,12 +66,6 @@ namespace Librainian.Linguistics {
 
             this.Paragraphs.AddRange( paragraphs.Where( paragraph => paragraph != null ) );
         }
-
-        [NotNull]
-        [JsonProperty]
-        private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
-
-        public static Page Empty { get; } = new Page();
 
         public Boolean Equals( [CanBeNull] Page other ) {
             if ( other is null ) { return false; }

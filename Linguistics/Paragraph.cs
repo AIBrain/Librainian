@@ -60,6 +60,8 @@ namespace Librainian.Linguistics {
         [JsonProperty]
         private readonly List<Sentence> Sentences = new List<Sentence>();
 
+        public static Paragraph Empty { get; } = new Paragraph();
+
         private Paragraph() { }
 
         /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
@@ -73,8 +75,6 @@ namespace Librainian.Linguistics {
 
             this.Sentences.Fix();
         }
-
-        public static Paragraph Empty { get; } = new Paragraph();
 
         public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
 

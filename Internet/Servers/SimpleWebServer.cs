@@ -70,6 +70,10 @@ namespace Librainian.Internet.Servers {
         [CanBeNull]
         private readonly Func<HttpListenerRequest, String> _responderMethod;
 
+        public Boolean IsReadyForRequests { get; private set; }
+
+        public String NotReadyBecause { get; private set; }
+
         /// <summary>
         /// </summary>
         /// <param name="prefixes"></param>
@@ -116,10 +120,6 @@ namespace Librainian.Internet.Servers {
         }
 
         public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
-
-        public Boolean IsReadyForRequests { get; private set; }
-
-        public String NotReadyBecause { get; private set; }
 
         private void ImNotReady( String because ) {
             this.IsReadyForRequests = false;

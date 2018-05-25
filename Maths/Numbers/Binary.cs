@@ -48,6 +48,11 @@ namespace Librainian.Maths.Numbers {
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public class Binary : IEnumerable<Boolean> {
 
+        [NotNull]
+        public List<Boolean> Booleans { get; }
+
+        public Int32 Length => this.Booleans.Count;
+
         public Binary( IReadOnlyCollection<Boolean> booleans ) {
             this.Booleans = booleans.ToList();
             this.Booleans.Capacity = this.Booleans.Count;
@@ -58,11 +63,6 @@ namespace Librainian.Maths.Numbers {
         public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
 
         public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
-
-        [NotNull]
-        public List<Boolean> Booleans { get; }
-
-        public Int32 Length => this.Booleans.Count;
 
         public Boolean this[Int32 index] {
             get => this.Booleans[index];

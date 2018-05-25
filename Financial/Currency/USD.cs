@@ -39,11 +39,6 @@ namespace Librainian.Financial.Currency {
     [JsonObject]
     public class USD : Wallet {
 
-        public USD( Decimal amount ) : base( Guid.NewGuid() ) {
-            var leftOverAmount = this.Fund( amount ).Result;
-            Assert.AreEqual( leftOverAmount, Decimal.Zero );
-        }
-
         /// <summary>
         ///     Example new Money(123.4567).Cents == 0.4567
         /// </summary>
@@ -53,5 +48,10 @@ namespace Librainian.Financial.Currency {
         ///     Example new Money(123.4567).Dollars == 123.0000
         /// </summary>
         public Decimal Dollars => this.TotalBankNotes();
+
+        public USD( Decimal amount ) : base( Guid.NewGuid() ) {
+            var leftOverAmount = this.Fund( amount ).Result;
+            Assert.AreEqual( leftOverAmount, Decimal.Zero );
+        }
     }
 }

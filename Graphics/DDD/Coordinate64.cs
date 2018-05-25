@@ -45,7 +45,7 @@ namespace Librainian.Graphics.DDD {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="long" /> integers.
+    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="Int64" /> integers.
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
@@ -82,19 +82,6 @@ namespace Librainian.Graphics.DDD {
 
         public static Coordinate64 Up = new Coordinate64( 0, 1, 0 );
 
-        /// <summary>
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        public Coordinate64( Int64 x, Int64 y, Int64 z ) {
-            this.X = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, x ) );
-            this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
-            this.Z = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, z ) );
-            this.Length = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
-            this._hashCode = Hashing.GetHashCodes( this.X, this.Y, this.Z );
-        }
-
         [Column]
         [JsonProperty( "L" )]
         public Int64 Length { get; private set; }
@@ -110,6 +97,19 @@ namespace Librainian.Graphics.DDD {
         [Column]
         [JsonProperty( "Z" )]
         public Int64 Z { get; private set; }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public Coordinate64( Int64 x, Int64 y, Int64 z ) {
+            this.X = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, x ) );
+            this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
+            this.Z = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, z ) );
+            this.Length = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+            this._hashCode = Hashing.GetHashCodes( this.X, this.Y, this.Z );
+        }
 
         /// <summary>
         ///     Calculates the distance between two <see cref="Coordinate64" />.

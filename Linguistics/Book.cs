@@ -52,6 +52,16 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
+        [NotNull]
+        [JsonProperty]
+        private HashSet<Author> Authors { get; } = new HashSet<Author>();
+
+        [NotNull]
+        [JsonProperty]
+        private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
+
+        public static Book Empty { get; } = new Book();
+
         private Book() { }
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
@@ -66,16 +76,6 @@ namespace Librainian.Linguistics {
 
             if ( null != authors ) { this.Authors.AddRange( authors.Where( author => null != author ) ); }
         }
-
-        [NotNull]
-        [JsonProperty]
-        private HashSet<Author> Authors { get; } = new HashSet<Author>();
-
-        [NotNull]
-        [JsonProperty]
-        private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
-
-        public static Book Empty { get; } = new Book();
 
         /// <summary>
         ///     static equality test, compare sequence of Books

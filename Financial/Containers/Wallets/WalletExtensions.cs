@@ -44,14 +44,14 @@ namespace Librainian.Financial.Containers.Wallets {
 
     public static class WalletExtensions {
 
+        [NotNull]
+        public static HashSet<IDenomination> PossibleDenominations { get; } = new HashSet<IDenomination>();
+
         static WalletExtensions() {
             foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) { PossibleDenominations.Add( denomination ); }
 
             foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) { PossibleDenominations.Add( denomination ); }
         }
-
-        [NotNull]
-        public static HashSet<IDenomination> PossibleDenominations { get; } = new HashSet<IDenomination>();
 
         /// <summary>
         /// </summary>

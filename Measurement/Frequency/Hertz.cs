@@ -145,6 +145,8 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static readonly Hertz Zero = new Hertz( 0 );
 
+        public Decimal Value => this._value;
+
         static Hertz() {
 
             //Assert.AreSame( Zero, MinValue );
@@ -162,8 +164,6 @@ namespace Librainian.Measurement.Frequency {
         public Hertz( UInt64 frequency ) : this( ( Decimal )frequency ) { }
 
         public Hertz( Double frequency ) : this( ( Decimal )frequency ) { }
-
-        public Decimal Value => this._value;
 
         public static implicit operator Span( Hertz hertz ) => new Seconds( 1.0m / hertz.Value );
 

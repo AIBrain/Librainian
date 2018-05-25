@@ -53,6 +53,12 @@ namespace Librainian.Maths.Numbers {
 
         public const Single NeutralValue = 0f;
 
+        public Single Value {
+            get => this._value;
+
+            private set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
+        }
+
         /// <summary>
         ///     <para>Initializes a random number between -1.0 and 1.0.</para>
         ///     <para>Restricts the value to between -1.0 and 1.0.</para>
@@ -67,12 +73,6 @@ namespace Librainian.Maths.Numbers {
             }
 
             this.Value = value.Value;
-        }
-
-        public Single Value {
-            get => this._value;
-
-            private set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
         }
 
         /// <summary>

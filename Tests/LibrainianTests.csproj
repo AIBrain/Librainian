@@ -50,6 +50,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BenchmarkTests.cs" />
+    <Compile Include="BPMTests.cs" />
     <Compile Include="ConcurrentListTests.cs" />
     <Compile Include="CoundownWatchTests.cs" />
     <Compile Include="CountableIntegersTests.cs" />

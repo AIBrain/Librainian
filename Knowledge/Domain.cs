@@ -42,8 +42,8 @@ namespace Librainian.Knowledge {
     /// </summary>
     public class Domain {
 
-        public Domain( String label ) => this.Label = label;
-
         public String Label { get; }
+
+        public Domain( String label ) => this.Label = label;
     }
 }

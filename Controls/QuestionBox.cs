@@ -37,6 +37,9 @@ namespace Librainian.Controls {
     /// </summary>
     public partial class QuestionBox : Form {
 
+        [CanBeNull]
+        public String Response { get; private set; }
+
         /// <summary>
         ///     <para>fix per http://stackoverflow.com/a/18619181/956364</para>
         ///     <para>questionBox.Load += ( sender, e ) =&gt; ( sender as QuestionBox ).Visible = true;</para>
@@ -52,9 +55,6 @@ namespace Librainian.Controls {
             this.Visible( false );
             this.richTextBoxQuestion.Text( question.Trim() );
         }
-
-        [CanBeNull]
-        public String Response { get; private set; }
 
         private void buttonCancel_Click( Object sender, EventArgs e ) {
             this.Response = null;

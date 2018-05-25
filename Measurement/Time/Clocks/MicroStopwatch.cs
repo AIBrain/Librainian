@@ -46,10 +46,10 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         public readonly Double MicrosecondsPerTick = 1000000d / Frequency;
 
+        public UInt64 ElapsedMicroseconds => ( UInt64 )( this.ElapsedTicks * this.MicrosecondsPerTick );
+
         public MicroStopwatch() {
             if ( !IsHighResolution ) { throw new InvalidOperationException( "The high-resolution performance counter is not available" ); }
         }
-
-        public UInt64 ElapsedMicroseconds => ( UInt64 )( this.ElapsedTicks * this.MicrosecondsPerTick );
     }
 }

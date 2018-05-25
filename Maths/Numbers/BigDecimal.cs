@@ -1,29 +1,29 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "BigDecimal.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// 
+//
 // "Librainian/Librainian/BigDecimal.cs" was last formatted by Protiguous on 2018/05/23 at 9:41 PM.
 
 namespace Librainian.Maths.Numbers {
@@ -150,8 +150,8 @@ namespace Librainian.Maths.Numbers {
 
             if ( !value.Length.CanAllocateMemory() ) { throw new ArgumentOutOfRangeException( nameof( value ), "'value' is too large to allocate" ); }
 
-            var number = new Byte[ value.Length - 4 ];
-            var flags = new Byte[ 4 ];
+            var number = new Byte[value.Length - 4];
+            var flags = new Byte[4];
 
             Buffer.BlockCopy( value, 0, number, 0, number.Length );
             Buffer.BlockCopy( value, value.Length - 4, flags, 0, 4 );
@@ -192,33 +192,33 @@ namespace Librainian.Maths.Numbers {
         //}
         [Pure]
         public static Byte[] DecimalToByteArray( Decimal d ) {
-            var bytes = new Byte[ 16 ];
+            var bytes = new Byte[16];
 
             var bits = Decimal.GetBits( d );
-            var lo = bits[ 0 ];
-            var mid = bits[ 1 ];
-            var hi = bits[ 2 ];
-            var flags = bits[ 3 ];
+            var lo = bits[0];
+            var mid = bits[1];
+            var hi = bits[2];
+            var flags = bits[3];
 
-            bytes[ 0 ] = ( Byte ) lo;
-            bytes[ 1 ] = ( Byte ) ( lo >> 8 );
-            bytes[ 2 ] = ( Byte ) ( lo >> 16 );
-            bytes[ 3 ] = ( Byte ) ( lo >> 24 );
+            bytes[0] = ( Byte )lo;
+            bytes[1] = ( Byte )( lo >> 8 );
+            bytes[2] = ( Byte )( lo >> 16 );
+            bytes[3] = ( Byte )( lo >> 24 );
 
-            bytes[ 4 ] = ( Byte ) mid;
-            bytes[ 5 ] = ( Byte ) ( mid >> 8 );
-            bytes[ 6 ] = ( Byte ) ( mid >> 16 );
-            bytes[ 7 ] = ( Byte ) ( mid >> 24 );
+            bytes[4] = ( Byte )mid;
+            bytes[5] = ( Byte )( mid >> 8 );
+            bytes[6] = ( Byte )( mid >> 16 );
+            bytes[7] = ( Byte )( mid >> 24 );
 
-            bytes[ 8 ] = ( Byte ) hi;
-            bytes[ 9 ] = ( Byte ) ( hi >> 8 );
-            bytes[ 10 ] = ( Byte ) ( hi >> 16 );
-            bytes[ 11 ] = ( Byte ) ( hi >> 24 );
+            bytes[8] = ( Byte )hi;
+            bytes[9] = ( Byte )( hi >> 8 );
+            bytes[10] = ( Byte )( hi >> 16 );
+            bytes[11] = ( Byte )( hi >> 24 );
 
-            bytes[ 12 ] = ( Byte ) flags;
-            bytes[ 13 ] = ( Byte ) ( flags >> 8 );
-            bytes[ 14 ] = ( Byte ) ( flags >> 16 );
-            bytes[ 15 ] = ( Byte ) ( flags >> 24 );
+            bytes[12] = ( Byte )flags;
+            bytes[13] = ( Byte )( flags >> 8 );
+            bytes[14] = ( Byte )( flags >> 16 );
+            bytes[15] = ( Byte )( flags >> 24 );
 
             return bytes;
         }
@@ -292,9 +292,9 @@ namespace Librainian.Maths.Numbers {
 
         public static explicit operator Byte( BigDecimal value ) => value.ToType<Byte>();
 
-        public static explicit operator Decimal( BigDecimal value ) => ( Decimal ) value.Mantissa * ( Decimal ) Math.Pow( 10, value.Exponent );
+        public static explicit operator Decimal( BigDecimal value ) => ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
 
-        public static explicit operator Double( BigDecimal value ) => ( Double ) value.Mantissa * Math.Pow( 10, value.Exponent );
+        public static explicit operator Double( BigDecimal value ) => ( Double )value.Mantissa * Math.Pow( 10, value.Exponent );
 
         public static explicit operator Int16( BigDecimal value ) => value.ToType<Int16>();
 
@@ -306,7 +306,7 @@ namespace Librainian.Maths.Numbers {
         // number = leftOfDecimalPoint;
         public static explicit operator SByte( BigDecimal value ) => value.ToType<SByte>();
 
-        public static explicit operator Single( BigDecimal value ) => Convert.ToSingle( ( Double ) value );
+        public static explicit operator Single( BigDecimal value ) => Convert.ToSingle( ( Double )value );
 
         public static explicit operator UInt16( BigDecimal value ) => value.ToType<UInt16>();
 
@@ -332,10 +332,10 @@ namespace Librainian.Maths.Numbers {
             var exponent = 0;
             Double scaleFactor = 1;
 
-            while ( Math.Abs( number * scaleFactor - ( Double ) mantissa ) > 0 ) {
+            while ( Math.Abs( number * scaleFactor - ( Double )mantissa ) > 0 ) {
                 exponent -= 1;
                 scaleFactor *= 10;
-                mantissa = ( BigInteger ) ( number * scaleFactor );
+                mantissa = ( BigInteger )( number * scaleFactor );
             }
 
             return new BigDecimal( mantissa, exponent );
@@ -347,11 +347,11 @@ namespace Librainian.Maths.Numbers {
         /// <param name="value"></param>
         /// <returns></returns>
         public static implicit operator BigDecimal( Decimal value ) {
-            var mantissa = ( BigInteger ) value;
+            var mantissa = ( BigInteger )value;
             var exponent = 0;
             Decimal scaleFactor = 1;
 
-            while ( ( Decimal ) mantissa != value * scaleFactor ) {
+            while ( ( Decimal )mantissa != value * scaleFactor ) {
                 exponent -= 1;
                 scaleFactor *= 10;
                 mantissa = new BigInteger( value * scaleFactor );
@@ -458,7 +458,7 @@ namespace Librainian.Maths.Numbers {
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( !( obj is BigDecimal ) ) { throw new ArgumentException(); }
 
-            return this.CompareTo( ( BigDecimal ) obj );
+            return this.CompareTo( ( BigDecimal )obj );
         }
 
         public Int32 CompareTo( BigDecimal other ) {
@@ -536,7 +536,7 @@ namespace Librainian.Maths.Numbers {
 
             if ( !( unscaledValue.Length + scale.Length ).CanAllocateMemory() ) { throw new OutOfMemoryException( "ToByteArray() is too large to allocate" ); }
 
-            var bytes = new Byte[ unscaledValue.Length + scale.Length ];
+            var bytes = new Byte[unscaledValue.Length + scale.Length];
             Buffer.BlockCopy( unscaledValue, 0, bytes, 0, unscaledValue.Length );
             Buffer.BlockCopy( scale, 0, bytes, unscaledValue.Length, scale.Length );
 
@@ -603,7 +603,7 @@ namespace Librainian.Maths.Numbers {
         //    return ( Decimal )value.Mantissa * ( Decimal )Math.Pow( 10, value.Exponent );
         //}
         //public String ToScientificString() => MathExtensions.ToScientificString( this );
-        public T ToType<T>() where T : struct => ( T ) ( ( IConvertible ) this ).ToType( typeof( T ), null );
+        public T ToType<T>() where T : struct => ( T )( ( IConvertible )this ).ToType( typeof( T ), null );
 
         TypeCode IConvertible.GetTypeCode() => TypeCode.Object;
 
@@ -638,8 +638,8 @@ namespace Librainian.Maths.Numbers {
 
             if ( scaledValue > new BigInteger( Decimal.MaxValue ) ) { throw new ArgumentOutOfRangeException( nameof( provider ), $"The value {this.Significand} cannot fit into {conversionType.Name}." ); }
 
-            var leftOfDecimal = ( Decimal ) scaledValue;
-            var rightOfDecimal = ( Decimal ) remainder / ( Decimal ) scaleDivisor;
+            var leftOfDecimal = ( Decimal )scaledValue;
+            var rightOfDecimal = ( Decimal )remainder / ( Decimal )scaleDivisor;
 
             var value = leftOfDecimal + rightOfDecimal;
 
@@ -857,7 +857,5 @@ namespace Librainian.Maths.Numbers {
         // if ( value.Any( c => !Char.IsDigit( c ) && c != '.' && c != '-' ) ) { whyParseFailed = "all chars must be a digit, a period, or a negative sign"; return false; }
 
         // var split = value.Split( '.' ); split.Should().HaveCount( expected: 2, because: "otherwise invalid" ); if ( split.Length != 2 ) { whyParseFailed = ""; return false; } var wholeSide = split[ 0 ];
-
     }
-
 }

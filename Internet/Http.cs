@@ -68,8 +68,6 @@ namespace Librainian.Internet {
 
         private static Hashtable _urls;
 
-        static Http() => Urls = new Hashtable( 100 );
-
         private static Hashtable Urls {
             get {
                 lock ( Synch ) { return _urls; }
@@ -79,6 +77,8 @@ namespace Librainian.Internet {
                 lock ( Synch ) { _urls = value; }
             }
         }
+
+        static Http() => Urls = new Hashtable( 100 );
 
         private static void GetAsynchCallback( IAsyncResult result ) {
             if ( !result.IsCompleted ) { return; }

@@ -53,8 +53,6 @@ namespace Librainian.Parsing {
         [JsonProperty]
         private String _inputBuffer = String.Empty;
 
-        public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
-
         [JsonProperty]
         private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
@@ -78,6 +76,8 @@ namespace Librainian.Parsing {
                 finally { this.AccessInputBuffer.ExitWriteLock(); }
             }
         }
+
+        public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
         /// <summary>
         ///     Append the <paramref name="text" /> to the current sentence buffer.

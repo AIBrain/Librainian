@@ -43,6 +43,20 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public class MomentInTimeClock : IStandardClock {
 
+        [JsonProperty]
+        public Hour Hour { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Millisecond Millisecond { get; }
+
+        [JsonProperty]
+        public Minute Minute { get; }
+
+        [JsonProperty]
+        public Second Second { get; }
+
         public MomentInTimeClock() : this( Measurement.Time.Time.Now() ) { }
 
         public MomentInTimeClock( Time time ) {
@@ -57,20 +71,6 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Minute = new Minute( ( Byte )time.Minute );
             this.Second = new Second( ( Byte )time.Second );
         }
-
-        [JsonProperty]
-        public Hour Hour { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Millisecond Millisecond { get; }
-
-        [JsonProperty]
-        public Minute Minute { get; }
-
-        [JsonProperty]
-        public Second Second { get; }
 
         public Boolean IsAm() => !this.IsPm();
 

@@ -165,6 +165,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Attoseconds Zero = new Attoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Attoseconds( Decimal value ) => this.Value = value;
 
         public Attoseconds( BigRational value ) => this.Value = value;
@@ -172,9 +175,6 @@ namespace Librainian.Measurement.Time {
         public Attoseconds( Int64 value ) => this.Value = value;
 
         public Attoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
 

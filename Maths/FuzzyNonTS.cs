@@ -61,10 +61,6 @@ namespace Librainian.Maths {
 
         public static readonly FuzzyNonTs Undecided = new FuzzyNonTs( 0.5D );
 
-        public FuzzyNonTs( Double value ) => this.Value = value;
-
-        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
-
         public Double Value {
             get => this._value;
 
@@ -77,6 +73,10 @@ namespace Librainian.Maths {
                 this._value = correctedvalue;
             }
         }
+
+        public FuzzyNonTs( Double value ) => this.Value = value;
+
+        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
         public static FuzzyNonTs Combine( FuzzyNonTs value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 

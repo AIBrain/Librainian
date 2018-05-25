@@ -63,11 +63,6 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
 
-        public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
-            this.Yes = votesYes;
-            this.No = votesNo;
-        }
-
         public UInt64 No {
             get => Thread.VolatileRead( ref this._votesNo );
 
@@ -80,6 +75,11 @@ namespace Librainian.Maths.Numbers {
             get => Thread.VolatileRead( ref this._votesYes );
 
             private set => Thread.VolatileWrite( ref this._votesYes, value );
+        }
+
+        public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
+            this.Yes = votesYes;
+            this.No = votesNo;
         }
 
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {

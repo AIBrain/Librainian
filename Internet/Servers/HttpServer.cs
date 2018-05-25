@@ -1,29 +1,29 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "HttpServer.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// 
+//
 // "Librainian/Librainian/HttpServer.cs" was last formatted by Protiguous on 2018/05/23 at 9:19 PM.
 
 namespace Librainian.Internet.Servers {
@@ -45,7 +45,8 @@ namespace Librainian.Internet.Servers {
 
         private readonly Thread _thrHttps;
 
-        internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
+        private TcpListener _secureListener;
+        private TcpListener _unsecureListener;
 
         /// <summary>If &gt; -1, the Server is listening for http connections on this port.</summary>
         protected readonly Int32 Port;
@@ -53,11 +54,8 @@ namespace Librainian.Internet.Servers {
         /// <summary>If &gt; -1, the Server is listening for https connections on this port.</summary>
         protected readonly Int32 SecurePort;
 
-        private TcpListener _secureListener;
-
-        private TcpListener _unsecureListener;
-
         protected volatile Boolean StopRequested;
+        internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
 
         /// <summary></summary>
         /// <param name="port">
@@ -127,7 +125,7 @@ namespace Librainian.Internet.Servers {
         ///     or until more than 100 listener restarts occur in a single day.
         /// </summary>
         private void Listen( Object param ) {
-            var isSecureListener = ( Boolean ) param;
+            var isSecureListener = ( Boolean )param;
 
             var errorCount = 0;
             var lastError = DateTime.Now;
@@ -246,7 +244,7 @@ namespace Librainian.Internet.Servers {
             }
 
             stopwatch.Stop();
-            timeToWait = timeoutMilliseconds - ( Int32 ) stopwatch.ElapsedMilliseconds;
+            timeToWait = timeoutMilliseconds - ( Int32 )stopwatch.ElapsedMilliseconds;
 
             if ( timeToWait > 0 ) {
                 try {
@@ -296,7 +294,5 @@ namespace Librainian.Internet.Servers {
         ///     This is called when the Server is stopping. Perform any cleanup work here.
         /// </summary>
         public abstract void StopServer();
-
     }
-
 }

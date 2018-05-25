@@ -53,12 +53,12 @@ namespace Librainian.Security {
         private UInt64 _hash;
         protected const UInt64 DefaultSeed = 0x0;
 
+        public override Int32 HashSize => 64;
+
         public Crc64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
             this._table = InitializeTable( polynomial: polynomial );
             this._seed = this._hash = seed;
         }
-
-        public override Int32 HashSize => 64;
 
         private static UInt64[] InitializeTable( UInt64 polynomial ) {
             if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) { return Crc64Iso.Table; }

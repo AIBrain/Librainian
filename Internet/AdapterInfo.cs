@@ -45,14 +45,14 @@ namespace Librainian.Internet {
     /// </summary>
     public class AdapterInfo {
 
+        public static Dictionary<UInt32, IPHelperInvoke.IPAdapterInfo> IndexedIpAdapterInfos { get; }
+
+        public static IEnumerable<IPHelperInvoke.IPAdapterInfo> IpAdapterInfos { get; }
+
         static AdapterInfo() {
             IpAdapterInfos = RetrieveAdapters();
             IndexedIpAdapterInfos = IpAdapterInfos.ToDictionary( o => ( UInt32 )o.Index );
         }
-
-        public static Dictionary<UInt32, IPHelperInvoke.IPAdapterInfo> IndexedIpAdapterInfos { get; }
-
-        public static IEnumerable<IPHelperInvoke.IPAdapterInfo> IpAdapterInfos { get; }
 
         private static IEnumerable<IPHelperInvoke.IPAdapterInfo> RetrieveAdapters() {
             Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );

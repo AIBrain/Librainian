@@ -50,25 +50,6 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "ToString()" )]
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-        public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
-            this.Value = planckTimesSinceBigBang;
-            var span = new Span( planckTimes: this.Value );
-
-            //TODO
-            this.Date = new Date( span );
-            this.Time = new Time( span );
-        }
-
-        public UniversalDateTime( DateTime dateTime ) {
-            var span = CalcSpanSince( dateTime );
-
-            this.Value = span.TotalPlanckTimes.Value;
-            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()?
-            this.Time = new Time( span );
-
-            //this.Time = new Time();
-        }
-
         public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
@@ -104,6 +85,25 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         [JsonProperty]
         public BigInteger Value { get; }
+
+        public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
+            this.Value = planckTimesSinceBigBang;
+            var span = new Span( planckTimes: this.Value );
+
+            //TODO
+            this.Date = new Date( span );
+            this.Time = new Time( span );
+        }
+
+        public UniversalDateTime( DateTime dateTime ) {
+            var span = CalcSpanSince( dateTime );
+
+            this.Value = span.TotalPlanckTimes.Value;
+            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()?
+            this.Time = new Time( span );
+
+            //this.Time = new Time();
+        }
 
         private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 

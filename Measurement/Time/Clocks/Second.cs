@@ -49,12 +49,6 @@ namespace Librainian.Measurement.Time.Clocks {
         [JsonProperty]
         public readonly Byte Value;
 
-        public Second( Byte value ) {
-            if ( !ValidSeconds.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
-
-            this.Value = value;
-        }
-
         public static Second Maximum { get; } = new Second( MaximumValue );
 
         /// <summary>should be 59</summary>
@@ -64,6 +58,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>should be 0</summary>
         public static Byte MinimumValue { get; } = ValidSeconds.Min();
+
+        public Second( Byte value ) {
+            if ( !ValidSeconds.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
+
+            this.Value = value;
+        }
 
         /// <summary>Allow this class to be visibly cast to a <see cref="SByte" />.</summary>
         /// <param name="value"></param>

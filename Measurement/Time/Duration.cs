@@ -66,34 +66,6 @@ namespace Librainian.Measurement.Time {
 
         public const Double MicsPerYear = MicsPerDay * Measurement.Time.Days.InOneCommonYear;
 
-        public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
-
-        public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
-
-        public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
-
-        public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
-
-        public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
-
-        public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
-
-        public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
-
-        public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
-
-        public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
-
-        public Duration( TimeSpan time ) : this( ticks: time.Ticks ) { }
-
-        public Duration( [NotNull] params TimeSpan[] times ) {
-            if ( times is null ) { throw new ArgumentNullException( nameof( times ) ); }
-
-            var total = times.Select( timeSpan => new Duration( timeSpan ) ).Aggregate( BigRational.Zero, ( current, dur ) => current + dur.totalMicroseconds );
-
-            this.totalMicroseconds = ( Double )total;
-        }
-
         [JsonProperty]
 
         // ReSharper disable once InconsistentNaming
@@ -130,6 +102,34 @@ namespace Librainian.Measurement.Time {
         public Double TotalMicroseconds => this.totalMicroseconds;
 
         public Double TotalMilliseconds => this.TotalMicroseconds / Measurement.Time.Microseconds.InOneMillisecond;
+
+        public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
+
+        public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
+
+        public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
+
+        public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
+
+        public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
+
+        public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
+
+        public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
+
+        public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
+
+        public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
+
+        public Duration( TimeSpan time ) : this( ticks: time.Ticks ) { }
+
+        public Duration( [NotNull] params TimeSpan[] times ) {
+            if ( times is null ) { throw new ArgumentNullException( nameof( times ) ); }
+
+            var total = times.Select( timeSpan => new Duration( timeSpan ) ).Aggregate( BigRational.Zero, ( current, dur ) => current + dur.totalMicroseconds );
+
+            this.totalMicroseconds = ( Double )total;
+        }
 
         public static Duration FromDays( Double value ) => new Duration( new Days( value ) );
 

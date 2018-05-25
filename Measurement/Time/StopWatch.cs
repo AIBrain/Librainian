@@ -76,8 +76,6 @@ namespace Librainian.Measurement.Time {
 
         public const Int64 TicksPerMillisecond = 10000;
 
-        public StopWatch() => this.Reset();
-
         public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
@@ -103,6 +101,8 @@ namespace Librainian.Measurement.Time {
 
             private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
+
+        public StopWatch() => this.Reset();
 
         [Pure]
         private Int64 GetElapsedTicks() {

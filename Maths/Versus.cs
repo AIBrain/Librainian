@@ -64,11 +64,6 @@ namespace Librainian.Maths {
         /// <summary>None for either.</summary>
         public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
 
-        public Versus( Int64 successes = 0, Int64 failures = 0 ) {
-            this.Successes = successes;
-            this.Failures = failures;
-        }
-
         public Int64 Failures {
             get => Thread.VolatileRead( ref this._failures );
 
@@ -82,6 +77,11 @@ namespace Librainian.Maths {
         }
 
         public Int64 Total => this.Successes + this.Failures;
+
+        public Versus( Int64 successes = 0, Int64 failures = 0 ) {
+            this.Successes = successes;
+            this.Failures = failures;
+        }
 
         public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
 

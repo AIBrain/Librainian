@@ -87,9 +87,9 @@ namespace Librainian.Collections {
 
         private Node _head;
 
-        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
-
         public Int32 Count { get; private set; }
+
+        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
 
         public void Add( T item ) => this.Push( item: item );
 

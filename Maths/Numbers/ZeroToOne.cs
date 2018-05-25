@@ -41,7 +41,7 @@ namespace Librainian.Maths.Numbers {
 
     /// <summary>
     ///     Restricts the value to between 0.0 and 1.0
-    ///     <para>Uses the <see cref="float" /> type.</para>
+    ///     <para>Uses the <see cref="Single" /> type.</para>
     /// </summary>
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -60,6 +60,12 @@ namespace Librainian.Maths.Numbers {
 
         public const Single NeutralValue = MaxValue / 2.0f;
 
+        public Single Value {
+            get => this._value;
+
+            set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
+        }
+
         private ZeroToOne( Double value ) : this() => this.Value = ( Single )( value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value ) );
 
         private ZeroToOne( Single value ) : this( ( Single? )value ) { }
@@ -73,12 +79,6 @@ namespace Librainian.Maths.Numbers {
             if ( !value.HasValue ) { value = Randem.NextSingle( min: MinValue, max: MaxValue ); }
 
             this.Value = value.Value;
-        }
-
-        public Single Value {
-            get => this._value;
-
-            set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
         }
 
         /// <summary>

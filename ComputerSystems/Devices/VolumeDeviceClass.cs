@@ -41,6 +41,8 @@ namespace Librainian.ComputerSystems.Devices {
     /// <remarks>written by Simon Mourier &lt;email: simon [underscore] mourier [at] hotmail [dot] com&gt;</remarks>
     public class VolumeDeviceClass : DeviceClass {
 
+        protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
+
         /// <summary>
         ///     Initializes a new instance of the VolumeDeviceClass class.
         /// </summary>
@@ -57,8 +59,6 @@ namespace Librainian.ComputerSystems.Devices {
                 //Debug.WriteLine( drive + " ==> " + sb );
             }
         }
-
-        protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
 
         protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
             new Volume( deviceClass, deviceInfoData, path, index );

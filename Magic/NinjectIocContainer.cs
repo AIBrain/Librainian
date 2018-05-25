@@ -46,6 +46,8 @@ namespace Librainian.Magic {
 
     public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer {
 
+        public IKernel Kernel { get; }
+
         // ReSharper disable once NotNullMemberIsNotInitialized
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             if ( modules is null ) { throw new ArgumentNullException( nameof( modules ) ); }
@@ -59,8 +61,6 @@ namespace Librainian.Magic {
 
             "done.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
         }
-
-        public IKernel Kernel { get; }
 
         /// <summary>
         ///     Dispose any disposable members.

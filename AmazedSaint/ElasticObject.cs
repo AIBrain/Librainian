@@ -40,15 +40,6 @@ namespace Librainian.AmazedSaint {
     /// </summary>
     public class ElasticObject : DynamicObject, IElasticHierarchyWrapper, INotifyPropertyChanged {
 
-        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) { }
-
-        public ElasticObject( String name, Object value = null ) {
-            this.InternalName = name;
-            this.InternalValue = value;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private IElasticHierarchyWrapper ElasticProvider { get; } = new SimpleHierarchyWrapper();
 
         private NodeType NodeType { get; set; } = NodeType.Element;
@@ -97,6 +88,15 @@ namespace Librainian.AmazedSaint {
         public IEnumerable<KeyValuePair<String, ElasticObject>> Attributes => this.ElasticProvider.Attributes;
 
         public IEnumerable<ElasticObject> Elements => this.ElasticProvider.Elements;
+
+        public ElasticObject() : this( $"id={Guid.NewGuid()}" ) { }
+
+        public ElasticObject( String name, Object value = null ) {
+            this.InternalName = name;
+            this.InternalValue = value;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged( String prop ) => this.PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( prop ) );
 

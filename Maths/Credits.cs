@@ -58,11 +58,6 @@ namespace Librainian.Maths {
         /// <summary>No credits.</summary>
         public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
 
-        public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
-            this.CurrentCredits = currentCredits;
-            this.LifetimeCredits = lifetimeCredits;
-        }
-
         public UInt64 CurrentCredits {
             get => Thread.VolatileRead( ref this._currentCredits );
 
@@ -73,6 +68,11 @@ namespace Librainian.Maths {
             get => Thread.VolatileRead( ref this._lifetimeCredits );
 
             private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
+        }
+
+        public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
+            this.CurrentCredits = currentCredits;
+            this.LifetimeCredits = lifetimeCredits;
         }
 
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {

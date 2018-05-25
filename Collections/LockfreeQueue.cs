@@ -47,6 +47,11 @@ namespace Librainian.Collections {
         private SingleLinkNode<T> _tail;
 
         /// <summary>
+        ///     Gets the number of elements contained in the queue.
+        /// </summary>
+        public Int32 Count => Thread.VolatileRead( address: ref this._count );
+
+        /// <summary>
         ///     Default constructor.
         /// </summary>
         public LockfreeQueue() => this._tail = this._head;
@@ -54,11 +59,6 @@ namespace Librainian.Collections {
         public LockfreeQueue( IEnumerable<T> items ) : this() {
             foreach ( var item in items ) { this.Enqueue( item: item ); }
         }
-
-        /// <summary>
-        ///     Gets the number of elements contained in the queue.
-        /// </summary>
-        public Int32 Count => Thread.VolatileRead( address: ref this._count );
 
         /// <summary>
         ///     Clears the queue.

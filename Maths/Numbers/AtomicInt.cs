@@ -46,13 +46,13 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         private Int64 _value;
 
-        public AtomicInt( Int32 value = 0 ) => this.Value = value;
-
         public Int32 Value {
             get => ( Int32 )Interlocked.Read( ref this._value );
 
             set => Interlocked.Exchange( ref this._value, value );
         }
+
+        public AtomicInt( Int32 value = 0 ) => this.Value = value;
 
         //public long Increment( long byAmount ) {
         //    return Interlocked.Add( ref this._value, byAmount );

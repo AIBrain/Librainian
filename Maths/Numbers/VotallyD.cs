@@ -58,11 +58,6 @@ namespace Librainian.Maths.Numbers {
         /// <summary>No vote for either.</summary>
         public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
 
-        public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
-            this.A = votesForA;
-            this.B = votesForB;
-        }
-
         public Double A {
             get => Thread.VolatileRead( ref this._aVotes );
 
@@ -96,6 +91,11 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsAWinning => this.A > this.B;
 
+        public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
+            this.A = votesForA;
+            this.B = votesForB;
+        }
+
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
             if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
 
@@ -113,6 +113,8 @@ namespace Librainian.Maths.Numbers {
 
             return votes.Near( 0 ) ? 0 : this.A / votes;
         }
+
+        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -155,8 +157,6 @@ namespace Librainian.Maths.Numbers {
 
             if ( this.B <= 0 ) { this.B = 0; }
         }
-
-        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
         Object ICloneable.Clone() => this.Clone();
     }

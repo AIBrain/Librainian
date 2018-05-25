@@ -43,6 +43,18 @@ namespace Librainian.Internet {
 
     public class OAuthBase {
 
+        /// <summary>
+        ///     Provides a predefined set of algorithms that are supported officially by the protocol
+        /// </summary>
+        public enum SignatureTypes {
+
+            Hmacsha1,
+
+            Plaintext,
+
+            Rsasha1
+        }
+
         protected const String Hmacsha1SignatureType = "HMAC-SHA1";
 
         protected const String OAuthCallbackKey = "oauth_callback";
@@ -77,18 +89,6 @@ namespace Librainian.Internet {
         protected const String UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
         protected readonly Random Random = new Random();
-
-        /// <summary>
-        ///     Provides a predefined set of algorithms that are supported officially by the protocol
-        /// </summary>
-        public enum SignatureTypes {
-
-            Hmacsha1,
-
-            Plaintext,
-
-            Rsasha1
-        }
 
         /// <summary>
         ///     Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")
@@ -317,14 +317,14 @@ namespace Librainian.Internet {
         /// </summary>
         protected class QueryParameter {
 
+            public String Name { get; }
+
+            public String Value { get; }
+
             public QueryParameter( String name, String value ) {
                 this.Name = name;
                 this.Value = value;
             }
-
-            public String Name { get; }
-
-            public String Value { get; }
         }
 
         /// <summary>

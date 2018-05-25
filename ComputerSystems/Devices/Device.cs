@@ -53,14 +53,6 @@ namespace Librainian.ComputerSystems.Devices {
 
         private Device _parent;
 
-        public Device( DeviceClass deviceClass, [NotNull] NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
-            this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
-            this.Path = path; // may be null
-            this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
-            this.Index = index;
-            this.DiskNumber = diskNumber;
-        }
-
         private NativeMethods.SP_DEVINFO_DATA DeviceInfoData { get; }
 
         /// <summary>
@@ -80,6 +72,14 @@ namespace Librainian.ComputerSystems.Devices {
         ///     Gets the device's path.
         /// </summary>
         public String Path { get; }
+
+        public Device( DeviceClass deviceClass, [NotNull] NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
+            this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
+            this.Path = path; // may be null
+            this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
+            this.Index = index;
+            this.DiskNumber = diskNumber;
+        }
 
         /// <summary>
         ///     Compares the current instance with another object of the same type.

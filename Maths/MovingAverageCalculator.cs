@@ -59,6 +59,14 @@ namespace Librainian.Maths {
 
         private Int32 _valuesIn;
 
+        /// <summary>
+        ///     Gets a value indicating whether enough values have been provided to fill the speicified
+        ///     window size. Values returned from NextValue may still be used prior to IsMature
+        ///     returning true, however such values are not subject to the intended smoothing effect of
+        ///     the moving average's window size.
+        /// </summary>
+        public Boolean IsMature => this._valuesIn == this._windowSize;
+
         /// <summary>Create a new moving average calculator.</summary>
         /// <param name="windowSize">
         ///     The maximum number of values to be considered by this moving average calculation.
@@ -72,14 +80,6 @@ namespace Librainian.Maths {
 
             this.Reset();
         }
-
-        /// <summary>
-        ///     Gets a value indicating whether enough values have been provided to fill the speicified
-        ///     window size. Values returned from NextValue may still be used prior to IsMature
-        ///     returning true, however such values are not subject to the intended smoothing effect of
-        ///     the moving average's window size.
-        /// </summary>
-        public Boolean IsMature => this._valuesIn == this._windowSize;
 
         /// <summary>
         ///     Updates the moving average with its next value, and returns the updated average value.

@@ -36,9 +36,9 @@ namespace Librainian.Financial.Containers.Accounts {
     [JsonObject]
     public class SavingsAccount : BankAccount {
 
-        public SavingsAccount( Guid id ) : base( id ) => this.Ledger = new Ledger();
-
         [JsonProperty]
         public Ledger Ledger { get; }
+
+        public SavingsAccount( Guid id ) : base( id ) => this.Ledger = new Ledger();
     }
 }

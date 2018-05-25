@@ -41,6 +41,19 @@ namespace Librainian.Graphics.Imaging {
 
     public unsafe class FasterBitmap : ABetterClassDispose {
 
+        private struct PixelData {
+
+            public Byte Alpha;
+
+            public Byte Blue;
+
+            public Byte Green;
+
+            public Byte Red;
+
+            public override String ToString() => $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";
+        }
+
         private readonly Rectangle _bounds;
 
         private readonly Bitmap _workingBitmap;
@@ -50,6 +63,12 @@ namespace Librainian.Graphics.Imaging {
         private Byte* _pBase = null;
 
         private PixelData* _pixelData = null;
+
+        public Int32 Height { get; }
+
+        public Boolean IsLocked { get; private set; }
+
+        public Int32 Width { get; }
 
         public FasterBitmap( Bitmap inputBitmap ) {
             this._workingBitmap = inputBitmap;
@@ -66,12 +85,6 @@ namespace Librainian.Graphics.Imaging {
 
             this.LockImage();
         }
-
-        public Int32 Height { get; }
-
-        public Boolean IsLocked { get; private set; }
-
-        public Int32 Width { get; }
 
         public override void DisposeManaged() {
             if ( this.IsLocked ) { this.UnlockImage(); }
@@ -108,19 +121,6 @@ namespace Librainian.Graphics.Imaging {
             this._bitmapData = null;
             this._pBase = null;
             this.IsLocked = false;
-        }
-
-        private struct PixelData {
-
-            public Byte Alpha;
-
-            public Byte Blue;
-
-            public Byte Green;
-
-            public Byte Red;
-
-            public override String ToString() => $"({this.Alpha}, {this.Red}, {this.Green}, {this.Blue})";
         }
     }
 }

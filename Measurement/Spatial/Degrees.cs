@@ -68,13 +68,6 @@ namespace Librainian.Measurement.Spatial {
         /// <summary>One <see cref="Degrees" />.</summary>
         public static readonly Degrees One = new Degrees( 1 );
 
-        public Degrees( Single value ) : this() => this.Value = value;
-
-        //public Boolean SetValue( Single degrees ) {
-        //    this.Value = degrees;
-        //    return true;
-        //}
-
         public Single Value {
             get => this._value;
 
@@ -91,6 +84,12 @@ namespace Librainian.Measurement.Spatial {
             }
         }
 
+        public Degrees( Single value ) : this() => this.Value = value;
+
+        //public Boolean SetValue( Single degrees ) {
+        //    this.Value = degrees;
+        //    return true;
+        //}
         public static Degrees Combine( Degrees left, Single degrees ) => new Degrees( left.Value + degrees );
 
         /// <summary>

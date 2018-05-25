@@ -34,9 +34,9 @@ namespace Librainian.Financial.Customers {
 
     public class Cashier : ABetterClassDispose, IPerson {
 
-        public Cashier( Guid cashierID ) => this.Wallet = new Wallet( cashierID );
-
         public Wallet Wallet { get; }
+
+        public Cashier( Guid cashierID ) => this.Wallet = new Wallet( cashierID );
 
         /// <summary>
         ///     Dispose any disposable members.

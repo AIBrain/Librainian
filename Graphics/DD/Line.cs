@@ -45,11 +45,6 @@ namespace Librainian.Graphics.DD {
 
         public PointF P2;
 
-        public Line( PointF p1, PointF p2 ) : this() {
-            this.P1 = p1;
-            this.P2 = p2;
-        }
-
         public Single X1 {
             get => this.P1.X;
 
@@ -72,6 +67,11 @@ namespace Librainian.Graphics.DD {
             get => this.P2.Y;
 
             set => this.P2.Y = value;
+        }
+
+        public Line( PointF p1, PointF p2 ) : this() {
+            this.P1 = p1;
+            this.P2 = p2;
         }
     }
 }

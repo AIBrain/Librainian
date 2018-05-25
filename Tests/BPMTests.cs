@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "WindowWrapper.cs" belongs to Rick@AIBrain.org and
+// This source code contained in "BPMTests.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -23,20 +23,23 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/WindowWrapper.cs" was last formatted by Protiguous on 2018/05/21 at 9:56 PM.
+// "Librainian/LibrainianTests/BPMTests.cs" was last formatted by Protiguous on 2018/05/24 at 6:53 PM.
 
-namespace Librainian.Controls {
+namespace LibrainianTests {
 
-    using System;
-    using System.Windows.Forms;
+    using FluentAssertions;
+    using Librainian.Measurement.Frequency;
+    using NUnit.Framework;
 
-    public class WindowWrapper : IWin32Window {
+    [TestFixture]
+    public static class BPMTests {
 
-        public IntPtr Handle { get; }
-
-        private WindowWrapper( IntPtr handle ) => this.Handle = handle;
-
-        public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
+        [Test]
+        public static void TestBPM() {
+            Bpm.One.Should().BeLessThan( Bpm.Two );
+            Bpm.Two.Should().BeGreaterThan( Bpm.One );
+        }
     }
 }

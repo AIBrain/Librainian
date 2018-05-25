@@ -48,17 +48,6 @@ namespace Librainian.Measurement.Spatial {
 
         public const Single Minimum = 0;
 
-        /// <summary>
-        ///     Init with a random direction
-        /// </summary>
-        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
-
-        /// <summary>
-        ///     ctor with <paramref name="degrees" />.
-        /// </summary>
-        /// <param name="degrees"></param>
-        public Compass( Single degrees ) => this.Degrees = degrees;
-
         public Single Degrees {
             get => this._degrees;
 
@@ -77,6 +66,17 @@ namespace Librainian.Measurement.Spatial {
                 this._degrees = value;
             }
         }
+
+        /// <summary>
+        ///     Init with a random direction
+        /// </summary>
+        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
+
+        /// <summary>
+        ///     ctor with <paramref name="degrees" />.
+        /// </summary>
+        /// <param name="degrees"></param>
+        public Compass( Single degrees ) => this.Degrees = degrees;
 
         public Boolean RotateLeft( Single byAmount = ( Single )Math.PI ) {
             if ( Single.IsNaN( byAmount ) ) { return false; }

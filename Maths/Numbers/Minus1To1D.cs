@@ -50,6 +50,12 @@ namespace Librainian.Maths.Numbers {
 
         public const Double NeutralValue = 0D;
 
+        public Double Value {
+            get => this._value;
+
+            set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
+        }
+
         /// <summary>
         ///     <para>Initializes a random number between -1.0 and 1.0</para>
         ///     <para>Restricts the value to between -1.0 and 1.0</para>
@@ -59,12 +65,6 @@ namespace Librainian.Maths.Numbers {
             if ( !value.HasValue ) { value = Randem.NextDouble( MinValue, MaxValue ); }
 
             this.Value = value.Value;
-        }
-
-        public Double Value {
-            get => this._value;
-
-            set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
         }
 
         /// <summary>

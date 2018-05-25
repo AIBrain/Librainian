@@ -42,6 +42,18 @@ namespace Librainian.Maths.Ranges {
     [JsonObject]
     public struct BigIntegerRange {
 
+        /// <summary>Length of the range (difference between maximum and minimum values).</summary>
+        [JsonProperty]
+        public BigInteger Length { get; }
+
+        /// <summary>Maximum value</summary>
+        [JsonProperty]
+        public BigInteger Max { get; }
+
+        /// <summary>Minimum value</summary>
+        [JsonProperty]
+        public BigInteger Min { get; }
+
         /// <summary>Initializes a new instance of the <see cref="BigIntegerRange" /> class</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
@@ -57,18 +69,6 @@ namespace Librainian.Maths.Ranges {
 
             this.Length = this.Max - this.Min;
         }
-
-        /// <summary>Length of the range (difference between maximum and minimum values).</summary>
-        [JsonProperty]
-        public BigInteger Length { get; }
-
-        /// <summary>Maximum value</summary>
-        [JsonProperty]
-        public BigInteger Max { get; }
-
-        /// <summary>Minimum value</summary>
-        [JsonProperty]
-        public BigInteger Min { get; }
 
         /// <summary>Check if the specified range is inside this range</summary>
         /// <param name="range">Range to check</param>

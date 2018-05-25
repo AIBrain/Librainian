@@ -43,6 +43,13 @@ namespace Librainian.ComputerSystems.FileSystem {
     [Immutable]
     public class Drive {
 
+        public Char DriveLetter { get; }
+
+        [NotNull]
+        public DriveInfo Info { get; }
+
+        public String RootDirectory => this.Info.RootDirectory.Name;
+
         public Drive( Document document ) : this( document.FullPathWithFileName[0] ) { }
 
         public Drive( Folder folder ) : this( folder.FullName[0] ) { }
@@ -65,13 +72,6 @@ namespace Librainian.ComputerSystems.FileSystem {
         }
 
         public Drive() : this( Environment.CurrentDirectory ) { }
-
-        public Char DriveLetter { get; }
-
-        [NotNull]
-        public DriveInfo Info { get; }
-
-        public String RootDirectory => this.Info.RootDirectory.Name;
 
         public static IEnumerable<Drive> GetDrives() => DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
 

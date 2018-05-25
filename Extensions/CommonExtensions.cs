@@ -148,11 +148,26 @@ namespace Librainian.Extensions {
             yield return second;
         }
 
-        public static void Swap<T>( ref T arg1, ref T arg2 ) {
-            var temp = arg1;
-            arg1 = arg2;
-            arg2 = temp;
+        /// <summary>
+        /// Swap.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        public static void Swap<T>( ref T left, ref T right ) {
+            var temp = left;
+            left = right;
+            right = temp;
         }
+
+        /// <summary>
+        /// Return (T right, T left).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static (T right, T left) Swap<T>( this T left, T right ) => (right, left);
 
         public static String ToHex( this IEnumerable<Byte> input ) {
             if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }

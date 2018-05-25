@@ -42,13 +42,6 @@ namespace Librainian.Maths.Numbers {
     //TODO this class needs fleshed out
     public struct Int256 {
 
-        public Int256( Int64 bits0, Int64 bits1, Int64 bits2, Int64 bits3 ) {
-            this.Bits0 = bits0;
-            this.Bits1 = bits1;
-            this.Bits2 = bits2;
-            this.Bits3 = bits3;
-        }
-
         public Int64 Bits0 { get; }
 
         public Int64 Bits1 { get; }
@@ -56,5 +49,12 @@ namespace Librainian.Maths.Numbers {
         public Int64 Bits2 { get; }
 
         public Int64 Bits3 { get; }
+
+        public Int256( Int64 bits0, Int64 bits1, Int64 bits2, Int64 bits3 ) {
+            this.Bits0 = bits0;
+            this.Bits1 = bits1;
+            this.Bits2 = bits2;
+            this.Bits3 = bits3;
+        }
     }
 }

@@ -36,6 +36,14 @@ namespace Librainian.ComputerSystems.FileSystem {
 
     public class PathSplitter {
 
+        [NotNull]
+        private List<String> Parts { get; } = new List<String>( 3 );
+
+        public String FileName { get; }
+
+        [CanBeNull]
+        public String OriginalPath { get; }
+
         public PathSplitter( String fullpathandfilename ) {
             this.FileName = Path.GetFileName( fullpathandfilename );
             this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
@@ -51,14 +59,6 @@ namespace Librainian.ComputerSystems.FileSystem {
         }
 
         public PathSplitter( Folder folder ) : this( folder.FullName ) { }
-
-        [NotNull]
-        private List<String> Parts { get; } = new List<String>( 3 );
-
-        public String FileName { get; }
-
-        [CanBeNull]
-        public String OriginalPath { get; }
 
         public Boolean InsertRoot( [NotNull] String path ) {
             if ( path is null ) { throw new ArgumentNullException( nameof( path ) ); }

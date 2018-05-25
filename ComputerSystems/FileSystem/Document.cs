@@ -308,19 +308,17 @@ namespace Librainian.ComputerSystems.FileSystem {
         /// <summary>
         ///     Returns the <see cref="WebClient" /> if a file copy was started.
         /// </summary>
-        /// <param name="destination">can this be a folder or a file?!?!</param>
+        /// <param name="destination"></param>
         /// <param name="onProgress"> </param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         public WebClient CopyFileWithProgress( Document destination, Action<Percentage> onProgress, Action onCompleted ) {
 
             var webClient = new WebClient();
-
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
                 onProgress?.Invoke( percentage );
             };
-
             webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
             webClient.DownloadFileAsync( address: new Uri( uriString: this.FullPathWithFileName ), fileName: destination.FullPathWithFileName );

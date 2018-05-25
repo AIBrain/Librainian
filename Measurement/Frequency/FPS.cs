@@ -50,23 +50,6 @@ namespace Librainian.Measurement.Frequency {
         [JsonProperty]
         private readonly Decimal _value;
 
-        public Fps( Decimal fps ) {
-            if ( fps <= 0m.Epsilon() ) { this._value = 0m.Epsilon(); }
-            else { this._value = fps >= Decimal.MaxValue ? Decimal.MaxValue : fps; }
-        }
-
-        /// <summary>
-        ///     Frames per second.
-        /// </summary>
-        /// <param name="fps"></param>
-        public Fps( UInt64 fps ) : this( ( Decimal )fps ) { }
-
-        /// <summary>
-        ///     Frames per second.
-        /// </summary>
-        /// <param name="fps"></param>
-        public Fps( Double fps ) : this( ( Decimal )fps ) { }
-
         /// <summary>
         ///     Fifteen <see cref="Fps" /> s.
         /// </summary>
@@ -149,21 +132,36 @@ namespace Librainian.Measurement.Frequency {
         /// </summary>
         public static Fps TwoPointFive { get; } = new Fps( 2.5 );
 
-        //faster WPM than a female (~240wpm)
-
-        //faster WPM than a female (~240wpm)
-
         /// <summary>
         ///     Two Thousand Three <see cref="Fps" /> (Prime).
         /// </summary>
         public static Fps TwoThousandThree { get; } = new Fps( 2003 );
 
+        //faster WPM than a female (~240wpm)
         /// <summary>
         ///     One <see cref="Fps" />.
         /// </summary>
         public static Fps Zero { get; } = new Fps( 0 );
 
+        //faster WPM than a female (~240wpm)
         public Decimal Value => this._value;
+
+        public Fps( Decimal fps ) {
+            if ( fps <= 0m.Epsilon() ) { this._value = 0m.Epsilon(); }
+            else { this._value = fps >= Decimal.MaxValue ? Decimal.MaxValue : fps; }
+        }
+
+        /// <summary>
+        ///     Frames per second.
+        /// </summary>
+        /// <param name="fps"></param>
+        public Fps( UInt64 fps ) : this( ( Decimal )fps ) { }
+
+        /// <summary>
+        ///     Frames per second.
+        /// </summary>
+        /// <param name="fps"></param>
+        public Fps( Double fps ) : this( ( Decimal )fps ) { }
 
         public static implicit operator Span( Fps fps ) => new Seconds( 1.0m / fps.Value );
 

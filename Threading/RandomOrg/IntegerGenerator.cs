@@ -32,7 +32,7 @@ namespace Librainian.Threading.RandomOrg {
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using Internet;
-    using Librainian.Parsing;
+    using Parsing;
 
     /// <summary>
     /// </summary>

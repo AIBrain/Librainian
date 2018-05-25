@@ -45,16 +45,16 @@ namespace Librainian.Maths.Numbers {
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public class BinaryMatrix {
 
-        public BinaryMatrix( Boolean[,] matrix ) => this.Matrix = matrix;
-
-        public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[rowsAmount, columsAmount];
-
         public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
 
         [NotNull]
         public Boolean[,] Matrix { get; }
 
         public Int32 RowAmount => this.Matrix.GetLength( 0 );
+
+        public BinaryMatrix( Boolean[,] matrix ) => this.Matrix = matrix;
+
+        public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[rowsAmount, columsAmount];
 
         public Boolean Get( Int32 row, Int32 column ) => this.Matrix[row, column];
 

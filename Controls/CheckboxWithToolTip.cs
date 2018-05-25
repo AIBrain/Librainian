@@ -33,6 +33,10 @@ namespace Librainian.Controls {
 
     public class CheckboxWithToolTip : CheckBox {
 
+        private ToolTip Tt { get; } = new ToolTip();
+
+        public String TooltipText { get; set; }
+
         public CheckboxWithToolTip() {
             this.Tt.AutoPopDelay = 1500;
             this.Tt.InitialDelay = 400;
@@ -50,9 +54,5 @@ namespace Librainian.Controls {
 
             this.MouseLeave += ( sender, args ) => this.Tt.Hide( this.Parent );
         }
-
-        private ToolTip Tt { get; } = new ToolTip();
-
-        public String TooltipText { get; set; }
     }
 }

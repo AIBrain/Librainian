@@ -61,17 +61,6 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         public const Single MinValue = 0.0f;
 
-        /// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
-        public PotentialF( Boolean randomValue ) {
-            if ( randomValue ) { this.Value = Randem.NextFloat( MinValue, MaxValue ); }
-        }
-
-        /// <summary>Initializes with <paramref name="initialValue" />.</summary>
-        /// <param name="initialValue"></param>
-        public PotentialF( Single initialValue ) => this.Value = initialValue;
-
-        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) { }
-
         /// <summary>
         ///     <para>Thread-safe getter and setter.</para>
         /// </summary>
@@ -85,6 +74,17 @@ namespace Librainian.Maths.Numbers {
 
             private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
         }
+
+        /// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
+        public PotentialF( Boolean randomValue ) {
+            if ( randomValue ) { this.Value = Randem.NextFloat( MinValue, MaxValue ); }
+        }
+
+        /// <summary>Initializes with <paramref name="initialValue" />.</summary>
+        /// <param name="initialValue"></param>
+        public PotentialF( Single initialValue ) => this.Value = initialValue;
+
+        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) { }
 
         public static implicit operator Single( PotentialF special ) => special.Value;
 

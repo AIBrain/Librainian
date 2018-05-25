@@ -34,13 +34,13 @@ namespace Librainian.Threading {
     /// <remarks>Untested.</remarks>
     public class Singleton<T> where T : class, new() {
 
-        public static T Instance => SingletonCreator.Instance;
+        public static T Instance => SingletonCreator.SingleInstance;
 
         private Singleton() { }
 
         public class SingletonCreator {
 
-            internal static T Instance { get; } = new T();
+            internal static T SingleInstance { get; } = new T();
 
             static SingletonCreator() { }
         }

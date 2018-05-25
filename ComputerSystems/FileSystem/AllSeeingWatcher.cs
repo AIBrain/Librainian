@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/AllSeeingWatcher.cs" was last formatted by Protiguous on 2018/05/21 at 10:53 PM.
+// "Librainian/Librainian/AllSeeingWatcher.cs" was last formatted by Protiguous on 2018/05/24 at 6:48 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -43,13 +44,13 @@ namespace Librainian.ComputerSystems.FileSystem {
         [NotNull]
         private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new ConcurrentList<FileSystemWatcher>();
 
-        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 123 );
+        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
 
-        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Created { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 123 );
+        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Created { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
 
-        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Deleted { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 123 );
+        public ConcurrentDictionary<DateTime, FileSystemEventArgs> Deleted { get; } = new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
 
-        public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } = new ConcurrentDictionary<DateTime, RenamedEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 123 );
+        public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } = new ConcurrentDictionary<DateTime, RenamedEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
 
         private void OnChanged( Object sender, FileSystemEventArgs args ) => this.Changed[DateTime.UtcNow] = args;
 
@@ -74,12 +75,15 @@ namespace Librainian.ComputerSystems.FileSystem {
                     InternalBufferSize = UInt16.MaxValue
                 };
 
-                watcher.Created += this.OnCreated;
-                watcher.Changed += this.OnChanged;
-                watcher.Renamed += this.OnRenamed;
                 watcher.Deleted += this.OnDeleted;
 
-                this.FileWatchers.Add( item: watcher );
+                watcher.Renamed += this.OnRenamed;
+
+                watcher.Changed += this.OnChanged;
+
+                watcher.Created += this.OnCreated;
+
+                this.FileWatchers.Add( watcher );
                 ( "Added " + nameof( AllSeeingWatcher ) + " to drive " + drive.RootDirectory ).Info();
 
                 watcher.EnableRaisingEvents = true;

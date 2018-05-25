@@ -38,16 +38,16 @@ namespace Librainian.Collections {
     [JsonObject]
     public class StringTable {
 
-        public StringTable( Folder commonName ) {
-            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
-            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
-        }
-
         [JsonProperty]
         public PersistTable<UInt64, String> Ints { get; }
 
         [JsonProperty]
         public PersistTable<String, UInt64> Words { get; }
+
+        public StringTable( Folder commonName ) {
+            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
+            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
+        }
 
         /// <summary>
         ///     Get or set the <paramref name="key" /> for this word.

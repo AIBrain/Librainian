@@ -38,10 +38,10 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class Warning : Exception {
 
-        private Warning() { Logging.Break(); }
+        private Warning() => Logging.Break();
 
-        public Warning( [NotNull] String message ) : base( message ) { Logging.Break(); }
+        public Warning( [NotNull] String message ) : base( message ) => Logging.Break();
 
-        public Warning( [NotNull] String message, Exception inner ) : base( message, inner ) { Logging.Break(); }
+        public Warning( [NotNull] String message, Exception inner ) : base( message, inner ) => Logging.Break();
     }
 }

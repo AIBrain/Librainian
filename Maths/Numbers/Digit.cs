@@ -48,14 +48,6 @@ namespace Librainian.Maths.Numbers {
 
         public const Byte Minimum = 0;
 
-        public Digit( SByte value ) {
-            if ( value < Minimum || value > Maximum ) { throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" ); }
-
-            this.Value = ( Byte )value;
-        }
-
-        public Digit( Byte value ) : this( ( SByte )value ) { }
-
         public static Digit Eight { get; } = new Digit( 8 );
 
         public static Digit Five { get; } = new Digit( 5 );
@@ -77,6 +69,14 @@ namespace Librainian.Maths.Numbers {
         public static Digit Zero { get; } = new Digit( 0 );
 
         public Byte Value { get; }
+
+        public Digit( SByte value ) {
+            if ( value < Minimum || value > Maximum ) { throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" ); }
+
+            this.Value = ( Byte )value;
+        }
+
+        public Digit( Byte value ) : this( ( SByte )value ) { }
 
         public static implicit operator Byte( Digit digit ) => digit.Value;
 

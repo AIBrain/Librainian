@@ -61,29 +61,6 @@ namespace Librainian.Measurement.Time.Clocks {
     [JsonObject]
     public class TickingClock : IStandardClock {
 
-        /// <summary>
-        /// </summary>
-        [CanBeNull]
-        private Timer _timer;
-
-        public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = ( Byte )time.Hour;
-            this.Minute = ( Byte )time.Minute;
-            this.Second = ( Byte )time.Second;
-            this.Millisecond = ( UInt16 )time.Millisecond;
-            this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
-            this.ResetTimer( granularity );
-        }
-
-        public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = time.Hour;
-            this.Minute = time.Minute;
-            this.Second = time.Second;
-            this.Millisecond = time.Millisecond;
-            this.Microsecond = time.Microsecond;
-            this.ResetTimer( granularity );
-        }
-
         public enum Granularity {
 
             Microseconds,
@@ -96,6 +73,11 @@ namespace Librainian.Measurement.Time.Clocks {
 
             Hours
         }
+
+        /// <summary>
+        /// </summary>
+        [CanBeNull]
+        private Timer _timer;
 
         /// <summary>
         /// </summary>
@@ -135,6 +117,24 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         [JsonProperty]
         public Second Second { get; private set; }
+
+        public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
+            this.Hour = ( Byte )time.Hour;
+            this.Minute = ( Byte )time.Minute;
+            this.Second = ( Byte )time.Second;
+            this.Millisecond = ( UInt16 )time.Millisecond;
+            this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
+            this.ResetTimer( granularity );
+        }
+
+        public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
+            this.Hour = time.Hour;
+            this.Minute = time.Minute;
+            this.Second = time.Second;
+            this.Millisecond = time.Millisecond;
+            this.Microsecond = time.Microsecond;
+            this.ResetTimer( granularity );
+        }
 
         private void OnHourElapsed( Object sender, ElapsedEventArgs e ) {
 

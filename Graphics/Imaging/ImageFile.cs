@@ -45,6 +45,27 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     internal class ImageFile {
 
+        public enum Types {
+
+            FileNotFound,
+
+            FileEmpty,
+
+            FileNull,
+
+            FileTooLarge,
+
+            FileUnrecognized,
+
+            PNG,
+
+            JPG,
+
+            GIFa,
+
+            GIFb
+        }
+
         private readonly Byte[] _abEndGIF = { 0, 59 };
 
         private readonly Byte[] _abEndJPGa = { 255, 217, 255, 255 };
@@ -60,6 +81,14 @@ namespace Librainian.Graphics.Imaging {
         private readonly Byte[] _abTagJPG = { 255, 216, 255 };
 
         private readonly Byte[] _abTagPNG = { 137, 80, 78, 71, 13, 10, 26, 10 };
+
+        public Int32 EndingNullBytes { get; }
+
+        public String Filename { get; }
+
+        public Types FileType { get; } = Types.FileNotFound;
+
+        public Boolean IsComplete { get; }
 
         public ImageFile( String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
             this.Filename = filename.Trim();
@@ -144,35 +173,6 @@ namespace Librainian.Graphics.Imaging {
                 }
             }
         }
-
-        public enum Types {
-
-            FileNotFound,
-
-            FileEmpty,
-
-            FileNull,
-
-            FileTooLarge,
-
-            FileUnrecognized,
-
-            PNG,
-
-            JPG,
-
-            GIFa,
-
-            GIFb
-        }
-
-        public Int32 EndingNullBytes { get; }
-
-        public String Filename { get; }
-
-        public Types FileType { get; } = Types.FileNotFound;
-
-        public Boolean IsComplete { get; }
 
         private static Boolean _EndsWidth( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
             var blRet = false;

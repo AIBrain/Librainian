@@ -49,12 +49,6 @@ namespace Librainian.Measurement.Time.Clocks {
         public static readonly Byte[] ValidMonths = Enumerable.Range( 1, Months.InOneCommonYear + 1 ) //TODO //BUG ??
             .Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
-        public Month( Byte value ) {
-            if ( !ValidMonths.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
-
-            this.Value = value;
-        }
-
         /// <summary>
         ///     12
         /// </summary>
@@ -67,6 +61,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [JsonProperty]
         public Byte Value { get; }
+
+        public Month( Byte value ) {
+            if ( !ValidMonths.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
+
+            this.Value = value;
+        }
 
         public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 

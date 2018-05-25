@@ -39,6 +39,10 @@ namespace Librainian.Extensions {
     [Serializable]
     public class SerializableExceptionWithCustomProperties : Exception {
 
+        public String ResourceName { get; }
+
+        public IList<String> ValidationErrors { get; }
+
         /// <summary>
         ///     Pulled from
         /// </summary>
@@ -67,10 +71,6 @@ namespace Librainian.Extensions {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
-
-        public String ResourceName { get; }
-
-        public IList<String> ValidationErrors { get; }
 
         [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
         public override void GetObjectData( SerializationInfo info, StreamingContext context ) {

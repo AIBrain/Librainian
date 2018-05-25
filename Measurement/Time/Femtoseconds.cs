@@ -127,6 +127,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Femtoseconds Zero = new Femtoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Femtoseconds( Decimal value ) => this.Value = value;
 
         public Femtoseconds( BigRational value ) => this.Value = value;
@@ -134,9 +137,6 @@ namespace Librainian.Measurement.Time {
         public Femtoseconds( Int64 value ) => this.Value = value;
 
         public Femtoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 

@@ -299,7 +299,7 @@
     <Compile Include="Graphics\Video\CarrierImage.cs" />
     <Compile Include="Internet\OAuthBase.cs" />
     <Compile Include="Internet\TraceExtensions.cs" />
-    <Compile Include="Internet\InternetExtensions.cs" />
+    <Compile Include="Internet\Internet.cs" />
     <Compile Include="OperatingSystem\ComputerFingerPrint.cs" />
     <Compile Include="ComputerSystems\FileSystem\DefragExtensions.cs" />
     <Compile Include="ComputerSystems\FileSystem\DocumentExtensions.cs" />

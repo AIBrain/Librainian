@@ -35,16 +35,16 @@ namespace Librainian.Database {
 
     public class Excel {
 
+        private String ConnectionString { get; }
+
+        private String Path { get; }
+
         public Excel( String path, Boolean hasHeaders, Boolean hasMixedData ) {
             this.Path = path;
             var strBuilder = new OleDbConnectionStringBuilder { Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path };
             strBuilder.Add( "Extended Properties", String.Format( "Excel 8.0;HDR={0}{1}Imex={2}{1}", hasHeaders ? "Yes" : "No", ';', hasMixedData ? "2" : "0" ) );
             this.ConnectionString = strBuilder.ToString();
         }
-
-        private String ConnectionString { get; }
-
-        private String Path { get; }
 
         public String[] GetColumnsList( String worksheet ) {
             String[] columns = { };

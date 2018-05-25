@@ -72,6 +72,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Months Zero = new Months( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         private Months( Int32 value ) => this.Value = value;
 
         public Months( Decimal value ) => this.Value = value;
@@ -79,9 +82,6 @@ namespace Librainian.Measurement.Time {
         public Months( BigRational value ) => this.Value = value;
 
         public Months( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 

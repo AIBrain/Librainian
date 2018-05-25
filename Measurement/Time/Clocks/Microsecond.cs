@@ -49,12 +49,6 @@ namespace Librainian.Measurement.Time.Clocks {
         [JsonProperty]
         public readonly UInt16 Value;
 
-        public Microsecond( UInt16 value ) {
-            if ( !ValidMicroseconds.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
-
-            this.Value = value;
-        }
-
         /// <summary>999</summary>
         public static UInt16 MaximumValue { get; } = ValidMicroseconds.Max();
 
@@ -66,6 +60,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>0</summary>
         public static UInt16 MinimumValue { get; } = ValidMicroseconds.Min();
+
+        public Microsecond( UInt16 value ) {
+            if ( !ValidMicroseconds.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
+
+            this.Value = value;
+        }
 
         /// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
         /// <param name="value"></param>

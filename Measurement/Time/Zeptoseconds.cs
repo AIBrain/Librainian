@@ -101,6 +101,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Zeptoseconds Zero = new Zeptoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Zeptoseconds( Decimal value ) => this.Value = value;
 
         public Zeptoseconds( BigRational value ) => this.Value = value;
@@ -108,9 +111,6 @@ namespace Librainian.Measurement.Time {
         public Zeptoseconds( Int64 value ) => this.Value = value;
 
         public Zeptoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Zeptoseconds Combine( Zeptoseconds left, Zeptoseconds right ) => Combine( left, right.Value );
 

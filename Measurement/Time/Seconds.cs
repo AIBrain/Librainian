@@ -140,6 +140,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Seconds Zero = new Seconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Seconds( Decimal value ) => this.Value = value;
 
         public Seconds( BigRational value ) => this.Value = value;
@@ -147,9 +150,6 @@ namespace Librainian.Measurement.Time {
         public Seconds( Int64 value ) => this.Value = value;
 
         public Seconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Seconds Combine( Seconds left, Seconds right ) => Combine( left, right.Value );
 

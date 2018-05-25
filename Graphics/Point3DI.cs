@@ -49,18 +49,6 @@ namespace Librainian.Graphics {
         public const Int32 Tolerance = 0;
 
         /// <summary>
-        ///     Instantiates a new Point3D.
-        /// </summary>
-        /// <param name="x">The point's X coordinate.</param>
-        /// <param name="y">The point's Y coordinate.</param>
-        /// <param name="z">The point's Z coordinate.</param>
-        public Point3Di( Int32 x, Int32 y, Int32 z ) : this() {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-        }
-
-        /// <summary>
         ///     The point's X coordinate.
         /// </summary>
         public Int32 X { get; }
@@ -74,6 +62,18 @@ namespace Librainian.Graphics {
         ///     The point's Z coordinate.
         /// </summary>
         public Int32 Z { get; }
+
+        /// <summary>
+        ///     Instantiates a new Point3D.
+        /// </summary>
+        /// <param name="x">The point's X coordinate.</param>
+        /// <param name="y">The point's Y coordinate.</param>
+        /// <param name="z">The point's Z coordinate.</param>
+        public Point3Di( Int32 x, Int32 y, Int32 z ) : this() {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
 
         ///// <summary>
         /////   Gets the location of the point projected onto the XY plane at the Z origin, from a specified

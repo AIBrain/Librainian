@@ -42,13 +42,6 @@ namespace Librainian.Internet.Wiki {
 
         private static DateTime _lastWikiResponse = DateTime.MinValue;
 
-        static Wiktionary() {
-            if ( DoesWikiRespond ) {
-
-                //AIBrain.Brain.BlackBoxClass.Diagnostic( String.Format( "Wiktionary responded at {0}.", LastWikiResponse ) );
-            }
-        }
-
         /// <summary>Use String.Format to enter the search parameter.</summary>
         private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
 
@@ -68,6 +61,13 @@ namespace Librainian.Internet.Wiki {
                 }
 
                 return false;
+            }
+        }
+
+        static Wiktionary() {
+            if ( DoesWikiRespond ) {
+
+                //AIBrain.Brain.BlackBoxClass.Diagnostic( String.Format( "Wiktionary responded at {0}.", LastWikiResponse ) );
             }
         }
 

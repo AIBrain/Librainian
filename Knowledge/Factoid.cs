@@ -42,18 +42,17 @@ namespace Librainian.Knowledge {
     [JsonObject]
     public class Factoid {
 
+        [JsonProperty]
+        public String Description { get; private set; }
+
+        //TODO
+        [JsonProperty]
+        public Percentage Truthiness { get; private set; }
+
         public Factoid( [NotNull] String description, Percentage truthiness ) {
             this.Description = description ?? throw new ArgumentNullException( nameof( description ) );
             this.Truthiness = truthiness;
         }
-
-        //TODO
-
-        [JsonProperty]
-        public String Description { get; private set; }
-
-        [JsonProperty]
-        public Percentage Truthiness { get; private set; }
     }
 
     /*

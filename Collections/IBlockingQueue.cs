@@ -143,8 +143,8 @@ namespace Librainian.Collections {
         /// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
         /// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
         /// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-        /// <seealso cref="DrainTo(ICollection{T},int)" />
-        /// <seealso cref="IQueue{T}.Drain(System.Action{T},int)" />
+        /// <seealso cref="DrainTo(ICollection{T},Int32)" />
+        /// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
         Int32 DrainTo( ICollection<T> collection );
 
         /// <summary>

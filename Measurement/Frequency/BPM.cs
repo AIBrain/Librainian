@@ -35,9 +35,7 @@
 namespace Librainian.Measurement.Frequency {
 
     using System;
-    using FluentAssertions;
     using Newtonsoft.Json;
-    using NUnit.Framework;
     using Time;
 
     /// <summary>BPM. Beats Per Minute</summary>
@@ -101,15 +99,5 @@ namespace Librainian.Measurement.Frequency {
         public Int32 CompareTo( Bpm other ) => this.Value.CompareTo( other.Value );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
-    }
-
-    [TestFixture]
-    public static class BPMTests {
-
-        [Test]
-        public static void TestBPM() {
-            Bpm.One.Should().BeLessThan( Bpm.Two );
-            Bpm.Two.Should().BeGreaterThan( Bpm.One );
-        }
     }
 }

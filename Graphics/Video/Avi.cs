@@ -39,44 +39,6 @@ namespace Librainian.Graphics.Video {
 
     public class Avi {
 
-        public const Int32 BmpMagicCookie = 19778;
-
-        public const Int32 OfShareDenyWrite = 32;
-
-        public const Int32 StreamtypeVideo = 1935960438;
-
-        //Create a new stream in an open AVI file
-
-        //ascii string "BM"
-        //Close the AVI Library
-
-        //mmioStringToFOURCC("vids", 0)
-        //Get a stream from an open AVI file
-
-        //Initialize the AVI Library
-
-        //Open an AVI file
-
-        //Release an open AVI file
-
-        //Get a pointer to a packed DIB (returns 0 on error)
-
-        //Release the GETFRAME object
-
-        //Get a pointer to a GETFRAME object (returns 0 on error)
-
-        //Get information about an open stream
-
-        //Get the length of a stream in frames
-
-        //Release an open AVI stream
-
-        //Set the format for a new stream
-
-        //Get the start position of a stream
-
-        //Write a sample to a stream
-
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Avistreaminfo {
 
@@ -118,6 +80,7 @@ namespace Librainian.Graphics.Video {
             public UInt16[] szName;
         }
 
+        //Write a sample to a stream
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Bitmapfileheader {
 
@@ -132,6 +95,7 @@ namespace Librainian.Graphics.Video {
             public Int32 bfOffBits;
         }
 
+        //Get the start position of a stream
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Bitmapinfoheader {
 
@@ -158,6 +122,7 @@ namespace Librainian.Graphics.Video {
             public UInt32 biClrImportant;
         }
 
+        //Set the format for a new stream
         [StructLayout( LayoutKind.Sequential, Pack = 1 )]
         public struct Rect {
 
@@ -170,6 +135,37 @@ namespace Librainian.Graphics.Video {
             public UInt32 bottom;
         }
 
+        public const Int32 BmpMagicCookie = 19778;
+
+        public const Int32 OfShareDenyWrite = 32;
+
+        public const Int32 StreamtypeVideo = 1935960438;
+
+        //Create a new stream in an open AVI file
+
+        //ascii string "BM"
+        //Close the AVI Library
+
+        //mmioStringToFOURCC("vids", 0)
+        //Get a stream from an open AVI file
+
+        //Initialize the AVI Library
+
+        //Open an AVI file
+
+        //Release an open AVI file
+
+        //Get a pointer to a packed DIB (returns 0 on error)
+
+        //Release the GETFRAME object
+
+        //Get a pointer to a GETFRAME object (returns 0 on error)
+
+        //Get information about an open stream
+
+        //Get the length of a stream in frames
+
+        //Release an open AVI stream
         /*[DllImport("avifil32.dll")]
 		public static extern int AVIStreamRead(
 			IntPtr pavi,

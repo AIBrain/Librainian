@@ -124,6 +124,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Picoseconds Zero = new Picoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Picoseconds( Decimal value ) => this.Value = value;
 
         public Picoseconds( BigRational value ) => this.Value = value;
@@ -131,9 +134,6 @@ namespace Librainian.Measurement.Time {
         public Picoseconds( Int64 value ) => this.Value = value;
 
         public Picoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
 

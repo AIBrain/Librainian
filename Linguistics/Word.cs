@@ -56,7 +56,7 @@ namespace Librainian.Linguistics {
     }
 
     /// <summary>
-    ///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
+    ///     A <see cref="Word" /> is a sequence of <see cref="Char" /> .
     /// </summary>
     /// <seealso cref="Sentence"></seealso>
     [JsonObject]
@@ -64,6 +64,12 @@ namespace Librainian.Linguistics {
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word> {
+
+        [NotNull]
+        [JsonProperty]
+        private List<Char> Chars { get; } = new List<Char>();
+
+        public static Word Empty { get; } = new Word();
 
         private Word() { }
 
@@ -73,12 +79,6 @@ namespace Librainian.Linguistics {
             this.Chars.AddRange( word.Select( character => character ) );
             this.Chars.Fix();
         }
-
-        [NotNull]
-        [JsonProperty]
-        private List<Char> Chars { get; } = new List<Char>();
-
-        public static Word Empty { get; } = new Word();
 
         public static implicit operator String( Word word ) => word.Chars.ToStrings( "" );
 

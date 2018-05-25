@@ -44,15 +44,13 @@ namespace Librainian.Threading {
 
         internal Boolean Waiting = true;
 
-        internal Thread _owner { get; }
-
         internal virtual Boolean IsWaiting => this.Waiting;
 
         internal virtual WaitNode NextWaitNode { get; set; }
 
-        internal virtual Thread Owner => this._owner;
+        internal virtual Thread Owner { get; }
 
-        public WaitNode() => this._owner = Thread.CurrentThread;
+        public WaitNode() => this.Owner = Thread.CurrentThread;
 
         public virtual Boolean DoTimedWait( IQueuedSync sync, TimeSpan duration ) {
             lock ( this ) {

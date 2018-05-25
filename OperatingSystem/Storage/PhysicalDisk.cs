@@ -39,13 +39,13 @@ namespace Librainian.OperatingSystem.Storage {
     [Immutable]
     public class PhysicalDisk {
 
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
+        public String SerialNumber { get; }
+
         public PhysicalDisk( Int32 diskNumber ) {
 
             //this.SerialNumber = GetSerialNumber( diskNumber );
         }
-
-        // ReSharper disable once UnassignedGetOnlyAutoProperty
-        public String SerialNumber { get; }
 
         [Obsolete( "not complete at all" )]
         public static String GetSerialNumber( Int32 diskNumber ) {

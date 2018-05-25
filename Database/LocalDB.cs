@@ -1,30 +1,31 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "LocalDB.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/LocalDB.cs" was last formatted by Protiguous on 2018/05/22 at 8:50 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+// 
+// "Librainian/Librainian/LocalDB.cs" was last formatted by Protiguous on 2018/05/24 at 6:55 PM.
 
 namespace Librainian.Database {
 
@@ -39,28 +40,6 @@ namespace Librainian.Database {
     using Magic;
 
     public class LocalDb : ABetterClassDispose {
-
-        [NotNull]
-        public SqlConnection Connection { get; }
-
-        [NotNull]
-        public String ConnectionString { get; }
-
-        [NotNull]
-        public Folder DatabaseLocation { get; }
-
-        [NotNull]
-        public Document DatabaseLog { get; }
-
-        [NotNull]
-        public Document DatabaseMdf { get; }
-
-        [NotNull]
-        public String DatabaseName { get; }
-
-        public TimeSpan ReadTimeout { get; }
-
-        public TimeSpan WriteTimeout { get; }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
@@ -99,15 +78,40 @@ namespace Librainian.Database {
             this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPathWithFileName};";
 
             this.Connection = new SqlConnection( this.ConnectionString );
-            this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
-            this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
+
             this.Connection.Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info();
+
+            this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
+
+            this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
 
             $"Attempting connection to {this.DatabaseMdf}...".Info();
             this.Connection.Open();
             this.Connection.ServerVersion.Info();
             this.Connection.Close();
         }
+
+        [NotNull]
+        public SqlConnection Connection { get; }
+
+        [NotNull]
+        public String ConnectionString { get; }
+
+        [NotNull]
+        public Folder DatabaseLocation { get; }
+
+        [NotNull]
+        public Document DatabaseLog { get; }
+
+        [NotNull]
+        public Document DatabaseMdf { get; }
+
+        [NotNull]
+        public String DatabaseName { get; }
+
+        public TimeSpan ReadTimeout { get; }
+
+        public TimeSpan WriteTimeout { get; }
 
         public async Task DetachDatabaseAsync() {
             try {
@@ -123,6 +127,7 @@ namespace Librainian.Database {
         }
 
         public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );
+
     }
 
     ///// <summary>
@@ -200,4 +205,5 @@ namespace Librainian.Database {
     //		return false;
     //	}
     //}
+
 }

@@ -83,6 +83,9 @@ namespace Librainian.Measurement.Time {
         /// <see cref="http://www.wolframalpha.com/input/?i=converts+1+month+to+hours" />
         public static BigInteger InOneMonth = 730;
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Hours( Decimal value ) => this.Value = value;
 
         public Hours( BigRational value ) => this.Value = value;
@@ -90,9 +93,6 @@ namespace Librainian.Measurement.Time {
         public Hours( Int64 value ) => this.Value = value;
 
         public Hours( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 

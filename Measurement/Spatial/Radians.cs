@@ -60,8 +60,6 @@ namespace Librainian.Measurement.Spatial {
         /// <summary>One <see cref="Radians" />.</summary>
         public static readonly Radians One = new Radians( 1 );
 
-        public Radians( Single value ) : this() => this.Value = value;
-
         public Single Value {
             get => this._value;
 
@@ -73,6 +71,8 @@ namespace Librainian.Measurement.Spatial {
                 this._value = value;
             }
         }
+
+        public Radians( Single value ) : this() => this.Value = value;
 
         public static Radians Combine( Radians left, Single radians ) => new Radians( left.Value + radians );
 

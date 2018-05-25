@@ -46,9 +46,9 @@ namespace Librainian.Internet {
     /// </summary>
     public static class NetworkInterfaceHelper {
 
-        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
-
         public static IDictionary<String, NetworkInterface> NetworkInterfaces { get; }
+
+        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
 
         public static NetworkInterface GetBestInterface( this IPAddress address ) {
             var byteArray1 = address.GetAddressBytes();

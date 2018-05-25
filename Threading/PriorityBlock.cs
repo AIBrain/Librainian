@@ -49,13 +49,6 @@ namespace Librainian.Threading {
 
         private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
 
-        public PriorityBlock( CancellationToken cancellationToken ) {
-            this.CancellationToken = cancellationToken;
-            this.Input = new BufferBlock<OneJob>();
-            this.Output = new ActionBlock<Action>( action => action?.Invoke(), Blocks.SingleProducer.ConsumeSensible );
-            this.TheDoctorsTask = Task.Run( this.Triage );
-        }
-
         public CancellationToken CancellationToken { get; }
 
         [NotNull]
@@ -65,6 +58,13 @@ namespace Librainian.Threading {
         public ActionBlock<Action> Output { get; }
 
         public Task TheDoctorsTask { get; }
+
+        public PriorityBlock( CancellationToken cancellationToken ) {
+            this.CancellationToken = cancellationToken;
+            this.Input = new BufferBlock<OneJob>();
+            this.Output = new ActionBlock<Action>( action => action?.Invoke(), Blocks.SingleProducer.ConsumeSensible );
+            this.TheDoctorsTask = Task.Run( this.Triage );
+        }
 
         private async Task Triage() {
             Logging.Enter();

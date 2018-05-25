@@ -57,38 +57,6 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public const Byte Scripthash = 0x05;
 
-        public Address( Byte[] data, Byte version = Pubkey ) {
-            RIPEMD160 ripemd160 = new RIPEMD160Managed();
-
-            switch ( version ) {
-                case Pubkey:
-                    this._pubKeyHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Pubkeyhash;
-
-                    break;
-
-                case Script:
-                    this._scriptHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Scripthash;
-
-                    break;
-
-                case Pubkeyhash:
-                    this._pubKeyHash = data;
-
-                    break;
-
-                case Scripthash:
-                    this._scriptHash = data;
-
-                    break;
-            }
-
-            this._type = version;
-        }
-
-        public Address( String address ) => this._address = address;
-
         public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
         public Hash EitherHash {
@@ -126,6 +94,38 @@ namespace Librainian.Measurement.Currency.BTC {
                 return this._type.Value;
             }
         }
+
+        public Address( Byte[] data, Byte version = Pubkey ) {
+            RIPEMD160 ripemd160 = new RIPEMD160Managed();
+
+            switch ( version ) {
+                case Pubkey:
+                    this._pubKeyHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
+                    version = Pubkeyhash;
+
+                    break;
+
+                case Script:
+                    this._scriptHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
+                    version = Scripthash;
+
+                    break;
+
+                case Pubkeyhash:
+                    this._pubKeyHash = data;
+
+                    break;
+
+                case Scripthash:
+                    this._scriptHash = data;
+
+                    break;
+            }
+
+            this._type = version;
+        }
+
+        public Address( String address ) => this._address = address;
 
         private void CalcBase58() {
             if ( this._pubKeyHash != null ) { this._address = Base58CheckString.FromByteArray( this._pubKeyHash, Pubkeyhash ); }

@@ -55,13 +55,6 @@ namespace Librainian.Maths.Numbers {
 
         public const Double MinValue = -1D;
 
-        /// <summary>Initialize the value to a random value between -1 and 1.</summary>
-        public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
-
-        /// <summary>Initialize the value to between -1 and 1.</summary>
-        /// <param name="value"></param>
-        public Minus1To1Ts( Double value ) => this.Value = value;
-
         public Double Value {
             get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
 
@@ -72,6 +65,13 @@ namespace Librainian.Maths.Numbers {
                 Interlocked.CompareExchange( ref this._value, value, this._value );
             }
         }
+
+        /// <summary>Initialize the value to a random value between -1 and 1.</summary>
+        public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
+
+        /// <summary>Initialize the value to between -1 and 1.</summary>
+        /// <param name="value"></param>
+        public Minus1To1Ts( Double value ) => this.Value = value;
 
         public static implicit operator Double( Minus1To1Ts special ) => special.Value;
 

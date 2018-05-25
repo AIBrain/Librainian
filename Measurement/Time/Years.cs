@@ -67,6 +67,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Years Zero = new Years( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Years( Decimal value ) => this.Value = value;
 
         public Years( BigRational value ) => this.Value = value;
@@ -74,9 +77,6 @@ namespace Librainian.Measurement.Time {
         public Years( Int64 value ) => this.Value = value;
 
         public Years( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
 

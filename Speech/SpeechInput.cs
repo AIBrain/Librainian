@@ -37,22 +37,6 @@ namespace Librainian.Speech {
 
     public class SpeechInput {
 
-        public SpeechInput() =>
-            this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
-                var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
-
-                try { speechRecognitionEngine.LoadGrammar( this.Grammar.Value ); }
-                catch ( InvalidOperationException ) { }
-
-                try { speechRecognitionEngine.SetInputToDefaultAudioDevice(); }
-                catch ( InvalidOperationException ) { "Warning: No microphone found.".Warning(); }
-
-                try { speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple ); }
-                catch ( InvalidOperationException ) { }
-
-                return speechRecognitionEngine;
-            }, isThreadSafe: true );
-
         public Lazy<Grammar> Grammar { get; } = new Lazy<Grammar>( () => {
             var grammar = new DictationGrammar { Enabled = true };
 
@@ -60,6 +44,22 @@ namespace Librainian.Speech {
         } );
 
         public Lazy<SpeechRecognitionEngine> RecognitionEngine { get; }
+
+        public SpeechInput() =>
+                            this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
+                                var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
+
+                                try { speechRecognitionEngine.LoadGrammar( this.Grammar.Value ); }
+                                catch ( InvalidOperationException ) { }
+
+                                try { speechRecognitionEngine.SetInputToDefaultAudioDevice(); }
+                                catch ( InvalidOperationException ) { "Warning: No microphone found.".Warning(); }
+
+                                try { speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple ); }
+                                catch ( InvalidOperationException ) { }
+
+                                return speechRecognitionEngine;
+                            }, isThreadSafe: true );
 
         public static Grammar CreateGrammars( params String[] phrases ) {
             if ( phrases is null ) { throw new ArgumentNullException( nameof( phrases ) ); }

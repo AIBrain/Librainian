@@ -50,8 +50,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
         private UInt64 _startTimeStamp;
 
-        public MillisecondStopWatch() => this.Reset();
-
         /// <summary>
         /// </summary>
         public Span Elapsed => new Span( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
@@ -59,6 +57,8 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>
         /// </summary>
         public Boolean IsRunning { get; private set; }
+
+        public MillisecondStopWatch() => this.Reset();
 
         private static UInt64 GetTimestamp() => ( UInt64 )DateTime.UtcNow.Ticks;
 

@@ -35,28 +35,6 @@ namespace Librainian.OperatingSystem {
 
     public static class Audio {
 
-        public enum EDataFlow {
-
-            eRender,
-
-            eCapture,
-
-            eAll,
-
-            EDataFlow_enum_count
-        }
-
-        public enum ERole {
-
-            eConsole,
-
-            eMultimedia,
-
-            eCommunications,
-
-            ERole_enum_count
-        }
-
         [Guid( "F4B1A599-7266-4319-A8CA-E70ACB11E8CD" )]
         [InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
         public interface IAudioSessionControl {
@@ -131,6 +109,28 @@ namespace Librainian.OperatingSystem {
 
             [PreserveSig]
             Int32 SetMute( Boolean bMute, ref Guid eventContext );
+        }
+
+        public enum EDataFlow {
+
+            eRender,
+
+            eCapture,
+
+            eAll,
+
+            EDataFlow_enum_count
+        }
+
+        public enum ERole {
+
+            eConsole,
+
+            eMultimedia,
+
+            eCommunications,
+
+            ERole_enum_count
         }
 
         public static IEnumerable<String> EnumerateApplications() {

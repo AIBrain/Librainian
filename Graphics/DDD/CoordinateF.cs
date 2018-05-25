@@ -44,13 +44,31 @@ namespace Librainian.Graphics.DDD {
     using static Maths.Hashing;
 
     /// <summary>
-    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
+    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
+
+        public static CoordinateF Empty { get; }
+
+        public static CoordinateF One { get; } = new CoordinateF( x: 1, y: 1, z: 1 );
+
+        public static CoordinateF Zero { get; } = new CoordinateF( x: 0, y: 0, z: 0 );
+
+        [JsonProperty]
+        public Single SquareLength { get; }
+
+        [JsonProperty]
+        public Single X { get; }
+
+        [JsonProperty]
+        public Single Y { get; }
+
+        [JsonProperty]
+        public Single Z { get; }
 
         /// <summary>
         ///     Initialize with a random point.
@@ -71,24 +89,6 @@ namespace Librainian.Graphics.DDD {
             this.Z = Math.Max( Single.Epsilon, Math.Min( 1, z ) );
             this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
         }
-
-        public static CoordinateF Empty { get; }
-
-        public static CoordinateF One { get; } = new CoordinateF( x: 1, y: 1, z: 1 );
-
-        public static CoordinateF Zero { get; } = new CoordinateF( x: 0, y: 0, z: 0 );
-
-        [JsonProperty]
-        public Single SquareLength { get; }
-
-        [JsonProperty]
-        public Single X { get; }
-
-        [JsonProperty]
-        public Single Y { get; }
-
-        [JsonProperty]
-        public Single Z { get; }
 
         /// <summary>
         ///     Calculates the distance between two Coordinates.

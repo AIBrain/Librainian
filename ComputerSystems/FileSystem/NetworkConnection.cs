@@ -176,6 +176,8 @@ namespace Librainian.ComputerSystems.FileSystem {
 
     public class NetworkConnection : IDisposable {
 
+        private String NetworkName { get; }
+
         public NetworkConnection( String networkName, NetworkCredential credentials ) {
             this.NetworkName = networkName;
 
@@ -189,8 +191,6 @@ namespace Librainian.ComputerSystems.FileSystem {
         }
 
         ~NetworkConnection() { this.Dispose( false ); }
-
-        private String NetworkName { get; }
 
         protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 

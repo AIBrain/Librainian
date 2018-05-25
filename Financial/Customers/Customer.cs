@@ -37,12 +37,6 @@ namespace Librainian.Financial.Customers {
     [JsonObject]
     public class Customer : ABetterClassDispose, ICustomer {
 
-        public Customer( Guid customerID ) {
-            this.Wallet = new Wallet( customerID );
-            this.CheckingAccount = new CheckingAccount( customerID );
-            this.SavingsAccount = new SavingsAccount( customerID );
-        }
-
         [JsonProperty]
         public CheckingAccount CheckingAccount { get; }
 
@@ -51,6 +45,12 @@ namespace Librainian.Financial.Customers {
 
         [JsonProperty]
         public Wallet Wallet { get; }
+
+        public Customer( Guid customerID ) {
+            this.Wallet = new Wallet( customerID );
+            this.CheckingAccount = new CheckingAccount( customerID );
+            this.SavingsAccount = new SavingsAccount( customerID );
+        }
 
         /// <summary>
         ///     Dispose any disposable members.

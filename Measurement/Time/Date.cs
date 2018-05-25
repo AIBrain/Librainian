@@ -48,6 +48,35 @@ namespace Librainian.Measurement.Time {
 
         public static readonly Date Zero = new Date( Year.Zero, Month.Minimum, Day.Minimum );
 
+        /// <summary>
+        ///     <para>The day of the month. (valid range is 1 to 31)</para>
+        /// </summary>
+        [JsonProperty]
+        public Day Day { get; }
+
+        /// <summary>
+        ///     <para>The number of the month. (valid range is 1-12)</para>
+        ///     <para>12 months makes 1 year.</para>
+        /// </summary>
+        [JsonProperty]
+        public Month Month { get; }
+
+        /// <summary>
+        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
+        /// </summary>
+        [JsonProperty]
+        public Year Year { get; }
+
+        //public Date( Years years, Months months, Days days )
+        //    : this( year: ( BigInteger )years.Value, month: ( BigInteger )months.Value, day: ( BigInteger )days.Value ) {
+        //}
+        public static Date Now => new Date( DateTime.Now );
+
+        //public Date( BigInteger year, BigInteger month, BigInteger day )
+        //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
+        //}
+        public static Date UtcNow => new Date( DateTime.UtcNow );
+
         public Date( BigInteger year, Byte month, Byte day ) {
             while ( day > Day.MaximumValue ) {
                 day -= Day.MaximumValue;
@@ -86,35 +115,6 @@ namespace Librainian.Measurement.Time {
 
             this.Day = span.Days.Value < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( Byte )span.Days.Value );
         }
-
-        /// <summary>
-        ///     <para>The day of the month. (valid range is 1 to 31)</para>
-        /// </summary>
-        [JsonProperty]
-        public Day Day { get; }
-
-        /// <summary>
-        ///     <para>The number of the month. (valid range is 1-12)</para>
-        ///     <para>12 months makes 1 year.</para>
-        /// </summary>
-        [JsonProperty]
-        public Month Month { get; }
-
-        /// <summary>
-        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
-        /// </summary>
-        [JsonProperty]
-        public Year Year { get; }
-
-        //public Date( Years years, Months months, Days days )
-        //    : this( year: ( BigInteger )years.Value, month: ( BigInteger )months.Value, day: ( BigInteger )days.Value ) {
-        //}
-        public static Date Now => new Date( DateTime.Now );
-
-        //public Date( BigInteger year, BigInteger month, BigInteger day )
-        //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
-        //}
-        public static Date UtcNow => new Date( DateTime.UtcNow );
 
         //public Date( long year, long month, long day )
         //    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {

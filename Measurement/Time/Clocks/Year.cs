@@ -46,10 +46,10 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public static readonly Year Zero = new Year( 0 );
 
-        public Year( BigInteger value ) : this() => this.Value = value;
-
         [JsonProperty]
         public BigInteger Value { get; }
+
+        public Year( BigInteger value ) : this() => this.Value = value;
 
         public static implicit operator BigInteger( Year value ) => value.Value;
 

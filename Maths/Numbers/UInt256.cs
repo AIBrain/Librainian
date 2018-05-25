@@ -56,6 +56,8 @@ namespace Librainian.Maths.Numbers {
 
         private readonly UInt64 _part4; // parts are big-endian
 
+        public static UInt256 Zero { get; } = new UInt256( new Byte[0] );
+
         private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
             this._part1 = part1;
             this._part2 = part2;
@@ -94,8 +96,6 @@ namespace Librainian.Maths.Numbers {
         public UInt256( BigInteger value ) : this( value.ToByteArray() ) {
             if ( value < 0 ) { throw new ArgumentOutOfRangeException(); }
         }
-
-        public static UInt256 Zero { get; } = new UInt256( new Byte[0] );
 
         public static UInt256 DivRem( UInt256 dividend, UInt256 divisor, out UInt256 remainder ) {
             var result = new UInt256( BigInteger.DivRem( dividend.ToBigInteger(), divisor.ToBigInteger(), out var remainderBigInt ) );

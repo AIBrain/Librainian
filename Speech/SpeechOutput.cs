@@ -41,14 +41,14 @@ namespace Librainian.Speech {
 
     public class SpeechOutput {
 
-        public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
-
         [NotNull]
         public Lazy<SpeechSynthesizer> Synthesizer { get; } = new Lazy<SpeechSynthesizer>( () => {
             var synthesizer = new SpeechSynthesizer();
 
             return synthesizer;
         }, isThreadSafe: true );
+
+        public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
 
         public void AttachEvents( Action<EventArgs> speechFeedbackEvent = null ) {
             try {

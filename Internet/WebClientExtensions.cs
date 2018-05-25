@@ -1,44 +1,39 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// =========================================================
-// This section of source code, "WebClientExtensions.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
+// This source code contained in "WebClientExtensions.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// (We try to avoid that from happening, but it does happen.)
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
-// =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
+// Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/WebClientExtensions.cs" was last cleaned by Protiguous on 2018/05/15 at 10:43 PM.
+// "Librainian/Librainian/WebClientExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 6:39 PM.
 
 namespace Librainian.Internet {
 
     using System;
-    using System.ComponentModel;
     using System.IO;
     using System.Net;
     using System.Threading.Tasks;
+    using Threading;
 
     /// <summary>
     ///     <para>Extension methods for working with WebClient asynchronously.</para>
@@ -50,104 +45,17 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task<Byte[]> DownloadDataTask( this WebClient webClient, String address ) => DownloadDataTask( webClient, new Uri( address ) );
+        public static async Task<Byte[]> DownloadDataTask( this WebClient webClient, String address ) => await DownloadDataTask( webClient, new Uri( address ) ).NoUI();
 
         /// <summary>Downloads the resource with the specified URI as a byte array, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task<Byte[]> DownloadDataTask( this WebClient webClient, Uri address ) {
+        public static async Task<Byte[]> DownloadDataTask( this WebClient webClient, Uri address ) {
+            try { return await webClient.DownloadDataTaskAsync( address ).NoUI(); }
+            catch ( Exception exception ) { exception.More(); }
 
-            // Create the task to be returned
-            var tcs = new TaskCompletionSource<Byte[]>( address );
-
-            // Setup the callback event handler
-            void Handler( Object sender, DownloadDataCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadDataCompleted -= Handler );
-
-            webClient.DownloadDataCompleted += Handler;
-
-            // Start the async work
-            try { webClient.DownloadDataAsync( address, tcs ); }
-            catch ( Exception exc ) {
-
-                // If something goes wrong kicking off the async work, unregister the callback and
-                // cancel the created task
-                webClient.DownloadDataCompleted -= Handler;
-                tcs.TrySetException( exc );
-            }
-
-            // Return the task that represents the async operation
-            return tcs.Task;
-        }
-
-        /// <summary>Downloads the resource with the specified URI to a local file, asynchronously.</summary>
-        /// <param name="webClient">The WebClient.</param>
-        /// <param name="address">The URI from which to download data.</param>
-        /// <param name="fileName">The name of the local file that is to receive the data.</param>
-        /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task DownloadFileTask( this WebClient webClient, String address, String fileName ) => DownloadFileTask( webClient, new Uri( address ), fileName );
-
-        /// <summary>Downloads the resource with the specified URI to a local file, asynchronously.</summary>
-        /// <param name="webClient">The WebClient.</param>
-        /// <param name="address">The URI from which to download data.</param>
-        /// <param name="fileName">The name of the local file that is to receive the data.</param>
-        /// <returns>A Task that contains the downloaded data.</returns>
-        public static Task DownloadFileTask( this WebClient webClient, Uri address, String fileName ) {
-
-            // Create the task to be returned
-            var tcs = new TaskCompletionSource<Object>( address );
-
-            // Setup the callback event handler
-            void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => webClient.DownloadFileCompleted -= Handler );
-
-            webClient.DownloadFileCompleted += Handler;
-
-            // Start the async work
-            try { webClient.DownloadFileAsync( address, fileName, tcs ); }
-            catch ( Exception exc ) {
-
-                // If something goes wrong kicking off the async work, unregister the callback and
-                // cancel the created task
-                webClient.DownloadFileCompleted -= Handler;
-                tcs.TrySetException( exc );
-            }
-
-            // Return the task that represents the async operation
-            return tcs.Task;
-        }
-
-        /// <summary>Downloads the resource with the specified URI as a String, asynchronously.</summary>
-        /// <param name="webClient">The WebClient.</param>
-        /// <param name="address">The URI from which to download data.</param>
-        /// <returns>A Task that contains the downloaded String.</returns>
-        public static Task<String> DownloadStringTask( this WebClient webClient, String address ) => DownloadStringTask( webClient, new Uri( address ) );
-
-        /// <summary>Downloads the resource with the specified URI as a String, asynchronously.</summary>
-        /// <param name="webClient">The WebClient.</param>
-        /// <param name="address">The URI from which to download data.</param>
-        /// <returns>A Task that contains the downloaded String.</returns>
-        public static Task<String> DownloadStringTask( this WebClient webClient, Uri address ) {
-
-            // Create the task to be returned
-            var tcs = new TaskCompletionSource<String>( address );
-
-            // Setup the callback event handler
-            void Handler( Object sender, DownloadStringCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Result, () => webClient.DownloadStringCompleted -= Handler );
-
-            webClient.DownloadStringCompleted += Handler;
-
-            // Start the async work
-            try { webClient.DownloadStringAsync( address, tcs ); }
-            catch ( Exception exc ) {
-
-                // If something goes wrong kicking off the async work, unregister the callback and
-                // cancel the created task
-                webClient.DownloadStringCompleted -= Handler;
-                tcs.TrySetException( exc );
-            }
-
-            // Return the task that represents the async operation
-            return tcs.Task;
+            return null;
         }
 
         /// <summary>Opens a readable stream for the data downloaded from a resource, asynchronously.</summary>

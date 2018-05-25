@@ -59,6 +59,13 @@ namespace Librainian.Linguistics {
         /// <summary></summary>
         public static readonly Sentence EndOfLine = new Sentence( "\0" );
 
+        /// <summary></summary>
+        [NotNull]
+        [JsonProperty]
+        private List<Word> Words { get; } = new List<Word>();
+
+        public static Sentence Empty { get; } = new Sentence();
+
         private Sentence() { }
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
@@ -73,13 +80,6 @@ namespace Librainian.Linguistics {
             this.Words.AddRange( words.Where( word => word != null ) );
             this.Words.Fix();
         }
-
-        /// <summary></summary>
-        [NotNull]
-        [JsonProperty]
-        private List<Word> Words { get; } = new List<Word>();
-
-        public static Sentence Empty { get; } = new Sentence();
 
         //public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
 

@@ -63,6 +63,21 @@ namespace Librainian.Persistence {
         ///     No path given?
         /// </summary>
 
+        [JsonProperty]
+        [NotNull]
+        private PersistentDictionary<TKey, String> Dictionary { get; }
+
+        [NotNull]
+        public Folder Folder { get; }
+
+        public Int32 Count => this.Dictionary.Count;
+
+        public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
+
+        public ICollection<TKey> Keys => this.Dictionary.Keys;
+
+        public ICollection<TValue> Values => this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() ) as ICollection<TValue> ?? new Collection<TValue>();
+
         // ReSharper disable once NotNullMemberIsNotInitialized
         private PersistTable() => throw new NotImplementedException();
 
@@ -121,21 +136,6 @@ namespace Librainian.Persistence {
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public PersistTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
-
-        [JsonProperty]
-        [NotNull]
-        private PersistentDictionary<TKey, String> Dictionary { get; }
-
-        [NotNull]
-        public Folder Folder { get; }
-
-        public Int32 Count => this.Dictionary.Count;
-
-        public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
-
-        public ICollection<TKey> Keys => this.Dictionary.Keys;
-
-        public ICollection<TValue> Values => this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() ) as ICollection<TValue> ?? new Collection<TValue>();
 
         [CanBeNull]
         public TValue this[[NotNull] TKey key] {

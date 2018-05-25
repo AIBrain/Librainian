@@ -42,12 +42,6 @@ namespace Librainian.OperatingSystem.Compression {
 
     public class RandomnessFeeding : ABetterClassDispose {
 
-        public RandomnessFeeding() {
-            this.HowManyBytesAsCompressed = BigInteger.Zero;
-            this.HowManyBytesFed = BigInteger.Zero;
-            this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
-        }
-
         [NotNull]
         private GZipStream GZipStream { get; }
 
@@ -57,6 +51,12 @@ namespace Librainian.OperatingSystem.Compression {
         public BigInteger HowManyBytesAsCompressed { get; private set; }
 
         public BigInteger HowManyBytesFed { get; private set; }
+
+        public RandomnessFeeding() {
+            this.HowManyBytesAsCompressed = BigInteger.Zero;
+            this.HowManyBytesFed = BigInteger.Zero;
+            this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
+        }
 
         public override void DisposeManaged() {
             using ( this.GZipStream ) { }

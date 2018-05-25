@@ -46,6 +46,13 @@ namespace Librainian.Measurement {
     [Immutable]
     public sealed class Temperature {
 
+        [JsonProperty]
+        public Single Celsius { get; }
+
+        public Single Fahrenheit => this.Celsius * 9 / 5 + 32;
+
+        public Single Kelvin => this.Celsius + 273.15f;
+
         /// <summary>
         ///     no no.
         /// </summary>
@@ -56,13 +63,6 @@ namespace Librainian.Measurement {
         ///     <see cref="Kelvin" />.
         /// </summary>
         public Temperature( Single celsius ) => this.Celsius = celsius;
-
-        [JsonProperty]
-        public Single Celsius { get; }
-
-        public Single Fahrenheit => this.Celsius * 9 / 5 + 32;
-
-        public Single Kelvin => this.Celsius + 273.15f;
 
         public override String ToString() => $"{this.Celsius} °C";
     }

@@ -50,6 +50,41 @@ namespace Librainian.Measurement.Time {
     [Serializable]
     public struct DateSpan {
 
+        /// <summary>
+        ///     The number of discrete days occurring in this span
+        /// </summary>
+        public Int32 Days { get; }
+
+        /// <summary>
+        ///     The number of discrete hours occurring in this span
+        /// </summary>
+        public Int32 Hours { get; }
+
+        /// <summary>
+        ///     The number of discrete minutes occurring in this span
+        /// </summary>
+        public Int32 Minutes { get; }
+
+        /// <summary>
+        ///     The number of discrete months occurring in this span
+        /// </summary>
+        public Int32 Months { get; }
+
+        /// <summary>
+        ///     The number of discrete seconds occurring in this span
+        /// </summary>
+        public Int32 Seconds { get; }
+
+        /// <summary>
+        ///     The number of discrete weeks occurring in this span
+        /// </summary>
+        public Int32 Weeks { get; }
+
+        /// <summary>
+        ///     The number of discrete years occurring in this span
+        /// </summary>
+        public Int32 Years { get; }
+
         /// <param name="start">The start date</param>
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
@@ -158,41 +193,6 @@ namespace Librainian.Measurement.Time {
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
         public DateSpan( DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = true ) : this( start.DateTime, end.DateTime, excludeEndDate ) { }
-
-        /// <summary>
-        ///     The number of discrete days occurring in this span
-        /// </summary>
-        public Int32 Days { get; }
-
-        /// <summary>
-        ///     The number of discrete hours occurring in this span
-        /// </summary>
-        public Int32 Hours { get; }
-
-        /// <summary>
-        ///     The number of discrete minutes occurring in this span
-        /// </summary>
-        public Int32 Minutes { get; }
-
-        /// <summary>
-        ///     The number of discrete months occurring in this span
-        /// </summary>
-        public Int32 Months { get; }
-
-        /// <summary>
-        ///     The number of discrete seconds occurring in this span
-        /// </summary>
-        public Int32 Seconds { get; }
-
-        /// <summary>
-        ///     The number of discrete weeks occurring in this span
-        /// </summary>
-        public Int32 Weeks { get; }
-
-        /// <summary>
-        ///     The number of discrete years occurring in this span
-        /// </summary>
-        public Int32 Years { get; }
 
         private static Int64 CalculateDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate ) {
             Int64 sum = 0;

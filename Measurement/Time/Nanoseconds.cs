@@ -124,6 +124,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Nanoseconds Zero = new Nanoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Nanoseconds( Decimal value ) => this.Value = value;
 
         public Nanoseconds( BigRational value ) => this.Value = value;
@@ -131,9 +134,6 @@ namespace Librainian.Measurement.Time {
         public Nanoseconds( Int64 value ) => this.Value = value;
 
         public Nanoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 

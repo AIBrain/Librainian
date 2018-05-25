@@ -62,17 +62,6 @@ namespace Librainian.Measurement.Currency {
         [JsonProperty]
         private Decimal _balance;
 
-        public SimpleWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
-        /// </summary>
-        /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
-
         public Decimal Balance {
             get {
                 try { return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero; }
@@ -98,6 +87,17 @@ namespace Librainian.Measurement.Currency {
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout { get; set; }
+
+        public SimpleWallet() {
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        /// <summary>
+        ///     Initialize the wallet with the specified <paramref name="balance" />.
+        /// </summary>
+        /// <param name="balance"></param>
+        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
 
         /// <summary>
         ///     <para>Static comparison.</para>

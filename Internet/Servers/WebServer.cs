@@ -45,11 +45,11 @@ namespace Librainian.Internet.Servers {
 
         private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
 
-        protected WebServer() => this._httpListener = new HttpListener();
-
         public Boolean IsRunning { get; private set; }
 
         public String Prefix { get; set; }
+
+        protected WebServer() => this._httpListener = new HttpListener();
 
         private static void ListenerCallback( IAsyncResult ar ) {
 

@@ -48,6 +48,19 @@ namespace Librainian.Measurement.Time.Clocks {
     [JsonObject]
     public class GameTimer {
 
+        [JsonObject]
+        public struct ReportBack {
+
+            [JsonProperty]
+            public UInt64 Counter { get; set; }
+
+            [JsonProperty]
+            public TimeSpan Elapsed { get; set; }
+
+            [JsonProperty]
+            public Boolean RunningSlow { get; set; }
+        }
+
         /// <summary>
         /// </summary>
         [JsonProperty]
@@ -65,15 +78,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [JsonProperty]
         private DateTime _lastUpdate = DateTime.UtcNow;
-
-        public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-            this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
-
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
-            this.Timer.Elapsed += this.OnTimerElapsed;
-            this.Resume();
-        }
 
         private DateTime LastProgressReport {
             get {
@@ -136,6 +140,15 @@ namespace Librainian.Measurement.Time.Clocks {
             }
         }
 
+        public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
+            this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
+            this.Timer.Elapsed += this.OnTimerElapsed;
+            this.Resume();
+        }
+
         private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
             try {
                 this.Pause();
@@ -170,18 +183,5 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         /// <returns></returns>
         public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
-
-        [JsonObject]
-        public struct ReportBack {
-
-            [JsonProperty]
-            public UInt64 Counter { get; set; }
-
-            [JsonProperty]
-            public TimeSpan Elapsed { get; set; }
-
-            [JsonProperty]
-            public Boolean RunningSlow { get; set; }
-        }
     }
 }

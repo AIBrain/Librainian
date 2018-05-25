@@ -50,6 +50,31 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>
         /// </summary>
+        [JsonProperty]
+        public Hour Hour { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Microsecond Microsecond { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Millisecond Millisecond { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Minute Minute { get; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Second Second { get; }
+
+        /// <summary>
+        /// </summary>
         /// <param name="hour"></param>
         /// <param name="minute"></param>
         /// <param name="second"></param>
@@ -73,31 +98,6 @@ namespace Librainian.Measurement.Time {
         /// <param name="span"></param>
         public Time( Span span ) : this( hour: ( Byte )span.Hours.Value, minute: ( Byte )span.Minutes.Value, second: ( Byte )span.Seconds.Value, millisecond: ( UInt16 )span.Milliseconds.Value,
             microsecond: ( UInt16 )span.Microseconds.Value ) { }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Hour Hour { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Microsecond Microsecond { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Millisecond Millisecond { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Minute Minute { get; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Second Second { get; }
 
         public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte )dateTime.Hour, ( Byte )dateTime.Minute, ( Byte )dateTime.Second, ( UInt16 )dateTime.Millisecond );
 

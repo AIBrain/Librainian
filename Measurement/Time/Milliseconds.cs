@@ -135,6 +135,14 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Milliseconds Zero = new Milliseconds( 0 );
 
+        /// <summary>
+        ///     Three Three Three <see cref="Milliseconds" />.
+        /// </summary>
+        public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
+
+        [JsonProperty]
+        public BigRational Value { get; }
+
         //faster WPM than a female (~240wpm)
         public Milliseconds( Decimal value ) => this.Value = value;
 
@@ -145,14 +153,6 @@ namespace Librainian.Measurement.Time {
         public Milliseconds( BigInteger value ) => this.Value = value;
 
         public Milliseconds( Double value ) => this.Value = value;
-
-        /// <summary>
-        ///     Three Three Three <see cref="Milliseconds" />.
-        /// </summary>
-        public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Milliseconds Combine( Milliseconds left, BigRational milliseconds ) => new Milliseconds( left.Value + milliseconds );
 

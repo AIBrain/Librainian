@@ -63,38 +63,6 @@ namespace Librainian.Graphics {
         private readonly Double[] _coeffs;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-        /// </summary>
-        public Matrix3X3() => this._coeffs = new Double[9];
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-        /// </summary>
-        /// <param name="coefficients">
-        ///     The coefficients to initialise. The number of elements of the array should be equal to 9,
-        ///     else an exception will be thrown
-        /// </param>
-        public Matrix3X3( Double[] coefficients ) {
-            if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
-
-            this._coeffs = coefficients;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-        /// </summary>
-        /// <param name="m11">The M11 coefficient</param>
-        /// <param name="m12">The M12 coefficien</param>
-        /// <param name="m13">The M13 coefficien</param>
-        /// <param name="m21">The M21 coefficien</param>
-        /// <param name="m22">The M22 coefficien</param>
-        /// <param name="m23">The M23 coefficien</param>
-        /// <param name="m31">The M31 coefficien</param>
-        /// <param name="m32">The M32 coefficien</param>
-        /// <param name="m33">The M33 coefficien</param>
-        public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) => this._coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
-
-        /// <summary>
         ///     Gets the determinant of the matrix
         /// </summary>
         /// <value>The determinant</value>
@@ -250,6 +218,38 @@ namespace Librainian.Graphics {
 
             set => this._coeffs[_M32] = value;
         }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+        /// </summary>
+        public Matrix3X3() => this._coeffs = new Double[9];
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+        /// </summary>
+        /// <param name="coefficients">
+        ///     The coefficients to initialise. The number of elements of the array should be equal to 9,
+        ///     else an exception will be thrown
+        /// </param>
+        public Matrix3X3( Double[] coefficients ) {
+            if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
+
+            this._coeffs = coefficients;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+        /// </summary>
+        /// <param name="m11">The M11 coefficient</param>
+        /// <param name="m12">The M12 coefficien</param>
+        /// <param name="m13">The M13 coefficien</param>
+        /// <param name="m21">The M21 coefficien</param>
+        /// <param name="m22">The M22 coefficien</param>
+        /// <param name="m23">The M23 coefficien</param>
+        /// <param name="m31">The M31 coefficien</param>
+        /// <param name="m32">The M32 coefficien</param>
+        /// <param name="m33">The M33 coefficien</param>
+        public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) => this._coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
 
         /// <summary>
         ///     Creates a new object that is a copy of the current instance.

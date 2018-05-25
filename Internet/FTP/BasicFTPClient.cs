@@ -40,6 +40,14 @@ namespace Librainian.Internet.FTP {
 
     public class BasicFtpClient {
 
+        public String Host { get; set; }
+
+        public String Password { get; set; }
+
+        public Int32 Port { get; set; }
+
+        public String Username { get; set; }
+
         public BasicFtpClient() {
             this.Username = "anonymous";
             this.Password = "anonymous@internet.com";
@@ -53,14 +61,6 @@ namespace Librainian.Internet.FTP {
             this.Host = theHost;
             this.Port = 21;
         }
-
-        public String Host { get; set; }
-
-        public String Password { get; set; }
-
-        public Int32 Port { get; set; }
-
-        public String Username { get; set; }
 
         private Uri BuildServerUri( String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
 

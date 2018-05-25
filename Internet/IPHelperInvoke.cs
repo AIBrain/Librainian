@@ -42,14 +42,6 @@ namespace Librainian.Internet {
     /// </summary>
     public class IPHelperInvoke {
 
-        public const Int32 ErrorBufferOverflow = 111;
-
-        public const Int32 MaxAdapterAddressLength = 8;
-
-        public const Int32 MaxAdapterDescriptionLength = 128;
-
-        public const Int32 MaxAdapterNameLength = 256;
-
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAdapterInfo {
 
@@ -111,5 +103,13 @@ namespace Librainian.Internet {
 
             public readonly Int32 Context;
         }
+
+        public const Int32 ErrorBufferOverflow = 111;
+
+        public const Int32 MaxAdapterAddressLength = 8;
+
+        public const Int32 MaxAdapterDescriptionLength = 128;
+
+        public const Int32 MaxAdapterNameLength = 256;
     }
 }

@@ -101,6 +101,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
 
+        [JsonProperty]
+        public BigRational Value { get; }
+
         public Yoctoseconds( Decimal value ) => this.Value = value;
 
         public Yoctoseconds( BigRational value ) => this.Value = value;
@@ -108,9 +111,6 @@ namespace Librainian.Measurement.Time {
         public Yoctoseconds( Int64 value ) => this.Value = value;
 
         public Yoctoseconds( BigInteger value ) => this.Value = value;
-
-        [JsonProperty]
-        public BigRational Value { get; }
 
         public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
 

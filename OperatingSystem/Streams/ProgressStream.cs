@@ -39,6 +39,8 @@ namespace Librainian.OperatingSystem.Streams {
 
         private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( -1 );
 
+        public ProgressChangedEventHandler ProgressChanged { get; set; }
+
         public ProgressStream( Stream stream ) : base( stream: stream ) {
             if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) { return; }
 
@@ -46,8 +48,6 @@ namespace Librainian.OperatingSystem.Streams {
 
             throw new ArgumentException( "stream" );
         }
-
-        public ProgressChangedEventHandler ProgressChanged { get; set; }
 
         public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
             var amountRead = this.Stream.Read( buffer, offset, count );

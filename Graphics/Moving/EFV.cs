@@ -67,8 +67,6 @@ namespace Librainian.Graphics.Moving {
         [JsonProperty]
         public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new ConcurrentDictionary<UInt64, Pixelyx>();
 
-        public Efv() => this.Checksum = UInt64.MaxValue;
-
         /// <summary>Checksum guard</summary>
         [JsonProperty]
         public UInt64 Checksum { get; set; }
@@ -78,6 +76,8 @@ namespace Librainian.Graphics.Moving {
 
         [JsonProperty]
         public UInt16 Width { get; set; }
+
+        public Efv() => this.Checksum = UInt64.MaxValue;
 
         public Boolean Add( Pixelyx pixelyx ) {
             var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );

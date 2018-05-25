@@ -51,11 +51,11 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
-        public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
-
         [NotNull]
         [JsonProperty]
         private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
+
+        public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
 
         /// <summary>
         ///     Static equality test

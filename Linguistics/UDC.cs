@@ -46,11 +46,11 @@ namespace Librainian.Linguistics {
     /// </example>
     public class UDC {
 
-        public UDC( String notation ) => this.Notation = notation;
-
         public static UDC Unknown { get; } = new UDC( String.Empty );
 
         public String Notation { get; }
+
+        public UDC( String notation ) => this.Notation = notation;
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>

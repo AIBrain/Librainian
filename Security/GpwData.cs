@@ -43,23 +43,6 @@ namespace Librainian.Security {
     /// <remarks>https://readablepass.codeplex.com/SourceControl/latest#ReadablePasswordGenerator/GpwData.cs</remarks>
     public static class GpwData {
 
-        static GpwData() {
-            Int32 c1;
-            Sigma = 0;
-
-            for ( c1 = 0; c1 < 26; c1++ ) {
-                Int32 c2;
-
-                for ( c2 = 0; c2 < 26; c2++ ) {
-                    Int32 c3;
-
-                    for ( c3 = 0; c3 < 26; c3++ ) { Sigma += Get( i1: c1, i2: c2, i3: c3 ); }
-                }
-            }
-
-            //Debug.WriteLine( Sigma );
-        }
-
         /// <summary>
         ///     letter / word frequencys as a catentated list of trigraphs.
         /// </summary>
@@ -368,6 +351,23 @@ namespace Librainian.Security {
         };
 
         public static Int64 Sigma { get; }
+
+        static GpwData() {
+            Int32 c1;
+            Sigma = 0;
+
+            for ( c1 = 0; c1 < 26; c1++ ) {
+                Int32 c2;
+
+                for ( c2 = 0; c2 < 26; c2++ ) {
+                    Int32 c3;
+
+                    for ( c3 = 0; c3 < 26; c3++ ) { Sigma += Get( i1: c1, i2: c2, i3: c3 ); }
+                }
+            }
+
+            //Debug.WriteLine( Sigma );
+        }
 
         public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[i1 * 26 * 26 + i2 * 26 + i3];
     }

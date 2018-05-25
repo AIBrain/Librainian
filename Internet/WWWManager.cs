@@ -50,14 +50,14 @@ namespace Librainian.Internet {
             return webClient;
         }, true );
 
+        public BufferBlock<Tuple<Uri, String>> DownloadedStrings { get; }
+
+        public ActionBlock<String> StringsToDownload { get; }
+
         public WwwManager() {
             this.StringsToDownload = new ActionBlock<String>( address => this.StartDownloadingString( address ) );
             this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
         }
-
-        public BufferBlock<Tuple<Uri, String>> DownloadedStrings { get; }
-
-        public ActionBlock<String> StringsToDownload { get; }
 
         //public void
 

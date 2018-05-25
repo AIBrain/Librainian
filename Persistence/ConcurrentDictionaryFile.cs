@@ -53,6 +53,17 @@ namespace Librainian.Persistence {
         ///     disallow constructor without a document/filename
         /// </summary>
 
+        private Boolean IsReading {
+            get => this._isReading;
+            set => this._isReading = value;
+        }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        [NotNull]
+        public Document Document { get; }
+
         // ReSharper disable once NotNullMemberIsNotInitialized
         private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
@@ -76,17 +87,6 @@ namespace Librainian.Persistence {
         /// <param name="filename"></param>
         /// <param name="preload"> </param>
         public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( fullPathWithFilename: filename ), preload: preload ) { }
-
-        private Boolean IsReading {
-            get => this._isReading;
-            set => this._isReading = value;
-        }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        [NotNull]
-        public Document Document { get; }
 
         protected virtual void Dispose( Boolean releaseManaged ) {
             if ( releaseManaged ) { this.Write().Wait( timeout: Minutes.One ); }

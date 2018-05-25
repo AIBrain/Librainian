@@ -1,29 +1,29 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "TaskExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// 
+//
 // "Librainian/Librainian/TaskExtensions.cs" was last formatted by Protiguous on 2018/05/22 at 4:40 PM.
 
 namespace Librainian.Threading {
@@ -87,7 +87,7 @@ namespace Librainian.Threading {
 
             foreach ( var task in inputs ) {
                 task.ContinueWith( completed => {
-                    var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
+                    var nextBox = boxes[index: Interlocked.Increment( location: ref currentIndex )];
                     PropagateResult( completedTask: completed, completionSource: nextBox );
                 }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
             }
@@ -138,18 +138,18 @@ namespace Librainian.Threading {
             if ( tasks is null ) { throw new ArgumentNullException( nameof( tasks ) ); }
 
             var inputTasks = tasks.ToList();
-            var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
-            var results = new Task<Task<T>>[ buckets.Length ];
+            var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
+            var results = new Task<Task<T>>[buckets.Length];
 
             for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[ i ] = new TaskCompletionSource<Task<T>>();
-                results[ i ] = buckets[ i ].Task;
+                buckets[i] = new TaskCompletionSource<Task<T>>();
+                results[i] = buckets[i].Task;
             }
 
             var nextTaskIndex = -1;
 
             void Continuation( Task<T> completed ) {
-                var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
+                var bucket = buckets[Interlocked.Increment( location: ref nextTaskIndex )];
                 bucket.TrySetResult( result: completed );
             }
 
@@ -322,7 +322,5 @@ namespace Librainian.Threading {
                 return null;
             }
         }
-
     }
-
 }

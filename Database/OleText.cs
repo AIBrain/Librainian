@@ -34,6 +34,12 @@ namespace Librainian.Database {
 
     public class OleText {
 
+        private String ConnectionString { get; }
+
+        private Char Delimiter { get; }
+
+        private String Path { get; }
+
         public OleText( String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
@@ -41,12 +47,6 @@ namespace Librainian.Database {
             connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
             this.ConnectionString = connectionStringBuilder.ToString();
         }
-
-        private String ConnectionString { get; }
-
-        private Char Delimiter { get; }
-
-        private String Path { get; }
 
         public String[] GetColumnsList( String worksheet ) {
             String[] columns = { };

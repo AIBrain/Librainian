@@ -56,26 +56,6 @@ namespace Librainian.Graphics {
         private readonly Double[] _coeffs;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Matrix3X2" /> class.
-        /// </summary>
-        public Matrix3X2() => this._coeffs = new Double[6];
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Matrix3X2" /> class.
-        /// </summary>
-        /// <param name="coefficients">
-        ///     The coefficients to initialise. The number of elements of the array should be equal to 6,
-        ///     else an exception will be thrown
-        /// </param>
-        public Matrix3X2( Double[] coefficients ) {
-            if ( coefficients.GetLength( 0 ) != 6 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 6" ); }
-
-            this._coeffs = coefficients;
-        }
-
-        public Matrix3X2( Double m11, Double m12, Double m21, Double m22, Double m31, Double m32 ) => this._coeffs = new[] { m11, m12, m21, m22, m31, m32 };
-
-        /// <summary>
         ///     Gets or sets the M11 coefficient
         /// </summary>
         /// <value>The M11</value>
@@ -165,6 +145,26 @@ namespace Librainian.Graphics {
 
             set => this._coeffs[_M32] = value;
         }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Matrix3X2" /> class.
+        /// </summary>
+        public Matrix3X2() => this._coeffs = new Double[6];
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Matrix3X2" /> class.
+        /// </summary>
+        /// <param name="coefficients">
+        ///     The coefficients to initialise. The number of elements of the array should be equal to 6,
+        ///     else an exception will be thrown
+        /// </param>
+        public Matrix3X2( Double[] coefficients ) {
+            if ( coefficients.GetLength( 0 ) != 6 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 6" ); }
+
+            this._coeffs = coefficients;
+        }
+
+        public Matrix3X2( Double m11, Double m12, Double m21, Double m22, Double m31, Double m32 ) => this._coeffs = new[] { m11, m12, m21, m22, m31, m32 };
 
         /// <summary>
         ///     Creates a new object that is a copy of the current instance.

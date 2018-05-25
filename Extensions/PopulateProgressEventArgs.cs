@@ -37,15 +37,15 @@ namespace Librainian.Extensions {
     /// </summary>
     public class PopulateProgressEventArgs : EventArgs {
 
+        public Int32 ItemCount { get; internal set; }
+
+        public String KeyName { get; }
+
         public PopulateProgressEventArgs( Int32 itemCount, String keyName = null ) {
             this.ItemCount = itemCount;
             this.KeyName = keyName;
         }
 
         public PopulateProgressEventArgs() : this( -1 ) { }
-
-        public Int32 ItemCount { get; internal set; }
-
-        public String KeyName { get; }
     }
 }

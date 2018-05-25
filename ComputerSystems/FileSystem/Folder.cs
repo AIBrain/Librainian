@@ -52,6 +52,29 @@ namespace Librainian.ComputerSystems.FileSystem {
     public class Folder : IEquatable<Folder> {
 
         /// <summary>
+        ///     "/"
+        /// </summary>
+        [NotNull]
+        public static String FolderAltSeparator { get; } = new String( new[] { Path.AltDirectorySeparatorChar } );
+
+        /// <summary>
+        ///     "\"
+        /// </summary>
+        [NotNull]
+        public static String FolderSeparator { get; } = new String( new[] { Path.DirectorySeparatorChar } );
+
+        public static Char FolderSeparatorChar { get; } = Path.DirectorySeparatorChar;
+
+        [NotNull]
+        public DirectoryInfo Info { get; }
+
+        [NotNull]
+        public String FullName => this.Info.FullName;
+
+        [NotNull]
+        public String Name => this.Info.Name;
+
+        /// <summary>
         /// </summary>
         /// <param name="fullPath"></param>
         /// <exception cref="InvalidOperationException"></exception>
@@ -146,29 +169,6 @@ namespace Librainian.ComputerSystems.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { } //-V3073
-
-        /// <summary>
-        ///     "/"
-        /// </summary>
-        [NotNull]
-        public static String FolderAltSeparator { get; } = new String( new[] { Path.AltDirectorySeparatorChar } );
-
-        /// <summary>
-        ///     "\"
-        /// </summary>
-        [NotNull]
-        public static String FolderSeparator { get; } = new String( new[] { Path.DirectorySeparatorChar } );
-
-        public static Char FolderSeparatorChar { get; } = Path.DirectorySeparatorChar;
-
-        [NotNull]
-        public DirectoryInfo Info { get; }
-
-        [NotNull]
-        public String FullName => this.Info.FullName;
-
-        [NotNull]
-        public String Name => this.Info.Name;
 
         /// <summary>
         ///     <para>Static comparison of the folder names (case sensitive) for equality.</para>

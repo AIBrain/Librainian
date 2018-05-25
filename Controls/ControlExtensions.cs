@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/ControlExtensions.cs" was last formatted by Protiguous on 2018/05/21 at 9:56 PM.
+// "Librainian/Librainian/ControlExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 6:48 PM.
 
 namespace Librainian.Controls {
 
@@ -323,29 +324,9 @@ namespace Librainian.Controls {
             window.WindowStyle = WindowStyle.None;
         }
 
-        public static void InvokeAction<T>( this T invokable, Action<T> action, T argument = default ) where T : ISynchronizeInvoke {
-            try {
-                switch ( invokable ) {
-                    case null:
-                    case Control control when control.IsDisposed:
+        public static void InvokeAction<T>( this T invokable, Action<T> action, Object[] arguments = default ) where T : class, ISynchronizeInvoke => invokable.Invoke( action, arguments );
 
-                        return;
-                }
-
-                if ( invokable.InvokeRequired ) { invokable.Invoke( action, new Object[] { argument } ); }
-                else { action( argument ); }
-            }
-            catch ( ObjectDisposedException exception ) { exception.More(); }
-        }
-
-        public static T InvokeF<T>( this T invokable, Func<T> function, T argument = default ) where T : class, ISynchronizeInvoke {
-            if ( invokable.InvokeRequired ) {
-                if ( ( invokable as Control )?.IsDisposed == true ) { }
-                else { return invokable.Invoke( function, new Object[] { argument } ) as T; }
-            }
-
-            return function();
-        }
+        public static T InvokeFunc<T>( this T invokable, Func<T> function, Object[] arguments = null ) where T : class, ISynchronizeInvoke => invokable.Invoke( function, arguments ) as T;
 
         /// <summary>
         ///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
@@ -363,9 +344,7 @@ namespace Librainian.Controls {
             if ( control.InvokeRequired ) {
                 control.Invoke( action );
 
-                if ( control.IsDisposed ) { return; }
-
-                control.Invoke( action );
+                if ( !control.IsDisposed ) { control.Invoke( action ); }
             }
             else { action(); }
         }

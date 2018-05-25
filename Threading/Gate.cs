@@ -41,6 +41,16 @@ namespace Librainian.Threading {
         private Int32 _value;
 
         /// <summary>
+        ///     Returns true if the gate is closed
+        /// </summary>
+        public Boolean IsClosed => 0 == Interlocked.Add( ref this._value, 0 );
+
+        /// <summary>
+        ///     Returns true if the gate is open
+        /// </summary>
+        public Boolean IsOpened => OpenOrClosed.Opened == ( OpenOrClosed )Interlocked.Add( ref this._value, 0 );
+
+        /// <summary>
         ///     Initializes a new instance of the Gate class.
         /// </summary>
         /// <param name="openOrClosed">Defaults to <see cref="OpenOrClosed.Closed" />.</param>
@@ -53,16 +63,6 @@ namespace Librainian.Threading {
 
             //
         }
-
-        /// <summary>
-        ///     Returns true if the gate is closed
-        /// </summary>
-        public Boolean IsClosed => 0 == Interlocked.Add( ref this._value, 0 );
-
-        /// <summary>
-        ///     Returns true if the gate is open
-        /// </summary>
-        public Boolean IsOpened => OpenOrClosed.Opened == ( OpenOrClosed )Interlocked.Add( ref this._value, 0 );
 
         /// <summary>
         ///     Closes the gate. The gate must be in the open state.

@@ -61,22 +61,6 @@ namespace Librainian.Collections {
     [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
     public class ConcurrentList<TType> : ABetterClassDispose, IList<TType>, IEquatable<IEnumerable<TType>> {
 
-        /// <summary>
-        ///     Create an empty list with different timeout values.
-        /// </summary>
-        /// <param name="enumerable">  Fill the list with the given enumerable.</param>
-        /// <param name="readTimeout"> </param>
-        /// <param name="writeTimeout"></param>
-        public ConcurrentList( [CanBeNull] IEnumerable<TType> enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
-            this.InputBuffer = new ConcurrentQueue<TType>();
-
-            if ( readTimeout.HasValue ) { this.TimeoutForReads = readTimeout.Value; }
-
-            if ( writeTimeout.HasValue ) { this.TimeoutForWrites = writeTimeout.Value; }
-
-            if ( null != enumerable ) { this.AddRange( items: enumerable ); }
-        }
-
         [JsonIgnore]
         private ConcurrentQueue<TType> InputBuffer { get; set; }
 
@@ -108,6 +92,22 @@ namespace Librainian.Collections {
 
         [JsonProperty]
         public TimeSpan? TimeoutForWrites { get; set; } = TimeSpan.FromMinutes( 1 );
+
+        /// <summary>
+        ///     Create an empty list with different timeout values.
+        /// </summary>
+        /// <param name="enumerable">  Fill the list with the given enumerable.</param>
+        /// <param name="readTimeout"> </param>
+        /// <param name="writeTimeout"></param>
+        public ConcurrentList( [CanBeNull] IEnumerable<TType> enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
+            this.InputBuffer = new ConcurrentQueue<TType>();
+
+            if ( readTimeout.HasValue ) { this.TimeoutForReads = readTimeout.Value; }
+
+            if ( writeTimeout.HasValue ) { this.TimeoutForWrites = writeTimeout.Value; }
+
+            if ( null != enumerable ) { this.AddRange( items: enumerable ); }
+        }
 
         /// <summary>
         ///     Gets or sets the element at the specified index.

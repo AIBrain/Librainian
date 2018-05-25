@@ -125,6 +125,31 @@ namespace Librainian.Collections {
         }
 
         /// <summary>
+        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
+        ///     <see cref="Array" /> index.
+        /// </summary>
+        /// <param name="array">
+        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
+        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
+        /// </param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException">array is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
+        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
+        ///     index to the end of the destination array.
+        /// </exception>
+        /// <exception cref="InvalidCastException">
+        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
+        ///     to the type of the destination array.
+        /// </exception>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void CopyTo( Array array, Int32 index ) {
+            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
+        }
+
+        /// <summary>
         ///     Called by <see cref="AddRange" /> after the parameter is validated to be neither <c>null</c> nor this collection
         ///     itself.
         /// </summary>
@@ -359,31 +384,6 @@ namespace Librainian.Collections {
             }
 
             return sb.Append( ")" ).ToString();
-        }
-
-        /// <summary>
-        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
-        ///     <see cref="Array" /> index.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
-        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentNullException">array is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
-        /// <exception cref="ArgumentException">
-        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
-        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
-        ///     index to the end of the destination array.
-        /// </exception>
-        /// <exception cref="InvalidCastException">
-        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
-        ///     to the type of the destination array.
-        /// </exception>
-        /// <filterpriority>2</filterpriority>
-        protected virtual void CopyTo( Array array, Int32 index ) {
-            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
         }
 
         /// <summary>

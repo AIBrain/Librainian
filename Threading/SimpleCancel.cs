@@ -47,15 +47,15 @@ namespace Librainian.Threading {
 
         /// <summary>
         /// </summary>
-        public SimpleCancel() => this.Reset();
-
-        /// <summary>
-        /// </summary>
         public DateTime? OldestCancelRequest { get; private set; }
 
         /// <summary>
         /// </summary>
         public DateTime? YoungestCancelRequest { get; private set; }
+
+        /// <summary>
+        /// </summary>
+        public SimpleCancel() => this.Reset();
 
         /// <summary>
         ///     Returns true if the cancel request was approved.

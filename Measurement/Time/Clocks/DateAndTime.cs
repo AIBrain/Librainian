@@ -39,13 +39,13 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public struct DateAndTime {
 
+        public Date Date { get; }
+
+        public Time Time { get; }
+
         public DateAndTime( Date date, Time time ) {
             this.Date = date;
             this.Time = time;
         }
-
-        public Date Date { get; }
-
-        public Time Time { get; }
     }
 }

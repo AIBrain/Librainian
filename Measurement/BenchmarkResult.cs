@@ -44,12 +44,6 @@ namespace Librainian.Measurement {
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     public struct BenchmarkResult {
 
-        public BenchmarkResult( Int64 roundsRan, TimeSpan averageTime, TimeSpan totalTime ) {
-            this.RoundsRan = roundsRan;
-            this.AverageTime = averageTime;
-            this.TotalTime = totalTime;
-        }
-
         /// <summary>
         ///     The average time for all the rounds.
         /// </summary>
@@ -71,6 +65,12 @@ namespace Librainian.Measurement {
         ///     for it to run. (It would take around 29,247 years for it to wrap around.)
         /// </remarks>
         public TimeSpan TotalTime { get; }
+
+        public BenchmarkResult( Int64 roundsRan, TimeSpan averageTime, TimeSpan totalTime ) {
+            this.RoundsRan = roundsRan;
+            this.AverageTime = averageTime;
+            this.TotalTime = totalTime;
+        }
 
         /// <summary>
         ///     Returns the fully qualified type name of this instance.

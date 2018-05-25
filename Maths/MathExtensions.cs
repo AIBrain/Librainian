@@ -48,6 +48,28 @@ namespace Librainian.Maths {
 
     public static class MathExtensions {
 
+        [StructLayout( layoutKind: LayoutKind.Explicit )]
+        public struct DecimalTo {
+
+            [FieldOffset( offset: 0 )]
+            public Decimal Decimal;
+
+            [FieldOffset( offset: 0 )]
+            public Guid Guid;
+
+            /// <summary>
+            /// Access the first four bytes.
+            /// </summary>
+            [FieldOffset( offset: 0 )]
+            public FourBytes Bytes4;
+
+            /// <summary>
+            /// Access all eight bytes.
+            /// </summary>
+            [FieldOffset( offset: 0 )]
+            public EightBytes Bytes8;
+        }
+
         private const Int32 MaxBits = 32;
 
         /// <summary>
@@ -1745,27 +1767,5 @@ namespace Librainian.Maths {
         public static Decimal Twice( this Decimal number ) => number * 2m;
 
         public static Int64 Twice( this Int64 number ) => number * 2L;
-
-        [StructLayout( layoutKind: LayoutKind.Explicit )]
-        public struct DecimalTo {
-
-            [FieldOffset( offset: 0 )]
-            public Decimal Decimal;
-
-            [FieldOffset( offset: 0 )]
-            public Guid Guid;
-
-            /// <summary>
-            /// Access the first four bytes.
-            /// </summary>
-            [FieldOffset( offset: 0 )]
-            public FourBytes Bytes4;
-
-            /// <summary>
-            /// Access all eight bytes.
-            /// </summary>
-            [FieldOffset( offset: 0 )]
-            public EightBytes Bytes8;
-        }
     }
 }

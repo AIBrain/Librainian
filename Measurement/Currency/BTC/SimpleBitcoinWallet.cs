@@ -36,6 +36,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Windows.Forms;
     using Controls;
@@ -52,6 +53,7 @@ namespace Librainian.Measurement.Currency.BTC {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
+    [SuppressMessage( "ReSharper", "InconsistentNaming" )]
     public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
 
         [NonSerialized]
@@ -76,7 +78,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     1000 mBTC are in 1 BTC
         /// </summary>
-        public const UInt64 mBTCInOneBTC = ( UInt64 )( BTC / mBTC );
+        public const UInt16 mBTCInOneBTC = ( UInt16 )( BTC / mBTC );
 
         /// <summary>
         ///     0.00000001
@@ -103,26 +105,6 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         public const UInt64 ΜBtcInOneBtc = ( UInt64 )( BTC / ΜBtc );
 
-        /// <summary>
-        ///     Initialize the wallet with the specified amount of satoshi.
-        /// </summary>
-        /// <param name="satoshi"></param>
-        public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
-
-        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
-
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" /> .
-        /// </summary>
-        /// <param name="balance"></param>
-        public SimpleBitcoinWallet( Decimal balance ) {
-            this._balance = balance.Sanitize();
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        public SimpleBitcoinWallet() : this( balance: 0.0m ) { }
-
         public Decimal Balance {
             get {
                 try { return this._access.TryEnterReadLock( timeout: this.Timeout ) ? this._balance : Decimal.Zero; }
@@ -148,6 +130,26 @@ namespace Librainian.Measurement.Currency.BTC {
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout { get; set; }
+
+        /// <summary>
+        ///     Initialize the wallet with the specified amount of satoshi.
+        /// </summary>
+        /// <param name="satoshi"></param>
+        public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
+
+        public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
+
+        /// <summary>
+        ///     Initialize the wallet with the specified <paramref name="balance" /> .
+        /// </summary>
+        /// <param name="balance"></param>
+        public SimpleBitcoinWallet( Decimal balance ) {
+            this._balance = balance.Sanitize();
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        public SimpleBitcoinWallet() : this( balance: 0.0m ) { }
 
         /// <summary>
         ///     <para>Static comparison.</para>

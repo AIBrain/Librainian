@@ -85,14 +85,6 @@ namespace Librainian.Maths {
         //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
         //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
 
-        /// <summary>
-        ///     Initializes a random number between 0 and 1
-        /// </summary>
-        public Fuzzy( Double? value = null ) : this() {
-            if ( value.HasValue ) { this.Value = value.Value; }
-            else { this.Randomize(); }
-        }
-
         public Double Value {
             get => this._value;
 
@@ -102,6 +94,14 @@ namespace Librainian.Maths {
 
                 this._value.Value = value;
             }
+        }
+
+        /// <summary>
+        ///     Initializes a random number between 0 and 1
+        /// </summary>
+        public Fuzzy( Double? value = null ) : this() {
+            if ( value.HasValue ) { this.Value = value.Value; }
+            else { this.Randomize(); }
         }
 
         public static Double Combine( Double left, Double rhs ) {
