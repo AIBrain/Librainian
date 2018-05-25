@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/CompressExtensions.cs" was last formatted by Protiguous on 2018/05/21 at 10:28 PM.
+// "Librainian/Librainian/CompressExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:28 PM.
 
 namespace Librainian.OperatingSystem.Compression {
 

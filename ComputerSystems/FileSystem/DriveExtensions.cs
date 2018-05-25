@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/DriveExtensions.cs" was last formatted by Protiguous on 2018/05/21 at 9:54 PM.
+// "Librainian/Librainian/DriveExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:02 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -38,7 +39,7 @@ namespace Librainian.ComputerSystems.FileSystem {
         public static List<DriveType> FixedDriveTypes { get; } = new List<DriveType>( new[] { DriveType.Fixed } );
 
         /// <summary>
-        /// Drives that have "disks" able to be "removed".
+        ///     Drives that have "disks" able to be "removed".
         /// </summary>
         public static List<DriveType> FleetingDriveTypes { get; } = new List<DriveType>( new[] { DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable } );
 

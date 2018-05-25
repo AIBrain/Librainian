@@ -25,7 +25,7 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/WebClientExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 6:39 PM.
+// "Librainian/Librainian/WebClientExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:16 PM.
 
 namespace Librainian.Internet {
 

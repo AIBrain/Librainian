@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/PersistenceExtensions.cs" was last formatted by Protiguous on 2018/05/23 at 8:53 PM.
+// "Librainian/Librainian/PersistenceExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:31 PM.
 
 namespace Librainian.Persistence {
 
@@ -45,7 +46,6 @@ namespace Librainian.Persistence {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
-    using System.Xml;
     using CodeFluent.Runtime.BinaryServices;
     using Collections;
     using ComputerSystems.FileSystem;

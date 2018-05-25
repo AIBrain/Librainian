@@ -23,13 +23,11 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/ShufflingType.cs" was last formatted by Protiguous on 2018/05/22 at 4:40 PM.
+// "Librainian/Librainian/ShufflingType.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
 
 namespace Librainian.Collections {
-
-    using System;
-    using System.Collections.Concurrent;
 
     public enum ShufflingType {
 

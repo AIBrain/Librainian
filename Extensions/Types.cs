@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/Types.cs" was last formatted by Protiguous on 2018/05/23 at 9:06 PM.
+// "Librainian/Librainian/Types.cs" was last formatted by Protiguous on 2018/05/24 at 7:09 PM.
 
 namespace Librainian.Extensions {
 
@@ -32,7 +33,6 @@ namespace Librainian.Extensions {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;

@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/AbstractCollection.cs" was last formatted by Protiguous on 2018/05/21 at 10:49 PM.
+// "Librainian/Librainian/AbstractCollection.cs" was last formatted by Protiguous on 2018/05/24 at 6:57 PM.
 
 namespace Librainian.Collections {
 
@@ -122,31 +123,6 @@ namespace Librainian.Collections {
 
             // new T[size] won't work here when targetArray is subtype of T.
             return ( T[] )Array.CreateInstance( elementType: array.GetType().GetElementType() ?? throw new InvalidOperationException(), length );
-        }
-
-        /// <summary>
-        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
-        ///     <see cref="Array" /> index.
-        /// </summary>
-        /// <param name="array">
-        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
-        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
-        /// </param>
-        /// <param name="index">The zero-based index in array at which copying begins.</param>
-        /// <exception cref="ArgumentNullException">array is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
-        /// <exception cref="ArgumentException">
-        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
-        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
-        ///     index to the end of the destination array.
-        /// </exception>
-        /// <exception cref="InvalidCastException">
-        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
-        ///     to the type of the destination array.
-        /// </exception>
-        /// <filterpriority>2</filterpriority>
-        protected virtual void CopyTo( Array array, Int32 index ) {
-            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
         }
 
         /// <summary>
@@ -384,6 +360,31 @@ namespace Librainian.Collections {
             }
 
             return sb.Append( ")" ).ToString();
+        }
+
+        /// <summary>
+        ///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
+        ///     <see cref="Array" /> index.
+        /// </summary>
+        /// <param name="array">
+        ///     The one-dimensional <see cref="Array" /> that is the destination of the elements copied from
+        ///     <see cref="ICollection" />. The <see cref="Array" /> must have zero-based indexing.
+        /// </param>
+        /// <param name="index">The zero-based index in array at which copying begins.</param>
+        /// <exception cref="ArgumentNullException">array is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">index is less than zero.</exception>
+        /// <exception cref="ArgumentException">
+        ///     array is multidimensional.-or- index is equal to or greater than the length of array.
+        ///     - or- The number of elements in the source <see cref="ICollection" /> is greater than the available space from
+        ///     index to the end of the destination array.
+        /// </exception>
+        /// <exception cref="InvalidCastException">
+        ///     The type of the source <see cref="ICollection" /> cannot be cast automatically
+        ///     to the type of the destination array.
+        /// </exception>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void CopyTo( Array array, Int32 index ) {
+            foreach ( var e in this ) { array.SetValue( e, index: index++ ); }
         }
 
         /// <summary>

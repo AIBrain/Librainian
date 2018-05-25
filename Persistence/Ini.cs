@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/Ini.cs" was last formatted by Protiguous on 2018/05/21 at 11:19 PM.
+// "Librainian/Librainian/Ini.cs" was last formatted by Protiguous on 2018/05/24 at 7:31 PM.
 
 namespace Librainian.Persistence {
 
@@ -48,8 +49,6 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class Ini : IEquatable<Ini> {
 
-        //private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, ReferenceLoopHandling = ReferenceLoopHandling.Serialize };
-
         /// <summary>
         ///     [Header] <see cref="Environment.NewLine" /> Key=Value <see cref="Environment.NewLine" />
         /// </summary>
@@ -57,6 +56,7 @@ namespace Librainian.Persistence {
         [NotNull]
         private ConcurrentDictionary<String, Section> Data { get; } = new ConcurrentDictionary<String, Section>();
 
+        //private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, ReferenceLoopHandling = ReferenceLoopHandling.Serialize };
         /// <summary>
         /// </summary>
         [JsonProperty]

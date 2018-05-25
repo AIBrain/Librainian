@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/PriorityQueue.cs" was last formatted by Protiguous on 2018/05/21 at 10:51 PM.
+// "Librainian/Librainian/PriorityQueue.cs" was last formatted by Protiguous on 2018/05/24 at 6:59 PM.
 
 namespace Librainian.Collections {
 

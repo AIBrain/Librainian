@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/Folder.cs" was last formatted by Protiguous on 2018/05/21 at 9:54 PM.
+// "Librainian/Librainian/Folder.cs" was last formatted by Protiguous on 2018/05/24 at 7:02 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -170,18 +171,18 @@ namespace Librainian.ComputerSystems.FileSystem {
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { } //-V3073
 
-        /// <summary>
-        ///     <para>Static comparison of the folder names (case sensitive) for equality.</para>
-        ///     <para>
-        ///         To compare the path of two <see cref="Folder" /> use
-        ///         <param name="left">todo: describe left parameter on Equals</param>
-        ///         <param name="right">todo: describe right parameter on Equals</param>
-        ///         <seealso /> .
-        ///     </para>
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
+                                                                                             /// <summary>
+                                                                                             ///     <para>Static comparison of the folder names (case sensitive) for equality.</para>
+                                                                                             ///     <para>
+                                                                                             ///         To compare the path of two <see cref="Folder" /> use
+                                                                                             ///         <param name="left">todo: describe left parameter on Equals</param>
+                                                                                             ///         <param name="right">todo: describe right parameter on Equals</param>
+                                                                                             ///         <seealso /> .
+                                                                                             ///     </para>
+                                                                                             /// </summary>
+                                                                                             /// <param name="left"> </param>
+                                                                                             /// <param name="right"></param>
+                                                                                             /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Folder left, [CanBeNull] Folder right ) {
             if ( ReferenceEquals( left, right ) ) { return true; }
 

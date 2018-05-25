@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/ShoppingItem.cs" was last formatted by Protiguous on 2018/05/21 at 10:02 PM.
+// "Librainian/Librainian/ShoppingItem.cs" was last formatted by Protiguous on 2018/05/24 at 7:09 PM.
 
 namespace Librainian.Financial.Containers.Shopping {
 
@@ -36,7 +37,8 @@ namespace Librainian.Financial.Containers.Shopping {
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Obviously there are thousands of real categories that should be loaded from a json document. But this is just a sample/experimental class.
+    ///     Obviously there are thousands of real categories that should be loaded from a json document. But this is just a
+    ///     sample/experimental class.
     /// </summary>
     public enum ItemCategory {
 

@@ -23,13 +23,13 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/StreamException.cs" was last formatted by Protiguous on 2018/05/23 at 8:58 PM.
+// "Librainian/Librainian/StreamException.cs" was last formatted by Protiguous on 2018/05/24 at 7:06 PM.
 
 namespace Librainian.Exceptions {
 
     using System;
-    using System.IO;
 
     /// <summary>
     ///     <para>Generic error when using a <see cref="Stream" />.</para>

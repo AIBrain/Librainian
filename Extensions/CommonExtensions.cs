@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/CommonExtensions.cs" was last formatted by Protiguous on 2018/05/22 at 5:53 PM.
+// "Librainian/Librainian/CommonExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:07 PM.
 
 namespace Librainian.Extensions {
 
@@ -149,7 +150,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Swap.
+        ///     Swap.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="left"></param>
@@ -161,7 +162,7 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>
-        /// Return (T right, T left).
+        ///     Return (T right, T left).
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="left"></param>

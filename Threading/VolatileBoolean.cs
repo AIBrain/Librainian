@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/VolatileBoolean.cs" was last formatted by Protiguous on 2018/05/22 at 3:52 PM.
+// "Librainian/Librainian/VolatileBoolean.cs" was last formatted by Protiguous on 2018/05/24 at 7:35 PM.
 
 namespace Librainian.Threading {
 

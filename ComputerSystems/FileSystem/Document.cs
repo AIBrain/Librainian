@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/Document.cs" was last formatted by Protiguous on 2018/05/21 at 10:53 PM.
+// "Librainian/Librainian/Document.cs" was last formatted by Protiguous on 2018/05/24 at 7:01 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -315,10 +316,12 @@ namespace Librainian.ComputerSystems.FileSystem {
         public WebClient CopyFileWithProgress( Document destination, Action<Percentage> onProgress, Action onCompleted ) {
 
             var webClient = new WebClient();
+
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
                 onProgress?.Invoke( percentage );
             };
+
             webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
             webClient.DownloadFileAsync( address: new Uri( uriString: this.FullPathWithFileName ), fileName: destination.FullPathWithFileName );

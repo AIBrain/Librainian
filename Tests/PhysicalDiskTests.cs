@@ -4,8 +4,9 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code, "PhysicalDiskTests.cs", belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by automatic formatting.
+// This source code contained in "PhysicalDiskTests.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
@@ -22,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/LibrainianTests/PhysicalDiskTests.cs" was last formatted by Protiguous on 2018/05/20 at 7:06 PM.
+// "Librainian/LibrainianTests/PhysicalDiskTests.cs" was last formatted by Protiguous on 2018/05/24 at 7:37 PM.
 
 namespace LibrainianTests {
 

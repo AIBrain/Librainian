@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/SlimLock.cs" was last formatted by Protiguous on 2018/05/21 at 10:56 PM.
+// "Librainian/Librainian/SlimLock.cs" was last formatted by Protiguous on 2018/05/24 at 7:35 PM.
 
 namespace Librainian.Threading {
 
@@ -63,10 +64,6 @@ namespace Librainian.Threading {
         private const UInt32 MaxReader = 0x10000000 - 2;
 
         private const UInt32 ReaderMask = 0x10000000 - 1;
-
-        private static Int32 ProcessorCount { get; } = Environment.ProcessorCount;
-
-        private Boolean IsReentrant { get; }
 
         //Various R/W masks
         //Note:
@@ -134,6 +131,10 @@ namespace Librainian.Threading {
 
             this.InitializeThreadCounts();
         }
+
+        private static Int32 ProcessorCount { get; } = Environment.ProcessorCount;
+
+        private Boolean IsReentrant { get; }
 
         public LockRecursionPolicy RecursionPolicy => this.IsReentrant ? LockRecursionPolicy.SupportsRecursion : LockRecursionPolicy.NoRecursion;
 

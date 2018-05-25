@@ -1,31 +1,31 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ListBoxLog.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
-// "Librainian/Librainian/ListBoxLog.cs" was last formatted by Protiguous on 2018/05/24 at 6:55 PM.
+//
+// "Librainian/Librainian/ListBoxLog.cs" was last formatted by Protiguous on 2018/05/24 at 7:04 PM.
 
 namespace Librainian.Controls {
 
@@ -48,6 +48,16 @@ namespace Librainian.Controls {
         ///     <seealso cref="FormatALogEventMessage" />
         /// </summary>
         private const String DefaultMessageFormat = "{4}>{8}";
+
+        private ListBox Box { get; set; }
+
+        private Boolean CanAdd { get; set; }
+
+        private Int32 MaxEntriesInListBox { get; }
+
+        private String MessageFormat { get; }
+
+        public Boolean Paused { get; }
 
         public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
 
@@ -76,24 +86,16 @@ namespace Librainian.Controls {
             this.Box.DrawMode = DrawMode.OwnerDrawFixed;
         }
 
-        private ListBox Box { get; set; }
-
-        private Boolean CanAdd { get; set; }
-
-        private Int32 MaxEntriesInListBox { get; }
-
-        private String MessageFormat { get; }
-
-        public Boolean Paused { get; }
-
         ~ListBoxLog() => this.Dispose();
+
+        private delegate void AddALogEntryDelegate( Object item );
 
         private static String FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
             var message = logEvent.Message ?? "<NULL>";
 
             return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
                 logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */ logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
-                LevelName( logEvent.LoggingLevel )[ 0 ], /* {6} */ LevelName( logEvent.LoggingLevel ), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
+                LevelName( logEvent.LoggingLevel )[0], /* {6} */ LevelName( logEvent.LoggingLevel ), /* {7} */ ( Int32 )logEvent.LoggingLevel, /* {8} */ message );
         }
 
         private static String LevelName( LoggingLevel loggingLevel ) {
@@ -110,7 +112,7 @@ namespace Librainian.Controls {
 
                 case LoggingLevel.Debug: return "Debug";
 
-                default: return $"<value={( Int32 ) loggingLevel}>";
+                default: return $"<value={( Int32 )loggingLevel}>";
             }
         }
 
@@ -123,9 +125,9 @@ namespace Librainian.Controls {
                 return;
             }
 
-            var currentText = items[ items.Count - 1 ] as String ?? String.Empty;
+            var currentText = items[items.Count - 1] as String ?? String.Empty;
             currentText += item as String ?? String.Empty;
-            this.Box.Items[ items.Count - 1 ] = currentText;
+            this.Box.Items[items.Count - 1] = currentText;
         }
 
         private void AddALogEntryLine( Object item ) {
@@ -139,7 +141,7 @@ namespace Librainian.Controls {
         private void CopyMenuOnClickHandler( Object sender, EventArgs e ) => this.CopyToClipboard();
 
         private void CopyMenuPopupHandler( Object sender, EventArgs e ) {
-            if ( sender is ContextMenu menu ) { menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0; }
+            if ( sender is ContextMenu menu ) { menu.MenuItems[0].Enabled = this.Box.SelectedItems.Count > 0; }
         }
 
         private void CopyToClipboard() {
@@ -152,7 +154,7 @@ namespace Librainian.Controls {
             foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
 
                 selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
-                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 ) logEvent.LoggingLevel > 5 ? 6 : ( Int32 ) logEvent.LoggingLevel + 1 );
+                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 )logEvent.LoggingLevel > 5 ? 6 : ( Int32 )logEvent.LoggingLevel + 1 );
 
                 selectedItemsAsRTFText.Append( FormatALogEventMessage( logEvent, this.MessageFormat ) );
                 selectedItemsAsRTFText.AppendLine( @"\par}" );
@@ -169,7 +171,7 @@ namespace Librainian.Controls {
             e.DrawBackground();
             e.DrawFocusRectangle();
 
-            var logEvent = ( ( ListBox ) sender ).Items[ e.Index ] as LogEvent ?? new LogEvent( LoggingLevel.Critical, ( ( ListBox ) sender ).Items[ e.Index ].ToString() );
+            var logEvent = ( ( ListBox )sender ).Items[e.Index] as LogEvent ?? new LogEvent( LoggingLevel.Critical, ( ( ListBox )sender ).Items[e.Index].ToString() );
 
             // SafeGuard against wrong configuration of list box
 
@@ -259,15 +261,7 @@ namespace Librainian.Controls {
 
         public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
-        private delegate void AddALogEntryDelegate( Object item );
-
         private class LogEvent {
-
-            public LogEvent( LoggingLevel loggingLevel, String message ) {
-                this.EventTime = DateTime.Now;
-                this.LoggingLevel = loggingLevel;
-                this.Message = message;
-            }
 
             public DateTime EventTime { get; }
 
@@ -275,8 +269,11 @@ namespace Librainian.Controls {
 
             public String Message { get; }
 
+            public LogEvent( LoggingLevel loggingLevel, String message ) {
+                this.EventTime = DateTime.Now;
+                this.LoggingLevel = loggingLevel;
+                this.Message = message;
+            }
         }
-
     }
-
 }

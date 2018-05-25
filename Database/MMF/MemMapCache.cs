@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/MemMapCache.cs" was last formatted by Protiguous on 2018/05/21 at 9:58 PM.
+// "Librainian/Librainian/MemMapCache.cs" was last formatted by Protiguous on 2018/05/24 at 7:06 PM.
 
 namespace Librainian.Database.MMF {
 
@@ -103,7 +104,7 @@ namespace Librainian.Database.MMF {
                         }
                     }
 
-                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 );   //TODO
+                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 ); //TODO
 
                     var o = this._formatter.Deserialize( serializationStream: viewStream );
 

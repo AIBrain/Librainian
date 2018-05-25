@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "InternetExtensions.cs" belongs to Rick@AIBrain.org and
+// This source code contained in "Internet.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -25,7 +25,7 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/InternetExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 6:33 PM.
+// "Librainian/Librainian/Internet.cs" was last formatted by Protiguous on 2018/05/24 at 7:15 PM.
 
 namespace Librainian.Internet {
 

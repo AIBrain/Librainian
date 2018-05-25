@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/EnumerableToArrayBuffer.cs" was last formatted by Protiguous on 2018/05/22 at 5:40 PM.
+// "Librainian/Librainian/EnumerableToArrayBuffer.cs" was last formatted by Protiguous on 2018/05/24 at 6:58 PM.
 
 namespace Librainian.Collections {
 

@@ -23,8 +23,9 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/IBlockingQueue.cs" was last formatted by Protiguous on 2018/05/21 at 10:50 PM.
+// "Librainian/Librainian/IBlockingQueue.cs" was last formatted by Protiguous on 2018/05/24 at 6:59 PM.
 
 namespace Librainian.Collections {
 
@@ -76,44 +77,44 @@ namespace Librainian.Collections {
     ///         Usage example, based on a typical producer-consumer scenario.
     ///         TODO: Convert non-generic example below to using generic version
     ///         <code>
-    ///         class Producer : IRunnable {
-    ///                private IBlockingQueue queue;
-    ///             Producer(IBlockingQueue q) { queue = q; }
-    ///             public void Run() {
-    ///                 try {
-    ///                     while (true) {
-    ///                         queue.Put(produce());
-    ///                     }
-    ///                 } catch (InterruptedException ex) {
-    ///                     ... handle ...
-    ///                 }
-    ///             }
-    ///             Object Produce() { ... }
-    ///         }
+    ///           class Producer : IRunnable {
+    ///                  private IBlockingQueue queue;
+    ///               Producer(IBlockingQueue q) { queue = q; }
+    ///               public void Run() {
+    ///                   try {
+    ///                       while (true) {
+    ///                           queue.Put(produce());
+    ///                       }
+    ///                   } catch (InterruptedException ex) {
+    ///                       ... handle ...
+    ///                   }
+    ///               }
+    ///               Object Produce() { ... }
+    ///           }
     ///
-    ///         class Consumer : IRunnable {
-    ///                private IBlockingQueue queue;
-    ///             Consumer(IBlockingQueue q) { queue = q; }
-    ///             public void Run() {
-    ///                 try {
-    ///                     while (true) { Consume(queue.Take()); }
-    ///                 } catch (InterruptedException ex) { ... handle ...}
-    ///             }
-    ///             void Consume(object x) { ... }
-    ///         }
+    ///           class Consumer : IRunnable {
+    ///                  private IBlockingQueue queue;
+    ///               Consumer(IBlockingQueue q) { queue = q; }
+    ///               public void Run() {
+    ///                   try {
+    ///                       while (true) { Consume(queue.Take()); }
+    ///                   } catch (InterruptedException ex) { ... handle ...}
+    ///               }
+    ///               void Consume(object x) { ... }
+    ///           }
     ///
-    ///         class Setup {
-    ///                void Main() {
-    ///                 IBlockingQueue q = new SomeQueueImplementation();
-    ///                 Producer p = new Producer(q);
-    ///                 Consumer c1 = new Consumer(q);
-    ///                 Consumer c2 = new Consumer(q);
-    ///                 new Thread(new ThreadStart(p.Run)).Start();
-    ///                 new Thread(new ThreadStart(c1.Run)).Start();
-    ///                 new Thread(new ThreadStart(c2.Run)).Start();
-    ///             }
-    ///         }
-    ///     </code>
+    ///           class Setup {
+    ///                  void Main() {
+    ///                   IBlockingQueue q = new SomeQueueImplementation();
+    ///                   Producer p = new Producer(q);
+    ///                   Consumer c1 = new Consumer(q);
+    ///                   Consumer c2 = new Consumer(q);
+    ///                   new Thread(new ThreadStart(p.Run)).Start();
+    ///                   new Thread(new ThreadStart(c1.Run)).Start();
+    ///                   new Thread(new ThreadStart(c2.Run)).Start();
+    ///               }
+    ///           }
+    ///       </code>
     ///     </example>
     /// </remarks>
     /// <typeparam name="T">The type of the elements in the queue.</typeparam>
