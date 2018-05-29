@@ -25,7 +25,7 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/StringVersusGuid.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
+// "Librainian/Librainian/StringVersusGuid.cs" was last formatted by Protiguous on 2018/05/27 at 6:12 PM.
 
 namespace Librainian.Collections {
 
@@ -42,9 +42,9 @@ namespace Librainian.Collections {
     [JsonObject]
     public class StringVersusGuid {
 
-        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
+        public IReadOnlyCollection<Guid> EachGuid => this.Guids.Keys as IReadOnlyCollection<Guid>;
 
-        public IEnumerable<String> EachWord => this.Words.Keys;
+        public IReadOnlyCollection<String> EachWord => this.Words.Keys as IReadOnlyCollection<String>;
 
         /// <summary>
         /// </summary>
@@ -121,7 +121,7 @@ namespace Librainian.Collections {
         public Boolean Contains( String daword ) {
             if ( String.IsNullOrEmpty( daword ) ) { return false; }
 
-            return this.Words.TryGetValue( daword, out var value );
+            return this.Words.TryGetValue( daword, out _ );
         }
 
         /// <summary>

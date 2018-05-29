@@ -40,7 +40,7 @@ namespace Librainian.Graphics.DDD {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="long" /> integers.
+    ///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="Int64" /> integers.
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]

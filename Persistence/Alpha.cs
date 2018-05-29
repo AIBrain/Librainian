@@ -25,62 +25,173 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/Alpha.cs" was last formatted by Protiguous on 2018/05/24 at 7:30 PM.
+// "Librainian/Librainian/Alpha.cs" was last formatted by Protiguous on 2018/05/28 at 5:09 AM.
 
 namespace Librainian.Persistence {
 
     using System;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Collections;
+    using ComputerSystems;
+    using ComputerSystems.Devices;
+    using ComputerSystems.FileSystem;
+    using JetBrains.Annotations;
+    using Threading;
 
     /// <summary>
     ///     The last data storage class your program should ever need.
     /// </summary>
     public static class Alpha {
 
+        /// <summary>
+        ///     Pull the value out of the either.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Boolean TryGet( String key, out String value ) {
+
+            //get index for key
+            //pull value from that index.
+            //simple!
+        }
+
         /*
 
-        //failure is not an option. No exceptions visible to user. If there is storage( ram, disk, ssd, flash, lan, inet) of any sort, let this class Store & Retrieve the data.
+//failure is not an option. No exceptions visible to user. If there is storage( ram, disk, ssd, flash, lan, inet) of any sort, let this class Store & Retrieve the data.
 
-        //screw security.. leave encrypt before storage and decrypt after retrieval up to the program/user
+//screw security.. leave encrypt before storage and decrypt after retrieval up to the program/user
 
-        //get list of disks on local computer
+//get list of disks on local computer
 
-        //check isolatedstorage for any pointers to other known storage locations
+//check isolatedstorage for any pointers to other known storage locations
 
-        //check AppDataa for any pointers to other storage locations
+//check AppDataa for any pointers to other storage locations
 
-        //use static PersistentDictionary access to store and retrieve. make it is using json serializer.
+//use static PersistentDictionary access to store and retrieve. make it is using json serializer.
 
-        //get list of available lan storage
+//get list of available lan storage
 
-        //redis? memcache?
+//redis? memcache?
 
-        //async Initialize()
+//async Initialize()
 
-        //async Store(NameKeyValue)
-        //sync Store(NameKeyValue)
+//async Store(NameKeyValue)
+//sync Store(NameKeyValue)
 
-        //async Retrieve(NameKey)
-        */
+//async Retrieve(NameKey)
+*/
 
-        /// <summary>
-        ///     Data([Name]Key=Value)
-        /// </summary>
-        public struct D {
+        public static class Storage {
+
+            private static TrackTime InitializeTime { get; } = new TrackTime();
+
+            private static CancellationTokenSource LocalDiscoveryCancellation { get; } = new CancellationTokenSource();
+
+            private static Task LocalDiscoveryTask { get; set; }
+
+            private static TrackTime LocalResourceDiscoveryTime { get; } = new TrackTime();
+
+            private static CancellationTokenSource RemoteDiscoveryCancellation { get; } = new CancellationTokenSource();
+
+            private static Task RemoteDiscoveryTask { get; set; }
+
+            private static TrackTime RemoteResourceDiscoveryTime { get; } = new TrackTime();
+
+            private static async Task<Boolean> DiscoverLocalResources() {
+                try {
+                    LocalResourceDiscoveryTime.Started = DateTime.UtcNow;
+
+                    var computer = new Computer();
+
+                    //var drives = new DeviceClass(
+
+                    //search drives for free space
+                    //report back
+                }
+                catch ( Exception exception ) { exception.More(); }
+                finally { LocalResourceDiscoveryTime.Finished = DateTime.UtcNow; }
+
+                return false;
+            }
+
+            private static async Task<Boolean> DiscoverRemoteResources() {
+                try {
+                    RemoteResourceDiscoveryTime.Started = DateTime.UtcNow;
+
+                    //search network/internet? for storage locations
+                    //report back
+                }
+                catch ( Exception exception ) { exception.More(); }
+                finally { RemoteResourceDiscoveryTime.Finished = DateTime.UtcNow; }
+
+                return false;
+            }
 
             /// <summary>
-            ///     The *pointer* to the value (<see cref="V" />).
+            ///     The <see cref="Root" /> folder for pointing to storage locations?
             /// </summary>
-            public String K { get; set; }
+            public static PersistTable<String, I> Root { get; }
 
             /// <summary>
-            ///     The namespace the key belongs in.
+            ///     Where the main indexes will be stored.
             /// </summary>
-            public String N { get; set; }
+            public static Folder RootPath { get; } = new Folder( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ), Path.Combine( nameof( Storage ), nameof( Root ) ) ) );
+
+            static Storage() {
+
+                if ( !RootPath.Exists() ) {
+                    RootPath.Create();
+
+                    if ( !RootPath.Exists() ) { throw new DirectoryNotFoundException( RootPath.FullName ); }
+                }
+
+                Root = new PersistTable<String, I>( RootPath );
+            }
+
+            public static String BuildKey<T>( [NotNull] params T[] keys ) {
+                if ( keys == null ) { throw new ArgumentNullException( paramName: nameof( keys ) ); }
+
+                return keys.ToStrings( "⦀" );
+            }
+
+            public static TaskStatus GetLocalDiscoveryStatus() => LocalDiscoveryTask.Status;
+
+            public static TaskStatus GetRemoteDiscoveryStatus() => RemoteDiscoveryTask.Status;
 
             /// <summary>
-            ///     The value. serialized to &amp; from json string&lt;-&gt;object.
+            ///     <para>Starts the local and remote discovery tasks.</para>
             /// </summary>
-            public String V { get; set; } //obj serialized to json
+            /// <returns></returns>
+            public static async Task Initialize() {
+                try {
+                    InitializeTime.Started = DateTime.UtcNow;
+                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources ).WithCancellation( LocalDiscoveryCancellation.Token );
+                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources ).WithCancellation( RemoteDiscoveryCancellation.Token );
+                    await Task.Run( () => Parallel.Invoke( async () => await LocalDiscoveryTask.NoUI(), async () => await RemoteDiscoveryTask.NoUI() ) ).NoUI();
+                }
+                catch ( Exception exception ) { exception.More(); }
+                finally { InitializeTime.Finished = DateTime.UtcNow; }
+            }
+
+            public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellation.Cancel( false );
+
+            public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellation.Cancel( false );
+
+            public class TrackTime {
+
+                /// <summary>
+                ///     Null? Hasn't finished yet.
+                /// </summary>
+                public DateTime? Finished { get; set; }
+
+                /// <summary>
+                ///     Null? Hasn't been started yet.
+                /// </summary>
+                public DateTime? Started { get; set; }
+            }
         }
     }
 }

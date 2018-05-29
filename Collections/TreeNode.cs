@@ -48,8 +48,6 @@ namespace Librainian.Collections {
         //public event EventHandler Disposing;
         public TreeTraversalType DisposeTraversal { get; } = TreeTraversalType.BottomUp;
 
-        public Boolean IsDisposed { get; private set; }
-
         public TreeNode<T> Parent {
             get => this._parent;
 
@@ -99,19 +97,10 @@ namespace Librainian.Collections {
             this.Children = new TreeNodeList<T>( parent: this );
         }
 
-        //protected void OnDisposing() => this.Disposing?.Invoke( sender: this, e: EventArgs.Empty );
-
-        public void CheckDisposed() {
-            if ( this.IsDisposed ) { throw new ObjectDisposedException( objectName: this.GetType().Name ); }
-        }
-
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() {
-            this.CheckDisposed();
-
-            //this.OnDisposing();
 
             // clean up contained objects (in Value property)
             if ( this.Value is IDisposable disposable ) {
@@ -125,8 +114,6 @@ namespace Librainian.Collections {
                     foreach ( var node in this.Children ) { node.Dispose(); }
                 }
             }
-
-            this.IsDisposed = true;
         }
     }
 }

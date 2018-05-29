@@ -77,7 +77,7 @@ namespace Librainian.Collections {
     ///     </para>
     ///     <para>
     ///         <see cref="IQueue{T}" /> implementations generally do not define element-based versions of methods
-    ///         <see cref="object.Equals(object)" /> and <see cref="object.GetHashCode" />, but instead inherit the identity
+    ///         <see cref="Object.Equals(Object)" /> and <see cref="Object.GetHashCode" />, but instead inherit the identity
     ///         based
     ///         versions from the class object, because element-based equality is not always well-defined for queues with the
     ///         same elements but different ordering properties.
@@ -92,7 +92,7 @@ namespace Librainian.Collections {
     {
 
         /// <summary>
-        ///     Gets the remaining capacity of a bounded queue or <see cref="int.MaxValue" /> if the queue is un-bounded.
+        ///     Gets the remaining capacity of a bounded queue or <see cref="Int32.MaxValue" /> if the queue is un-bounded.
         /// </summary>
         Int32 RemainingCapacity { get; }
 

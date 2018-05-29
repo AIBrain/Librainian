@@ -244,6 +244,8 @@
     <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
+    <Compile Include="Persistence\D.cs" />
+    <Compile Include="Persistence\I.cs" />
     <Compile Include="Persistence\ObsoletePersistenceClasses.cs" />
     <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
     <Compile Include="Persistence\ConcurrentListFile.cs" />
@@ -868,6 +870,12 @@
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.10.1</Version>
+    </PackageReference>
+    <PackageReference Include="Platform.VirtualFileSystem">
+      <Version>1.2.1.124</Version>
+    </PackageReference>
+    <PackageReference Include="Platform.VirtualFileSystem.Providers.Zip">
+      <Version>1.2.1.124</Version>
     </PackageReference>
     <PackageReference Include="RandomNameGeneratorLibrary">
       <Version>1.2.2</Version>

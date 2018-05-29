@@ -39,7 +39,7 @@ namespace Librainian.Graphics.DDD {
     using static Maths.Hashing;
 
     /// <summary>
-    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
+    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]

@@ -1,31 +1,31 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Extensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/Extensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:25 PM.
+// 
+// "Librainian/Librainian/Extensions.cs" was last formatted by Protiguous on 2018/05/26 at 1:44 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -35,6 +35,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Linq;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
+    using Denominations;
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using NUnit.Framework;
@@ -106,10 +107,10 @@ namespace Librainian.Measurement.Currency.BTC {
             while ( leftOverAmount > Decimal.Zero && left.Any() ) {
                 var coin = left.OrderByDescending( denomination => denomination.FaceValue ).First();
 
-                var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
+                var chunks = ( UInt64 ) ( leftOverAmount / coin.FaceValue );
 
                 if ( chunks > Decimal.Zero ) {
-                    result[coin] += chunks;
+                    result[ coin ] += chunks;
                     leftOverAmount -= chunks * coin.FaceValue;
                 }
 
@@ -202,15 +203,15 @@ namespace Librainian.Measurement.Currency.BTC {
                 return new ConcurrentDictionary<ICoin, UInt64>( Transfer( source, target ) );
             } );
 
-        public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
-        public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+        public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
         public static Decimal TomBTC( this Decimal btc ) => btc * SimpleBitcoinWallet.mBTCInOneBTC;
 
-        public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 )( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
+        public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 ) ( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
 
         /// <summary>Return the <paramref name="wallet" /> in Satoshi.</summary>
         /// <param name="wallet"></param>
@@ -277,10 +278,10 @@ namespace Librainian.Measurement.Currency.BTC {
             while ( leftOverAmount > Decimal.Zero && left.Any() ) {
                 var coin = left.OrderBy( denomination => denomination.FaceValue ).First();
 
-                var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
+                var chunks = ( UInt64 ) ( leftOverAmount / coin.FaceValue );
 
                 if ( chunks > Decimal.Zero ) {
-                    result[coin] += chunks;
+                    result[ coin ] += chunks;
                     leftOverAmount -= chunks * coin.FaceValue;
                 }
 
@@ -291,5 +292,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
             return result;
         }
+
     }
+
 }

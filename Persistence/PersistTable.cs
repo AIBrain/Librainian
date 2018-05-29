@@ -64,6 +64,28 @@ namespace Librainian.Persistence {
         [NotNull]
         private PersistentDictionary<TKey, String> Dictionary { get; }
 
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private PersistTable() => throw new NotImplementedException();
+
+        /// <summary>
+        ///     Return true if we can read/write in the <see cref="Folder" /> .
+        /// </summary>
+        /// <returns></returns>
+        private Boolean TestForReadWriteAccess() {
+            try {
+                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
+                    var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
+                    document.AppendText( text: text );
+                    document.TryDeleting( tryFor: Seconds.Five );
+
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
         /// <summary>
         ///     No path given?
         /// </summary>
@@ -77,9 +99,6 @@ namespace Librainian.Persistence {
         public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         public ICollection<TValue> Values => this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() ) as ICollection<TValue> ?? new Collection<TValue>();
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private PersistTable() => throw new NotImplementedException();
 
         /// <summary>
         /// </summary>
@@ -159,25 +178,6 @@ namespace Librainian.Persistence {
 
                 this.Dictionary[key] = value.ToJSON().ToCompressedBase64();
             }
-        }
-
-        /// <summary>
-        ///     Return true if we can read/write in the <see cref="Folder" /> .
-        /// </summary>
-        /// <returns></returns>
-        private Boolean TestForReadWriteAccess() {
-            try {
-                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
-                    var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
-                    document.AppendText( text: text );
-                    document.TryDeleting( tryFor: Seconds.Five );
-
-                    return true;
-                }
-            }
-            catch { }
-
-            return false;
         }
 
         public void Add( TKey key, TValue value ) => this[key] = value;

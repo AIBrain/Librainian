@@ -35,7 +35,7 @@ namespace Librainian.Maths.Numbers {
 
     /// <summary>
     ///     An automatically incrementing Identity class. ( <see cref="Identity" /> is
-    ///     <see cref="ulong" /> )
+    ///     <see cref="UInt64" /> )
     /// </summary>
     [JsonObject]
     public sealed class AutoNumber {

@@ -25,7 +25,7 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
+// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/05/28 at 12:00 AM.
 
 namespace Librainian.Collections {
 
@@ -138,7 +138,7 @@ namespace Librainian.Collections {
 
         public Boolean Load() {
 
-            var obj = 1;
+            Logging.Break();
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );

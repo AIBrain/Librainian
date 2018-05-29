@@ -29,6 +29,9 @@
 
 namespace Librainian.Collections {
 
+    using System;
+    using System.Collections.Concurrent;
+
     public enum ShufflingType {
 
         /// <summary>

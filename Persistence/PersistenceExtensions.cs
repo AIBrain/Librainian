@@ -46,6 +46,7 @@ namespace Librainian.Persistence {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
+    using System.Xml;
     using CodeFluent.Runtime.BinaryServices;
     using Collections;
     using ComputerSystems.FileSystem;
@@ -210,14 +211,15 @@ namespace Librainian.Persistence {
         public static TSource Deserialize<TSource>( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
             if ( null == stream ) { throw new ArgumentNullException( nameof( stream ) ); }
 
-            var cs = new ProgressStream( stream );
+            using ( var cs = new ProgressStream( stream ) ) {
 
-            if ( feedback != null ) { cs.ProgressChanged += feedback; }
+                cs.ProgressChanged += feedback;
 
-            using ( var bs = new BufferedStream( stream: cs, bufferSize: 16384 ) ) {
-                var formatter = new NetDataContractSerializer();
+                using ( var bs = new BufferedStream( stream: cs, bufferSize: 16384 ) ) {
+                    var formatter = new NetDataContractSerializer();
 
-                return formatter.Deserialize( bs ) as TSource;
+                    return formatter.Deserialize( bs ) as TSource;
+                }
             }
         }
 

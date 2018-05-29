@@ -1,31 +1,31 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Types.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/Types.cs" was last formatted by Protiguous on 2018/05/24 at 7:09 PM.
+// 
+// "Librainian/Librainian/Types.cs" was last formatted by Protiguous on 2018/05/26 at 1:44 AM.
 
 namespace Librainian.Extensions {
 
@@ -33,6 +33,7 @@ namespace Librainian.Extensions {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -49,7 +50,7 @@ namespace Librainian.Extensions {
 
         public static Boolean CanAssignValue( this PropertyInfo p, Object value ) => value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
 
-        public static IList<T> Clone<T>( this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T )item.Clone() ).ToList();
+        public static IList<T> Clone<T>( this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T ) item.Clone() ).ToList();
 
         public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field is null ) { throw new ArgumentNullException( nameof( field ) ); }
@@ -178,13 +179,13 @@ namespace Librainian.Extensions {
         public static IEnumerable<T> GetEnumerableOfType<T>( params Object[] constructorArgs ) where T : class, IComparable<T> {
             if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out var list ) ) {
                 list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
-                EnumerableOfTypeCache[typeof( T )] = list;
+                EnumerableOfTypeCache[ typeof( T ) ] = list;
             }
 
             if ( null == list ) { yield break; }
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
-                if ( constructorArgs?.Any() == true ) { yield return ( T )Activator.CreateInstance( myType, constructorArgs ); }
+                if ( constructorArgs?.Any() == true ) { yield return ( T ) Activator.CreateInstance( myType, constructorArgs ); }
                 else {
                     var declaredCtor = myType.GetConstructors();
 
@@ -277,7 +278,7 @@ namespace Librainian.Extensions {
             if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) { return false; }
 
             foreach ( var key in sourceValue.Keys ) {
-                try { destAsDictionary[key] = sourceValue[key]; }
+                try { destAsDictionary[ key ] = sourceValue[ key ]; }
                 catch ( Exception exception ) { exception.More(); }
             }
 
@@ -372,16 +373,16 @@ namespace Librainian.Extensions {
 
                 // Just one edge case you might want to handle.
                 if ( underlyingType == typeof( Guid ) ) {
-                    if ( value is String ) { value = new Guid( ( String )value ); }
+                    if ( value is String ) { value = new Guid( ( String ) value ); }
 
-                    if ( value is Byte[] ) { value = new Guid( ( Byte[] )value ); }
+                    if ( value is Byte[] ) { value = new Guid( ( Byte[] ) value ); }
 
-                    result = ( T )Convert.ChangeType( value, underlyingType );
+                    result = ( T ) Convert.ChangeType( value, underlyingType );
 
                     return true;
                 }
 
-                result = ( T )Convert.ChangeType( value, underlyingType );
+                result = ( T ) Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -403,8 +404,9 @@ namespace Librainian.Extensions {
 
                 if ( t.HasDefaultConstructor() ) { return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile(); }
 
-                return () => ( T )FormatterServices.GetUninitializedObject( t );
+                return () => ( T ) FormatterServices.GetUninitializedObject( t );
             }
+
         }
 
         /*
@@ -477,5 +479,7 @@ namespace Librainian.Extensions {
         //            }
         //    }
         //}
+
     }
+
 }

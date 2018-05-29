@@ -1,31 +1,31 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Wallet.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
 // Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
 // We are NOT responsible for Anything You Do With Our Code.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/Wallet.cs" was last formatted by Protiguous on 2018/05/24 at 7:10 PM.
+// 
+// "Librainian/Librainian/Wallet.cs" was last formatted by Protiguous on 2018/05/26 at 1:44 AM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -42,6 +42,7 @@ namespace Librainian.Financial.Containers.Wallets {
     using JetBrains.Annotations;
     using Magic;
     using Maths;
+    using Measurement.Currency;
     using Newtonsoft.Json;
     using NUnit.Framework;
 
@@ -54,6 +55,8 @@ namespace Librainian.Financial.Containers.Wallets {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Wallet : ABetterClassDispose, IEnumerable<KeyValuePair<IDenomination, UInt64>> {
+
+        public Wallet( Guid id ) => this.ID = id;
 
         /// <summary>
         ///     Count of each <see cref="IBankNote" />.
@@ -75,20 +78,22 @@ namespace Librainian.Financial.Containers.Wallets {
         [JsonProperty]
         public WalletStatistics Statistics { get; } = new WalletStatistics();
 
-        public Wallet( Guid id ) => this.ID = id;
+        public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
             if ( null == bankNote ) { return 0; }
 
             try {
                 lock ( this.BankNotes ) {
-                    if ( this.BankNotes.ContainsKey( bankNote ) ) { this.BankNotes[bankNote] += quantity; }
+                    if ( this.BankNotes.ContainsKey( bankNote ) ) { this.BankNotes[ bankNote ] += quantity; }
                     else {
                         if ( this.BankNotes.TryAdd( bankNote, quantity ) ) { }
                     }
                 }
 
-                return this.BankNotes[bankNote]; //outside of lock... is this okay?
+                return this.BankNotes[ bankNote ]; //outside of lock... is this okay?
             }
             finally { this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity; }
         }
@@ -181,13 +186,13 @@ namespace Librainian.Financial.Containers.Wallets {
 
             try {
                 lock ( this.Coins ) {
-                    if ( this.Coins.ContainsKey( coin ) ) { this.Coins[coin] += quantity; }
+                    if ( this.Coins.ContainsKey( coin ) ) { this.Coins[ coin ] += quantity; }
                     else {
                         if ( !this.Coins.TryAdd( coin, quantity ) ) { throw new WalletException( $"Unable to add {quantity} of {coin}" ); }
                     }
                 }
 
-                return this.Coins[coin];
+                return this.Coins[ coin ];
             }
             finally { this.Statistics.AllTimeDeposited += coin.FaceValue * quantity; }
         }
@@ -227,8 +232,6 @@ namespace Librainian.Financial.Containers.Wallets {
 
             return this.Coins;
         }
-
-        public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
 
         /// <summary>
         ///     Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.
@@ -295,11 +298,11 @@ namespace Librainian.Financial.Containers.Wallets {
             if ( quantity <= 0 ) { return false; }
 
             lock ( this.BankNotes ) {
-                if ( !this.BankNotes.ContainsKey( bankNote ) || this.BankNotes[bankNote] < quantity ) {
+                if ( !this.BankNotes.ContainsKey( bankNote ) || this.BankNotes[ bankNote ] < quantity ) {
                     return false; //no bills to withdraw!
                 }
 
-                this.BankNotes[bankNote] -= quantity;
+                this.BankNotes[ bankNote ] -= quantity;
 
                 return true;
             }
@@ -319,11 +322,11 @@ namespace Librainian.Financial.Containers.Wallets {
             if ( quantity <= 0 ) { return false; }
 
             lock ( this.Coins ) {
-                if ( !this.Coins.ContainsKey( coin ) || this.Coins[coin] < quantity ) {
+                if ( !this.Coins.ContainsKey( coin ) || this.Coins[ coin ] < quantity ) {
                     return false; //no coins to withdraw!
                 }
 
-                this.Coins[coin] -= quantity;
+                this.Coins[ coin ] -= quantity;
 
                 return true;
             }
@@ -356,6 +359,6 @@ namespace Librainian.Financial.Containers.Wallets {
             throw new WalletException( $"Unknown denomination {message.Denomination}" );
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
+
 }

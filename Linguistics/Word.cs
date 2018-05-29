@@ -51,7 +51,7 @@ namespace Librainian.Linguistics {
     }
 
     /// <summary>
-    ///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
+    ///     A <see cref="Word" /> is a sequence of <see cref="Char" /> .
     /// </summary>
     /// <seealso cref="Sentence"></seealso>
     [JsonObject]

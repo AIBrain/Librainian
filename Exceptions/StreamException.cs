@@ -30,6 +30,7 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using System.IO;
 
     /// <summary>
     ///     <para>Generic error when using a <see cref="Stream" />.</para>
