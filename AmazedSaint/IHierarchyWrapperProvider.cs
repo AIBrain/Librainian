@@ -1,67 +1,76 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "IHierarchyWrapperProvider.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/IHierarchyWrapperProvider.cs" was last formatted by Protiguous on 2018/05/24 at 6:57 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "IHierarchyWrapperProvider.cs" was last formatted by Protiguous on 2018/06/04 at 3:42 PM.
 
 namespace Librainian.AmazedSaint {
 
-    using System;
-    using System.Collections.Generic;
+	using System;
+	using System.Collections.Generic;
 
-    public interface IHierarchyWrapperProvider<T> {
+	public interface IHierarchyWrapperProvider<T> {
 
-        IEnumerable<KeyValuePair<String, T>> Attributes { get; }
+		Object InternalContent { get; set; }
 
-        IEnumerable<T> Elements { get; }
+		String InternalName { get; set; }
 
-        Object InternalContent { get; set; }
+		T InternalParent { get; set; }
 
-        String InternalName { get; set; }
+		Object InternalValue { get; set; }
 
-        T InternalParent { get; set; }
+		void AddAttribute( String key, T value );
 
-        Object InternalValue { get; set; }
+		void AddElement( T element );
 
-        void AddAttribute( String key, T value );
+		T Attribute( String name );
 
-        void AddElement( T element );
+		T Element( String name );
 
-        T Attribute( String name );
+		IEnumerable<KeyValuePair<String, T>> GetAttributes();
 
-        T Element( String name );
+		Object GetAttributeValue( String name );
 
-        Object GetAttributeValue( String name );
+		IEnumerable<T> GetElements();
 
-        Boolean HasAttribute( String name );
+		Boolean HasAttribute( String name );
 
-        void RemoveAttribute( String key );
+		void RemoveAttribute( String key );
 
-        void RemoveElement( T element );
+		void RemoveElement( T element );
 
-        void SetAttributeValue( String name, Object obj );
-    }
+		void SetAttributeValue( String name, Object obj );
+
+	}
+
 }

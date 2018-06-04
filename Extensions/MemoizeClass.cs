@@ -1,73 +1,82 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MemoizeClass.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/MemoizeClass.cs" was last formatted by Protiguous on 2018/05/24 at 7:08 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "MemoizeClass.cs" was last formatted by Protiguous on 2018/06/04 at 3:52 PM.
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.Collections.Concurrent;
+	using System;
+	using System.Collections.Concurrent;
 
-    public static class MemoizeClass {
+	public static class MemoizeClass {
 
-        private static Func<T, TR> CastByExample<T, TR>( Func<T, TR> f, T t ) => f;
+		private static Func<T, TR> CastByExample<T, TR>( Func<T, TR> f, T t ) => f;
 
-        //static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
-        //    return f.Tuplify().Memoize().Detuplify();
-        //}
-        private static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR> f ) {
-            var example = new { A = default( TA ), B = default( TB ) };
-            var tuplified = CastByExample( t => f( t.A, t.B ), example );
-            var memoized = tuplified.Memoize();
+		//static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
+		//    return f.Tuplify().Memoize().Detuplify();
+		//}
+		private static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR> f ) {
+			var example = new { A = default( TA ), B = default( TB ) };
+			var tuplified = CastByExample( t => f( t.A, t.B ), example );
+			var memoized = tuplified.Memoize();
 
-            return ( a, b ) => memoized( new { A = a, B = b } );
-        }
+			return ( a, b ) => memoized( new { A = a, B = b } );
+		}
 
-        public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( this Func<Tuple<TA, TB>, TR> func ) => ( a, b ) => func( Tuple.Create( a, b ) );
+		public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( this Func<Tuple<TA, TB>, TR> func ) => ( a, b ) => func( Tuple.Create( a, b ) );
 
-        public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> f ) {
-            var d = new ConcurrentDictionary<TKey, TResult>();
+		public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> f ) {
+			var d = new ConcurrentDictionary<TKey, TResult>();
 
-            return a => {
-                if ( !d.TryGetValue( a, out var value ) ) {
-                    value = f( a );
-                    d.TryAdd( a, value );
-                }
+			return a => {
+				if ( !d.TryGetValue( a, out var value ) ) {
+					value = f( a );
+					d.TryAdd( a, value );
+				}
 
-                return value;
-            };
-        }
+				return value;
+			};
+		}
 
-        //public static Func<Tuple<TA, TB>, TR> Memoize(this Func<Tuple<TA, TB>, TR> func) {
-        //    Func<Tuple<TA, TB>, TR> tuplified = t => func( t.Item1, t.Item2 );
-        //    Func<Tuple<TA, TB>, TR> memoized = tuplified.Memoize();
-        //    return (a, b) => memoized( Tuple.Create( a, b ) );
-        //}
+		//public static Func<Tuple<TA, TB>, TR> Memoize(this Func<Tuple<TA, TB>, TR> func) {
+		//    Func<Tuple<TA, TB>, TR> tuplified = t => func( t.Item1, t.Item2 );
+		//    Func<Tuple<TA, TB>, TR> memoized = tuplified.Memoize();
+		//    return (a, b) => memoized( Tuple.Create( a, b ) );
+		//}
 
-        public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( this Func<TA, TB, TR> func ) => t => func( t.Item1, t.Item2 );
-    }
+		public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( this Func<TA, TB, TR> func ) => t => func( t.Item1, t.Item2 );
+
+	}
+
 }

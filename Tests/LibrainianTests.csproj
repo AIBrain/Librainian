@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions">
-      <Version>5.3.0</Version>
+      <Version>5.3.2</Version>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
       <Version>11.1.0</Version>

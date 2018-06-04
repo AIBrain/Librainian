@@ -1,106 +1,111 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Compass.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "Compass.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/Compass.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "Compass.cs" was last formatted by Protiguous on 2018/06/04 at 4:11 PM.
 
 namespace Librainian.Measurement.Spatial {
 
-    using System;
-    using System.Runtime.Serialization;
-    using FluentAssertions;
-    using Maths;
+	using System;
+	using System.Runtime.Serialization;
+	using FluentAssertions;
+	using Maths;
 
-    /// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
-    [DataContract( IsReference = false )]
-    public class Compass {
+	/// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
+	[DataContract( IsReference = false )]
+	public class Compass {
 
-        private volatile Single _degrees;
-        public const Single Maximum = 360;
+		public Single Degrees {
+			get => this._degrees;
 
-        public const Single Minimum = 0;
+			set {
+				if ( Single.IsNaN( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
 
-        public Single Degrees {
-            get => this._degrees;
+				if ( Single.IsInfinity( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
 
-            set {
-                if ( Single.IsNaN( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
+				while ( value < Minimum ) { value += Maximum; }
 
-                if ( Single.IsInfinity( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" ); }
+				while ( value > Maximum ) { value -= Maximum; }
 
-                while ( value < Minimum ) { value += Maximum; }
+				value.Should().BeGreaterOrEqualTo( Minimum );
+				value.Should().BeLessOrEqualTo( Maximum );
 
-                while ( value > Maximum ) { value -= Maximum; }
+				this._degrees = value;
+			}
+		}
 
-                value.Should().BeGreaterOrEqualTo( Minimum );
-                value.Should().BeLessOrEqualTo( Maximum );
+		private volatile Single _degrees;
 
-                this._degrees = value;
-            }
-        }
+		public Boolean RotateLeft( Single byAmount = ( Single ) Math.PI ) {
+			if ( Single.IsNaN( byAmount ) ) { return false; }
 
-        /// <summary>
-        ///     Init with a random direction
-        /// </summary>
-        public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
+			if ( Single.IsInfinity( byAmount ) ) { return false; }
 
-        /// <summary>
-        ///     ctor with <paramref name="degrees" />.
-        /// </summary>
-        /// <param name="degrees"></param>
-        public Compass( Single degrees ) => this.Degrees = degrees;
+			//TODO would a Lerp here make turning smoother?
+			this.Degrees -= byAmount;
 
-        public Boolean RotateLeft( Single byAmount = ( Single )Math.PI ) {
-            if ( Single.IsNaN( byAmount ) ) { return false; }
+			return true;
+		}
 
-            if ( Single.IsInfinity( byAmount ) ) { return false; }
+		/// <summary>Clockwise from a top-down view.</summary>
+		/// <param name="byAmount"></param>
+		/// <returns></returns>
+		public Boolean RotateRight( Single byAmount = ( Single ) Math.PI ) {
+			if ( Single.IsNaN( byAmount ) ) { return false; }
 
-            //TODO would a Lerp here make turning smoother?
-            this.Degrees -= byAmount;
+			if ( Single.IsInfinity( byAmount ) ) { return false; }
 
-            return true;
-        }
+			//TODO would a Lerp here make turning smoother?
+			this.Degrees += byAmount;
 
-        /// <summary>Clockwise from a top-down view.</summary>
-        /// <param name="byAmount"></param>
-        /// <returns></returns>
-        public Boolean RotateRight( Single byAmount = ( Single )Math.PI ) {
-            if ( Single.IsNaN( byAmount ) ) { return false; }
+			return true;
+		}
 
-            if ( Single.IsInfinity( byAmount ) ) { return false; }
+		public const Single Maximum = 360;
 
-            //TODO would a Lerp here make turning smoother?
-            this.Degrees += byAmount;
+		public const Single Minimum = 0;
 
-            return true;
-        }
-    }
+		/// <summary>
+		///     Init with a random direction
+		/// </summary>
+		public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
+
+		/// <summary>
+		///     ctor with <paramref name="degrees" />.
+		/// </summary>
+		/// <param name="degrees"></param>
+		public Compass( Single degrees ) => this.Degrees = degrees;
+
+	}
+
 }

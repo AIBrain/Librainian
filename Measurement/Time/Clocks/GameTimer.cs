@@ -1,187 +1,192 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "GameTimer.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "GameTimer.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/GameTimer.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "GameTimer.cs" was last formatted by Protiguous on 2018/06/04 at 4:12 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
-    using System.Threading;
-    using System.Timers;
-    using Frequency;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Timer = System.Timers.Timer;
+	using System;
+	using System.Threading;
+	using System.Timers;
+	using Frequency;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Timer = System.Timers.Timer;
 
-    /// <summary>
-    ///     A timer that fires at 60fps and Reports() back.
-    /// </summary>
-    [JsonObject]
-    public class GameTimer {
+	/// <summary>
+	///     A timer that fires at 60fps and Reports() back.
+	/// </summary>
+	[JsonObject]
+	public class GameTimer {
 
-        [JsonObject]
-        public struct ReportBack {
+		public UInt64 Counter {
+			get => Thread.VolatileRead( ref this._counter );
 
-            [JsonProperty]
-            public UInt64 Counter { get; set; }
+			private set => Thread.VolatileWrite( ref this._counter, value );
+		}
 
-            [JsonProperty]
-            public TimeSpan Elapsed { get; set; }
+		/// <summary>
+		///     Time since last tick().
+		/// </summary>
+		/// <value></value>
+		public TimeSpan Elapsed {
+			get {
+				this.LastElapsed = DateTime.UtcNow - this.LastProgressReport;
 
-            [JsonProperty]
-            public Boolean RunningSlow { get; set; }
-        }
+				return this.LastElapsed;
+			}
+		}
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        private UInt64 _counter;
+		public Boolean IsPaused {
+			get => this._isPaused;
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        private volatile Boolean _isPaused;
+			private set => this._isPaused = value;
+		}
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        private TimeSpan _lastElapsed = TimeSpan.Zero;
+		/// <summary>
+		///     A copy of the most recent <see cref="Elapsed" />.
+		/// </summary>
+		public TimeSpan LastElapsed {
+			get {
+				try { return this._lastElapsed; }
+				finally { Thread.MemoryBarrier(); }
+			}
 
-        [JsonProperty]
-        private DateTime _lastUpdate = DateTime.UtcNow;
+			private set {
+				try { Thread.MemoryBarrier(); }
+				finally { this._lastElapsed = value; }
+			}
+		}
 
-        private DateTime LastProgressReport {
-            get {
-                try { return this._lastUpdate; }
-                finally { Thread.MemoryBarrier(); }
-            }
+		private DateTime LastProgressReport {
+			get {
+				try { return this._lastUpdate; }
+				finally { Thread.MemoryBarrier(); }
+			}
 
-            set {
-                try { Thread.MemoryBarrier(); }
-                finally { this._lastUpdate = value; }
-            }
-        }
+			set {
+				try { Thread.MemoryBarrier(); }
+				finally { this._lastUpdate = value; }
+			}
+		}
 
-        [NotNull]
-        private IProgress<ReportBack> Progress { get; }
+		[NotNull]
+		private IProgress<ReportBack> Progress { get; }
 
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        private Timer Timer { get; }
+		/// <summary>
+		/// </summary>
+		[NotNull]
+		private Timer Timer { get; }
 
-        private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
+		private Double UpdateRate { get; } = ( Double ) Fps.Sixty.Value;
 
-        public UInt64 Counter {
-            get => Thread.VolatileRead( ref this._counter );
+		[JsonObject]
+		public struct ReportBack {
 
-            private set => Thread.VolatileWrite( ref this._counter, value );
-        }
+			[JsonProperty]
+			public UInt64 Counter { get; set; }
 
-        /// <summary>
-        ///     Time since last tick().
-        /// </summary>
-        /// <value></value>
-        public TimeSpan Elapsed {
-            get {
-                this.LastElapsed = DateTime.UtcNow - this.LastProgressReport;
+			[JsonProperty]
+			public TimeSpan Elapsed { get; set; }
 
-                return this.LastElapsed;
-            }
-        }
+			[JsonProperty]
+			public Boolean RunningSlow { get; set; }
 
-        public Boolean IsPaused {
-            get => this._isPaused;
+		}
 
-            private set => this._isPaused = value;
-        }
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		private UInt64 _counter;
 
-        /// <summary>
-        ///     A copy of the most recent <see cref="Elapsed" />.
-        /// </summary>
-        public TimeSpan LastElapsed {
-            get {
-                try { return this._lastElapsed; }
-                finally { Thread.MemoryBarrier(); }
-            }
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		private volatile Boolean _isPaused;
 
-            private set {
-                try { Thread.MemoryBarrier(); }
-                finally { this._lastElapsed = value; }
-            }
-        }
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		private TimeSpan _lastElapsed = TimeSpan.Zero;
 
-        public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-            this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+		[JsonProperty]
+		private DateTime _lastUpdate = DateTime.UtcNow;
 
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
-            this.Timer.Elapsed += this.OnTimerElapsed;
-            this.Resume();
-        }
+		private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+			try {
+				this.Pause();
+				this.Counter++;
+				this.Progress.Report( new ReportBack { Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow() } );
+			}
+			catch ( Exception exception ) { exception.More(); }
+			finally {
+				this.LastProgressReport = DateTime.UtcNow;
+				this.Resume();
+			}
+		}
 
-        private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
-            try {
-                this.Pause();
-                this.Counter++;
-                this.Progress.Report( new ReportBack { Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow() } );
-            }
-            catch ( Exception exception ) { exception.More(); }
-            finally {
-                this.LastProgressReport = DateTime.UtcNow;
-                this.Resume();
-            }
-        }
+		public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
 
-        public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
+		public Boolean Pause() {
+			this.Timer.Stop();
+			this.IsPaused = true;
 
-        public Boolean Pause() {
-            this.Timer.Stop();
-            this.IsPaused = true;
+			return this.IsPaused;
+		}
 
-            return this.IsPaused;
-        }
+		public Boolean Resume() {
+			this.IsPaused = false;
+			this.Timer.Start();
 
-        public Boolean Resume() {
-            this.IsPaused = false;
-            this.Timer.Start();
+			return !this.IsPaused;
+		}
 
-            return !this.IsPaused;
-        }
+		/// <summary>
+		///     Total time passed since timer was started.
+		/// </summary>
+		/// <returns></returns>
+		public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
 
-        /// <summary>
-        ///     Total time passed since timer was started.
-        /// </summary>
-        /// <returns></returns>
-        public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
-    }
+		public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
+			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+
+			// ReSharper disable once UseObjectOrCollectionInitializer
+			this.Timer = new Timer( interval: this.UpdateRate ) { AutoReset = false };
+			this.Timer.Elapsed += this.OnTimerElapsed;
+			this.Resume();
+		}
+
+	}
+
 }

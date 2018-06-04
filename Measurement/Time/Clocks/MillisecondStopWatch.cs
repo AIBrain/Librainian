@@ -1,104 +1,108 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "MillisecondStopWatch.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "MillisecondStopWatch.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/MillisecondStopWatch.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "MillisecondStopWatch.cs" was last formatted by Protiguous on 2018/06/04 at 4:12 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
+	using System;
 
-    /// <summary>
-    ///     Use with WindowsCE and Silverlight which don't have Stopwatch
-    /// </summary>
-    /// <remarks>
-    ///     Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
-    /// </remarks>
-    internal class MillisecondStopWatch {
+	/// <summary>
+	///     Use with WindowsCE and Silverlight which don't have Stopwatch
+	/// </summary>
+	/// <remarks>
+	///     Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
+	/// </remarks>
+	internal class MillisecondStopWatch {
 
-        private const Decimal TicksPerMillisecond = 10000.0m;
+		/// <summary>
+		/// </summary>
+		public Span Elapsed => new Span( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
-        private UInt64 _elapsed;
+		/// <summary>
+		/// </summary>
+		public Boolean IsRunning { get; private set; }
 
-        private UInt64 _startTimeStamp;
+		private UInt64 _elapsed;
 
-        /// <summary>
-        /// </summary>
-        public Span Elapsed => new Span( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
+		private UInt64 _startTimeStamp;
 
-        /// <summary>
-        /// </summary>
-        public Boolean IsRunning { get; private set; }
+		private static UInt64 GetTimestamp() => ( UInt64 ) DateTime.UtcNow.Ticks;
 
-        public MillisecondStopWatch() => this.Reset();
+		private UInt64 GetElapsedDateTimeTicks() {
+			var elapsed = this._elapsed;
 
-        private static UInt64 GetTimestamp() => ( UInt64 )DateTime.UtcNow.Ticks;
+			if ( !this.IsRunning ) { return elapsed; }
 
-        private UInt64 GetElapsedDateTimeTicks() {
-            var elapsed = this._elapsed;
+			var ticks = GetTimestamp() - this._startTimeStamp;
+			elapsed += ticks;
 
-            if ( !this.IsRunning ) { return elapsed; }
+			return elapsed;
+		}
 
-            var ticks = GetTimestamp() - this._startTimeStamp;
-            elapsed += ticks;
+		public static MillisecondStopWatch StartNew() {
+			var stopwatch = new MillisecondStopWatch();
+			stopwatch.Start();
 
-            return elapsed;
-        }
+			return stopwatch;
+		}
 
-        public static MillisecondStopWatch StartNew() {
-            var stopwatch = new MillisecondStopWatch();
-            stopwatch.Start();
+		public void Reset() {
+			this._elapsed = 0;
+			this._startTimeStamp = 0;
+			this.IsRunning = false;
+		}
 
-            return stopwatch;
-        }
+		public void Start() {
+			if ( this.IsRunning ) { return; }
 
-        public void Reset() {
-            this._elapsed = 0;
-            this._startTimeStamp = 0;
-            this.IsRunning = false;
-        }
+			this._startTimeStamp = GetTimestamp();
+			this.IsRunning = true;
+		}
 
-        public void Start() {
-            if ( this.IsRunning ) { return; }
+		public void Stop() {
+			if ( !this.IsRunning ) { return; }
 
-            this._startTimeStamp = GetTimestamp();
-            this.IsRunning = true;
-        }
+			var ticks = GetTimestamp() - this._startTimeStamp;
+			this._elapsed += ticks;
+			this.IsRunning = false;
+		}
 
-        public void Stop() {
-            if ( !this.IsRunning ) { return; }
+		private const Decimal TicksPerMillisecond = 10000.0m;
 
-            var ticks = GetTimestamp() - this._startTimeStamp;
-            this._elapsed += ticks;
-            this.IsRunning = false;
-        }
-    }
+		public MillisecondStopWatch() => this.Reset();
+
+	}
+
 }

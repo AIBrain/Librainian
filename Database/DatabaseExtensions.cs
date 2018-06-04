@@ -1,338 +1,346 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "DatabaseExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/DatabaseExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:05 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "DatabaseExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:49 PM.
 
 namespace Librainian.Database {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SqlClient;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Management;
-    using System.Media;
-    using System.Reflection;
-    using System.ServiceProcess;
-    using System.Threading;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
-    using Parsing;
+	using System;
+	using System.Collections.Generic;
+	using System.Data;
+	using System.Data.SqlClient;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Management;
+	using System.Media;
+	using System.Reflection;
+	using System.ServiceProcess;
+	using System.Threading;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using NUnit.Framework;
+	using Parsing;
 
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    [Immutable]
-    public struct SqlServerInstance {
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	[Immutable]
+	public struct SqlServerInstance {
 
-        public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
+		public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
-        public String Edition { get; set; }
+		public String Edition { get; set; }
 
-        public String InstanceName { get; set; }
+		public String InstanceName { get; set; }
 
-        public String MachineName { get; set; }
+		public String MachineName { get; set; }
 
-        public String ServiceName { get; set; }
+		public String ServiceName { get; set; }
 
-        public String Version { get; set; }
-
-        public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
-    }
+		public String Version { get; set; }
 
-    public static class DatabaseExtensions {
+		public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
 
-        private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
+	}
 
-        private static T CreateItemFromRow<T>( [NotNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
-            if ( row is null ) { throw new ArgumentNullException( paramName: nameof( row ) ); }
+	public static class DatabaseExtensions {
 
-            if ( properties is null ) { throw new ArgumentNullException( paramName: nameof( properties ) ); }
+		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
-            //T item = new T();
-            var item = Activator.CreateInstance<T>();
+		private static T CreateItemFromRow<T>( [NotNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
+			if ( row is null ) { throw new ArgumentNullException( paramName: nameof( row ) ); }
 
-            foreach ( var property in properties ) { property.SetValue( item, row[property.Name], null ); }
+			if ( properties is null ) { throw new ArgumentNullException( paramName: nameof( properties ) ); }
 
-            return item;
-        }
+			//T item = new T();
+			var item = Activator.CreateInstance<T>();
 
-        /// <summary>
-        ///     Enumerates all SQL Server instances on the machine.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
-            const String query = "select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = \'instanceID\'";
+			foreach ( var property in properties ) { property.SetValue( item, row[ property.Name ], null ); }
 
-            foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
+			return item;
+		}
 
-                var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
+		/// <summary>
+		///     Enumerates all SQL Server instances on the machine.
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
+			const String query = "select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = \'instanceID\'";
 
-                try {
-                    if ( !getSqlEngine.Get().Count.Any() ) { yield break; }
-                }
-                catch ( ManagementException ) { yield break; }
+			foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
 
-                //Console.WriteLine( "SQL Server database instances discovered :" );
-                //Console.WriteLine( "Instance Name \t ServiceName \t Edition \t Version \t" );
-                foreach ( var o in getSqlEngine.Get() ) {
-                    if ( !( o is ManagementObject sqlEngine ) ) { continue; }
+				var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
 
-                    var serviceName = sqlEngine["ServiceName"].ToString();
-                    var instanceName = GetInstanceNameFromServiceName( serviceName );
-                    var version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" );
-                    var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
+				try {
+					if ( !getSqlEngine.Get().Count.Any() ) { yield break; }
+				}
+				catch ( ManagementException ) { yield break; }
 
-                    yield return new SqlServerInstance { InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName };
-                }
-            }
-        }
+				//Console.WriteLine( "SQL Server database instances discovered :" );
+				//Console.WriteLine( "Instance Name \t ServiceName \t Edition \t Version \t" );
+				foreach ( var o in getSqlEngine.Get() ) {
+					if ( !( o is ManagementObject sqlEngine ) ) { continue; }
 
-        /// <summary>
-        ///     Method returns the correct SQL namespace to use to detect SQL Server instances.
-        /// </summary>
-        /// <returns>namespace to use to detect SQL Server instances</returns>
-        [ItemNotNull]
-        public static IEnumerable<String> GetCorrectWmiNameSpaces() {
-            const String root = "root\\Microsoft\\sqlserver";
-            var namespaces = new List<String>();
+					var serviceName = sqlEngine[ "ServiceName" ].ToString();
+					var instanceName = GetInstanceNameFromServiceName( serviceName );
+					var version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" );
+					var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
 
-            try {
+					yield return new SqlServerInstance { InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName };
+				}
+			}
+		}
 
-                // Enumerate all WMI instances of __namespace WMI class.
-                var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
-                namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"].ToString() ) );
-            }
-            catch ( ManagementException exception ) { exception.More(); }
+		/// <summary>
+		///     Method returns the correct SQL namespace to use to detect SQL Server instances.
+		/// </summary>
+		/// <returns>namespace to use to detect SQL Server instances</returns>
+		[ItemNotNull]
+		public static IEnumerable<String> GetCorrectWmiNameSpaces() {
+			const String root = "root\\Microsoft\\sqlserver";
+			var namespaces = new List<String>();
 
-            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) { yield return root + "\\" + ns; }
-        }
+			try {
 
-        /// <summary>
-        ///     method extracts the instance name from the service name
-        /// </summary>
-        /// <param name="serviceName"></param>
-        /// <returns></returns>
-        public static String GetInstanceNameFromServiceName( String serviceName ) {
-            if ( String.IsNullOrEmpty( serviceName ) ) { return String.Empty; }
+				// Enumerate all WMI instances of __namespace WMI class.
+				var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
+				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ].ToString() ) );
+			}
+			catch ( ManagementException exception ) { exception.More(); }
 
-            if ( serviceName.Like( "MSSQLSERVER" ) ) { return serviceName; }
+			foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) { yield return root + "\\" + ns; }
+		}
 
-            return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
-        }
+		/// <summary>
+		///     method extracts the instance name from the service name
+		/// </summary>
+		/// <param name="serviceName"></param>
+		/// <returns></returns>
+		public static String GetInstanceNameFromServiceName( String serviceName ) {
+			if ( String.IsNullOrEmpty( serviceName ) ) { return String.Empty; }
 
-        public static IList<PropertyInfo> GetPropertiesForType<T>() {
-            var type = typeof( T );
+			if ( serviceName.Like( "MSSQLSERVER" ) ) { return serviceName; }
 
-            if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) { TypeDictionary.Add( type, type.GetProperties().ToList() ); }
+			return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
+		}
 
-            return TypeDictionary[type];
-        }
+		public static IList<PropertyInfo> GetPropertiesForType<T>() {
+			var type = typeof( T );
 
-        /// <summary>
-        ///     Returns the WMI property value for a given property name for a particular SQL Server service Name
-        /// </summary>
-        /// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
-        /// <param name="wmiNamespace">The wmi namespace to connect to</param>
-        /// <param name="propertyName">The property name whose value is required</param>
-        /// <returns></returns>
-        public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
-            if ( serviceName is null ) { throw new ArgumentNullException( nameof( serviceName ) ); }
+			if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) { TypeDictionary.Add( type, type.GetProperties().ToList() ); }
 
-            if ( wmiNamespace is null ) { throw new ArgumentNullException( nameof( wmiNamespace ) ); }
-
-            if ( propertyName is null ) { throw new ArgumentNullException( nameof( propertyName ) ); }
+			return TypeDictionary[ type ];
+		}
 
-            var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
-            var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
-
-            foreach ( var o in propertySearcher.Get() ) {
-                if ( o is ManagementObject managementObject ) { return managementObject["PropertyStrValue"].ToString(); }
-            }
-
-            return String.Empty;
-        }
-
-        [Test]
-        public static void ListInstances() {
-            foreach ( var instance in EnumerateSqlInstances() ) { Console.WriteLine( instance ); }
-        }
-
-        public static void StartSqlBrowserService( IEnumerable<String> activeMachines ) {
-            var myService = new ServiceController { ServiceName = "SQLBrowser" };
-
-            foreach ( var machine in activeMachines ) {
-                try {
-                    myService.MachineName = machine;
-                    var svcStatus = myService.Status.ToString();
-
-                    switch ( svcStatus ) {
-                        case "ContinuePending":
-                            Console.WriteLine( "Service is attempting to continue." );
-
-                            break;
-
-                        case "Paused":
-                            Console.WriteLine( "Service is paused." );
-                            Console.WriteLine( "Attempting to continue the service." );
-                            myService.Continue();
-
-                            break;
-
-                        case "PausePending":
-                            Console.WriteLine( "Service is pausing." );
-                            Thread.Sleep( 1000 );
-
-                            try {
-                                Console.WriteLine( "Attempting to continue the service." );
-                                myService.Start();
-                            }
-                            catch ( Exception e ) { Console.WriteLine( e.Message ); }
-
-                            break;
+		/// <summary>
+		///     Returns the WMI property value for a given property name for a particular SQL Server service Name
+		/// </summary>
+		/// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
+		/// <param name="wmiNamespace">The wmi namespace to connect to</param>
+		/// <param name="propertyName">The property name whose value is required</param>
+		/// <returns></returns>
+		public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
+			if ( serviceName is null ) { throw new ArgumentNullException( nameof( serviceName ) ); }
 
-                        case "Running":
-                            Console.WriteLine( "Service is already running." );
-
-                            break;
+			if ( wmiNamespace is null ) { throw new ArgumentNullException( nameof( wmiNamespace ) ); }
+
+			if ( propertyName is null ) { throw new ArgumentNullException( nameof( propertyName ) ); }
 
-                        case "StartPending":
-                            Console.WriteLine( "Service is starting." );
-
-                            break;
-
-                        case "Stopped":
-                            Console.WriteLine( "Service is stopped." );
-                            Console.WriteLine( "Attempting to start service." );
-                            myService.Start();
+			var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
+			var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
+
+			foreach ( var o in propertySearcher.Get() ) {
+				if ( o is ManagementObject managementObject ) { return managementObject[ "PropertyStrValue" ].ToString(); }
+			}
+
+			return String.Empty;
+		}
+
+		[Test]
+		public static void ListInstances() {
+			foreach ( var instance in EnumerateSqlInstances() ) { Console.WriteLine( instance ); }
+		}
+
+		public static void StartSqlBrowserService( IEnumerable<String> activeMachines ) {
+			var myService = new ServiceController { ServiceName = "SQLBrowser" };
+
+			foreach ( var machine in activeMachines ) {
+				try {
+					myService.MachineName = machine;
+					var svcStatus = myService.Status.ToString();
+
+					switch ( svcStatus ) {
+						case "ContinuePending":
+							Console.WriteLine( "Service is attempting to continue." );
+
+							break;
+
+						case "Paused":
+							Console.WriteLine( "Service is paused." );
+							Console.WriteLine( "Attempting to continue the service." );
+							myService.Continue();
+
+							break;
+
+						case "PausePending":
+							Console.WriteLine( "Service is pausing." );
+							Thread.Sleep( 1000 );
+
+							try {
+								Console.WriteLine( "Attempting to continue the service." );
+								myService.Start();
+							}
+							catch ( Exception e ) { Console.WriteLine( e.Message ); }
+
+							break;
 
-                            break;
+						case "Running":
+							Console.WriteLine( "Service is already running." );
+
+							break;
+
+						case "StartPending":
+							Console.WriteLine( "Service is starting." );
+
+							break;
+
+						case "Stopped":
+							Console.WriteLine( "Service is stopped." );
+							Console.WriteLine( "Attempting to start service." );
+							myService.Start();
 
-                        case "StopPending":
-                            Console.WriteLine( "Service is stopping." );
-                            Thread.Sleep( 1000 );
+							break;
 
-                            try {
-                                Console.WriteLine( "Attempting to restart service." );
-                                myService.Start();
-                            }
-                            catch ( Exception e ) { Console.WriteLine( e.Message ); }
+						case "StopPending":
+							Console.WriteLine( "Service is stopping." );
+							Thread.Sleep( 1000 );
 
-                            break;
-                    }
-                }
-                catch ( Exception e ) { Console.WriteLine( e.Message ); }
-            }
-        }
+							try {
+								Console.WriteLine( "Attempting to restart service." );
+								myService.Start();
+							}
+							catch ( Exception e ) { Console.WriteLine( e.Message ); }
 
-        /// <summary>
-        ///     Convert our IList to a DataSet
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns>DataSet</returns>
-        /// <copyright>
-        ///     Based from http://codereview.stackexchange.com/q/40891
-        /// </copyright>
-        public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
-            var ds = new DataSet();
-            ds.Tables.Add( list.ToDataTable() );
+							break;
+					}
+				}
+				catch ( Exception e ) { Console.WriteLine( e.Message ); }
+			}
+		}
 
-            return ds;
-        }
+		/// <summary>
+		///     Convert our IList to a DataSet
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns>DataSet</returns>
+		/// <copyright>
+		///     Based from http://codereview.stackexchange.com/q/40891
+		/// </copyright>
+		public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
+			var ds = new DataSet();
+			ds.Tables.Add( list.ToDataTable() );
 
-        /// <summary>
-        ///     <para>Warning: Untested and buggy.</para>
-        ///     Convert our IList to a DataTable
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns>DataTable</returns>
-        /// <copyright>
-        ///     Based from http://codereview.stackexchange.com/q/40891
-        /// </copyright>
-        public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
-            var elementType = typeof( T );
+			return ds;
+		}
 
-            var t = new DataTable();
+		/// <summary>
+		///     <para>Warning: Untested and buggy.</para>
+		///     Convert our IList to a DataTable
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns>DataTable</returns>
+		/// <copyright>
+		///     Based from http://codereview.stackexchange.com/q/40891
+		/// </copyright>
+		public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
+			var elementType = typeof( T );
 
-            var properties = elementType.GetProperties();
+			var t = new DataTable();
 
-            foreach ( var propInfo in properties ) {
-                var propertyType = propInfo.PropertyType;
-                var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
-                t.Columns.Add( propInfo.Name, colType );
-            }
+			var properties = elementType.GetProperties();
 
-            foreach ( var item in list ) {
-                foreach ( var propInfo in properties ) {
-                    var newRow = t.NewRow();
+			foreach ( var propInfo in properties ) {
+				var propertyType = propInfo.PropertyType;
+				var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
+				t.Columns.Add( propInfo.Name, colType );
+			}
 
-                    // try { var ival = propInfo.GetValue( item );
-                    newRow[propInfo.Name] = item; // DBNull.Value; //ival ??
+			foreach ( var item in list ) {
+				foreach ( var propInfo in properties ) {
+					var newRow = t.NewRow();
 
-                    // } catch ( Exception exception) { Debug.WriteLine( exception.Message ); }
-                    t.Rows.Add( newRow );
-                }
-            }
+					// try { var ival = propInfo.GetValue( item );
+					newRow[ propInfo.Name ] = item; // DBNull.Value; //ival ??
 
-            return t;
-        }
+					// } catch ( Exception exception) { Debug.WriteLine( exception.Message ); }
+					t.Rows.Add( newRow );
+				}
+			}
 
-        public static DataTable ToDataTable( this SqlDataReader dataReader ) {
-            var table = new DataTable();
-            table.BeginLoadData();
+			return t;
+		}
 
-            if ( dataReader != null ) { table.Load( dataReader, LoadOption.OverwriteChanges ); }
+		public static DataTable ToDataTable( this SqlDataReader dataReader ) {
+			var table = new DataTable();
+			table.BeginLoadData();
 
-            table.EndLoadData();
+			if ( dataReader != null ) { table.Load( dataReader, LoadOption.OverwriteChanges ); }
 
-            return table;
-        }
+			table.EndLoadData();
 
-        public static IEnumerable<T> ToList<T>( this DataTable table ) {
-            var properties = GetPropertiesForType<T>();
-            IList<T> result = new List<T>();
+			return table;
+		}
 
-            foreach ( var row in table.Rows ) {
-                var item = CreateItemFromRow<T>( row as DataRow, properties );
-                result.Add( item );
-            }
+		public static IEnumerable<T> ToList<T>( this DataTable table ) {
+			var properties = GetPropertiesForType<T>();
+			IList<T> result = new List<T>();
 
-            return result;
-        }
+			foreach ( var row in table.Rows ) {
+				var item = CreateItemFromRow<T>( row as DataRow, properties );
+				result.Add( item );
+			}
 
-        public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) => new SqlParameter( parameterName, value ) { Value = value };
+			return result;
+		}
 
-        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
+		public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) => new SqlParameter( parameterName, value ) { Value = value };
 
-        /*
+		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
+
+		/*
                 private static List<T> MapList<T>( DataTable dt ) {
                     List<T> list = new List<T>();
 
@@ -349,7 +357,7 @@ namespace Librainian.Database {
                     return list;
                 }
         */
-        /*
+		/*
 
                 /// <summary>
                 /// <para>"Attempting below to get a fluent Object to DTO builder - which fails when a property is missed."</para>
@@ -398,7 +406,7 @@ namespace Librainian.Database {
                 }
         */
 
-        /*
+		/*
 
                 /// <summary>
                 /// Returns the total time taken for a simple query. (connect + execute + fetch...)
@@ -434,18 +442,18 @@ namespace Librainian.Database {
                 }
         */
 
-        public static void TryPlayFile( this String fileName ) {
-            try {
-                using ( var player = new SoundPlayer() ) {
-                    player.SoundLocation = fileName;
-                    player.Load();
-                    player.Play();
-                }
-            }
-            catch ( Exception exception ) { exception.More(); }
-        }
+		public static void TryPlayFile( this String fileName ) {
+			try {
+				using ( var player = new SoundPlayer() ) {
+					player.SoundLocation = fileName;
+					player.Load();
+					player.Play();
+				}
+			}
+			catch ( Exception exception ) { exception.More(); }
+		}
 
-        /*
+		/*
                 [Obsolete( "No access to a local Server atm." )]
                 public static TimeSpan PingAverage() {
                     var stopwatch = Stopwatch.StartNew();
@@ -461,7 +469,7 @@ namespace Librainian.Database {
                 }
         */
 
-        /*
+		/*
 
                 /// <summary>
                 /// Returns the total time taken for a simple query. (connect + execute + fetch...)
@@ -495,5 +503,7 @@ namespace Librainian.Database {
                     return stopwatch.Elapsed;
                 }
         */
-    }
+
+	}
+
 }

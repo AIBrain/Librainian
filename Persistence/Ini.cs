@@ -1,306 +1,315 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Ini.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/Ini.cs" was last formatted by Protiguous on 2018/05/24 at 7:31 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "Ini.cs" was last formatted by Protiguous on 2018/06/04 at 4:22 PM.
 
 namespace Librainian.Persistence {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using ComputerSystems.FileSystem;
-    using JetBrains.Annotations;
-    using Measurement.Time;
-    using Newtonsoft.Json;
-    using Threading;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
+	using Measurement.Time;
+	using Newtonsoft.Json;
+	using Threading;
 
-    /// <summary>
-    ///     Persist <see cref="Section" /> to and from a JSON formatted text <see cref="Document" />.
-    /// </summary>
-    [JsonObject]
-    public class Ini : IEquatable<Ini> {
+	/// <summary>
+	///     Persist <see cref="Section" /> to and from a JSON formatted text <see cref="Document" />.
+	/// </summary>
+	[JsonObject]
+	public class Ini : IEquatable<Ini> {
 
-        /// <summary>
-        ///     [Header] <see cref="Environment.NewLine" /> Key=Value <see cref="Environment.NewLine" />
-        /// </summary>
-        [JsonProperty]
-        [NotNull]
-        private ConcurrentDictionary<String, Section> Data { get; } = new ConcurrentDictionary<String, Section>();
+		/// <summary>
+		///     Indicates whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
+		public Boolean Equals( Ini other ) => Equals( this, other );
 
-        //private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, ReferenceLoopHandling = ReferenceLoopHandling.Serialize };
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        [CanBeNull]
-        public Document Document { get; set; }
+		//private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, ReferenceLoopHandling = ReferenceLoopHandling.Serialize };
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		[CanBeNull]
+		public Document Document { get; set; }
 
-        [JsonProperty]
-        public Guid ID { get; }
+		[JsonProperty]
+		public Guid ID { get; }
 
-        public IReadOnlyList<Section> Sections => this.Data.Values as IReadOnlyList<Section>;
+		/// <summary>
+		/// </summary>
+		/// <param name="section"></param>
+		/// <param name="key">    </param>
+		/// <returns></returns>
+		public String this[ String section, String key ] {
+			[DebuggerStepThrough]
+			[CanBeNull]
+			get {
+				if ( section is null ) { return null; }
 
-        public Ini( Guid id ) => this.ID = id;
+				if ( key is null ) { return null; }
 
-        public Ini() => this.ID = Guid.NewGuid();
+				return this.Data[ section ]?[ key ];
+			}
 
-        /// <summary>
-        ///     Persist a document to and from a JSON formatted text document.
-        /// </summary>
-        /// <param name="document">          </param>
-        /// <param name="cancellationSource"></param>
-        public Ini( [NotNull] Document document, CancellationTokenSource cancellationSource = null ) {
-            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+			[DebuggerStepThrough]
+			set {
+				if ( section is null ) { return; }
 
-            if ( !this.Document.Folder.Exists() ) { this.Document.Folder.Create(); }
+				if ( key is null ) { return; }
 
-            if ( cancellationSource is null ) { cancellationSource = new CancellationTokenSource( delay: Seconds.Ten ); }
+				if ( this.Data.TryGetValue( section, out var result ) ) { result[ key ] = value; }
+				else {
 
-            this.Reload().Wait( cancellationToken: cancellationSource.Token );
-        }
+					//is this threadsafe? another thread could pop in between the TryGetValue() above, and the Add() here.
+					this.Add( section, key, value );
+				}
+			}
+		}
 
-        /// <summary>
-        /// </summary>
-        /// <param name="section"></param>
-        /// <param name="key">    </param>
-        /// <returns></returns>
-        public String this[String section, String key] {
-            [DebuggerStepThrough]
-            [CanBeNull]
-            get {
-                if ( section is null ) { return null; }
+		public IReadOnlyList<Section> Sections => this.Data.Values as IReadOnlyList<Section>;
 
-                if ( key is null ) { return null; }
+		/// <summary>
+		///     [Header] <see cref="Environment.NewLine" /> Key=Value <see cref="Environment.NewLine" />
+		/// </summary>
+		[JsonProperty]
+		[NotNull]
+		private ConcurrentDictionary<String, Section> Data { get; } = new ConcurrentDictionary<String, Section>();
 
-                return this.Data[section]?[key];
-            }
+		/// <summary>
+		///     Add the <paramref name="value" /> to the <see cref="Section" /> under the key
+		/// </summary>
+		/// <param name="section"></param>
+		/// <param name="key">    </param>
+		/// <param name="value">  </param>
+		/// <returns></returns>
+		private Boolean Add( [NotNull] String section, [NotNull] String key, String value ) {
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
-            [DebuggerStepThrough]
-            set {
-                if ( section is null ) { return; }
+			if ( key is null ) { throw new ArgumentNullException( nameof( key ) ); }
 
-                if ( key is null ) { return; }
+			if ( this.Data.TryGetValue( section, out var result ) ) { result[ key ] = value; }
+			else { this.Data[ section ] = new Section { [ key ] = value }; }
 
-                if ( this.Data.TryGetValue( section, out var result ) ) { result[key] = value; }
-                else {
+			return true;
+		}
 
-                    //is this threadsafe? another thread could pop in between the TryGetValue() above, and the Add() here.
-                    this.Add( section, key, value );
-                }
-            }
-        }
+		/// <summary>
+		///     static comparison.
+		/// </summary>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static Boolean Equals( Ini left, Ini right ) {
+			if ( ReferenceEquals( left, right ) ) { return true; }
 
-        /// <summary>
-        ///     Add the <paramref name="value" /> to the <see cref="Section" /> under the key
-        /// </summary>
-        /// <param name="section"></param>
-        /// <param name="key">    </param>
-        /// <param name="value">  </param>
-        /// <returns></returns>
-        private Boolean Add( [NotNull] String section, [NotNull] String key, String value ) {
-            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+			if ( ReferenceEquals( left, default ) || ReferenceEquals( default, right ) ) { return false; }
 
-            if ( key is null ) { throw new ArgumentNullException( nameof( key ) ); }
+			return left.ID.Equals( right.ID );
+		}
 
-            if ( this.Data.TryGetValue( section, out var result ) ) { result[key] = value; }
-            else { this.Data[section] = new Section { [key] = value }; }
+		/// <summary>
+		///     Returns a value that indicates whether two <see cref="T:Librainian.Persistence.Ini" /> objects have different
+		///     values.
+		/// </summary>
+		/// <param name="left"> The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+		public static Boolean operator !=( Ini left, Ini right ) => !Equals( left, right );
 
-            return true;
-        }
+		/// <summary>
+		///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Persistence.Ini" /> objects are
+		///     equal.
+		/// </summary>
+		/// <param name="left"> The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>
+		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+		///     false.
+		/// </returns>
+		public static Boolean operator ==( Ini left, Ini right ) => Equals( left, right );
 
-        /// <summary>
-        ///     static comparison.
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( Ini left, Ini right ) {
-            if ( ReferenceEquals( left, right ) ) { return true; }
+		/// <summary>
+		///     <para>Add in all of the sections, and key-value-pairs from the <see cref="IniFile" />.</para>
+		///     <para>Performs a file save.</para>
+		/// </summary>
+		/// <param name="iniFile"></param>
+		/// <returns></returns>
+		public Boolean Add( IniFile iniFile ) {
+			if ( null == iniFile ) { return false; }
 
-            if ( ReferenceEquals( left, default ) || ReferenceEquals( default, right ) ) { return false; }
+			Parallel.ForEach( source: iniFile.Sections.AsParallel(), body: section => {
+				var dictionary = iniFile[ section: section ];
 
-            return left.ID.Equals( right.ID );
-        }
+				if ( dictionary != null ) { Parallel.ForEach( source: dictionary.AsParallel(), body: pair => this.Add( section: section, pair.Key, pair.Value ) ); }
+			} );
 
-        /// <summary>
-        ///     Returns a value that indicates whether two <see cref="T:Librainian.Persistence.Ini" /> objects have different
-        ///     values.
-        /// </summary>
-        /// <param name="left"> The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( Ini left, Ini right ) => !Equals( left, right );
+			return true;
+		}
 
-        /// <summary>
-        ///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Persistence.Ini" /> objects are
-        ///     equal.
-        /// </summary>
-        /// <param name="left"> The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns>
-        ///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-        ///     false.
-        /// </returns>
-        public static Boolean operator ==( Ini left, Ini right ) => Equals( left, right );
+		/// <summary>
+		///     Removes all data from all sections.
+		/// </summary>
+		/// <returns></returns>
+		public Boolean Clear() {
+			Parallel.ForEach( source: this.Data.Keys, body: section => this.TryRemove( section: section ) );
 
-        /// <summary>
-        ///     <para>Add in all of the sections, and key-value-pairs from the <see cref="IniFile" />.</para>
-        ///     <para>Performs a file save.</para>
-        /// </summary>
-        /// <param name="iniFile"></param>
-        /// <returns></returns>
-        public Boolean Add( IniFile iniFile ) {
-            if ( null == iniFile ) { return false; }
+			return !this.Data.Keys.Any();
+		}
 
-            Parallel.ForEach( source: iniFile.Sections.AsParallel(), body: section => {
-                var dictionary = iniFile[section: section];
+		/// <summary>
+		///     Determines whether the specified object is equal to the current object.
+		/// </summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns>
+		///     <see langword="true" /> if the specified object is equal to the current object; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
+		public override Boolean Equals( Object obj ) => Equals( this, obj as Ini );
 
-                if ( dictionary != null ) { Parallel.ForEach( source: dictionary.AsParallel(), body: pair => this.Add( section: section, pair.Key, pair.Value ) ); }
-            } );
+		/// <summary>
+		///     Serves as the default hash function.
+		/// </summary>
+		/// <returns>A hash code for the current object.</returns>
+		public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-            return true;
-        }
+		public Task<Boolean> Reload( CancellationToken cancellationToken = default ) {
+			var document = this.Document;
 
-        /// <summary>
-        ///     Removes all data from all sections.
-        /// </summary>
-        /// <returns></returns>
-        public Boolean Clear() {
-            Parallel.ForEach( source: this.Data.Keys, body: section => this.TryRemove( section: section ) );
+			return Task.Run( function: () => {
 
-            return !this.Data.Keys.Any();
-        }
+				if ( document?.Exists() != true ) { return false; }
 
-        /// <summary>
-        ///     Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>
-        ///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
-        ///     <see langword="false" />.
-        /// </returns>
-        public Boolean Equals( Ini other ) => Equals( this, other );
+				try {
+					var data = document.LoadJSON<ConcurrentDictionary<String, Section>>();
 
-        /// <summary>
-        ///     Determines whether the specified object is equal to the current object.
-        /// </summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>
-        ///     <see langword="true" /> if the specified object is equal to the current object; otherwise,
-        ///     <see langword="false" />.
-        /// </returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Ini );
+					if ( data is null ) { return false; }
 
-        /// <summary>
-        ///     Serves as the default hash function.
-        /// </summary>
-        /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this.Data.GetHashCode();
+					var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
+						body: section => Parallel.ForEach( source: data[ section ].Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
+							body: key => this.Add( section: section, key, data[ section ][ key ] ) ) );
 
-        public Task<Boolean> Reload( CancellationToken cancellationToken = default ) {
-            var document = this.Document;
+					return result.IsCompleted;
+				}
+				catch ( JsonException exception ) { exception.More(); }
+				catch ( IOException exception ) {
 
-            return Task.Run( function: () => {
+					//file in use by another app
+					exception.More();
+				}
+				catch ( OutOfMemoryException exception ) {
 
-                if ( document?.Exists() != true ) { return false; }
+					//file is huge. too huge!
+					exception.More();
+				}
 
-                try {
-                    var data = document.LoadJSON<ConcurrentDictionary<String, Section>>();
+				return false;
+			}, cancellationToken: cancellationToken );
+		}
 
-                    if ( data is null ) { return false; }
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>A string that represents the current object.</returns>
+		public override String ToString() => $"{this.Sections.Count()} sections, {this.Data.Keys.Count} keys";
 
-                    var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
-                        body: section => Parallel.ForEach( source: data[section].Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
-                            body: key => this.Add( section: section, key, data[section][key] ) ) );
+		[DebuggerStepThrough]
+		public Boolean TryRemove( String section ) {
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
-                    return result.IsCompleted;
-                }
-                catch ( JsonException exception ) { exception.More(); }
-                catch ( IOException exception ) {
+			return this.Data.TryRemove( section, out _ );
+		}
 
-                    //file in use by another app
-                    exception.More();
-                }
-                catch ( OutOfMemoryException exception ) {
+		[DebuggerStepThrough]
+		public Boolean TryRemove( String section, String key ) {
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
-                    //file is huge. too huge!
-                    exception.More();
-                }
+			if ( !this.Data.ContainsKey( section ) ) { return false; }
 
-                return false;
-            }, cancellationToken: cancellationToken );
-        }
+			if ( !this.Data[ section ].Keys.Contains( key ) ) { return false; }
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.Sections.Count()} sections, {this.Data.Keys.Count} keys";
+			this.Data[ section ][ key ] = null;
 
-        [DebuggerStepThrough]
-        public Boolean TryRemove( String section ) {
-            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+			return true;
+		}
 
-            return this.Data.TryRemove( section, out _ );
-        }
+		/// <summary>
+		///     Saves the <see cref="Data" /> to the <see cref="Document" />.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		[NotNull]
+		public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
+			var document = this.Document;
 
-        [DebuggerStepThrough]
-        public Boolean TryRemove( String section, String key ) {
-            if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+			return Task.Run( function: () => {
+				if ( document is null ) { return false; }
 
-            if ( !this.Data.ContainsKey( section ) ) { return false; }
+				if ( document.Exists() ) { document.Delete(); }
 
-            if ( !this.Data[section].Keys.Contains( key ) ) { return false; }
+				return this.Data.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
+			}, cancellationToken: cancellationToken );
+		}
 
-            this.Data[section][key] = null;
+		public Ini( Guid id ) => this.ID = id;
 
-            return true;
-        }
+		public Ini() => this.ID = Guid.NewGuid();
 
-        /// <summary>
-        ///     Saves the <see cref="Data" /> to the <see cref="Document" />.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [NotNull]
-        public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
-            var document = this.Document;
+		/// <summary>
+		///     Persist a document to and from a JSON formatted text document.
+		/// </summary>
+		/// <param name="document">          </param>
+		/// <param name="cancellationSource"></param>
+		public Ini( [NotNull] Document document, CancellationTokenSource cancellationSource = null ) {
+			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-            return Task.Run( function: () => {
-                if ( document is null ) { return false; }
+			if ( !this.Document.Folder.Exists() ) { this.Document.Folder.Create(); }
 
-                if ( document.Exists() ) { document.Delete(); }
+			if ( cancellationSource is null ) { cancellationSource = new CancellationTokenSource( delay: Seconds.Ten ); }
 
-                return this.Data.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
-            }, cancellationToken: cancellationToken );
-        }
-    }
+			this.Reload().Wait( cancellationToken: cancellationSource.Token );
+		}
+
+	}
+
 }

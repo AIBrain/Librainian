@@ -1,51 +1,53 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous.
-// All Rights Reserved.
-//
-// This ENTIRE copyright notice and file header MUST BE KEPT
-// VISIBLE in any source code derived from or used from our
-// libraries and projects.
-//
+﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "StopWatch.cs" belongs to Rick@AIBrain.org and
+// Protiguous@Protiguous.com unless otherwise specified or the original license has
+// been overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// Donations, royalties from any software that uses any of our code, or license fees can be paid
+// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// 
 // =========================================================
-// This section of source code, "StopWatch.cs",
-// belongs to Rick@AIBrain.org and Protiguous@Protiguous.com
-// unless otherwise specified OR the original license has been
-// overwritten by the automatic formatting.
-//
-// (We try to avoid that from happening, but it does happen.)
-//
-// Any unmodified portions of source code gleaned from other
-// projects still retain their original license and our thanks
-// goes to those Authors.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
-// Donations (more please!), royalties from any software that
-// uses any of our code, and license fees can be paid to us via
-// bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
-// =========================================================
-// Usage of the source code or compiled binaries is AS-IS.
-// No warranties are expressed or implied.
-// I am NOT responsible for Anything You Do With Our Code.
-// =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-//
-// "Librainian/Librainian/StopWatch.cs" was last cleaned by Protiguous on 2018/05/15 at 10:47 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "StopWatch.cs" was last formatted by Protiguous on 2018/06/04 at 4:16 PM.
 
 namespace Librainian.Measurement.Time {
 
-    using System;
-    using System.Diagnostics;
-    using System.Threading;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
+	using System;
+	using System.Diagnostics;
+	using System.Threading;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
 
-    // ==++==
-    //
-    // Copyright (c) Microsoft Corporation. All rights reserved.
-    //
-    // ==--==
-    /*============================================================
+	// ==++==
+	//
+	// Copyright (c) Microsoft Corporation. All rights reserved.
+	//
+	// ==--==
+	/*============================================================
     **
     ** Class:  Stopwatch
     **
@@ -55,138 +57,140 @@ namespace Librainian.Measurement.Time {
     **
     ===========================================================*/
 
-    /// <summary>
-    ///     Pulled from Microsoft's Stopwatch() source. Wanted to see how it works.
-    ///     Made my changes to it. Needs some unit tests.
-    /// </summary>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
+	/// <summary>
+	///     Pulled from Microsoft's Stopwatch() source. Wanted to see how it works.
+	///     Made my changes to it. Needs some unit tests.
+	/// </summary>
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
 
-        [JsonProperty]
-        private Int64 _endTimeStamp;
+		/// <summary>
+		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+		///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+		/// </summary>
+		/// <returns>
+		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+		///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
+		///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
+		///     <paramref name="other" /> in the sort order.
+		/// </returns>
+		/// <param name="other">An object to compare with this instance. </param>
+		public Int32 CompareTo( StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
 
-        [JsonProperty]
-        private volatile Boolean _isRunning;
+		/// <summary>
+		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+		///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+		/// </summary>
+		/// <returns>
+		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+		///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
+		///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
+		///     <paramref name="other" /> in the sort order.
+		/// </returns>
+		/// <param name="other">An object to compare with this instance. </param>
+		public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
-        [JsonProperty]
-        private Int64 _startTimeStamp;
+		public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
-        public const Int64 TicksPerMicrosecond = 10;
+		public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
-        public const Int64 TicksPerMillisecond = 10000;
+		public Int64 ElapsedMilliseconds => this.GetElapsedTicks() / TicksPerMillisecond;
 
-        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+		public Int64 ElapsedTicks => this.GetElapsedTicks();
 
-        public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
+		public Int64 EndTimeStamp {
+			get => Interlocked.Read( ref this._endTimeStamp );
 
-        public Int64 ElapsedMilliseconds => this.GetElapsedTicks() / TicksPerMillisecond;
+			private set => Interlocked.Exchange( ref this._endTimeStamp, value );
+		}
 
-        public Int64 ElapsedTicks => this.GetElapsedTicks();
+		public Boolean IsRunning {
+			get => this._isRunning;
 
-        public Int64 EndTimeStamp {
-            get => Interlocked.Read( ref this._endTimeStamp );
+			private set => this._isRunning = value;
+		}
 
-            private set => Interlocked.Exchange( ref this._endTimeStamp, value );
-        }
+		public Int64 StartTimeStamp {
+			get => Interlocked.Read( ref this._startTimeStamp );
 
-        public Boolean IsRunning {
-            get => this._isRunning;
+			private set => Interlocked.Exchange( ref this._startTimeStamp, value );
+		}
 
-            private set => this._isRunning = value;
-        }
+		[JsonProperty]
+		private Int64 _endTimeStamp;
 
-        public Int64 StartTimeStamp {
-            get => Interlocked.Read( ref this._startTimeStamp );
+		[JsonProperty]
+		private volatile Boolean _isRunning;
 
-            private set => Interlocked.Exchange( ref this._startTimeStamp, value );
-        }
+		[JsonProperty]
+		private Int64 _startTimeStamp;
 
-        public StopWatch() => this.Reset();
+		[Pure]
+		private Int64 GetElapsedTicks() {
+			if ( this.IsRunning ) { return DateTime.UtcNow.Ticks - this.StartTimeStamp; }
 
-        [Pure]
-        private Int64 GetElapsedTicks() {
-            if ( this.IsRunning ) { return DateTime.UtcNow.Ticks - this.StartTimeStamp; }
+			return this.EndTimeStamp - this.StartTimeStamp;
+		}
 
-            return this.EndTimeStamp - this.StartTimeStamp;
-        }
+		public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
 
-        public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
+		public static StopWatch StartNew() {
+			var stopWatch = new StopWatch();
+			stopWatch.Start();
 
-        public static StopWatch StartNew() {
-            var stopWatch = new StopWatch();
-            stopWatch.Start();
+			return stopWatch;
+		}
 
-            return stopWatch;
-        }
+		public void Pause() => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
-        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
-        ///     <paramref name="other" /> in the sort order.
-        /// </returns>
-        /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
+		/// <summary>
+		///     Stops the stopwatch and resets all the values to default.
+		/// </summary>
+		public void Reset() {
+			this.IsRunning = false;
+			this.StartTimeStamp = 0;
+			this.EndTimeStamp = 0;
+		}
 
-        /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
-        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
-        ///     <paramref name="other" /> in the sort order.
-        /// </returns>
-        /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
+		public void Restart() {
+			this.StartTimeStamp = DateTime.UtcNow.Ticks;
+			this.IsRunning = true;
+		}
 
-        public void Pause() => throw new NotImplementedException();
+		public void Resume() {
+			this.Start();
 
-        /// <summary>
-        ///     Stops the stopwatch and resets all the values to default.
-        /// </summary>
-        public void Reset() {
-            this.IsRunning = false;
-            this.StartTimeStamp = 0;
-            this.EndTimeStamp = 0;
-        }
+			throw new NotImplementedException();
+		}
 
-        public void Restart() {
-            this.StartTimeStamp = DateTime.UtcNow.Ticks;
-            this.IsRunning = true;
-        }
+		public void Start() {
+			if ( this.IsRunning ) { return; }
 
-        public void Resume() {
-            this.Start();
+			this.StartTimeStamp = DateTime.UtcNow.Ticks; //BUG possible bug here?
+			this.IsRunning = true;
+		}
 
-            throw new NotImplementedException();
-        }
+		public void Stop() {
+			if ( !this.IsRunning ) { return; }
 
-        public void Start() {
-            if ( this.IsRunning ) { return; }
+			this.EndTimeStamp = DateTime.UtcNow.Ticks;
+		}
 
-            this.StartTimeStamp = DateTime.UtcNow.Ticks; //BUG possible bug here?
-            this.IsRunning = true;
-        }
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		///     A string that represents the current object.
+		/// </returns>
+		public override String ToString() => this.Elapsed.ToString( "g" );
 
-        public void Stop() {
-            if ( !this.IsRunning ) { return; }
+		public const Int64 TicksPerMicrosecond = 10;
 
-            this.EndTimeStamp = DateTime.UtcNow.Ticks;
-        }
+		public const Int64 TicksPerMillisecond = 10000;
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override String ToString() => this.Elapsed.ToString( "g" );
-    }
+		public StopWatch() => this.Reset();
+
+	}
+
 }

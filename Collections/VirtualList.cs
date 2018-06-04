@@ -1,120 +1,129 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "VirtualList.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/VirtualList.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "VirtualList.cs" was last formatted by Protiguous on 2018/06/04 at 3:44 PM.
 
 namespace Librainian.Collections {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
 
-    /// <summary>
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <remarks>http://www.deanchalk.me.uk/post/2010/11/01/LINQ-Dynamically-Levereage-IList3cT3e-Functionality-With-VirtualList3cT3e.aspx</remarks>
-    /// <example>
-    ///     var pi = new VirtualList(Double)(int.MaxValue, i =&gt; Math.Pow(-1d, i) / (2 * i + 1) *
-    ///     4) .AsParallel().Aggregate(()
-    ///     = &gt; 0d, (tot, next) =&gt; tot + next, (maint,localt) =&gt; maint + localt, final =&gt; final);
-    /// </example>
-    public sealed class VirtualList<T> : IList<T>, IList {
+	/// <summary>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <remarks>http://www.deanchalk.me.uk/post/2010/11/01/LINQ-Dynamically-Levereage-IList3cT3e-Functionality-With-VirtualList3cT3e.aspx</remarks>
+	/// <example>
+	///     var pi = new VirtualList(Double)(int.MaxValue, i =&gt; Math.Pow(-1d, i) / (2 * i + 1) *
+	///     4) .AsParallel().Aggregate(()
+	///     = &gt; 0d, (tot, next) =&gt; tot + next, (maint,localt) =&gt; maint + localt, final =&gt; final);
+	/// </example>
+	public sealed class VirtualList<T> : IList<T>, IList {
 
-        private Int32 _count { get; }
+		Int32 ICollection.Count => this._count;
 
-        private Func<Int32, T> _getValueForIndex { get; }
+		Boolean IList.IsFixedSize => true;
 
-        Int32 ICollection.Count => this._count;
+		Boolean IList.IsReadOnly => true;
 
-        Int32 ICollection<T>.Count => this._count;
+		Boolean ICollection.IsSynchronized => false;
 
-        Boolean IList.IsFixedSize => true;
+		Object ICollection.SyncRoot => this;
 
-        Boolean IList.IsReadOnly => true;
+		Object IList.this[ Int32 index ] {
+			get => this.GetValueForIndex( arg: index );
 
-        Boolean ICollection<T>.IsReadOnly => true;
+			set => throw new NotSupportedException();
+		}
 
-        Boolean ICollection.IsSynchronized => false;
+		Int32 IList.Add( Object value ) => throw new NotSupportedException();
 
-        Object ICollection.SyncRoot => this;
+		void IList.Clear() => throw new NotSupportedException();
 
-        public VirtualList( Int32 count, Func<Int32, T> getValueForIndex ) {
-            this._getValueForIndex = getValueForIndex;
-            this._count = count;
-        }
+		Boolean IList.Contains( Object value ) => throw new NotSupportedException();
 
-        Object IList.this[Int32 index] {
-            get => this._getValueForIndex( arg: index );
+		void ICollection.CopyTo( Array array, Int32 index ) => throw new NotSupportedException();
 
-            set => throw new NotSupportedException();
-        }
+		Int32 IList.IndexOf( Object value ) => throw new NotSupportedException();
 
-        T IList<T>.this[Int32 index] {
-            get => this._getValueForIndex( arg: index );
+		void IList.Insert( Int32 index, Object value ) => throw new NotSupportedException();
 
-            set => throw new NotSupportedException();
-        }
+		void IList.Remove( Object value ) => throw new NotSupportedException();
 
-        Int32 IList.Add( Object value ) => throw new NotSupportedException();
+		void IList.RemoveAt( Int32 index ) => throw new NotSupportedException();
 
-        void ICollection<T>.Add( T item ) => throw new NotSupportedException();
+		Int32 ICollection<T>.Count => this._count;
 
-        void IList.Clear() => throw new NotSupportedException();
+		Boolean ICollection<T>.IsReadOnly => true;
 
-        void ICollection<T>.Clear() => throw new NotSupportedException();
+		T IList<T>.this[ Int32 index ] {
+			get => this.GetValueForIndex( arg: index );
 
-        Boolean IList.Contains( Object value ) => throw new NotSupportedException();
+			set => throw new NotSupportedException();
+		}
 
-        Boolean ICollection<T>.Contains( T item ) => throw new NotSupportedException();
+		void ICollection<T>.Add( T item ) => throw new NotSupportedException();
 
-        void ICollection.CopyTo( Array array, Int32 index ) => throw new NotSupportedException();
+		void ICollection<T>.Clear() => throw new NotSupportedException();
 
-        void ICollection<T>.CopyTo( T[] array, Int32 arrayIndex ) => throw new NotSupportedException();
+		Boolean ICollection<T>.Contains( T item ) => throw new NotSupportedException();
 
-        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable<T> )this ).GetEnumerator();
+		void ICollection<T>.CopyTo( T[] array, Int32 arrayIndex ) => throw new NotSupportedException();
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() {
-            for ( var i = 0; i < this._count; i++ ) { yield return this._getValueForIndex( arg: i ); }
-        }
+		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable<T> ) this ).GetEnumerator();
 
-        Int32 IList.IndexOf( Object value ) => throw new NotSupportedException();
+		IEnumerator<T> IEnumerable<T>.GetEnumerator() {
+			for ( var i = 0; i < this._count; i++ ) { yield return this.GetValueForIndex( arg: i ); }
+		}
 
-        Int32 IList<T>.IndexOf( T item ) => throw new NotSupportedException();
+		Int32 IList<T>.IndexOf( T item ) => throw new NotSupportedException();
 
-        void IList.Insert( Int32 index, Object value ) => throw new NotSupportedException();
+		void IList<T>.Insert( Int32 index, T item ) => throw new NotSupportedException();
 
-        void IList<T>.Insert( Int32 index, T item ) => throw new NotSupportedException();
+		Boolean ICollection<T>.Remove( T item ) => throw new NotSupportedException();
 
-        void IList.Remove( Object value ) => throw new NotSupportedException();
+		void IList<T>.RemoveAt( Int32 index ) => throw new NotSupportedException();
 
-        Boolean ICollection<T>.Remove( T item ) => throw new NotSupportedException();
+		private Int32 _count { get; }
 
-        void IList.RemoveAt( Int32 index ) => throw new NotSupportedException();
+		private Func<Int32, T> GetValueForIndex { get; }
 
-        void IList<T>.RemoveAt( Int32 index ) => throw new NotSupportedException();
-    }
+		public VirtualList( Int32 count, Func<Int32, T> getValueForIndex ) {
+			this.GetValueForIndex = getValueForIndex;
+			this._count = count;
+		}
+
+	}
+
 }

@@ -29,85 +29,85 @@
 
 namespace Librainian.Threading {
 
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Magic;
-    using Microsoft.FSharp.Core;
+	using System;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using Collections;
+	using Magic;
 
-    /// <summary>
-    ///     A simpler threadsafe way to cancel a <see cref="Task" />. <seealso cref="CancellationToken" /> This version has the
-    ///     Date and Time of the cancel request.
-    /// </summary>
-    [Experimental( "Somewhat untested" )]
-    public sealed class SimpleCancel : ABetterClassDispose {
+	/// <summary>
+	///     A simpler threadsafe way to cancel a <see cref="Task" />. <seealso cref="CancellationToken" /> This version has the
+	///     Date and Time of the cancel request.
+	/// </summary>
+	[Experimental( "Somewhat untested" )]
+	public sealed class SimpleCancel : ABetterClassDispose {
 
-        /// <summary>
-        /// </summary>
-        private Int64 _cancelRequests;
+		/// <summary>
+		/// </summary>
+		private Int64 _cancelRequests;
 
-        /// <summary>
-        /// </summary>
-        public DateTime? OldestCancelRequest { get; private set; }
+		/// <summary>
+		/// </summary>
+		public DateTime? OldestCancelRequest { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        public DateTime? YoungestCancelRequest { get; private set; }
+		/// <summary>
+		/// </summary>
+		public DateTime? YoungestCancelRequest { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        public SimpleCancel() => this.Reset();
+		/// <summary>
+		/// </summary>
+		public SimpleCancel() => this.Reset();
 
-        /// <summary>
-        ///     Returns true if the cancel request was approved.
-        /// </summary>
-        /// <param name="throwIfAlreadyRequested"></param>
-        /// <param name="throwMessage">           </param>
-        /// <returns></returns>
-        /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) => this.RequestCancel( throwIfAlreadyRequested: throwIfAlreadyRequested, throwMessage: throwMessage );
+		/// <summary>
+		///     Returns true if the cancel request was approved.
+		/// </summary>
+		/// <param name="throwIfAlreadyRequested"></param>
+		/// <param name="throwMessage">           </param>
+		/// <returns></returns>
+		/// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
+		public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) => this.RequestCancel( throwIfAlreadyRequested: throwIfAlreadyRequested, throwMessage: throwMessage );
 
-        public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
+		public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
 
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        public Int64 GetCancelsRequestedCounter() => Interlocked.Read( location: ref this._cancelRequests );
+		/// <summary>
+		/// </summary>
+		/// <returns></returns>
+		public Int64 GetCancelsRequestedCounter() => Interlocked.Read( location: ref this._cancelRequests );
 
-        /// <summary>
-        /// </summary>
-        public Boolean HaveAnyCancellationsBeenRequested() => Interlocked.Read( location: ref this._cancelRequests ) > 0;
+		/// <summary>
+		/// </summary>
+		public Boolean HaveAnyCancellationsBeenRequested() => Interlocked.Read( location: ref this._cancelRequests ) > 0;
 
-        /// <summary>
-        ///     Returns true if the cancel request was approved.
-        /// </summary>
-        /// <param name="throwIfAlreadyRequested"></param>
-        /// <param name="throwMessage">           </param>
-        /// <returns></returns>
-        /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        [Experimental( "Untested" )]
-        public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
-            if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) { throw new TaskCanceledException( throwMessage ); }
+		/// <summary>
+		///     Returns true if the cancel request was approved.
+		/// </summary>
+		/// <param name="throwIfAlreadyRequested"></param>
+		/// <param name="throwMessage">           </param>
+		/// <returns></returns>
+		/// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
+		[Experimental( "Untested" )]
+		public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
+			if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) { throw new TaskCanceledException( throwMessage ); }
 
-            var now = DateTime.UtcNow;
+			var now = DateTime.UtcNow;
 
-            if ( !this.OldestCancelRequest.HasValue ) {
+			if ( !this.OldestCancelRequest.HasValue ) {
 
-                //TODO name these better
-                this.OldestCancelRequest = now; //TODO check logic here, might be backwards
-            }
+				//TODO name these better
+				this.OldestCancelRequest = now; //TODO check logic here, might be backwards
+			}
 
-            if ( !this.YoungestCancelRequest.HasValue || this.YoungestCancelRequest.Value < now ) { this.YoungestCancelRequest = now; }
+			if ( !this.YoungestCancelRequest.HasValue || this.YoungestCancelRequest.Value < now ) { this.YoungestCancelRequest = now; }
 
-            Interlocked.Increment( location: ref this._cancelRequests );
+			Interlocked.Increment( location: ref this._cancelRequests );
 
-            //this.CancelRequests.Enqueue( now );
-            return true;
-        }
+			//this.CancelRequests.Enqueue( now );
+			return true;
+		}
 
-        /// <summary>
-        ///     Resets all requests back to starting values.
-        /// </summary>
-        public void Reset() => Interlocked.Add( location1: ref this._cancelRequests, -Interlocked.Read( location: ref this._cancelRequests ) );
-    }
+		/// <summary>
+		///     Resets all requests back to starting values.
+		/// </summary>
+		public void Reset() => Interlocked.Add( location1: ref this._cancelRequests, -Interlocked.Read( location: ref this._cancelRequests ) );
+	}
 }

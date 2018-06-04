@@ -1,175 +1,187 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConcurrentStackNoBlock.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/ConcurrentStackNoBlock.cs" was last formatted by Protiguous on 2018/05/24 at 6:58 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "ConcurrentStackNoBlock.cs" was last formatted by Protiguous on 2018/06/04 at 3:43 PM.
 
 namespace Librainian.Collections {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Threading;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using Threading;
 
-    public class ConcurrentNoBlockStackL<T> {
+	public class ConcurrentNoBlockStackL<T> {
 
-        private volatile Node _head;
+		private volatile Node _head;
 
-        public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
+		public T Pop() {
+			Node ret;
 
-        public T Pop() {
-            Node ret;
+			do {
+				ret = this._head;
 
-            do {
-                ret = this._head;
+				if ( ret.Next is null ) { throw new IndexOutOfRangeException( "Stack is empty" ); }
+			} while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
 
-                if ( ret.Next is null ) { throw new IndexOutOfRangeException( "Stack is empty" ); }
-            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+			return ret.Item;
+		}
 
-            return ret.Item;
-        }
+		public void Push( T item ) {
+			var nodeNew = new Node { Item = item };
 
-        public void Push( T item ) {
-            var nodeNew = new Node { Item = item };
+			Node tmp;
 
-            Node tmp;
+			do {
+				tmp = this._head;
+				nodeNew.Next = tmp;
+			} while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+		}
 
-            do {
-                tmp = this._head;
-                nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
-        }
+		internal sealed class Node {
 
-        internal sealed class Node {
+			internal T Item;
 
-            internal T Item;
+			internal Node Next;
 
-            internal Node Next;
+			public Node() { }
 
-            public Node() { }
+			public Node( T item, Node next ) {
+				this.Item = item;
+				this.Next = next;
+			}
 
-            public Node( T item, Node next ) {
-                this.Item = item;
-                this.Next = next;
-            }
-        }
-    }
+		}
 
-    /// <summary>
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
-    public class ConcurrentStackNoBlock<T> {
+		public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
 
-        private Node _head;
+	}
 
-        public Int32 Count { get; private set; }
+	/// <summary>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
+	public class ConcurrentStackNoBlock<T> {
 
-        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
+		public Int32 Count { get; private set; }
 
-        public void Add( T item ) => this.Push( item: item );
+		private Node _head;
 
-        public void Add( IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
+		public void Add( T item ) => this.Push( item: item );
 
-        public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
+		public void Add( IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
 
-        public Int64 LongCount() => this.Count;
+		public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
 
-        public void Push( T item ) {
-            if ( Equals( default, item ) ) { return; }
+		public Int64 LongCount() => this.Count;
 
-            var nodeNew = new Node { Item = item };
+		public void Push( T item ) {
+			if ( Equals( default, item ) ) { return; }
 
-            Node tmp;
+			var nodeNew = new Node { Item = item };
 
-            do {
-                tmp = this._head;
-                nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+			Node tmp;
 
-            ++this.Count;
-        }
+			do {
+				tmp = this._head;
+				nodeNew.Next = tmp;
+			} while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
 
-        public Boolean TryPop( out T result ) {
-            result = default;
+			++this.Count;
+		}
 
-            Node ret;
+		public Boolean TryPop( out T result ) {
+			result = default;
 
-            do {
-                ret = this._head;
+			Node ret;
 
-                if ( ret.Next == default( Node ) ) {
+			do {
+				ret = this._head;
 
-                    //throw new IndexOutOfRangeException( "Stack is empty" );
-                    return false;
-                }
-            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+				if ( ret.Next == default( Node ) ) {
 
-            --this.Count;
-            result = ret.Item;
+					//throw new IndexOutOfRangeException( "Stack is empty" );
+					return false;
+				}
+			} while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
 
-            return !Equals( result, default );
-        }
+			--this.Count;
+			result = ret.Item;
 
-        /// <summary>
-        ///     Attempt two <see cref="TryPop" />
-        /// </summary>
-        /// <param name="itemOne"></param>
-        /// <param name="itemTwo"></param>
-        /// <returns></returns>
-        public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
-            if ( !this.TryPop( result: out itemOne ) ) {
-                itemTwo = default;
+			return !Equals( result, default );
+		}
 
-                return false;
-            }
+		/// <summary>
+		///     Attempt two <see cref="TryPop" />
+		/// </summary>
+		/// <param name="itemOne"></param>
+		/// <param name="itemTwo"></param>
+		/// <returns></returns>
+		public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
+			if ( !this.TryPop( result: out itemOne ) ) {
+				itemTwo = default;
 
-            if ( !this.TryPop( result: out itemTwo ) ) {
-                this.Push( item: itemOne );
+				return false;
+			}
 
-                return false;
-            }
+			if ( !this.TryPop( result: out itemTwo ) ) {
+				this.Push( item: itemOne );
 
-            return true;
-        }
+				return false;
+			}
 
-        internal class Node {
+			return true;
+		}
 
-            internal T Item;
+		internal class Node {
 
-            internal Node Next;
+			internal T Item;
 
-            public Node() { }
+			internal Node Next;
 
-            public Node( T item, Node next ) {
-                this.Item = item;
-                this.Next = next;
-            }
-        }
-    }
+			public Node() { }
+
+			public Node( T item, Node next ) {
+				this.Item = item;
+				this.Next = next;
+			}
+
+		}
+
+		public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
+
+	}
+
 }

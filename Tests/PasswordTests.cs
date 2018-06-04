@@ -29,21 +29,21 @@
 
 namespace LibrainianTests {
 
-    using System;
-    using System.Globalization;
-    using Librainian.Maths;
-    using Librainian.Parsing;
-    using Librainian.Security;
-    using NUnit.Framework;
+	using System;
+	using System.Globalization;
+	using Librainian.Maths;
+	using Librainian.Parsing;
+	using Librainian.Security;
+	using NUnit.Framework;
 
-    [TestFixture]
-    public static class PasswordTests {
+	[TestFixture]
+	public static class PasswordTests {
 
-        [Test]
-        public static void TestAFew() {
-            foreach ( var variable in 1.To( end: 25 ) ) {
-                Console.WriteLine( value: PronounceablePasswordCreator.Generate( requiredLength: 3.Next( maxValue: 15 ) ).ToPascalCase( culture: CultureInfo.CurrentUICulture ) );
-            }
-        }
-    }
+		[Test]
+		public static void TestAFew() {
+			foreach ( var _ in 1.To( end: 25 ) ) {
+				Console.WriteLine( value: PronounceablePasswordCreator.Generate( requiredLength: 3.Next( maxValue: 15 ) ).ToPascalCase( culture: CultureInfo.CurrentUICulture ) );
+			}
+		}
+	}
 }

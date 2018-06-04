@@ -1,66 +1,75 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "HashSetLinqAccess.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/HashSetLinqAccess.cs" was last formatted by Protiguous on 2018/05/24 at 7:08 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "HashSetLinqAccess.cs" was last formatted by Protiguous on 2018/06/04 at 3:52 PM.
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.Collections.Generic;
+	using System;
+	using System.Collections.Generic;
 
-    /// <summary>
-    ///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
-    ///     provided by the others: ToList(), ToArray(), ToDictionary().. Now ToHashSet() is available.
-    ///     UPDATE: These might be available in the newer Libraries.
-    /// </summary>
-    /// <seealso
-    ///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
-    public static class HashSetLinqAccess {
+	/// <summary>
+	///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
+	///     provided by the others: ToList(), ToArray(), ToDictionary().. Now ToHashSet() is available.
+	///     UPDATE: These might be available in the newer Libraries.
+	/// </summary>
+	/// <seealso
+	///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
+	public static class HashSetLinqAccess {
 
-        public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
-            if ( Equals( hashSet, null ) ) { throw new ArgumentNullException( nameof( hashSet ) ); }
+		public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
+			if ( Equals( hashSet, null ) ) { throw new ArgumentNullException( nameof( hashSet ) ); }
 
-            if ( Equals( range, null ) ) { throw new ArgumentNullException( nameof( range ) ); }
+			if ( Equals( range, null ) ) { throw new ArgumentNullException( nameof( range ) ); }
 
-            foreach ( var item in range ) { hashSet.Add( item: item ); }
+			foreach ( var item in range ) { hashSet.Add( item: item ); }
 
-            return hashSet;
-        }
+			return hashSet;
+		}
 
-        public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
-            if ( null == fromEnumerable ) { throw new ArgumentNullException( nameof( fromEnumerable ) ); }
+		public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
+			if ( null == fromEnumerable ) { throw new ArgumentNullException( nameof( fromEnumerable ) ); }
 
-            if ( null == comparer ) { comparer = EqualityComparer<T>.Default; }
+			if ( null == comparer ) { comparer = EqualityComparer<T>.Default; }
 
-            if ( fromEnumerable is HashSet<T> set ) { return set; }
+			if ( fromEnumerable is HashSet<T> set ) { return set; }
 
-            return new HashSet<T>( fromEnumerable, comparer );
-        }
+			return new HashSet<T>( fromEnumerable, comparer );
+		}
 
-        //public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
-    }
+		//public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
+
+	}
+
 }

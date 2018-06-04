@@ -17,87 +17,94 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/SpeechInput.cs" was last formatted by Protiguous on 2018/05/24 at 7:33 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "SpeechInput.cs" was last formatted by Protiguous on 2018/06/04 at 4:25 PM.
 
 namespace Librainian.Speech {
 
-    using System;
-    using System.Globalization;
-    using System.Linq;
-    using System.Speech.Recognition;
-    using Collections;
-    using Parsing;
+	using System;
+	using System.Globalization;
+	using System.Linq;
+	using System.Speech.Recognition;
+	using Collections;
+	using Parsing;
 
-    public class SpeechInput {
+	public class SpeechInput {
 
-        public Lazy<Grammar> Grammar { get; } = new Lazy<Grammar>( () => {
-            var grammar = new DictationGrammar { Enabled = true };
+		public Lazy<Grammar> Grammar { get; } = new Lazy<Grammar>( () => {
+			var grammar = new DictationGrammar { Enabled = true };
 
-            return grammar;
-        } );
+			return grammar;
+		} );
 
-        public Lazy<SpeechRecognitionEngine> RecognitionEngine { get; }
+		public Lazy<SpeechRecognitionEngine> RecognitionEngine { get; }
 
-        public SpeechInput() =>
-                            this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
-                                var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
+		public SpeechInput() =>
+			this.RecognitionEngine = new Lazy<SpeechRecognitionEngine>( () => {
+				var speechRecognitionEngine = new SpeechRecognitionEngine( CultureInfo.CurrentCulture );
 
-                                try { speechRecognitionEngine.LoadGrammar( this.Grammar.Value ); }
-                                catch ( InvalidOperationException ) { }
+				try { speechRecognitionEngine.LoadGrammar( this.Grammar.Value ); }
+				catch ( InvalidOperationException ) { }
 
-                                try { speechRecognitionEngine.SetInputToDefaultAudioDevice(); }
-                                catch ( InvalidOperationException ) { "Warning: No microphone found.".Warning(); }
+				try { speechRecognitionEngine.SetInputToDefaultAudioDevice(); }
+				catch ( InvalidOperationException ) { "Warning: No microphone found.".Warning(); }
 
-                                try { speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple ); }
-                                catch ( InvalidOperationException ) { }
+				try { speechRecognitionEngine.RecognizeAsync( RecognizeMode.Multiple ); }
+				catch ( InvalidOperationException ) { }
 
-                                return speechRecognitionEngine;
-                            }, isThreadSafe: true );
+				return speechRecognitionEngine;
+			}, isThreadSafe: true );
 
-        public static Grammar CreateGrammars( params String[] phrases ) {
-            if ( phrases is null ) { throw new ArgumentNullException( nameof( phrases ) ); }
+		public static Grammar CreateGrammars( params String[] phrases ) {
+			if ( phrases is null ) { throw new ArgumentNullException( nameof( phrases ) ); }
 
-            var choices = new Choices( phrases );
-            var builder = new GrammarBuilder( choices );
+			var choices = new Choices( phrases );
+			var builder = new GrammarBuilder( choices );
 
-            return new Grammar( builder );
-        }
+			return new Grammar( builder );
+		}
 
-        public void AttachEvent( Action<AudioLevelUpdatedEventArgs> audioLevelUpdated = null, Action<AudioSignalProblemOccurredEventArgs> audioSignalProblemOccurred = null,
-            Action<AudioStateChangedEventArgs> audioStateChanged = null, Action<LoadGrammarCompletedEventArgs> loadGrammarCompleted = null, Action<RecognizeCompletedEventArgs> recognizeCompleted = null,
-            Action<RecognizerUpdateReachedEventArgs> recognizerUpdateReached = null, Action<SpeechDetectedEventArgs> speechDetected = null, Action<SpeechHypothesizedEventArgs> speechHypothesized = null,
-            Action<SpeechRecognitionRejectedEventArgs> speechRecognitionRejected = null, Action<SpeechRecognizedEventArgs> speechRecognized = null ) {
-            this.RecognitionEngine.Value.AudioLevelUpdated += ( sender, args ) => audioLevelUpdated?.Invoke( args );
-            this.RecognitionEngine.Value.AudioSignalProblemOccurred += ( sender, args ) => audioSignalProblemOccurred?.Invoke( args );
-            this.RecognitionEngine.Value.AudioStateChanged += ( sender, args ) => audioStateChanged?.Invoke( args );
-            this.RecognitionEngine.Value.LoadGrammarCompleted += ( sender, args ) => loadGrammarCompleted?.Invoke( args );
-            this.RecognitionEngine.Value.RecognizeCompleted += ( sender, args ) => recognizeCompleted?.Invoke( args );
-            this.RecognitionEngine.Value.RecognizerUpdateReached += ( sender, args ) => recognizerUpdateReached?.Invoke( args );
-            this.RecognitionEngine.Value.SpeechDetected += ( sender, args ) => speechDetected?.Invoke( args );
-            this.RecognitionEngine.Value.SpeechHypothesized += ( sender, args ) => speechHypothesized?.Invoke( args );
-            this.RecognitionEngine.Value.SpeechRecognitionRejected += ( sender, args ) => speechRecognitionRejected?.Invoke( args );
-            this.RecognitionEngine.Value.SpeechRecognized += ( sender, args ) => speechRecognized?.Invoke( args );
-        }
+		public void AttachEvent( Action<AudioLevelUpdatedEventArgs> audioLevelUpdated = null, Action<AudioSignalProblemOccurredEventArgs> audioSignalProblemOccurred = null,
+			Action<AudioStateChangedEventArgs> audioStateChanged = null, Action<LoadGrammarCompletedEventArgs> loadGrammarCompleted = null, Action<RecognizeCompletedEventArgs> recognizeCompleted = null,
+			Action<RecognizerUpdateReachedEventArgs> recognizerUpdateReached = null, Action<SpeechDetectedEventArgs> speechDetected = null, Action<SpeechHypothesizedEventArgs> speechHypothesized = null,
+			Action<SpeechRecognitionRejectedEventArgs> speechRecognitionRejected = null, Action<SpeechRecognizedEventArgs> speechRecognized = null ) {
+			this.RecognitionEngine.Value.AudioLevelUpdated += ( sender, args ) => audioLevelUpdated?.Invoke( args );
+			this.RecognitionEngine.Value.AudioSignalProblemOccurred += ( sender, args ) => audioSignalProblemOccurred?.Invoke( args );
+			this.RecognitionEngine.Value.AudioStateChanged += ( sender, args ) => audioStateChanged?.Invoke( args );
+			this.RecognitionEngine.Value.LoadGrammarCompleted += ( sender, args ) => loadGrammarCompleted?.Invoke( args );
+			this.RecognitionEngine.Value.RecognizeCompleted += ( sender, args ) => recognizeCompleted?.Invoke( args );
+			this.RecognitionEngine.Value.RecognizerUpdateReached += ( sender, args ) => recognizerUpdateReached?.Invoke( args );
+			this.RecognitionEngine.Value.SpeechDetected += ( sender, args ) => speechDetected?.Invoke( args );
+			this.RecognitionEngine.Value.SpeechHypothesized += ( sender, args ) => speechHypothesized?.Invoke( args );
+			this.RecognitionEngine.Value.SpeechRecognitionRejected += ( sender, args ) => speechRecognitionRejected?.Invoke( args );
+			this.RecognitionEngine.Value.SpeechRecognized += ( sender, args ) => speechRecognized?.Invoke( args );
+		}
 
-        /// <summary>
-        ///     <seealso cref="AttachEvent" />
-        /// </summary>
-        /// <param name="action"></param>
-        public void OnRecognizeSentence( Action<String> action ) =>
-            this.RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
-                var words = args.Result.Words.Select( unit => unit.Text ).ToList();
-                var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
-                action( sentence );
-            };
+		/// <summary>
+		///     <seealso cref="AttachEvent" />
+		/// </summary>
+		/// <param name="action"></param>
+		public void OnRecognizeSentence( Action<String> action ) =>
+			this.RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
+				var words = args.Result.Words.Select( unit => unit.Text ).ToList();
+				var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
+				action( sentence );
+			};
 
-        public void Stop() => this.RecognitionEngine.Value.RecognizeAsyncCancel();
-    }
+		public void Stop() => this.RecognitionEngine.Value.RecognizeAsyncCancel();
+	}
 }

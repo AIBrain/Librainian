@@ -1,85 +1,92 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "EvalProvider.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/EvalProvider.cs" was last formatted by Protiguous on 2018/05/24 at 7:07 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "EvalProvider.cs" was last formatted by Protiguous on 2018/06/04 at 3:52 PM.
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.CodeDom.Compiler;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Microsoft.CSharp;
+	using System;
+	using System.CodeDom.Compiler;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Text;
+	using Microsoft.CSharp;
 
-    /// <summary>
-    ///     <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/" />.</para>
-    /// </summary>
-    public static class EvalProvider {
+	/// <summary>
+	///     <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/" />.</para>
+	/// </summary>
+	public static class EvalProvider {
 
-        private static String GetUsing( IEnumerable<String> usingStatements ) {
-            var result = new StringBuilder();
+		private static String GetUsing( IEnumerable<String> usingStatements ) {
+			var result = new StringBuilder();
 
-            foreach ( var usingStatement in usingStatements ) { result.AppendLine( $"using {usingStatement};" ); }
+			foreach ( var usingStatement in usingStatements ) { result.AppendLine( $"using {usingStatement};" ); }
 
-            return result.ToString();
-        }
+			return result.ToString();
+		}
 
-        /// <summary>
-        ///     Example:
-        ///     <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
-        ///     <para>Console.WriteLine(HelloWorld(42));</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="code">           </param>
-        /// <param name="usingStatements"></param>
-        /// <param name="assemblies">     </param>
-        /// <returns></returns>
-        public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, String[] usingStatements = null, String[] assemblies = null ) {
-            var returnType = typeof( TResult );
-            var inputType = typeof( T );
+		/// <summary>
+		///     Example:
+		///     <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
+		///     <para>Console.WriteLine(HelloWorld(42));</para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="code">           </param>
+		/// <param name="usingStatements"></param>
+		/// <param name="assemblies">     </param>
+		/// <returns></returns>
+		public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, String[] usingStatements = null, String[] assemblies = null ) {
+			var returnType = typeof( TResult );
+			var inputType = typeof( T );
 
-            var includeUsings = new HashSet<String>( new[] { "System" } ) { returnType.Namespace, inputType.Namespace };
+			var includeUsings = new HashSet<String>( new[] { "System" } ) { returnType.Namespace, inputType.Namespace };
 
-            if ( usingStatements != null ) {
-                foreach ( var usingStatement in usingStatements ) { includeUsings.Add( usingStatement ); }
-            }
+			if ( usingStatements != null ) {
+				foreach ( var usingStatement in usingStatements ) { includeUsings.Add( usingStatement ); }
+			}
 
-            using ( var compiler = new CSharpCodeProvider() ) {
-                var includeAssemblies = new HashSet<String>( new[] { "system.dll" } );
+			using ( var compiler = new CSharpCodeProvider() ) {
+				var includeAssemblies = new HashSet<String>( new[] { "system.dll" } );
 
-                if ( assemblies != null ) {
-                    foreach ( var assembly in assemblies ) { includeAssemblies.Add( assembly ); }
-                }
+				if ( assemblies != null ) {
+					foreach ( var assembly in assemblies ) { includeAssemblies.Add( assembly ); }
+				}
 
-                var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
+				var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
 
-                var source = $@"
+				var source = $@"
 {GetUsing( includeUsings )}
 namespace {name}
 {{
@@ -92,14 +99,16 @@ namespace {name}
 	}}
 }}";
 
-                var parameters = new CompilerParameters( includeAssemblies.ToArray() ) { GenerateInMemory = true };
-                var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
-                var compiledAssembly = compilerResult.CompiledAssembly;
-                var type = compiledAssembly.GetType( $"{name}.EvalClass" );
-                var method = type.GetMethod( "Eval" );
+				var parameters = new CompilerParameters( includeAssemblies.ToArray() ) { GenerateInMemory = true };
+				var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
+				var compiledAssembly = compilerResult.CompiledAssembly;
+				var type = compiledAssembly.GetType( $"{name}.EvalClass" );
+				var method = type.GetMethod( "Eval" );
 
-                return ( Func<T, TResult> )Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
-            }
-        }
-    }
+				return ( Func<T, TResult> ) Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
+			}
+		}
+
+	}
+
 }

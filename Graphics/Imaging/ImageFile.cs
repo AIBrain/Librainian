@@ -1,191 +1,201 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ImageFile.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/ImageFile.cs" was last formatted by Protiguous on 2018/05/24 at 7:12 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "ImageFile.cs" was last formatted by Protiguous on 2018/06/04 at 3:56 PM.
 
 namespace Librainian.Graphics.Imaging {
 
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Linq;
 
-    /// <summary>
-    ///     Untested.
-    ///     Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/
-    /// </summary>
-    internal class ImageFile {
+	/// <summary>
+	///     Untested.
+	///     Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/
+	/// </summary>
+	internal class ImageFile {
 
-        public enum Types {
+		public Int32 EndingNullBytes { get; }
 
-            FileNotFound,
+		public String Filename { get; }
 
-            FileEmpty,
+		public Types FileType { get; } = Types.FileNotFound;
 
-            FileNull,
+		public Boolean IsComplete { get; }
 
-            FileTooLarge,
+		private readonly Byte[] _abEndGIF = { 0, 59 };
 
-            FileUnrecognized,
+		private readonly Byte[] _abEndJPGa = { 255, 217, 255, 255 };
 
-            PNG,
+		private readonly Byte[] _abEndJPGb = { 255, 217 };
 
-            JPG,
+		private readonly Byte[] _abEndPNG = { 73, 69, 78, 68, 174, 66, 96, 130 };
 
-            GIFa,
+		private readonly Byte[] _abTagGIFa = { 71, 73, 70, 56, 55, 97 };
 
-            GIFb
-        }
+		private readonly Byte[] _abTagGIFb = { 71, 73, 70, 56, 57, 97 };
 
-        private readonly Byte[] _abEndGIF = { 0, 59 };
+		private readonly Byte[] _abTagJPG = { 255, 216, 255 };
 
-        private readonly Byte[] _abEndJPGa = { 255, 217, 255, 255 };
+		private readonly Byte[] _abTagPNG = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
-        private readonly Byte[] _abEndJPGb = { 255, 217 };
+		private static Boolean _EndsWidth( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
+			var blRet = false;
 
-        private readonly Byte[] _abEndPNG = { 73, 69, 78, 68, 174, 66, 96, 130 };
+			if ( search.Length() <= data.Length() ) {
+				var iStart = data.Length() - search.Length();
+				blRet = !search.Where( ( t, i ) => data[ iStart + i ] != t ).Any();
+			}
 
-        private readonly Byte[] _abTagGIFa = { 71, 73, 70, 56, 55, 97 };
+			return blRet; // RETURN
+		}
 
-        private readonly Byte[] _abTagGIFb = { 71, 73, 70, 56, 57, 97 };
+		private static Boolean _StartsWith( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
+			var blRet = false;
 
-        private readonly Byte[] _abTagJPG = { 255, 216, 255 };
+			if ( search.Length() <= data.Length() ) { blRet = !search.Where( ( t, i ) => data[ i ] != t ).Any(); }
 
-        private readonly Byte[] _abTagPNG = { 137, 80, 78, 71, 13, 10, 26, 10 };
+			return blRet; // RETURN
+		}
 
-        public Int32 EndingNullBytes { get; }
+		public enum Types {
 
-        public String Filename { get; }
+			FileNotFound,
 
-        public Types FileType { get; } = Types.FileNotFound;
+			FileEmpty,
 
-        public Boolean IsComplete { get; }
+			FileNull,
 
-        public ImageFile( String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
-            this.Filename = filename.Trim();
-            var fliTmp = new FileInfo( this.Filename );
+			FileTooLarge,
 
-            if ( File.Exists( this.Filename ) ) {
-                this.FileType = Types.FileUnrecognized; // default if found
+			FileUnrecognized,
 
-                // check file has data...
-                if ( fliTmp.Length == 0 ) { this.FileType = Types.FileEmpty; }
-                else {
+			PNG,
 
-                    // check file isn't like stupid crazy big
-                    if ( fliTmp.Length > maxFileSize ) { this.FileType = Types.FileTooLarge; }
-                    else {
+			JPG,
 
-                        // load the whole file
-                        var abtTmp = File.ReadAllBytes( this.Filename );
+			GIFa,
 
-                        // check the length of actual data
-                        var iLength = abtTmp.Length;
+			GIFb
 
-                        if ( abtTmp[abtTmp.Length - 1] == 0 ) {
-                            for ( var i = abtTmp.Length - 1; i > -1; i-- ) {
-                                if ( abtTmp[i] == 0 ) { continue; }
+		}
 
-                                iLength = i;
+		public ImageFile( String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
+			this.Filename = filename.Trim();
+			var fliTmp = new FileInfo( this.Filename );
 
-                                break;
-                            }
-                        }
+			if ( File.Exists( this.Filename ) ) {
+				this.FileType = Types.FileUnrecognized; // default if found
 
-                        // check that there is actual data
-                        if ( iLength == 0 ) { this.FileType = Types.FileNull; }
-                        else {
-                            this.EndingNullBytes = abtTmp.Length - iLength;
+				// check file has data...
+				if ( fliTmp.Length == 0 ) { this.FileType = Types.FileEmpty; }
+				else {
 
-                            // resize the data so we can work with it
-                            Array.Resize( ref abtTmp, iLength );
+					// check file isn't like stupid crazy big
+					if ( fliTmp.Length > maxFileSize ) { this.FileType = Types.FileTooLarge; }
+					else {
 
-                            // get the file type
-                            if ( _StartsWith( abtTmp, this._abTagPNG ) ) { this.FileType = Types.PNG; }
-                            else if ( _StartsWith( abtTmp, this._abTagJPG ) ) { this.FileType = Types.JPG; }
-                            else if ( _StartsWith( abtTmp, this._abTagGIFa ) ) { this.FileType = Types.GIFa; }
-                            else if ( _StartsWith( abtTmp, this._abTagGIFb ) ) { this.FileType = Types.GIFb; }
+						// load the whole file
+						var abtTmp = File.ReadAllBytes( this.Filename );
 
-                            // check the file is complete
-                            switch ( this.FileType ) {
-                                case Types.PNG:
-                                    this.IsComplete = _EndsWidth( abtTmp, this._abEndPNG );
+						// check the length of actual data
+						var iLength = abtTmp.Length;
 
-                                    break;
+						if ( abtTmp[ abtTmp.Length - 1 ] == 0 ) {
+							for ( var i = abtTmp.Length - 1; i > -1; i-- ) {
+								if ( abtTmp[ i ] == 0 ) { continue; }
 
-                                case Types.JPG:
-                                    this.IsComplete = _EndsWidth( abtTmp, this._abEndJPGa ) || _EndsWidth( abtTmp, this._abEndJPGb );
+								iLength = i;
 
-                                    break;
+								break;
+							}
+						}
 
-                                case Types.GIFa:
-                                case Types.GIFb:
-                                    this.IsComplete = _EndsWidth( abtTmp, this._abEndGIF );
+						// check that there is actual data
+						if ( iLength == 0 ) { this.FileType = Types.FileNull; }
+						else {
+							this.EndingNullBytes = abtTmp.Length - iLength;
 
-                                    break;
+							// resize the data so we can work with it
+							Array.Resize( ref abtTmp, iLength );
 
-                                case Types.FileNotFound: break;
+							// get the file type
+							if ( _StartsWith( abtTmp, this._abTagPNG ) ) { this.FileType = Types.PNG; }
+							else if ( _StartsWith( abtTmp, this._abTagJPG ) ) { this.FileType = Types.JPG; }
+							else if ( _StartsWith( abtTmp, this._abTagGIFa ) ) { this.FileType = Types.GIFa; }
+							else if ( _StartsWith( abtTmp, this._abTagGIFb ) ) { this.FileType = Types.GIFb; }
 
-                                case Types.FileEmpty: break;
+							// check the file is complete
+							switch ( this.FileType ) {
+								case Types.PNG:
+									this.IsComplete = _EndsWidth( abtTmp, this._abEndPNG );
 
-                                case Types.FileNull: break;
+									break;
 
-                                case Types.FileTooLarge: break;
+								case Types.JPG:
+									this.IsComplete = _EndsWidth( abtTmp, this._abEndJPGa ) || _EndsWidth( abtTmp, this._abEndJPGb );
 
-                                case Types.FileUnrecognized: break;
+									break;
 
-                                default: throw new ArgumentOutOfRangeException();
-                            }
+								case Types.GIFa:
+								case Types.GIFb:
+									this.IsComplete = _EndsWidth( abtTmp, this._abEndGIF );
 
-                            // get rid of ending null bytes at caller's option
-                            if ( this.IsComplete && cullEndingNullBytes ) { File.WriteAllBytes( this.Filename, abtTmp ); }
-                        }
-                    }
-                }
-            }
-        }
+									break;
 
-        private static Boolean _EndsWidth( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
-            var blRet = false;
+								case Types.FileNotFound: break;
 
-            if ( search.Length() <= data.Length() ) {
-                var iStart = data.Length() - search.Length();
-                blRet = !search.Where( ( t, i ) => data[iStart + i] != t ).Any();
-            }
+								case Types.FileEmpty: break;
 
-            return blRet; // RETURN
-        }
+								case Types.FileNull: break;
 
-        private static Boolean _StartsWith( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
-            var blRet = false;
+								case Types.FileTooLarge: break;
 
-            if ( search.Length() <= data.Length() ) { blRet = !search.Where( ( t, i ) => data[i] != t ).Any(); }
+								case Types.FileUnrecognized: break;
 
-            return blRet; // RETURN
-        }
-    }
+								default: throw new ArgumentOutOfRangeException();
+							}
+
+							// get rid of ending null bytes at caller's option
+							if ( this.IsComplete && cullEndingNullBytes ) { File.WriteAllBytes( this.Filename, abtTmp ); }
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 }

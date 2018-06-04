@@ -1,93 +1,90 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "CodeEngine.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/CodeEngine.cs" was last formatted by Protiguous on 2018/05/24 at 7:07 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "CodeEngine.cs" was last formatted by Protiguous on 2018/06/04 at 3:51 PM.
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.CodeDom.Compiler;
-    using System.IO;
-    using System.Reflection;
-    using Microsoft.CSharp;
-    using NUnit.Framework;
-    using Persistence;
+	using System;
+	using System.CodeDom.Compiler;
+	using System.IO;
+	using System.Reflection;
+	using Microsoft.CSharp;
+	using NUnit.Framework;
+	using Persistence;
 
-    public class CodeEngine {
+	public class CodeEngine {
 
-        public interface IOutput {
+		public static CSharpCodeProvider CSharpCodeProvider { get; } = new CSharpCodeProvider();
 
-            void Output();
-        }
+		public Guid ID { get; private set; }
 
-        private CompilerResults _compilerResults;
+		public Object[] Parameters { get; set; }
 
-        private String _mSourceCode = String.Empty;
+		public String SourceCode {
+			get {
+				lock ( this.OSourceCode ) { return this._mSourceCode; }
+			}
 
-        public Action<String> Output = delegate { };
+			set {
+				lock ( this.OSourceCode ) {
+					this._mSourceCode = value;
+					this.Compile();
+				}
+			}
+		}
 
-        private Object ORun { get; } = new Object();
+		public String SourcePath { get; }
 
-        private Object OSourceCode { get; } = new Object();
+		private Object ORun { get; } = new Object();
 
-        public static CSharpCodeProvider CSharpCodeProvider { get; } = new CSharpCodeProvider();
+		private Object OSourceCode { get; } = new Object();
 
-        public Guid ID { get; private set; }
+		private CompilerResults _compilerResults;
 
-        public Object[] Parameters { get; set; }
+		private String _mSourceCode = String.Empty;
 
-        public String SourceCode {
-            get {
-                lock ( this.OSourceCode ) { return this._mSourceCode; }
-            }
+		public Action<String> Output = delegate { };
 
-            set {
-                lock ( this.OSourceCode ) {
-                    this._mSourceCode = value;
-                    this.Compile();
-                }
-            }
-        }
+		public interface IOutput {
 
-        public String SourcePath { get; }
+			void Output();
 
-        public CodeEngine( String sourcePath, Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
+		}
 
-        public CodeEngine( Guid id, String sourcePath, Action<String> output ) {
-            if ( null != output ) { this.Output = output; }
-
-            //if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
-            this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
-
-            if ( !this.Load() ) { this.SourceCode = DefaultCode(); }
-        }
-
-        private static String DefaultCode() =>
-            @"
+		private static String DefaultCode() =>
+			@"
 using System;
 using Libranian;
 
@@ -105,104 +102,117 @@ namespace Coding
     }
 }";
 
-        ///// <summary>
-        ///// system.windows.forms.dll
-        ///// </summary>
-        ///// <param name="dllname"></param>
-        //public void AddReference( String dllname ) {
-        //    this.codeCompileUnit.ReferencedAssemblies.Add( dllname );
-        //}
-        /// <summary>
-        ///     Prepare the assembly for Run()
-        /// </summary>
-        private Boolean Compile() {
-            try {
-                this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false }, this.SourceCode );
+		///// <summary>
+		///// system.windows.forms.dll
+		///// </summary>
+		///// <param name="dllname"></param>
+		//public void AddReference( String dllname ) {
+		//    this.codeCompileUnit.ReferencedAssemblies.Add( dllname );
+		//}
+		/// <summary>
+		///     Prepare the assembly for Run()
+		/// </summary>
+		private Boolean Compile() {
+			try {
+				this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false }, this.SourceCode );
 
-                if ( this._compilerResults.Errors.HasErrors ) {
-                    Logging.Break();
+				if ( this._compilerResults.Errors.HasErrors ) {
+					Logging.Break();
 
-                    return false;
-                }
+					return false;
+				}
 
-                if ( !this._compilerResults.Errors.HasWarnings ) { return true; }
+				if ( !this._compilerResults.Errors.HasWarnings ) { return true; }
 
-                Logging.Break();
+				Logging.Break();
 
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
+				return true;
+			}
+			catch ( Exception exception ) {
+				exception.More();
 
-                return false;
-            }
-        }
+				return false;
+			}
+		}
 
-        public static Boolean Test( Action<String> output ) {
-            try {
-                var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
-                var ooo = test.Run();
-                Assert.IsNotNull( ooo );
+		public static Boolean Test( Action<String> output ) {
+			try {
+				var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
+				var ooo = test.Run();
+				Assert.IsNotNull( ooo );
 
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.More();
+				return true;
+			}
+			catch ( Exception exception ) {
+				exception.More();
 
-                return false;
-            }
-        }
+				return false;
+			}
+		}
 
-        public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
+		public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
 
-        public Object Run() {
-            lock ( this.ORun ) {
-                if ( null == this._compilerResults ) { this.Compile(); }
+		public Object Run() {
+			lock ( this.ORun ) {
+				if ( null == this._compilerResults ) { this.Compile(); }
 
-                if ( null == this._compilerResults ) { return null; }
+				if ( null == this._compilerResults ) { return null; }
 
-                if ( this._compilerResults.Errors.HasErrors ) {
-                    Logging.Break();
+				if ( this._compilerResults.Errors.HasErrors ) {
+					Logging.Break();
 
-                    return null;
-                }
+					return null;
+				}
 
-                if ( this._compilerResults.Errors.HasWarnings ) { Logging.Break(); }
+				if ( this._compilerResults.Errors.HasWarnings ) { Logging.Break(); }
 
-                var loAssembly = this._compilerResults.CompiledAssembly;
-                var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
+				var loAssembly = this._compilerResults.CompiledAssembly;
+				var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
 
-                if ( loObject is null ) {
-                    Logging.Break();
+				if ( loObject is null ) {
+					Logging.Break();
 
-                    return null;
-                }
+					return null;
+				}
 
-                try {
-                    var loResult = loObject.GetType().InvokeMember( "DynamicCode", BindingFlags.InvokeMethod, null, loObject, this.Parameters );
+				try {
+					var loResult = loObject.GetType().InvokeMember( "DynamicCode", BindingFlags.InvokeMethod, null, loObject, this.Parameters );
 
-                    return loResult;
-                }
-                catch ( Exception exception ) {
-                    exception.More();
+					return loResult;
+				}
+				catch ( Exception exception ) {
+					exception.More();
 
-                    return null;
-                }
-            }
-        }
+					return null;
+				}
+			}
+		}
 
-        public Boolean Save() => this.SourceCode.Saver( this.SourcePath );
+		public Boolean Save() => this.SourceCode.Saver( this.SourcePath );
 
-        //private CodeCompileUnit codeCompileUnit;
-        //private CodeNamespace codeNamespace;
+		public CodeEngine( String sourcePath, Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
 
-        ///// <summary>
-        ///// Clears all internal code for this CodeEngine
-        ///// </summary>
-        //public void Init() {
-        //    this.codeCompileUnit = new CodeCompileUnit();
-        //    this.codeNamespace = new CodeNamespace( "AIBrain" );
-        //    this.codeCompileUnit.Namespaces.Add( this.codeNamespace );
-        //}
-    }
+		public CodeEngine( Guid id, String sourcePath, Action<String> output ) {
+			if ( null != output ) { this.Output = output; }
+
+			//if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
+			this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
+
+			if ( !this.Load() ) { this.SourceCode = DefaultCode(); }
+		}
+
+		//private CodeCompileUnit codeCompileUnit;
+		//private CodeNamespace codeNamespace;
+
+		///// <summary>
+		///// Clears all internal code for this CodeEngine
+		///// </summary>
+		//public void Init() {
+		//    this.codeCompileUnit = new CodeCompileUnit();
+		//    this.codeNamespace = new CodeNamespace( "AIBrain" );
+		//    this.codeCompileUnit.Namespaces.Add( this.codeNamespace );
+		//}
+
+	}
+
 }

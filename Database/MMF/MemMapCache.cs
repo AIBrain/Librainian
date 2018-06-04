@@ -1,209 +1,218 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MemMapCache.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/MemMapCache.cs" was last formatted by Protiguous on 2018/05/24 at 7:06 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "MemMapCache.cs" was last formatted by Protiguous on 2018/06/04 at 3:50 PM.
 
 namespace Librainian.Database.MMF {
 
-    using System;
-    using System.Collections.Generic;
-    using System.IO.MemoryMappedFiles;
-    using System.Net.Sockets;
-    using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters.Binary;
-    using System.Text;
-    using Magic;
+	using System;
+	using System.Collections.Generic;
+	using System.IO.MemoryMappedFiles;
+	using System.Net.Sockets;
+	using System.Runtime.Serialization;
+	using System.Runtime.Serialization.Formatters.Binary;
+	using System.Text;
+	using Magic;
 
-    public class MemMapCache<T> : ABetterClassDispose {
+	public class MemMapCache<T> : ABetterClassDispose {
 
-        private const String Delim = "[!@#]";
+		public static Int32 MaxKeyLength => 4096 - 32;
 
-        private BinaryFormatter _formatter;
+		public Boolean CacheHitAlwaysMiss { get; }
 
-        private NetworkStream _networkStream;
+		public Int64 ChunkSize { get; }
 
-        private TcpClient _tcpClient;
+		public Encoding Encoding { get; }
 
-        private Dictionary<String, DateTime> _keyExpirations { get; }
+		public Boolean IsConnected => this._tcpClient.Connected;
 
-        public static Int32 MaxKeyLength => 4096 - 32;
+		public Int32 Port { get; }
 
-        public Boolean CacheHitAlwaysMiss { get; }
+		public String Server { get; }
 
-        public Int64 ChunkSize { get; }
+		private Dictionary<String, DateTime> _keyExpirations { get; }
 
-        public Encoding Encoding { get; }
+		private BinaryFormatter _formatter;
 
-        public Boolean IsConnected => this._tcpClient.Connected;
+		private NetworkStream _networkStream;
 
-        public Int32 Port { get; }
+		private TcpClient _tcpClient;
 
-        public String Server { get; }
+		public void Connect() {
+			this._tcpClient = new TcpClient();
+			this._tcpClient.Connect( hostname: this.Server, port: this.Port );
+			this._networkStream = this._tcpClient.GetStream();
+			this._formatter = new BinaryFormatter();
+		}
 
-        public MemMapCache() {
-            this.Encoding = Encoding.Unicode;
-            this.ChunkSize = 1024 * 1024 * 30;
+		/// <summary>
+		///     Dispose any disposable members.
+		/// </summary>
+		public override void DisposeManaged() => this._tcpClient?.Dispose();
 
-            this.Server = "127.0.0.1"; //limited to local
-            this.Port = 57742;
+		//32 bytes for datetime String... it's an overkill i know
+		public T Get( String key ) {
+			if ( !this.IsConnected ) { return default; }
 
-            this.CacheHitAlwaysMiss = false;
+			if ( this.CacheHitAlwaysMiss ) { return default; }
 
-            this._keyExpirations = new Dictionary<String, DateTime>();
-        }
+			try {
+				using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( mapName: key ) ) {
+					if ( this._keyExpirations.ContainsKey( key ) ) {
+						if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
+							this._keyExpirations.Remove( key );
 
-        public void Connect() {
-            this._tcpClient = new TcpClient();
-            this._tcpClient.Connect( hostname: this.Server, port: this.Port );
-            this._networkStream = this._tcpClient.GetStream();
-            this._formatter = new BinaryFormatter();
-        }
+							return default;
+						}
+					}
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this._tcpClient?.Dispose();
+					var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 ); //TODO
 
-        //32 bytes for datetime String... it's an overkill i know
-        public T Get( String key ) {
-            if ( !this.IsConnected ) { return default; }
+					var o = this._formatter.Deserialize( serializationStream: viewStream );
 
-            if ( this.CacheHitAlwaysMiss ) { return default; }
+					return ( T ) o;
+				}
+			}
+			catch ( SerializationException ) {
 
-            try {
-                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( mapName: key ) ) {
-                    if ( this._keyExpirations.ContainsKey( key ) ) {
-                        if ( DateTime.UtcNow >= this._keyExpirations[key] ) {
-                            this._keyExpirations.Remove( key );
+				//throw;
+				return default;
+			}
+			catch ( Exception ) {
+				if ( this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Remove( key ); }
 
-                            return default;
-                        }
-                    }
+				return default;
+			}
+		}
 
-                    var viewStream = memoryMappedFile.CreateViewStream( offset: 0, size: 0 ); //TODO
+		//ideal for Unit Testing of classes that depend upon this Library.
+		public void Set( String key, T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
 
-                    var o = this._formatter.Deserialize( serializationStream: viewStream );
+		public void Set( String key, T obj, Int64 size, DateTime expire ) {
+			try {
+				if ( String.IsNullOrEmpty( key ) ) { throw new Exception( "The key can't be null or empty." ); }
 
-                    return ( T )o;
-                }
-            }
-            catch ( SerializationException ) {
+				if ( key.Length >= MaxKeyLength ) { throw new Exception( "The key has exceeded the maximum length." ); }
 
-                //throw;
-                return default;
-            }
-            catch ( Exception ) {
-                if ( this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Remove( key ); }
+				if ( !this.IsConnected ) { return; }
 
-                return default;
-            }
-        }
+				expire = expire.ToUniversalTime();
 
-        //ideal for Unit Testing of classes that depend upon this Library.
-        public void Set( String key, T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
+				if ( !this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Add( key, expire ); }
+				else { this._keyExpirations[ key ] = expire; }
 
-        public void Set( String key, T obj, Int64 size, DateTime expire ) {
-            try {
-                if ( String.IsNullOrEmpty( key ) ) { throw new Exception( "The key can't be null or empty." ); }
+				var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size );
+				var vs = mmf.CreateViewStream();
+				this._formatter.Serialize( serializationStream: vs, graph: obj );
 
-                if ( key.Length >= MaxKeyLength ) { throw new Exception( "The key has exceeded the maximum length." ); }
+				var cmd = String.Format( format: "{0}{1}{2}", arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
 
-                if ( !this.IsConnected ) { return; }
+				var buf = this.Encoding.GetBytes( s: cmd );
+				this._networkStream.Write( buffer: buf, offset: 0, size: buf.Length );
+				this._networkStream.Flush();
+			}
+			catch ( NotSupportedException exception ) {
 
-                expire = expire.ToUniversalTime();
+				//Console.WriteLine( "{0} is too small for {1}.", size, key );
+				exception.More();
+			}
+			catch ( Exception exception ) {
 
-                if ( !this._keyExpirations.ContainsKey( key ) ) { this._keyExpirations.Add( key, expire ); }
-                else { this._keyExpirations[key] = expire; }
+				//Console.WriteLine( "MemMapCache: Set Failed.\n\t" + ex.Message );
+				exception.More();
+			}
+		}
 
-                var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size );
-                var vs = mmf.CreateViewStream();
-                this._formatter.Serialize( serializationStream: vs, graph: obj );
+		public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, size: this.ChunkSize, expire: expire );
 
-                var cmd = String.Format( format: "{0}{1}{2}", arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
+		public void Set( String key, T obj, TimeSpan expire ) {
+			var expireDt = DateTime.Now.Add( expire );
+			this.Set( key, obj, size: this.ChunkSize, expire: expireDt );
+		}
 
-                var buf = this.Encoding.GetBytes( s: cmd );
-                this._networkStream.Write( buffer: buf, offset: 0, size: buf.Length );
-                this._networkStream.Flush();
-            }
-            catch ( NotSupportedException exception ) {
+		public void Set( String key, T obj, Int64 size ) => this.Set( key, obj, size: size, expire: DateTime.MaxValue );
 
-                //Console.WriteLine( "{0} is too small for {1}.", size, key );
-                exception.More();
-            }
-            catch ( Exception exception ) {
+		public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
 
-                //Console.WriteLine( "MemMapCache: Set Failed.\n\t" + ex.Message );
-                exception.More();
-            }
-        }
+		public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
+			var obj = this.Get( key );
 
-        public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, size: this.ChunkSize, expire: expire );
+			if ( obj != null ) { return obj; }
 
-        public void Set( String key, T obj, TimeSpan expire ) {
-            var expireDt = DateTime.Now.Add( expire );
-            this.Set( key, obj, size: this.ChunkSize, expire: expireDt );
-        }
+			obj = cacheMiss.Invoke();
+			this.Set( key, obj, expire: expire );
 
-        public void Set( String key, T obj, Int64 size ) => this.Set( key, obj, size: size, expire: DateTime.MaxValue );
+			return obj;
+		}
 
-        public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
+		public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
+			var expireDt = DateTime.Now.Add( expire );
 
-        public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
-            var obj = this.Get( key );
+			return this.TryGetThenSet( key, expire: expireDt, cacheMiss: cacheMiss );
+		}
 
-            if ( obj != null ) { return obj; }
+		public T TryGetThenSet( String key, Int64 size, TimeSpan expire, Func<T> cacheMiss ) {
+			var expireDt = DateTime.Now.Add( expire );
 
-            obj = cacheMiss.Invoke();
-            this.Set( key, obj, expire: expire );
+			return this.TryGetThenSet( key, size: size, expire: expireDt, cacheMiss: cacheMiss );
+		}
 
-            return obj;
-        }
+		public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
+			var obj = this.Get( key );
 
-        public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
-            var expireDt = DateTime.Now.Add( expire );
+			if ( obj == null ) {
+				obj = cacheMiss.Invoke();
+				this.Set( key, obj, size: size, expire: expire );
+			}
 
-            return this.TryGetThenSet( key, expire: expireDt, cacheMiss: cacheMiss );
-        }
+			return obj;
+		}
 
-        public T TryGetThenSet( String key, Int64 size, TimeSpan expire, Func<T> cacheMiss ) {
-            var expireDt = DateTime.Now.Add( expire );
+		private const String Delim = "[!@#]";
 
-            return this.TryGetThenSet( key, size: size, expire: expireDt, cacheMiss: cacheMiss );
-        }
+		public MemMapCache() {
+			this.Encoding = Encoding.Unicode;
+			this.ChunkSize = 1024 * 1024 * 30;
 
-        public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
-            var obj = this.Get( key );
+			this.Server = "127.0.0.1"; //limited to local
+			this.Port = 57742;
 
-            if ( obj == null ) {
-                obj = cacheMiss.Invoke();
-                this.Set( key, obj, size: size, expire: expire );
-            }
+			this.CacheHitAlwaysMiss = false;
 
-            return obj;
-        }
-    }
+			this._keyExpirations = new Dictionary<String, DateTime>();
+		}
+
+	}
+
 }

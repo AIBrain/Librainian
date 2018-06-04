@@ -17,42 +17,49 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/OneJob.cs" was last formatted by Protiguous on 2018/05/24 at 7:34 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "OneJob.cs" was last formatted by Protiguous on 2018/06/04 at 4:28 PM.
 
 namespace Librainian.Threading {
 
-    using System;
-    using Maths.Numbers;
+	using System;
+	using Maths.Numbers;
 
-    public class OneJob : IComparable<OneJob> {
+	public class OneJob : IComparable<OneJob> {
 
-        public Action Action { get; }
+		public Action Action { get; }
 
-        public Percentage Priority { get; }
+		public Percentage Priority { get; }
 
-        public OneJob( Single priority, Action action ) {
-            this.Priority = priority;
-            this.Action = action;
-        }
+		public OneJob( Single priority, Action action ) {
+			this.Priority = priority;
+			this.Action = action;
+		}
 
-        /// <summary>
-        ///     Compares the current object with another object of the same type.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has the following
-        ///     meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This
-        ///     object is equal to <paramref name="other" />. Greater than zero This object is greater than
-        ///     <paramref name="other" />.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public Int32 CompareTo( OneJob other ) => this.Priority.CompareTo( other.Priority );
-    }
+		/// <summary>
+		///     Compares the current object with another object of the same type.
+		/// </summary>
+		/// <returns>
+		///     A value that indicates the relative order of the objects being compared. The return value has the following
+		///     meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This
+		///     object is equal to <paramref name="other" />. Greater than zero This object is greater than
+		///     <paramref name="other" />.
+		/// </returns>
+		/// <param name="other">An object to compare with this object.</param>
+		public Int32 CompareTo( OneJob other ) => this.Priority.CompareTo( other.Priority );
+	}
 }

@@ -1,194 +1,203 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Scraper.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/Scraper.cs" was last formatted by Protiguous on 2018/05/24 at 7:15 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "Scraper.cs" was last formatted by Protiguous on 2018/06/04 at 3:59 PM.
 
 namespace Librainian.Internet {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Cache;
-    using System.Net.Security;
-    using System.Threading;
-    using Collections;
-    using Newtonsoft.Json;
-    using Parsing;
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Net;
+	using System.Net.Cache;
+	using System.Net.Security;
+	using System.Threading;
+	using Collections;
+	using Newtonsoft.Json;
+	using Parsing;
 
-    [JsonObject]
-    [Obsolete]
-    public static class Scraper {
+	[JsonObject]
+	[Obsolete]
+	public static class Scraper {
 
-        [JsonProperty]
-        private static readonly CookieContainer Cookies = new CookieContainer();
+		public static List<WebSite> ScrapedSites {
+			get {
+				try {
+					MAccess.EnterReadLock();
 
-        [JsonProperty]
-        private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+					return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
+				}
+				finally { MAccess.ExitReadLock(); }
+			}
+		}
 
-        /// <summary>TODO: concurrentbag</summary>
-        [JsonProperty]
-        private static readonly List<WebSite> MWebsites = new List<WebSite>();
+		private static WebSite GetNextToScrape() {
+			try {
+				MAccess.EnterReadLock();
 
-        public static List<WebSite> ScrapedSites {
-            get {
-                try {
-                    MAccess.EnterReadLock();
+				return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
+			}
+			finally { MAccess.ExitReadLock(); }
+		}
 
-                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
-                }
-                finally { MAccess.ExitReadLock(); }
-            }
-        }
+		private static void RespCallback( IAsyncResult asynchronousResult ) {
+			try {
+				if ( asynchronousResult.AsyncState is WebSite web ) {
+					var response = web.Request.EndGetResponse( asynchronousResult );
+					var document = response.StringFromResponse();
 
-        private static WebSite GetNextToScrape() {
-            try {
-                MAccess.EnterReadLock();
+					Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
 
-                return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
-            }
-            finally { MAccess.ExitReadLock(); }
-        }
+					MAccess.EnterWriteLock();
+					web.ResponseCount++;
+					web.WhenResponseCame = DateTime.UtcNow;
+					web.Document = document;
 
-        private static void RespCallback( IAsyncResult asynchronousResult ) {
-            try {
-                if ( asynchronousResult.AsyncState is WebSite web ) {
-                    var response = web.Request.EndGetResponse( asynchronousResult );
-                    var document = response.StringFromResponse();
+					if ( !web.Location.Equals( response.ResponseUri ) ) {
+						web.Location = response.ResponseUri;
 
-                    Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
+						//AddSiteToScrape( response.ResponseUri, web.ResponseAction );
+					}
 
-                    MAccess.EnterWriteLock();
-                    web.ResponseCount++;
-                    web.WhenResponseCame = DateTime.UtcNow;
-                    web.Document = document;
+					MAccess.ExitWriteLock();
+				}
 
-                    if ( !web.Location.Equals( response.ResponseUri ) ) {
-                        web.Location = response.ResponseUri;
+				//TODO
+				//if ( web.ResponseAction is Action<WebSite> ) {
+				//    web.ResponseAction.FiredAndForgotten( web );
+				//    //web.ResponseAction( web );
+				//}
+			}
+			catch ( WebException ) { }
+			catch ( Exception exception ) { exception.More(); }
+		}
 
-                        //AddSiteToScrape( response.ResponseUri, web.ResponseAction );
-                    }
+		private static void StartNextScrape() {
+			try {
+				var web = GetNextToScrape();
 
-                    MAccess.ExitWriteLock();
-                }
+				if ( null == web ) { return; }
 
-                //TODO
-                //if ( web.ResponseAction is Action<WebSite> ) {
-                //    web.ResponseAction.FiredAndForgotten( web );
-                //    //web.ResponseAction( web );
-                //}
-            }
-            catch ( WebException ) { }
-            catch ( Exception exception ) { exception.More(); }
-        }
+				if ( null == web.Request ) {
+					try {
+						MAccess.EnterWriteLock();
+						web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
 
-        private static void StartNextScrape() {
-            try {
-                var web = GetNextToScrape();
+						if ( web.Request != null ) {
+							web.Request.AllowAutoRedirect = true;
+							web.Request.AllowWriteStreamBuffering = true;
+							web.Request.AuthenticationLevel = AuthenticationLevel.None;
+							web.Request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+							web.Request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
+							web.Request.CookieContainer = Cookies;
+							web.Request.KeepAlive = true;
+							web.Request.MaximumAutomaticRedirections = 300;
+							web.Request.Method = "GET";
+							web.Request.Pipelined = true;
+							web.Request.SendChunked = true;
+							var now = DateTime.Now;
+							web.Request.UserAgent = $"AIBrain/{now.Year}.{now.Month}.{now.Day}";
+						}
 
-                if ( null == web ) { return; }
+						web.WhenRequestStarted = DateTime.UtcNow;
+					}
+					finally { MAccess.ExitWriteLock(); }
+				}
 
-                if ( null == web.Request ) {
-                    try {
-                        MAccess.EnterWriteLock();
-                        web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
+				web.Request?.BeginGetResponse( RespCallback, web );
+			}
+			catch ( Exception exception ) { exception.More(); }
+		}
 
-                        if ( web.Request != null ) {
-                            web.Request.AllowAutoRedirect = true;
-                            web.Request.AllowWriteStreamBuffering = true;
-                            web.Request.AuthenticationLevel = AuthenticationLevel.None;
-                            web.Request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                            web.Request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-                            web.Request.CookieContainer = Cookies;
-                            web.Request.KeepAlive = true;
-                            web.Request.MaximumAutomaticRedirections = 300;
-                            web.Request.Method = "GET";
-                            web.Request.Pipelined = true;
-                            web.Request.SendChunked = true;
-                            var now = DateTime.Now;
-                            web.Request.UserAgent = $"AIBrain/{now.Year}.{now.Month}.{now.Day}";
-                        }
+		public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
+			try {
+				if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
+			}
+			catch ( Exception exception ) { exception.More(); }
+		}
 
-                        web.WhenRequestStarted = DateTime.UtcNow;
-                    }
-                    finally { MAccess.ExitWriteLock(); }
-                }
+		public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
+			if ( !IsSiteQueued( uri ) ) {
+				var web = new WebSite {
+					Location = uri,
+					Document = String.Empty,
+					RequestCount = 0,
+					ResponseCount = 0,
+					WhenAddedToQueue = DateTime.UtcNow,
+					WhenRequestStarted = DateTime.MinValue,
+					WhenResponseCame = DateTime.MinValue
 
-                web.Request?.BeginGetResponse( RespCallback, web );
-            }
-            catch ( Exception exception ) { exception.More(); }
-        }
+					//ResponseAction = responseaction
+				};
 
-        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
-            try {
-                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
-            }
-            catch ( Exception exception ) { exception.More(); }
-        }
+				try {
+					MAccess.EnterWriteLock();
+					MWebsites.Add( web );
+				}
+				finally { MAccess.ExitWriteLock(); }
+			}
+			else {
+				try {
+					MAccess.EnterWriteLock();
+					MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
+				}
+				finally { MAccess.ExitWriteLock(); }
+			}
 
-        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
-            if ( !IsSiteQueued( uri ) ) {
-                var web = new WebSite {
-                    Location = uri,
-                    Document = String.Empty,
-                    RequestCount = 0,
-                    ResponseCount = 0,
-                    WhenAddedToQueue = DateTime.UtcNow,
-                    WhenRequestStarted = DateTime.MinValue,
-                    WhenResponseCame = DateTime.MinValue
+			StartNextScrape();
+		}
 
-                    //ResponseAction = responseaction
-                };
+		public static Boolean IsSiteQueued( Uri uri ) {
+			try {
+				MAccess.EnterReadLock();
 
-                try {
-                    MAccess.EnterWriteLock();
-                    MWebsites.Add( web );
-                }
-                finally { MAccess.ExitWriteLock(); }
-            }
-            else {
-                try {
-                    MAccess.EnterWriteLock();
-                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
-                }
-                finally { MAccess.ExitWriteLock(); }
-            }
+				return MWebsites.Exists( w => w.Location.Equals( uri ) );
+			}
+			finally { MAccess.ExitReadLock(); }
+		}
 
-            StartNextScrape();
-        }
+		[JsonProperty]
+		private static readonly CookieContainer Cookies = new CookieContainer();
 
-        public static Boolean IsSiteQueued( Uri uri ) {
-            try {
-                MAccess.EnterReadLock();
+		[JsonProperty]
+		private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-                return MWebsites.Exists( w => w.Location.Equals( uri ) );
-            }
-            finally { MAccess.ExitReadLock(); }
-        }
-    }
+		/// <summary>TODO: concurrentbag</summary>
+		[JsonProperty]
+		private static readonly List<WebSite> MWebsites = new List<WebSite>();
+
+	}
+
 }

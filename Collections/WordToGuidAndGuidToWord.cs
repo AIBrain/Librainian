@@ -1,162 +1,171 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "WordToGuidAndGuidToWord.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/05/28 at 12:00 AM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/06/04 at 3:45 PM.
 
 namespace Librainian.Collections {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using ComputerSystems.FileSystem;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Persistence;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Persistence;
 
-    /// <summary>
-    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
-    /// </summary>
-    [JsonObject]
-    public class WordToGuidAndGuidToWord {
+	/// <summary>
+	///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
+	/// </summary>
+	[JsonObject]
+	public class WordToGuidAndGuidToWord {
 
-        [JsonProperty]
-        private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
+		public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
 
-        [JsonProperty]
-        private ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
+		public IEnumerable<Guid> EachGuid => this.Guids.Keys;
 
-        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
+		public IEnumerable<String> EachWord => this.Words.Keys;
 
-        public IEnumerable<String> EachWord => this.Words.Keys;
+		[JsonIgnore]
+		public Boolean IsDirty { get; set; }
 
-        [JsonIgnore]
-        public Boolean IsDirty { get; set; }
+		/// <summary>
+		///     Get or set the guid for this word.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public Guid this[ String key ] {
+			get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[ key ];
 
-        public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
+			set {
+				if ( String.IsNullOrEmpty( key ) ) { return; }
 
-        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
+				if ( this.Words.ContainsKey( key ) && value == this.Words[ key ] ) { return; }
 
-        /// <summary>
-        ///     Get or set the guid for this word.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public Guid this[String key] {
-            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[key];
+				this.Words[ key ] = value;
+				this[ value ] = key;
 
-            set {
-                if ( String.IsNullOrEmpty( key ) ) { return; }
+				this.IsDirty = true;
+			}
+		}
 
-                if ( this.Words.ContainsKey( key ) && value == this.Words[key] ) { return; }
+		/// <summary>
+		///     Get or set the word for this guid.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public String this[ Guid key ] {
+			get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[ key ];
 
-                this.Words[key] = value;
-                this[value] = key;
+			set {
+				if ( Guid.Empty.Equals( g: key ) ) { return; }
 
-                this.IsDirty = true;
-            }
-        }
+				//Are they removing the guid from both lists?
+				if ( String.IsNullOrEmpty( value ) ) {
+					this.Guids.TryRemove( key, out var oldstringfortheguid );
 
-        /// <summary>
-        ///     Get or set the word for this guid.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public String this[Guid key] {
-            get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[key];
+					if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
 
-            set {
-                if ( Guid.Empty.Equals( g: key ) ) { return; }
+					this.Words.TryRemove( oldstringfortheguid, out var oldguid );
+					oldguid.Equals( g: key ).BreakIfFalse();
+					this.IsDirty = true;
+				}
+				else {
+					if ( this.Guids.ContainsKey( key ) && value == this.Guids[ key ] ) { return; }
 
-                //Are they removing the guid from both lists?
-                if ( String.IsNullOrEmpty( value ) ) {
-                    this.Guids.TryRemove( key, out var oldstringfortheguid );
+					this.Guids[ key ] = value;
+					this.IsDirty = true;
+				}
+			}
+		}
 
-                    if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
+		[JsonProperty]
+		private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
 
-                    this.Words.TryRemove( oldstringfortheguid, out var oldguid );
-                    oldguid.Equals( g: key ).BreakIfFalse();
-                    this.IsDirty = true;
-                }
-                else {
-                    if ( this.Guids.ContainsKey( key ) && value == this.Guids[key] ) { return; }
+		[JsonProperty]
+		private ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
 
-                    this.Guids[key] = value;
-                    this.IsDirty = true;
-                }
-            }
-        }
+		public void Clear() {
+			if ( this.Words.IsEmpty && this.Guids.IsEmpty ) { return; }
 
-        public void Clear() {
-            if ( this.Words.IsEmpty && this.Guids.IsEmpty ) { return; }
+			this.Words.Clear();
+			this.Guids.Clear();
+			this.IsDirty = true;
+		}
 
-            this.Words.Clear();
-            this.Guids.Clear();
-            this.IsDirty = true;
-        }
+		/// <summary>
+		///     Returns true if the word is contained in the collections.
+		/// </summary>
+		/// <param name="theWord"></param>
+		/// <returns></returns>
+		public Boolean Contains( [NotNull] String theWord ) {
+			if ( theWord is null ) { throw new ArgumentNullException( nameof( theWord ) ); }
 
-        /// <summary>
-        ///     Returns true if the word is contained in the collections.
-        /// </summary>
-        /// <param name="theWord"></param>
-        /// <returns></returns>
-        public Boolean Contains( [NotNull] String theWord ) {
-            if ( theWord is null ) { throw new ArgumentNullException( nameof( theWord ) ); }
+			return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
+		}
 
-            return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
-        }
+		/// <summary>
+		///     Returns true if the guid is contained in the collection.
+		/// </summary>
+		/// <param name="theGuid"></param>
+		/// <returns></returns>
+		public Boolean Contains( Guid theGuid ) => this.Words.Values.Contains( item: theGuid ) && this.Guids.Keys.Contains( item: theGuid );
 
-        /// <summary>
-        ///     Returns true if the guid is contained in the collection.
-        /// </summary>
-        /// <param name="theGuid"></param>
-        /// <returns></returns>
-        public Boolean Contains( Guid theGuid ) => this.Words.Values.Contains( item: theGuid ) && this.Guids.Keys.Contains( item: theGuid );
+		public Boolean Load() {
 
-        public Boolean Load() {
+			Logging.Break();
 
-            Logging.Break();
+			//var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
+			//var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
+			//if ( storage is null ) {
+			//    return false;
+			//}
+			//var countBefore = this.Count;
+			//foreach ( var word in storage.Keys ) {
+			//    this[ word ] = storage[ word ];
+			//}
+			//this.IsDirty = this.Count != countBefore + storage.Keys.Count;
+			return false;
+		}
 
-            //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
-            //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
-            //if ( storage is null ) {
-            //    return false;
-            //}
-            //var countBefore = this.Count;
-            //foreach ( var word in storage.Keys ) {
-            //    this[ word ] = storage[ word ];
-            //}
-            //this.IsDirty = this.Count != countBefore + storage.Keys.Count;
-            return false;
-        }
+		/// <summary>
+		///     Returns true if the collections are persisted to storage (or empty).
+		/// </summary>
+		/// <returns></returns>
+		public Boolean Save() => !this.IsDirty || this.Words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
 
-        /// <summary>
-        ///     Returns true if the collections are persisted to storage (or empty).
-        /// </summary>
-        /// <returns></returns>
-        public Boolean Save() => !this.IsDirty || this.Words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
-    }
+		public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
+
+	}
+
 }

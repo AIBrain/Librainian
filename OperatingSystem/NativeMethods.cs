@@ -1,1010 +1,1040 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "NativeMethods.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/NativeMethods.cs" was last formatted by Protiguous on 2018/05/24 at 7:29 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "NativeMethods.cs" was last formatted by Protiguous on 2018/06/04 at 4:19 PM.
 
 namespace Librainian.OperatingSystem {
 
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Runtime.ConstrainedExecution;
-    using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Text;
-    using System.Threading;
-    using ComputerSystems.FileSystem;
-    using Controls;
-    using Extensions;
-    using Graphics;
-    using Graphics.Video;
-    using Microsoft.Win32.SafeHandles;
+	using System;
+	using System.Diagnostics.CodeAnalysis;
+	using System.IO;
+	using System.Runtime.ConstrainedExecution;
+	using System.Runtime.InteropServices;
+	using System.Security;
+	using System.Text;
+	using System.Threading;
+	using ComputerSystems.FileSystem;
+	using Controls;
+	using Extensions;
+	using Graphics;
+	using Graphics.Video;
+	using Microsoft.Win32.SafeHandles;
 
-    [SuppressMessage( "ReSharper", "InconsistentNaming" )]
-    public static class NativeMethods {
+	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+	public static class NativeMethods {
 
-        [Flags]
-        public enum AllocationType : UInt32 {
+		[SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ATA_PASS_THROUGH_EX {
 
-            COMMIT = 0x1000,
+			public UInt16 Length;
 
-            RESERVE = 0x2000,
+			public UInt16 AtaFlags;
 
-            RESET = 0x80000,
+			public readonly Byte PathId;
 
-            LARGE_PAGES = 0x20000000,
+			public readonly Byte TargetId;
 
-            PHYSICAL = 0x400000,
+			public readonly Byte Lun;
 
-            TOP_DOWN = 0x100000,
+			public readonly Byte ReservedAsUchar;
 
-            WRITE_WATCH = 0x200000
-        }
+			public UInt32 DataTransferLength;
 
-        public enum FILE_INFO_BY_HANDLE_CLASS {
+			public UInt32 TimeOutValue;
 
-            FileBasicInfo = 0,
+			public readonly UInt32 ReservedAsUlong;
 
-            FileStandardInfo = 1,
+			internal IntPtr DataBufferOffset;
 
-            FileNameInfo = 2,
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+			public Byte[] PreviousTaskFile;
 
-            FileRenameInfo = 3,
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+			public Byte[] CurrentTaskFile;
 
-            FileDispositionInfo = 4,
+		}
 
-            FileAllocationInfo = 5,
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ATAIdentifyDeviceQuery {
 
-            FileEndOfFileInfo = 6,
+			public ATA_PASS_THROUGH_EX header;
 
-            FileStreamInfo = 7,
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+			public UInt16[] data;
 
-            FileCompressionInfo = 8,
+		}
 
-            FileAttributeTagInfo = 9,
+		[StructLayout( LayoutKind.Sequential )]
+		public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
 
-            FileIdBothDirectoryInfo = 10, // 0x0A
+			public readonly UInt32 Version;
 
-            FileIdBothDirectoryRestartInfo = 11, // 0xB
+			public readonly UInt32 Size;
 
-            FileIoPriorityHintInfo = 12, // 0xC
+			[MarshalAs( UnmanagedType.U1 )]
+			public readonly Boolean IncursSeekPenalty;
 
-            FileRemoteProtocolInfo = 13, // 0xD
+		}
 
-            FileFullDirectoryInfo = 14, // 0xE
+		[StructLayout( LayoutKind.Sequential )]
+		public struct DISK_EXTENT {
 
-            FileFullDirectoryRestartInfo = 15, // 0xF
+			public readonly Int32 DiskNumber;
 
-            FileStorageInfo = 16, // 0x10
+			public readonly Int64 StartingOffset;
 
-            FileAlignmentInfo = 17, // 0x11
+			public readonly Int64 ExtentLength;
 
-            FileIdInfo = 18, // 0x12
+		}
 
-            FileIdExtdDirectoryInfo = 19, // 0x13
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+		public struct FILE_ID_BOTH_DIR_INFO {
 
-            FileIdExtdDirectoryRestartInfo = 20, // 0x14
+			public readonly UInt32 NextEntryOffset;
 
-            MaximumFileInfoByHandlesClass
-        }
+			public readonly UInt32 FileIndex;
 
-        [Flags]
-        public enum HeapFlags {
+			public LargeInteger CreationTime;
 
-            HEAP_NO_SERIALIZE = 0x1,
+			public LargeInteger LastAccessTime;
 
-            HEAP_GENERATE_EXCEPTIONS = 0x4,
+			public LargeInteger LastWriteTime;
 
-            HEAP_ZERO_MEMORY = 0x8
-        }
+			public LargeInteger ChangeTime;
 
-        [Flags]
-        public enum MemoryProtection : UInt32 {
+			public LargeInteger EndOfFile;
 
-            EXECUTE = 0x10,
+			public LargeInteger AllocationSize;
 
-            EXECUTE_READ = 0x20,
+			public readonly UInt32 FileAttributes;
 
-            EXECUTE_READWRITE = 0x40,
+			public readonly UInt32 FileNameLength;
 
-            EXECUTE_WRITECOPY = 0x80,
+			public readonly UInt32 EaSize;
 
-            NOACCESS = 0x01,
+			public readonly Char ShortNameLength;
 
-            READONLY = 0x02,
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
+			public readonly String ShortName;
 
-            READWRITE = 0x04,
+			public LargeInteger FileId;
 
-            WRITECOPY = 0x08,
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
+			public readonly String FileName;
 
-            GUARD_Modifierflag = 0x100,
+		}
 
-            NOCACHE_Modifierflag = 0x200,
+		/// <summary>
+		///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
+		///     100-nanosecond intervals since January 1, 1601 (UTC)."
+		/// </summary>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
+		[StructLayout( LayoutKind.Sequential )]
+		public struct Filetime {
 
-            WRITECOMBINE_Modifierflag = 0x400
-        }
+			public readonly UInt32 dwLowDateTime;
 
-        public enum PLATFORM_ID {
+			public readonly UInt32 dwHighDateTime;
 
-            PlatformIDDos = 300,
+		}
 
-            PlatformIDOs2 = 400,
+		[StructLayout( LayoutKind.Explicit )]
+		public struct LargeInteger {
 
-            PlatformIDNt = 500,
+			[FieldOffset( 0 )]
+			public Int32 Low;
 
-            PlatformIDOsf = 600,
+			[FieldOffset( 4 )]
+			public Int32 High;
 
-            PlatformIDVms = 700
-        }
+			[FieldOffset( 0 )]
+			public readonly Int64 QuadPart;
 
-        public enum PNP_VETO_TYPE {
+			/// <summary>
+			///     use only when QuadPart cannot be passed
+			/// </summary>
+			/// <returns></returns>
+			public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
 
-            Ok,
+			// just for demonstration
+			internal static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 ) value, High = ( Int32 ) ( value >> 32 ) };
 
-            TypeUnknown,
+		}
 
-            LegacyDevice,
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ServerInfo101 {
 
-            PendingClose,
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_platform_id;
 
-            WindowsApp,
+			[MarshalAs( UnmanagedType.LPWStr )]
+			public readonly String sv101_name;
 
-            WindowsService,
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_version_major;
 
-            OutstandingOpen,
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_version_minor;
 
-            Device,
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_type;
 
-            Driver,
+			[MarshalAs( UnmanagedType.LPWStr )]
+			public readonly String sv101_comment;
 
-            IllegalDeviceRequest,
+		}
 
-            InsufficientPower,
+		[StructLayout( LayoutKind.Sequential )]
+		public struct STORAGE_DEVICE_NUMBER {
 
-            NonDisableable,
+			public Int32 DeviceType;
 
-            LegacyDriver
-        }
+			public Int32 DeviceNumber;
 
-        [Flags]
-        public enum Sv101Types : UInt32 {
+			public Int32 PartitionNumber;
 
-            SvTypeWorkstation = 0x00000001,
+		}
 
-            SvTypeServer = 0x00000002,
+		[StructLayout( LayoutKind.Sequential )]
+		public struct STORAGE_PROPERTY_QUERY {
 
-            SvTypeSqlserver = 0x00000004,
+			public UInt32 PropertyId;
 
-            SvTypeDomainCtrl = 0x00000008,
+			public UInt32 QueryType;
 
-            SvTypeDomainBakctrl = 0x00000010,
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
+			public readonly Byte[] AdditionalParameters;
 
-            SvTypeTimeSource = 0x00000020,
+		}
 
-            SvTypeAfp = 0x00000040,
+		/// <summary>
+		///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
+		///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
+		/// </summary>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
+		public struct Win32FindData {
 
-            SvTypeNovell = 0x00000080,
+			public readonly FileAttributes dwFileAttributes;
 
-            SvTypeDomainMember = 0x00000100,
+			public Filetime ftCreationTime;
 
-            SvTypePrintqServer = 0x00000200,
+			public Filetime ftLastAccessTime;
 
-            SvTypeDialinServer = 0x00000400,
+			public Filetime ftLastWriteTime;
 
-            SvTypeXenixServer = 0x00000800,
+			public readonly UInt32 nFileSizeHigh;
 
-            SvTypeServerUnix = 0x00000800,
+			public readonly UInt32 nFileSizeLow;
 
-            SvTypeNt = 0x00001000,
+			public readonly UInt32 dwReserved0;
 
-            SvTypeWfw = 0x00002000,
+			public readonly UInt32 dwReserved1;
 
-            SvTypeServerMfpn = 0x00004000,
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
+			public readonly String cFileName;
 
-            SvTypeServerNt = 0x00008000,
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+			public readonly String cAlternateFileName;
 
-            SvTypePotentialBrowser = 0x00010000,
+		}
 
-            SvTypeBackupBrowser = 0x00020000,
+		[DllImport( "kernel32.dll" )]
+		internal static extern Boolean AllocConsole();
 
-            SvTypeMasterBrowser = 0x00040000,
+		//[DllImport( "kernel32.dll", SetLastError = true )]
+		//internal static extern IntPtr CreateFile( String lpFileName, JunctionPoint.EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, JunctionPoint.ECreationDisposition dwCreationDisposition, JunctionPoint.EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-            SvTypeDomainMaster = 0x00080000,
+		//[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
+		//internal static extern IntPtr CreateFile( String lpFileName, Int32 dwDesiredAccess, Int32 dwShareMode, IntPtr lpSecurityAttributes, Int32 dwCreationDisposition, Int32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-            SvTypeServerOsf = 0x00100000,
+		//[DllImport( "kernel32.dll", SetLastError = true )]
+		//internal static extern IntPtr CreateFile( String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-            SvTypeServerVms = 0x00200000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIFileCreateStream( Int32 pfile, out IntPtr ppavi, ref Avi.Avistreaminfo ptrStreaminfo );
 
-            SvTypeWindows = 0x00400000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern void AVIFileExit();
 
-            SvTypeDfs = 0x00800000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIFileGetStream( Int32 pfile, out IntPtr ppavi, Int32 fccType, Int32 lParam );
 
-            SvTypeClusterNt = 0x01000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern void AVIFileInit();
 
-            SvTypeTerminalserver = 0x02000000,
+		[DllImport( "avifil32.dll", PreserveSig = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
+		internal static extern Int32 AVIFileOpen( ref Int32 ppfile, [MarshalAs( UnmanagedType.LPWStr )] String szFile, Int32 uMode, Int32 pclsidHandler );
 
-            SvTypeClusterVsNt = 0x04000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIFileRelease( Int32 pfile );
 
-            SvTypeDce = 0x10000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamGetFrame( Int32 pGetFrameObj, Int32 lPos );
 
-            SvTypeAlternateXport = 0x20000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamGetFrameClose( Int32 pGetFrameObj );
 
-            SvTypeLocalListOnly = 0x40000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamGetFrameOpen( IntPtr pAviStream, ref Avi.Bitmapinfoheader bih );
 
-            SvTypeDomainEnum = 0x80000000,
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamInfo( Int32 pAviStream, ref Avi.Avistreaminfo psi, Int32 lSize );
 
-            SvTypeAll = 0xFFFFFFFF
-        }
+		[DllImport( "avifil32.dll", PreserveSig = true )]
+		internal static extern Int32 AVIStreamLength( Int32 pavi );
 
-        [SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ATA_PASS_THROUGH_EX {
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamRelease( IntPtr aviStream );
 
-            public UInt16 Length;
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamSetFormat( IntPtr aviStream, Int32 lPos, ref Avi.Bitmapinfoheader lpFormat, Int32 cbFormat );
 
-            public UInt16 AtaFlags;
+		[DllImport( "avifil32.dll", PreserveSig = true )]
+		internal static extern Int32 AVIStreamStart( Int32 pavi );
 
-            public readonly Byte PathId;
+		[DllImport( "avifil32.dll" )]
+		internal static extern Int32 AVIStreamWrite( IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1, Int32 dummy2 );
 
-            public readonly Byte TargetId;
+		[DllImport( "User32.Dll" )]
+		internal static extern Boolean ClientToScreen( IntPtr hWnd, ref Win32.POINT point );
 
-            public readonly Byte Lun;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		[ReliabilityContract( Consistency.WillNotCorruptState, Cer.Success )]
+		[SuppressUnmanagedCodeSecurity]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		internal static extern Boolean CloseHandle( IntPtr handle );
 
-            public readonly Byte ReservedAsUchar;
+		[DllImport( "setupapi.dll" )]
+		internal static extern Int32 CM_Get_Device_ID( Int32 dnDevInst, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder buffer, Int32 bufferLen, Int32 ulFlags );
 
-            public UInt32 DataTransferLength;
+		[DllImport( "setupapi.dll" )]
+		internal static extern Int32 CM_Get_Parent( ref Int32 pdnDevInst, UInt32 dnDevInst, Int32 ulFlags );
 
-            public UInt32 TimeOutValue;
+		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode )]
+		internal static extern Int32 CM_Request_Device_Eject( UInt32 dnDevInst, out PNP_VETO_TYPE pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
 
-            public readonly UInt32 ReservedAsUlong;
+		[DllImport( "setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Unicode )]
+		internal static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
 
-            internal IntPtr DataBufferOffset;
+		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes,
+			[MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-            public Byte[] PreviousTaskFile;
+		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, Int32 flProtect, Int32 dwMaximumSizeLow, Int32 dwMaximumSizeHigh, String lpName );
 
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-            public Byte[] CurrentTaskFile;
-        }
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition,
+			UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ATAIdentifyDeviceQuery {
+		[DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned,
+			IntPtr lpOverlapped );
 
-            public ATA_PASS_THROUGH_EX header;
+		[DllImport( "kernel32.dll" )]
+		internal static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize, ref Int32 lpBytesReturned,
+			IntPtr lpOverlapped );
 
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-            public UInt16[] data;
-        }
+		//[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
+		//internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned,
+			IntPtr lpOverlapped );
 
-            public readonly UInt32 Version;
+		[DllImport( "Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, ref Int64 inBuffer, Int32 inBufferSize, ref Int64 outBuffer, Int32 outBufferSize, ref Int32 bytesReturned,
+			[In] ref NativeOverlapped overlapped );
 
-            public readonly UInt32 Size;
+		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		internal static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref STORAGE_PROPERTY_QUERY lpInBuffer, UInt32 nInBufferSize, ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer,
+			UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
-            [MarshalAs( UnmanagedType.U1 )]
-            public readonly Boolean IncursSeekPenalty;
-        }
+		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		internal static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref ATAIdentifyDeviceQuery lpInBuffer, UInt32 nInBufferSize, ref ATAIdentifyDeviceQuery lpOutBuffer,
+			UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct DISK_EXTENT {
+		[DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Int32 DuplicateToken( IntPtr hToken, Int32 impersonationLevel, ref IntPtr hNewToken );
 
-            public readonly Int32 DiskNumber;
+		[DllImport( "user32.dll" )]
+		internal static extern Int32 EnableMenuItem( this IntPtr tMenu, Int32 targetItem, Int32 targetStatus );
 
-            public readonly Int64 StartingOffset;
+		/// <summary>
+		///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
+		/// </summary>
+		/// <param name="hFindFile">The file search handle.</param>
+		/// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx" />
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean FindClose( IntPtr hFindFile );
 
-            public readonly Int64 ExtentLength;
-        }
+		/// <summary>
+		///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
+		///     wildcards are used).
+		/// </summary>
+		/// <param name="lpFileName">
+		///     The directory or path, and the file name, which can include wildcard characters, for example,
+		///     an asterisk (*) or a question mark (?).
+		/// </param>
+		/// <param name="lpFindData">
+		///     A pointer to the WIN32_FIND_DATA structure that receives information about a found file or
+		///     directory.
+		/// </param>
+		/// <returns>
+		///     If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or
+		///     FindClose, and the lpFindFileData parameter contains information about the first file or directory
+		///     found. If the function fails or fails to locate files from the search String in the lpFileName parameter, the
+		///     return value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+		/// </returns>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
+		[DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
+		internal static extern SafeSearchHandle FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-        public struct FILE_ID_BOTH_DIR_INFO {
+		/// <summary>
+		///     Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.
+		/// </summary>
+		/// <param name="hFindFile">
+		///     The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx
+		///     function.
+		/// </param>
+		/// <param name="lpFindData">
+		///     A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The
+		///     structure can be used in subsequent calls to FindNextFile to indicate from which file to continue
+		///     the search.
+		/// </param>
+		/// <returns>
+		///     If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about
+		///     the next file or directory found. If the function fails, the return value is zero and the
+		///     contents of lpFindFileData are indeterminate.
+		/// </returns>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx" />
+		[DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
+		internal static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
 
-            public readonly UInt32 NextEntryOffset;
+		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
+		internal static extern IntPtr FindWindow( String cls, String win );
 
-            public readonly UInt32 FileIndex;
+		[DllImport( "user32.dll", ThrowOnUnmappableChar = true, BestFitMapping = false )]
+		internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, [MarshalAs( UnmanagedType.LPWStr )] String lpszClass, String lpszWindow );
 
-            public LargeInteger CreationTime;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
 
-            public LargeInteger LastAccessTime;
+		[DllImport( "kernel32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
+		internal static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer, UInt32 nSize, IntPtr arguments );
 
-            public LargeInteger LastWriteTime;
+		[DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true )]
+		internal static extern Boolean FreeConsole();
 
-            public LargeInteger ChangeTime;
+		[DllImport( "iphlpapi.dll", CharSet = CharSet.Ansi )]
+		internal static extern Int32 GetAdaptersInfo( IntPtr pAdapterInfo, ref Int64 pBufOutLen );
 
-            public LargeInteger EndOfFile;
+		[DllImport( "iphlpapi.dll", SetLastError = true )]
+		internal static extern Int32 GetBestInterface( UInt32 destAddr, out UInt32 bestIfIndex );
 
-            public LargeInteger AllocationSize;
+		/// <summary>
+		///     <para>
+		///         Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted
+		///         operation.
+		///     </para>
+		///     <para>
+		///         If the file is located on a volume that supports compression and the file is compressed, the value obtained
+		///         is the compressed size of the specified file.
+		///     </para>
+		///     <para>
+		///         If the file is located on a volume that supports sparse files and the file is a sparse file, the value
+		///         obtained is the sparse size of the specified file.
+		///     </para>
+		/// </summary>
+		/// <param name="lpFileName">    </param>
+		/// <param name="lpFileSizeHigh"></param>
+		/// <returns></returns>
+		/// <seealso cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
+		[DllImport( "kernel32.dll" )]
+		internal static extern UInt32 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )]
+			String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh );
 
-            public readonly UInt32 FileAttributes;
+		[DllImport( "kernel32.dll" )]
+		internal static extern IntPtr GetCurrentThread();
 
-            public readonly UInt32 FileNameLength;
+		[DllImport( "user32.dll" )]
+		internal static extern IntPtr GetDC( IntPtr hWnd );
 
-            public readonly UInt32 EaSize;
+		/// <summary>
+		/// </summary>
+		/// <returns></returns>
+		/// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991" />
+		internal static IntPtr GetDesktopHandle() {
+			var desktop = GetDesktopWindow();
+			var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
+			var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", String.Empty );
 
-            public readonly Char ShortNameLength;
+			//var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
-            public readonly String ShortName;
+			return defView;
+		}
 
-            public LargeInteger FileId;
+		[DllImport( "user32.dll", EntryPoint = "GetDesktopWindow" )]
+		internal static extern IntPtr GetDesktopWindow();
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
-            public readonly String FileName;
-        }
+		[DllImport( "gdi32.dll" )]
+		internal static extern Boolean GetDeviceGammaRamp( IntPtr hDC, ref GraphicsExtensions.RAMP lpRamp );
 
-        /// <summary>
-        ///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
-        ///     100-nanosecond intervals since January 1, 1601 (UTC)."
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
-        [StructLayout( LayoutKind.Sequential )]
-        public struct Filetime {
+		[DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
+		internal static extern UInt32 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )]
+			String lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector, out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters );
 
-            public readonly UInt32 dwLowDateTime;
+		internal static String GetErrorMessage( Int32 code ) {
+			var message = new StringBuilder( 255 );
 
-            public readonly UInt32 dwHighDateTime;
-        }
+			FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 ) code, 0, message, ( UInt32 ) message.Capacity, IntPtr.Zero );
 
-        [StructLayout( LayoutKind.Explicit )]
-        public struct LargeInteger {
+			return message.ToString();
+		}
 
-            [FieldOffset( 0 )]
-            public Int32 Low;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean GetFileInformationByHandleEx( IntPtr hFile, FILE_INFO_BY_HANDLE_CLASS infoClass, out FILE_ID_BOTH_DIR_INFO dirInfo, UInt32 dwBufferSize );
 
-            [FieldOffset( 4 )]
-            public Int32 High;
+		[DllImport( "user32.dll", CharSet = CharSet.Auto, ExactSpelling = true )]
+		internal static extern IntPtr GetForegroundWindow();
 
-            [FieldOffset( 0 )]
-            public readonly Int64 QuadPart;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern IntPtr GetProcessHeap();
 
-            /// <summary>
-            ///     use only when QuadPart cannot be passed
-            /// </summary>
-            /// <returns></returns>
-            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
+		[DllImport( "user32.dll" )]
+		internal static extern IntPtr GetSystemMenu( IntPtr hwndValue, Boolean isRevert );
 
-            // just for demonstration
-            internal static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
-        }
+		[DllImport( "Kernel32.dll", CallingConvention = CallingConvention.Winapi )]
+		internal static extern void GetSystemTimePreciseAsFileTime( out Int64 filetime );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct ServerInfo101 {
+		[DllImport( "kernel32", CharSet = CharSet.Unicode, SetLastError = true )]
+		internal static extern Boolean GetVolumeNameForVolumeMountPoint( [MarshalAs( UnmanagedType.LPWStr )] String volumeName, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder uniqueVolumeName,
+			UInt32 uniqueNameBufferCapacity );
 
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_platform_id;
+		[DllImport( "user32.dll" )]
+		internal static extern IntPtr GetWindowDC( IntPtr hwnd );
 
-            [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly String sv101_name;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern IntPtr HeapAlloc( IntPtr hHeap, HeapFlags dwFlags, UInt32 dwSize );
 
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_version_major;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern IntPtr HeapCreate( UInt32 flOptions, UIntPtr dwInitialSize, UIntPtr dwMaximumSize );
 
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_version_minor;
+		//[DllImport( "kernel32.dll", SetLastError = true )]
+		//internal static extern IntPtr HeapCreate( HeapFlags flOptions, UInt64 dwInitialsize, UInt64 dwMaximumSize );
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean HeapDestroy( IntPtr hHeap );
 
-            [MarshalAs( UnmanagedType.U4 )]
-            public readonly UInt32 sv101_type;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean HeapFree( IntPtr hHeap, HeapFlags dwFlags, IntPtr lpMem );
 
-            [MarshalAs( UnmanagedType.LPWStr )]
-            public readonly String sv101_comment;
-        }
+		[DllImport( "kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi )]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		internal static extern Boolean IsWow64Process( [In] IntPtr process, [Out] out Boolean wow64Process );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct STORAGE_DEVICE_NUMBER {
+		[DllImport( "user32.dll", SetLastError = true )]
+		internal static extern Boolean LockWorkStation();
 
-            public Int32 DeviceType;
+		[DllImport( "advapi32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
+		internal static extern Int32 LogonUser( String lpszUserName, String lpszDomain, String lpszPassword, Int32 dwLogonType, Int32 dwLogonProvider, ref IntPtr phToken );
 
-            public Int32 DeviceNumber;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, Int32 dwDesiredAccess, Int32 dwFileOffsetHigh, Int32 dwFileOffsetLow, IntPtr dwNumBytesToMap );
 
-            public Int32 PartitionNumber;
-        }
+		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern Boolean MoveFileWithProgress( [MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData,
+			MoveFileFlags dwFlags );
 
-        [StructLayout( LayoutKind.Sequential )]
-        public struct STORAGE_PROPERTY_QUERY {
+		/// <summary>
+		///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
+		///     Call NetApiBufferFree to free the memory that other network management functions return.
+		/// </summary>
+		[DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree" )]
+		internal static extern Int32 NetApiBufferFree( IntPtr buffer );
 
-            public UInt32 PropertyId;
+		/// <summary>
+		///     The NetServerEnum function lists all servers of the specified type that are visible in a domain.
+		/// </summary>
+		/// <param name="servername">  </param>
+		/// <param name="level">       </param>
+		/// <param name="bufptr">      </param>
+		/// <param name="prefmaxlen">  </param>
+		/// <param name="entriesread"> </param>
+		/// <param name="totalentries"></param>
+		/// <param name="servertype">  </param>
+		/// <param name="domain">      </param>
+		/// <param name="resumeHandle"></param>
+		/// <returns></returns>
+		/// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
+		[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
+		internal static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread, ref Int32 totalentries,
+			Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
 
-            public UInt32 QueryType;
+		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
 
-            [MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
-            public readonly Byte[] AdditionalParameters;
-        }
+		[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
+		internal static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out]
+			StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
 
-        /// <summary>
-        ///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
-        ///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
-        public struct Win32FindData {
+		[DllImport( "kernel32.dll" )]
+		internal static extern Boolean QueryPerformanceCounter( out Int64 value );
 
-            public readonly FileAttributes dwFileAttributes;
+		[DllImport( "kernel32.dll" )]
+		internal static extern Boolean QueryPerformanceFrequency( out Int64 value );
 
-            public Filetime ftCreationTime;
+		[DllImport( "user32.dll" )]
+		internal static extern Int32 ReleaseDC( IntPtr hwnd, IntPtr dc );
 
-            public Filetime ftLastAccessTime;
+		[DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Boolean RevertToSelf();
 
-            public Filetime ftLastWriteTime;
+		[DllImport( "user32.dll" )]
+		internal static extern IntPtr SendMessage( IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp );
 
-            public readonly UInt32 nFileSizeHigh;
+		[DllImport( "User32.Dll" )]
+		internal static extern Int64 SetCursorPos( Int32 x, Int32 y );
 
-            public readonly UInt32 nFileSizeLow;
+		[DllImport( "gdi32.dll" )]
+		internal static extern Boolean SetDeviceGammaRamp( IntPtr hDC, ref GraphicsExtensions.RAMP lpRamp );
 
-            public readonly UInt32 dwReserved0;
+		/// <summary>
+		/// </summary>
+		/// <param name="hThread">             </param>
+		/// <param name="dwThreadAffinityMask"></param>
+		/// <returns></returns>
+		/// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
+		[DllImport( "kernel32.dll" )]
+		internal static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
 
-            public readonly UInt32 dwReserved1;
+		//[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
+		//internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+		[DllImport( "setupapi.dll" )]
+		internal static extern UInt32 SetupDiDestroyDeviceInfoList( IntPtr deviceInfoSet );
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
-            public readonly String cFileName;
+		//[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
+		//internal static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, ref Guid interfaceClassGuid, Int32 memberIndex, SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
-            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
-            public readonly String cAlternateFileName;
-        }
+		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr hDevInfo, ref SP_DEVINFO_DATA devInfo, ref Guid interfaceClassGuid, UInt32 memberIndex, ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
-        public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
+		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, BestFitMapping = false, ThrowOnUnmappableChar = true )]
+		internal static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, [MarshalAs( UnmanagedType.LPTStr )] String enumerator, IntPtr hwndParent, UInt32 flags );
 
-        public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
+		//[DllImport( "setupapi.dll" )]
+		//internal static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, Int64 enumerator, IntPtr hwndParent, Int32 flags );
+		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Auto )]
+		internal static extern Boolean SetupDiGetDeviceInterfaceDetail( IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData, Int32 deviceInterfaceDetailDataSize,
+			ref Int32 requiredSize, SP_DEVINFO_DATA deviceInfoData );
 
-        public const Int32 DIGCF_PRESENT = 0x00000002;
+		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
+		internal static extern Boolean SetupDiGetDeviceRegistryProperty( IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, UInt32 property, out UInt32 propertyRegDataType, Byte[] propertyBuffer,
+			UInt32 propertyBufferSize, out UInt32 requiredSize );
 
-        public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
+		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true )]
+		internal static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent, Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
 
-        public const Int32 ERROR_INVALID_DATA = 13;
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		internal static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );
 
-        public const Int32 ERROR_NO_MORE_ITEMS = 259;
+		[DllImport( "mpr.dll", BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true, CharSet = CharSet.Unicode )]
+		internal static extern Int32 WNetAddConnection2( NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, Int32 flags );
 
-        public const UInt32 ErrorMoreData = 234;
+		//[DllImport("Mpr.dll", EntryPoint="WNetAddConnection2", CallingConvention=CallingConvention.Winapi)]
+		//private static extern ErrorCodes WNetAddConnection2( NETRESOURCE lpNetResource,ref String lpPassword,ref     String lpUsername, UInt32 dwFlags );
 
-        public const UInt32 ErrorSuccess = 0;
+		/// <summary>
+		///     This must be used if NETRESOURCE is defined as a struct???
+		/// </summary>
+		/// <param name="netResource"></param>
+		/// <param name="password">   </param>
+		/// <param name="username">   </param>
+		/// <param name="flags">      </param>
+		/// <returns></returns>
+		[DllImport( "mpr.dll" )]
+		internal static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, UInt32 flags );
 
-        public const UInt32 FILE_ANY_ACCESS = 0;
+		[DllImport( "mpr.dll" )]
+		internal static extern Int32 WNetCancelConnection2( [MarshalAs( UnmanagedType.LPWStr )] String name, Int32 flags, Boolean force );
 
-        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
+		[SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )]
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		public static extern IntPtr VirtualAlloc( IntPtr lpAddress, UIntPtr dwSize, AllocationType flAllocationType, MemoryProtection flProtect );
 
-        public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
+		[SuppressMessage( "Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "1" )]
+		[SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )] //BUG here's a bug waiting to happen...
+		[DllImport( "kernel32" )]
+		public static extern Boolean VirtualFree( IntPtr lpAddress, UInt32 dwSize, UInt32 dwFreeType );
 
-        public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
+		[SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )]
+		[DllImport( "kernel32.dll", SetLastError = true )]
+		public static extern Boolean VirtualFree( UIntPtr lpAddress, UIntPtr dwSize, UInt32 dwFreeType );
 
-        public const UInt32 FILE_READ_ACCESS = 0x00000001;
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
+		public class SP_DEVICE_INTERFACE_DATA {
 
-        public const UInt32 FILE_SHARE_READ = 0x00000001;
+			public UInt32 cbSize;
 
-        public const UInt32 FILE_SHARE_WRITE = 0x00000002;
+			public UInt32 Flags;
 
-        public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
+			public Guid InterfaceClassGuid;
 
-        public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+			private IntPtr Reserved;
 
-        public const UInt32 GENERIC_READ = 0x80000000;
+		}
 
-        public const UInt32 GENERIC_WRITE = 0x40000000;
+		[StructLayout( LayoutKind.Sequential, Pack = 2 )]
+		public class SP_DEVICE_INTERFACE_DETAIL_DATA {
 
-        public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+			public Int32 cbSize;
 
-        public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
+			public Int16 devicePath;
 
-        public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
+		}
 
-        public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
+		public class SP_DEVINFO_DATA {
 
-        public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
+			public UInt32 cbSize;
 
-        public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
+			public Guid classGuid;
 
-        public const Int32 MaxPath = 260;
+			public UInt32 devInst;
 
-        public const UInt32 METHOD_BUFFERED = 0;
+			private IntPtr reserved;
 
-        public const UInt32 OPEN_EXISTING = 3;
+		}
 
-        public const UInt32 PropertyStandardQuery = 0;
+		public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
 
-        public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
+		public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
 
-        public const Int32 SPDRP_CLASS = 0x00000007;
+		public const Int32 DIGCF_PRESENT = 0x00000002;
 
-        public const Int32 SPDRP_CLASSGUID = 0x00000008;
+		public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
 
-        public const Int32 SPDRP_DEVICEDESC = 0x00000000;
+		public const Int32 ERROR_INVALID_DATA = 13;
 
-        public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
+		public const Int32 ERROR_NO_MORE_ITEMS = 259;
 
-        public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
+		public const UInt32 ErrorMoreData = 234;
 
-        public const Int32 WM_DEVICECHANGE = 0x0219;
+		public const UInt32 ErrorSuccess = 0;
 
-        [DllImport( "kernel32.dll" )]
-        internal static extern Boolean AllocConsole();
+		public const UInt32 FILE_ANY_ACCESS = 0;
 
-        //[DllImport( "kernel32.dll", SetLastError = true )]
-        //internal static extern IntPtr CreateFile( String lpFileName, JunctionPoint.EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, JunctionPoint.ECreationDisposition dwCreationDisposition, JunctionPoint.EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
 
-        //[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        //internal static extern IntPtr CreateFile( String lpFileName, Int32 dwDesiredAccess, Int32 dwShareMode, IntPtr lpSecurityAttributes, Int32 dwCreationDisposition, Int32 dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
 
-        //[DllImport( "kernel32.dll", SetLastError = true )]
-        //internal static extern IntPtr CreateFile( String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIFileCreateStream( Int32 pfile, out IntPtr ppavi, ref Avi.Avistreaminfo ptrStreaminfo );
+		public const UInt32 FILE_READ_ACCESS = 0x00000001;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern void AVIFileExit();
+		public const UInt32 FILE_SHARE_READ = 0x00000001;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIFileGetStream( Int32 pfile, out IntPtr ppavi, Int32 fccType, Int32 lParam );
+		public const UInt32 FILE_SHARE_WRITE = 0x00000002;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern void AVIFileInit();
+		public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
 
-        [DllImport( "avifil32.dll", PreserveSig = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-        internal static extern Int32 AVIFileOpen( ref Int32 ppfile, [MarshalAs( UnmanagedType.LPWStr )] String szFile, Int32 uMode, Int32 pclsidHandler );
+		public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIFileRelease( Int32 pfile );
+		public const UInt32 GENERIC_READ = 0x80000000;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamGetFrame( Int32 pGetFrameObj, Int32 lPos );
+		public const UInt32 GENERIC_WRITE = 0x40000000;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamGetFrameClose( Int32 pGetFrameObj );
+		public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamGetFrameOpen( IntPtr pAviStream, ref Avi.Bitmapinfoheader bih );
+		public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamInfo( Int32 pAviStream, ref Avi.Avistreaminfo psi, Int32 lSize );
+		public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
 
-        [DllImport( "avifil32.dll", PreserveSig = true )]
-        internal static extern Int32 AVIStreamLength( Int32 pavi );
+		public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamRelease( IntPtr aviStream );
+		public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamSetFormat( IntPtr aviStream, Int32 lPos, ref Avi.Bitmapinfoheader lpFormat, Int32 cbFormat );
+		public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
 
-        [DllImport( "avifil32.dll", PreserveSig = true )]
-        internal static extern Int32 AVIStreamStart( Int32 pavi );
+		public const Int32 MaxPath = 260;
 
-        [DllImport( "avifil32.dll" )]
-        internal static extern Int32 AVIStreamWrite( IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1, Int32 dummy2 );
+		public const UInt32 METHOD_BUFFERED = 0;
 
-        [DllImport( "User32.Dll" )]
-        internal static extern Boolean ClientToScreen( IntPtr hWnd, ref Win32.POINT point );
+		public const UInt32 OPEN_EXISTING = 3;
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.Success )]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        internal static extern Boolean CloseHandle( IntPtr handle );
+		public const UInt32 PropertyStandardQuery = 0;
 
-        [DllImport( "setupapi.dll" )]
-        internal static extern Int32 CM_Get_Device_ID( Int32 dnDevInst, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder buffer, Int32 bufferLen, Int32 ulFlags );
+		public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
 
-        [DllImport( "setupapi.dll" )]
-        internal static extern Int32 CM_Get_Parent( ref Int32 pdnDevInst, UInt32 dnDevInst, Int32 ulFlags );
+		public const Int32 SPDRP_CLASS = 0x00000007;
 
-        [DllImport( "setupapi.dll", CharSet = CharSet.Unicode )]
-        internal static extern Int32 CM_Request_Device_Eject( UInt32 dnDevInst, out PNP_VETO_TYPE pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
+		public const Int32 SPDRP_CLASSGUID = 0x00000008;
 
-        [DllImport( "setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Unicode )]
-        internal static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
+		public const Int32 SPDRP_DEVICEDESC = 0x00000000;
 
-        [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes,
-            [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
 
-        [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, Int32 flProtect, Int32 dwMaximumSizeLow, Int32 dwMaximumSizeHigh, String lpName );
+		public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition,
-            UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public const Int32 WM_DEVICECHANGE = 0x0219;
 
-        [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned,
-            IntPtr lpOverlapped );
+		[Flags]
+		public enum AllocationType : UInt32 {
 
-        [DllImport( "kernel32.dll" )]
-        internal static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize, ref Int32 lpBytesReturned,
-            IntPtr lpOverlapped );
+			COMMIT = 0x1000,
 
-        //[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
-        //internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+			RESERVE = 0x2000,
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned,
-            IntPtr lpOverlapped );
+			RESET = 0x80000,
 
-        [DllImport( "Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, ref Int64 inBuffer, Int32 inBufferSize, ref Int64 outBuffer, Int32 outBufferSize, ref Int32 bytesReturned,
-            [In] ref NativeOverlapped overlapped );
+			LARGE_PAGES = 0x20000000,
 
-        [DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        internal static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref STORAGE_PROPERTY_QUERY lpInBuffer, UInt32 nInBufferSize, ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer,
-            UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+			PHYSICAL = 0x400000,
 
-        [DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        internal static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref ATAIdentifyDeviceQuery lpInBuffer, UInt32 nInBufferSize, ref ATAIdentifyDeviceQuery lpOutBuffer,
-            UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+			TOP_DOWN = 0x100000,
 
-        [DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Int32 DuplicateToken( IntPtr hToken, Int32 impersonationLevel, ref IntPtr hNewToken );
+			WRITE_WATCH = 0x200000
 
-        [DllImport( "user32.dll" )]
-        internal static extern Int32 EnableMenuItem( this IntPtr tMenu, Int32 targetItem, Int32 targetStatus );
+		}
 
-        /// <summary>
-        ///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, or FindFirstStreamW function.
-        /// </summary>
-        /// <param name="hFindFile">The file search handle.</param>
-        /// <returns>If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.</returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364413%28VS.85%29.aspx" />
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean FindClose( IntPtr hFindFile );
+		public enum FILE_INFO_BY_HANDLE_CLASS {
 
-        /// <summary>
-        ///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
-        ///     wildcards are used).
-        /// </summary>
-        /// <param name="lpFileName">
-        ///     The directory or path, and the file name, which can include wildcard characters, for example,
-        ///     an asterisk (*) or a question mark (?).
-        /// </param>
-        /// <param name="lpFindData">
-        ///     A pointer to the WIN32_FIND_DATA structure that receives information about a found file or
-        ///     directory.
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or
-        ///     FindClose, and the lpFindFileData parameter contains information about the first file or directory
-        ///     found. If the function fails or fails to locate files from the search String in the lpFileName parameter, the
-        ///     return value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
-        /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
-        [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
-        internal static extern SafeSearchHandle FindFirstFile( String lpFileName, out Win32FindData lpFindData );
+			FileBasicInfo = 0,
 
-        /// <summary>
-        ///     Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.
-        /// </summary>
-        /// <param name="hFindFile">
-        ///     The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx
-        ///     function.
-        /// </param>
-        /// <param name="lpFindData">
-        ///     A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The
-        ///     structure can be used in subsequent calls to FindNextFile to indicate from which file to continue
-        ///     the search.
-        /// </param>
-        /// <returns>
-        ///     If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about
-        ///     the next file or directory found. If the function fails, the return value is zero and the
-        ///     contents of lpFindFileData are indeterminate.
-        /// </returns>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx" />
-        [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false )]
-        internal static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
+			FileStandardInfo = 1,
 
-        [DllImport( "user32.dll", CharSet = CharSet.Unicode )]
-        internal static extern IntPtr FindWindow( String cls, String win );
+			FileNameInfo = 2,
 
-        [DllImport( "user32.dll", ThrowOnUnmappableChar = true, BestFitMapping = false )]
-        internal static extern IntPtr FindWindowEx( IntPtr hwndParent, IntPtr hwndChildAfter, [MarshalAs( UnmanagedType.LPWStr )] String lpszClass, String lpszWindow );
+			FileRenameInfo = 3,
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
+			FileDispositionInfo = 4,
 
-        [DllImport( "kernel32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-        internal static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer, UInt32 nSize, IntPtr arguments );
+			FileAllocationInfo = 5,
 
-        [DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true )]
-        internal static extern Boolean FreeConsole();
+			FileEndOfFileInfo = 6,
 
-        [DllImport( "iphlpapi.dll", CharSet = CharSet.Ansi )]
-        internal static extern Int32 GetAdaptersInfo( IntPtr pAdapterInfo, ref Int64 pBufOutLen );
+			FileStreamInfo = 7,
 
-        [DllImport( "iphlpapi.dll", SetLastError = true )]
-        internal static extern Int32 GetBestInterface( UInt32 destAddr, out UInt32 bestIfIndex );
+			FileCompressionInfo = 8,
 
-        /// <summary>
-        ///     <para>
-        ///         Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted
-        ///         operation.
-        ///     </para>
-        ///     <para>
-        ///         If the file is located on a volume that supports compression and the file is compressed, the value obtained
-        ///         is the compressed size of the specified file.
-        ///     </para>
-        ///     <para>
-        ///         If the file is located on a volume that supports sparse files and the file is a sparse file, the value
-        ///         obtained is the sparse size of the specified file.
-        ///     </para>
-        /// </summary>
-        /// <param name="lpFileName">    </param>
-        /// <param name="lpFileSizeHigh"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
-        [DllImport( "kernel32.dll" )]
-        internal static extern UInt32 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )]
-            String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh );
+			FileAttributeTagInfo = 9,
 
-        [DllImport( "kernel32.dll" )]
-        internal static extern IntPtr GetCurrentThread();
+			FileIdBothDirectoryInfo = 10, // 0x0A
 
-        [DllImport( "user32.dll" )]
-        internal static extern IntPtr GetDC( IntPtr hWnd );
+			FileIdBothDirectoryRestartInfo = 11, // 0xB
 
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        /// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991" />
-        internal static IntPtr GetDesktopHandle() {
-            var desktop = GetDesktopWindow();
-            var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
-            var defView = FindWindowEx( progMan, IntPtr.Zero, "SHELLDLL_DefView", String.Empty );
+			FileIoPriorityHintInfo = 12, // 0xC
 
-            //var listView = FindWindowEx( defView, IntPtr.Zero, "SysListView32", "FolderView" );
+			FileRemoteProtocolInfo = 13, // 0xD
 
-            return defView;
-        }
+			FileFullDirectoryInfo = 14, // 0xE
 
-        [DllImport( "user32.dll", EntryPoint = "GetDesktopWindow" )]
-        internal static extern IntPtr GetDesktopWindow();
+			FileFullDirectoryRestartInfo = 15, // 0xF
 
-        [DllImport( "gdi32.dll" )]
-        internal static extern Boolean GetDeviceGammaRamp( IntPtr hDC, ref GraphicsExtensions.RAMP lpRamp );
+			FileStorageInfo = 16, // 0x10
 
-        [DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
-        internal static extern UInt32 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )]
-            String lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector, out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters );
+			FileAlignmentInfo = 17, // 0x11
 
-        internal static String GetErrorMessage( Int32 code ) {
-            var message = new StringBuilder( 255 );
+			FileIdInfo = 18, // 0x12
 
-            FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, IntPtr.Zero, ( UInt32 )code, 0, message, ( UInt32 )message.Capacity, IntPtr.Zero );
+			FileIdExtdDirectoryInfo = 19, // 0x13
 
-            return message.ToString();
-        }
+			FileIdExtdDirectoryRestartInfo = 20, // 0x14
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean GetFileInformationByHandleEx( IntPtr hFile, FILE_INFO_BY_HANDLE_CLASS infoClass, out FILE_ID_BOTH_DIR_INFO dirInfo, UInt32 dwBufferSize );
+			MaximumFileInfoByHandlesClass
 
-        [DllImport( "user32.dll", CharSet = CharSet.Auto, ExactSpelling = true )]
-        internal static extern IntPtr GetForegroundWindow();
+		}
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern IntPtr GetProcessHeap();
+		[Flags]
+		public enum HeapFlags {
 
-        [DllImport( "user32.dll" )]
-        internal static extern IntPtr GetSystemMenu( IntPtr hwndValue, Boolean isRevert );
+			HEAP_NO_SERIALIZE = 0x1,
 
-        [DllImport( "Kernel32.dll", CallingConvention = CallingConvention.Winapi )]
-        internal static extern void GetSystemTimePreciseAsFileTime( out Int64 filetime );
+			HEAP_GENERATE_EXCEPTIONS = 0x4,
 
-        [DllImport( "kernel32", CharSet = CharSet.Unicode, SetLastError = true )]
-        internal static extern Boolean GetVolumeNameForVolumeMountPoint( [MarshalAs( UnmanagedType.LPWStr )] String volumeName, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder uniqueVolumeName,
-            UInt32 uniqueNameBufferCapacity );
+			HEAP_ZERO_MEMORY = 0x8
 
-        [DllImport( "user32.dll" )]
-        internal static extern IntPtr GetWindowDC( IntPtr hwnd );
+		}
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern IntPtr HeapAlloc( IntPtr hHeap, HeapFlags dwFlags, UInt32 dwSize );
+		[Flags]
+		public enum MemoryProtection : UInt32 {
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern IntPtr HeapCreate( UInt32 flOptions, UIntPtr dwInitialSize, UIntPtr dwMaximumSize );
+			EXECUTE = 0x10,
 
-        //[DllImport( "kernel32.dll", SetLastError = true )]
-        //internal static extern IntPtr HeapCreate( HeapFlags flOptions, UInt64 dwInitialsize, UInt64 dwMaximumSize );
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean HeapDestroy( IntPtr hHeap );
+			EXECUTE_READ = 0x20,
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean HeapFree( IntPtr hHeap, HeapFlags dwFlags, IntPtr lpMem );
+			EXECUTE_READWRITE = 0x40,
 
-        [DllImport( "kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi )]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        internal static extern Boolean IsWow64Process( [In] IntPtr process, [Out] out Boolean wow64Process );
+			EXECUTE_WRITECOPY = 0x80,
 
-        [DllImport( "user32.dll", SetLastError = true )]
-        internal static extern Boolean LockWorkStation();
+			NOACCESS = 0x01,
 
-        [DllImport( "advapi32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-        internal static extern Int32 LogonUser( String lpszUserName, String lpszDomain, String lpszPassword, Int32 dwLogonType, Int32 dwLogonProvider, ref IntPtr phToken );
+			READONLY = 0x02,
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, Int32 dwDesiredAccess, Int32 dwFileOffsetHigh, Int32 dwFileOffsetLow, IntPtr dwNumBytesToMap );
+			READWRITE = 0x04,
 
-        [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern Boolean MoveFileWithProgress( [MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData,
-            MoveFileFlags dwFlags );
+			WRITECOPY = 0x08,
 
-        /// <summary>
-        ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
-        ///     Call NetApiBufferFree to free the memory that other network management functions return.
-        /// </summary>
-        [DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree" )]
-        internal static extern Int32 NetApiBufferFree( IntPtr buffer );
+			GUARD_Modifierflag = 0x100,
 
-        /// <summary>
-        ///     The NetServerEnum function lists all servers of the specified type that are visible in a domain.
-        /// </summary>
-        /// <param name="servername">  </param>
-        /// <param name="level">       </param>
-        /// <param name="bufptr">      </param>
-        /// <param name="prefmaxlen">  </param>
-        /// <param name="entriesread"> </param>
-        /// <param name="totalentries"></param>
-        /// <param name="servertype">  </param>
-        /// <param name="domain">      </param>
-        /// <param name="resumeHandle"></param>
-        /// <returns></returns>
-        /// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
-        [DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
-        internal static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread, ref Int32 totalentries,
-            Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
+			NOCACHE_Modifierflag = 0x200,
 
-        [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
+			WRITECOMBINE_Modifierflag = 0x400
 
-        [DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
-        internal static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out]
-            StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
+		}
 
-        [DllImport( "kernel32.dll" )]
-        internal static extern Boolean QueryPerformanceCounter( out Int64 value );
+		public enum PLATFORM_ID {
 
-        [DllImport( "kernel32.dll" )]
-        internal static extern Boolean QueryPerformanceFrequency( out Int64 value );
+			PlatformIDDos = 300,
 
-        [DllImport( "user32.dll" )]
-        internal static extern Int32 ReleaseDC( IntPtr hwnd, IntPtr dc );
+			PlatformIDOs2 = 400,
 
-        [DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Boolean RevertToSelf();
+			PlatformIDNt = 500,
 
-        [DllImport( "user32.dll" )]
-        internal static extern IntPtr SendMessage( IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp );
+			PlatformIDOsf = 600,
 
-        [DllImport( "User32.Dll" )]
-        internal static extern Int64 SetCursorPos( Int32 x, Int32 y );
+			PlatformIDVms = 700
 
-        [DllImport( "gdi32.dll" )]
-        internal static extern Boolean SetDeviceGammaRamp( IntPtr hDC, ref GraphicsExtensions.RAMP lpRamp );
+		}
 
-        /// <summary>
-        /// </summary>
-        /// <param name="hThread">             </param>
-        /// <param name="dwThreadAffinityMask"></param>
-        /// <returns></returns>
-        /// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
-        [DllImport( "kernel32.dll" )]
-        internal static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
+		public enum PNP_VETO_TYPE {
 
-        //[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
-        //internal static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
-        [DllImport( "setupapi.dll" )]
-        internal static extern UInt32 SetupDiDestroyDeviceInfoList( IntPtr deviceInfoSet );
+			Ok,
 
-        //[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        //internal static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
-        [DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, ref Guid interfaceClassGuid, Int32 memberIndex, SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
+			TypeUnknown,
 
-        [DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr hDevInfo, ref SP_DEVINFO_DATA devInfo, ref Guid interfaceClassGuid, UInt32 memberIndex, ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
+			LegacyDevice,
 
-        [DllImport( "setupapi.dll", CharSet = CharSet.Unicode, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-        internal static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, [MarshalAs( UnmanagedType.LPTStr )] String enumerator, IntPtr hwndParent, UInt32 flags );
+			PendingClose,
 
-        //[DllImport( "setupapi.dll" )]
-        //internal static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, Int64 enumerator, IntPtr hwndParent, Int32 flags );
-        [DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        internal static extern Boolean SetupDiGetDeviceInterfaceDetail( IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData, Int32 deviceInterfaceDetailDataSize,
-            ref Int32 requiredSize, SP_DEVINFO_DATA deviceInfoData );
+			WindowsApp,
 
-        [DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
-        internal static extern Boolean SetupDiGetDeviceRegistryProperty( IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, UInt32 property, out UInt32 propertyRegDataType, Byte[] propertyBuffer,
-            UInt32 propertyBufferSize, out UInt32 requiredSize );
+			WindowsService,
 
-        [DllImport( "setupapi.dll", CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-        internal static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent, Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
+			OutstandingOpen,
 
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        internal static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );
+			Device,
 
-        [DllImport( "mpr.dll", BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true, CharSet = CharSet.Unicode )]
-        internal static extern Int32 WNetAddConnection2( NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, Int32 flags );
+			Driver,
 
-        //[DllImport("Mpr.dll", EntryPoint="WNetAddConnection2", CallingConvention=CallingConvention.Winapi)]
-        //private static extern ErrorCodes WNetAddConnection2( NETRESOURCE lpNetResource,ref String lpPassword,ref     String lpUsername, UInt32 dwFlags );
+			IllegalDeviceRequest,
 
-        /// <summary>
-        ///     This must be used if NETRESOURCE is defined as a struct???
-        /// </summary>
-        /// <param name="netResource"></param>
-        /// <param name="password">   </param>
-        /// <param name="username">   </param>
-        /// <param name="flags">      </param>
-        /// <returns></returns>
-        [DllImport( "mpr.dll" )]
-        internal static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, UInt32 flags );
+			InsufficientPower,
 
-        [DllImport( "mpr.dll" )]
-        internal static extern Int32 WNetCancelConnection2( [MarshalAs( UnmanagedType.LPWStr )] String name, Int32 flags, Boolean force );
+			NonDisableable,
 
-        [SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )]
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        public static extern IntPtr VirtualAlloc( IntPtr lpAddress, UIntPtr dwSize, AllocationType flAllocationType, MemoryProtection flProtect );
+			LegacyDriver
 
-        [SuppressMessage( "Microsoft.Portability", "CA1901:PInvokeDeclarationsShouldBePortable", MessageId = "1" )]
-        [SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )] //BUG here's a bug waiting to happen...
-        [DllImport( "kernel32" )]
-        public static extern Boolean VirtualFree( IntPtr lpAddress, UInt32 dwSize, UInt32 dwFreeType );
+		}
 
-        [SuppressMessage( "Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible" )]
-        [DllImport( "kernel32.dll", SetLastError = true )]
-        public static extern Boolean VirtualFree( UIntPtr lpAddress, UIntPtr dwSize, UInt32 dwFreeType );
+		[Flags]
+		public enum Sv101Types : UInt32 {
 
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
-        public class SP_DEVICE_INTERFACE_DATA {
+			SvTypeWorkstation = 0x00000001,
 
-            public UInt32 cbSize;
+			SvTypeServer = 0x00000002,
 
-            public UInt32 Flags;
+			SvTypeSqlserver = 0x00000004,
 
-            public Guid InterfaceClassGuid;
+			SvTypeDomainCtrl = 0x00000008,
 
-            private IntPtr Reserved;
-        }
+			SvTypeDomainBakctrl = 0x00000010,
 
-        [StructLayout( LayoutKind.Sequential, Pack = 2 )]
-        public class SP_DEVICE_INTERFACE_DETAIL_DATA {
+			SvTypeTimeSource = 0x00000020,
 
-            public Int32 cbSize;
+			SvTypeAfp = 0x00000040,
 
-            public Int16 devicePath;
-        }
+			SvTypeNovell = 0x00000080,
 
-        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
-        public class SP_DEVINFO_DATA {
+			SvTypeDomainMember = 0x00000100,
 
-            public UInt32 cbSize;
+			SvTypePrintqServer = 0x00000200,
 
-            public Guid classGuid;
+			SvTypeDialinServer = 0x00000400,
 
-            public UInt32 devInst;
+			SvTypeXenixServer = 0x00000800,
 
-            private IntPtr reserved;
-        }
-    }
+			SvTypeServerUnix = 0x00000800,
+
+			SvTypeNt = 0x00001000,
+
+			SvTypeWfw = 0x00002000,
+
+			SvTypeServerMfpn = 0x00004000,
+
+			SvTypeServerNt = 0x00008000,
+
+			SvTypePotentialBrowser = 0x00010000,
+
+			SvTypeBackupBrowser = 0x00020000,
+
+			SvTypeMasterBrowser = 0x00040000,
+
+			SvTypeDomainMaster = 0x00080000,
+
+			SvTypeServerOsf = 0x00100000,
+
+			SvTypeServerVms = 0x00200000,
+
+			SvTypeWindows = 0x00400000,
+
+			SvTypeDfs = 0x00800000,
+
+			SvTypeClusterNt = 0x01000000,
+
+			SvTypeTerminalserver = 0x02000000,
+
+			SvTypeClusterVsNt = 0x04000000,
+
+			SvTypeDce = 0x10000000,
+
+			SvTypeAlternateXport = 0x20000000,
+
+			SvTypeLocalListOnly = 0x40000000,
+
+			SvTypeDomainEnum = 0x80000000,
+
+			SvTypeAll = 0xFFFFFFFF
+
+		}
+
+	}
+
 }

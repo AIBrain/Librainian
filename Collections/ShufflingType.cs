@@ -17,47 +17,54 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/ShufflingType.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "ShufflingType.cs" was last formatted by Protiguous on 2018/06/04 at 3:44 PM.
 
 namespace Librainian.Collections {
 
-    using System;
-    using System.Collections.Concurrent;
+	using System;
+	using System.Collections.Concurrent;
 
-    public enum ShufflingType {
+	public enum ShufflingType {
 
-        /// <summary>
-        ///     This one is works best with smaller lists and more iterations.
-        /// </summary>
-        ByHarker,
+		/// <summary>
+		///     This one is works best with smaller lists and more iterations.
+		/// </summary>
+		ByHarker,
 
-        /// <summary>
-        ///     Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This is _might_ be the fastest for larger sets.
-        /// </summary>
-        ByRandom,
+		/// <summary>
+		///     Uses OrderBy( Random.Next ).ThenBy( Random.Next ). This is _might_ be the fastest for larger sets.
+		/// </summary>
+		ByRandom,
 
-        /// <summary>
-        ///     Uses <see cref="ConcurrentBag{T}" />, which can introduce /some/ randomness, but is horribly nondeterministic and
-        ///     unrandom. This method is so horrible, that please: Do NOT use it. If you *have* to, do many many iterations.
-        /// </summary>
-        ByBags,
+		/// <summary>
+		///     Uses <see cref="ConcurrentBag{T}" />, which can introduce /some/ randomness, but is horribly nondeterministic and
+		///     unrandom. This method is so horrible, that please: Do NOT use it. If you *have* to, do many many iterations.
+		/// </summary>
+		ByBags,
 
-        /// <summary>
-        ///     Uses <see cref="Guid.NewGuid" /> to introduce randomness.
-        /// </summary>
-        ByGuid,
+		/// <summary>
+		///     Uses <see cref="Guid.NewGuid" /> to introduce randomness.
+		/// </summary>
+		ByGuid,
 
-        /// <summary>
-        ///     Let the algorithm choose the optimal.
-        /// </summary>
-        AutoChoice
-    }
+		/// <summary>
+		///     Let the algorithm choose the optimal.
+		/// </summary>
+		AutoChoice
+	}
 }

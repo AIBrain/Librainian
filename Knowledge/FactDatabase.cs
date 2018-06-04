@@ -1,117 +1,126 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "FactDatabase.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/FactDatabase.cs" was last formatted by Protiguous on 2018/05/24 at 7:17 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "FactDatabase.cs" was last formatted by Protiguous on 2018/06/04 at 4:01 PM.
 
 namespace Librainian.Knowledge {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using ComputerSystems.FileSystem;
-    using JetBrains.Annotations;
-    using Maths;
-    using Newtonsoft.Json;
-    using Parsing;
-    using Threading;
+	using System;
+	using System.Collections.Concurrent;
+	using System.ComponentModel;
+	using System.IO;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
+	using Maths;
+	using Newtonsoft.Json;
+	using Parsing;
+	using Threading;
 
-    [JsonObject]
-    public class FactDatabase {
+	[JsonObject]
+	public class FactDatabase {
 
-        [JsonProperty]
-        [NotNull]
-        public readonly ConcurrentBag<Document> KnbFiles = new ConcurrentBag<Document>();
+		[JsonProperty]
+		[NotNull]
+		public readonly ConcurrentBag<Document> KnbFiles = new ConcurrentBag<Document>();
 
-        [JsonProperty]
-        public Int32 FilesFound;
+		[JsonProperty]
+		public Int32 FilesFound;
 
-        public Int32 AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
-            if ( dataFile is null ) { throw new ArgumentNullException( nameof( dataFile ) ); }
+		public Int32 AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
+			if ( dataFile is null ) { throw new ArgumentNullException( nameof( dataFile ) ); }
 
-            if ( !dataFile.Extension().Like( ".knb" ) ) { return 0; }
+			if ( !dataFile.Extension().Like( ".knb" ) ) { return 0; }
 
-            Interlocked.Increment( ref this.FilesFound );
-            feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName()}" ) );
+			Interlocked.Increment( ref this.FilesFound );
+			feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName()}" ) );
 
-            if ( !this.KnbFiles.Contains( dataFile ) ) { this.KnbFiles.Add( dataFile ); }
+			if ( !this.KnbFiles.Contains( dataFile ) ) { this.KnbFiles.Add( dataFile ); }
 
-            //TODO text, xml, csv, html, etc...
+			//TODO text, xml, csv, html, etc...
 
-            return 0;
-        }
+			return 0;
+		}
 
-        public async Task ReadRandomFact( Action<String> action ) {
-            if ( null == action ) { return; }
+		public async Task ReadRandomFact( Action<String> action ) {
+			if ( null == action ) { return; }
 
-            await Task.Run( () => {
+			await Task.Run( () => {
 
-                //pick random line from random file
-                var file = this.KnbFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
+				//pick random line from random file
+				var file = this.KnbFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
 
-                if ( null == file ) { return; }
+				if ( null == file ) { return; }
 
-                try {
+				try {
 
-                    //pick random line
-                    var line = File.ReadLines( file.FullPathWithFileName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[0] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
-                    action( line );
-                }
-                catch ( Exception exception ) { exception.More(); }
-            } );
-        }
+					//pick random line
+					var line = File.ReadLines( file.FullPathWithFileName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+					action( line );
+				}
+				catch ( Exception exception ) { exception.More(); }
+			} );
+		}
 
-        public String SearchForFactFiles( SimpleCancel cancellation ) {
-            Logging.Enter();
+		public String SearchForFactFiles( SimpleCancel cancellation ) {
+			Logging.Enter();
 
-            try {
-                var searchPatterns = new[] { "*.knb" };
+			try {
+				var searchPatterns = new[] { "*.knb" };
 
-                var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath ) ) );
+				var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath ) ) );
 
-                folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
-                    searchStyle: SearchStyle.FilesFirst );
+				folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
+					searchStyle: SearchStyle.FilesFirst );
 
-                if ( !this.KnbFiles.Any() ) {
-                    folder = new Folder( Environment.SpecialFolder.CommonDocuments );
+				if ( !this.KnbFiles.Any() ) {
+					folder = new Folder( Environment.SpecialFolder.CommonDocuments );
 
-                    folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
-                        searchStyle: SearchStyle.FilesFirst );
-                }
+					folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
+						searchStyle: SearchStyle.FilesFirst );
+				}
 
-                if ( !this.KnbFiles.Any() ) { searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellation: cancellation ); }
+				if ( !this.KnbFiles.Any() ) { searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellation: cancellation ); }
 
-                return $"Found {this.KnbFiles.Count} KNB files";
-            }
-            finally { Logging.Exit(); }
-        }
-    }
+				return $"Found {this.KnbFiles.Count} KNB files";
+			}
+			finally { Logging.Exit(); }
+		}
+
+	}
+
 }

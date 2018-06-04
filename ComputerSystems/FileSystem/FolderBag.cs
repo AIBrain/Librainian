@@ -1,143 +1,152 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "FolderBag.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/FolderBag.cs" was last formatted by Protiguous on 2018/05/24 at 7:02 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "FolderBag.cs" was last formatted by Protiguous on 2018/06/04 at 3:46 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Linq;
+	using FluentAssertions;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
 
-    /// <summary>
-    ///     <para>A bag of folders, stored somewhat efficiently ?memory-wise> than a list.</para>
-    /// </summary>
-    [JsonObject]
-    public partial class FolderBag : IEnumerable<Folder> {
+	/// <summary>
+	///     <para>A bag of folders, stored somewhat efficiently ?memory-wise> than a list.</para>
+	/// </summary>
+	[JsonObject]
+	public partial class FolderBag : IEnumerable<Folder> {
 
-        [JsonProperty]
-        public List<Node> Endings { get; } = new List<Node>();
+		/// <summary>
+		///     Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>
+		///     An enumerator that can be used to iterate through the collection.
+		/// </returns>
+		public IEnumerator<Folder> GetEnumerator() {
+			foreach ( var ending in this.Endings ) {
+				var node = ending;
+				var path = String.Empty;
 
-        [JsonProperty]
-        public List<Node> Roots { get; } = new List<Node>();
+				while ( node.Parent != null ) {
+					path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
+					node = node.Parent;
+				}
 
-        public Boolean Add( [CanBeNull] String folderpath ) {
-            if ( null == folderpath ) { return false; }
+				this.Roots.Should().Contain( node );
+				path = String.Concat( node.Data, path );
 
-            this.FoundAnotherFolder( new Folder( folderpath ) );
+				yield return new Folder( path );
+			}
+		}
 
-            return true;
-        }
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public UInt64 AddRange( [CanBeNull] IEnumerable<String> folderpaths ) {
-            var counter = 0UL;
+		[JsonProperty]
+		public List<Node> Endings { get; } = new List<Node>();
 
-            if ( null == folderpaths ) { return counter; }
+		[JsonProperty]
+		public List<Node> Roots { get; } = new List<Node>();
 
-            foreach ( var folderpath in folderpaths ) {
-                this.FoundAnotherFolder( new Folder( folderpath ) );
-                counter++;
-            }
+		public Boolean Add( [CanBeNull] String folderpath ) {
+			if ( null == folderpath ) { return false; }
 
-            return counter;
-        }
+			this.FoundAnotherFolder( new Folder( folderpath ) );
 
-        public void FoundAnotherFolder( [NotNull] Folder folder ) {
-            if ( folder is null ) { throw new ArgumentNullException( nameof( folder ) ); }
+			return true;
+		}
 
-            var pathParts = folder.Info.SplitPath().ToList();
+		public UInt64 AddRange( [CanBeNull] IEnumerable<String> folderpaths ) {
+			var counter = 0UL;
 
-            if ( !pathParts.Any() ) { return; }
+			if ( null == folderpaths ) { return counter; }
 
-            var currentNode = new Node( pathParts[0] );
+			foreach ( var folderpath in folderpaths ) {
+				this.FoundAnotherFolder( new Folder( folderpath ) );
+				counter++;
+			}
 
-            var existingNode = this.Roots.Find( node => Node.Equals( node, currentNode ) ); // look for an existing root node
+			return counter;
+		}
 
-            if ( !Node.Equals( existingNode, default ) ) {
+		public void FoundAnotherFolder( [NotNull] Folder folder ) {
+			if ( folder is null ) { throw new ArgumentNullException( nameof( folder ) ); }
 
-                // use existing node
-                currentNode = existingNode;
-            }
-            else {
+			var pathParts = folder.Info.SplitPath().ToList();
 
-                // didn't find one, add it
-                this.Roots.Add( currentNode );
-            }
+			if ( !pathParts.Any() ) { return; }
 
-            // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach ( var pathPart in pathParts.Skip( 1 ) ) {
-                var nextNode = new Node( pathPart, currentNode );
-                existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
+			var currentNode = new Node( pathParts[ 0 ] );
 
-                if ( !Node.Equals( existingNode, default ) ) {
-                    nextNode = existingNode; // already there? don't need to add it.
-                }
-                else {
-                    currentNode.SubFolders.Add( nextNode ); // didn't find one, add it
-                }
+			var existingNode = this.Roots.Find( node => Node.Equals( node, currentNode ) ); // look for an existing root node
 
-                currentNode = nextNode;
-            }
+			if ( !Node.Equals( existingNode, default ) ) {
 
-            currentNode.IsEmpty.Should().BeTrue();
+				// use existing node
+				currentNode = existingNode;
+			}
+			else {
 
-            if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
+				// didn't find one, add it
+				this.Roots.Add( currentNode );
+			}
 
-            this.Endings.Add( currentNode );
-        }
+			// ReSharper disable once LoopCanBePartlyConvertedToQuery
+			foreach ( var pathPart in pathParts.Skip( 1 ) ) {
+				var nextNode = new Node( pathPart, currentNode );
+				existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     An enumerator that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<Folder> GetEnumerator() {
-            foreach ( var ending in this.Endings ) {
-                var node = ending;
-                var path = String.Empty;
+				if ( !Node.Equals( existingNode, default ) ) {
+					nextNode = existingNode; // already there? don't need to add it.
+				}
+				else {
+					currentNode.SubFolders.Add( nextNode ); // didn't find one, add it
+				}
 
-                while ( node.Parent != null ) {
-                    path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
-                    node = node.Parent;
-                }
+				currentNode = nextNode;
+			}
 
-                this.Roots.Should().Contain( node );
-                path = String.Concat( node.Data, path );
+			currentNode.IsEmpty.Should().BeTrue();
 
-                yield return new Folder( path );
-            }
-        }
+			if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-    }
+			this.Endings.Add( currentNode );
+		}
+
+	}
+
 }

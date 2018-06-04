@@ -1,156 +1,168 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MersenneTwister.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/MersenneTwister.cs" was last formatted by Protiguous on 2018/05/24 at 7:32 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "MersenneTwister.cs" was last formatted by Protiguous on 2018/06/04 at 4:24 PM.
 
 namespace Librainian.Security {
 
-    using System;
+	using System;
 
-    /// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
-    internal class MersenneTwister : Random {
+	/// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
+	internal class MersenneTwister : Random {
 
-        /* Period parameters */
-        private const UInt32 LowerMask = 0x7fffffff;
+		private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
 
-        private const Int32 M = 397;
+		private Int16 _mti;
 
-        private const UInt32 MatrixA = 0x9908b0df;
+		private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
 
-        private const Int32 N = 624;
+		private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
 
-        /* constant vector a */
-        private const UInt32 TemperingMaskB = 0x9d2c5680;
+		private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
 
-        private const UInt32 TemperingMaskC = 0xefc60000;
+		private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
 
-        private const UInt32 UpperMask = 0x80000000; /* most significant w-r bits */
+		protected UInt32 GenerateUInt() {
+			UInt32 y;
 
-        /* least significant r bits */
-        /* Tempering parameters */
-        private static readonly UInt32[] Mag01 = { 0x0, MatrixA };
+			/* mag01[x] = x * MATRIX_A  for x=0,1 */
+			if ( this._mti >= N ) /* generate N words at one time */ {
+				Int16 kk = 0;
 
-        private readonly UInt32[] _mt = new UInt32[N]; /* the array for the state vector  */
+				for ( ; kk < N - M; ++kk ) {
+					y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
+					this._mt[ kk ] = this._mt[ kk + M ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
+				}
 
-        private Int16 _mti;
-        /* initializing the array with a NONZERO seed */
+				for ( ; kk < N - 1; ++kk ) {
+					y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
+					this._mt[ kk ] = this._mt[ kk + ( M - N ) ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
+				}
 
-        public MersenneTwister( UInt32 seed ) {
-            /* setting initial seeds to mt[N] using         */
-            /* the generator Line 25 of Table 1 in          */
-            /* [KNUTH 1981, The Art of Computer Programming */
-            /*    Vol. 2 (2nd Ed.), pp102]                  */
-            this._mt[0] = seed & 0xffffffffU;
+				y = ( this._mt[ N - 1 ] & UpperMask ) | ( this._mt[ 0 ] & LowerMask );
+				this._mt[ N - 1 ] = this._mt[ M - 1 ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
 
-            for ( this._mti = 1; this._mti < N; ++this._mti ) { this._mt[this._mti] = ( 69069 * this._mt[this._mti - 1] ) & 0xffffffffU; }
-        }
+				this._mti = 0;
+			}
 
-        /// <summary>a default initial seed is used</summary>
-        public MersenneTwister() : this( seed: 4357 ) { }
+			y = this._mt[ this._mti++ ];
+			y ^= TEMPERING_SHIFT_U( y: y );
+			y ^= TEMPERING_SHIFT_S( y: y ) & TemperingMaskB;
+			y ^= TEMPERING_SHIFT_T( y: y ) & TemperingMaskC;
+			y ^= TEMPERING_SHIFT_L( y: y );
 
-        private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
+			return y;
+		}
 
-        private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
+		public override Int32 Next() => this.Next( maxValue: Int32.MaxValue );
 
-        private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
+		public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+			if ( maxValue > 1 ) { return ( Int32 ) ( this.NextDouble() * maxValue ); }
 
-        private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
+			if ( maxValue < 0 ) { throw new ArgumentOutOfRangeException(); }
 
-        protected UInt32 GenerateUInt() {
-            UInt32 y;
+			return 0;
+		}
 
-            /* mag01[x] = x * MATRIX_A  for x=0,1 */
-            if ( this._mti >= N ) /* generate N words at one time */ {
-                Int16 kk = 0;
+		public override Int32 Next( Int32 minValue, Int32 maxValue ) {
+			if ( maxValue < minValue ) { throw new ArgumentOutOfRangeException(); }
 
-                for ( ; kk < N - M; ++kk ) {
-                    y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-                    this._mt[kk] = this._mt[kk + M] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
-                }
+			if ( maxValue == minValue ) { return minValue; }
 
-                for ( ; kk < N - 1; ++kk ) {
-                    y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-                    this._mt[kk] = this._mt[kk + ( M - N )] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
-                }
+			return this.Next( maxValue: maxValue - minValue ) + minValue;
+		}
 
-                y = ( this._mt[N - 1] & UpperMask ) | ( this._mt[0] & LowerMask );
-                this._mt[N - 1] = this._mt[M - 1] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+		/// <summary></summary>
+		/// <param name="buffer"></param>
+		/// <exception cref="ArgumentNullException"></exception>
+		public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
+			if ( buffer is null ) { throw new ArgumentNullException(); }
 
-                this._mti = 0;
-            }
+			var bufLen = buffer.Length;
 
-            y = this._mt[this._mti++];
-            y ^= TEMPERING_SHIFT_U( y: y );
-            y ^= TEMPERING_SHIFT_S( y: y ) & TemperingMaskB;
-            y ^= TEMPERING_SHIFT_T( y: y ) & TemperingMaskC;
-            y ^= TEMPERING_SHIFT_L( y: y );
+			for ( var idx = 0; idx < bufLen; ++idx ) { buffer[ idx ] = ( Byte ) this.Next( maxValue: 256 ); }
+		}
 
-            return y;
-        }
+		public override Double NextDouble() => ( Double ) this.GenerateUInt() / ( ( UInt64 ) UInt32.MaxValue + 1 );
 
-        public override Int32 Next() => this.Next( maxValue: Int32.MaxValue );
+		public virtual UInt32 NextUInt() => this.GenerateUInt();
 
-        public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
-            if ( maxValue > 1 ) { return ( Int32 )( this.NextDouble() * maxValue ); }
+		public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 ) ( this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / maxValue ) );
 
-            if ( maxValue < 0 ) { throw new ArgumentOutOfRangeException(); }
+		public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+			if ( minValue >= maxValue ) { throw new ArgumentOutOfRangeException(); }
 
-            return 0;
-        }
+			return ( UInt32 ) ( this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
+		}
 
-        public override Int32 Next( Int32 minValue, Int32 maxValue ) {
-            if ( maxValue < minValue ) { throw new ArgumentOutOfRangeException(); }
+		private const UInt32 LowerMask = 0x7fffffff;
 
-            if ( maxValue == minValue ) { return minValue; }
+		private const Int32 M = 397;
 
-            return this.Next( maxValue: maxValue - minValue ) + minValue;
-        }
+		private const UInt32 MatrixA = 0x9908b0df;
 
-        /// <summary></summary>
-        /// <param name="buffer"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
-            if ( buffer is null ) { throw new ArgumentNullException(); }
+		private const Int32 N = 624;
 
-            var bufLen = buffer.Length;
+		private const UInt32 TemperingMaskB = 0x9d2c5680;
 
-            for ( var idx = 0; idx < bufLen; ++idx ) { buffer[idx] = ( Byte )this.Next( maxValue: 256 ); }
-        }
+		private const UInt32 TemperingMaskC = 0xefc60000;
 
-        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
+		private const UInt32 UpperMask = 0x80000000;
 
-        public virtual UInt32 NextUInt() => this.GenerateUInt();
+		private static readonly UInt32[] Mag01 = { 0x0, MatrixA };
 
-        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
+		public MersenneTwister( UInt32 seed ) {
+			/* setting initial seeds to mt[N] using         */
+			/* the generator Line 25 of Table 1 in          */
+			/* [KNUTH 1981, The Art of Computer Programming */
+			/*    Vol. 2 (2nd Ed.), pp102]                  */
+			this._mt[ 0 ] = seed & 0xffffffffU;
 
-        public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
-            if ( minValue >= maxValue ) { throw new ArgumentOutOfRangeException(); }
+			for ( this._mti = 1; this._mti < N; ++this._mti ) { this._mt[ this._mti ] = ( 69069 * this._mt[ this._mti - 1 ] ) & 0xffffffffU; }
+		}
 
-            return ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
-        }
-    }
+		/// <summary>a default initial seed is used</summary>
+		public MersenneTwister() : this( seed: 4357 ) { }
+
+		/* Period parameters */
+		/* constant vector a */
+		/* most significant w-r bits */
+
+		/* least significant r bits */
+		/* Tempering parameters */
+		/* initializing the array with a NONZERO seed */
+
+	}
+
 }

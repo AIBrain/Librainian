@@ -17,43 +17,41 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/IoC.cs" was last formatted by Protiguous on 2018/05/24 at 7:19 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "IoC.cs" was last formatted by Protiguous on 2018/06/04 at 4:03 PM.
 
 namespace Librainian.Magic {
 
-    using System;
-    using JetBrains.Annotations;
+	using System;
+	using JetBrains.Annotations;
 
-    /// <summary>
-    ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
-    /// </summary>
-    public static class IoC {
+	/// <summary>
+	///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
+	/// </summary>
+	public static class IoC {
 
-        /// <summary>
-        /// </summary>
-        [CanBeNull]
-        private static IIocContainer _container = StealthMode.Value;
+		/// <summary>
+		/// </summary>
+		[NotNull]
+		private static Lazy<NinjectIocContainer> StealthMode { get; } = new Lazy<NinjectIocContainer>( () => new NinjectIocContainer() );
 
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        private static Lazy<NinjectIocContainer> StealthMode { get; } = new Lazy<NinjectIocContainer>( () => new NinjectIocContainer() );
-
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        public static IIocContainer Container {
-            get => StealthMode.Value;
-
-            set => _container = value;
-        }
-    }
+		/// <summary>
+		/// </summary>
+		[NotNull]
+		public static IIocContainer Container => StealthMode.Value;
+	}
 }

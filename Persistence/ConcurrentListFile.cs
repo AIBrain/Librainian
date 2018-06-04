@@ -1,146 +1,155 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConcurrentListFile.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/ConcurrentListFile.cs" was last formatted by Protiguous on 2018/05/24 at 7:30 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "ConcurrentListFile.cs" was last formatted by Protiguous on 2018/06/04 at 4:21 PM.
 
 namespace Librainian.Persistence {
 
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using Collections;
-    using ComputerSystems.FileSystem;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Parsing;
-    using Threading;
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using Collections;
+	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Parsing;
+	using Threading;
 
-    /// <summary>
-    ///     Persist a list to and from a JSON formatted text document.
-    /// </summary>
-    [JsonObject]
-    public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
+	/// <summary>
+	///     Persist a list to and from a JSON formatted text document.
+	/// </summary>
+	[JsonObject]
+	public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
 
-        /// <summary>
-        ///     disallow constructor without a document/filename
-        /// </summary>
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        [NotNull]
-        public Document Document { get; set; }
+		/// <summary>
+		///     disallow constructor without a document/filename
+		/// </summary>
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		[NotNull]
+		public Document Document { get; set; }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private ConcurrentListFile() => throw new NotImplementedException();
+		/// <summary>
+		///     Dispose any disposable members.
+		/// </summary>
+		public override void DisposeManaged() {
+			this.Write().Wait();
+			base.DisposeManaged();
+		}
 
-        /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
-        /// </summary>
-        /// <param name="document"></param>
-        public ConcurrentListFile( [NotNull] Document document ) {
-            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
-            this.Read().Wait(); //TODO I don't like this here.
-        }
+		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
+			if ( !this.Document.Exists() ) { return false; }
 
-        /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
-        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
-        /// </summary>
-        /// <param name="filename"></param>
-        public ConcurrentListFile( [NotNull] String filename ) {
-            if ( filename.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( filename ) ); }
+			try {
+				var data = this.Document.LoadJSON<IEnumerable<TValue>>();
 
-            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
+				if ( data != null ) {
+					await this.AddRangeAsync( data ).NoUI();
 
-            if ( !folder.Exists() ) { folder.Create(); }
+					return true;
+				}
+			}
+			catch ( JsonException exception ) { exception.More(); }
+			catch ( IOException exception ) {
 
-            this.Document = new Document( folder, filename );
-            this.Read().Wait();
-        }
+				//file in use by another app
+				exception.More();
+			}
+			catch ( OutOfMemoryException exception ) {
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() {
-            this.Write().Wait();
-            base.DisposeManaged();
-        }
+				//file is huge
+				exception.More();
+			}
 
-        public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
-            if ( !this.Document.Exists() ) { return false; }
+			return false;
+		}
 
-            try {
-                var data = this.Document.LoadJSON<IEnumerable<TValue>>();
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>A string that represents the current object.</returns>
+		public override String ToString() => $"{this.Count} items";
 
-                if ( data != null ) {
-                    await this.AddRangeAsync( data ).NoUI();
+		/// <summary>
+		///     Saves the data to the <see cref="Document" />.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
+			var document = this.Document;
 
-                    return true;
-                }
-            }
-            catch ( JsonException exception ) { exception.More(); }
-            catch ( IOException exception ) {
+			return Task.Run( () => {
+				if ( !document.Folder.Exists() ) { document.Folder.Create(); }
 
-                //file in use by another app
-                exception.More();
-            }
-            catch ( OutOfMemoryException exception ) {
+				if ( document.Exists() ) { document.Delete(); }
 
-                //file is huge
-                exception.More();
-            }
+				return this.TrySave( document, true, Formatting.Indented );
+			}, cancellationToken );
+		}
 
-            return false;
-        }
+		// ReSharper disable once NotNullMemberIsNotInitialized
+		private ConcurrentListFile() => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.Count} items";
+		/// <summary>
+		///     Persist a dictionary to and from a JSON formatted text document.
+		/// </summary>
+		/// <param name="document"></param>
+		public ConcurrentListFile( [NotNull] Document document ) {
+			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+			this.Read().Wait(); //TODO I don't like this here.
+		}
 
-        /// <summary>
-        ///     Saves the data to the <see cref="Document" />.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
-            var document = this.Document;
+		/// <summary>
+		///     Persist a dictionary to and from a JSON formatted text document.
+		///     <para>Defaults to user\appdata\Local\productname\filename</para>
+		/// </summary>
+		/// <param name="filename"></param>
+		public ConcurrentListFile( [NotNull] String filename ) {
+			if ( filename.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( filename ) ); }
 
-            return Task.Run( () => {
-                if ( !document.Folder.Exists() ) { document.Folder.Create(); }
+			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
 
-                if ( document.Exists() ) { document.Delete(); }
+			if ( !folder.Exists() ) { folder.Create(); }
 
-                return this.TrySave( document, true, Formatting.Indented );
-            }, cancellationToken );
-        }
-    }
+			this.Document = new Document( folder, filename );
+			this.Read().Wait();
+		}
+
+	}
+
 }

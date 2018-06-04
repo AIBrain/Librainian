@@ -1,154 +1,163 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ERG.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/ERG.cs" was last formatted by Protiguous on 2018/05/24 at 7:12 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "ERG.cs" was last formatted by Protiguous on 2018/06/04 at 3:56 PM.
 
 namespace Librainian.Graphics.Imaging {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Collections;
-    using ComputerSystems.FileSystem;
-    using JetBrains.Annotations;
-    using Maths;
-    using Measurement.Time;
-    using Newtonsoft.Json;
-    using Threading;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Drawing;
+	using System.Drawing.Imaging;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using Collections;
+	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
+	using Maths.Hashings;
+	using Measurement.Time;
+	using Newtonsoft.Json;
+	using Threading;
 
-    /// <summary> Experimental Resilient Graphics </summary>
-    /// <remarks>
-    ///     Just for fun & learning.
-    /// </remarks>
-    /// <remarks>
-    ///     Prefer native file system compression over encoding/compression speed
-    ///     (assuming local cpu will be 'faster' than network transfer speed).
-    ///     <para>Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.</para>
-    ///     <para>Checksums are used on each pixel to guard against (detect but not fix) corruption.</para>
-    /// </remarks>
-    /// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
-    /// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
-    [JsonObject]
-    public class Erg {
+	/// <summary> Experimental Resilient Graphics </summary>
+	/// <remarks>
+	///     Just for fun & learning.
+	/// </remarks>
+	/// <remarks>
+	///     Prefer native file system compression over encoding/compression speed
+	///     (assuming local cpu will be 'faster' than network transfer speed).
+	///     <para>Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.</para>
+	///     <para>Checksums are used on each pixel to guard against (detect but not fix) corruption.</para>
+	/// </remarks>
+	/// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
+	/// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
+	[JsonObject]
+	public class Erg {
 
-        public static readonly String Extension = ".erg";
+		/// <summary>
+		///     Checksum of all pages
+		/// </summary>
+		[JsonProperty]
+		public UInt64 Checksum { get; private set; }
 
-        /// <summary>
-        ///     Human readable file header.
-        /// </summary>
-        public static readonly String Header = "ERG0.1";
+		public UInt32 Height { get; private set; }
 
-        /// <summary>
-        ///     EXIF metadata
-        /// </summary>
-        [JsonProperty]
-        public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
+		[JsonProperty]
+		public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
 
-        /// <summary>
-        ///     Checksum of all pages
-        /// </summary>
-        [JsonProperty]
-        public UInt64 Checksum { get; private set; }
+		[JsonProperty]
+		public ConcurrentSet<Int32> PropertyIdList { get; } = new ConcurrentSet<Int32>();
 
-        public UInt32 Height { get; private set; }
+		[JsonProperty]
+		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
 
-        [JsonProperty]
-        public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
+		public UInt32 Width { get; private set; }
 
-        [JsonProperty]
-        public ConcurrentSet<Int32> PropertyIdList { get; } = new ConcurrentSet<Int32>();
+		/// <summary>
+		///     EXIF metadata
+		/// </summary>
+		[JsonProperty]
+		public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
 
-        [JsonProperty]
-        public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
+		public async Task<UInt64> CalculateChecksumAsync() =>
+			await Task.Run( () => {
+				unchecked { return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels ); }
+			} );
 
-        public UInt32 Width { get; private set; }
+		public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
+			try { return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).NoUI(); }
+			catch ( Exception exception ) { exception.More(); }
 
-        public Erg() => this.Checksum = UInt64.MaxValue;
+			return false;
+		}
 
-        public async Task<UInt64> CalculateChecksumAsync() =>
-            await Task.Run( () => {
-                unchecked { return ( UInt64 )Hashing.GetHashCodes( this.Pixels ); }
-            } );
+		public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
+			if ( bitmap is null ) { return false; }
 
-        public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
-            try { return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).NoUI(); }
-            catch ( Exception exception ) { exception.More(); }
+			var stopwatch = StopWatch.StartNew();
 
-            return false;
-        }
+			return await Task.Run( () => {
+				var width = bitmap.Width;
 
-        public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-            if ( bitmap is null ) { return false; }
+				if ( width < UInt32.MinValue ) { return false; }
 
-            var stopwatch = StopWatch.StartNew();
+				var height = bitmap.Height;
 
-            return await Task.Run( () => {
-                var width = bitmap.Width;
+				if ( height < UInt32.MinValue ) { return false; }
 
-                if ( width < UInt32.MinValue ) { return false; }
+				this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
+				this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem { Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value } ) );
 
-                var height = bitmap.Height;
+				this.Width = ( UInt32 ) bitmap.Width;
+				this.Height = ( UInt32 ) bitmap.Height;
 
-                if ( height < UInt32.MinValue ) { return false; }
+				var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
 
-                this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
-                this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem { Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value } ) );
+				var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
 
-                this.Width = ( UInt32 )bitmap.Width;
-                this.Height = ( UInt32 )bitmap.Height;
+				Parallel.For( 0, this.Height, y => {
+					if ( stopwatch.Elapsed > timeout ) { return; }
 
-                var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
+					if ( cancellationToken.IsCancellationRequested ) { return; }
 
-                var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
+					for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
+						var color = bitmap.GetPixel( ( Int32 ) x, ( Int32 ) y );
+						var pixel = new Pixel( color, x, ( UInt32 ) y );
+						this.Pixels.TryAdd( pixel );
+					}
+				} );
 
-                Parallel.For( 0, this.Height, y => {
-                    if ( stopwatch.Elapsed > timeout ) { return; }
+				bitmap.UnlockBits( data );
 
-                    if ( cancellationToken.IsCancellationRequested ) { return; }
+				//TODO animated gif RE: image.FrameDimensionsList;
 
-                    for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
-                        var pixel = new Pixel( color, x, ( UInt32 )y );
-                        this.Pixels.TryAdd( pixel );
-                    }
-                } );
+				//image.Palette?
 
-                bitmap.UnlockBits( data );
+				return false; //TODO add frame
+			}, cancellationToken );
+		}
 
-                //TODO animated gif RE: image.FrameDimensionsList;
+		public static readonly String Extension = ".erg";
 
-                //image.Palette?
+		/// <summary>
+		///     Human readable file header.
+		/// </summary>
+		public static readonly String Header = "ERG0.1";
 
-                return false; //TODO add frame
-            }, cancellationToken );
-        }
-    }
+		public Erg() => this.Checksum = UInt64.MaxValue;
+
+	}
+
 }

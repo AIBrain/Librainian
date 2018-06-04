@@ -1,86 +1,96 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "TrainingQueue.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/TrainingQueue.cs" was last formatted by Protiguous on 2018/05/24 at 7:00 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "TrainingQueue.cs" was last formatted by Protiguous on 2018/06/04 at 3:44 PM.
 
 namespace Librainian.Collections {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Linq;
-    using System.Threading;
-    using Magic;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Linq;
+	using System.Threading;
+	using Magic;
 
-    public class TrainingQueue : ABetterClassDispose {
+	public class TrainingQueue : ABetterClassDispose {
 
-        private ManualResetEvent Bob { get; } = new ManualResetEvent( initialState: false );
+		public ConcurrentQueue<TrainingQueueItem> Items { get; } = new ConcurrentQueue<TrainingQueueItem>();
 
-        public ConcurrentQueue<TrainingQueueItem> Items { get; } = new ConcurrentQueue<TrainingQueueItem>();
+		private ManualResetEvent Bob { get; } = new ManualResetEvent( initialState: false );
 
-        //public  { get; }  ConcurrentStack<TrainingQueueItem> Items = new ConcurrentStack<TrainingQueueItem>();
-        public TrainingQueue() => this.Bob.Reset();
+		public TrainingQueueItem Dequeue() => this.Items.Remove();
 
-        public TrainingQueueItem Dequeue() => this.Items.Remove();
+		/// <summary>
+		///     Dispose any disposable members.
+		/// </summary>
+		public override void DisposeManaged() => this.Bob.Dispose();
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this.Bob.Dispose();
+		public void Enqueue( TrainingQueueItem train ) {
+			this.Items.Add( item: train );
+			this.Bob.Set();
+		}
 
-        public void Enqueue( TrainingQueueItem train ) {
-            this.Items.Add( item: train );
-            this.Bob.Set();
-        }
+		/// <summary>
+		///     Waits until an item in is the queue.
+		/// </summary>
+		public void Wait() {
 
-        /// <summary>
-        ///     Waits until an item in is the queue.
-        /// </summary>
-        public void Wait() {
+			while ( !this.Items.Any() ) { this.Bob.WaitOne( timeout: TimeSpan.FromMilliseconds( 1234 ) ); }
 
-            while ( !this.Items.Any() ) { this.Bob.WaitOne( timeout: TimeSpan.FromMilliseconds( 1234 ) ); }
+			this.Bob.Reset();
+		}
 
-            this.Bob.Reset();
-        }
+		public class TrainingQueueItem {
 
-        public class TrainingQueueItem {
+			public Action Action { get; set; }
 
-            public Action Action { get; set; }
+			public Object Answer { get; }
 
-            public Object Answer { get; }
+			public Object Question { get; }
 
-            public Object Question { get; }
+			public override String ToString() => $"{this.Question} -> {this.Answer}";
 
-            public TrainingQueueItem( Object question, Object answer, Action action ) {
-                this.Question = question;
-                this.Answer = answer;
-                this.Action = action;
-            }
+			public TrainingQueueItem( Object question, Object answer, Action action ) {
+				this.Question = question;
+				this.Answer = answer;
+				this.Action = action;
+			}
 
-            public override String ToString() => $"{this.Question} -> {this.Answer}";
-        }
-    }
+		}
+
+		//public  { get; }  ConcurrentStack<TrainingQueueItem> Items = new ConcurrentStack<TrainingQueueItem>();
+		public TrainingQueue() => this.Bob.Reset();
+
+	}
+
 }

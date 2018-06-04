@@ -17,34 +17,41 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/StreamException.cs" was last formatted by Protiguous on 2018/05/24 at 7:06 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "StreamException.cs" was last formatted by Protiguous on 2018/06/04 at 3:51 PM.
 
 namespace Librainian.Exceptions {
 
-    using System;
-    using System.IO;
+	using System;
+	using System.IO;
 
-    /// <summary>
-    ///     <para>Generic error when using a <see cref="Stream" />.</para>
-    /// </summary>
-    [Serializable]
-    public class StreamException : Exception {
+	/// <summary>
+	///     <para>Generic error when using a <see cref="Stream" />.</para>
+	/// </summary>
+	[Serializable]
+	public class StreamException : Exception {
 
-        /// <summary>
-        ///     Disallow no message.
-        /// </summary>
-        private StreamException() { }
+		/// <summary>
+		///     Disallow no message.
+		/// </summary>
+		private StreamException() { }
 
-        public StreamException( String message ) : base( message ) { }
+		public StreamException( String message ) : base( message ) { }
 
-        public StreamException( String message, Exception inner ) : base( message, inner ) { }
-    }
+		public StreamException( String message, Exception inner ) : base( message, inner ) { }
+	}
 }

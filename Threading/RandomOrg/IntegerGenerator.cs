@@ -25,87 +25,113 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 //
-// "Librainian/Librainian/IntegerGenerator.cs" was last formatted by Protiguous on 2018/05/24 at 7:34 PM.
+// "Librainian/Librainian/IntegerGenerator.cs" was last formatted by Protiguous on 2018/05/31 at 4:44 AM.
 
 namespace Librainian.Threading.RandomOrg {
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using Extensions;
     using Internet;
+    using Measurement.Time;
     using Parsing;
 
-    /// <summary>
-    /// </summary>
-    /// <seealso cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
-    public class IntegerGenerator {
+    public static class RandomDotOrg {
 
-        private const Int32 BaseDefault = 10;
+        internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
 
-        private const Int32 ColDefault = 1;
+        public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
 
-        private const Int32 ColMax = 1000000000;
+            if ( maxValue < minValue ) { CommonExtensions.Swap( ref minValue, ref maxValue ); }
 
-        private const Int32 Max = 1000000000;
+            if ( maxValue - minValue + 1 > Math.Pow( x: 10, y: 3 ) ) { throw new ArgumentException( "Range requested cannot be larger than 10,000" ); }
 
-        private const Int32 Min = -1000000000;
+            if ( minValue < -Math.Pow( x: 10, y: 8 ) || minValue > Math.Pow( x: 10, y: 8 ) ) { throw new ArgumentException( "Value of min must be between -1e9 and 1e9", nameof( minValue ) ); }
 
-        private const Int32 NumMax = 10000;
+            if ( maxValue < -Math.Pow( x: 10, y: 8 ) || maxValue > Math.Pow( x: 10, y: 8 ) ) { throw new ArgumentException( "Value of max must be between -1e9 and 1e9", nameof( maxValue ) ); }
 
-        private const Int32 NumMin = 1;
+            var url = $"http://www.random.org/sequences/?min={minValue}&max={maxValue}&col=1&base=10&format=plain&rnd=new";
 
-        private Int32 _index;
+            var responseFromServer = await url.GetWebPageAsync( Seconds.Two ).NoUI();
 
-        private List<Int32> Ints { get; } = new List<Int32>();
-
-        public IntegerGenerator() => this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
-
-        public IntegerGenerator( Int32 num ) => this.Init( num, Min, Max, ColDefault, BaseDefault );
-
-        public IntegerGenerator( Int32 num, Int32 min ) => this.Init( num, min, Max, ColDefault, BaseDefault );
-
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max ) => this.Init( num, min, max, ColDefault, BaseDefault );
-
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) => this.Init( num, min, max, col, BaseDefault );
-
-        public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) => this.Init( num, min, max, col, inbase );
-
-        private void Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
-            if ( num >= NumMin && num <= NumMax ) {
-                if ( min >= Min ) {
-                    if ( max <= Max ) {
-                        if ( max > min ) {
-                            if ( col > 0 && col <= ColMax ) {
-                                if ( inbase == 2 || inbase == 8 || inbase == 10 || inbase == 16 ) {
-                                    var toParse = $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPage();
-
-                                    if ( toParse is null ) { return; }
-
-                                    foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
-                                        try {
-                                            if ( !s.IsNullOrWhiteSpace() ) { this.Ints.Add( Convert.ToInt32( s, inbase ) ); }
-                                        }
-                                        catch { }
-                                    }
-                                }
-                                else { throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." ); }
-                            }
-                            else { throw new ArgumentOutOfRangeException( nameof( col ), "The column count must be between 1 and 1000000000." ); }
-                        }
-                        else { throw new ArgumentOutOfRangeException( nameof( min ), "The random number upper bound must be greater than the lower bound." ); }
-                    }
-                    else { throw new ArgumentOutOfRangeException( nameof( max ), "The random number upper bound must be between -1000000000 and 1000000000." ); }
-                }
-                else { throw new ArgumentOutOfRangeException( nameof( min ), "The random number lower bound must be between -1000000000 and 1000000000." ); }
-            }
-            else { throw new ArgumentOutOfRangeException( nameof( num ), "The number of random numbers to generate must be between 1 and 10000." ); }
+            return responseFromServer.Split( '\n' ).Where( n => n.Any() ).Select( Int32.Parse );
         }
 
-        public Int32 Get() {
-            this._index++;
-            this._index %= this.Ints.Count;
+        /// <summary>
+        /// </summary>
+        /// <seealso cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
+        public class IntegerGenerator {
 
-            return this.Ints[this._index];
+            private const Int32 BaseDefault = 10;
+
+            private const Int32 ColDefault = 1;
+
+            private const Int32 ColMax = 1000000000;
+
+            private const Int32 Max = 1000000000;
+
+            private const Int32 Min = -1000000000;
+
+            private const Int32 NumMax = 10000;
+
+            private const Int32 NumMin = 1;
+
+            private Int32 _index;
+
+            private List<Int32> Ints { get; } = new List<Int32>();
+
+            private void Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
+                if ( num >= NumMin && num <= NumMax ) {
+                    if ( min >= Min ) {
+                        if ( max <= Max ) {
+                            if ( max > min ) {
+                                if ( col > 0 && col <= ColMax ) {
+                                    if ( inbase == 2 || inbase == 8 || inbase == 10 || inbase == 16 ) {
+                                        var toParse = $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPage();
+
+                                        if ( toParse is null ) { return; }
+
+                                        foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
+                                            try {
+                                                if ( !s.IsNullOrWhiteSpace() ) { this.Ints.Add( Convert.ToInt32( s, inbase ) ); }
+                                            }
+                                            catch { }
+                                        }
+                                    }
+                                    else { throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." ); }
+                                }
+                                else { throw new ArgumentOutOfRangeException( nameof( col ), "The column count must be between 1 and 1000000000." ); }
+                            }
+                            else { throw new ArgumentOutOfRangeException( nameof( min ), "The random number upper bound must be greater than the lower bound." ); }
+                        }
+                        else { throw new ArgumentOutOfRangeException( nameof( max ), "The random number upper bound must be between -1000000000 and 1000000000." ); }
+                    }
+                    else { throw new ArgumentOutOfRangeException( nameof( min ), "The random number lower bound must be between -1000000000 and 1000000000." ); }
+                }
+                else { throw new ArgumentOutOfRangeException( nameof( num ), "The number of random numbers to generate must be between 1 and 10000." ); }
+            }
+
+            public IntegerGenerator() => this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
+
+            public IntegerGenerator( Int32 num ) => this.Init( num, Min, Max, ColDefault, BaseDefault );
+
+            public IntegerGenerator( Int32 num, Int32 min ) => this.Init( num, min, Max, ColDefault, BaseDefault );
+
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max ) => this.Init( num, min, max, ColDefault, BaseDefault );
+
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) => this.Init( num, min, max, col, BaseDefault );
+
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) => this.Init( num, min, max, col, inbase );
+
+            public Int32 Get() {
+                this._index++;
+                this._index %= this.Ints.Count;
+
+                return this.Ints[this._index];
+            }
         }
     }
 }

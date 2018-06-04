@@ -1,80 +1,89 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "WalletTests.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/WalletTests.cs" was last formatted by Protiguous on 2018/05/24 at 7:10 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "WalletTests.cs" was last formatted by Protiguous on 2018/06/04 at 3:54 PM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
-    using FluentAssertions;
-    using Maths;
-    using NUnit.Framework;
+	using FluentAssertions;
+	using Maths;
+	using NUnit.Framework;
 
-    [TestFixture]
-    public static class WalletTests {
+	[TestFixture]
+	public static class WalletTests {
 
-        public static Wallet WalletMain { get; } = Wallet.Create();
+		public static Wallet WalletMain { get; } = Wallet.Create();
 
-        public static Wallet WalletSecond { get; } = Wallet.Create();
+		public static Wallet WalletSecond { get; } = Wallet.Create();
 
-        public static Wallet WalletThird { get; } = Wallet.Create();
+		public static Wallet WalletThird { get; } = Wallet.Create();
 
-        //[OneTimeSetUp]
-        public static void Setup() { }
+		//[OneTimeSetUp]
+		public static void Setup() { }
 
-        //[OneTimeTearDown]
-        public static void TearDown() { }
+		//[OneTimeTearDown]
+		public static void TearDown() { }
 
-        [Test]
-        public static void Test_funding_an_empty_wallet() {
-            WalletMain.Should().NotBeNull();
+		[Test]
+		public static void Test_funding_an_empty_wallet() {
+			WalletMain.Should().NotBeNull();
 
-            WalletMain.ClearEverything();
+			WalletMain.ClearEverything();
 
-            var leftOver = WalletMain.Fund( 123.45678m ).Result;
+			var leftOver = WalletMain.Fund( 123.45678m ).Result;
 
-            WalletMain.Total().Should().Be( 123.45m );
+			WalletMain.Total().Should().Be( 123.45m );
 
-            leftOver.Should().Be( 0.00678m );
-        }
+			leftOver.Should().Be( 0.00678m );
+		}
 
-        [Test]
-        public static void Test_random_funding_wallet_to_wallet() {
-            WalletMain.Should().NotBeNull();
-            WalletMain.ClearEverything();
+		[Test]
+		public static void Test_random_funding_wallet_to_wallet() {
+			WalletMain.Should().NotBeNull();
+			WalletMain.ClearEverything();
 
-            var leftOver = WalletMain.Fund( 0.00001m.NextDecimal( 9999999m ) ).Result;
-            var total = WalletMain.Total();
+			var leftOver = WalletMain.Fund( 0.00001m.NextDecimal( 9999999m ) ).Result;
+			var total = WalletMain.Total();
 
-            WalletSecond.Should().NotBeNull();
-            WalletSecond.ClearEverything();
+			WalletSecond.Should().NotBeNull();
+			WalletSecond.ClearEverything();
 
-            var bob = WalletMain.Transfer( WalletSecond );
+			var bob = WalletMain.Transfer( WalletSecond );
 
-            total.Should().Be( WalletSecond.Total() );
-        }
-    }
+			total.Should().Be( WalletSecond.Total() );
+		}
+
+	}
+
 }

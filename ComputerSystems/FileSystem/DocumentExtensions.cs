@@ -1,89 +1,96 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "DocumentExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// "Librainian/Librainian/DocumentExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:02 PM.
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// 
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+// 
+// ***  Project "Librainian"  ***
+// File "DocumentExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:46 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Measurement.Time;
-    using Threading;
+	using System;
+	using System.IO;
+	using System.Linq;
+	using System.Text;
+	using System.Threading.Tasks;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Measurement.Time;
+	using Threading;
 
-    public static class DocumentExtensions {
+	public static class DocumentExtensions {
 
-        public static UInt32 BufferSize { get; } = 0x1000000;
+		public static UInt32 BufferSize { get; } = 0x1000000;
 
-        /// <summary>
-        ///     The characters not allowed in file names.
-        /// </summary>
-        [NotNull]
-        public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
+		/// <summary>
+		///     The characters not allowed in file names.
+		/// </summary>
+		[NotNull]
+		public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
 
-        private static async Task InternalCopyWithProgress( Document source, Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta, Char[] buffer, Single bytesToBeCopied, StopWatch begin ) {
-            using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
-                using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
-                    Int32 numRead;
+		private static async Task InternalCopyWithProgress( Document source, Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta, Char[] buffer, Single bytesToBeCopied, StopWatch begin ) {
+			using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
+				using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
+					Int32 numRead;
 
-                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).NoUI() ).Any() ) {
-                        await writer.WriteAsync( buffer, 0, numRead ).NoUI();
-                        var bytesCopied = ( UInt64 )numRead;
+					while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).NoUI() ).Any() ) {
+						await writer.WriteAsync( buffer, 0, numRead ).NoUI();
+						var bytesCopied = ( UInt64 ) numRead;
 
-                        var percent = bytesCopied / bytesToBeCopied;
+						var percent = bytesCopied / bytesToBeCopied;
 
-                        progress?.Report( percent );
-                        eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
-                    }
-                }
-            }
-        }
+						progress?.Report( percent );
+						eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
+					}
+				}
+			}
+		}
 
-        /// <summary>
-        ///     Returns the <paramref name="filename" /> with any invalid chars removed.
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String CleanupForFileName( this String filename ) {
-            filename = filename ?? String.Empty;
+		/// <summary>
+		///     Returns the <paramref name="filename" /> with any invalid chars removed.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static String CleanupForFileName( this String filename ) {
+			filename = filename ?? String.Empty;
 
-            var sb = new StringBuilder( filename.Length );
+			var sb = new StringBuilder( filename.Length );
 
-            foreach ( var c in filename.Where( c => !InvalidFileNameChars.Contains( c ) ) ) { sb.Append( c ); }
+			foreach ( var c in filename.Where( c => !InvalidFileNameChars.Contains( c ) ) ) { sb.Append( c ); }
 
-            return sb.ToString();
-        }
+			return sb.ToString();
+		}
 
-        /*
+		/*
 
         /// <summary>
         ///     Any result less than 1 is an error of some sort.
@@ -176,13 +183,14 @@ namespace Librainian.ComputerSystems.FileSystem {
         }
         */
 
-        /*
+		/*
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
-    }
 
-    /*
+	}
+
+	/*
     [TestFixture]
     public static class TestAsyncCopyAndMoves {
 
@@ -207,4 +215,5 @@ namespace Librainian.ComputerSystems.FileSystem {
         }
     }
     */
+
 }
