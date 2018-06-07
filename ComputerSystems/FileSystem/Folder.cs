@@ -413,6 +413,18 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 		//-V3073
 
+		/// <summary>
+		///     Opens a folder in file explorer.
+		/// </summary>
+		public static void OpenWithExplorer( Folder folder ) {
+			if ( folder != null ) {
+				var windowsFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows );
+
+				Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullName}\"" );
+			}
+
+		}
+
 	}
 
 }

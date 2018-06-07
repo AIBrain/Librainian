@@ -1,21 +1,21 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DatabaseExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "DatabaseExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:49 PM.
 
@@ -71,22 +71,24 @@ namespace Librainian.Database {
 		public String Version { get; set; }
 
 		public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
-
 	}
 
 	public static class DatabaseExtensions {
 
 		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
-		private static T CreateItemFromRow<T>( [NotNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
-			if ( row is null ) { throw new ArgumentNullException( paramName: nameof( row ) ); }
+		[CanBeNull]
+		private static T CreateItemFromRow<T>( DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
+			if ( row is null ) {
+				return default;
+			}
 
 			if ( properties is null ) { throw new ArgumentNullException( paramName: nameof( properties ) ); }
 
 			//T item = new T();
 			var item = Activator.CreateInstance<T>();
 
-			foreach ( var property in properties ) { property.SetValue( item, row[ property.Name ], null ); }
+			foreach ( var property in properties ) { property.SetValue( item, row[property.Name], null ); }
 
 			return item;
 		}
@@ -112,7 +114,7 @@ namespace Librainian.Database {
 				foreach ( var o in getSqlEngine.Get() ) {
 					if ( !( o is ManagementObject sqlEngine ) ) { continue; }
 
-					var serviceName = sqlEngine[ "ServiceName" ].ToString();
+					var serviceName = sqlEngine["ServiceName"].ToString();
 					var instanceName = GetInstanceNameFromServiceName( serviceName );
 					var version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" );
 					var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
@@ -135,7 +137,7 @@ namespace Librainian.Database {
 
 				// Enumerate all WMI instances of __namespace WMI class.
 				var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
-				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ].ToString() ) );
+				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"].ToString() ) );
 			}
 			catch ( ManagementException exception ) { exception.More(); }
 
@@ -160,7 +162,7 @@ namespace Librainian.Database {
 
 			if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) { TypeDictionary.Add( type, type.GetProperties().ToList() ); }
 
-			return TypeDictionary[ type ];
+			return TypeDictionary[type];
 		}
 
 		/// <summary>
@@ -181,7 +183,7 @@ namespace Librainian.Database {
 			var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
 
 			foreach ( var o in propertySearcher.Get() ) {
-				if ( o is ManagementObject managementObject ) { return managementObject[ "PropertyStrValue" ].ToString(); }
+				if ( o is ManagementObject managementObject ) { return managementObject["PropertyStrValue"].ToString(); }
 			}
 
 			return String.Empty;
@@ -303,7 +305,7 @@ namespace Librainian.Database {
 					var newRow = t.NewRow();
 
 					// try { var ival = propInfo.GetValue( item );
-					newRow[ propInfo.Name ] = item; // DBNull.Value; //ival ??
+					newRow[propInfo.Name] = item; // DBNull.Value; //ival ??
 
 					// } catch ( Exception exception) { Debug.WriteLine( exception.Message ); }
 					t.Rows.Add( newRow );
@@ -503,7 +505,5 @@ namespace Librainian.Database {
                     return stopwatch.Elapsed;
                 }
         */
-
 	}
-
 }

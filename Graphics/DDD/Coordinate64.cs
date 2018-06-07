@@ -47,11 +47,13 @@ namespace Librainian.Graphics.DDD {
 	using Maths.Hashings;
 	using Newtonsoft.Json;
 
+#pragma warning disable IDE0015 // Use framework type
 	/// <summary>
 	///     A 3D point; with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /><see cref="long" /> integers.
 	/// </summary>
 	/// <remarks>Code towards speed.</remarks>
 	[Immutable]
+#pragma warning restore IDE0015 // Use framework type
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject( MemberSerialization.Fields )]
 	public class Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {

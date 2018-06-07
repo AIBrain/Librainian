@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "HistogramaDesenat.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +23,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
-// File "HistogramaDesenat.cs" was last formatted by Protiguous on 2018/06/04 at 3:48 PM.
+// File "HistogramaDesenat.cs" was last formatted by Protiguous on 2018/06/06 at 10:00 PM.
 
 namespace Librainian.Controls {
 
@@ -60,7 +60,9 @@ namespace Librainian.Controls {
 		[Description( "The distance from the margins for the histogram" )]
 		public Int32 Offset {
 			set {
-				if ( value > 0 ) { this._myOffset = value; }
+				if ( value > 0 ) {
+					this._myOffset = value;
+				}
 			}
 
 			get => this._myOffset;
@@ -71,7 +73,9 @@ namespace Librainian.Controls {
 		/// <summary>
 		///     Required designer variable.
 		/// </summary>
+#pragma warning disable 169
 		private Container _components;
+#pragma warning restore 169
 
 		private Boolean _myIsDrawing;
 
@@ -86,8 +90,8 @@ namespace Librainian.Controls {
 		private Single _myYUnit;
 
 		private void ComputeXyUnitValues() {
-			this._myYUnit = ( Single ) ( this.Height - 2 * this._myOffset ) / this._myMaxValue;
-			this._myXUnit = ( Single ) ( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
+			this._myYUnit = ( Single )( this.Height - 2 * this._myOffset ) / this._myMaxValue;
+			this._myXUnit = ( Single )( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
 		}
 
 		///// <summary>
@@ -105,13 +109,19 @@ namespace Librainian.Controls {
 		/// <param name="vals">The array of values in which we look</param>
 		/// <returns>The maximum value</returns>
 		private Int64 GetMaxim( IEnumerable<Int64> vals ) {
-			if ( this._myIsDrawing ) { return vals.Concat( new Int64[] { 0 } ).Max(); }
+			if ( this._myIsDrawing ) {
+				return vals.Concat( new Int64[] {
+					0
+				} ).Max();
+			}
 
 			return 1;
 		}
 
 		private void HistogramaDesenat_Paint( Object sender, PaintEventArgs e ) {
-			if ( !this._myIsDrawing ) { return; }
+			if ( !this._myIsDrawing ) {
+				return;
+			}
 
 			var g = e.Graphics;
 			var myPen = new Pen( new SolidBrush( this.DisplayColor ), this._myXUnit );
@@ -121,10 +131,12 @@ namespace Librainian.Controls {
 
 				//We draw each line
 				g.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset ),
-					new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
+					new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[i] * this._myYUnit ) );
 
 				//We plot the coresponding index for the maximum value.
-				if ( this._myValues[ i ] != this._myMaxValue ) { continue; }
+				if ( this._myValues[i] != this._myMaxValue ) {
+					continue;
+				}
 
 				var mySize = g.MeasureString( i.ToString(), this.MyFont );
 
@@ -144,7 +156,9 @@ namespace Librainian.Controls {
 		}
 
 		private void HistogramaDesenat_Resize( Object sender, EventArgs e ) {
-			if ( this._myIsDrawing ) { this.ComputeXyUnitValues(); }
+			if ( this._myIsDrawing ) {
+				this.ComputeXyUnitValues();
+			}
 
 			this.Refresh();
 		}
@@ -165,7 +179,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="values">The values being drawn</param>
 		public void DrawHistogram( Int64[] values ) {
-			this._myValues = new Int64[ values.Length ];
+			this._myValues = new Int64[values.Length];
 			values.CopyTo( this._myValues, 0 );
 
 			this._myIsDrawing = true;
@@ -184,7 +198,5 @@ namespace Librainian.Controls {
 			this.Paint += this.HistogramaDesenat_Paint;
 			this.Resize += this.HistogramaDesenat_Resize;
 		}
-
 	}
-
 }

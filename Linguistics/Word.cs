@@ -58,11 +58,13 @@ namespace Librainian.Linguistics {
 
 	}
 
+#pragma warning disable IDE0015 // Use framework type
 	/// <summary>
 	///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
 	/// </summary>
 	/// <seealso cref="Sentence"></seealso>
 	[JsonObject]
+#pragma warning restore IDE0015 // Use framework type
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]

@@ -40,11 +40,13 @@ namespace Librainian.Maths.Numbers {
 	using System.Threading;
 	using Newtonsoft.Json;
 
+#pragma warning disable IDE0015 // Use framework type
 	/// <summary>
 	///     An automatically incrementing Identity class. ( <see cref="Identity" /> is
 	///     <see cref="ulong" /> )
 	/// </summary>
 	[JsonObject]
+#pragma warning restore IDE0015 // Use framework type
 	public sealed class AutoNumber {
 
 		/// <summary>The current value of the AutoNumber</summary>
