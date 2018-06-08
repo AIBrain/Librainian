@@ -32,7 +32,7 @@
 // Feel free to browse any source code we might have available.
 //
 // ***  Project "Librainian"  ***
-// File "AssemblyInfo.cs" was last formatted by Protiguous on 2018/06/05 at 7:04 PM.
+// File "AssemblyInfo.cs" was last formatted by Protiguous on 2018/06/07 at 8:17 PM.
 
 using System.Reflection;
 using System.Resources;
@@ -66,6 +66,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2018.06.07.452" )]
-[assembly: AssemblyFileVersion( "2018.06.07.452" )]
+[assembly: AssemblyVersion( "2018.06.08.457" )]
+[assembly: AssemblyFileVersion( "2018.06.08.457" )]
 [assembly: NeutralResourcesLanguage( "en-US" )]

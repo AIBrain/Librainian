@@ -17,15 +17,22 @@
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
 //
 // =========================================================
-// Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
-// "Librainian/Librainian/TaskExtensions.cs" was last formatted by Protiguous on 2018/05/24 at 7:35 PM.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we might have available.
+//
+// ***  Project "Librainian"  ***
+// File "TaskExtensions.cs" was last formatted by Protiguous on 2018/06/07 at 2:37 PM.
 
 namespace Librainian.Threading {
 
@@ -48,49 +55,33 @@ namespace Librainian.Threading {
 	public static class TaskExtensions {
 
 		/// <summary>
-		///     <para>Automatically apply <see cref="Task{TResult}.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return task.ConfigureAwait( false );
-		}
-
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+		///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+		/// <param name="completedTask">   </param>
+		/// <param name="completionSource"></param>
+		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
+			switch ( completedTask.Status ) {
+				case TaskStatus.Canceled:
+					completionSource.TrySetCanceled();
 
-			return task.ConfigureAwait( false );
-		}
+					break;
 
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+				case TaskStatus.Faulted:
 
-			return task.ConfigureAwait( true );
-		}
+					if ( completedTask.Exception != null ) {
+						completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
+					}
 
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+					break;
 
-			return task.ConfigureAwait( true );
+				case TaskStatus.RanToCompletion:
+					completionSource.TrySetResult( result: completedTask.Result );
+
+					break;
+
+				default: throw new ArgumentException( "Task was not completed." );
+			}
 		}
 
 		/// <summary>
@@ -100,7 +91,9 @@ namespace Librainian.Threading {
 		/// <param name="source"></param>
 		/// <returns></returns>
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( [NotNull] this IEnumerable<Task<T>> source ) {
-			if ( source == null ) { throw new ArgumentNullException( paramName: nameof( source ) ); }
+			if ( source == null ) {
+				throw new ArgumentNullException( paramName: nameof( source ) );
+			}
 
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -117,34 +110,6 @@ namespace Librainian.Threading {
 		}
 
 		/// <summary>
-		///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="completedTask">   </param>
-		/// <param name="completionSource"></param>
-		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
-			switch ( completedTask.Status ) {
-				case TaskStatus.Canceled:
-					completionSource.TrySetCanceled();
-
-					break;
-
-				case TaskStatus.Faulted:
-
-					if ( completedTask.Exception != null ) { completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions ); }
-
-					break;
-
-				case TaskStatus.RanToCompletion:
-					completionSource.TrySetResult( result: completedTask.Result );
-
-					break;
-
-				default: throw new ArgumentException( "Task was not completed." );
-			}
-		}
-
-		/// <summary>
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tasks"></param>
@@ -156,7 +121,9 @@ namespace Librainian.Threading {
 		///     result = await t; Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
-			if ( tasks == null ) { throw new ArgumentNullException( paramName: nameof( tasks ) ); }
+			if ( tasks == null ) {
+				throw new ArgumentNullException( paramName: nameof( tasks ) );
+			}
 
 			var inputTasks = tasks.ToList();
 			var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
@@ -170,17 +137,49 @@ namespace Librainian.Threading {
 			var nextTaskIndex = -1;
 
 			void Continuation( Task<T> completed ) {
-				if ( completed == null ) { throw new ArgumentNullException( paramName: nameof( completed ) ); }
+				if ( completed == null ) {
+					throw new ArgumentNullException( paramName: nameof( completed ) );
+				}
 
 				var bucket = buckets[Interlocked.Increment( location: ref nextTaskIndex )];
 				bucket.TrySetResult( result: completed );
 			}
 
 			foreach ( var inputTask in inputTasks ) {
-				inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None, continuationOptions: TaskContinuationOptions.ExecuteSynchronously, scheduler: TaskScheduler.Default );
+				inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None, continuationOptions: TaskContinuationOptions.ExecuteSynchronously,
+					scheduler: TaskScheduler.Default );
 			}
 
 			return results;
+		}
+
+		public static Boolean IsNotRunning( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
+
+		/// <summary>
+		///     <para>Automatically apply <see cref="Task{TResult}.ConfigureAwait" /> to the <paramref name="task" />.</para>
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return task.ConfigureAwait( false );
+		}
+
+		/// <summary>
+		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return task.ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -190,7 +189,9 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
+			if ( job is null ) {
+				throw new ArgumentNullException( nameof( job ) );
+			}
 
 			await Task.Delay( delay: delay );
 			await Task.Run( job );
@@ -203,7 +204,9 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Span delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
+			if ( job is null ) {
+				throw new ArgumentNullException( nameof( job ) );
+			}
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -216,7 +219,9 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
+			if ( job is null ) {
+				throw new ArgumentNullException( nameof( job ) );
+			}
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -229,7 +234,9 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
+			if ( job is null ) {
+				throw new ArgumentNullException( nameof( job ) );
+			}
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -242,96 +249,12 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
+			if ( job is null ) {
+				throw new ArgumentNullException( nameof( job ) );
+			}
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
-		}
-
-		/// <summary>
-		///     Wrap 3 methods into one.
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="pre">   </param>
-		/// <param name="post">  </param>
-		/// <returns></returns>
-		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
-			() => {
-				try { pre?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
-
-				try { action?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
-
-				try { post?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
-			};
-
-		/// <summary>
-		///     Keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="target"></param>
-		/// <param name="item">  </param>
-		public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
-			if ( target is null ) {
-#if DEBUG
-                throw new ArgumentNullException( nameof( target ) );
-#else
-				return;
-#endif
-			}
-
-			if ( !target.Post( item: item ) ) {
-				target.TryPost( item: item, delay: TimeExtensions.GetAverageDateTimePrecision() ); //retry
-			}
-		}
-
-		/// <summary>
-		///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="target"></param>
-		/// <param name="item">  </param>
-		/// <param name="delay"> </param>
-		public static Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
-			if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
-
-			try {
-				if ( delay < Milliseconds.One ) { delay = Milliseconds.One; }
-
-				return delay.CreateTimer( () => target.TryPost( item: item ) ).AndStart();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-
-				throw;
-			}
-		}
-
-		/// <summary>
-		///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
-		///     <paramref name="action" />.
-		/// </summary>
-		/// <param name="afterDelay"></param>
-		/// <param name="action">    </param>
-		/// <param name="condition"> </param>
-		[CanBeNull]
-		public static Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
-			if ( condition is null ) { throw new ArgumentNullException( nameof( condition ) ); }
-
-			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
-
-			try {
-				return afterDelay.CreateTimer( () => {
-					if ( condition() ) { action(); }
-				} ).Once().AndStart();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-
-				return null;
-			}
 		}
 
 		public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
@@ -340,23 +263,33 @@ namespace Librainian.Threading {
 			//    throw new ArgumentNullException( "next" );
 			//}
 
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
 
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( task => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
 				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
 				else {
 					try {
 						next();
 						tcs.TrySetResult( null );
 					}
-					catch ( Exception ex ) { tcs.TrySetException( ex ); }
+					catch ( Exception ex ) {
+						tcs.TrySetException( ex );
+					}
 				}
 			} );
 
@@ -365,33 +298,51 @@ namespace Librainian.Threading {
 
 		[Obsolete( "use continuewith", true )]
 		public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
 
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
 
 			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( obj => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
 				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
 				else {
 					try {
 						var t = next();
 
-						if ( t is null ) { tcs.TrySetCanceled(); }
+						if ( t is null ) {
+							tcs.TrySetCanceled();
+						}
 						else {
 							t.ContinueWith( obj1 => {
 								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
+									if ( t.Exception != null ) {
+										tcs.TrySetException( t.Exception.InnerExceptions );
+									}
 								}
-								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
-								else { tcs.TrySetResult( t.Result ); }
+								else if ( t.IsCanceled ) {
+									tcs.TrySetCanceled();
+								}
+								else {
+									tcs.TrySetResult( t.Result );
+								}
 							}, TaskContinuationOptions.ExecuteSynchronously );
 						}
 					}
-					catch ( Exception exc ) { tcs.TrySetException( exc ); }
+					catch ( Exception exc ) {
+						tcs.TrySetException( exc );
+					}
 				}
 			}, TaskContinuationOptions.ExecuteSynchronously );
 
@@ -399,23 +350,33 @@ namespace Librainian.Threading {
 		}
 
 		public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
 
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( task => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
 				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
 				else {
 					try {
 						next( first.Result );
 						tcs.TrySetResult( null );
 					}
-					catch ( Exception ex ) { tcs.TrySetException( ex ); }
+					catch ( Exception ex ) {
+						tcs.TrySetException( ex );
+					}
 				}
 			} );
 
@@ -423,33 +384,51 @@ namespace Librainian.Threading {
 		}
 
 		public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
 
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( delegate {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
 				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
 				else {
 					try {
 						var t = next( first.Result );
 
-						if ( t is null ) { tcs.TrySetCanceled(); }
+						if ( t is null ) {
+							tcs.TrySetCanceled();
+						}
 						else {
 							t.ContinueWith( delegate {
 								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
+									if ( t.Exception != null ) {
+										tcs.TrySetException( t.Exception.InnerExceptions );
+									}
 								}
-								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
-								else { tcs.TrySetResult( null ); }
+								else if ( t.IsCanceled ) {
+									tcs.TrySetCanceled();
+								}
+								else {
+									tcs.TrySetResult( null );
+								}
 							}, TaskContinuationOptions.ExecuteSynchronously );
 						}
 					}
-					catch ( Exception exc ) { tcs.TrySetException( exc ); }
+					catch ( Exception exc ) {
+						tcs.TrySetException( exc );
+					}
 				}
 			}, TaskContinuationOptions.ExecuteSynchronously );
 
@@ -457,27 +436,140 @@ namespace Librainian.Threading {
 		}
 
 		public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
 
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
 
 			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( delegate {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
 				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
 				else {
 					try {
 						var result = next( first.Result );
 						tcs.TrySetResult( result );
 					}
-					catch ( Exception ex ) { tcs.TrySetException( ex ); }
+					catch ( Exception ex ) {
+						tcs.TrySetException( ex );
+					}
 				}
 			} );
 
 			return tcs.Task;
+		}
+
+		public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
+			if ( first is null ) {
+				throw new ArgumentNullException( nameof( first ) );
+			}
+
+			if ( next is null ) {
+				throw new ArgumentNullException( nameof( next ) );
+			}
+
+			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
+
+			first.ContinueWith( delegate {
+				if ( first.IsFaulted ) {
+					if ( first.Exception != null ) {
+						tcs.TrySetException( first.Exception.InnerExceptions );
+					}
+				}
+				else if ( first.IsCanceled ) {
+					tcs.TrySetCanceled();
+				}
+				else {
+					try {
+						var t = next( first.Result );
+
+						if ( t is null ) {
+							tcs.TrySetCanceled();
+						}
+						else {
+							t.ContinueWith( delegate {
+								if ( t.IsFaulted ) {
+									if ( t.Exception != null ) {
+										tcs.TrySetException( t.Exception.InnerExceptions );
+									}
+								}
+								else if ( t.IsCanceled ) {
+									tcs.TrySetCanceled();
+								}
+								else {
+									tcs.TrySetResult( t.Result );
+								}
+							}, TaskContinuationOptions.ExecuteSynchronously );
+						}
+					}
+					catch ( Exception exc ) {
+						tcs.TrySetException( exc );
+					}
+				}
+			}, TaskContinuationOptions.ExecuteSynchronously );
+
+			return tcs.Task;
+		}
+
+		/// <summary>
+		///     Keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="target"></param>
+		/// <param name="item">  </param>
+		/// <param name="token"></param>
+		public static async Task TryPost<T>( this ITargetBlock<T> target, T item, CancellationToken token ) {
+			if ( target is null ) {
+				throw new ArgumentNullException( nameof( target ) );
+			}
+
+			while ( true ) {
+
+				if ( !await target.SendAsync( item, token ).NoUI() && !token.IsCancellationRequested ) {
+					await Task.Delay( 1, token ).NoUI();
+
+					continue;
+				}
+
+				break;
+			}
+		}
+
+		/// <summary>
+		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return task.ConfigureAwait( true );
+		}
+
+		/// <summary>
+		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return task.ConfigureAwait( true );
 		}
 
 		/// <summary>
@@ -507,19 +599,69 @@ namespace Librainian.Threading {
 		public static async Task<Boolean> Until( this TimeSpan timeout, Task task ) => await Until( task, timeout ).NoUI();
 
 		/// <summary>
+		///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do the
+		///     <paramref name="action" />.
+		/// </summary>
+		/// <param name="afterDelay"></param>
+		/// <param name="action">    </param>
+		/// <param name="condition"> </param>
+		[CanBeNull]
+		public static Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
+			if ( condition is null ) {
+				throw new ArgumentNullException( nameof( condition ) );
+			}
+
+			if ( action is null ) {
+				throw new ArgumentNullException( nameof( action ) );
+			}
+
+			try {
+				return afterDelay.CreateTimer( () => {
+					if ( condition() ) {
+						action();
+					}
+				} ).Once().AndStart();
+			}
+			catch ( Exception exception ) {
+				exception.More();
+
+				return null;
+			}
+		}
+
+		/// <summary>
+		///     "you can even have a timeout using the following simple extension method"
+		/// </summary>
+		/// <param name="task">             </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		[ItemNotNull]
+		public static Task WithCancellation( [NotNull] this Task task, CancellationToken token ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) );
+		}
+
+		/// <summary>
 		///     "you can even have a timeout using the following simple extension method"
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">             </param>
-		/// <param name="cancellationToken"></param>
+		/// <param name="token"></param>
 		/// <returns></returns>
 		[ItemNotNull]
-		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, CancellationToken cancellationToken ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, CancellationToken token ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
 
-			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, cancellationToken ) ).NoUI();
+			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) ).NoUI();
 
-			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
+			if ( t != task ) {
+				throw new OperationCanceledException( "timeout" );
+			}
 
 			return task.Result;
 		}
@@ -533,11 +675,15 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[ItemNotNull]
 		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
 
 			var t = await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI();
 
-			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
+			if ( t != task ) {
+				throw new OperationCanceledException( "timeout" );
+			}
 
 			return task.Result;
 		}
@@ -552,14 +698,78 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[ItemNotNull]
 		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
 
 			var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) ).NoUI();
 
-			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
+			if ( t != task ) {
+				throw new OperationCanceledException( "timeout" );
+			}
 
 			return task.Result;
 		}
+
+		/// <summary>
+		///     Wrap 3 methods into one.
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="pre">   </param>
+		/// <param name="post">  </param>
+		/// <returns></returns>
+		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
+			() => {
+				try {
+					pre?.Invoke();
+				}
+				catch ( Exception exception ) {
+					exception.More();
+				}
+
+				try {
+					action?.Invoke();
+				}
+				catch ( Exception exception ) {
+					exception.More();
+				}
+
+				try {
+					post?.Invoke();
+				}
+				catch ( Exception exception ) {
+					exception.More();
+				}
+			};
+
+		/* Concept class
+
+		/// <summary>
+		///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="target"></param>
+		/// <param name="item">  </param>
+		/// <param name="delay"> </param>
+		public static Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
+			if ( target is null ) {
+				throw new ArgumentNullException( nameof( target ) );
+			}
+
+			try {
+				if ( delay < Milliseconds.One ) {
+					delay = Milliseconds.One;
+				}
+
+				return delay.CreateTimer( () => target.Post( item ) ).AndStart();
+			}
+			catch ( Exception exception ) {
+				exception.More();
+
+				throw;
+			}
+		}
+		*/
 
 		/// <summary>
 		///     var result = await Wrap( () =&gt; OldNonAsyncFunction( ) );
@@ -568,7 +778,9 @@ namespace Librainian.Threading {
 		/// <param name="selector"></param>
 		/// <returns></returns>
 		public static async Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
-			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
+			if ( selector is null ) {
+				throw new ArgumentNullException( nameof( selector ) );
+			}
 
 			return await Task.Run( selector ).NoUI();
 		}
@@ -582,7 +794,9 @@ namespace Librainian.Threading {
 		/// <param name="input">   </param>
 		/// <returns></returns>
 		public static async Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
-			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
+			if ( selector is null ) {
+				throw new ArgumentNullException( nameof( selector ) );
+			}
 
 			return await Task.Run( () => selector( input ) ).NoUI();
 		}
@@ -596,7 +810,8 @@ namespace Librainian.Threading {
 		/// <param name="onException">      </param>
 		/// <param name="callerMemberName"> </param>
 		/// <returns></returns>
-		public static Boolean Wrap( this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, Action onException = null, [CallerMemberName] String callerMemberName = "" ) {
+		public static Boolean Wrap( this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, Action onException = null,
+			[CallerMemberName] String callerMemberName = "" ) {
 			var attempts = 1;
 			TryAgain:
 
@@ -606,9 +821,13 @@ namespace Librainian.Threading {
 						var stopwatch = Stopwatch.StartNew();
 						action();
 
-						if ( stopwatch.Elapsed > ( andTookLongerThan ?? Milliseconds.ThreeHundredThirtyThree ) ) { $"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine(); }
+						if ( stopwatch.Elapsed > ( andTookLongerThan ?? Milliseconds.ThreeHundredThirtyThree ) ) {
+							$"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine();
+						}
 					}
-					else { action(); }
+					else {
+						action();
+					}
 
 					return true;
 				}
@@ -618,51 +837,19 @@ namespace Librainian.Threading {
 				Logging.Garbage();
 				attempts--;
 
-				if ( attempts.Any() ) { goto TryAgain; }
+				if ( attempts.Any() ) {
+					goto TryAgain;
+				}
 			}
 			catch ( Exception exception ) {
-				if ( null != onException ) { return onException.Wrap(); }
+				if ( null != onException ) {
+					return onException.Wrap();
+				}
 
 				exception.More();
 			}
 
 			return false;
-		}
-
-		public static Boolean IsNotRunning( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
-
-		public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
-
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
-
-			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
-
-			first.ContinueWith( delegate {
-				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
-				}
-				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
-				else {
-					try {
-						var t = next( first.Result );
-
-						if ( t is null ) { tcs.TrySetCanceled(); }
-						else {
-							t.ContinueWith( delegate {
-								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
-								}
-								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
-								else { tcs.TrySetResult( t.Result ); }
-							}, TaskContinuationOptions.ExecuteSynchronously );
-						}
-					}
-					catch ( Exception exc ) { tcs.TrySetException( exc ); }
-				}
-			}, TaskContinuationOptions.ExecuteSynchronously );
-
-			return tcs.Task;
 		}
 	}
 }

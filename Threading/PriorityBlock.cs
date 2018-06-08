@@ -29,79 +29,79 @@
 
 namespace Librainian.Threading {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Threading.Tasks.Dataflow;
-    using Collections;
-    using JetBrains.Annotations;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using System.Threading.Tasks.Dataflow;
+	using Collections;
+	using JetBrains.Annotations;
 
-    [Obsolete]
-    public class PriorityBlock {
+	[Obsolete]
+	public class PriorityBlock {
 
-        private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
+		private readonly ConcurrentQueue<OneJob> _jobs = new ConcurrentQueue<OneJob>();
 
-        public CancellationToken CancellationToken { get; }
+		private async Task Triage() {
+			Logging.Enter();
 
-        [NotNull]
-        public BufferBlock<OneJob> Input { get; }
+			while ( !this.CancellationToken.IsCancellationRequested ) {
+				await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) ).NoUI();
 
-        [NotNull]
-        public ActionBlock<Action> Output { get; }
+				if ( !this.Input.TryReceive( null, out var item ) ) {
+					continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
+				}
 
-        public Task TheDoctorsTask { get; }
+				var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
 
-        public PriorityBlock( CancellationToken cancellationToken ) {
-            this.CancellationToken = cancellationToken;
-            this.Input = new BufferBlock<OneJob>();
-            this.Output = new ActionBlock<Action>( action => action?.Invoke(), Blocks.SingleProducer.ConsumeSensible );
-            this.TheDoctorsTask = Task.Run( this.Triage );
-        }
+				if ( null == highest ) { continue; }
 
-        private async Task Triage() {
-            Logging.Enter();
+				this._jobs.Remove( highest );
 
-            while ( !this.CancellationToken.IsCancellationRequested ) {
-                await Task.WhenAny( this.Input.OutputAvailableAsync( this.CancellationToken ) );
+				if ( highest != item ) {
+					await this.Add( item, this.CancellationToken ).NoUI(); //add back into the pile
+				}
 
-                if ( !this.Input.TryReceive( null, out var item ) ) {
-                    continue; //Hello? Hello? Hmm. No one is there. Go back to waiting.
-                }
+				await this.Output.SendAsync( highest.Action, this.CancellationToken ).NoUI();
+			}
 
-                var highest = this._jobs.OrderByDescending( job => job.Priority ).FirstOrDefault();
+			Logging.Exit();
+		}
 
-                if ( null == highest ) { continue; }
+		public CancellationToken CancellationToken { get; }
 
-                this._jobs.Remove( highest );
+		[NotNull]
+		public BufferBlock<OneJob> Input { get; }
 
-                if ( highest != item ) {
-                    this.Add( item ); //add back into the pile
-                }
+		[NotNull]
+		public ActionBlock<Action> Output { get; }
 
-                await this.Output.SendAsync( highest.Action, this.CancellationToken );
-            }
+		public Task TheDoctorsTask { get; }
 
-            Logging.Exit();
-        }
+		public PriorityBlock( CancellationToken cancellationToken ) {
+			this.CancellationToken = cancellationToken;
+			this.Input = new BufferBlock<OneJob>();
+			this.Output = new ActionBlock<Action>( action => action?.Invoke(), Blocks.SingleProducer.ConsumeSensible );
+			this.TheDoctorsTask = Task.Run( this.Triage );
+		}
 
-        public void Add( [NotNull] OneJob oneJob ) {
-            if ( oneJob is null ) { throw new ArgumentNullException( nameof( oneJob ) ); }
+		public async Task Add( [NotNull] OneJob oneJob, CancellationToken token ) {
+			if ( oneJob is null ) { throw new ArgumentNullException( nameof( oneJob ) ); }
 
-            this._jobs.Enqueue( oneJob );
-            this.Input.TryPost( oneJob );
-        }
+			this._jobs.Enqueue( oneJob );
+			await this.Input.TryPost( oneJob, token );
+		}
 
-        public void AddJobs( [NotNull] IEnumerable<OneJob> jobs ) {
-            if ( jobs is null ) { throw new ArgumentNullException( nameof( jobs ) ); }
+		public async Task AddJobs( [NotNull] IEnumerable<OneJob> jobs, CancellationToken token ) {
+			if ( jobs is null ) { throw new ArgumentNullException( nameof( jobs ) ); }
 
-            var enumerable = jobs as IList<OneJob> ?? jobs.ToList();
+			var enumerable = jobs as IList<OneJob> ?? jobs.ToList();
 
-            foreach ( var job in enumerable ) { this._jobs.Enqueue( job ); }
+			foreach ( var job in enumerable ) { this._jobs.Enqueue( job ); }
 
-            foreach ( var job in enumerable.OrderByDescending( job => job.Priority ) ) { this.Input.TryPost( job ); }
-        }
-    }
+			foreach ( var job in enumerable.OrderByDescending( job => job.Priority ) ) { await this.Input.TryPost( job, token ); }
+		}
+	}
 }
