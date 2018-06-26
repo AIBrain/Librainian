@@ -69,6 +69,7 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private UInt64 _lifetimeCredits;
 
+		[NotNull]
 		public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
 			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
 
@@ -82,6 +83,7 @@ namespace Librainian.Maths.Numbers {
 			this.LifetimeCredits += credits;
 		}
 
+		[NotNull]
 		public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
 
 		public void SubtractCredits( UInt64 credits = 1 ) {

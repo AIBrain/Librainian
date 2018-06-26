@@ -54,7 +54,7 @@ namespace Librainian.Financial.Containers.Shopping {
 
 		public Boolean AddItem( [CanBeNull] ShoppingItem item ) => item != null && this.Items.TryAdd( item );
 
-		public UInt32 AddItems( params ShoppingItem[] items ) {
+		public UInt32 AddItems( [CanBeNull] params ShoppingItem[] items ) {
 			UInt32 added = 0;
 
 			if ( null == items ) { return added; }
@@ -90,6 +90,7 @@ namespace Librainian.Financial.Containers.Shopping {
 		/// <returns></returns>
 		public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item );
 
+		[NotNull]
 		public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
 			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 

@@ -41,6 +41,7 @@ namespace Librainian.Collections {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Threading;
 
 	public class ConcurrentNoBlockStackL<T> {
@@ -101,9 +102,9 @@ namespace Librainian.Collections {
 
 		public void Add( T item ) => this.Push( item: item );
 
-		public void Add( IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
+		public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
 
-		public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
+		public void Add( [NotNull] ParallelQuery<T> items ) => items.ForAll( this.Push );
 
 		public Int64 LongCount() => this.Count;
 

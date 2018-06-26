@@ -53,7 +53,7 @@ namespace Librainian.Threading {
 
         public WaitNode() => this.Owner = Thread.CurrentThread;
 
-        public virtual Boolean DoTimedWait( IQueuedSync sync, TimeSpan duration ) {
+        public virtual Boolean DoTimedWait( [NotNull] IQueuedSync sync, TimeSpan duration ) {
             lock ( this ) {
                 if ( sync.Recheck( this ) || !this.Waiting ) { return true; }
 
@@ -124,7 +124,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public virtual void DoWaitUninterruptibly( IQueuedSync sync ) {
+        public virtual void DoWaitUninterruptibly( [NotNull] IQueuedSync sync ) {
             lock ( this ) {
                 if ( !sync.Recheck( this ) ) {
                     var wasInterrupted = false;

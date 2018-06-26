@@ -44,6 +44,7 @@ namespace Librainian.Measurement.Physics {
 
 	public static class Extensions {
 
+		[NotNull]
 		public static String Simpler( this ElectronVolts volts ) {
 			var list = new HashSet<String> {
 				volts.ToTeraElectronVolts().ToString(),
@@ -56,6 +57,7 @@ namespace Librainian.Measurement.Physics {
 			return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
 		}
 
+		[NotNull]
 		public static String Simpler( this KiloElectronVolts volts ) {
 			var list = new HashSet<String> {
 				volts.ToTeraElectronVolts().ToString(),
@@ -68,6 +70,7 @@ namespace Librainian.Measurement.Physics {
 			return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
 		}
 
+		[NotNull]
 		public static String Simpler( this MegaElectronVolts volts ) {
 			var list = new HashSet<String> {
 				volts.ToTeraElectronVolts().ToString(),
@@ -80,6 +83,7 @@ namespace Librainian.Measurement.Physics {
 			return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
 		}
 
+		[NotNull]
 		public static String Simpler( this GigaElectronVolts volts ) {
 			var list = new HashSet<String> {
 				volts.ToTeraElectronVolts().ToString(),
@@ -92,6 +96,7 @@ namespace Librainian.Measurement.Physics {
 			return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
 		}
 
+		[NotNull]
 		public static String Simpler( this TeraElectronVolts volts ) {
 			var list = new HashSet<String> {
 				volts.ToTeraElectronVolts().ToString(),

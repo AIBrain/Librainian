@@ -82,7 +82,7 @@ namespace Librainian.Linguistics.PoS {
 		public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
 
 		[Pure]
-		public static implicit operator String( TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
+		public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
 		[Pure]
 		public override String ToString() => this.Tokens.ToStrings( " " );

@@ -40,6 +40,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Text;
+	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
 	using OperatingSystem;
 
@@ -126,6 +127,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 			finally { Marshal.FreeHGlobal( outBuffer ); }
 		}
 
+		[NotNull]
 		private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
 			var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint,
 				IntPtr.Zero );
@@ -150,7 +152,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		///     Thrown when the junction point could not be created or when an existing directory was
 		///     found and <paramref name="overwrite" /> if false
 		/// </exception>
-		public static void Create( String junctionPoint, String targetDir, Boolean overwrite ) {
+		public static void Create( [NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
 			targetDir = Path.GetFullPath( targetDir );
 
 			if ( !Directory.Exists( targetDir ) ) { throw new IOException( "Target path does not exist or is not a directory." ); }
@@ -248,6 +250,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
 		///     some other error occurs
 		/// </exception>
+		[NotNull]
 		public static String GetTarget( String junctionPoint ) {
 			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
 				var target = InternalGetTarget( handle );

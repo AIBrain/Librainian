@@ -39,6 +39,7 @@ namespace Librainian.OperatingSystem.Storage {
 	using System;
 	using System.Management;
 	using Extensions;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     A physical storage medium. HD, usb, dvd, etc...
@@ -50,6 +51,7 @@ namespace Librainian.OperatingSystem.Storage {
 		// ReSharper disable once UnassignedGetOnlyAutoProperty
 		public String SerialNumber { get; }
 
+		[NotNull]
 		[Obsolete( "not complete at all" )]
 		public static String GetSerialNumber( Int32 diskNumber ) {
 

@@ -39,6 +39,7 @@ namespace Librainian.OperatingSystem.Streams {
 	using System;
 	using System.ComponentModel;
 	using System.IO;
+	using JetBrains.Annotations;
 	using Measurement.Frequency;
 
 	public sealed class ProgressStream : ContainerStream {
@@ -123,7 +124,7 @@ namespace Librainian.OperatingSystem.Streams {
 		/// <filterpriority>1</filterpriority>
 		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
 
-		public ProgressStream( Stream stream ) : base( stream: stream ) {
+		public ProgressStream( [NotNull] Stream stream ) : base( stream: stream ) {
 			if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) { return; }
 
 			Logging.Break();

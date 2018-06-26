@@ -39,6 +39,7 @@ namespace Librainian.Maths {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Numerics;
 
@@ -71,6 +72,7 @@ namespace Librainian.Maths {
 		[JsonProperty]
 		private Int64 _successes;
 
+		[NotNull]
 		public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
 
 		/// <summary>

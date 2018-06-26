@@ -38,6 +38,7 @@ namespace Librainian.Internet.Wiki {
 
 	using System;
 	using System.Xml;
+	using JetBrains.Annotations;
 	using Parsing;
 
 	public class YanWiki {
@@ -50,6 +51,7 @@ namespace Librainian.Internet.Wiki {
 			}
 		}
 
+		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
 
 		private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();

@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Spatial {
 			return radians;
 		}
 
-		public static T Clamp<T>( this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
+		public static T Clamp<T>( [NotNull] this T val, T min, T max ) where T : IComparable<T> => val.CompareTo( min ) < 0 ? min : ( val.CompareTo( max ) > 0 ? max : val );
 
 		public static Single Clamp01( this Single value ) => Clamp( value, 0.0f, 1.0f );
 

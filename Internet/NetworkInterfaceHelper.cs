@@ -41,6 +41,7 @@ namespace Librainian.Internet {
 	using System.Linq;
 	using System.Net;
 	using System.Net.NetworkInformation;
+	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>
@@ -50,7 +51,7 @@ namespace Librainian.Internet {
 
 		public static IDictionary<String, NetworkInterface> NetworkInterfaces { get; }
 
-		public static NetworkInterface GetBestInterface( this IPAddress address ) {
+		public static NetworkInterface GetBestInterface( [NotNull] this IPAddress address ) {
 			var byteArray1 = address.GetAddressBytes();
 
 			var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );

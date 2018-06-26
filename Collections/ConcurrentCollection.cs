@@ -43,6 +43,7 @@ namespace Librainian.Collections {
 	using System.Linq;
 	using System.Runtime.Serialization;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Maths;
 
 	public class ConcurrentCollection<T> : IProducerConsumerCollection<T> {
@@ -69,7 +70,7 @@ namespace Librainian.Collections {
 
 		public ConcurrentCollection() { }
 
-		public ConcurrentCollection( IEnumerable<T> collection ) {
+		public ConcurrentCollection( [NotNull] IEnumerable<T> collection ) {
 			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
 			this.InitializeFromCollection( collection: collection );
@@ -88,7 +89,7 @@ namespace Librainian.Collections {
 			for ( var current = head; current != null; current = current.MNext ) { yield return current.MValue; }
 		}
 
-		private static void ValidatePushPopRangeInput( ICollection<T> items, Int32 startIndex, Int32 count ) {
+		private static void ValidatePushPopRangeInput( [NotNull] ICollection<T> items, Int32 startIndex, Int32 count ) {
 			if ( items is null ) { throw new ArgumentNullException( nameof( items ) ); }
 
 			if ( count < 0 ) { throw new ArgumentOutOfRangeException( nameof( count ), "ConcurrentStack_PushPopRange_CountOutOfRange" ); }
@@ -100,7 +101,7 @@ namespace Librainian.Collections {
 			if ( length - count < startIndex ) { throw new ArgumentException( "ConcurrentStack_PushPopRange_InvalidCount" ); }
 		}
 
-		private void InitializeFromCollection( IEnumerable<T> collection ) {
+		private void InitializeFromCollection( [NotNull] IEnumerable<T> collection ) {
 			var node = collection.Aggregate<T, Node>( seed: null, func: ( current, obj ) => new Node( obj ) { MNext = current } );
 			this.Head = node;
 		}
@@ -124,7 +125,7 @@ namespace Librainian.Collections {
 		[OnSerializing]
 		private void OnSerializing( StreamingContext context ) => this.SerializationArray = this.ToArray();
 
-		private void PushCore( Node head, Node tail ) {
+		private void PushCore( Node head, [NotNull] Node tail ) {
 			var spinWait = new SpinWait();
 			var mHead = this.Head;
 
@@ -134,6 +135,7 @@ namespace Librainian.Collections {
 			} while ( Interlocked.CompareExchange( location1: ref mHead, head, comparand: tail.MNext ) != tail.MNext );
 		}
 
+		[NotNull]
 		private List<T> ToList() {
 			var list = new List<T>();
 
@@ -154,7 +156,7 @@ namespace Librainian.Collections {
 			return false;
 		}
 
-		private Int32 TryPopCore( Int32 count, out Node poppedHead ) {
+		private Int32 TryPopCore( Int32 count, [CanBeNull] out Node poppedHead ) {
 			var spinWait = new SpinWait();
 			var num1 = 1;
 
@@ -192,7 +194,7 @@ namespace Librainian.Collections {
 
 		public void Clear() => this.Head = null;
 
-		public void CopyTo( T[] array, Int32 index ) {
+		public void CopyTo( [NotNull] T[] array, Int32 index ) {
 			if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
 			this.ToList().CopyTo( array: array, arrayIndex: index );
@@ -211,13 +213,13 @@ namespace Librainian.Collections {
 			this.PushCore( head: node, tail: node );
 		}
 
-		public void PushRange( T[] items ) {
+		public void PushRange( [NotNull] T[] items ) {
 			if ( items is null ) { throw new ArgumentNullException( nameof( items ) ); }
 
 			this.PushRange( items: items, startIndex: 0, count: items.Length );
 		}
 
-		public void PushRange( T[] items, Int32 startIndex, Int32 count ) {
+		public void PushRange( [NotNull] T[] items, Int32 startIndex, Int32 count ) {
 			ValidatePushPopRangeInput( items: items, startIndex: startIndex, count: count );
 
 			if ( count == 0 ) { return; }
@@ -240,6 +242,7 @@ namespace Librainian.Collections {
 		/// <returns></returns>
 
 		// ReSharper disable once RemoveToList.1
+		[NotNull]
 		public T[] ToArray() => this.ToList().ToArray();
 
 		public Boolean TryAdd( T item ) {
@@ -280,13 +283,13 @@ namespace Librainian.Collections {
 			return false;
 		}
 
-		public Int32 TryPopRange( T[] items ) {
+		public Int32 TryPopRange( [NotNull] T[] items ) {
 			if ( items is null ) { throw new ArgumentNullException( nameof( items ) ); }
 
 			return this.TryPopRange( items: items, startIndex: 0, count: items.Length );
 		}
 
-		public Int32 TryPopRange( T[] items, Int32 startIndex, Int32 count ) {
+		public Int32 TryPopRange( [NotNull] T[] items, Int32 startIndex, Int32 count ) {
 			ValidatePushPopRangeInput( items: items, startIndex: startIndex, count: count );
 
 			if ( count == 0 ) { return 0; }

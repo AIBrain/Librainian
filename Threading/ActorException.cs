@@ -38,6 +38,7 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Thrown when the actor fails.
@@ -48,7 +49,7 @@ namespace Librainian.Threading {
 
 		public String Reason { get; }
 
-		protected ActorException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+		protected ActorException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
 		public ActorException( String because ) => this.Reason = because;
 

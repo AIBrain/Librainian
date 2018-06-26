@@ -41,6 +41,7 @@ namespace Librainian.Speech {
 	using System.Linq;
 	using System.Speech.Recognition;
 	using Collections;
+	using JetBrains.Annotations;
 	using Parsing;
 
 	public class SpeechInput {
@@ -69,7 +70,8 @@ namespace Librainian.Speech {
 				return speechRecognitionEngine;
 			}, isThreadSafe: true );
 
-		public static Grammar CreateGrammars( params String[] phrases ) {
+		[NotNull]
+		public static Grammar CreateGrammars( [NotNull] params String[] phrases ) {
 			if ( phrases is null ) { throw new ArgumentNullException( nameof( phrases ) ); }
 
 			var choices = new Choices( phrases );
@@ -78,10 +80,10 @@ namespace Librainian.Speech {
 			return new Grammar( builder );
 		}
 
-		public void AttachEvent( Action<AudioLevelUpdatedEventArgs> audioLevelUpdated = null, Action<AudioSignalProblemOccurredEventArgs> audioSignalProblemOccurred = null,
-			Action<AudioStateChangedEventArgs> audioStateChanged = null, Action<LoadGrammarCompletedEventArgs> loadGrammarCompleted = null, Action<RecognizeCompletedEventArgs> recognizeCompleted = null,
-			Action<RecognizerUpdateReachedEventArgs> recognizerUpdateReached = null, Action<SpeechDetectedEventArgs> speechDetected = null, Action<SpeechHypothesizedEventArgs> speechHypothesized = null,
-			Action<SpeechRecognitionRejectedEventArgs> speechRecognitionRejected = null, Action<SpeechRecognizedEventArgs> speechRecognized = null ) {
+		public void AttachEvent( [CanBeNull] Action<AudioLevelUpdatedEventArgs> audioLevelUpdated = null, [CanBeNull] Action<AudioSignalProblemOccurredEventArgs> audioSignalProblemOccurred = null,
+			[CanBeNull] Action<AudioStateChangedEventArgs> audioStateChanged = null, [CanBeNull] Action<LoadGrammarCompletedEventArgs> loadGrammarCompleted = null, [CanBeNull] Action<RecognizeCompletedEventArgs> recognizeCompleted = null,
+			[CanBeNull] Action<RecognizerUpdateReachedEventArgs> recognizerUpdateReached = null, [CanBeNull] Action<SpeechDetectedEventArgs> speechDetected = null, [CanBeNull] Action<SpeechHypothesizedEventArgs> speechHypothesized = null,
+			[CanBeNull] Action<SpeechRecognitionRejectedEventArgs> speechRecognitionRejected = null, [CanBeNull] Action<SpeechRecognizedEventArgs> speechRecognized = null ) {
 			this.RecognitionEngine.Value.AudioLevelUpdated += ( sender, args ) => audioLevelUpdated?.Invoke( args );
 			this.RecognitionEngine.Value.AudioSignalProblemOccurred += ( sender, args ) => audioSignalProblemOccurred?.Invoke( args );
 			this.RecognitionEngine.Value.AudioStateChanged += ( sender, args ) => audioStateChanged?.Invoke( args );

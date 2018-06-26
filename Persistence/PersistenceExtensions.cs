@@ -41,6 +41,7 @@ namespace Librainian.Persistence {
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Configuration;
+	using System.Diagnostics;
 	using System.IO;
 	using System.IO.Compression;
 	using System.IO.IsolatedStorage;
@@ -70,15 +71,57 @@ namespace Librainian.Persistence {
 
 	public static class PersistenceExtensions {
 
-		public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
+		/// <summary>
+		///     Can the file be read from at this moment in time ?
+		/// </summary>
+		/// <param name="isf">     </param>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		private static Boolean FileCanBeRead( IsolatedStorageFile isf, String fileName ) {
+			try {
+				using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+					try { return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0; }
+					catch ( ArgumentException exception ) { exception.More(); }
+				}
+			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( ArgumentNullException exception ) { exception.More(); }
+			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( DirectoryNotFoundException exception ) { exception.More(); }
+			catch ( FileNotFoundException exception ) { exception.More(); }
+			catch ( ObjectDisposedException exception ) { exception.More(); }
 
-			//ContractResolver = new MyContractResolver(),
-			TypeNameHandling = TypeNameHandling.Auto,
-			NullValueHandling = NullValueHandling.Ignore,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-			PreserveReferencesHandling = PreserveReferencesHandling.Objects
-		};
+			return false;
+		}
+
+		[NotNull]
+		private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
+			var path = Path.Combine( Environment.GetFolderPath( specialFolder ), nameof( Settings ) );
+
+			if ( !Directory.Exists( path ) ) { Directory.CreateDirectory( path ); }
+
+			var destinationFile = Path.Combine( path, "StaticSettings.exe" );
+
+			if ( !File.Exists( destinationFile ) ) {
+				using ( File.Create( destinationFile ) ) { }
+			}
+
+			return new Document( destinationFile );
+		}
+
+		private class MyContractResolver : DefaultContractResolver {
+
+			[NotNull]
+			protected override IList<JsonProperty> CreateProperties( Type type, MemberSerialization memberSerialization ) {
+				var list = base.CreateProperties( type, memberSerialization );
+
+				foreach ( var prop in list ) {
+					prop.Ignored = false; // Don't ignore any property
+				}
+
+				return list;
+			}
+		}
 
 		public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
 			var document = new Document( DataFolder.Value, Application.ExecutablePath + ".data" );
@@ -159,42 +202,15 @@ namespace Librainian.Persistence {
 		//}
 		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
-		/// <summary>
-		///     Can the file be read from at this moment in time ?
-		/// </summary>
-		/// <param name="isf">     </param>
-		/// <param name="fileName"></param>
-		/// <returns></returns>
-		private static Boolean FileCanBeRead( IsolatedStorageFile isf, String fileName ) {
-			try {
-				using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					try { return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0; }
-					catch ( ArgumentException exception ) { exception.More(); }
-				}
-			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
-			catch ( ArgumentNullException exception ) { exception.More(); }
-			catch ( ArgumentException exception ) { exception.More(); }
-			catch ( DirectoryNotFoundException exception ) { exception.More(); }
-			catch ( FileNotFoundException exception ) { exception.More(); }
-			catch ( ObjectDisposedException exception ) { exception.More(); }
+		public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
 
-			return false;
-		}
-
-		private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
-			var path = Path.Combine( Environment.GetFolderPath( specialFolder ), nameof( Settings ) );
-
-			if ( !Directory.Exists( path ) ) { Directory.CreateDirectory( path ); }
-
-			var destinationFile = Path.Combine( path, "StaticSettings.exe" );
-
-			if ( !File.Exists( destinationFile ) ) {
-				using ( File.Create( destinationFile ) ) { }
-			}
-
-			return new Document( destinationFile );
-		}
+			//ContractResolver = new MyContractResolver(),
+			TypeNameHandling = TypeNameHandling.Auto,
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.Objects
+		};
 
 		/// <summary>
 		/// </summary>
@@ -213,7 +229,8 @@ namespace Librainian.Persistence {
 			return default;
 		}
 
-		public static TSource Deserialize<TSource>( Stream stream, ProgressChangedEventHandler feedback = null ) where TSource : class {
+		[CanBeNull]
+		public static TSource Deserialize<TSource>( [NotNull] Stream stream, [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
 			if ( null == stream ) { throw new ArgumentNullException( nameof( stream ) ); }
 
 			using ( var cs = new ProgressStream( stream ) ) {
@@ -228,12 +245,12 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public static Boolean DeserializeDictionary<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null,
+		public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null,
 			String extension = ".xml" ) where TKey : IComparable<TKey> {
 			try {
 
 				//Report.Enter();
-				var stopwatch = StopWatch.StartNew();
+				var stopwatch = Stopwatch.StartNew();
 
 				if ( null == toDictionary ) { return false; }
 
@@ -325,11 +342,8 @@ namespace Librainian.Persistence {
 		/// <typeparam name="TKey"></typeparam>
 		/// <param name="data"></param>
 		/// <returns></returns>
-		public static TKey FromJSON<TKey>( [NotNull] this String data ) {
-			if ( data is null ) { throw new ArgumentNullException( paramName: nameof( data ) ); }
-
-			return JsonConvert.DeserializeObject<TKey>( data, Jss );
-		}
+		[CanBeNull]
+		public static TKey FromJSON<TKey>( [CanBeNull] this String data ) => String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss );
 
 		/// <summary>
 		///     Deserialize from an IsolatedStorageFile.
@@ -337,6 +351,7 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="fileName"></param>
 		/// <returns></returns>
+		[CanBeNull]
 		[Obsolete]
 		public static T Load<T>( [CanBeNull] String fileName ) where T : class, new() {
 			try {
@@ -375,7 +390,7 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 
 		//[Obsolete( "Use JSON methods" )]
-		public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, ProgressChangedEventHandler feedback = null ) where TSource : class {
+		public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
 			if ( fullPathAndFileName is null ) { throw new ArgumentNullException( nameof( fullPathAndFileName ) ); }
 
 			try {
@@ -426,8 +441,9 @@ namespace Librainian.Persistence {
 		/// <param name="feedback">  </param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
+		[CanBeNull]
 		[Obsolete( "Use JSON serializers" )]
-		public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
+		public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
 			if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			if ( parameters is null ) { throw new ArgumentNullException( nameof( parameters ) ); }
@@ -469,7 +485,7 @@ namespace Librainian.Persistence {
 		/// <param name="fileName" />
 		/// <returns></returns>
 		[Obsolete( "Use JSON serializers" )]
-		public static Boolean LoadValue<T>( out T obj, String fileName ) where T : struct {
+		public static Boolean LoadValue<T>( out T obj, [CanBeNull] String fileName ) where T : struct {
 			obj = default;
 
 			try {
@@ -595,7 +611,7 @@ namespace Librainian.Persistence {
 		/// <param name="fileName">  </param>
 		/// <returns>Returns True if the object was saved.</returns>
 		[Obsolete( "Not in use yet." )]
-		public static Boolean SaveCollection<T>( this IProducerConsumerCollection<T> collection, String fileName ) {
+		public static Boolean SaveCollection<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] String fileName ) {
 			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
 			if ( String.IsNullOrWhiteSpace( fileName ) ) { throw new ArgumentNullException( nameof( fileName ) ); }
@@ -612,7 +628,7 @@ namespace Librainian.Persistence {
 		/// <param name="fileName">  </param>
 		/// <returns>Returns True if the object was saved.</returns>
 		[Obsolete( "Not in use yet." )]
-		public static Boolean SaveCollection<T>( this ConcurrentList<T> collection, String fileName ) where T : class {
+		public static Boolean SaveCollection<T>( [NotNull] this ConcurrentList<T> collection, [NotNull] String fileName ) where T : class {
 			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
 			if ( String.IsNullOrWhiteSpace( fileName ) ) { throw new ArgumentNullException( nameof( fileName ) ); }
@@ -832,7 +848,7 @@ namespace Librainian.Persistence {
 			try {
 
 				//Report.Enter();
-				var stopwatch = StopWatch.StartNew();
+				var stopwatch = Stopwatch.StartNew();
 
 				if ( !folder.Exists() ) { folder.Create(); }
 
@@ -942,6 +958,7 @@ namespace Librainian.Persistence {
 		/// <param name="specialFolder"></param>
 		/// <param name="key">          </param>
 		/// <returns></returns>
+		[CanBeNull]
 		public static String Settings( this Environment.SpecialFolder specialFolder, String key ) {
 			try {
 				var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
@@ -985,7 +1002,7 @@ namespace Librainian.Persistence {
 		/// <param name="location"> </param>
 		/// <seealso cref="TrySave{TKey}" />
 		/// <returns></returns>
-		public static Boolean TryLoad<TSource>( this String attribute, out TSource value, String location = null ) {
+		public static Boolean TryLoad<TSource>( [NotNull] this String attribute, out TSource value, String location = null ) {
 			if ( attribute is null ) { throw new ArgumentNullException( nameof( attribute ) ); }
 
 			value = default;
@@ -1041,19 +1058,6 @@ namespace Librainian.Persistence {
 			}
 
 			return true;
-		}
-
-		private class MyContractResolver : DefaultContractResolver {
-
-			protected override IList<JsonProperty> CreateProperties( Type type, MemberSerialization memberSerialization ) {
-				var list = base.CreateProperties( type, memberSerialization );
-
-				foreach ( var prop in list ) {
-					prop.Ignored = false; // Don't ignore any property
-				}
-
-				return list;
-			}
 		}
 	}
 }

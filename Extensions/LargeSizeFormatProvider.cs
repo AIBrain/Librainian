@@ -42,7 +42,7 @@ namespace Librainian.Extensions {
 
 	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
-		public String Format( String format, Object arg, IFormatProvider formatProvider ) {
+		public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
 			if ( format?.StartsWith( FileSizeFormat ) != true ) { return DefaultFormat( format, arg, formatProvider ); }
 
 			if ( arg is String ) { return DefaultFormat( format, arg, formatProvider ); }
@@ -81,7 +81,8 @@ namespace Librainian.Extensions {
 			return formatType == typeof( ICustomFormatter ) ? this : null;
 		}
 
-		private static String DefaultFormat( String format, Object arg, IFormatProvider formatProvider ) {
+		[NotNull]
+		private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
 			var formattableArg = arg as IFormattable;
 
 			return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();

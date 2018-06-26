@@ -176,7 +176,8 @@ namespace Librainian.Measurement.Time.Clocks {
 		///     Total time passed since timer was started.
 		/// </summary>
 		/// <returns></returns>
-		public Span TotalElapsed() => new Span( milliseconds: this.Counter / this.UpdateRate );
+		[NotNull]
+		public SpanOfTime TotalElapsed() => new SpanOfTime( milliseconds: this.Counter / this.UpdateRate );
 
 		public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
 			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );

@@ -42,6 +42,7 @@ namespace Librainian.Database.MMF {
 	using System.Reflection;
 	using System.Runtime.InteropServices;
 	using System.Text;
+	using JetBrains.Annotations;
 	using Microsoft.CSharp;
 
 	/// <summary>
@@ -60,7 +61,7 @@ namespace Librainian.Database.MMF {
 
 		private Int32 _size;
 
-		private static void BytesToObjectCode( StringBuilder sb, String typeFullName ) {
+		private static void BytesToObjectCode( [NotNull] StringBuilder sb, String typeFullName ) {
 			sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
 			sb.Append( "{" );
 
@@ -79,6 +80,7 @@ namespace Librainian.Database.MMF {
 			return true;
 		}
 
+		[NotNull]
 		private CompilerResults CompileCode() {
 			var providerOptions = new Dictionary<String, String> { { "CompilerVersion", "v3.5" } };
 			CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
@@ -87,6 +89,7 @@ namespace Librainian.Database.MMF {
 			return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
 		}
 
+		[NotNull]
 		private String GenerateCode() {
 			var typeFullName = this.Type.FullName.Replace( '+', '.' );
 
@@ -108,7 +111,7 @@ namespace Librainian.Database.MMF {
 			return sb.ToString();
 		}
 
-		private void GenerateMethodBodyCode( StringBuilder sb ) {
+		private void GenerateMethodBodyCode( [NotNull] StringBuilder sb ) {
 			this._addCount = 0;
 			var length = this._size;
 
@@ -121,6 +124,7 @@ namespace Librainian.Database.MMF {
 			} while ( length > 0 );
 		}
 
+		[NotNull]
 		private CompilerParameters GetCompilerParameters() {
 			var cParameters = new CompilerParameters { GenerateInMemory = true, GenerateExecutable = false, TreatWarningsAsErrors = false, IncludeDebugInformation = false, CompilerOptions = "/optimize /unsafe" };
 			cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
@@ -139,7 +143,7 @@ namespace Librainian.Database.MMF {
 			}
 		}
 
-		private void ObjectToBytesCode( StringBuilder sb, String typeFullName ) {
+		private void ObjectToBytesCode( [NotNull] StringBuilder sb, String typeFullName ) {
 			sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
 			sb.Append( "{" );
 			sb.Append( $"byte[] buffer = new byte[{this._size}];" );
@@ -177,6 +181,7 @@ namespace Librainian.Database.MMF {
 			}
 		}
 
+		[CanBeNull]
 		public ISerializeDeserialize<T> GetSerializer() {
 			if ( !this.CanGetSize() ) { return null; }
 

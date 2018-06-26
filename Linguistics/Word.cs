@@ -81,7 +81,7 @@ namespace Librainian.Linguistics {
 		///     <paramref name="other" /> in the sort order.
 		/// </returns>
 		/// <param name="other">An object to compare with this instance. </param>
-		public Int32 CompareTo( Word other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
+		public Int32 CompareTo( [NotNull] Word other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
 		public IEnumerator<Char> GetEnumerator() => this.Chars.GetEnumerator();
 
@@ -99,10 +99,11 @@ namespace Librainian.Linguistics {
 		[JsonProperty]
 		private List<Char> Chars { get; } = new List<Char>();
 
-		public static implicit operator String( Word word ) => word.Chars.ToStrings( "" );
+		public static implicit operator String( [NotNull] Word word ) => word.Chars.ToStrings( "" );
 
 		public override Int32 GetHashCode() => this.Chars.GetHashCode();
 
+		[NotNull]
 		public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
 
 		public override String ToString() => this.Chars.ToStrings( "" );

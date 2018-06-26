@@ -37,6 +37,7 @@
 namespace Librainian.Knowledge.Logic {
 
 	using System;
+	using JetBrains.Annotations;
 	using Linguistics;
 
 	/// <summary>
@@ -48,7 +49,7 @@ namespace Librainian.Knowledge.Logic {
 
 		public readonly Sentence Sentence;
 
-		public Statement( String sentence ) => this.Sentence = new Sentence( sentence );
+		public Statement( [NotNull] String sentence ) => this.Sentence = new Sentence( sentence );
 
 	}
 

@@ -32,6 +32,7 @@ namespace Librainian.Threading {
     using System;
     using System.Security.Permissions;
     using System.Threading;
+    using JetBrains.Annotations;
     using NUnit.Framework;
 
     /// <summary>
@@ -253,6 +254,7 @@ namespace Librainian.Threading {
         ///     lock simultaneously. DontAllocate is set to true if the caller just wants to get an existing entry for this thread,
         ///     but doesn't want to add one if an existing one could not be found.
         /// </summary>
+        [CanBeNull]
         private ReaderWriterCount GetThreadRwCount( Int32 id, Boolean dontAllocate ) {
             var hash = id & HashTableSize;
             ReaderWriterCount firstfound = null;
@@ -307,7 +309,7 @@ namespace Librainian.Threading {
             return firstfound;
         }
 
-        private static Boolean IsRwEntryEmpty( ReaderWriterCount rwc ) =>
+        private static Boolean IsRwEntryEmpty( [NotNull] ReaderWriterCount rwc ) =>
             rwc.Threadid == -1 || rwc.Readercount == 0 && rwc.RecursiveCounts is null || rwc.Readercount == 0 && rwc.RecursiveCounts.Writercount == 0 && rwc.RecursiveCounts.Upgradecount == 0;
 
         private void ExitMyLock() {
@@ -469,13 +471,13 @@ namespace Librainian.Threading {
             else { Thread.Sleep( 1 ); }
         }
 
-        private static Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
+        private static Boolean IsRwHashEntryChanged( [NotNull] ReaderWriterCount lrwc, Int32 id ) => lrwc.Threadid != id;
 
         /// <summary>
         ///     A routine for lazily creating a event outside the lock (so if errors happen they are outside the lock and that we
         ///     don't do much work while holding a spin lock). If all goes well, reenter the lock and set 'waitEvent'
         /// </summary>
-        private void LazyCreateEvent( ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
+        private void LazyCreateEvent( [NotNull] ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
 #if DEBUG
             Assert.That( this.MyLockHeld );
             Assert.That( waitEvent is null );
@@ -492,7 +494,7 @@ namespace Librainian.Threading {
         ///     Waits on 'waitEvent' with a timeout of 'millisceondsTimeout. Before the wait 'numWaiters' is incremented and is
         ///     restored before leaving this routine.
         /// </summary>
-        private Boolean WaitOnEvent( EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout ) {
+        private Boolean WaitOnEvent( [NotNull] EventWaitHandle waitEvent, ref UInt32 numWaiters, Int32 millisecondsTimeout ) {
 #if DEBUG
             Assert.That( this.MyLockHeld );
 #endif

@@ -50,6 +50,7 @@ namespace Librainian.Collections {
 
 		public TreeNode<T> Add( T value ) => this.Add( node: new TreeNode<T>( value ) );
 
+		[NotNull]
 		public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
 			if ( node is null ) { throw new ArgumentNullException( nameof( node ) ); }
 

@@ -46,7 +46,7 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Length of the range (difference between maximum and minimum values).</summary>
 		[JsonProperty]
-		public readonly Span Length;
+		public readonly SpanOfTime Length;
 
 		/// <summary>Maximum value</summary>
 		[JsonProperty]
@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time {
 			}
 
 			var δ = this.Max.Value - this.Min.Value;
-			this.Length = new Span( planckTimes: δ );
+			this.Length = new SpanOfTime( planckTimes: δ );
 		}
 
 	}

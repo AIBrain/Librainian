@@ -39,6 +39,7 @@ namespace Librainian.Internet.FTP {
 	using System;
 	using System.IO;
 	using System.Net;
+	using JetBrains.Annotations;
 
 	public class BasicFtpClient {
 
@@ -50,6 +51,7 @@ namespace Librainian.Internet.FTP {
 
 		public String Username { get; set; }
 
+		[NotNull]
 		private Uri BuildServerUri( String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
 
 		/// <summary>
@@ -69,7 +71,7 @@ namespace Librainian.Internet.FTP {
 		///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile".
 		///     Throws a WebException on encountering a network error.
 		/// </summary>
-		public void DownloadFile( String ftppath, String destfile ) {
+		public void DownloadFile( String ftppath, [NotNull] String destfile ) {
 
 			// Download the data
 			var data = this.DownloadData( ftppath );
@@ -84,7 +86,7 @@ namespace Librainian.Internet.FTP {
 		/// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
 		/// <param name="data">A byte[] containing the data to upload</param>
 		/// <returns>The Server response in a byte[]</returns>
-		public Byte[] UploadData( String path, Byte[] data ) {
+		public Byte[] UploadData( String path, [NotNull] Byte[] data ) {
 
 			// Get the object used to communicate with the Server.
 			var request = new WebClient { Credentials = new NetworkCredential( userName: this.Username, password: this.Password ) };
@@ -97,7 +99,7 @@ namespace Librainian.Internet.FTP {
 		/// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
 		/// <param name="srcfile">File on the local harddisk to upload</param>
 		/// <returns>The Server response in a byte[]</returns>
-		public Byte[] UploadFile( String ftppath, String srcfile ) {
+		public Byte[] UploadFile( String ftppath, [NotNull] String srcfile ) {
 
 			// Read the data from disk
 			var fs = new FileStream( srcfile, FileMode.Open );

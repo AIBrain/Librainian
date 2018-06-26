@@ -42,6 +42,7 @@ namespace Librainian.Controls {
 	using System.Text;
 	using System.Windows.Forms;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Magic;
 
 	/// <summary>
@@ -63,7 +64,8 @@ namespace Librainian.Controls {
 
 		private delegate void AddALogEntryDelegate( Object item );
 
-		private static String FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
+		[NotNull]
+		private static String FormatALogEventMessage( [NotNull] LogEvent logEvent, [NotNull] String messageFormat ) {
 			var message = logEvent.Message ?? "<NULL>";
 
 			return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
@@ -71,6 +73,7 @@ namespace Librainian.Controls {
 				LevelName( logEvent.LoggingLevel )[ 0 ], /* {6} */ LevelName( logEvent.LoggingLevel ), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
 		}
 
+		[NotNull]
 		private static String LevelName( LoggingLevel loggingLevel ) {
 			switch ( loggingLevel ) {
 				case LoggingLevel.Critical: return "Critical";
@@ -103,7 +106,7 @@ namespace Librainian.Controls {
 			this.Box.Items[ items.Count - 1 ] = currentText;
 		}
 
-		private void AddALogEntryLine( Object item ) {
+		private void AddALogEntryLine( [NotNull] Object item ) {
 			this.Box.Items.Add( item );
 
 			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) { this.Box.Items.RemoveAt( 0 ); }
@@ -138,7 +141,7 @@ namespace Librainian.Controls {
 			Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
 		}
 
-		private void DrawItemHandler( Object sender, DrawItemEventArgs e ) {
+		private void DrawItemHandler( Object sender, [NotNull] DrawItemEventArgs e ) {
 			if ( e.Index < 0 ) { return; }
 
 			e.DrawBackground();
@@ -187,7 +190,7 @@ namespace Librainian.Controls {
 			e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), new Font( "Hack", 8.25f, FontStyle.Regular ), new SolidBrush( color ), e.Bounds );
 		}
 
-		private void KeyDownHandler( Object sender, KeyEventArgs e ) {
+		private void KeyDownHandler( Object sender, [NotNull] KeyEventArgs e ) {
 			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) { this.CopyToClipboard(); }
 		}
 
@@ -195,11 +198,11 @@ namespace Librainian.Controls {
 
 		private void OnHandleDestroyed( Object sender, EventArgs e ) => this.CanAdd = false;
 
-		private void WriteEvent( LogEvent logEvent ) {
+		private void WriteEvent( [CanBeNull] LogEvent logEvent ) {
 			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent ); }
 		}
 
-		private void WriteEventLine( LogEvent logEvent ) {
+		private void WriteEventLine( [CanBeNull] LogEvent logEvent ) {
 			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent ); }
 		}
 
@@ -228,9 +231,9 @@ namespace Librainian.Controls {
 
 		public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
 
-		public void LogLine( String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
+		public void LogLine( [CanBeNull] String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-		public void LogLine( LoggingLevel loggingLevel, String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
+		public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
 		public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
@@ -259,7 +262,7 @@ namespace Librainian.Controls {
 
 		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
 
-		public ListBoxLog( ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+		public ListBoxLog( [NotNull] ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
 
 			this.Box = listBox;
 			this.MessageFormat = messageFormat;

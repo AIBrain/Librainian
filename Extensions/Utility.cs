@@ -41,6 +41,7 @@ namespace Librainian.Extensions {
 	using System.Linq;
 	using System.Security;
 	using System.Threading;
+	using JetBrains.Annotations;
 
 	public static class Utility {
 
@@ -53,7 +54,7 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <param name="text">   </param>
 		/// <param name="yOffset"></param>
-		public static void AtEndOfLine( this String text, Int32 yOffset = 0 ) {
+		public static void AtEndOfLine( [CanBeNull] this String text, Int32 yOffset = 0 ) {
 			if ( String.IsNullOrEmpty( text ) ) { return; }
 
 			try {
@@ -142,7 +143,7 @@ namespace Librainian.Extensions {
 		//    Debug.WriteLine( "]" );
 		//}
 
-		public static void TopRight( String text ) {
+		public static void TopRight( [CanBeNull] String text ) {
 			if ( String.IsNullOrEmpty( text ) ) { return; }
 
 			try {
@@ -163,7 +164,7 @@ namespace Librainian.Extensions {
 			finally { ConsoleOutputSynch.ExitUpgradeableReadLock(); }
 		}
 
-		public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms ) {
+		public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, [CanBeNull] params Object[] parms ) {
 			lock ( ConsoleOutputSynch ) {
 				if ( parms?.Any() != true ) {
 
@@ -190,7 +191,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public static void WriteLineColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, params Object[] parms ) {
+		public static void WriteLineColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, [CanBeNull] params Object[] parms ) {
 			lock ( ConsoleOutputSynch ) {
 				if ( parms?.Any() != true ) {
 

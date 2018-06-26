@@ -39,10 +39,12 @@ namespace Librainian.Misc {
 	using System;
 	using System.Linq;
 	using Extensions;
+	using JetBrains.Annotations;
 
 	internal static class ProductExampleClass {
 
-		private static IQueryable<Product> SearchProducts( IQueryable<Product> products, params String[] keywords ) {
+		[NotNull]
+		private static IQueryable<Product> SearchProducts( [NotNull] IQueryable<Product> products, [NotNull] params String[] keywords ) {
 
 			//var predicate = keywords.Aggregate( False<Product>(), ( current, temp ) => current.Or( p => p.Description.Contains( temp ) ).And( p => true ) );
 			var predicate = BooleanPredicateBuilder.False<Product>();

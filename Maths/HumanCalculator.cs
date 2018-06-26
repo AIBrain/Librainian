@@ -39,6 +39,7 @@ namespace Librainian.Maths {
 	using System;
 	using System.Linq;
 	using System.Numerics;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Challenge: Do math the way we were taught in school.
@@ -64,7 +65,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="terms"></param>
 		/// <returns></returns>
-		public static BigInteger Add( params BigInteger[] terms ) {
+		public static BigInteger Add( [NotNull] params BigInteger[] terms ) {
 			var total = BigInteger.Zero;
 
 			foreach ( var local in terms.Select( term => term.ToString() ) ) {

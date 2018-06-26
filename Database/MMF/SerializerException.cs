@@ -39,12 +39,13 @@ namespace Librainian.Database.MMF {
 	using System;
 	using System.Diagnostics.CodeAnalysis;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 
 	[SuppressMessage( "Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable" )]
 	[Serializable]
 	public class SerializerException : Exception {
 
-		protected SerializerException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+		protected SerializerException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
 		public SerializerException( String message ) : base( message ) { }
 

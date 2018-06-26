@@ -85,7 +85,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
 		public Wallet( Guid id ) => this.ID = id;
 
-		private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
+		private UInt64 Deposit( [CanBeNull] IBankNote bankNote, UInt64 quantity ) {
 			if ( null == bankNote ) { return 0; }
 
 			try {
@@ -130,20 +130,20 @@ namespace Librainian.Financial.Containers.Wallets {
 			this.ClearCoins();
 		}
 
-		public Boolean Contains( IBankNote bankNote ) {
+		public Boolean Contains( [NotNull] IBankNote bankNote ) {
 			if ( bankNote is null ) { throw new ArgumentNullException( nameof( bankNote ) ); }
 
 			return this.BankNotes.ContainsKey( bankNote );
 		}
 
-		public Boolean Contains( ICoin coin ) {
+		public Boolean Contains( [NotNull] ICoin coin ) {
 			if ( coin is null ) { throw new ArgumentNullException( nameof( coin ) ); }
 
 			return this.Coins.ContainsKey( coin );
 		}
 
 		// await this.Messages.Completion;
-		public UInt64 Count( IBankNote bankNote ) {
+		public UInt64 Count( [NotNull] IBankNote bankNote ) {
 			if ( bankNote is null ) { throw new ArgumentNullException( nameof( bankNote ) ); }
 
 			return this.BankNotes.TryGetValue( bankNote, out var result ) ? result : UInt64.MinValue;
@@ -153,7 +153,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		///// Makes sure all <see cref="Messages" /> have been processed.
 		///// </summary>
 		//public async Task CatchUp() {
-		public UInt64 Count( ICoin coin ) {
+		public UInt64 Count( [NotNull] ICoin coin ) {
 			if ( coin is null ) { throw new ArgumentNullException( nameof( coin ) ); }
 
 			return this.Coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
@@ -167,7 +167,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="id">          </param>
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
-		public Boolean Deposit( IDenomination denomination, UInt64 quantity, Guid? id = null ) {
+		public Boolean Deposit( [NotNull] IDenomination denomination, UInt64 quantity, Guid? id = null ) {
 			if ( denomination is null ) { throw new ArgumentNullException( nameof( denomination ) ); }
 
 			if ( !quantity.Any() ) { return false; }
@@ -184,7 +184,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="quantity"></param>
 		/// <returns></returns>
 		/// <exception cref="WalletException"></exception>
-		public UInt64 Deposit( ICoin coin, UInt64 quantity ) {
+		public UInt64 Deposit( [CanBeNull] ICoin coin, UInt64 quantity ) {
 			if ( null == coin ) { return 0; }
 
 			try {
@@ -228,8 +228,10 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <summary>
 		///     Return each <see cref="ICoin" /> in this <see cref="Wallet" />.
 		/// </summary>
+		[NotNull]
 		public IEnumerable<ICoin> GetCoins() => this.Coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
+		[NotNull]
 		public IEnumerable<KeyValuePair<ICoin, UInt64>> GetCoinsGrouped() {
 			Assert.NotNull( this.Coins );
 
@@ -241,18 +243,22 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <summary>
 		///     Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.
 		/// </summary>
+		[NotNull]
 		public IEnumerable<KeyValuePair<IDenomination, UInt64>> GetGroups() => this.BankNotes.Cast<KeyValuePair<IDenomination, UInt64>>().Concat( this.Coins.Cast<KeyValuePair<IDenomination, UInt64>>() );
 
 		/// <summary>
 		///     Return each <see cref="IBankNote" /> in this <see cref="Wallet" />.
 		/// </summary>
+		[NotNull]
 		public IEnumerable<IBankNote> GetNotes() => this.BankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
 		/// <summary>
 		///     Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" />.
 		/// </summary>
+		[NotNull]
 		public IEnumerable<IDenomination> GetNotesAndCoins() => this.GetCoins().Concat<IDenomination>( this.GetNotes() );
 
+		[NotNull]
 		public IEnumerable<KeyValuePair<IBankNote, UInt64>> GetNotesGrouped() => this.BankNotes;
 
 		public override String ToString() {
@@ -297,7 +303,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="quantity"></param>
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
-		public Boolean TryWithdraw( IBankNote bankNote, UInt64 quantity ) {
+		public Boolean TryWithdraw( [CanBeNull] IBankNote bankNote, UInt64 quantity ) {
 			if ( bankNote is null ) { return false; }
 
 			if ( quantity <= 0 ) { return false; }
@@ -321,7 +327,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="quantity"></param>
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
-		public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
+		public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
 			if ( coin is null ) { throw new ArgumentNullException( nameof( coin ) ); }
 
 			if ( quantity <= 0 ) { return false; }
@@ -343,7 +349,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="quantity">    </param>
 		/// <returns></returns>
 		/// <exception cref="WalletException"></exception>
-		public Boolean TryWithdraw( IDenomination denomination, UInt64 quantity ) {
+		public Boolean TryWithdraw( [NotNull] IDenomination denomination, UInt64 quantity ) {
 			if ( denomination is IBankNote asBankNote ) { return this.TryWithdraw( asBankNote, quantity ); }
 
 			if ( denomination is ICoin asCoin ) { return this.TryWithdraw( asCoin, quantity ); }

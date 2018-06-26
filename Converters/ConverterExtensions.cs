@@ -128,6 +128,7 @@ namespace Librainian.Converters {
 			return converter.Decimal;
 		}
 
+		[NotNull]
 		public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ) );
 
 		public static Guid ToGuid( this Decimal number ) {
@@ -196,13 +197,14 @@ namespace Librainian.Converters {
 			return guidMerger.guid;
 		}
 
-		public static Guid ToGuid( this Tuple<UInt64, UInt64, UInt64> tuple ) {
+		public static Guid ToGuid( [NotNull] this Tuple<UInt64, UInt64, UInt64> tuple ) {
 			var guidMerger = new TranslateGuidUInt64( high: tuple.Item1, low: tuple.Item3 );
 
 			return guidMerger.guid;
 		}
 
-		public static ManagementPath ToManagementPath( this DirectoryInfo systemPath ) {
+		[NotNull]
+		public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
 			var fullPath = systemPath.FullName;
 
 			while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) { fullPath = fullPath.Substring( 0, fullPath.Length - 1 ); }
@@ -235,6 +237,7 @@ namespace Librainian.Converters {
 		/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
 		/// <returns></returns>
 		/// <seealso cref="GuidExtensions.FromPath" />
+		[NotNull]
 		public static String ToPath( this Guid guid, Boolean reversed = false ) {
 			var a = guid.ToByteArray();
 
@@ -249,6 +252,7 @@ namespace Librainian.Converters {
 			return pathNormal;
 		}
 
+		[NotNull]
 		public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
 			if ( directoryInfo is null ) { throw new ArgumentNullException( nameof( directoryInfo ) ); }
 

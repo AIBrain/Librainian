@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "HttpServer.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "HttpServer.cs" was last formatted by Protiguous on 2018/06/04 at 3:59 PM.
 
@@ -38,12 +38,13 @@ namespace Librainian.Internet.Servers {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Net;
 	using System.Net.Sockets;
 	using System.Security.Cryptography.X509Certificates;
 	using System.Threading;
-	using Measurement.Time;
+	using JetBrains.Annotations;
 
 	public abstract class HttpServer {
 
@@ -57,22 +58,12 @@ namespace Librainian.Internet.Servers {
 
 		private TcpListener _unsecureListener;
 
-		/// <summary>If &gt; -1, the Server is listening for http connections on this port.</summary>
-		protected readonly Int32 Port;
-
-		/// <summary>If &gt; -1, the Server is listening for https connections on this port.</summary>
-		protected readonly Int32 SecurePort;
-
-		protected volatile Boolean StopRequested;
-
-		internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
-
 		/// <summary>
 		///     Listens for connections, somewhat robustly. Does not return until the Server is stopped
 		///     or until more than 100 listener restarts occur in a single day.
 		/// </summary>
-		private void Listen( Object param ) {
-			var isSecureListener = ( Boolean ) param;
+		private void Listen( [NotNull] Object param ) {
+			var isSecureListener = ( Boolean )param;
 
 			var errorCount = 0;
 			var lastError = DateTime.Now;
@@ -157,6 +148,79 @@ namespace Librainian.Internet.Servers {
 			}
 		}
 
+		/// <summary>If &gt; -1, the Server is listening for http connections on this port.</summary>
+		protected readonly Int32 Port;
+
+		/// <summary>If &gt; -1, the Server is listening for https connections on this port.</summary>
+		protected readonly Int32 SecurePort;
+
+		protected volatile Boolean StopRequested;
+
+		internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
+
+		/// <summary></summary>
+		/// <param name="port">
+		///     The port number on which to accept regular http connections. If -1, the Server will not
+		///     listen for http connections.
+		/// </param>
+		/// <param name="thrHttps"></param>
+		/// <param name="httpsPort">
+		///     (Optional) The port number on which to accept https connections. If -1, the Server will
+		///     not listen for https connections.
+		/// </param>
+		/// <param name="cert">
+		///     (Optional) Certificate to use for https connections. If null and an httpsPort was
+		///     specified, a certificate is automatically created if necessary and loaded from
+		///     "SimpleHttpServer-SslCert.pfx" in the same directory that the current executable is
+		///     located in.
+		/// </param>
+		public HttpServer( Int32 port, Thread thrHttps, Int32 httpsPort = -1, [CanBeNull] X509Certificate2 cert = null ) {
+			this.Port = port;
+			this._thrHttps = thrHttps;
+			this.SecurePort = httpsPort;
+			this._sslCertificate = cert;
+
+			if ( this.Port > 65535 || this.Port < -1 ) { this.Port = -1; }
+
+			if ( this.SecurePort > 65535 || this.SecurePort < -1 ) { this.SecurePort = -1; }
+
+			if ( this.Port > -1 ) { this._thrHttp = new Thread( this.Listen ) { Name = "HttpServer Thread" }; }
+
+			//if ( this.SecurePort > -1 ) {
+			//    if ( this._sslCertificate is null ) {
+			//        String exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			//        FileInfo fiExe = new FileInfo( exePath );
+			//        FileInfo fiCert = new FileInfo( fiExe.Directory.FullName + "\\SimpleHttpServer-SslCert.pfx" );
+			//        if ( fiCert.Exists )
+			//            this._sslCertificate = new X509Certificate2( fiCert.FullName, "N0t_V3ry-S3cure#lol" );
+			//        else {
+			//            using ( Pluralsight.Crypto.CryptContext ctx = new Pluralsight.Crypto.CryptContext() ) {
+			//                ctx.Open();
+
+			// this._sslCertificate = ctx.CreateSelfSignedCertificate( new
+			// Pluralsight.Crypto.SelfSignedCertProperties { IsPrivateKeyExportable = true,
+			// KeyBitLength = 4096, Name = new X500DistinguishedName( "cn=localhost" ), ValidFrom =
+			// DateTime.Today.AddDays( -1 ), ValidTo = DateTime.Today.AddYears( 100 ), } );
+
+			//                byte[] certData = this._sslCertificate.Export( X509ContentType.Pfx, "N0t_V3ry-S3cure#lol" );
+			//                File.WriteAllBytes( fiCert.FullName, certData );
+			//            }
+			//        }
+			//    }
+			//    this.thrHttps = new Thread( this.listen );
+			//    this.thrHttps.Name = "HttpsServer Thread";
+			//}
+
+			// ReSharper disable once LoopCanBePartlyConvertedToQuery
+			foreach ( var addr in Dns.GetHostEntry( Dns.GetHostName() ).AddressList ) {
+				if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
+					var bytes = addr.GetAddressBytes();
+
+					if ( bytes.Length == 4 ) { this.LocalIPv4Addresses.Add( bytes ); }
+				}
+			}
+		}
+
 		/// <summary>Handles an Http GET request.</summary>
 		/// <param name="p">The HttpProcessor handling the request.</param>
 		public abstract void HandleGetRequest( HttpProcessor p );
@@ -179,7 +243,7 @@ namespace Librainian.Internet.Servers {
 		///     Maximum number of milliseconds to wait for the HttpServer Threads to stop.
 		/// </param>
 		public void Join( Int32 timeoutMilliseconds = 2000 ) {
-			var stopwatch = new StopWatch();
+			var stopwatch = new Stopwatch();
 			var timeToWait = timeoutMilliseconds;
 			stopwatch.Start();
 
@@ -191,7 +255,7 @@ namespace Librainian.Internet.Servers {
 			}
 
 			stopwatch.Stop();
-			timeToWait = timeoutMilliseconds - ( Int32 ) stopwatch.ElapsedMilliseconds;
+			timeToWait = timeoutMilliseconds - ( Int32 )stopwatch.ElapsedMilliseconds;
 
 			if ( timeToWait > 0 ) {
 				try {
@@ -241,70 +305,5 @@ namespace Librainian.Internet.Servers {
 		///     This is called when the Server is stopping. Perform any cleanup work here.
 		/// </summary>
 		public abstract void StopServer();
-
-		/// <summary></summary>
-		/// <param name="port">
-		///     The port number on which to accept regular http connections. If -1, the Server will not
-		///     listen for http connections.
-		/// </param>
-		/// <param name="thrHttps"></param>
-		/// <param name="httpsPort">
-		///     (Optional) The port number on which to accept https connections. If -1, the Server will
-		///     not listen for https connections.
-		/// </param>
-		/// <param name="cert">
-		///     (Optional) Certificate to use for https connections. If null and an httpsPort was
-		///     specified, a certificate is automatically created if necessary and loaded from
-		///     "SimpleHttpServer-SslCert.pfx" in the same directory that the current executable is
-		///     located in.
-		/// </param>
-		public HttpServer( Int32 port, Thread thrHttps, Int32 httpsPort = -1, X509Certificate2 cert = null ) {
-			this.Port = port;
-			this._thrHttps = thrHttps;
-			this.SecurePort = httpsPort;
-			this._sslCertificate = cert;
-
-			if ( this.Port > 65535 || this.Port < -1 ) { this.Port = -1; }
-
-			if ( this.SecurePort > 65535 || this.SecurePort < -1 ) { this.SecurePort = -1; }
-
-			if ( this.Port > -1 ) { this._thrHttp = new Thread( this.Listen ) { Name = "HttpServer Thread" }; }
-
-			//if ( this.SecurePort > -1 ) {
-			//    if ( this._sslCertificate is null ) {
-			//        String exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-			//        FileInfo fiExe = new FileInfo( exePath );
-			//        FileInfo fiCert = new FileInfo( fiExe.Directory.FullName + "\\SimpleHttpServer-SslCert.pfx" );
-			//        if ( fiCert.Exists )
-			//            this._sslCertificate = new X509Certificate2( fiCert.FullName, "N0t_V3ry-S3cure#lol" );
-			//        else {
-			//            using ( Pluralsight.Crypto.CryptContext ctx = new Pluralsight.Crypto.CryptContext() ) {
-			//                ctx.Open();
-
-			// this._sslCertificate = ctx.CreateSelfSignedCertificate( new
-			// Pluralsight.Crypto.SelfSignedCertProperties { IsPrivateKeyExportable = true,
-			// KeyBitLength = 4096, Name = new X500DistinguishedName( "cn=localhost" ), ValidFrom =
-			// DateTime.Today.AddDays( -1 ), ValidTo = DateTime.Today.AddYears( 100 ), } );
-
-			//                byte[] certData = this._sslCertificate.Export( X509ContentType.Pfx, "N0t_V3ry-S3cure#lol" );
-			//                File.WriteAllBytes( fiCert.FullName, certData );
-			//            }
-			//        }
-			//    }
-			//    this.thrHttps = new Thread( this.listen );
-			//    this.thrHttps.Name = "HttpsServer Thread";
-			//}
-
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var addr in Dns.GetHostEntry( Dns.GetHostName() ).AddressList ) {
-				if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
-					var bytes = addr.GetAddressBytes();
-
-					if ( bytes.Length == 4 ) { this.LocalIPv4Addresses.Add( bytes ); }
-				}
-			}
-		}
-
 	}
-
 }

@@ -38,6 +38,7 @@ namespace Librainian.Graphics.Moving {
 
 	using System;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 	using Maths.Hashings;
 	using Newtonsoft.Json;
 
@@ -108,7 +109,7 @@ namespace Librainian.Graphics.Moving {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equal( Pixelyx left, Pixelyx right ) => left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
+		public static Boolean Equal( [NotNull] Pixelyx left, [NotNull] Pixelyx right ) => left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
 
 		/// <summary>Returns the hash code for this instance.</summary>
 		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>

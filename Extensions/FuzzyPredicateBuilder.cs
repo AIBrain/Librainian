@@ -38,18 +38,23 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Linq.Expressions;
+	using JetBrains.Annotations;
 
 	[Obsolete( "warning: totally untested and unfinished" )]
 	public static class FuzzyPredicateBuilder {
 
-		public static Expression<Func<TTt, Boolean>> And<TTt>( this Expression<Func<TTt, Single>> expr1, Expression<Func<TTt, Single>> expr2 ) =>
+		[NotNull]
+		public static Expression<Func<TTt, Boolean>> And<TTt>( [NotNull] this Expression<Func<TTt, Single>> expr1, [NotNull] Expression<Func<TTt, Single>> expr2 ) =>
 			Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
+		[NotNull]
 		public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
 
-		public static Expression<Func<TTt, Boolean>> Or<TTt>( this Expression<Func<TTt, Single>> expr1, Expression<Func<TTt, Single>> expr2 ) =>
+		[NotNull]
+		public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Single>> expr1, [NotNull] Expression<Func<TTt, Single>> expr2 ) =>
 			Expression.Lambda<Func<TTt, Boolean>>( body: Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), parameters: expr1.Parameters );
 
+		[NotNull]
 		public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;
 
 	}

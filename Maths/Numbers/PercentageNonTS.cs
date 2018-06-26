@@ -38,6 +38,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>Restricts the value to between 0.0 and 1.0</summary>
@@ -59,19 +60,21 @@ namespace Librainian.Maths.Numbers {
 		/////   Initializes a random number between 0.0 and 1.0
 		///// </summary>
 		//public Percentage() : this( Randem.NextDouble() ) { }
-		public static implicit operator Double( PercentageNonTs special ) => special.Value;
+		public static implicit operator Double( [NotNull] PercentageNonTs special ) => special.Value;
 
+		[NotNull]
 		public static implicit operator PercentageNonTs( Double value ) => new PercentageNonTs( value );
 
-		public static PercentageNonTs Parse( String value ) => new PercentageNonTs( Double.Parse( value ) );
+		[NotNull]
+		public static PercentageNonTs Parse( [NotNull] String value ) => new PercentageNonTs( Double.Parse( value ) );
 
-		public void DropByAbsolute( PercentageNonTs percentage ) => this.Value -= percentage.Value;
+		public void DropByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value;
 
-		public void DropByRelative( PercentageNonTs percentage ) => this.Value -= percentage.Value * this.Value;
+		public void DropByRelative( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value * this.Value;
 
-		public void RaiseByAbsolute( PercentageNonTs percentage ) => this.Value += percentage.Value;
+		public void RaiseByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value;
 
-		public void RaiseByRelative( PercentageNonTs percentage ) => this.Value += percentage.Value * this.Value;
+		public void RaiseByRelative( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value * this.Value;
 
 		public override String ToString() => $"{this.Value:P1}";
 

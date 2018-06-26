@@ -124,7 +124,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
-		public static implicit operator Span( Hours hours ) => new Span( hours );
+		[NotNull]
+		public static implicit operator SpanOfTime( Hours hours ) => new SpanOfTime( hours );
 
 		public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double ) hours.Value );
 

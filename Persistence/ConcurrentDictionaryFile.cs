@@ -149,7 +149,7 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( TKey key ) => key != null && this.TryRemove( key, out _ );
+		public Boolean TryRemove( [CanBeNull] TKey key ) => key != null && this.TryRemove( key, out _ );
 
 		/// <summary>
 		///     Saves the data to the <see cref="Document" />.

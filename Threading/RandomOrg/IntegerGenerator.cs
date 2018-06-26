@@ -36,6 +36,7 @@ namespace Librainian.Threading.RandomOrg {
     using System.Threading.Tasks;
     using Extensions;
     using Internet;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Parsing;
 
@@ -43,6 +44,7 @@ namespace Librainian.Threading.RandomOrg {
 
         internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
 
+        [ItemNotNull]
         public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
 
             if ( maxValue < minValue ) { CommonExtensions.Swap( ref minValue, ref maxValue ); }

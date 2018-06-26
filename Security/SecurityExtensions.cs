@@ -83,7 +83,8 @@ namespace Librainian.Security {
 		/// </summary>
 		public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
-		private static Byte[] Uid( String s ) {
+		[NotNull]
+		private static Byte[] Uid( [NotNull] String s ) {
 			var numArray = new Byte[ s.Length ];
 
 			for ( var i = 0; i < s.Length; i++ ) { numArray[ i ] = ( Byte ) ( s[ index: i ] & '\u007F' ); }
@@ -108,6 +109,7 @@ namespace Librainian.Security {
 			catch { return new SecureString(); }
 		}
 
+		[NotNull]
 		public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
 
 			// This is the variable that will be returned to the user
@@ -150,12 +152,14 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static String EncryptString( this SecureString input ) {
 			var encryptedData = ProtectedData.Protect( userData: Encoding.Unicode.GetBytes( s: ToInsecureString( input: input ) ), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser );
 
 			return Convert.ToBase64String( inArray: encryptedData );
 		}
 
+		[NotNull]
 		public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
 
 			// This is the variable that will be returned to the user
@@ -193,6 +197,7 @@ namespace Librainian.Security {
 			return encryptedValue;
 		}
 
+		[NotNull]
 		public static String GenerateKey( String username, Decimal version = 9.2M ) {
 			username = ( username ?? String.Empty ).Trim();
 
@@ -216,7 +221,8 @@ namespace Librainian.Security {
 			return $"{1}-{Convert.ToBase64String( inArray: integer1.GetBytes() )}";
 		}
 
-		public static String GetHexString( this IReadOnlyList<Byte> bt ) {
+		[NotNull]
+		public static String GetHexString( [NotNull] this IReadOnlyList<Byte> bt ) {
 			var s = String.Empty;
 
 			for ( var i = 0; i < bt.Count; i++ ) {
@@ -241,7 +247,7 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static String GetMD5Hash( this String s ) {
+		public static String GetMD5Hash( [NotNull] this String s ) {
 			using ( MD5 md5 = new MD5CryptoServiceProvider() ) { return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString(); }
 		}
 
@@ -251,7 +257,7 @@ namespace Librainian.Security {
 		/// <param name="file"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String MD5( this FileInfo file ) {
+		public static String MD5( [NotNull] this FileInfo file ) {
 			if ( !file.Exists ) { return null; }
 
 			var p = new Process { StartInfo = { FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true } };
@@ -263,7 +269,8 @@ namespace Librainian.Security {
 			return String.IsNullOrWhiteSpace( result ) ? null : result;
 		}
 
-		public static Byte[] Sha256( this Byte[] input ) {
+		[NotNull]
+		public static Byte[] Sha256( [NotNull] this Byte[] input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA256Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
@@ -276,7 +283,8 @@ namespace Librainian.Security {
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
 		/// <returns></returns>
-		public static Byte[] Sha256( this String input, Encoding encoding = null ) {
+		[NotNull]
+		public static Byte[] Sha256( [NotNull] this String input, Encoding encoding = null ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			if ( null == encoding ) { encoding = Encoding.UTF8; }
@@ -291,7 +299,7 @@ namespace Librainian.Security {
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
 		/// <returns></returns>
-		public static Byte[] Sha384( this String input, Encoding encoding = null ) {
+		public static Byte[] Sha384( [NotNull] this String input, Encoding encoding = null ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			if ( null == encoding ) { encoding = Encoding.UTF8; }
@@ -299,7 +307,8 @@ namespace Librainian.Security {
 			return encoding.GetBytes( s: input ).Sha384();
 		}
 
-		public static Byte[] Sha384( this Byte[] input ) {
+		[NotNull]
+		public static Byte[] Sha384( [NotNull] this Byte[] input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA384Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
@@ -312,7 +321,7 @@ namespace Librainian.Security {
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
 		/// <returns></returns>
-		public static Byte[] Sha512( this String input, Encoding encoding = null ) {
+		public static Byte[] Sha512( [NotNull] this String input, Encoding encoding = null ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			if ( null == encoding ) { encoding = Encoding.Unicode; }
@@ -320,13 +329,15 @@ namespace Librainian.Security {
 			return encoding.GetBytes( s: input ).Sha512();
 		}
 
-		public static Byte[] Sha512( this Byte[] input ) {
+		[NotNull]
+		public static Byte[] Sha512( [NotNull] this Byte[] input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA512Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
 		}
 
-		public static String ToHexString( this Byte[] bytes ) {
+		[NotNull]
+		public static String ToHexString( [NotNull] this Byte[] bytes ) {
 			var sb = new StringBuilder( bytes.Length * 2 );
 
 			foreach ( var b in bytes ) { sb.Append( b.ToString( "X2" ).ToUpper() ); }
@@ -334,7 +345,7 @@ namespace Librainian.Security {
 			return sb.ToString();
 		}
 
-		public static String ToInsecureString( this SecureString input ) {
+		public static String ToInsecureString( [NotNull] this SecureString input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			String returnValue;
@@ -346,7 +357,8 @@ namespace Librainian.Security {
 			return returnValue;
 		}
 
-		public static SecureString ToSecureString( this String input ) {
+		[NotNull]
+		public static SecureString ToSecureString( [NotNull] this String input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			var secure = new SecureString();

@@ -42,6 +42,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.Net.NetworkInformation;
 	using System.Runtime.InteropServices;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Measurement.Time;
 	using OperatingSystem;
 
@@ -214,7 +215,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 			return NetworkInterface.GetIsNetworkAvailable();
 		}
 
-		public NetworkConnection( String networkName, NetworkCredential credentials ) {
+		public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
 			this.NetworkName = networkName;
 
 			var netResource = new NetResource { Scope = ResourceScope.GlobalNetwork, ResourceType = ResourceType.Disk, DisplayType = ResourceDisplaytype.Share, RemoteName = networkName };

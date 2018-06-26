@@ -38,6 +38,7 @@ namespace Librainian.Linguistics.PoS {
 
 	using System;
 	using System.Linq;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -53,7 +54,7 @@ namespace Librainian.Linguistics.PoS {
 		///     otherwise, false.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		public Boolean Equals( Noun other ) {
+		public Boolean Equals( [CanBeNull] Noun other ) {
 			if ( other is null ) { return false; }
 
 			return ReferenceEquals( this, other ) || this.SequenceEqual( other );

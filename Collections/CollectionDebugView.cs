@@ -39,6 +39,7 @@ namespace Librainian.Collections {
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	/// </summary>
@@ -46,6 +47,7 @@ namespace Librainian.Collections {
 	/// <remarks>http://www.codeproject.com/Articles/28405/Make-the-debugger-show-the-contents-of-your-custom</remarks>
 	public class CollectionDebugView<T> {
 
+		[NotNull]
 		[DebuggerBrowsable( state: DebuggerBrowsableState.RootHidden )]
 		public T[] Items {
 			get {
@@ -58,7 +60,7 @@ namespace Librainian.Collections {
 
 		private ICollection<T> Collection { get; }
 
-		public CollectionDebugView( ICollection<T> collection ) => this.Collection = collection ?? throw new ArgumentNullException( nameof( collection ) );
+		public CollectionDebugView( [NotNull] ICollection<T> collection ) => this.Collection = collection ?? throw new ArgumentNullException( nameof( collection ) );
 
 	}
 

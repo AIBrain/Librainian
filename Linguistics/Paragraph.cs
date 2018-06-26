@@ -74,7 +74,8 @@ namespace Librainian.Linguistics {
 		[JsonProperty]
 		private readonly List<Sentence> Sentences = new List<Sentence>();
 
-		public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
+		[NotNull]
+		public static implicit operator String( [NotNull] Paragraph paragraph ) => paragraph.ToString();
 
 		/// <summary>Serves as the default hash function. </summary>
 		/// <returns>A hash code for the current object.</returns>

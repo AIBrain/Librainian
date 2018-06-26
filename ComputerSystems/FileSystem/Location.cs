@@ -48,7 +48,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	/// </remarks>
 	public class Location : IEquatable<Location>, IComparable<Location>, IComparable {
 
-		public Int32 CompareTo( Object obj ) {
+		public Int32 CompareTo( [CanBeNull] Object obj ) {
 			if ( obj is null ) { return 1; }
 
 			if ( ReferenceEquals( this, obj ) ) { return 0; }
@@ -86,13 +86,13 @@ namespace Librainian.ComputerSystems.FileSystem {
 			return left.HashCode == right.HashCode;
 		}
 
-		public static Boolean operator !=( Location left, Location right ) => !Equals( left: left, right: right );
+		public static Boolean operator !=( [CanBeNull] Location left, [CanBeNull] Location right ) => !Equals( left: left, right: right );
 
 		public static Boolean operator <( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) < 0;
 
 		public static Boolean operator <=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) <= 0;
 
-		public static Boolean operator ==( Location left, Location right ) => Equals( left: left, right: right );
+		public static Boolean operator ==( [CanBeNull] Location left, [CanBeNull] Location right ) => Equals( left: left, right: right );
 
 		public static Boolean operator >( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) > 0;
 

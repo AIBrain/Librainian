@@ -27,12 +27,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
 //
 // ***  Project "Librainian"  ***
-// File "ABetterClassDispose.cs" was last formatted by Protiguous on 2018/06/04 at 5:11 PM.
+// File "ABetterClassDispose.cs" was last formatted by Protiguous on 2018/06/10 at 12:23 PM.
 
 namespace Librainian.Magic {
 
@@ -41,7 +42,7 @@ namespace Librainian.Magic {
 
 	/// <summary>
 	///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
-	///     <para><see cref="Dispose" /> can be called multiple times with no side effects.</para>
+	///     <para><see cref="Dispose()" /> can be called multiple times with no side effects.</para>
 	///     <para>Override <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
 	/// </summary>
 	/// <remarks>ABCD (hehe). Designed by Rick Harker</remarks>
@@ -49,17 +50,26 @@ namespace Librainian.Magic {
 
 		private Boolean Suppressed { get; set; }
 
+		/// <summary>
+		///     Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by
+		///     garbage collection.
+		/// </summary>
+		~ABetterClassDispose() {
+			this.Dispose( true );
+		}
+
+		private void ReleaseUnmanagedResources() {
+
+			// TODO release unmanaged resources here
+		}
+
 		public Boolean HasDisposedManaged { get; private set; }
 
 		public Boolean HasDisposedNative { get; private set; }
 
 		public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
-		~ABetterClassDispose() { this.Dispose(); }
-
-		public void Dispose() {
-
-			//if ( this.Suppressed ) { return; }
+		public void Dispose( Boolean _ ) {
 
 			try {
 				if ( !this.HasDisposedManaged ) {
@@ -68,7 +78,9 @@ namespace Librainian.Magic {
 						this.HasDisposedManaged = true;
 					}
 					catch ( Exception ) {
-						if ( Debugger.IsAttached ) { Debugger.Break(); }
+						if ( Debugger.IsAttached ) {
+							Debugger.Break();
+						}
 					}
 				}
 
@@ -78,7 +90,9 @@ namespace Librainian.Magic {
 						this.HasDisposedNative = true;
 					}
 					catch ( Exception ) {
-						if ( Debugger.IsAttached ) { Debugger.Break(); }
+						if ( Debugger.IsAttached ) {
+							Debugger.Break();
+						}
 					}
 				}
 			}
@@ -90,16 +104,19 @@ namespace Librainian.Magic {
 			}
 		}
 
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose() => this.Dispose( true );
+
 		/// <summary>
 		///     <para>Dispose any disposable managed fields or properties.</para>
-		///     <para>Call "base.DisposeManaged();" or "base.<see cref="Dispose" />;" when possible.</para>
+		///     <para>Call "base.DisposeManaged();" or "base.<see cref="Dispose(Boolean)" />;" when possible.</para>
 		/// </summary>
 		/// <remarks>Call sooner rathar than later for garbage collection.</remarks>
 		public virtual void DisposeManaged() => this.HasDisposedManaged = true;
 
 		/// <summary>
 		///     <para>Dispose of COM objects, Handles, etc. Then set those objects to null if possible.</para>
-		///     <para>Call "base.DisposeNative();" or "base.<see cref="Dispose" />;" when possible.</para>
+		///     <para>Call "base.DisposeNative();" or "base.<see cref="Dispose(Boolean)" />;" when possible.</para>
 		/// </summary>
 		/// <remarks>Call sooner rathar than later for garbage collection.</remarks>
 		public virtual void DisposeNative() => this.HasDisposedNative = true;

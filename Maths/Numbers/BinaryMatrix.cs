@@ -56,6 +56,7 @@ namespace Librainian.Maths.Numbers {
 
 		public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
 
+		[NotNull]
 		public Binary GetColumn( Int32 index ) {
 			var column = new Boolean[ this.RowAmount ];
 
@@ -64,6 +65,7 @@ namespace Librainian.Maths.Numbers {
 			return new Binary( column );
 		}
 
+		[NotNull]
 		public Binary GetRow( Int32 index ) {
 			var row = new Boolean[ this.ColumnAmount ];
 
@@ -86,7 +88,7 @@ namespace Librainian.Maths.Numbers {
 			return stringBuilder.ToString();
 		}
 
-		public BinaryMatrix( Boolean[ , ] matrix ) => this.Matrix = matrix;
+		public BinaryMatrix( [NotNull] Boolean[ , ] matrix ) => this.Matrix = matrix;
 
 		public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
 

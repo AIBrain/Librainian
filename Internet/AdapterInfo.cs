@@ -40,6 +40,7 @@ namespace Librainian.Internet {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>
@@ -51,6 +52,7 @@ namespace Librainian.Internet {
 
 		public static IEnumerable<IPHelperInvoke.IPAdapterInfo> IpAdapterInfos { get; }
 
+		[NotNull]
 		private static IEnumerable<IPHelperInvoke.IPAdapterInfo> RetrieveAdapters() {
 			Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );
 			var pArray = Marshal.AllocHGlobal( new IntPtr( structSize ) );

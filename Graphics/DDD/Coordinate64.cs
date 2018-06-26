@@ -59,7 +59,7 @@ namespace Librainian.Graphics.DDD {
 	public class Coordinate64 : IEquatable<Coordinate64>, IComparable<Coordinate64> {
 
 		[Pure]
-		public Int32 CompareTo( Coordinate64 other ) => this.Length.CompareTo( other.Length );
+		public Int32 CompareTo( [NotNull] Coordinate64 other ) => this.Length.CompareTo( other.Length );
 
 		/// <summary>
 		///     Calls the static comparison.
@@ -90,7 +90,7 @@ namespace Librainian.Graphics.DDD {
 		/// <summary>
 		///     Calculates the distance between two <see cref="Coordinate64" />.
 		/// </summary>
-		public static Int64 Distance( Coordinate64 left, Coordinate64 rhs ) {
+		public static Int64 Distance( [NotNull] Coordinate64 left, [NotNull] Coordinate64 rhs ) {
 			var num1 = left.X - rhs.X;
 			var num2 = left.Y - rhs.Y;
 			var num3 = left.Z - rhs.Z;
@@ -114,38 +114,41 @@ namespace Librainian.Graphics.DDD {
 			return left.X == rhs.X && left.Y == rhs.Y && left.Z == rhs.Z;
 		}
 
-		public static explicit operator Point( Coordinate64 coordinate ) => new Point( x: ( Int32 ) coordinate.X, y: ( Int32 ) coordinate.Y );
+		public static explicit operator Point( [NotNull] Coordinate64 coordinate ) => new Point( x: ( Int32 ) coordinate.X, y: ( Int32 ) coordinate.Y );
 
-		public static explicit operator PointF( Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
+		public static explicit operator PointF( [NotNull] Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
 		/// <summary>
 		///     Allow an explicit conversion from <see cref="Coordinate64" /> to a <see cref="Vector3" />.
 		/// </summary>
 		/// <param name="bob"></param>
-		public static explicit operator Vector3( Coordinate64 bob ) => new Vector3( bob.X, bob.Y, bob.Z );
+		public static explicit operator Vector3( [NotNull] Coordinate64 bob ) => new Vector3( bob.X, bob.Y, bob.Z );
 
 		/// <summary>
 		///     <para>Returns a new Coordinate64 as a unit <see cref="Coordinate64" />.</para>
 		///     <para>The result is a Coordinate64 one unit in length pointing in the same direction as the original Coordinate64.</para>
 		/// </summary>
-		public static Coordinate64 Normalize( Coordinate64 coordinate ) {
+		[NotNull]
+		public static Coordinate64 Normalize( [NotNull] Coordinate64 coordinate ) {
 			var num = 1.0D / coordinate.Length;
 
 			return new Coordinate64( ( Int64 ) ( coordinate.X * num ), ( Int64 ) ( coordinate.Y * num ), ( Int64 ) ( coordinate.Z * num ) );
 		}
 
-		public static Coordinate64 operator -( Coordinate64 v1, Coordinate64 v2 ) => new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+		[NotNull]
+		public static Coordinate64 operator -( [NotNull] Coordinate64 v1, [NotNull] Coordinate64 v2 ) => new Coordinate64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-		public static Boolean operator !=( Coordinate64 left, Coordinate64 rhs ) => !Equals( left: left, rhs: rhs );
+		public static Boolean operator !=( [CanBeNull] Coordinate64 left, [CanBeNull] Coordinate64 rhs ) => !Equals( left: left, rhs: rhs );
 
-		public static Boolean operator ==( Coordinate64 left, Coordinate64 rhs ) => Equals( left: left, rhs: rhs );
+		public static Boolean operator ==( [CanBeNull] Coordinate64 left, [CanBeNull] Coordinate64 rhs ) => Equals( left: left, rhs: rhs );
 
+		[NotNull]
 		public static Coordinate64 Random() => new Coordinate64( x: Randem.NextInt64(), y: Randem.NextInt64(), z: Randem.NextInt64() );
 
 		/// <summary>
 		///     Calculates the distance between this <see cref="Coordinate64" /> and another <see cref="Coordinate64" />.
 		/// </summary>
-		public Int64 Distance( Coordinate64 to ) => Distance( this, to );
+		public Int64 Distance( [NotNull] Coordinate64 to ) => Distance( this, to );
 
 		public override Boolean Equals( Object obj ) {
 			if ( obj is null ) { return false; }

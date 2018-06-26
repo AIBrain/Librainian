@@ -38,6 +38,7 @@ namespace Librainian.Internet.Wiki {
 
 	using System;
 	using System.Xml;
+	using JetBrains.Annotations;
 	using Parsing;
 
 	public class Wiktionary {
@@ -60,6 +61,7 @@ namespace Librainian.Internet.Wiki {
 		}
 
 		/// <summary>Use String.Format to enter the search parameter.</summary>
+		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
 
 		private static XmlDocument BaseXMLResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
@@ -67,7 +69,8 @@ namespace Librainian.Internet.Wiki {
 		/// <summary>Pull the HTML for the Wiktionary entry on the base word.</summary>
 		/// <param name="baseWord"></param>
 		/// <returns></returns>
-		public static String Wiki( String baseWord ) {
+		[NotNull]
+		public static String Wiki( [CanBeNull] String baseWord ) {
 			if ( String.IsNullOrEmpty( baseWord ) ) { return String.Empty; }
 
 			if ( !DoesWikiRespond ) { return String.Empty; }

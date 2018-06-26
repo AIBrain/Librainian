@@ -39,6 +39,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 
@@ -75,14 +76,19 @@ namespace Librainian.Measurement.Time {
 			this.Length = δ;
 		}
 
+		[NotNull]
 		public IEnumerable<Days> AllDays() => this.Min.TotalDays.To( this.Max.TotalDays, 1 ).Select( second => Days.One );
 
+		[NotNull]
 		public IEnumerable<Hours> AllHours() => this.Min.TotalHours.To( this.Max.TotalHours, 1 ).Select( second => Hours.One );
 
+		[NotNull]
 		public IEnumerable<Milliseconds> AllMilliseconds() => this.Min.TotalMilliseconds.To( this.Max.TotalMilliseconds, 1 ).Select( millsecond => Milliseconds.One );
 
+		[NotNull]
 		public IEnumerable<Minutes> AllMinutes() => this.Min.TotalMinutes.To( this.Max.TotalMinutes, 1 ).Select( minutes => Minutes.One );
 
+		[NotNull]
 		public IEnumerable<Seconds> AllSeconds() => this.Min.TotalSeconds.To( this.Max.TotalSeconds, 1 ).Select( second => Seconds.One );
 
 		/// <summary>Check if the specified range is inside this range</summary>

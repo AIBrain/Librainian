@@ -38,6 +38,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Globalization;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Represents a byte size value.
@@ -53,6 +54,7 @@ namespace Librainian.Maths {
 
 		public Double KiloBytes => this.Bytes / BytesInKiloByte;
 
+		[NotNull]
 		public String LargestWholeNumberSymbol {
 			get {
 

@@ -40,6 +40,7 @@ namespace Librainian.Extensions {
 	using System.IO;
 	using System.Net;
 	using System.Xml;
+	using JetBrains.Annotations;
 
 	public class DummyXMLResolver : XmlUrlResolver {
 
@@ -50,6 +51,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
+		[NotNull]
 		public override Object GetEntity( Uri absoluteUri, String role, Type ofObjectToReturn ) => new MemoryStream();
 
 		public override Uri ResolveUri( Uri baseUri, String relativeUri ) => new Uri( String.Empty );

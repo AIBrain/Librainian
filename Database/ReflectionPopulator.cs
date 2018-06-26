@@ -39,10 +39,12 @@ namespace Librainian.Database {
 	using System;
 	using System.Collections.Generic;
 	using System.Data.SqlClient;
+	using JetBrains.Annotations;
 
 	public class ReflectionPopulator<T> {
 
-		public virtual List<T> CreateList( SqlDataReader reader ) {
+		[NotNull]
+		public virtual List<T> CreateList( [NotNull] SqlDataReader reader ) {
 			var results = new List<T>();
 			var properties = typeof( T ).GetProperties();
 

@@ -37,6 +37,7 @@
 namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Use with WindowsCE and Silverlight which don't have Stopwatch
@@ -48,7 +49,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>
 		/// </summary>
-		public Span Elapsed => new Span( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
+		[NotNull]
+		public SpanOfTime Elapsed => new SpanOfTime( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
 		/// <summary>
 		/// </summary>
@@ -71,6 +73,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			return elapsed;
 		}
 
+		[NotNull]
 		public static MillisecondStopWatch StartNew() {
 			var stopwatch = new MillisecondStopWatch();
 			stopwatch.Start();

@@ -39,6 +39,7 @@ namespace Librainian.Threading {
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	/// </summary>
@@ -64,7 +65,8 @@ namespace Librainian.Threading {
 			if ( innerTask.IsCompleted ) { this._afterComplete?.Invoke( innerTask ); }
 		}
 
-		public static Task Start( CancellationToken cancellationToken, Action blockingWork, Action beginWork = null, Action<Task> afterComplete = null ) {
+		[NotNull]
+		public static Task Start( CancellationToken cancellationToken, [NotNull] Action blockingWork, [CanBeNull] Action beginWork = null, [CanBeNull] Action<Task> afterComplete = null ) {
 			if ( blockingWork is null ) { throw new ArgumentNullException( nameof( blockingWork ) ); }
 
 			var worker = new AbandonableTask( cancellationToken, beginWork, blockingWork, afterComplete );
@@ -74,7 +76,7 @@ namespace Librainian.Threading {
 			return outerTask;
 		}
 
-		private AbandonableTask( CancellationToken cancellationToken, Action beginWork, Action blockingWork, Action<Task> afterComplete ) {
+		private AbandonableTask( CancellationToken cancellationToken, Action beginWork, [NotNull] Action blockingWork, Action<Task> afterComplete ) {
 			this._cancellationToken = cancellationToken;
 			this._beginWork = beginWork;
 			this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );

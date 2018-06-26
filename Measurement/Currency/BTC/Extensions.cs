@@ -105,6 +105,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
 			var left = new List<ICoin>( PossibleCoins );
 			var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
@@ -157,6 +158,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		///     <para>etc...</para>
 		/// </param>
 		/// <returns></returns>
+		[NotNull]
 		public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
 			if ( coinSuffix is null ) { throw new ArgumentNullException( nameof( coinSuffix ) ); }
 
@@ -223,10 +225,11 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <summary>Return the <paramref name="wallet" /> in Satoshi.</summary>
 		/// <param name="wallet"></param>
 		/// <returns></returns>
-		public static Int64 ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
+		public static Int64 ToSatoshi( [NotNull] this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
 
 		public static Decimal ToμBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
 
+		[NotNull]
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
 			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
@@ -276,6 +279,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> UnOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
 			var left = new List<ICoin>( PossibleCoins );
 			var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );

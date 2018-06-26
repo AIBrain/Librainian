@@ -184,7 +184,7 @@ namespace Librainian.Measurement.Currency {
 			}
 		}
 
-		public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
+		public void TryUpdateBalance( [NotNull] SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
 		/// <summary>
 		///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>

@@ -130,7 +130,7 @@ namespace Librainian.Extensions {
 		/// <example>5. Between(10, 1)</example>
 		/// <example>5. Between(10, 6) == false</example>
 		/// <example>5. Between(5, 5))</example>
-		public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable {
+		public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, T endInclusive ) where T : IComparable {
 			if ( startInclusive.CompareTo( endInclusive ) == 1 ) { return target.CompareTo( startInclusive ) <= 0 && target.CompareTo( endInclusive ) >= 0; }
 
 			return target.CompareTo( startInclusive ) >= 0 && target.CompareTo( endInclusive ) <= 0;
@@ -144,13 +144,13 @@ namespace Librainian.Extensions {
 		/// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
 		/// <param name="max"> The maximum value of the <typeparamref name="T" /> that can be returned.</param>
 		/// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
-		public static T Clamp<T>( this T self, T min, T max ) where T : IComparable<T> {
+		public static T Clamp<T>( [NotNull] this T self, T min, T max ) where T : IComparable<T> {
 			if ( self.CompareTo( other: min ) < 0 ) { return min; }
 
 			return self.CompareTo( other: max ) > 0 ? max : self;
 		}
 
-		public static IEnumerable<T> Concat<T>( this IEnumerable<T> first, T second ) {
+		public static IEnumerable<T> Concat<T>( [NotNull] this IEnumerable<T> first, T second ) {
 			foreach ( var item in first ) { yield return item; }
 
 			yield return second;
@@ -177,7 +177,7 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		public static (T right, T left) Swap<T>( this T left, T right ) => ( right, left );
 
-		public static String ToHex( this IEnumerable<Byte> input ) {
+		public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
@@ -187,8 +187,10 @@ namespace Librainian.Extensions {
 
 		public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-		public static String ToHexNumberString( this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+		[NotNull]
+		public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
 
+		[NotNull]
 		public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
 
 	}

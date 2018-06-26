@@ -84,12 +84,14 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Actor Do( Action action ) => new Actor( action );
 
 		/// <summary>
 		///     add a scene if everything <see cref="IsReady" />.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public Actor AddScene() {
 			if ( this.IsReady() ) {
 				this.Actions.Add( this.Current );
@@ -108,6 +110,7 @@ namespace Librainian.Threading {
 		///     add a scene.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public Actor EndScene() {
 
 			//how to inform user that we still need X? throw new ActorException?
@@ -158,7 +161,7 @@ namespace Librainian.Threading {
 			Debug.WriteLine( "Created a new player." );
 		}
 
-		public Actor( Action action ) : this() {
+		public Actor( [CanBeNull] Action action ) : this() {
 			if ( null != action ) { this.Current.TheAct = action; }
 		}
 

@@ -40,6 +40,7 @@ namespace Librainian.Graphics.Video {
 	using System.Drawing;
 	using System.Drawing.Imaging;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 	using Magic;
 	using OperatingSystem;
 
@@ -108,7 +109,7 @@ namespace Librainian.Graphics.Video {
 		///     Adds a new frame to the AVI stream
 		/// </summary>
 		/// <param name="bmp">The image to add</param>
-		public void AddFrame( Bitmap bmp ) {
+		public void AddFrame( [NotNull] Bitmap bmp ) {
 			bmp.RotateFlip( RotateFlipType.RotateNoneFlipY );
 
 			var bmpDat = bmp.LockBits( new Rectangle( 0, 0, bmp.Width, bmp.Height ), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );

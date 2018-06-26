@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ImmutableAttribute.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,30 +23,30 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
-// File "ImmutableAttribute.cs" was last formatted by Protiguous on 2018/06/04 at 3:52 PM.
+// File "ImmutableAttribute.cs" was last formatted by Protiguous on 2018/06/09 at 2:42 PM.
 
 namespace Librainian.Extensions {
 
 	using System;
 	using System.Collections.Generic;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
 	using System.Reflection;
-	using System.Runtime.Serialization;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
-	///     Without further ado, here's the ImmutableAttribute itself.
+	///     Without further ado, here's the ImmutableAttribute itself. Now.. does it work?
 	/// </summary>
 	/// <seealso cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
 	[AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
@@ -54,28 +54,47 @@ namespace Librainian.Extensions {
 	[MeansImplicitUse]
 	public sealed class ImmutableAttribute : Attribute {
 
-		public Boolean OnFaith;
+		private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
+			if ( type == null ) {
+				throw new ArgumentNullException( paramName: nameof( type ) );
+			}
 
-		private static Boolean IsMarkedImmutable( Type type ) => type.TypeHasAttribute<ImmutableAttribute>();
+			return type.TypeHasAttribute<ImmutableAttribute>();
+		}
 
-		private static Boolean IsWhiteListed( Type type ) {
+		private static Boolean IsWhiteListed( [NotNull] Type type ) {
+			if ( type == null ) {
+				throw new ArgumentNullException( paramName: nameof( type ) );
+			}
 
 			// Boolean, int, etc.
-			if ( type.IsPrimitive ) { return true; }
+			if ( type.IsPrimitive ) {
+				return true;
+			}
 
-			if ( type == typeof( Object ) ) { return true; }
+			if ( type == typeof( Object ) ) {
+				return true;
+			}
 
-			if ( type == typeof( String ) ) { return true; }
+			if ( type == typeof( String ) ) {
+				return true;
+			}
 
-			if ( type == typeof( Guid ) ) { return true; }
+			if ( type == typeof( Guid ) ) {
+				return true;
+			}
 
-			if ( type.IsEnum ) { return true; }
+			if ( type.IsEnum ) {
+				return true;
+			}
 
 			// override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
 			var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
 
 			return immutableAttribute.OnFaith;
 		}
+
+		public Boolean OnFaith;
 
 		// in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
 		// instead of testing explicitly.
@@ -88,29 +107,51 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
 		public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
-			if ( type is null ) { throw new ArgumentNullException( nameof( type ) ); }
+			if ( type is null ) {
+				throw new ArgumentNullException( nameof( type ) );
+			}
 
-			if ( type.BaseType is null ) { throw new ArgumentNullException( nameof( type ) ); }
+			if ( type.BaseType is null ) {
+				throw new ArgumentNullException( nameof( type ) );
+			}
 
-			if ( whiteList is null ) { throw new ArgumentNullException( nameof( whiteList ) ); }
+			if ( whiteList is null ) {
+				throw new ArgumentNullException( nameof( whiteList ) );
+			}
 
 			var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
-			if ( enumerable.Contains( type ) ) { return; }
+			if ( enumerable.Contains( type ) ) {
+				return;
+			}
 
-			if ( IsWhiteListed( type ) ) { return; }
+			if ( IsWhiteListed( type ) ) {
+				return;
+			}
 
-			try { VerifyTypeIsImmutable( type.BaseType, enumerable ); }
-			catch ( ImmutableFailureException ex ) { throw new MutableBaseException( type, ex ); }
+			try {
+				VerifyTypeIsImmutable( type.BaseType, enumerable );
+			}
+			catch ( ImmutableFailureException ex ) {
+				throw new MutableBaseException( type, ex );
+			}
 
 			foreach ( var fieldInfo in type.GetAllDeclaredInstanceFields() ) {
-				if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) { throw new WritableFieldException( fieldInfo ); }
+				if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) {
+					throw new WritableFieldException( fieldInfo );
+				}
 
 				// if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
-				if ( IsMarkedImmutable( fieldInfo.FieldType ) ) { continue; }
+				if ( IsMarkedImmutable( fieldInfo.FieldType ) ) {
+					continue;
+				}
 
-				try { VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable ); }
-				catch ( ImmutableFailureException ex ) { throw new MutableFieldException( fieldInfo, ex ); }
+				try {
+					VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable );
+				}
+				catch ( ImmutableFailureException ex ) {
+					throw new MutableFieldException( fieldInfo, ex );
+				}
 			}
 		}
 
@@ -118,63 +159,16 @@ namespace Librainian.Extensions {
 		///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
 		/// </summary>
 		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-		public static void VerifyTypesAreImmutable( IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
+		public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
+			if ( assemblies == null ) {
+				throw new ArgumentNullException( paramName: nameof( assemblies ) );
+			}
+
 			var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
 
-			foreach ( var type in typesMarkedImmutable ) { VerifyTypeIsImmutable( type, whiteList ); }
+			foreach ( var type in typesMarkedImmutable ) {
+				VerifyTypeIsImmutable( type, whiteList );
+			}
 		}
-
-		[JsonObject]
-		[Serializable]
-		private class MutableBaseException : ImmutableFailureException {
-
-			private static String FormatMessage( Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
-
-			protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
-
-			internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) { }
-
-		}
-
-		[JsonObject]
-		[Serializable]
-		private class MutableFieldException : ImmutableFailureException {
-
-			[SuppressMessage( "Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)" )]
-			private static String FormatMessage( FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
-
-			protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
-
-			internal MutableFieldException( FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) { }
-
-		}
-
-		[JsonObject]
-		[Serializable]
-		private class WritableFieldException : ImmutableFailureException {
-
-			private static String FormatMessage( FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
-
-			protected WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
-
-			internal WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) { }
-
-		}
-
-		[JsonObject]
-		[Serializable]
-		public class ImmutableFailureException : Exception {
-
-			public Type Type { get; }
-
-			protected ImmutableFailureException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
-
-			internal ImmutableFailureException( Type type, String message, Exception inner ) : base( message, inner ) => this.Type = type;
-
-			internal ImmutableFailureException( Type type, String message ) : base( message ) => this.Type = type;
-
-		}
-
 	}
-
 }

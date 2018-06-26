@@ -81,7 +81,8 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Percentage Combine( Percentage left, Percentage right ) => new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
+		[NotNull]
+		public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) => new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
 
 		//TODO BigDecimal any better here?
 		/// <summary>static comparison</summary>
@@ -98,21 +99,25 @@ namespace Librainian.Maths.Numbers {
 			return left.Quotient == right.Quotient;
 		}
 
-		public static implicit operator Double( Percentage special ) => ( Double ) special.Quotient;
+		public static implicit operator Double( [NotNull] Percentage special ) => ( Double ) special.Quotient;
 
+		[NotNull]
 		public static implicit operator Percentage( Single value ) => new Percentage( value );
 
+		[NotNull]
 		public static implicit operator Percentage( Double value ) => new Percentage( value );
 
-		public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
+		[NotNull]
+		public static Percentage operator +( [NotNull] Percentage left, [NotNull] Percentage right ) => Combine( left, right );
 
+		[NotNull]
 		public static Percentage Parse( [NotNull] String value ) {
 			if ( value is null ) { throw new ArgumentNullException( nameof( value ) ); }
 
 			return new Percentage( Double.Parse( value ) );
 		}
 
-		public static Boolean TryParse( [NotNull] String numberString, out Percentage result ) {
+		public static Boolean TryParse( [NotNull] String numberString, [NotNull] out Percentage result ) {
 			if ( numberString is null ) { throw new ArgumentNullException( nameof( numberString ) ); }
 
 			if ( !Double.TryParse( numberString, out var value ) ) { value = Double.NaN; }

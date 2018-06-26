@@ -41,6 +41,7 @@ namespace Librainian.Graphics.Geometry {
 	using System.Drawing.Drawing2D;
 	using System.Numerics;
 	using DDD;
+	using JetBrains.Annotations;
 
 	public static class Functions {
 
@@ -172,7 +173,7 @@ namespace Librainian.Graphics.Geometry {
 		/// <param name="horizontalDiameter">Horizontal diameter for the rounded angles.</param>
 		/// <param name="verticalDiameter">  Vertical diameter for the rounded angles.</param>
 		/// <param name="rectAngles">        Angles to round.</param>
-		public static void DrawAndFillRoundedRectangle( this Graphics g, Pen p, Brush b, Rectangle r, Int32 horizontalDiameter, Int32 verticalDiameter, RectAngles rectAngles ) {
+		public static void DrawAndFillRoundedRectangle( this Graphics g, [CanBeNull] Pen p, [CanBeNull] Brush b, Rectangle r, Int32 horizontalDiameter, Int32 verticalDiameter, RectAngles rectAngles ) {
 
 			// get out data
 			var x = r.X;

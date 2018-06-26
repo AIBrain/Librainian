@@ -61,7 +61,7 @@ namespace Librainian.Knowledge {
 		[JsonProperty]
 		public Int32 FilesFound;
 
-		public Int32 AddFile( Document dataFile, ProgressChangedEventHandler feedback = null ) {
+		public Int32 AddFile( [NotNull] Document dataFile, [CanBeNull] ProgressChangedEventHandler feedback = null ) {
 			if ( dataFile is null ) { throw new ArgumentNullException( nameof( dataFile ) ); }
 
 			if ( !dataFile.Extension().Like( ".knb" ) ) { return 0; }
@@ -76,7 +76,7 @@ namespace Librainian.Knowledge {
 			return 0;
 		}
 
-		public async Task ReadRandomFact( Action<String> action ) {
+		public async Task ReadRandomFact( [CanBeNull] Action<String> action ) {
 			if ( null == action ) { return; }
 
 			await Task.Run( () => {

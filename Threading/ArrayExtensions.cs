@@ -37,10 +37,11 @@
 namespace Librainian.Threading {
 
 	using System;
+	using JetBrains.Annotations;
 
 	public static class ArrayExtensions {
 
-		public static void ForEach( this Array array, Action<Array, Int32[]> action ) {
+		public static void ForEach( [NotNull] this Array array, Action<Array, Int32[]> action ) {
 			if ( array.LongLength == 0 ) { return; }
 
 			var walker = new ArrayTraverse( array );

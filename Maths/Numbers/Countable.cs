@@ -81,7 +81,7 @@ namespace Librainian.Maths.Numbers {
 
 		[CanBeNull]
 		[JsonProperty]
-		public BigInteger? this[ TKey key ] {
+		public BigInteger? this[ [NotNull] TKey key ] {
 			get {
 				if ( key == null ) { throw new ArgumentNullException( nameof( key ) ); }
 
@@ -135,14 +135,14 @@ namespace Librainian.Maths.Numbers {
 
 		private volatile Boolean _isReadOnly;
 
-		private static Byte Hash( TKey key ) {
+		private static Byte Hash( [NotNull] TKey key ) {
 			var hash = key.GetHashCodeByte();
 
 			return hash;
 		}
 
 		[NotNull]
-		private ReaderWriterLockSlim Bucket( TKey key ) {
+		private ReaderWriterLockSlim Bucket( [NotNull] TKey key ) {
 			var hash = Hash( key );
 
 			TryAgain:
@@ -156,6 +156,7 @@ namespace Librainian.Maths.Numbers {
 			goto TryAgain;
 		}
 
+		[NotNull]
 		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( selector: Hash );
 
 		public Boolean Add( IEnumerable<TKey> keys ) {

@@ -38,6 +38,7 @@ namespace Librainian.OperatingSystem.FileHistory {
 
 	using System;
 	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
 
 	public class FileHistoryFile {
 
@@ -48,6 +49,7 @@ namespace Librainian.OperatingSystem.FileHistory {
 
 		public Folder Folder => this._folder;
 
+		[NotNull]
 		public Document FullPathAndName => new Document( folder: this.Folder, filename: this.FileName );
 
 		public Boolean IsFileHistoryFile { get; }
@@ -62,7 +64,7 @@ namespace Librainian.OperatingSystem.FileHistory {
 
 		private readonly DateTime? _when;
 
-		public FileHistoryFile( Document biglongpath ) {
+		public FileHistoryFile( [NotNull] Document biglongpath ) {
 			this.OriginalPath = biglongpath;
 			this.IsFileHistoryFile = FileHistoryFileExtensions.TryParseFileHistoryFile( biglongpath, folder: out this._folder, filename: out this._filename, when: out this._when );
 		}

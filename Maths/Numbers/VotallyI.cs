@@ -74,6 +74,7 @@ namespace Librainian.Maths.Numbers {
 		/// </summary>
 		private UInt64 _votesYes;
 
+		[NotNull]
 		public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
 			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
 
@@ -129,6 +130,7 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
+		[NotNull]
 		public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
 
 		public UInt64 HalfOfVotes() => this.Votes / 2;

@@ -38,6 +38,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using Extensions;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
@@ -134,6 +135,7 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="other">An object to compare with this object.</param>
 		public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
 
+		[NotNull]
 		public String Number() => this.Value.ToString();
 
 		public override String ToString() {

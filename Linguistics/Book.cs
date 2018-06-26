@@ -94,6 +94,7 @@ namespace Librainian.Linguistics {
 			return left.SequenceEqual( rhs ); //no authors??
 		}
 
+		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;
 
 		/// <summary>
@@ -102,6 +103,7 @@ namespace Librainian.Linguistics {
 		/// <returns>A hash code for the current object.</returns>
 		public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
+		[NotNull]
 		public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
 
 		private Book() { }

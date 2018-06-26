@@ -160,6 +160,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		///     Fractions of Dollars/Pennies not accounted for. OfficeSpace, Superman III"...
 		/// </param>
 		/// <returns></returns>
+		[NotNull]
 		public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
 			var denominations = new List<IDenomination>( PossibleDenominations );
 			var optimal = denominations.ToDictionary<IDenomination, IDenomination, UInt64>( denomination => denomination, denomination => 0 );
@@ -184,6 +185,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			return optimal;
 		}
 
+		[NotNull]
 		public static IEnumerable<KeyValuePair<IDenomination, UInt64>> Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
 			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 

@@ -37,6 +37,7 @@
 namespace Librainian.Knowledge {
 
 	using System;
+	using JetBrains.Annotations;
 
 	/// <summary></summary>
 	/// <example>For example (rdf:type Morris Cat) means "Morris is a type of Cat"</example>
@@ -48,7 +49,7 @@ namespace Librainian.Knowledge {
 		/// <example>Cat. Canine. Mammal</example>
 		public String Label { get; }
 
-		public TypeOrClass( String label ) => this.Label = String.IsNullOrWhiteSpace( label ) ? Guid.NewGuid().ToString() : label;
+		public TypeOrClass( [CanBeNull] String label ) => this.Label = String.IsNullOrWhiteSpace( label ) ? Guid.NewGuid().ToString() : label;
 
 	}
 

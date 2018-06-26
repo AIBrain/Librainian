@@ -37,6 +37,7 @@
 namespace Librainian.Threading {
 
 	using System;
+	using JetBrains.Annotations;
 
 	internal class ArrayTraverse {
 
@@ -58,7 +59,7 @@ namespace Librainian.Threading {
 			return false;
 		}
 
-		public ArrayTraverse( Array array ) {
+		public ArrayTraverse( [NotNull] Array array ) {
 			this.MaxLengths = new Int32[ array.Rank ];
 
 			for ( var i = 0; i < array.Rank; ++i ) { this.MaxLengths[ i ] = array.GetLength( i ) - 1; }

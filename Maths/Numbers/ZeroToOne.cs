@@ -39,6 +39,7 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Diagnostics;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 #pragma warning disable IDE0015 // Use framework type
@@ -74,17 +75,21 @@ namespace Librainian.Maths.Numbers {
 		///     Returns a new <see cref="ZeroToOne" /> with the value of <paramref name="value1" /> moved closer to the value
 		///     of <paramref name="value2" /> .
 		/// </returns>
+		[NotNull]
 		public static ZeroToOne Combine( ZeroToOne value1, ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
 
-		public static implicit operator Double( ZeroToOne special ) => special.Value;
+		public static implicit operator Double( [NotNull] ZeroToOne special ) => special.Value;
 
-		public static implicit operator Single( ZeroToOne special ) => special.Value;
+		public static implicit operator Single( [NotNull] ZeroToOne special ) => special.Value;
 
+		[NotNull]
 		public static implicit operator ZeroToOne( Single value ) => new ZeroToOne( value );
 
+		[NotNull]
 		public static implicit operator ZeroToOne( Double value ) => new ZeroToOne( value );
 
-		public static ZeroToOne Parse( String value ) => new ZeroToOne( Single.Parse( s: value ) );
+		[NotNull]
+		public static ZeroToOne Parse( [NotNull] String value ) => new ZeroToOne( Single.Parse( s: value ) );
 
 		public override String ToString() => $"{this.Value:P}";
 

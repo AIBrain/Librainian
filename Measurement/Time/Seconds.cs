@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Seconds.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "Seconds.cs" was last formatted by Protiguous on 2018/06/04 at 4:16 PM.
 
@@ -57,6 +57,36 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
 	public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
+
+		/// <summary>
+		///     31536000
+		/// </summary>
+		public const UInt32 InOneCommonYear = 31536000;
+
+		/// <summary>
+		///     86400
+		/// </summary>
+		public const UInt32 InOneDay = 86400;
+
+		/// <summary>
+		///     3600
+		/// </summary>
+		public const UInt16 InOneHour = 3600;
+
+		/// <summary>
+		///     60
+		/// </summary>
+		public const Byte InOneMinute = 60;
+
+		/// <summary>
+		///     2635200 (30.5 days)
+		/// </summary>
+		public const UInt32 InOneMonth = 2635200;
+
+		/// <summary>
+		///     604800
+		/// </summary>
+		public const UInt32 InOneWeek = 604800;
 
 		/// <summary>
 		///     <see cref="Five" /><see cref="Seconds" />.
@@ -115,36 +145,6 @@ namespace Librainian.Measurement.Time {
 		[JsonProperty]
 		public BigRational Value { get; }
 
-		/// <summary>
-		///     31536000
-		/// </summary>
-		public const UInt32 InOneCommonYear = 31536000;
-
-		/// <summary>
-		///     86400
-		/// </summary>
-		public const UInt32 InOneDay = 86400;
-
-		/// <summary>
-		///     3600
-		/// </summary>
-		public const UInt16 InOneHour = 3600;
-
-		/// <summary>
-		///     60
-		/// </summary>
-		public const Byte InOneMinute = 60;
-
-		/// <summary>
-		///     2635200 (30.5 days)
-		/// </summary>
-		public const UInt32 InOneMonth = 2635200;
-
-		/// <summary>
-		///     604800
-		/// </summary>
-		public const UInt32 InOneWeek = 604800;
-
 		public Seconds( Decimal value ) => this.Value = value;
 
 		public Seconds( BigRational value ) => this.Value = value;
@@ -157,7 +157,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Seconds Combine( Seconds left, BigRational seconds ) => new Seconds( left.Value + seconds );
 
-		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger ) left.Value + seconds );
+		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger )left.Value + seconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -181,18 +181,19 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Minutes( Seconds seconds ) => seconds.ToMinutes();
 
-		public static implicit operator Span( Seconds seconds ) => new Span( seconds: seconds );
+		[NotNull]
+		public static implicit operator SpanOfTime( Seconds seconds ) => new SpanOfTime( seconds: seconds );
 
 		/// <summary>
 		///     Returns a <seealso cref="TimeSpan." />
 		/// </summary>
 		/// <param name="seconds"></param>
 		public static implicit operator TimeSpan( Seconds seconds ) {
-			if ( seconds.Value >= TimeSpan.MaxValue.TotalSeconds ) { return TimeSpan.MaxValue; }
+			if ( seconds.Value >= (Int64)TimeSpan.MaxValue.TotalSeconds ) { return TimeSpan.MaxValue; }
 
-			if ( seconds.Value <= TimeSpan.MinValue.TotalSeconds ) { return TimeSpan.MinValue; }
+			if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) { return TimeSpan.MinValue; }
 
-			return TimeSpan.FromSeconds( ( Double ) seconds.Value );
+			return TimeSpan.FromSeconds( ( Double )seconds.Value );
 		}
 
 		public static Seconds operator -( Seconds seconds ) => new Seconds( seconds.Value * -1 );
@@ -211,17 +212,17 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Seconds left, Seconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds ) right;
+		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds )right;
 
-		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes ) left < right;
+		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes )left < right;
 
 		public static Boolean operator ==( Seconds left, Seconds right ) => Equals( left, right );
 
-		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes ) left > right;
+		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes )left > right;
 
 		public static Boolean operator >( Seconds left, Seconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds ) right;
+		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds )right;
 
 		public Int32 CompareTo( Seconds other ) => this.Value.CompareTo( other.Value );
 
@@ -260,7 +261,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "second" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "second" )}";
 		}
@@ -270,7 +271,5 @@ namespace Librainian.Measurement.Time {
 
 		[Pure]
 		public Years ToYears() => new Years( this.Value / InOneCommonYear );
-
 	}
-
 }

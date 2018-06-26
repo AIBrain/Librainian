@@ -43,6 +43,7 @@ namespace Librainian.Database.MMF {
 	using System.Runtime.Serialization;
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Text;
+	using JetBrains.Annotations;
 	using Magic;
 
 	public class MemMapCache<T> : ABetterClassDispose {
@@ -82,6 +83,7 @@ namespace Librainian.Database.MMF {
 		public override void DisposeManaged() => this._tcpClient?.Dispose();
 
 		//32 bytes for datetime String... it's an overkill i know
+		[CanBeNull]
 		public T Get( String key ) {
 			if ( !this.IsConnected ) { return default; }
 
@@ -119,7 +121,7 @@ namespace Librainian.Database.MMF {
 		//ideal for Unit Testing of classes that depend upon this Library.
 		public void Set( String key, T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
 
-		public void Set( String key, T obj, Int64 size, DateTime expire ) {
+		public void Set( [CanBeNull] String key, T obj, Int64 size, DateTime expire ) {
 			try {
 				if ( String.IsNullOrEmpty( key ) ) { throw new Exception( "The key can't be null or empty." ); }
 

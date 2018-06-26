@@ -45,6 +45,7 @@ namespace Librainian.Graphics {
 	using ComputerSystems.FileSystem;
 	using Extensions;
 	using Imaging;
+	using JetBrains.Annotations;
 	using Moving;
 	using OperatingSystem;
 
@@ -64,6 +65,7 @@ namespace Librainian.Graphics {
 
 		}
 
+		[NotNull]
 		public static Stream EfvToStream() {
 			var ms = new MemoryStream();
 

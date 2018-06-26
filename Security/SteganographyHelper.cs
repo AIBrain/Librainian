@@ -38,10 +38,12 @@ namespace Librainian.Security {
 
 	using System;
 	using System.Drawing;
+	using JetBrains.Annotations;
 
 	public static class SteganographyHelper {
 
-		public static Bitmap EmbedText( this Bitmap bmp, String text ) {
+		[NotNull]
+		public static Bitmap EmbedText( [NotNull] this Bitmap bmp, String text ) {
 
 			// initially, we'll be hiding characters in the image
 			var state = State.Hiding;
@@ -162,7 +164,8 @@ namespace Librainian.Security {
 			return bmp;
 		}
 
-		public static String ExtractText( this Bitmap bmp ) {
+		[NotNull]
+		public static String ExtractText( [NotNull] this Bitmap bmp ) {
 			var colorUnitIndex = 0;
 			var charValue = 0;
 

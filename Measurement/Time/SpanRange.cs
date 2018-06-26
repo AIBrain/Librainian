@@ -45,20 +45,20 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Length of the range (difference between maximum and minimum values).</summary>
 		[JsonProperty]
-		public readonly Span Length;
+		public readonly SpanOfTime Length;
 
 		/// <summary>Maximum value</summary>
 		[JsonProperty]
-		public readonly Span Max;
+		public readonly SpanOfTime Max;
 
 		/// <summary>Minimum value</summary>
 		[JsonProperty]
-		public readonly Span Min;
+		public readonly SpanOfTime Min;
 
 		/// <summary>Initializes a new instance of the <see cref="SpanRange" /> class</summary>
 		/// <param name="min">Minimum value of the range</param>
 		/// <param name="max">Maximum value of the range</param>
-		public SpanRange( Span min, Span max ) {
+		public SpanRange( SpanOfTime min, SpanOfTime max ) {
 			if ( min < max ) {
 				this.Min = min;
 				this.Max = max;
@@ -84,7 +84,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns>
 		///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
 		/// </returns>
-		public Boolean IsInside( Span x ) => this.Min <= x && x <= this.Max;
+		public Boolean IsInside( SpanOfTime x ) => this.Min <= x && x <= this.Max;
 
 		/// <summary>Check if the specified range overlaps with this range</summary>
 		/// <param name="range">Range to check for overlapping</param>

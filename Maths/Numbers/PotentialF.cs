@@ -38,6 +38,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -68,9 +69,10 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private Single _value = MinValue;
 
-		public static implicit operator Single( PotentialF special ) => special.Value;
+		public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
 
-		public static PotentialF Parse( String value ) => new PotentialF( Single.Parse( value ) );
+		[NotNull]
+		public static PotentialF Parse( [NotNull] String value ) => new PotentialF( Single.Parse( value ) );
 
 		public void Add( Single amount ) => this.Value += amount;
 

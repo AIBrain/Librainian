@@ -40,6 +40,7 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -90,7 +91,7 @@ namespace Librainian.Measurement.Time {
 
 		public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
 			this.Value = planckTimesSinceBigBang;
-			var span = new Span( planckTimes: this.Value );
+			var span = new SpanOfTime( planckTimes: this.Value );
 
 			//TODO
 			this.Date = new Date( span );
@@ -112,14 +113,15 @@ namespace Librainian.Measurement.Time {
 		private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
 
 		/// <summary>
-		///     Given a <see cref="DateTime" />, calculate the <see cref="Span" />.
+		///     Given a <see cref="DateTime" />, calculate the <see cref="SpanOfTime" />.
 		/// </summary>
 		/// <param name="dateTime"></param>
 		/// <returns></returns>
-		public static Span CalcSpanSince( DateTime dateTime ) {
-			var sinceThen = new Span( dateTime - DateTime.MinValue );
+		[NotNull]
+		public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
+			var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
 			var plancksSinceThen = sinceThen.TotalPlanckTimes;
-			var span = new Span( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
+			var span = new SpanOfTime( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
 
 			return span;
 		}

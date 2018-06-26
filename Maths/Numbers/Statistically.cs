@@ -37,6 +37,7 @@
 namespace Librainian.Maths.Numbers {
 
 	using System;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -62,9 +63,10 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		public Double Ups { get; private set; }
 
-		public static Statistically Combine( Statistically value1, Statistically value2 ) => new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
+		[NotNull]
+		public static Statistically Combine( [NotNull] Statistically value1, [NotNull] Statistically value2 ) => new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
 
-		public static void Reset( Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
+		public static void Reset( [NotNull] Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
 			statistically.Ups = 0d;
 			statistically.Downs = 0d;
 			statistically.Total = 0d;
@@ -72,11 +74,12 @@ namespace Librainian.Maths.Numbers {
 			statistically.IncrementDowns( newDowns );
 		}
 
-		public void Add( Statistically other ) {
+		public void Add( [NotNull] Statistically other ) {
 			this.IncrementUps( other.Ups );
 			this.IncrementDowns( other.Downs );
 		}
 
+		[NotNull]
 		public Statistically Clone() => new Statistically( ups: this.Ups, downs: this.Downs );
 
 		public void DecrementDowns( Double byAmount = 1d ) {

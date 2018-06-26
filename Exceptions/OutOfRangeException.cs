@@ -38,6 +38,7 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using Parsing;
+	using Warnings;
 
 	/// <summary>
 	///     Use when a value is out of range. (Too low or too high)

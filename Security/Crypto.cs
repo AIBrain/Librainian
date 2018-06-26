@@ -40,6 +40,7 @@ namespace Librainian.Security {
 	using System.IO;
 	using System.Security.Cryptography;
 	using System.Text;
+	using JetBrains.Annotations;
 
 	public static class Crypto {
 
@@ -49,7 +50,8 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="cipherText">The text to decrypt.</param>
 		/// <param name="sharedSecret">A password used to generate a key for decryption.</param>
-		public static String DecryptStringAES( this String cipherText, String sharedSecret ) {
+		[NotNull]
+		public static String DecryptStringAES( [NotNull] this String cipherText, [NotNull] String sharedSecret ) {
 			if ( String.IsNullOrEmpty( cipherText ) ) { throw new ArgumentNullException( nameof( cipherText ) ); }
 
 			if ( String.IsNullOrEmpty( sharedSecret ) ) { throw new ArgumentNullException( nameof( sharedSecret ) ); }
@@ -101,7 +103,8 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="plainText">The text to encrypt.</param>
 		/// <param name="sharedSecret">A password used to generate a key for encryption.</param>
-		public static String EncryptStringAES( this String plainText, String sharedSecret ) {
+		[NotNull]
+		public static String EncryptStringAES( [NotNull] this String plainText, [NotNull] String sharedSecret ) {
 			if ( String.IsNullOrEmpty( plainText ) ) { throw new ArgumentNullException( nameof( plainText ) ); }
 
 			if ( String.IsNullOrEmpty( sharedSecret ) ) { throw new ArgumentNullException( nameof( sharedSecret ) ); }
@@ -148,7 +151,8 @@ namespace Librainian.Security {
 			return outStr;
 		}
 
-		public static Byte[] ReadByteArray( this Stream s ) {
+		[NotNull]
+		public static Byte[] ReadByteArray( [NotNull] this Stream s ) {
 			var rawLength = new Byte[ sizeof( Int32 ) ];
 
 			if ( s.Read( buffer: rawLength, offset: 0, count: rawLength.Length ) != rawLength.Length ) { throw new SystemException( "Stream did not contain properly formatted byte array" ); }

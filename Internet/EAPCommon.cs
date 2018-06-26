@@ -39,21 +39,40 @@ namespace Librainian.Internet {
 	using System;
 	using System.ComponentModel;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
-	public class EapCommon {
+	public static class EapCommon {
 
-		internal static void HandleCompletion<T>( TaskCompletionSource<T> tcs, AsyncCompletedEventArgs e, Func<T> getResult, Action unregisterHandler ) {
+		public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult, [NotNull] Action unregisterHandler ) {
+			if ( taskCompletionSource == null ) {
+				throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) );
+			}
 
-			// Transfers the results from the AsyncCompletedEventArgs and getResult() to the
-			// TaskCompletionSource, but only AsyncCompletedEventArg's UserState matches the TCS
-			// (this check is important if the same WebClient is used for multiple, asynchronous
-			// operations concurrently). Also unregisters the handler to avoid a leak.
+			if ( e == null ) {
+				throw new ArgumentNullException( paramName: nameof( e ) );
+			}
+
+			if ( getResult == null ) {
+				throw new ArgumentNullException( paramName: nameof( getResult ) );
+			}
+
+			if ( unregisterHandler == null ) {
+				throw new ArgumentNullException( paramName: nameof( unregisterHandler ) );
+			}
+
 			try {
-				if ( e.UserState != tcs ) { return; }
+				if ( e.UserState == taskCompletionSource ) {
+					if ( e.Cancelled ) {
+						taskCompletionSource.TrySetCanceled();
+					}
+					else if ( e.Error != null ) {
+						taskCompletionSource.TrySetException( e.Error );
+					}
+					else {
+						taskCompletionSource.TrySetResult( getResult() );
+					}
+				}
 
-				if ( e.Cancelled ) { tcs.TrySetCanceled(); }
-				else if ( e.Error != null ) { tcs.TrySetException( e.Error ); }
-				else { tcs.TrySetResult( getResult() ); }
 			}
 			finally { unregisterHandler(); }
 		}

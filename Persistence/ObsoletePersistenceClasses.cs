@@ -55,7 +55,7 @@ namespace Librainian.Persistence {
 		/// <param name="feedback"> </param>
 		/// <returns></returns>
 		[Obsolete]
-		public static Boolean Load<TSource>( out TSource obj, [NotNull] String fileName, ProgressChangedEventHandler feedback = null ) where TSource : class {
+		public static Boolean Load<TSource>( [CanBeNull] out TSource obj, [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
 			if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			obj = default;

@@ -39,6 +39,7 @@ namespace Librainian.AmazedSaint {
 	using System;
 	using System.Linq;
 	using System.Xml.Linq;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Extension methods for our ElasticObject. See
@@ -51,7 +52,8 @@ namespace Librainian.AmazedSaint {
 		/// </summary>
 		/// <param name="el"></param>
 		/// <returns></returns>
-		public static ElasticObject ElasticFromXElement( XElement el ) {
+		[NotNull]
+		public static ElasticObject ElasticFromXElement( [NotNull] XElement el ) {
 			var exp = new ElasticObject();
 
 			if ( !String.IsNullOrEmpty( el.Value ) ) { exp.InternalValue = el.Value; }
@@ -77,7 +79,8 @@ namespace Librainian.AmazedSaint {
 		/// </summary>
 		/// <param name="e"></param>
 		/// <returns></returns>
-		public static dynamic ToElastic( this XElement e ) => ElasticFromXElement( e );
+		[NotNull]
+		public static dynamic ToElastic( [NotNull] this XElement e ) => ElasticFromXElement( e );
 
 		/// <summary>
 		///     Converts an expando to XElement
@@ -91,7 +94,8 @@ namespace Librainian.AmazedSaint {
 		/// </summary>
 		/// <param name="elastic"></param>
 		/// <returns></returns>
-		public static XElement XElementFromElastic( ElasticObject elastic ) {
+		[NotNull]
+		public static XElement XElementFromElastic( [NotNull] ElasticObject elastic ) {
 			var exp = new XElement( elastic.InternalName );
 
 			foreach ( var a in elastic.GetAttributes().Where( a => a.Value.InternalValue != null ) ) { exp.Add( new XAttribute( a.Key, a.Value.InternalValue ) ); }

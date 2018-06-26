@@ -37,6 +37,7 @@
 namespace Librainian.Measurement.Currency {
 
 	using System;
+	using JetBrains.Annotations;
 
 	public static class AltCoinExtensions {
 
@@ -45,6 +46,7 @@ namespace Librainian.Measurement.Currency {
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static String Formatted( this Decimal amount ) => $"{amount:F8}";
 
 	}

@@ -42,6 +42,7 @@ namespace Librainian.Collections {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Magic;
 	using Measurement.Time;
 
@@ -73,7 +74,8 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns>Returns the DateTime the data was queued.</returns>
-		public QueueWaiting<T> Add( T item ) {
+		[NotNull]
+		public QueueWaiting<T> Add( [CanBeNull] T item ) {
 			if ( null != item ) {
 				this.Queue.Enqueue( item: item );
 				this.Wait.Set();
@@ -82,7 +84,8 @@ namespace Librainian.Collections {
 			return this;
 		}
 
-		public QueueWaiting<T> AddRange( IEnumerable<T> items ) {
+		[NotNull]
+		public QueueWaiting<T> AddRange( [NotNull] IEnumerable<T> items ) {
 			foreach ( var item in items ) { this.Add( item: item ); }
 
 			return this;
@@ -97,12 +100,14 @@ namespace Librainian.Collections {
 		///     Pulls out the next <see cref="T" /> in the <see cref="Queue" /> or null.
 		/// </summary>
 		/// <returns></returns>
+		[CanBeNull]
 		public T Next() => this.Queue.TryDequeue( result: out var temp ) ? temp : default;
 
 		/// <summary>
 		///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public IEnumerable<T> NextAll() => this.Queue.Select( selector: o => this.Next() ).Where( o => default( T ) != o );
 
 		/// <summary>

@@ -65,6 +65,7 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="requiredLength"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static String Generate( Int32 requiredLength ) {
 			Int32 c1;
 			Int32 c2;
@@ -131,6 +132,7 @@ namespace Librainian.Security {
 		/// <param name="minWordLength"></param>
 		/// <param name="maxWordLength"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static String GeneratePhrase( Int32 minLength, Int32 minWordLength = 3, Int32 maxWordLength = 6 ) {
 			var words = new List<String>();
 			var passwordLength = 0;

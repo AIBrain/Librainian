@@ -220,23 +220,23 @@ namespace Librainian.Measurement.Time {
 		[Test]
 		public static void TestSpanIdentity() {
 			try {
-				Span.Identity.Years.Value.Should().Be( 1 );
-				Span.Identity.Months.Value.Should().Be( 1 );
-				Span.Identity.Weeks.Value.Should().Be( 1 );
-				Span.Identity.Days.Value.Should().Be( 1 );
-				Span.Identity.Hours.Value.Should().Be( 1 );
-				Span.Identity.Minutes.Value.Should().Be( 1 );
-				Span.Identity.Seconds.Value.Should().Be( 1 );
-				Span.Identity.Milliseconds.Value.Should().Be( 1 );
-				Span.Identity.Microseconds.Value.Should().Be( 1 );
-				Span.Identity.Nanoseconds.Value.Should().Be( 1 );
-				Span.Identity.Picoseconds.Value.Should().Be( 1 );
-				Span.Identity.Attoseconds.Value.Should().Be( 1 );
-				Span.Identity.Femtoseconds.Value.Should().Be( 1 );
-				Span.Identity.Zeptoseconds.Value.Should().Be( 1 );
-				Span.Identity.Yoctoseconds.Value.Should().Be( 0 ); //BUG should be 1, not 0
+				SpanOfTime.Identity.Years.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Months.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Weeks.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Days.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Hours.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Minutes.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Seconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Milliseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Microseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Nanoseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Picoseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Attoseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Femtoseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Zeptoseconds.Value.Should().Be( 1 );
+				SpanOfTime.Identity.Yoctoseconds.Value.Should().Be( 0 ); //BUG should be 1, not 0
 
-				Span.Bytey.TotalPlanckTimes.Should().BeGreaterThan( Span.Identity.TotalPlanckTimes );
+				SpanOfTime.Bytey.TotalPlanckTimes.Should().BeGreaterThan( SpanOfTime.Identity.TotalPlanckTimes );
 			}
 			catch ( Exception exception ) { exception.More(); }
 		}

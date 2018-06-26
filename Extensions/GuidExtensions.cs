@@ -41,6 +41,7 @@ namespace Librainian.Extensions {
 	using System.Linq;
 	using System.Text.RegularExpressions;
 	using ComputerSystems.FileSystem;
+	using JetBrains.Annotations;
 	using Maths.Numbers;
 	using NUnit.Framework;
 
@@ -56,7 +57,7 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public static Guid FromPath( this DirectoryInfo path ) {
+		public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
 			var s = path.ToPaths().ToList();
 			s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
 
@@ -98,7 +99,7 @@ namespace Librainian.Extensions {
 		/// </value>
 		/// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
-		public static Boolean IsGuid( this String s ) {
+		public static Boolean IsGuid( [NotNull] this String s ) {
 			if ( s is null ) { throw new ArgumentNullException( nameof( s ) ); }
 
 			var match = InGuidFormat.Match( input: s );

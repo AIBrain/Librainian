@@ -58,7 +58,7 @@ namespace Librainian.Linguistics {
 	[Serializable]
 	public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
 
-		public Int32 CompareTo( Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
+		public Int32 CompareTo( [NotNull] Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
 		public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
@@ -81,6 +81,7 @@ namespace Librainian.Linguistics {
 
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
+		[NotNull]
 		public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
 		public override String ToString() => this.Words.ToStrings( " " );

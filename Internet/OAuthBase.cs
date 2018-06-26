@@ -42,6 +42,7 @@ namespace Librainian.Internet {
 	using System.Security.Cryptography;
 	using System.Text;
 	using System.Web;
+	using JetBrains.Annotations;
 
 	public class OAuthBase {
 
@@ -52,6 +53,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="parameters">The query string part of the Url</param>
 		/// <returns>A list of QueryParameter each containing the parameter name and value</returns>
+		[NotNull]
 		private static List<QueryParameter> GetQueryParameters( String parameters ) {
 			if ( parameters.StartsWith( "?" ) ) { parameters = parameters.Remove( 0, 1 ); }
 
@@ -81,7 +83,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="data">The data to hash</param>
 		/// <returns>a Base64 string of the hash value</returns>
-		private String ComputeHash( HashAlgorithm hashAlgorithm, String data ) {
+		[NotNull]
+		private String ComputeHash( [NotNull] HashAlgorithm hashAlgorithm, [NotNull] String data ) {
 			if ( hashAlgorithm is null ) { throw new ArgumentNullException( nameof( hashAlgorithm ) ); }
 
 			if ( String.IsNullOrEmpty( data ) ) { throw new ArgumentNullException( nameof( data ) ); }
@@ -97,7 +100,8 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="parameters">The list of parameters already sorted</param>
 		/// <returns>a string representing the normalized parameters</returns>
-		protected static String NormalizeRequestParameters( IList<QueryParameter> parameters ) {
+		[NotNull]
+		protected static String NormalizeRequestParameters( [NotNull] IList<QueryParameter> parameters ) {
 			var sb = new StringBuilder();
 
 			for ( var i = 0; i < parameters.Count; i++ ) {
@@ -117,7 +121,8 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="value">The value to Url encode</param>
 		/// <returns>Returns a Url encoded string</returns>
-		public static String UrlEncode( String value ) {
+		[NotNull]
+		public static String UrlEncode( [NotNull] String value ) {
 			var result = new StringBuilder();
 
 			foreach ( var symbol in value ) {
@@ -132,6 +137,7 @@ namespace Librainian.Internet {
 		///     Generate a nonce
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public virtual String GenerateNonce() => this.Random.Next( 123400, 9999999 ).ToString();
 
 		/// <summary>
@@ -204,8 +210,9 @@ namespace Librainian.Internet {
 		/// <param name="normalizedUrl"></param>
 		/// <param name="normalizedRequestParameters"></param>
 		/// <returns>The signature base</returns>
-		public String GenerateSignatureBase( Uri url, String consumerKey, String token, String tokenSecret, String httpMethod, String timeStamp, String nonce, String signatureType, out String normalizedUrl,
-			out String normalizedRequestParameters ) {
+		[NotNull]
+		public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, String tokenSecret, [NotNull] String httpMethod, String timeStamp, String nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl,
+			[NotNull] out String normalizedRequestParameters ) {
 			if ( token is null ) { token = String.Empty; }
 
 			if ( tokenSecret is null ) {
@@ -255,12 +262,14 @@ namespace Librainian.Internet {
 		///     a key it should be set prior to calling this method
 		/// </param>
 		/// <returns>A base64 string of the hash value</returns>
-		public String GenerateSignatureUsingHash( String signatureBase, HashAlgorithm hash ) => this.ComputeHash( hash, signatureBase );
+		[NotNull]
+		public String GenerateSignatureUsingHash( [NotNull] String signatureBase, [NotNull] HashAlgorithm hash ) => this.ComputeHash( hash, signatureBase );
 
 		/// <summary>
 		///     Generate the timestamp for the signature
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public virtual String GenerateTimeStamp() {
 
 			// Default implementation of UNIX time of the current UTC time

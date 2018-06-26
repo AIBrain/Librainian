@@ -56,7 +56,7 @@ namespace Librainian.Speech {
 			return synthesizer;
 		}, isThreadSafe: true );
 
-		public void AttachEvents( Action<EventArgs> speechFeedbackEvent = null ) {
+		public void AttachEvents( [CanBeNull] Action<EventArgs> speechFeedbackEvent = null ) {
 			try {
 				if ( null == speechFeedbackEvent ) { return; }
 
@@ -72,6 +72,7 @@ namespace Librainian.Speech {
 			catch ( Exception exception ) { exception.More(); }
 		}
 
+		[NotNull]
 		public IEnumerable<InstalledVoice> GetVoices() => this.Synthesizer.Value.GetInstalledVoices();
 
 		public Boolean IsTalking() => this.Synthesizer.Value.State == SynthesizerState.Speaking;

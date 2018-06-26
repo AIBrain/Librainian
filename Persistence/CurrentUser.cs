@@ -52,6 +52,7 @@ namespace Librainian.Persistence {
 		///     <para>Use this one for setting and getting.</para>
 		/// </summary>
 		/// <value></value>
+		[CanBeNull]
 		internal static RegistryKey Application {
 			get {
 				var name = Path.GetFileName( Process.GetCurrentProcess().ProcessName );
@@ -68,12 +69,14 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.
 		/// </summary>
+		[CanBeNull]
 		internal static RegistryKey Protiguous =>
 			Software.GetSubKeyNames().Contains( nameof( Protiguous ) ) ? Software.OpenSubKey( nameof( Protiguous ), Writeable ) : Software.CreateSubKey( nameof( Protiguous ), Writeable );
 
 		/// <summary>
 		///     The <see cref="Software" /> key under the <see cref="HKCU" /> key.
 		/// </summary>
+		[CanBeNull]
 		internal static RegistryKey Software => HKCU.GetSubKeyNames().Contains( nameof( Software ) ) ? HKCU.OpenSubKey( nameof( Software ), Writeable ) : HKCU.CreateSubKey( nameof( Software ), Writeable );
 
 		/// <summary>

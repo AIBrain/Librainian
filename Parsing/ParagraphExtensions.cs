@@ -39,11 +39,13 @@ namespace Librainian.Parsing {
 	using System;
 	using System.Linq;
 	using Collections;
+	using JetBrains.Annotations;
 	using Linguistics;
 	using Maths;
 
 	public static class ParagraphExtensions {
 
+		[NotNull]
 		public static String FakeLatinSentence( UInt16 wordCount ) {
 			var words = new Sentence( FakeLatin.Split( ' ' ).OrderBy( s => Randem.Next() ).Take( wordCount ).ToStrings( " " ) );
 			var sentence = words.ToString();

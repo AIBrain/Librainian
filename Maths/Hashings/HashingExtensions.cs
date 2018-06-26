@@ -92,7 +92,7 @@ namespace Librainian.Maths.Hashings {
 		public static Int32 CalcHash( [NotNull] this FileInfo fileInfo ) {
 			if ( fileInfo is null ) { throw new ArgumentNullException( nameof( fileInfo ) ); }
 
-			return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
+			return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
 		}
 
 		/// <summary>
@@ -107,7 +107,7 @@ namespace Librainian.Maths.Hashings {
 
 			if ( fileInfo is null ) { throw new NullReferenceException( "fileInfo" ); }
 
-			return fileInfo.AsByteArray().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
+			return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
 		}
 
 		/// <summary>
@@ -198,7 +198,7 @@ namespace Librainian.Maths.Hashings {
 			return translate64.SignedValue;
 		}
 
-		public static Byte GetHashCodeByte<TLeft>( this TLeft objectA, Byte maximum = Byte.MaxValue ) {
+		public static Byte GetHashCodeByte<TLeft>( [NotNull] this TLeft objectA, Byte maximum = Byte.MaxValue ) {
 			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
@@ -214,7 +214,7 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="objects"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Int32 GetHashCodes<T>( params T[] objects ) {
+		public static Int32 GetHashCodes<T>( [CanBeNull] params T[] objects ) {
 			unchecked {
 				if ( objects is null ) { return 0; }
 
@@ -233,7 +233,7 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="objects"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Int32 GetHashCodes( params Object[] objects ) {
+		public static Int32 GetHashCodes( [CanBeNull] params Object[] objects ) {
 			unchecked {
 				if ( objects is null ) { return 0; }
 
@@ -265,7 +265,7 @@ namespace Librainian.Maths.Hashings {
 			return bob.SignedLow;
 		}
 
-		public static UInt16 GetHashCodeUInt16<TLeft>( this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
+		public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
 			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
@@ -275,7 +275,7 @@ namespace Librainian.Maths.Hashings {
 			}
 		}
 
-		public static UInt32 GetHashCodeUInt32<TLeft>( this TLeft objectA, UInt32 maximum = UInt32.MaxValue ) {
+		public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA, UInt32 maximum = UInt32.MaxValue ) {
 			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
@@ -285,7 +285,7 @@ namespace Librainian.Maths.Hashings {
 			}
 		}
 
-		public static UInt64 GetHashCodeUInt64<TLeft>( this TLeft objectA, UInt64 maximum = UInt64.MaxValue ) {
+		public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA, UInt64 maximum = UInt64.MaxValue ) {
 			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {

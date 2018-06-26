@@ -125,11 +125,12 @@ namespace Librainian.Measurement.Time {
 		public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
 		/// <summary>
-		///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="Span" />.
+		///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.
 		/// </summary>
 		/// <param name="minutes"></param>
 		/// <returns></returns>
-		public static implicit operator Span( Minutes minutes ) => new Span( minutes );
+		[NotNull]
+		public static implicit operator SpanOfTime( Minutes minutes ) => new SpanOfTime( minutes );
 
 		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double ) minutes.Value );
 

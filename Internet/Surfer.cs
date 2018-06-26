@@ -45,6 +45,7 @@ namespace Librainian.Internet {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Magic;
 
 	public class Surfer : ABetterClassDispose {
@@ -82,7 +83,7 @@ namespace Librainian.Internet {
 
 		private Boolean _downloadInProgressStatus;
 
-		public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, String webpage ) {
+		public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, [NotNull] String webpage ) {
 
 			// ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
@@ -104,7 +105,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public Boolean Surf( String address ) {
+		public Boolean Surf( [CanBeNull] String address ) {
 			if ( String.IsNullOrWhiteSpace( address ) ) { return false; }
 
 			try {
@@ -124,7 +125,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public Boolean Surf( Uri address ) {
+		public Boolean Surf( [CanBeNull] Uri address ) {
 			if ( null == address ) { return false; }
 
 			try {
@@ -137,7 +138,7 @@ namespace Librainian.Internet {
 			finally { this.StartNextDownload(); }
 		}
 
-		internal void webclient_DownloadStringCompleted( Object sender, DownloadStringCompletedEventArgs e ) {
+		internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
 			if ( e.UserState is Uri userState ) {
 				String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).WriteLine();
 				this._pastUrls.Add( userState );
@@ -167,7 +168,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
 
-		public Surfer( Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
+		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
 			this._webclient = new WebClient { CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default ) };
 
 			if ( null != onDownloadStringCompleted ) { this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e ); }

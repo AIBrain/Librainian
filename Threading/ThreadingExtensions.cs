@@ -124,6 +124,7 @@ namespace Librainian.Threading {
 		///     remainingCallsAllowed: 2 );
 		/// </example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
+		[NotNull]
 		public static Action ActionBarrier( [CanBeNull] this Action action, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
@@ -144,6 +145,7 @@ namespace Librainian.Threading {
 		///     remainingCallsAllowed: 2 );
 		/// </example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
+		[NotNull]
 		public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
@@ -289,7 +291,7 @@ namespace Librainian.Threading {
 		public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
 			if ( null == thread ) { throw new ArgumentNullException( nameof( thread ) ); }
 
-			var stopwatch = StopWatch.StartNew();
+			var stopwatch = Stopwatch.StartNew();
 			var tenth = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
 
 			if ( tenth > Seconds.One ) { tenth = Seconds.One; }
@@ -436,7 +438,7 @@ namespace Librainian.Threading {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) { action(); }
 		}
 
-		public static void RepeatAction( this Int32 counter, Action action ) {
+		public static void RepeatAction( this Int32 counter, [CanBeNull] Action action ) {
 			if ( null == action ) { return; }
 
 			Parallel.For( 1, counter, i => action() );
@@ -451,7 +453,7 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, Action<String> output = null, String description = null, Boolean inParallel = true ) {
+		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null, Boolean inParallel = true ) {
 			if ( actions == null ) { throw new ArgumentNullException( paramName: nameof( actions ) ); }
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) { output( description ); }
@@ -477,7 +479,7 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, Action<String> output = null, String description = null, Boolean inParallel = true ) {
+		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null, Boolean inParallel = true ) {
 			if ( functions == null ) { throw new ArgumentNullException( paramName: nameof( functions ) ); }
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) { output( description ); }

@@ -39,6 +39,7 @@ namespace Librainian.Collections {
 	using System;
 	using System.Collections.Generic;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Threading;
 
@@ -69,6 +70,7 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[NotNull]
 		public ICollection<Thread> WaitingThreads {
 			get {
 				var list = new List<Thread>();
@@ -84,6 +86,7 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[CanBeNull]
 		public WaitNode Dequeue() {
 			if ( this.Head is null ) { return null; }
 
@@ -105,7 +108,7 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public Boolean IsWaiting( Thread thread ) {
+		public Boolean IsWaiting( [NotNull] Thread thread ) {
 			if ( thread is null ) { throw new ArgumentNullException( nameof( thread ) ); }
 
 			for ( var node = this.Head; node != null; node = node.NextWaitNode ) {

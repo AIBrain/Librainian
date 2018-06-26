@@ -38,6 +38,7 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Collections.Generic;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
@@ -48,7 +49,8 @@ namespace Librainian.Extensions {
 	///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
 	public static class HashSetLinqAccess {
 
-		public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
+		[NotNull]
+		public static HashSet<T> AddRange<T>( [NotNull] this HashSet<T> hashSet, [NotNull] IEnumerable<T> range ) {
 			if ( Equals( hashSet, null ) ) { throw new ArgumentNullException( nameof( hashSet ) ); }
 
 			if ( Equals( range, null ) ) { throw new ArgumentNullException( nameof( range ) ); }
@@ -58,7 +60,8 @@ namespace Librainian.Extensions {
 			return hashSet;
 		}
 
-		public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
+		[NotNull]
+		public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
 			if ( null == fromEnumerable ) { throw new ArgumentNullException( nameof( fromEnumerable ) ); }
 
 			if ( null == comparer ) { comparer = EqualityComparer<T>.Default; }

@@ -68,8 +68,9 @@ namespace Librainian.Maths {
 
 		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-		public static implicit operator Double( WeightObsolete special ) => special.Value;
+		public static implicit operator Double( [NotNull] WeightObsolete special ) => special.Value;
 
+		[NotNull]
 		public static WeightObsolete Parse( [NotNull] String value ) {
 			if ( value is null ) { throw new ArgumentNullException( nameof( value ) ); }
 

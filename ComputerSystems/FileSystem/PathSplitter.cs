@@ -66,6 +66,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		///     Returns the reconstructed path and filename.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public Document Recombined() {
 			var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
 
@@ -90,11 +91,11 @@ namespace Librainian.ComputerSystems.FileSystem {
 			this.Parts.AddRange( strings );
 		}
 
-		public PathSplitter( Document document ) : this( document.FullPathWithFileName ) {
+		public PathSplitter( [NotNull] Document document ) : this( document.FullPathWithFileName ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 		}
 
-		public PathSplitter( Folder folder ) : this( folder.FullName ) { }
+		public PathSplitter( [NotNull] Folder folder ) : this( folder.FullName ) { }
 
 	}
 

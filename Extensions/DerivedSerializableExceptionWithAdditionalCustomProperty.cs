@@ -40,6 +40,7 @@ namespace Librainian.Extensions {
 	using System.Collections.Generic;
 	using System.Runtime.Serialization;
 	using System.Security.Permissions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -58,7 +59,7 @@ namespace Librainian.Extensions {
 		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 
 		// Serialization constructor is private, as this class is sealed
-		private DerivedSerializableExceptionWithAdditionalCustomProperty( SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Username = info.GetString( "Username" );
+		private DerivedSerializableExceptionWithAdditionalCustomProperty( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Username = info.GetString( "Username" );
 
 		public DerivedSerializableExceptionWithAdditionalCustomProperty() { }
 

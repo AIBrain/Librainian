@@ -85,6 +85,8 @@ namespace Librainian.Measurement.Time {
 
 		public Months( BigInteger value ) => this.Value = value;
 
+		public Months( Byte value ) => this.Value = value;
+
 		public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
 		public static Months Combine( Months left, BigRational months ) => new Months( left.Value + months );
@@ -99,7 +101,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
-		public static implicit operator Span( Months months ) => new Span( months: months.Value );
+		[NotNull]
+		public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months.Value );
 
 		public static implicit operator Weeks( Months months ) => months.ToWeeks();
 

@@ -37,6 +37,7 @@
 namespace Librainian.Graphics {
 
 	using System;
+	using JetBrains.Annotations;
 
 	public class Matrix {
 
@@ -46,7 +47,8 @@ namespace Librainian.Graphics {
 
 		protected readonly Int32 Rows;
 
-		private static Single[ , ] Multiply( Matrix matrix1, Matrix matrix2 ) {
+		[NotNull]
+		private static Single[ , ] Multiply( [NotNull] Matrix matrix1, [NotNull] Matrix matrix2 ) {
 			var m1Cols = matrix1.Cols;
 
 			if ( m1Cols != matrix2.Rows ) { throw new ArgumentException(); }
@@ -70,7 +72,8 @@ namespace Librainian.Graphics {
 			return m3;
 		}
 
-		protected static Single[ , ] Multiply( Matrix matrix, Single scalar ) {
+		[NotNull]
+		protected static Single[ , ] Multiply( [NotNull] Matrix matrix, Single scalar ) {
 			var rows = matrix.Rows;
 			var cols = matrix.Cols;
 			var m1 = matrix.matrix;
@@ -83,9 +86,11 @@ namespace Librainian.Graphics {
 			return m2;
 		}
 
-		public static Matrix operator *( Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
+		[NotNull]
+		public static Matrix operator *( [NotNull] Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
 
-		public static Matrix operator *( Matrix m1, Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
+		[NotNull]
+		public static Matrix operator *( [NotNull] Matrix m1, [NotNull] Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
 
 		public override String ToString() {
 			var res = "";
@@ -103,7 +108,7 @@ namespace Librainian.Graphics {
 			return $"({res})";
 		}
 
-		protected Matrix( Single[ , ] matrix ) {
+		protected Matrix( [NotNull] Single[ , ] matrix ) {
 			this.matrix = matrix;
 			this.Rows = matrix.GetLength( 0 );
 			this.Cols = matrix.GetLength( 1 );

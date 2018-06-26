@@ -77,7 +77,7 @@ namespace Librainian.Extensions {
 		/// <param name="element"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String Description( this Enum element ) {
+		public static String Description( [NotNull] this Enum element ) {
 			var type = element.GetType();
 
 			var memberInfo = type.GetMember( element.ToString() );
@@ -97,6 +97,7 @@ namespace Librainian.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<T> GetAllItems<T>( this Enum value ) => from Object item in Enum.GetValues( typeof( T ) ) select ( T ) item;
 
 		/// <summary>
@@ -104,6 +105,7 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<T> GetAllItems<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
 		/// <summary>
@@ -122,6 +124,7 @@ namespace Librainian.Extensions {
 		/// }
 		/// </code>
 		/// </example>
+		[NotNull]
 		public static IEnumerable<T> GetAllSelectedItems<T>( this Enum value ) {
 			var valueAsInt = Convert.ToInt32( value, CultureInfo.InvariantCulture );
 
@@ -129,7 +132,7 @@ namespace Librainian.Extensions {
 		}
 
 		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
-		public static T GetAttribute<T>( this Enum value ) where T : Attribute {
+		public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
 			var type = value.GetType();
 			var memberInfo = type.GetMember( value.ToString() );
 			var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( T ), false );
@@ -137,6 +140,7 @@ namespace Librainian.Extensions {
 			return ( T ) attributes[ 0 ];
 		}
 
+		[NotNull]
 		public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof( T ) ).Cast<T>();
 
 	}

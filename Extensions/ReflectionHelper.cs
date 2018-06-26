@@ -48,12 +48,14 @@ namespace Librainian.Extensions {
 		///     Find all types in 'assembly' that derive from 'baseType'
 		/// </summary>
 		/// <owner>jayBaz</owner>
+		[NotNull]
 		public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( [NotNull] this Assembly assembly ) {
 			if ( assembly == null ) { throw new ArgumentNullException( paramName: nameof( assembly ) ); }
 
 			return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
 		}
 
+		[NotNull]
 		public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( [NotNull] this Type type ) {
 			if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
 
@@ -64,6 +66,7 @@ namespace Librainian.Extensions {
 		///     A typesafe wrapper for Attribute.GetCustomAttribute
 		/// </summary>
 		/// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
+		[CanBeNull]
 		public static TAttribute GetCustomAttribute<TAttribute>( [NotNull] this MemberInfo element ) where TAttribute : Attribute {
 			if ( element == null ) { throw new ArgumentNullException( paramName: nameof( element ) ); }
 
@@ -73,6 +76,7 @@ namespace Librainian.Extensions {
 		/// <summary>
 		///     All types across multiple assemblies
 		/// </summary>
+		[NotNull]
 		public static IEnumerable<Type> GetTypes( [NotNull] this IEnumerable<Assembly> assemblies ) {
 			if ( assemblies == null ) { throw new ArgumentNullException( paramName: nameof( assemblies ) ); }
 

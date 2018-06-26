@@ -60,6 +60,7 @@ namespace Librainian.Threading {
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		[NotNull]
 		public static Timer AndStart( [NotNull] this Timer timer ) {
 			if ( timer is null ) { throw new ArgumentNullException( nameof( timer ) ); }
 
@@ -73,6 +74,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="timer"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Timer AutoResetting( [NotNull] this Timer timer ) {
 			if ( timer is null ) { throw new ArgumentNullException( nameof( timer ) ); }
 
@@ -91,6 +93,7 @@ namespace Librainian.Threading {
 		/// <param name="onElapsed"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
+		[NotNull]
 		public static Timer CreateTimer( this TimeSpan interval, [CanBeNull] Action onElapsed ) {
 			if ( interval < Milliseconds.One ) { interval = Milliseconds.One; }
 
@@ -125,7 +128,7 @@ namespace Librainian.Threading {
 		///// <param name="onElapsed"></param>
 		///// <returns></returns>
 		//public static Timer Create(this TimeSpan interval, [CanBeNull] Action onElapsed) => Create( interval, onElapsed );
-		public static void DoneWith( this Timer timer ) {
+		public static void DoneWith( [CanBeNull] this Timer timer ) {
 			if ( null == timer ) { return; }
 
 			Timers.TryRemove( timer, out _ );
@@ -133,6 +136,7 @@ namespace Librainian.Threading {
 			using ( timer ) { timer.Stop(); }
 		}
 
+		[NotNull]
 		public static IEnumerable<KeyValuePair<Timer, DateTime>> GetTimers() => Timers;
 
 		/// <summary>
@@ -140,6 +144,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="timer"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Timer Once( [NotNull] this Timer timer ) {
 			if ( timer is null ) { throw new ArgumentNullException( nameof( timer ) ); }
 

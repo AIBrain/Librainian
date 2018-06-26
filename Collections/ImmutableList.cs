@@ -139,6 +139,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="value">The value to add.</param>
 		/// <returns>A modified copy of this list.</returns>
+		[NotNull]
 		public ImmutableList<T> CopyAndAdd( T value ) {
 			var newArray = new T[ this.Array.Length + 1 ];
 			this.Array.CopyTo( array: newArray, index: 0 );
@@ -151,6 +152,7 @@ namespace Librainian.Collections {
 		///     Returns a new, cleared (empty) immutable list.
 		/// </summary>
 		/// <returns>A modified copy of this list.</returns>
+		[NotNull]
 		public ImmutableList<T> CopyAndClear() => new ImmutableList<T>( arrayToCopy: new T[ 0 ] );
 
 		/// <summary>
@@ -159,6 +161,7 @@ namespace Librainian.Collections {
 		/// <param name="index">The index at which to insert an element.</param>
 		/// <param name="item"> The element to insert.</param>
 		/// <returns>An immutable copy of this modified list.</returns>
+		[NotNull]
 		public ImmutableList<T> CopyAndInsert( Int32 index, T item ) {
 			var newArray = new T[ this.Array.Length + 1 ];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
@@ -186,6 +189,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="index">The index of the element to remove.</param>
 		/// <returns>A modified copy of this list.</returns>
+		[NotNull]
 		public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
 			var newArray = new T[ this.Array.Length - 1 ];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
@@ -200,6 +204,7 @@ namespace Librainian.Collections {
 		/// <param name="index">The index whose value is to be changed.</param>
 		/// <param name="item"> The value to store at the specified index.</param>
 		/// <returns>A modified copy of this list.</returns>
+		[NotNull]
 		public ImmutableList<T> CopyAndSet( Int32 index, T item ) {
 			var newArray = new T[ this.Array.Length ];
 			this.Array.CopyTo( array: newArray, index: 0 );
@@ -228,7 +233,7 @@ namespace Librainian.Collections {
 		///     Create a new list, copying elements from the specified enumerable.
 		/// </summary>
 		/// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
-		public ImmutableList( IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
+		public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
 
 	}
 

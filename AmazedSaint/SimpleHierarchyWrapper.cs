@@ -40,6 +40,7 @@ namespace Librainian.AmazedSaint {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     A concrete hierarchy wrapper
@@ -54,35 +55,38 @@ namespace Librainian.AmazedSaint {
 
 		public Object InternalValue { get; set; }
 
-		public void AddAttribute( String key, ElasticObject value ) => this.Attributes.TryAdd( key, value );
+		public void AddAttribute( [NotNull] String key, ElasticObject value ) => this.Attributes.TryAdd( key, value );
 
-		public void AddElement( ElasticObject element ) {
+		public void AddElement( [NotNull] ElasticObject element ) {
 			if ( !this.Elements.ContainsKey( element.InternalName ) ) { this.Elements[ element.InternalName ] = new List<ElasticObject>(); }
 
 			this.Elements[ element.InternalName ].Add( element );
 		}
 
+		[CanBeNull]
 		public ElasticObject Attribute( String name ) => this.HasAttribute( name ) ? this.Attributes[ name ] : null;
 
+		[CanBeNull]
 		public ElasticObject Element( String name ) => this.GetElements().FirstOrDefault( item => item.InternalName == name );
 
 		public IEnumerable<KeyValuePair<String, ElasticObject>> GetAttributes() => this.Attributes;
 
-		public Object GetAttributeValue( String name ) => this.Attributes[ name ].InternalValue;
+		public Object GetAttributeValue( [NotNull] String name ) => this.Attributes[ name ].InternalValue;
 
+		[NotNull]
 		public IEnumerable<ElasticObject> GetElements() => this.Elements.SelectMany( list => list.Value );
 
-		public Boolean HasAttribute( String name ) => this.Attributes.ContainsKey( name );
+		public Boolean HasAttribute( [NotNull] String name ) => this.Attributes.ContainsKey( name );
 
-		public void RemoveAttribute( String key ) => this.Attributes.TryRemove( key, out _ );
+		public void RemoveAttribute( [NotNull] String key ) => this.Attributes.TryRemove( key, out _ );
 
-		public void RemoveElement( ElasticObject element ) {
+		public void RemoveElement( [NotNull] ElasticObject element ) {
 			if ( !this.Elements.ContainsKey( element.InternalName ) ) { return; }
 
 			if ( this.Elements[ element.InternalName ].Contains( element ) ) { this.Elements[ element.InternalName ].Remove( element ); }
 		}
 
-		public void SetAttributeValue( String name, Object obj ) => this.Attributes[ name ].InternalValue = obj;
+		public void SetAttributeValue( [NotNull] String name, Object obj ) => this.Attributes[ name ].InternalValue = obj;
 
 		private ConcurrentDictionary<String, ElasticObject> Attributes { get; } = new ConcurrentDictionary<String, ElasticObject>();
 

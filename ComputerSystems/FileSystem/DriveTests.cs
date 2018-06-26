@@ -50,7 +50,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 			Debug.WriteLine( alphabet );
 
 			foreach ( var letter in alphabet ) {
-				var drive = new Drive( letter );
+				var drive = new Disk( letter );
 
 				if ( drive.FreeSpace() > 0 ) { Console.WriteLine( drive + " " + drive.FreeSpace() + " " ); }
 			}

@@ -39,6 +39,7 @@ namespace Librainian.Extensions {
 	using System;
 	using System.IO;
 	using System.Reflection;
+	using JetBrains.Annotations;
 
 	public static class AssemblyInformation {
 
@@ -86,6 +87,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
+		[NotNull]
 		public static String Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
 	}

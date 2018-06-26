@@ -96,7 +96,8 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Months( Years years ) => years.ToMonths();
 
-		public static implicit operator Span( Years years ) => new Span( years: years.Value );
+		[NotNull]
+		public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years.Value );
 
 		public static Years operator -( Years days ) => new Years( days.Value * -1 );
 

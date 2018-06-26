@@ -85,6 +85,7 @@ namespace Librainian.Parsing {
 		///     Append the <paramref name="text" /> to the current sentence buffer.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public ContinuousSentence Add( [CanBeNull] String text ) {
 			if ( text is null ) { text = String.Empty; }
 
@@ -100,6 +101,7 @@ namespace Librainian.Parsing {
 			using ( this.AccessInputBuffer ) { }
 		}
 
+		[NotNull]
 		public String PeekNextChar() => new String( new[] { this.CurrentBuffer.FirstOrDefault() } );
 
 		[NotNull]
@@ -114,6 +116,7 @@ namespace Librainian.Parsing {
 			finally { this.AccessInputBuffer.ExitReadLock(); }
 		}
 
+		[NotNull]
 		public String PeekNextWord() {
 			var word = this.CurrentBuffer.FirstWord();
 

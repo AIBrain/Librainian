@@ -40,6 +40,7 @@ namespace Librainian.Magic {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Linq.Expressions;
+	using JetBrains.Annotations;
 
 	/// <typeparam name="TInstance"></typeparam>
 	/// <example>
@@ -48,7 +49,8 @@ namespace Librainian.Magic {
 	/// </example>
 	public static class Instantiator<TInstance> {
 
-		private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( params Type[] argTypes ) {
+		[NotNull]
+		private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( [NotNull] params Type[] argTypes ) {
 			Debug.Assert( argTypes != null );
 
 			var paramExpressions = new ParameterExpression[ argTypes.Length ];

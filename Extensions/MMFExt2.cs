@@ -39,10 +39,11 @@ namespace Librainian.Extensions {
 	using System;
 	using System.IO;
 	using System.IO.MemoryMappedFiles;
+	using JetBrains.Annotations;
 
 	public class MmfExt2 {
 
-		public static Boolean Resize( FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
+		public static Boolean Resize( [NotNull] FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
 			source.Refresh();
 
 			if ( !source.Exists ) { return false; }

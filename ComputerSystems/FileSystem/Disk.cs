@@ -1,21 +1,21 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Drive.cs" belongs to Rick@AIBrain.org and
+//
+// This source code contained in "Disk.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,81 +23,81 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
-// File "Drive.cs" was last formatted by Protiguous on 2018/06/04 at 3:46 PM.
+// File "Disk.cs" was last formatted by Protiguous on 2018/06/14 at 5:35 PM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Globalization;
 	using System.IO;
 	using System.Linq;
 	using Extensions;
-	using FluentAssertions;
 	using JetBrains.Annotations;
 
 	/// <summary>
-	///     A <see cref="Drive" /> contains 1 or more disks.
+	///     A Drive contains 1 or more <see cref="Disk"/>.
 	/// </summary>
 	/// <remarks>http://superuser.com/questions/341497/whats-the-difference-between-a-disk-and-a-drive</remarks>
 	[Immutable]
-	public class Drive {
+	public class Disk {
 
 		public Char DriveLetter { get; }
 
 		[NotNull]
 		public DriveInfo Info { get; }
 
+		[NotNull]
 		public String RootDirectory => this.Info.RootDirectory.Name;
 
-		public static IEnumerable<Drive> GetDrives() => DriveInfo.GetDrives().Select( drive => new Drive( drive ) );
+		public Disk( [NotNull] Document document ) : this( document.FullPathWithFileName[0] ) { }
 
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
+		public Disk( [NotNull] Folder folder ) : this( folder.FullName[0] ) { }
 
-		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 ) this.Info.AvailableFreeSpace : 0;
+		public Disk( [NotNull] String fullpath ) : this( fullpath[0] ) { }
 
-		public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
-			var root = new Folder( this.Info.RootDirectory );
+		public Disk( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
 
-			return root.BetterGetFolders( searchPattern );
-		}
-
-		public override String ToString() => this.DriveLetter.ToString();
-
-		public Drive( Document document ) : this( document.FullPathWithFileName[ 0 ] ) { }
-
-		public Drive( Folder folder ) : this( folder.FullName[ 0 ] ) { }
-
-		public Drive( String fullpath ) : this( fullpath[ 0 ] ) { }
-
-		public Drive( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
-
-		public Drive( Char driveLetter ) {
-			this.DriveLetter = Char.ToUpper( driveLetter );
-
-			this.DriveLetter.Should().BeGreaterOrEqualTo( 'A' );
-			this.DriveLetter.Should().BeLessOrEqualTo( 'Z' );
+		public Disk( Char driveLetter ) {
+			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
 
 			if ( this.DriveLetter < 'A' || this.DriveLetter > 'Z' ) {
+
+				//Do other cultures have different drive letters?
 				throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
 			}
 
 			this.Info = new DriveInfo( this.DriveLetter.ToString() );
 		}
 
-		public Drive() : this( Environment.CurrentDirectory ) { }
+		public Disk() : this( Environment.CurrentDirectory ) { }
 
+		[NotNull]
+		public static IEnumerable<Disk> GetDrives() => DriveInfo.GetDrives().Select( drive => new Disk( drive ) );
+
+		/// <summary>
+		/// </summary>
+		/// <returns></returns>
+		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
+
+		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
+
+		public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
+			var root = new Folder( this.Info.RootDirectory );
+
+			return root.GetFolders( searchPattern );
+		}
+
+		public override String ToString() => this.DriveLetter.ToString();
 	}
-
 }

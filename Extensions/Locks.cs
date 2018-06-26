@@ -38,6 +38,7 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using NUnit.Framework;
 
 	public static class Locks {
@@ -48,6 +49,7 @@ namespace Librainian.Extensions {
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+		[NotNull]
 		public static IDisposable Read( this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
 		/// <summary>
@@ -56,6 +58,7 @@ namespace Librainian.Extensions {
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+		[NotNull]
 		public static IDisposable Upgrade( this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
 		/// <summary>
@@ -64,6 +67,7 @@ namespace Librainian.Extensions {
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+		[NotNull]
 		public static IDisposable Write( this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
 
 		private sealed class ReadLockToken : IDisposable {
@@ -78,7 +82,7 @@ namespace Librainian.Extensions {
 
 			private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public ReadLockToken( ReaderWriterLockSlim slimLock ) {
+			public ReadLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
 				Assert.NotNull( slimLock );
 				Assert.False( slimLock.IsReadLockHeld );
 				Assert.False( slimLock.IsUpgradeableReadLockHeld );
@@ -101,7 +105,7 @@ namespace Librainian.Extensions {
 
 			private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public UpgradeLockToken( ReaderWriterLockSlim slimLock ) {
+			public UpgradeLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
 				this._readerWriterLockSlim = slimLock;
 				slimLock.EnterUpgradeableReadLock();
 			}
@@ -120,7 +124,7 @@ namespace Librainian.Extensions {
 
 			private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public WriteLockToken( ReaderWriterLockSlim slimLock ) {
+			public WriteLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
 				this._readerWriterLockSlim = slimLock;
 				slimLock.EnterWriteLock();
 			}
@@ -184,7 +188,7 @@ namespace Librainian.Extensions {
 				this._lockType = LockTypes.Write;
 			}
 
-			public Manager( ReaderWriterLockSlim slimLock ) {
+			public Manager( [NotNull] ReaderWriterLockSlim slimLock ) {
 				Assert.NotNull( slimLock );
 				this.SlimLock = slimLock;
 			}

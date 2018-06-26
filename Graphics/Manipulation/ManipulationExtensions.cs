@@ -53,7 +53,8 @@ namespace Librainian.Graphics.Manipulation {
 		/// <param name="rectangle"></param>
 		/// <param name="pixelateSize"></param>
 		/// <returns></returns>
-		private static Bitmap Pixelate( this Bitmap image, Rectangle rectangle, Int32 pixelateSize ) {
+		[NotNull]
+		private static Bitmap Pixelate( [NotNull] this Bitmap image, Rectangle rectangle, Int32 pixelateSize ) {
 			var pixelated = new Bitmap( image.Width, image.Height );
 
 			// make an exact copy of the bitmap provided
@@ -90,7 +91,7 @@ namespace Librainian.Graphics.Manipulation {
 		}
 
 		[CanBeNull]
-		public static Bitmap LoadAndResize( this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
+		public static Bitmap LoadAndResize( [NotNull] this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
 
 		[CanBeNull]
 		public static Bitmap LoadAndResize( Document document, Single multiplier ) {
@@ -106,7 +107,8 @@ namespace Librainian.Graphics.Manipulation {
 			catch ( OutOfMemoryException ) { return null; }
 		}
 
-		public static Bitmap MakeGrayscale( this Bitmap original ) {
+		[NotNull]
+		public static Bitmap MakeGrayscale( [NotNull] this Bitmap original ) {
 
 			//create a blank bitmap the same size as original
 			var newBitmap = new Bitmap( original.Width, original.Height );

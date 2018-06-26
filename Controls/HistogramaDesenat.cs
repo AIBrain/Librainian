@@ -42,6 +42,7 @@ namespace Librainian.Controls {
 	using System.Drawing;
 	using System.Linq;
 	using System.Windows.Forms;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Summary description for HistogramaDesenat.
@@ -178,7 +179,7 @@ namespace Librainian.Controls {
 		///     We draw the histogram on the control
 		/// </summary>
 		/// <param name="values">The values being drawn</param>
-		public void DrawHistogram( Int64[] values ) {
+		public void DrawHistogram( [NotNull] Int64[] values ) {
 			this._myValues = new Int64[values.Length];
 			values.CopyTo( this._myValues, 0 );
 

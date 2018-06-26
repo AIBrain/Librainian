@@ -192,10 +192,11 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
 
-		public static implicit operator Span( Attoseconds attoseconds ) {
+		[NotNull]
+		public static implicit operator SpanOfTime( Attoseconds attoseconds ) {
 			var plancks = attoseconds.ToPlanckTimes();
 
-			return new Span( plancks );
+			return new SpanOfTime( plancks );
 		}
 
 		public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();

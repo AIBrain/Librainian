@@ -154,7 +154,7 @@ namespace Librainian.Maths.Numbers {
 
 		public BigDecimal( UInt64 value ) : this( new BigInteger( value ), 0 ) { }
 
-		public BigDecimal( Byte[] value ) {
+		public BigDecimal( [NotNull] Byte[] value ) {
 			if ( value.Length < 5 ) { throw new ArgumentOutOfRangeException( nameof( value ), "Not enough bytes to construct the Significand" ); }
 
 			if ( !value.Length.CanAllocateMemory() ) { throw new ArgumentOutOfRangeException( nameof( value ), "'value' is too large to allocate" ); }
@@ -199,6 +199,7 @@ namespace Librainian.Maths.Numbers {
 		//        }
 		//    }
 		//}
+		[NotNull]
 		[Pure]
 		public static Byte[] DecimalToByteArray( Decimal d ) {
 			var bytes = new Byte[ 16 ];
@@ -538,6 +539,7 @@ namespace Librainian.Maths.Numbers {
 		//public static explicit operator Int32( BigDecimal value ) {
 		//    return ( Int32 )( value.Mantissa * BigInteger.Pow( 10, value.Exponent ) );
 		//}
+		[NotNull]
 		public Byte[] ToByteArray() {
 
 			var unscaledValue = this.Significand.ToByteArray();
@@ -604,6 +606,7 @@ namespace Librainian.Maths.Numbers {
 		//public String ToString( String format, IFormatProvider formatProvider ) {
 		//    throw new NotImplementedException();
 		//}
+		[NotNull]
 		public String ToStringWithE() => String.Concat( this.Mantissa.ToString(), "E", this.Exponent );
 
 		//public static explicit operator uint( BigDecimal value ) {

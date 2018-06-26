@@ -65,6 +65,7 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[NotNull]
 		public TreeNode<T> Root {
 			get {
 

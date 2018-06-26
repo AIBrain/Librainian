@@ -39,6 +39,7 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Strongly typed version of Enum with Parsing and performance improvements.
@@ -73,20 +74,24 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<T> GetAllItems() => Enum.GetValues( typeof( T ) ).Cast<T>();
 
+		[NotNull]
 		public static IEnumerable<T> GetFlags( T flagEnum ) {
 			var flagInt = Convert.ToInt32( flagEnum );
 
 			return All.Where( value => ( Convert.ToInt32( value ) & flagInt ) != 0 );
 		}
 
+		[CanBeNull]
 		public static String GetName( T value ) {
 			Names.TryGetValue( value, out var name );
 
 			return name;
 		}
 
+		[NotNull]
 		public static String[] GetNames() => Names.Values.ToArray();
 
 		public static IEnumerable<T> GetValues() => All;
@@ -97,13 +102,13 @@ namespace Librainian.Extensions {
 
 		public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
-		public static T Parse( String value ) {
+		public static T Parse( [NotNull] String value ) {
 			if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
 
 			return parsed;
 		}
 
-		public static T Parse( String value, Boolean ignoreCase ) {
+		public static T Parse( [NotNull] String value, Boolean ignoreCase ) {
 			if ( !ignoreCase ) { return Parse( value ); }
 
 			if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
@@ -111,7 +116,7 @@ namespace Librainian.Extensions {
 			return parsed;
 		}
 
-		public static T? ParseOrNull( String value ) {
+		public static T? ParseOrNull( [CanBeNull] String value ) {
 			if ( String.IsNullOrEmpty( value ) ) { return null; }
 
 			if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) { return foundValue; }
@@ -129,15 +134,15 @@ namespace Librainian.Extensions {
 			return null;
 		}
 
-		public static T SetFlags( IEnumerable<T> flags ) {
+		public static T SetFlags( [NotNull] IEnumerable<T> flags ) {
 			var combined = flags.Aggregate( default( Int32 ), ( current, flag ) => current | Convert.ToInt32( flag ) );
 
 			return Values.TryGetValue( combined, out var result ) ? result : default;
 		}
 
-		public static Boolean TryParse( String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
+		public static Boolean TryParse( [NotNull] String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
 
-		public static Boolean TryParse( String value, Boolean ignoreCase, out T returnValue ) =>
+		public static Boolean TryParse( [NotNull] String value, Boolean ignoreCase, out T returnValue ) =>
 			ignoreCase ? InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
 
 	}

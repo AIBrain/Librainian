@@ -27,12 +27,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
 //
 // ***  Project "Librainian"  ***
-// File "AssemblyInfo.cs" was last formatted by Protiguous on 2018/06/07 at 8:17 PM.
+// File "AssemblyInfo.cs" was last formatted by Protiguous on 2018/06/12 at 11:28 AM.
 
 using System.Reflection;
 using System.Resources;
@@ -66,6 +67,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2018.06.08.457" )]
-[assembly: AssemblyFileVersion( "2018.06.08.457" )]
+[assembly: AssemblyVersion( "2018.06.19.514" )]
+[assembly: AssemblyFileVersion( "2018.06.19.514" )]
 [assembly: NeutralResourcesLanguage( "en-US" )]

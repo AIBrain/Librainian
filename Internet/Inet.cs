@@ -40,10 +40,12 @@ namespace Librainian.Internet {
 	using System.IO;
 	using System.Net;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
 	public static class Inet {
 
-		private static async Task<Byte[]> GetUrlContentsAsync( String url ) {
+		[ItemNotNull]
+		private static async Task<Byte[]> GetUrlContentsAsync( [NotNull] String url ) {
 
 			// The downloaded resource ends up in the variable named content.
 			var content = new MemoryStream();

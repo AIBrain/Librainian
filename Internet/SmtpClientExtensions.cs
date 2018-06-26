@@ -40,6 +40,7 @@ namespace Librainian.Internet {
 	using System.ComponentModel;
 	using System.Net.Mail;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     <para>Extension methods for working with SmtpClient asynchronously.</para>
@@ -55,7 +56,7 @@ namespace Librainian.Internet {
 		///     be passed as the user-supplied state to the actual SmtpClient.SendAsync method.
 		/// </param>
 		/// <returns></returns>
-		private static Task SendTaskCore( SmtpClient smtpClient, Object userToken, Action<TaskCompletionSource<Object>> sendAsync ) {
+		private static Task SendTaskCore( [NotNull] SmtpClient smtpClient, Object userToken, Action<TaskCompletionSource<Object>> sendAsync ) {
 
 			// Validate we're being used with a real smtpClient. The rest of the arg validation will
 			// happen in the call to sendAsync.
@@ -65,7 +66,7 @@ namespace Librainian.Internet {
 			var tcs = new TaskCompletionSource<Object>( userToken );
 
 			// Register a handler that will transfer completion results to the TCS Task
-			void Handler( Object sender, AsyncCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => null, () => smtpClient.SendCompleted -= Handler );
+			void Handler( Object sender, AsyncCompletedEventArgs e ) => tcs.HandleCompletion( e, () => null, () => smtpClient.SendCompleted -= Handler );
 
 			smtpClient.SendCompleted += Handler;
 
@@ -86,7 +87,7 @@ namespace Librainian.Internet {
 		/// <param name="message">A MailMessage that contains the message to send.</param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A Task that represents the asynchronous send.</returns>
-		public static Task SendTask( this SmtpClient smtpClient, MailMessage message, Object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
+		public static Task SendTask( [NotNull] this SmtpClient smtpClient, MailMessage message, Object userToken ) => SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
 
 		/// <summary>Sends an e-mail message asynchronously.</summary>
 		/// <param name="smtpClient">The client.</param>
@@ -98,7 +99,7 @@ namespace Librainian.Internet {
 		/// <param name="body">A String that contains the message body.</param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A Task that represents the asynchronous send.</returns>
-		public static Task SendTask( this SmtpClient smtpClient, String from, String recipients, String subject, String body, Object userToken ) =>
+		public static Task SendTask( [NotNull] this SmtpClient smtpClient, String from, String recipients, String subject, String body, Object userToken ) =>
 			SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
 
 	}

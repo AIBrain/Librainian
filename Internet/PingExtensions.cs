@@ -1,21 +1,21 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "PingExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "PingExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:59 PM.
 
@@ -40,10 +40,11 @@ namespace Librainian.Internet {
 	using System.Net;
 	using System.Net.NetworkInformation;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     <para>Extension methods for working with Ping asynchronously.</para>
-	///     <para>Copyright (c) Microsoft Corporation. All rights reserved.</para>
+	///     <para></para>
 	/// </summary>
 	public static class PingExtensions {
 
@@ -55,7 +56,8 @@ namespace Librainian.Internet {
 		///     be passed as the user-supplied state to the actual Ping.SendAsync method.
 		/// </param>
 		/// <returns></returns>
-		private static Task<PingReply> SendTaskCore( Ping ping, Object userToken, Action<TaskCompletionSource<PingReply>> sendAsync ) {
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, Object userToken, Action<TaskCompletionSource<PingReply>> sendAsync ) {
 
 			// Validate we're being used with a real smtpClient. The rest of the arg validation will
 			// happen in the call to sendAsync.
@@ -65,7 +67,7 @@ namespace Librainian.Internet {
 			var tcs = new TaskCompletionSource<PingReply>( userToken );
 
 			// Register a handler that will transfer completion results to the TCS Task
-			void Handler( Object sender, PingCompletedEventArgs e ) => EapCommon.HandleCompletion( tcs, e, () => e.Reply, () => ping.PingCompleted -= Handler );
+			void Handler( Object sender, PingCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Reply, () => ping.PingCompleted -= Handler );
 
 			ping.PingCompleted += Handler;
 
@@ -90,7 +92,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, IPAddress address, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
 
 		/// <summary>
 		///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -103,7 +106,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, String hostNameOrAddress, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
 
 		/// <summary>
 		///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -118,7 +122,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, IPAddress address, Int32 timeout, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
 
 		/// <summary>
 		///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -135,7 +140,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, String hostNameOrAddress, Int32 timeout, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Object userToken ) => SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
 
 		/// <summary>
 		///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
@@ -154,7 +160,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, Object userToken ) =>
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, Object userToken ) =>
 			SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
 
 		/// <summary>
@@ -176,7 +183,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, Object userToken ) =>
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, Object userToken ) =>
 			SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
 
 		/// <summary>
@@ -200,7 +208,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
 			SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
 
 		/// <summary>
@@ -226,9 +235,8 @@ namespace Librainian.Internet {
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
-		public static Task<PingReply> SendTask( this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
+		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+		public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
 			SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
-
 	}
-
 }

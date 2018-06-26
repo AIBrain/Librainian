@@ -39,6 +39,7 @@ namespace Librainian.Collections {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -49,8 +50,10 @@ namespace Librainian.Collections {
 	[JsonObject]
 	public class StringVersusGuid {
 
+		[CanBeNull]
 		public IReadOnlyCollection<Guid> EachGuid => this.Guids.Keys as IReadOnlyCollection<Guid>;
 
+		[CanBeNull]
 		public IReadOnlyCollection<String> EachWord => this.Words.Keys as IReadOnlyCollection<String>;
 
 		/// <summary>
@@ -64,7 +67,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public Guid this[ String key ] {
+		public Guid this[ [CanBeNull] String key ] {
 			get {
 				if ( !String.IsNullOrEmpty( key ) ) {
 					if ( this.Words.TryGetValue( key, out var result ) ) { return result; }
@@ -109,7 +112,7 @@ namespace Librainian.Collections {
 		[JsonProperty]
 		public ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
 
-		public static void InternalTest( StringVersusGuid stringVersusGuid ) {
+		public static void InternalTest( [NotNull] StringVersusGuid stringVersusGuid ) {
 			var guid = new Guid( g: @"bddc4fac-20b9-4365-97bf-c98e84697012" );
 			stringVersusGuid[ "AIBrain" ] = guid;
 			stringVersusGuid[ guid ].Is( right: "AIBrain" ).BreakIfFalse();
@@ -125,7 +128,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="daword"></param>
 		/// <returns></returns>
-		public Boolean Contains( String daword ) {
+		public Boolean Contains( [CanBeNull] String daword ) {
 			if ( String.IsNullOrEmpty( daword ) ) { return false; }
 
 			return this.Words.TryGetValue( daword, out _ );

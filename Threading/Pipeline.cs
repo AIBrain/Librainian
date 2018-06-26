@@ -49,6 +49,7 @@ namespace Librainian.Threading {
 
         public Pipeline( [NotNull] Func<TInput, TOutput> function ) => this._pipelineFunction = function ?? throw new ArgumentNullException( nameof( function ) );
 
+        [NotNull]
         public Pipeline<TInput, TNewOutput> AddFunction<TNewOutput>( [NotNull] Func<TOutput, TNewOutput> newfunction ) {
 
             // create a composite function
@@ -70,6 +71,7 @@ namespace Librainian.Threading {
 
         public override void DisposeManaged() => this._valueQueue.Dispose();
 
+        [NotNull]
         public Task StartProcessing() {
 
             // initialize the collection

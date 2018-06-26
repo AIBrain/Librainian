@@ -37,6 +37,7 @@
 namespace Librainian.Maths {
 
 	using System;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     128 bit output, 64 bit platform version
@@ -95,7 +96,7 @@ namespace Librainian.Maths {
 			this._h2 = this._h2 * 5 + 0x38495ab5;
 		}
 
-		private void ProcessBytes( Byte[] bb ) {
+		private void ProcessBytes( [NotNull] Byte[] bb ) {
 			this._h1 = this._seed;
 			this._length = 0L;
 
@@ -120,7 +121,7 @@ namespace Librainian.Maths {
 			if ( remaining > 0 ) { this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos ); }
 		}
 
-		private void ProcessBytesRemaining( Byte[] bb, UInt64 remaining, Int32 pos ) {
+		private void ProcessBytesRemaining( [NotNull] Byte[] bb, UInt64 remaining, Int32 pos ) {
 			UInt64 k1 = 0;
 			UInt64 k2 = 0;
 			this._length += remaining;
@@ -183,12 +184,13 @@ namespace Librainian.Maths {
 			this._h2 ^= MixKey2( k2: k2 );
 		}
 
-		public Byte[] ComputeHash( Byte[] bb ) {
+		public Byte[] ComputeHash( [NotNull] Byte[] bb ) {
 			this.ProcessBytes( bb: bb );
 
 			return this.GetHash();
 		}
 
+		[NotNull]
 		public Byte[] GetHash() {
 			this._h1 ^= this._length;
 			this._h2 ^= this._length;

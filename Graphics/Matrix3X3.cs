@@ -37,6 +37,7 @@
 namespace Librainian.Graphics {
 
 	using System;
+	using JetBrains.Annotations;
 	using Maths;
 
 	/// <summary>
@@ -217,6 +218,7 @@ namespace Librainian.Graphics {
 		///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
 		/// </summary>
 		/// <returns>The inverse</returns>
+		[NotNull]
 		public Matrix3X3 Inverse() {
 
 			// Taken from http://everything2.com/index.pl?node_id=1271704
@@ -301,7 +303,7 @@ namespace Librainian.Graphics {
 		///     Multiplies the current matrix by the 3x3 matrix passed in
 		/// </summary>
 		/// <param name="rhs"></param>
-		public void Multiply( Matrix3X3 rhs ) {
+		public void Multiply( [NotNull] Matrix3X3 rhs ) {
 
 			// Get coeffs
 			var a = this._coeffs[ _M11 ];
@@ -384,7 +386,7 @@ namespace Librainian.Graphics {
 		///     The coefficients to initialise. The number of elements of the array should be equal to 9,
 		///     else an exception will be thrown
 		/// </param>
-		public Matrix3X3( Double[] coefficients ) {
+		public Matrix3X3( [NotNull] Double[] coefficients ) {
 			if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
 
 			this._coeffs = coefficients;

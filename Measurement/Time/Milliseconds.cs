@@ -38,9 +38,9 @@ namespace Librainian.Measurement.Time {
 
 	using System;
 	using System.Diagnostics;
-	using System.Diagnostics.Contracts;
 	using System.Numerics;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Numerics;
@@ -181,7 +181,8 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Seconds( Milliseconds milliseconds ) => milliseconds.ToSeconds();
 
-		public static implicit operator Span( Milliseconds milliseconds ) => new Span( milliseconds: milliseconds );
+		[NotNull]
+		public static implicit operator SpanOfTime( Milliseconds milliseconds ) => new SpanOfTime( milliseconds: milliseconds );
 
 		public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( ( Double ) milliseconds.Value );
 
@@ -223,13 +224,13 @@ namespace Librainian.Measurement.Time {
 
 		public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMillisecond * this.Value );
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
 
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public override String ToString() {
 			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
 				var whole = this.Value.GetWholePart();

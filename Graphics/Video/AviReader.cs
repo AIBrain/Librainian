@@ -40,6 +40,7 @@ namespace Librainian.Graphics.Video {
 	using System.Drawing;
 	using System.IO;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 	using Magic;
 	using OperatingSystem;
 
@@ -99,7 +100,7 @@ namespace Librainian.Graphics.Video {
 		/// </summary>
 		/// <param name="position">   Position of the frame</param>
 		/// <param name="dstFileName">Name ofthe file to store the bitmap</param>
-		public void ExportBitmap( Int32 position, String dstFileName ) {
+		public void ExportBitmap( Int32 position, [NotNull] String dstFileName ) {
 			if ( position > this.CountFrames ) { throw new Exception( "Invalid frame position" ); }
 
 			//Decompress the frame and return a pointer to the DIB

@@ -42,6 +42,7 @@ namespace Librainian.Internet {
 	using System.Linq;
 	using System.Runtime.InteropServices;
 	using System.Windows.Forms;
+	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>
@@ -85,6 +86,7 @@ namespace Librainian.Internet {
 		/// <returns>
 		///     Arraylist that represents all the SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's in the Domain
 		/// </returns>
+		[NotNull]
 		public static IEnumerable<NativeMethods.ServerInfo101> GetNetworkComputers() {
 
 			//local fields
@@ -158,12 +160,14 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <example>Debug.WriteLine( entry.Name );</example>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<DirectoryEntry> GetServerList() {
 			var root = new DirectoryEntry( "WinNT:" );
 
 			return ( from DirectoryEntry entries in root.Children from DirectoryEntry entry in entries.Children select entry ).Where( entry => !entry.Name.Equals( "Schema", StringComparison.Ordinal ) );
 		}
 
+		[NotNull]
 		public static IEnumerable<NativeMethods.ServerInfo101> GetServerListAlt( NativeMethods.Sv101Types serverType ) {
 			Int32 entriesread = 0, totalentries = 0;
 			var alServers = new List<NativeMethods.ServerInfo101>();

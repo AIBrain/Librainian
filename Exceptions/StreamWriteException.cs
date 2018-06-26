@@ -43,7 +43,7 @@ namespace Librainian.Exceptions {
 
 		public StreamWriteException( String message ) : base( message ) { }
 
-		public StreamWriteException( String message, Exception inner ) : base( message, inner ) { }
+		public StreamWriteException( String message, Exception innerException ) : base( message, innerException ) { }
 
 	}
 

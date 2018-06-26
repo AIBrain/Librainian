@@ -111,7 +111,8 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
-		public static implicit operator Span( Weeks weeks ) => new Span( weeks: weeks.Value );
+		[NotNull]
+		public static implicit operator SpanOfTime( Weeks weeks ) => new SpanOfTime( weeks: weeks.Value );
 
 		public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
 

@@ -38,6 +38,7 @@ namespace Librainian.Collections {
 
 	using System;
 	using System.Collections.Generic;
+	using JetBrains.Annotations;
 
 	[Experimental( "untested" )]
 	public struct EnumerableToArrayBuffer<T> {
@@ -50,7 +51,7 @@ namespace Librainian.Collections {
 
 		internal Int32 Count => this.Collection?.Count ?? this._count;
 
-		internal EnumerableToArrayBuffer( IEnumerable<T> source ) {
+		internal EnumerableToArrayBuffer( [NotNull] IEnumerable<T> source ) {
 			T[] array = null;
 			var length = 0;
 			this.Collection = source as ICollection<T>;
@@ -86,6 +87,7 @@ namespace Librainian.Collections {
 			else if ( this._count > 0 ) { Buffer.BlockCopy( this.Items, 0, items, index, this._count ); }
 		}
 
+		[NotNull]
 		internal T[] ToArray() {
 			var count = this.Count;
 

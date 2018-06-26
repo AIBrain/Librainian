@@ -41,6 +41,7 @@ namespace Librainian.Extensions {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
+	using JetBrains.Annotations;
 	using Microsoft.CSharp;
 
 	/// <summary>
@@ -48,7 +49,8 @@ namespace Librainian.Extensions {
 	/// </summary>
 	public static class EvalProvider {
 
-		private static String GetUsing( IEnumerable<String> usingStatements ) {
+		[NotNull]
+		private static String GetUsing( [NotNull] IEnumerable<String> usingStatements ) {
 			var result = new StringBuilder();
 
 			foreach ( var usingStatement in usingStatements ) { result.AppendLine( $"using {usingStatement};" ); }
@@ -67,7 +69,8 @@ namespace Librainian.Extensions {
 		/// <param name="usingStatements"></param>
 		/// <param name="assemblies">     </param>
 		/// <returns></returns>
-		public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, String[] usingStatements = null, String[] assemblies = null ) {
+		[NotNull]
+		public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, [CanBeNull] String[] usingStatements = null, [CanBeNull] String[] assemblies = null ) {
 			var returnType = typeof( TResult );
 			var inputType = typeof( T );
 

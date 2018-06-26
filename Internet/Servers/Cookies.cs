@@ -40,6 +40,7 @@ namespace Librainian.Internet.Servers {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Web;
+	using JetBrains.Annotations;
 
 	public class Cookies {
 
@@ -52,6 +53,7 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
 		/// <returns></returns>
+		[NotNull]
 		public static Cookies FromString( String str ) {
 			var cookies = new Cookies();
 
@@ -97,7 +99,8 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="name">The name of the cookie.</param>
 		/// <returns></returns>
-		public Cookie Get( String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
+		[CanBeNull]
+		public Cookie Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
 		/// <summary>
 		///     Gets the value of the cookie with the specified name. If the cookie is not found, an
@@ -105,7 +108,7 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="name">The name of the cookie.</param>
 		/// <returns></returns>
-		public String GetValue( String name ) {
+		public String GetValue( [NotNull] String name ) {
 			var cookie = this.Get( name );
 
 			if ( cookie is null ) { return ""; }

@@ -27,7 +27,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;_DEEPDEBUG_</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;_DEEPDEBUG_</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
@@ -41,6 +41,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <NoWarn>IDE0015,IDE0044</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>embedded</DebugType>
@@ -123,8 +124,12 @@
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory">
+      <HintPath>C:\Users\Rick\.nuget\packages\system.memory\4.5.0\ref\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -151,12 +156,15 @@
     <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
     <Compile Include="AmazedSaint\NodeType.cs" />
     <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
+    <Compile Include="Collections\ConcurrentHashset.cs" />
     <Compile Include="Collections\ConcurrentListTests.cs" />
     <Compile Include="Collections\ExperimentalAttribute.cs" />
     <Compile Include="Collections\Positionial.cs" />
     <Compile Include="Collections\PriorityQueue.cs" />
     <Compile Include="Collections\PriorityTime.cs" />
     <Compile Include="Collections\StringTable.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Unique.cs" />
+    <Compile Include="ComputerSystems\FileSystem\UniqueExtensions.cs" />
     <Compile Include="ComputerSystems\FileSystem\Win32DiskPartition.cs" />
     <Compile Include="ComputerSystems\Memory.cs" />
     <Compile Include="Controls\CheckboxWithToolTip.cs">
@@ -195,19 +203,21 @@
     <Compile Include="Database\OleText.cs" />
     <Compile Include="Database\ReflectionPopulator.cs" />
     <Compile Include="Database\GenericPopulator.cs" />
+    <Compile Include="Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Exceptions\InvalidParameterException.cs" />
     <Compile Include="Exceptions\StreamException.cs" />
     <Compile Include="Exceptions\StreamReadException.cs" />
     <Compile Include="Exceptions\StreamWriteException.cs" />
     <Compile Include="Exceptions\UnknownException.cs" />
     <Compile Include="Exceptions\ValueTooHighException.cs" />
-    <Compile Include="Exceptions\NotAllowed.cs" />
+    <Compile Include="Exceptions\Warnings\NotAllowed.cs" />
     <Compile Include="Exceptions\NotEnoughMemoryException.cs" />
     <Compile Include="Exceptions\OutOfRangeException.cs" />
     <Compile Include="Exceptions\ValueTooLowException.cs" />
-    <Compile Include="Exceptions\Warning.cs" />
+    <Compile Include="Exceptions\Warnings\Warning.cs" />
     <Compile Include="Extensions\AssemblyInformation.cs" />
     <Compile Include="Extensions\CommonExtensions.cs" />
+    <Compile Include="Exceptions\ImmutableFailureException.cs" />
     <Compile Include="Extensions\MarshalCache.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\EvalProvider.cs" />
@@ -223,11 +233,14 @@
     <Compile Include="ComputerSystems\Devices\DeviceCapabilities.cs" />
     <Compile Include="ComputerSystems\Devices\DeviceClass.cs" />
     <Compile Include="ComputerSystems\Devices\DiskDeviceClass.cs" />
-    <Compile Include="ComputerSystems\FileSystem\Physical\Volume.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Volume.cs" />
     <Compile Include="ComputerSystems\Devices\VolumeDeviceClass.cs" />
     <Compile Include="ComputerSystems\FileSystem\ResultCode.cs" />
     <Compile Include="ComputerSystems\FileSystem\NetworkConnection.cs" />
     <Compile Include="ComputerSystems\FileSystem\Partitions.cs" />
+    <Compile Include="Exceptions\MutableBaseException.cs" />
+    <Compile Include="Exceptions\WritableFieldException.cs" />
+    <Compile Include="Extensions\MutableFieldException.cs" />
     <Compile Include="Financial\Containers\Wallets\CashDrawer.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingItem.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingCart.cs" />
@@ -245,6 +258,7 @@
     <Compile Include="Financial\Currency\Coins\Penny.cs" />
     <Compile Include="Financial\Currency\Coins\Quarter.cs" />
     <Compile Include="Financial\Store.cs" />
+    <Compile Include="Misc\Go.cs" />
     <Compile Include="Graphics\Imaging\FasterBitmap.cs" />
     <Compile Include="Graphics\Imaging\ImagingExtensions.cs" />
     <Compile Include="Graphics\Imaging\PropertyItem.cs" />
@@ -278,7 +292,6 @@
     <Compile Include="Measurement\Time\Duration.cs" />
     <Compile Include="Measurement\Time\PlanckExtensions.cs" />
     <Compile Include="Misc\PlaySound.cs" />
-    <Compile Include="Misc\Applications\Class1.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
     <Compile Include="OperatingSystem\OSExtensions.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
@@ -286,6 +299,8 @@
     <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
+    <Compile Include="Parsing\TrimmedString.cs" />
+    <Compile Include="Persistence\Cache.cs" />
     <Compile Include="Persistence\CurrentUser.cs" />
     <Compile Include="Persistence\D.cs" />
     <Compile Include="Persistence\I.cs" />
@@ -296,6 +311,7 @@
     <Compile Include="Persistence\DocumentInfo.cs" />
     <Compile Include="Persistence\Alpha.cs" />
     <Compile Include="Persistence\Section.cs" />
+    <Compile Include="Persistence\StringKVPTable.cs" />
     <Compile Include="Security\AES.cs" />
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
@@ -349,7 +365,7 @@
     <Compile Include="ComputerSystems\FileSystem\DefragExtensions.cs" />
     <Compile Include="ComputerSystems\FileSystem\DocumentExtensions.cs" />
     <Compile Include="OperatingSystem\Storage\PhysicalDisk.cs" />
-    <Compile Include="ComputerSystems\FileSystem\Drive.cs" />
+    <Compile Include="ComputerSystems\FileSystem\Disk.cs" />
     <Compile Include="ComputerSystems\FileSystem\DriveExtensions.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFile.cs" />
     <Compile Include="OperatingSystem\FileHistory\FileHistoryFileExtensions.cs" />
@@ -711,7 +727,7 @@
     <Compile Include="Measurement\Time\Milliseconds.cs" />
     <Compile Include="Measurement\Time\Minutes.cs" />
     <Compile Include="Measurement\Time\Seconds.cs" />
-    <Compile Include="Measurement\Time\Span.cs" />
+    <Compile Include="Measurement\Time\SpanOfTime.cs" />
     <Compile Include="Misc\Bitten.cs" />
     <Compile Include="Extensions\CodeEngine.cs" />
     <Compile Include="Parsing\ClosedMatchContext.cs" />
@@ -857,7 +873,7 @@
       <Version>11.1.0</Version>
     </PackageReference>
     <PackageReference Include="LanguageExt.Core">
-      <Version>3.0.8</Version>
+      <Version>3.0.13</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster">
       <Version>1.0.0</Version>
@@ -974,7 +990,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

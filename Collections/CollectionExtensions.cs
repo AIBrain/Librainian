@@ -51,12 +51,11 @@ namespace Librainian.Collections {
 	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Maths;
-	using Measurement.Time;
 	using Threading;
 
 	public static class CollectionExtensions {
 
-		public static void Add<T>( this IProducerConsumerCollection<T> collection, T item ) {
+		public static void Add<T>( [NotNull] this IProducerConsumerCollection<T> collection, T item ) {
 			if ( null == collection ) { throw new ArgumentNullException( nameof( collection ) ); }
 
 			collection.TryAdd( item: item );
@@ -75,7 +74,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="self">The extended <see cref="IEnumerable{T}" />.</param>
 		/// <returns>True if the sequence contains duplicate elements, false if not.</returns>
-		public static Boolean AnyDuplicates<T>( this IEnumerable<T> self ) {
+		public static Boolean AnyDuplicates<T>( [NotNull] this IEnumerable<T> self ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "AnyDuplicates<T> called on a null IEnumerable<T>." ); }
 
 			return AnyRelationship( self: self, relationshipFunc: ( arg1, arg2 ) => arg1.Equals( arg2 ) );
@@ -87,7 +86,7 @@ namespace Librainian.Collections {
 		/// <param name="self">            The extended <see cref="IEnumerable{T}" />.</param>
 		/// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
 		/// <returns>True if the relationship exists between any two elements, false if not.</returns>
-		public static Boolean AnyRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
+		public static Boolean AnyRelationship<T>( [NotNull] this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "AnyRelationship called on a null IEnumerable<T>." ); }
 
 			var enumerable = self as T[] ?? self.ToArray();
@@ -111,7 +110,7 @@ namespace Librainian.Collections {
 		///     is greater than the size of the source sequence, or less than <paramref name="minInstances" /> elements are found
 		///     to match the <paramref name="predicate" />, it will return false.
 		/// </returns>
-		public static Boolean AtLeast<T>( this IEnumerable<T> self, UInt64 minInstances, Func<T, Boolean> predicate ) {
+		public static Boolean AtLeast<T>( [NotNull] this IEnumerable<T> self, UInt64 minInstances, [NotNull] Func<T, Boolean> predicate ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "AtLeast called on a null IEnumerable<>." ); }
 
 			if ( predicate is null ) { throw new ArgumentNullException( nameof( predicate ) ); }
@@ -136,7 +135,7 @@ namespace Librainian.Collections {
 		///     of the source sequence, or less than <paramref name="maxInstances" /> elements are found to match the
 		///     <paramref name="predicate" />, it will return true.
 		/// </returns>
-		public static Boolean AtMost<T>( this IEnumerable<T> self, UInt64 maxInstances, Func<T, Boolean> predicate ) {
+		public static Boolean AtMost<T>( [NotNull] this IEnumerable<T> self, UInt64 maxInstances, [NotNull] Func<T, Boolean> predicate ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "AtMost called on a null IEnumerable<>." ); }
 
 			if ( predicate is null ) { throw new ArgumentNullException( nameof( predicate ) ); }
@@ -155,7 +154,7 @@ namespace Librainian.Collections {
 		}
 
 		[CanBeNull]
-		public static Byte[] Clone( this Byte[] bytes ) {
+		public static Byte[] Clone( [CanBeNull] this Byte[] bytes ) {
 			if ( bytes is null ) { return null; }
 
 			var copy = new Byte[bytes.Length];
@@ -164,6 +163,7 @@ namespace Librainian.Collections {
 			return copy;
 		}
 
+		[NotNull]
 		public static Byte[] ClonePortion( [NotNull] this Byte[] bytes, Int32 offset, Int32 length ) {
 			if ( bytes is null ) { throw new ArgumentNullException( nameof( bytes ) ); }
 
@@ -183,7 +183,8 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="arrays"></param>
 		/// <returns></returns>
-		public static Byte[] Concat( params Byte[][] arrays ) {
+		[NotNull]
+		public static Byte[] Concat( [NotNull] params Byte[][] arrays ) {
 			Int64 totalLength = arrays.Where( data => data != null ).Sum( Buffer.ByteLength );
 
 			if ( totalLength > Int32.MaxValue ) { throw new OutOfRangeException( $"The total size of the arrays ({totalLength:N0}) is too large." ); }
@@ -239,7 +240,8 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="self">The extended IEnumerable{T}.</param>
 		/// <returns>A dictionary of elements mapped to the number of times they appeared in <paramref name="self" />.</returns>
-		public static IDictionary<T, Int32> CountInstances<T>( this IEnumerable<T> self ) {
+		[NotNull]
+		public static IDictionary<T, Int32> CountInstances<T>( [NotNull] this IEnumerable<T> self ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "CountInstances called on a null IEnumerable<T>." ); }
 
 			IDictionary<T, Int32> result = new Dictionary<T, Int32>();
@@ -259,7 +261,7 @@ namespace Librainian.Collections {
 		/// <param name="self">            The extended IEnumerable{T}.</param>
 		/// <param name="relationshipFunc">The function that determines whether the given relationship exists between two elements.</param>
 		/// <returns>The number of pairs found.</returns>
-		public static Int32 CountRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
+		public static Int32 CountRelationship<T>( [NotNull] this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "CountRelationship called on a null IEnumerable<T>." ); }
 
 			var enumerable = self as T[] ?? self.ToArray();
@@ -272,7 +274,8 @@ namespace Librainian.Collections {
 		///     Returns duplicate items found in the <see cref="sequence" /> .
 		/// </summary>
 		/// <param name="sequence">todo: describe sequence parameter on Duplicates</param>
-		public static HashSet<T> Duplicates<T>( this IEnumerable<T> sequence ) {
+		[NotNull]
+		public static HashSet<T> Duplicates<T>( [NotNull] this IEnumerable<T> sequence ) {
 			if ( null == sequence ) { throw new ArgumentNullException( nameof( sequence ) ); }
 
 			var set = new HashSet<T>();
@@ -282,13 +285,14 @@ namespace Librainian.Collections {
 
 		public static IEnumerable<T> Empty<T>() { yield break; }
 
+		[NotNull]
 		public static IEnumerable<T> EnumerableFromArray<T>( [NotNull] IEnumerable<T> array ) {
 			if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
 			return array;
 		}
 
-		public static Boolean EqualLists<T>( this List<T> left, [NotNull] List<T> right ) {
+		public static Boolean EqualLists<T>( [NotNull] this List<T> left, [NotNull] List<T> right ) {
 			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
 
 			if ( right is null ) { throw new ArgumentNullException( nameof( right ) ); }
@@ -327,7 +331,7 @@ namespace Librainian.Collections {
 		///     A tuple of the first two elements that match the given relationship, or <c>null</c> if no such relationship
 		///     exists.
 		/// </returns>
-		public static KeyValuePair<T, T>? FirstRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
+		public static KeyValuePair<T, T>? FirstRelationship<T>( [NotNull] this IEnumerable<T> self, [NotNull] Func<T, T, Boolean> relationshipFunc ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "FirstRelationship called on a null IEnumerable<T>." ); }
 
 			if ( relationshipFunc is null ) { throw new ArgumentNullException( nameof( relationshipFunc ) ); }
@@ -353,7 +357,7 @@ namespace Librainian.Collections {
 			collection.Capacity = collection.Count;
 		}
 
-		public static void ForEach<T>( this IEnumerable<T> items, Action<T> action ) {
+		public static void ForEach<T>( [NotNull] this IEnumerable<T> items, [NotNull] Action<T> action ) {
 			if ( null == items ) { throw new ArgumentNullException( nameof( items ) ); }
 
 			if ( null == action ) { throw new ArgumentNullException( nameof( action ) ); }
@@ -375,7 +379,7 @@ namespace Librainian.Collections {
 		/// <param name="generator"></param>
 		/// <param name="added">    </param>
 		/// <returns></returns>
-		public static TValue GetOrAdd<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dict, TKey key, [NotNull] Func<TKey, TValue> generator, out Boolean added ) {
+		public static TValue GetOrAdd<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dict, [NotNull] TKey key, [NotNull] Func<TKey, TValue> generator, out Boolean added ) {
 			if ( generator is null ) { throw new ArgumentNullException( nameof( generator ) ); }
 
 			while ( true ) {
@@ -415,7 +419,7 @@ namespace Librainian.Collections {
 			return items.Contains( value );
 		}
 
-		public static Int32 IndexOf<T>( this T[] self, T item ) => Array.IndexOf( array: self, item );
+		public static Int32 IndexOf<T>( [NotNull] this T[] self, T item ) => Array.IndexOf( array: self, item );
 
 		/// <summary>
 		/// </summary>
@@ -515,9 +519,9 @@ namespace Librainian.Collections {
 		/// <typeparam name="T">The type of objects to enumerate.</typeparam>
 		/// <param name="source">The IEnumerable to check if empty.</param>
 		/// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
-		public static Boolean IsEmpty<T>( this IEnumerable<T> source ) => source?.Any() != true;
+		public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
-		public static UInt64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
+		public static UInt64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
 
 		/// <summary>
 		/// </summary>
@@ -530,12 +534,14 @@ namespace Librainian.Collections {
 			return current.Next ?? current.List.First;
 		}
 
-		public static IEnumerable<T> OrderBy<T>( this IEnumerable<T> list, IEnumerable<T> guide ) {
+		[NotNull]
+		public static IEnumerable<T> OrderBy<T>( [NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> guide ) {
 			var toBeSorted = new HashSet<T>( collection: list );
 
 			return guide.Where( member => toBeSorted.Contains( item: member ) );
 		}
 
+		[ItemNotNull]
 		public static IEnumerable<IEnumerable<T>> Partition<T>( [NotNull] this IEnumerable<T> source, Int32 size ) {
 			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
@@ -570,7 +576,7 @@ namespace Librainian.Collections {
 		/// <param name="self"></param>
 		/// <param name="key"> </param>
 		/// <returns></returns>
-		public static TValue Pop<TKey, TValue>( this IDictionary<TKey, TValue> self, TKey key ) {
+		public static TValue Pop<TKey, TValue>( [NotNull] this IDictionary<TKey, TValue> self, [NotNull] TKey key ) {
 			var result = self[key];
 			self.Remove( key );
 
@@ -583,7 +589,7 @@ namespace Librainian.Collections {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static T PopFirst<T>( this ICollection<T> self ) {
+		public static T PopFirst<T>( [NotNull] this ICollection<T> self ) {
 			var result = self.First();
 			self.Remove( item: result );
 
@@ -596,7 +602,7 @@ namespace Librainian.Collections {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static T PopLast<T>( this ICollection<T> self ) {
+		public static T PopLast<T>( [NotNull] this ICollection<T> self ) {
 			var result = self.Last();
 			self.Remove( item: result );
 
@@ -642,6 +648,7 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[CanBeNull]
 		public static T Remove<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
 			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
@@ -662,7 +669,8 @@ namespace Librainian.Collections {
 		/// <param name="collection">  </param>
 		/// <param name="specificItem"></param>
 		/// <returns></returns>
-		public static T Remove<T>( this IProducerConsumerCollection<T> collection, T specificItem ) {
+		[CanBeNull]
+		public static T Remove<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] T specificItem ) {
 			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
 			if ( Equals( specificItem, null ) ) { throw new ArgumentNullException( nameof( specificItem ) ); }
@@ -778,7 +786,7 @@ namespace Librainian.Collections {
 		/// <param name="forHowLong">      </param>
 		/// <param name="orUntilCancelled"></param>
 		/// <example>Deck.Shuffle( 7 );</example>
-		public static void Shuffle<T>( [NotNull] this List<T> list, Int32 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
+		public static void Shuffle<T>( [NotNull] this List<T> list, Int32 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null ) {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			try {
@@ -869,10 +877,10 @@ namespace Librainian.Collections {
 		/// <param name="forHowLong">      </param>
 		/// <param name="orUntilCancelled"></param>
 		/// <remarks>The while.Any() could be replaced with a for loop.. the count is well known ahead of time.</remarks>
-		public static void ShuffleByHarker<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
+		public static void ShuffleByHarker<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null ) {
 			if ( list == null ) { throw new ArgumentNullException( nameof( list ) ); }
 
-			var whenStarted = StopWatch.StartNew();
+			var whenStarted = Stopwatch.StartNew();
 			var itemCount = list.Count;
 			var array = list.ToArray();
 
@@ -916,7 +924,7 @@ namespace Librainian.Collections {
 			list.Count.Should().Be( expected: itemCount );
 		}
 
-		public static void ShuffleByHarkerList<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, SimpleCancel orUntilCancelled = null ) {
+		public static void ShuffleByHarkerList<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null ) {
 			if ( list == null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			var itemCount = list.Count;
@@ -948,7 +956,7 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public static IEnumerable<T> SideEffects<T>( [NotNull] this IEnumerable<T> items, Action<T> perfomAction ) {
+		public static IEnumerable<T> SideEffects<T>( [NotNull] this IEnumerable<T> items, [CanBeNull] Action<T> perfomAction ) {
 			if ( items is null ) { throw new ArgumentNullException( nameof( items ) ); }
 
 			foreach ( var item in items ) {
@@ -958,6 +966,7 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[NotNull]
 		public static IEnumerable<IEnumerable<T>> Split<T>( [NotNull] this IEnumerable<T> list, Int32 parts ) {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
@@ -992,7 +1001,7 @@ namespace Librainian.Collections {
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		/// <exception cref="NotSupportedException"></exception>
-		public static Boolean TakeFirst<TType>( this IList<TType> list, out TType item ) {
+		public static Boolean TakeFirst<TType>( [NotNull] this IList<TType> list, out TType item ) {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			if ( list.Count <= 0 ) {
@@ -1014,7 +1023,7 @@ namespace Librainian.Collections {
 		/// <param name="list"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static TType TakeFirst<TType>( this IList<TType> list ) {
+		public static TType TakeFirst<TType>( [NotNull] this IList<TType> list ) {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			if ( list.Count <= 0 ) { return default; }
@@ -1032,7 +1041,7 @@ namespace Librainian.Collections {
 		/// <param name="list"></param>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public static Boolean TakeLast<TType>( this IList<TType> list, out TType item ) {
+		public static Boolean TakeLast<TType>( [NotNull] this IList<TType> list, out TType item ) {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			var index = list.Count - 1;
@@ -1056,7 +1065,7 @@ namespace Librainian.Collections {
 		/// <param name="list"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static TType TakeLast<TType>( this IList<TType> list ) where TType : class {
+		public static TType TakeLast<TType>( [NotNull] this IList<TType> list ) where TType : class {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			var index = list.Count - 1;
@@ -1075,7 +1084,8 @@ namespace Librainian.Collections {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <returns></returns>
-		public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
+		[NotNull]
+		public static DataTable ToDataTable<T>( [CanBeNull] this IEnumerable<T> list ) {
 			var dt = new DataTable();
 
 			if ( list != null ) {
@@ -1115,7 +1125,8 @@ namespace Librainian.Collections {
 		/// <param name="source">  </param>
 		/// <param name="capacity"></param>
 		/// <returns></returns>
-		public static List<TSource> ToList<TSource>( this IEnumerable<TSource> source, Int32 capacity ) {
+		[NotNull]
+		public static List<TSource> ToList<TSource>( [NotNull] this IEnumerable<TSource> source, Int32 capacity ) {
 			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
 			if ( capacity < 0 ) { throw new ArgumentOutOfRangeException( nameof( capacity ) ); }
@@ -1133,6 +1144,7 @@ namespace Librainian.Collections {
 		/// <param name="source"></param>
 		/// <param name="x">     </param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<TSource> Top<TSource>( [NotNull] this IEnumerable<TSource> source, Double x ) {
 			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
@@ -1141,7 +1153,8 @@ namespace Librainian.Collections {
 			return sources.Take( count: ( Int32 )( x * sources.Count ) );
 		}
 
-		public static List<T> ToSortedList<T>( this IEnumerable<T> values ) {
+		[NotNull]
+		public static List<T> ToSortedList<T>( [NotNull] this IEnumerable<T> values ) {
 			var list = new List<T>( collection: values );
 			list.Sort();
 
@@ -1157,7 +1170,7 @@ namespace Librainian.Collections {
                 }
         */
 
-		public static String ToStrings( this IEnumerable<Object> enumerable, Char c ) => ToStrings( enumerable: enumerable, separator: new String( new[] { c } ) );
+		public static String ToStrings( [NotNull] this IEnumerable<Object> enumerable, Char c ) => ToStrings( enumerable: enumerable, separator: new String( new[] { c } ) );
 
 		/// <summary>
 		///     <para>
@@ -1171,7 +1184,7 @@ namespace Librainian.Collections {
 		/// <param name="atTheEnd">  </param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [NotNull] String separator = ", ", String atTheEnd = null ) {
+		public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [NotNull] String separator = ", ", [CanBeNull] String atTheEnd = null ) {
 			if ( enumerable is null ) { throw new ArgumentNullException( nameof( enumerable ) ); }
 
 			if ( separator is null ) { throw new ArgumentNullException( nameof( separator ) ); }
@@ -1219,13 +1232,13 @@ namespace Librainian.Collections {
 		/// <param name="stack"></param>
 		/// <param name="item"> </param>
 		/// <returns></returns>
-		public static Boolean TryTake<T>( this ConcurrentStack<T> stack, out T item ) {
+		public static Boolean TryTake<T>( [NotNull] this ConcurrentStack<T> stack, out T item ) {
 			if ( null == stack ) { throw new ArgumentNullException( nameof( stack ) ); }
 
 			return stack.TryPop( result: out item );
 		}
 
-		public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, TValue value ) {
+		public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, TValue value ) {
 			if ( dictionary is null ) { throw new ArgumentNullException( nameof( dictionary ) ); }
 
 			dictionary.TryRemove( key, out var dummy ); //HACK
@@ -1245,7 +1258,7 @@ namespace Librainian.Collections {
 		///     An enumeration of all combinations of items that satisfy the <paramref name="relationshipFunc" />. Each
 		///     combination will only be returned once (e.g. <c>[a, b]</c> but not <c>[b, a]</c>).
 		/// </returns>
-		public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( this IEnumerable<T> self, [NotNull] Func<T, T, Boolean> relationshipFunc ) {
+		public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( [NotNull] this IEnumerable<T> self, [NotNull] Func<T, T, Boolean> relationshipFunc ) {
 			if ( self is null ) { throw new ArgumentNullException( nameof( self ), "WhereRelationship called on a null IEnumerable<T>." ); }
 
 			if ( relationshipFunc is null ) { throw new ArgumentNullException( nameof( relationshipFunc ) ); }

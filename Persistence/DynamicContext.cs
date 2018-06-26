@@ -41,6 +41,7 @@ namespace Librainian.Persistence {
 	using System.Dynamic;
 	using System.Runtime.Serialization;
 	using System.Security.Permissions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary></summary>
@@ -56,7 +57,7 @@ namespace Librainian.Persistence {
 
 		private Dictionary<String, Object> Context { get; } = new Dictionary<String, Object>();
 
-		public override Boolean TryGetMember( GetMemberBinder binder, out Object result ) => this.Context.TryGetValue( binder.Name, out result );
+		public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
 
 		public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
 			this.Context.Add( binder.Name, value );
@@ -64,7 +65,7 @@ namespace Librainian.Persistence {
 			return true;
 		}
 
-		protected DynamicContext( SerializationInfo info, StreamingContext context ) {
+		protected DynamicContext( [NotNull] SerializationInfo info, StreamingContext context ) {
 
 			// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
 			foreach ( var entry in info ) { this.Context.Add( entry.Name, entry.Value ); }

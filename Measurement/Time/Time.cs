@@ -39,6 +39,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using Clocks;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -97,9 +98,9 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>
 		/// </summary>
-		/// <param name="span"></param>
-		public Time( Span span ) : this( hour: ( Byte ) span.Hours.Value, minute: ( Byte ) span.Minutes.Value, second: ( Byte ) span.Seconds.Value, millisecond: ( UInt16 ) span.Milliseconds.Value,
-			microsecond: ( UInt16 ) span.Microseconds.Value ) { }
+		/// <param name="spanOfTime"></param>
+		public Time( [NotNull] SpanOfTime spanOfTime ) : this( hour: ( Byte ) spanOfTime.Hours.Value, minute: ( Byte ) spanOfTime.Minutes.Value, second: ( Byte ) spanOfTime.Seconds.Value, millisecond: ( UInt16 ) spanOfTime.Milliseconds.Value,
+			microsecond: ( UInt16 ) spanOfTime.Microseconds.Value ) { }
 
 		public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte ) dateTime.Hour, ( Byte ) dateTime.Minute, ( Byte ) dateTime.Second, ( UInt16 ) dateTime.Millisecond );
 

@@ -40,6 +40,7 @@ namespace Librainian.Graphics.DDD {
 	using System.Diagnostics;
 	using System.Drawing;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Maths;
 	using Maths.Ranges;
 	using Newtonsoft.Json;
@@ -68,7 +69,7 @@ namespace Librainian.Graphics.DDD {
 		///     <paramref name="other" /> .
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		public Int32 CompareTo( CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
+		public Int32 CompareTo( [NotNull] CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
 
 		public Boolean Equals( CoordinateF other ) => Equals( this, other );
 
@@ -93,7 +94,7 @@ namespace Librainian.Graphics.DDD {
 		/// <summary>
 		///     Calculates the distance between two Coordinates.
 		/// </summary>
-		public static Single Distance( CoordinateF left, CoordinateF rhs ) {
+		public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF rhs ) {
 			var num1 = left.X - rhs.X;
 			var num2 = left.Y - rhs.Y;
 			var num3 = left.Z - rhs.Z;
@@ -127,27 +128,29 @@ namespace Librainian.Graphics.DDD {
 			return !( left.Z > rhs.Z );
 		}
 
-		public static implicit operator Point( CoordinateF coordinate ) => new Point( ( Int32 ) coordinate.X, ( Int32 ) coordinate.Y );
+		public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new Point( ( Int32 ) coordinate.X, ( Int32 ) coordinate.Y );
 
-		public static implicit operator PointF( CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
+		public static implicit operator PointF( [NotNull] CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
 		/// <summary>
 		///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same
 		///     direction as the original Coordinate.
 		/// </summary>
-		public static CoordinateF Normalize( CoordinateF coordinate ) {
+		[NotNull]
+		public static CoordinateF Normalize( [NotNull] CoordinateF coordinate ) {
 			var num = 1.0f / coordinate.SquareLength;
 
 			return new CoordinateF( coordinate.X * num, coordinate.Y * num, coordinate.Z * num );
 		}
 
-		public static CoordinateF operator -( CoordinateF v1, CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+		[NotNull]
+		public static CoordinateF operator -( [NotNull] CoordinateF v1, [NotNull] CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-		public static Boolean operator !=( CoordinateF left, CoordinateF rhs ) => !Equals( left: left, rhs: rhs );
+		public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => !Equals( left: left, rhs: rhs );
 
-		public static Boolean operator ==( CoordinateF left, CoordinateF rhs ) => Equals( left: left, rhs: rhs );
+		public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => Equals( left: left, rhs: rhs );
 
-		public Double DistanceTo( CoordinateF to ) {
+		public Double DistanceTo( [CanBeNull] CoordinateF to ) {
 			if ( to == default ) {
 				return 0; //BUG ?
 			}

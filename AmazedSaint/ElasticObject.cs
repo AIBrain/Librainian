@@ -42,6 +42,7 @@ namespace Librainian.AmazedSaint {
 	using System.Dynamic;
 	using System.Linq;
 	using System.Linq.Expressions;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     See http://amazedsaint.blogspot.com/2010/02/introducing-elasticobject-for-net-40.html for details
@@ -72,13 +73,13 @@ namespace Librainian.AmazedSaint {
 			set => this.ElasticProvider.InternalValue = value;
 		}
 
-		public void AddAttribute( String key, ElasticObject value ) {
+		public void AddAttribute( String key, [NotNull] ElasticObject value ) {
 			value.NodeType = NodeType.Attribute;
 			value.InternalParent = this;
 			this.ElasticProvider.AddAttribute( key, value );
 		}
 
-		public void AddElement( ElasticObject element ) {
+		public void AddElement( [NotNull] ElasticObject element ) {
 			element.NodeType = NodeType.Element;
 			element.InternalParent = this;
 			this.ElasticProvider.AddElement( element );
@@ -269,7 +270,7 @@ namespace Librainian.AmazedSaint {
 		/// <param name="args">  </param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public override Boolean TryInvokeMember( InvokeMemberBinder binder, Object[] args, out Object result ) {
+		public override Boolean TryInvokeMember( InvokeMemberBinder binder, Object[] args, [NotNull] out Object result ) {
 			var obj = new ElasticObject( binder.Name );
 			this.AddElement( obj );
 			result = obj;
@@ -305,7 +306,7 @@ namespace Librainian.AmazedSaint {
 		/// </summary>
 		/// <param name="binder">todo: describe binder parameter on TryUnaryOperation</param>
 		/// <param name="result">todo: describe result parameter on TryUnaryOperation</param>
-		public override Boolean TryUnaryOperation( UnaryOperationBinder binder, out Object result ) {
+		public override Boolean TryUnaryOperation( [NotNull] UnaryOperationBinder binder, out Object result ) {
 			if ( binder.Operation == ExpressionType.OnesComplement ) {
 				result = this.NodeType == NodeType.Element ? this.InternalContent : this.InternalValue;
 
@@ -317,7 +318,7 @@ namespace Librainian.AmazedSaint {
 
 		public ElasticObject() : this( $"id={Guid.NewGuid()}" ) { }
 
-		public ElasticObject( String name, Object value = null ) {
+		public ElasticObject( String name, [CanBeNull] Object value = null ) {
 			this.InternalName = name;
 			this.InternalValue = value;
 		}

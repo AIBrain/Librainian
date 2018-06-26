@@ -63,7 +63,7 @@ namespace Librainian.Internet {
 		/// <param name="onWebException"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static async Task<Document> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, VolatileBoolean inProgress = null,
+		public static async Task<Document> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
 			[CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
 			if ( address is null ) { throw new ArgumentNullException( nameof( address ) ); }
 
@@ -105,7 +105,7 @@ namespace Librainian.Internet {
 			return null;
 		}
 
-		public static IEnumerable<Document> FindFile( String filename, IEnumerable<String> locationClues ) {
+		public static IEnumerable<Document> FindFile( String filename, [NotNull] IEnumerable<String> locationClues ) {
 			foreach ( var locationClue in locationClues ) {
 				if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) { continue; }
 

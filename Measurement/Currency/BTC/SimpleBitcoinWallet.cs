@@ -224,7 +224,7 @@ namespace Librainian.Measurement.Currency.BTC {
 			}
 		}
 
-		public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( amount: simpleBitcoinWallet.Balance );
+		public void TryUpdateBalance( [NotNull] SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( amount: simpleBitcoinWallet.Balance );
 
 		/// <summary>
 		///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -313,7 +313,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="satoshi"></param>
 		public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
 
-		public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
+		public SimpleBitcoinWallet( [NotNull] ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
 
 		/// <summary>
 		///     Initialize the wallet with the specified <paramref name="balance" /> .

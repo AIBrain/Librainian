@@ -38,11 +38,13 @@ namespace Librainian.Controls {
 
 	using System;
 	using System.Windows.Forms;
+	using JetBrains.Annotations;
 
 	public class WindowWrapper : IWin32Window {
 
 		public IntPtr Handle { get; }
 
+		[NotNull]
 		public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
 
 		private WindowWrapper( IntPtr handle ) => this.Handle = handle;

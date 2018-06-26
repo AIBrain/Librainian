@@ -40,6 +40,7 @@ namespace Librainian.Collections {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Multi-Key Dictionary Class
@@ -69,15 +70,15 @@ namespace Librainian.Collections {
 
 		internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new ConcurrentDictionary<TL, TK>();
 
-		public void Add( TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
+		public void Add( [NotNull] TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
 
-		public void Add( TK primaryKey, TL subKey, TV val ) {
+		public void Add( [NotNull] TK primaryKey, TL subKey, TV val ) {
 			this.TryAdd( primaryKey, val );
 
 			this.Associate( subKey: subKey, primaryKey: primaryKey );
 		}
 
-		public void Associate( TL subKey, TK primaryKey ) {
+		public void Associate( [NotNull] TL subKey, [NotNull] TK primaryKey ) {
 			if ( !base.ContainsKey( primaryKey ) ) { throw new KeyNotFoundException( $"The primary dictionary does not contain the key '{primaryKey}'" ); }
 
 			if ( this.SubDictionary.ContainsKey( subKey ) ) {
@@ -90,17 +91,20 @@ namespace Librainian.Collections {
 			}
 		}
 
+		[NotNull]
 		public TK[] ClonePrimaryKeys() => this.Keys.ToArray();
 
+		[NotNull]
 		public TL[] CloneSubKeys() => this.SubDictionary.Keys.ToArray();
 
+		[NotNull]
 		public TV[] CloneValues() => this.Values.ToArray();
 
 		public Boolean ContainsKey( TL subKey ) => this.TryGetValue( subKey: subKey, val: out _ );
 
 		public new Boolean ContainsKey( TK primaryKey ) => this.TryGetValue( primaryKey: primaryKey, val: out _ );
 
-		public void Remove( TK primaryKey ) {
+		public void Remove( [NotNull] TK primaryKey ) {
 			this.SubDictionary.TryRemove( this.PrimaryToSubkeyMapping[ primaryKey ], out _ );
 
 			this.PrimaryToSubkeyMapping.TryRemove( primaryKey, out var lvalue );
@@ -108,19 +112,19 @@ namespace Librainian.Collections {
 			this.TryRemove( primaryKey, out var value );
 		}
 
-		public void Remove( TL subKey ) {
+		public void Remove( [NotNull] TL subKey ) {
 			this.TryRemove( this.SubDictionary[ subKey ], out var value );
 			this.PrimaryToSubkeyMapping.TryRemove( this.SubDictionary[ subKey ], out var lvalue );
 			this.SubDictionary.TryRemove( subKey, out var kvalue );
 		}
 
-		public Boolean TryGetValue( TL subKey, out TV val ) {
+		public Boolean TryGetValue( [NotNull] TL subKey, [CanBeNull] out TV val ) {
 			val = default;
 
 			return this.SubDictionary.TryGetValue( subKey, out var ep ) && this.TryGetValue( primaryKey: ep, val: out val );
 		}
 
-		public new Boolean TryGetValue( TK primaryKey, out TV val ) => base.TryGetValue( primaryKey, out val );
+		public new Boolean TryGetValue( [NotNull] TK primaryKey, out TV val ) => base.TryGetValue( primaryKey, out val );
 
 	}
 

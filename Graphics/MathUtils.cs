@@ -42,6 +42,7 @@ namespace Librainian.Graphics {
 	using System.Windows.Controls;
 	using System.Windows.Media;
 	using System.Windows.Media.Media3D;
+	using JetBrains.Annotations;
 	using Maths;
 
 	public static class MathUtils {
@@ -55,7 +56,7 @@ namespace Librainian.Graphics {
 			return new Matrix3D( scaleX, 0, 0, 0, 0, -scaleY, 0, 0, 0, 0, 1, 0, offsetX, offsetY, 0, 1 );
 		}
 
-		private static Matrix3D GetProjectionMatrix( OrthographicCamera camera, Double aspectRatio ) {
+		private static Matrix3D GetProjectionMatrix( [NotNull] OrthographicCamera camera, Double aspectRatio ) {
 			Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
 			// This math is identical to what you find documented for D3DXMatrixOrthoRH with the
@@ -73,7 +74,7 @@ namespace Librainian.Graphics {
 			return new Matrix3D( 2 / w, 0, 0, 0, 0, 2 / h, 0, 0, 0, 0, m33, 0, 0, 0, m43, 1 );
 		}
 
-		private static Matrix3D GetProjectionMatrix( PerspectiveCamera camera, Double aspectRatio ) {
+		private static Matrix3D GetProjectionMatrix( [NotNull] PerspectiveCamera camera, Double aspectRatio ) {
 			Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
 			// This math is identical to what you find documented for D3DXMatrixPerspectiveFovRH
@@ -92,7 +93,7 @@ namespace Librainian.Graphics {
 			return new Matrix3D( xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, m33, -1, 0, 0, m43, 0 );
 		}
 
-		private static Matrix3D GetViewMatrix( ProjectionCamera camera ) {
+		private static Matrix3D GetViewMatrix( [NotNull] ProjectionCamera camera ) {
 			Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
 			// This math is identical to what you find documented for D3DXMatrixLookAtRH with the
@@ -118,7 +119,7 @@ namespace Librainian.Graphics {
 		/// <param name="visual">The visual whose world space transform should be found</param>
 		/// <param name="viewport">The Viewport3DVisual the Visual is contained within</param>
 		/// <returns>The world space transformation</returns>
-		private static Matrix3D GetWorldTransformationMatrix( DependencyObject visual, out Viewport3DVisual viewport ) {
+		private static Matrix3D GetWorldTransformationMatrix( DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport ) {
 			var worldTransform = Matrix3D.Identity;
 			viewport = null;
 
@@ -181,7 +182,7 @@ namespace Librainian.Graphics {
 		}
 
 		//FIXME: Should be replaced with method below
-		public static Point Convert3DPoint( Point3D p3D, Viewport3D vp ) {
+		public static Point Convert3DPoint( Point3D p3D, [NotNull] Viewport3D vp ) {
 			var vp3Dv = VisualTreeHelper.GetParent( vp.Children[ 0 ] ) as Viewport3DVisual;
 			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
@@ -193,7 +194,7 @@ namespace Librainian.Graphics {
 			return p2D;
 		}
 
-		public static Point Convert3DPoint( Point3D p3D, DependencyObject dependencyObject ) {
+		public static Point Convert3DPoint( Point3D p3D, [NotNull] DependencyObject dependencyObject ) {
 			var vp3Dv = VisualTreeHelper.GetParent( dependencyObject ) as Viewport3DVisual;
 			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
@@ -226,6 +227,7 @@ namespace Librainian.Graphics {
 			return new Point3D( x * orientation.X, y * orientation.Y, y * orientation.Z );
 		}
 
+		[NotNull]
 		public static Point3D[] GetCirclePoints( Int32 quantity, Point3D orientation = new Point3D(), Double radius = 70 ) {
 			var circlePoints = new Point3D[ quantity ];
 
@@ -238,7 +240,7 @@ namespace Librainian.Graphics {
 		}
 
 		/// <summary>Computes the effective projection matrix for the given camera.</summary>
-		public static Matrix3D GetProjectionMatrix( Camera camera, Double aspectRatio ) {
+		public static Matrix3D GetProjectionMatrix( [NotNull] Camera camera, Double aspectRatio ) {
 			if ( camera is null ) { throw new ArgumentNullException( nameof( camera ) ); }
 
 			if ( camera is PerspectiveCamera perspectiveCamera ) { return GetProjectionMatrix( perspectiveCamera, aspectRatio ); }
@@ -250,6 +252,7 @@ namespace Librainian.Graphics {
 			throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
 		}
 
+		[NotNull]
 		public static Point3D[] GetSectorPoints( Int32 resolution, Double startAngle, Double endAngle, Point3D orientation = new Point3D(), Double radius = 70 ) {
 			var circlePoints = new Point3D[ resolution + 1 ];
 
@@ -262,7 +265,7 @@ namespace Librainian.Graphics {
 		}
 
 		/// <summary>Computes the effective view matrix for the given camera.</summary>
-		public static Matrix3D GetViewMatrix( Camera camera ) {
+		public static Matrix3D GetViewMatrix( [NotNull] Camera camera ) {
 			if ( camera is null ) { throw new ArgumentNullException( nameof( camera ) ); }
 
 			if ( camera is ProjectionCamera projectionCamera ) { return GetViewMatrix( projectionCamera ); }
@@ -281,7 +284,7 @@ namespace Librainian.Graphics {
 		/// <param name="point3D">A point in 3D space</param>
 		/// <param name="viewPort">An instance of Viewport3D</param>
 		/// <returns>The corresponding 2D point or null if it could not be calculated</returns>
-		public static Point Point3DToScreen2D( Point3D point3D, Viewport3D viewPort ) {
+		public static Point Point3DToScreen2D( Point3D point3D, [NotNull] Viewport3D viewPort ) {
 
 			// We need a Viewport3DVisual but we only have a Viewport3D.
 			var vpv = VisualTreeHelper.GetParent( viewPort.Children[ 0 ] ) as Viewport3DVisual;
@@ -383,7 +386,7 @@ namespace Librainian.Graphics {
 		/// <param name="viewport"></param>
 		/// <param name="success"></param>
 		/// <returns></returns>
-		public static Matrix3D TryTransformTo2DAncestor( DependencyObject visual, out Viewport3DVisual viewport, out Boolean success ) {
+		public static Matrix3D TryTransformTo2DAncestor( DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
 			var to2D = GetWorldTransformationMatrix( visual, out viewport );
 			to2D.Append( TryWorldToViewportTransform( viewport, out success ) );
 
@@ -402,7 +405,7 @@ namespace Librainian.Graphics {
 		/// <param name="viewport"></param>
 		/// <param name="success"></param>
 		/// <returns></returns>
-		public static Matrix3D TryTransformToCameraSpace( DependencyObject visual, out Viewport3DVisual viewport, out Boolean success ) {
+		public static Matrix3D TryTransformToCameraSpace( DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
 			var toViewSpace = GetWorldTransformationMatrix( visual, out viewport );
 			toViewSpace.Append( TryWorldToCameraTransform( viewport, out success ) );
 
@@ -416,7 +419,7 @@ namespace Librainian.Graphics {
 		///     Camera.Transform is non-invertable in which case the camera clip planes will be
 		///     coincident and nothing will render. In this case success will be false.
 		/// </summary>
-		public static Matrix3D TryWorldToCameraTransform( Viewport3DVisual visual, out Boolean success ) {
+		public static Matrix3D TryWorldToCameraTransform( [CanBeNull] Viewport3DVisual visual, out Boolean success ) {
 			success = false;
 
 			if ( visual != null ) {

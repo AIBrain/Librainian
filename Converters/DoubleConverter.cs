@@ -37,6 +37,7 @@
 namespace Librainian.Converters {
 
 	using System;
+	using JetBrains.Annotations;
 	using Maths;
 
 	/// <summary>
@@ -51,6 +52,7 @@ namespace Librainian.Converters {
 		/// </summary>
 		/// <param name="d">The Double to convert.</param>
 		/// <returns>A String representation of the Double's exact System.Decimal value.</returns>
+		[NotNull]
 		public static String ToExactString( this Double d ) {
 			if ( Double.IsPositiveInfinity( d ) ) { return "+Infinity"; }
 

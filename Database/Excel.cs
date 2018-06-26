@@ -47,6 +47,7 @@ namespace Librainian.Database {
 
 		private String Path { get; }
 
+		[NotNull]
 		public String[] GetColumnsList( String worksheet ) {
 			String[] columns = { };
 
@@ -104,6 +105,7 @@ namespace Librainian.Database {
 			return null;
 		}
 
+		[NotNull]
 		public String[] GetWorksheetList() {
 			String[] worksheets = { };
 

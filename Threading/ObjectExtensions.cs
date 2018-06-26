@@ -39,14 +39,15 @@ namespace Librainian.Threading {
 	using System;
 	using System.Collections.Generic;
 	using System.Reflection;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Code pulled from https://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs
 	/// </summary>
 	public static class ObjectExtensions {
 
-		private static void CopyFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, Type typeToReflect,
-			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, Boolean> filter = null ) {
+		private static void CopyFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect,
+			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, [CanBeNull] Func<FieldInfo, Boolean> filter = null ) {
 			foreach ( var fieldInfo in typeToReflect.GetFields( bindingFlags ) ) {
 				if ( filter != null && filter( fieldInfo ) == false ) { continue; }
 
@@ -58,7 +59,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		private static Object InternalCopy( Object originalObject, IDictionary<Object, Object> visited ) {
+		private static Object InternalCopy( [CanBeNull] Object originalObject, IDictionary<Object, Object> visited ) {
 			if ( originalObject is null ) { return null; }
 
 			var typeToReflect = originalObject.GetType();
@@ -87,7 +88,7 @@ namespace Librainian.Threading {
 			return cloneObject;
 		}
 
-		private static void RecursiveCopyBaseTypePrivateFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, Type typeToReflect ) {
+		private static void RecursiveCopyBaseTypePrivateFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect ) {
 			if ( null == typeToReflect.BaseType ) { return; }
 
 			RecursiveCopyBaseTypePrivateFields( originalObject, visited, cloneObject, typeToReflect.BaseType );
@@ -103,7 +104,7 @@ namespace Librainian.Threading {
 
 		public static T Copy<T>( this T original ) => ( T ) Copy( ( Object ) original );
 
-		public static Boolean IsPrimitive( this Type type ) {
+		public static Boolean IsPrimitive( [NotNull] this Type type ) {
 			if ( type == typeof( String ) ) { return true; }
 
 			return type.IsValueType && type.IsPrimitive;

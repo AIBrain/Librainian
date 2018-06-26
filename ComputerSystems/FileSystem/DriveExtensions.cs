@@ -40,6 +40,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.Collections.Generic;
 	using System.IO;
 	using Collections;
+	using JetBrains.Annotations;
 
 	public static class DriveExtensions {
 
@@ -50,13 +51,13 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// </summary>
 		public static List<DriveType> FleetingDriveTypes { get; } = new List<DriveType>( new[] { DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable } );
 
-		public static Boolean IsFixed( this Drive drive ) => FixedDriveTypes.Contains( drive.Info.DriveType );
+		public static Boolean IsFixed( [NotNull] this Disk disk ) => FixedDriveTypes.Contains( disk.Info.DriveType );
 
-		public static Boolean IsFixed( this DriveInfo drive ) => FixedDriveTypes.Contains( drive.DriveType );
+		public static Boolean IsFixed( [NotNull] this DriveInfo drive ) => FixedDriveTypes.Contains( drive.DriveType );
 
-		public static Boolean IsFleeting( this Drive drive ) => FleetingDriveTypes.Contains( drive.Info.DriveType );
+		public static Boolean IsFleeting( [NotNull] this Disk disk ) => FleetingDriveTypes.Contains( disk.Info.DriveType );
 
-		public static Boolean IsFleeting( this DriveInfo drive ) => FleetingDriveTypes.Contains( drive.DriveType );
+		public static Boolean IsFleeting( [NotNull] this DriveInfo drive ) => FleetingDriveTypes.Contains( drive.DriveType );
 
 		static DriveExtensions() {
 			FleetingDriveTypes.Fix();

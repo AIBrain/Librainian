@@ -27,12 +27,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
 //
 // ***  Project "Librainian"  ***
-// File "TaskExtensions.cs" was last formatted by Protiguous on 2018/06/07 at 2:37 PM.
+// File "TaskExtensions.cs" was last formatted by Protiguous on 2018/06/09 at 1:39 PM.
 
 namespace Librainian.Threading {
 
@@ -60,7 +61,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="completedTask">   </param>
 		/// <param name="completionSource"></param>
-		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
+		private static void PropagateResult<T>( [NotNull] Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
 			switch ( completedTask.Status ) {
 				case TaskStatus.Canceled:
 					completionSource.TrySetCanceled();
@@ -85,11 +86,83 @@ namespace Librainian.Threading {
 		}
 
 		/// <summary>
+		///     "you can even have a timeout using the following simple extension method"
+		/// </summary>
+		/// <param name="task">             </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		[Obsolete( "Does not work as intended." )]
+		public static Task AddCancellation( [NotNull] this Task task, CancellationToken token ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			return Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) );
+		}
+
+		/// <summary>
+		///     "you can even have a timeout using the following simple extension method"
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task">             </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		[Obsolete( "Does not work as intended." )]
+		[ItemNotNull]
+		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, CancellationToken token ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) ).NoUI();
+
+			if ( t != task ) {
+				throw new OperationCanceledException( "timeout" );
+			}
+
+			return task.Result;
+		}
+
+		/// <summary>
+		///     "you can even have a timeout using the following simple extension method"
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task">             </param>
+		/// <param name="timeout">          </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
+		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
+		[Obsolete( "Does not work as intended." )]
+		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
+			if ( task is null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			try {
+				var winning = await Task.WhenAny( task, Task.Delay( timeout, token ) ).NoUI();
+
+				if ( winning != task ) {
+					throw new OperationCanceledException( "cancelled" );
+				}
+
+				return task.Result;
+			}
+			catch ( TaskCanceledException ) {
+				return Task.FromCanceled<T>( token ).Result; //cancelled?
+			}
+			catch ( OperationCanceledException exception ) {
+				return Task.FromException<T>( exception ).Result; //timeout?
+			}
+		}
+
+		/// <summary>
 		///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( [NotNull] this IEnumerable<Task<T>> source ) {
 			if ( source == null ) {
 				throw new ArgumentNullException( paramName: nameof( source ) );
@@ -120,6 +193,7 @@ namespace Librainian.Threading {
 		///     Task.Delay(4000).ContinueWith(_ =&gt; 4), }; foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int
 		///     result = await t; Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
+		[NotNull]
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
 			if ( tasks == null ) {
 				throw new ArgumentNullException( paramName: nameof( tasks ) );
@@ -153,7 +227,13 @@ namespace Librainian.Threading {
 			return results;
 		}
 
-		public static Boolean IsNotRunning( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
+		/// <summary>
+		/// Returns true if the <paramref name="task"/> is Completed, Cancelled, or Faulted.
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		[DebuggerStepThrough]
+		public static Boolean IsTaskDone( [NotNull] this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
 
 		/// <summary>
 		///     <para>Automatically apply <see cref="Task{TResult}.ConfigureAwait" /> to the <paramref name="task" />.</para>
@@ -203,7 +283,7 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
 		/// <returns></returns>
-		public static async Task Then( this Span delay, [NotNull] Action job ) {
+		public static async Task Then( this SpanOfTime delay, [NotNull] Action job ) {
 			if ( job is null ) {
 				throw new ArgumentNullException( nameof( job ) );
 			}
@@ -297,7 +377,7 @@ namespace Librainian.Threading {
 		}
 
 		[Obsolete( "use continuewith", true )]
-		public static Task<T2> Then<T2>( this Task first, Func<Task<T2>> next ) {
+		public static Task<T2> Then<T2>( [NotNull] this Task first, [NotNull] Func<Task<T2>> next ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -349,7 +429,7 @@ namespace Librainian.Threading {
 			return tcs.Task;
 		}
 
-		public static Task Then<T1>( this Task<T1> first, Action<T1> next ) {
+		public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Action<T1> next ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -383,7 +463,7 @@ namespace Librainian.Threading {
 			return tcs.Task;
 		}
 
-		public static Task Then<T1>( this Task<T1> first, Func<T1, Task> next ) {
+		public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task> next ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -435,7 +515,7 @@ namespace Librainian.Threading {
 			return tcs.Task;
 		}
 
-		public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, T2> next ) {
+		public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, T2> next ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -469,7 +549,7 @@ namespace Librainian.Threading {
 			return tcs.Task;
 		}
 
-		public static Task<T2> Then<T1, T2>( this Task<T1> first, Func<T1, Task<T2>> next ) {
+		public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task<T2>> next ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -528,20 +608,18 @@ namespace Librainian.Threading {
 		/// <param name="target"></param>
 		/// <param name="item">  </param>
 		/// <param name="token"></param>
-		public static async Task TryPost<T>( this ITargetBlock<T> target, T item, CancellationToken token ) {
+		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, T item, CancellationToken token ) {
 			if ( target is null ) {
 				throw new ArgumentNullException( nameof( target ) );
 			}
 
 			while ( true ) {
 
-				if ( !await target.SendAsync( item, token ).NoUI() && !token.IsCancellationRequested ) {
-					await Task.Delay( 1, token ).NoUI();
-
-					continue;
+				if ( await target.SendAsync( item, token ).NoUI() || token.IsCancellationRequested ) {
+					break;
 				}
 
-				break;
+				await Task.Delay( 16, token ).NoUI();
 			}
 		}
 
@@ -606,7 +684,7 @@ namespace Librainian.Threading {
 		/// <param name="action">    </param>
 		/// <param name="condition"> </param>
 		[CanBeNull]
-		public static Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
+		public static Timer When( this TimeSpan afterDelay, [NotNull] Func<Boolean> condition, [NotNull] Action action ) {
 			if ( condition is null ) {
 				throw new ArgumentNullException( nameof( condition ) );
 			}
@@ -632,77 +710,19 @@ namespace Librainian.Threading {
 		/// <summary>
 		///     "you can even have a timeout using the following simple extension method"
 		/// </summary>
-		/// <param name="task">             </param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static Task WithCancellation( [NotNull] this Task task, CancellationToken token ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
-
-			return Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) );
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task">             </param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, CancellationToken token ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
-
-			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) ).NoUI();
-
-			if ( t != task ) {
-				throw new OperationCanceledException( "timeout" );
-			}
-
-			return task.Result;
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">             </param>
 		/// <param name="timeout">          </param>
 		/// <returns></returns>
+		/// <exception cref="OperationCanceledException">on timeout</exception>
+		[Obsolete( "Does not work as intended." )]
 		[ItemNotNull]
-		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
+		public static async Task<T> WithTimeout<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
 			if ( task == null ) {
 				throw new ArgumentNullException( paramName: nameof( task ) );
 			}
 
 			var t = await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI();
-
-			if ( t != task ) {
-				throw new OperationCanceledException( "timeout" );
-			}
-
-			return task.Result;
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task">             </param>
-		/// <param name="timeout">          </param>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<T> WithCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
-
-			var t = await Task.WhenAny( task, Task.Delay( timeout, cancellationToken ) ).NoUI();
 
 			if ( t != task ) {
 				throw new OperationCanceledException( "timeout" );
@@ -718,6 +738,7 @@ namespace Librainian.Threading {
 		/// <param name="pre">   </param>
 		/// <param name="post">  </param>
 		/// <returns></returns>
+		[NotNull]
 		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
 			() => {
 				try {
@@ -810,7 +831,7 @@ namespace Librainian.Threading {
 		/// <param name="onException">      </param>
 		/// <param name="callerMemberName"> </param>
 		/// <returns></returns>
-		public static Boolean Wrap( this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, Action onException = null,
+		public static Boolean Wrap( [CanBeNull] this Action action, Boolean timeAction = true, TimeSpan? andTookLongerThan = null, [CanBeNull] Action onException = null,
 			[CallerMemberName] String callerMemberName = "" ) {
 			var attempts = 1;
 			TryAgain:

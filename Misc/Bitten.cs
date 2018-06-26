@@ -40,6 +40,7 @@ namespace Librainian.Misc {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -71,7 +72,7 @@ namespace Librainian.Misc {
 		private readonly Byte _k;
 
 		/// Creates a new guid from an array of bytes.
-		public Bitten( IList<Byte> b ) {
+		public Bitten( [NotNull] IList<Byte> b ) {
 			this._d = b[ 0 ];
 			this._e = b[ 1 ];
 			this._f = b[ 2 ];
@@ -133,7 +134,7 @@ namespace Librainian.Misc {
 		//
 		// The String must be of the form dddddddd-dddd-dddd-dddd-dddddddddddd. where d is a hex
 		// digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
-		public Bitten( String g ) {
+		public Bitten( [NotNull] String g ) {
 			if ( g is null ) { throw new ArgumentNullException( nameof( g ) ); }
 
 			this = Parse( g );
@@ -142,6 +143,7 @@ namespace Librainian.Misc {
 		public static Bitten Parse( String input ) => Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
 
 		// Returns an unsigned byte array containing the GUID.
+		[NotNull]
 		public Byte[] ToByteArray() {
 			var g = new Byte[ 8 ];
 
@@ -206,7 +208,7 @@ namespace Librainian.Misc {
 			return ( Char ) ( a > 9 ? a - 10 + 0x61 : a + 0x30 );
 		}
 
-		private static Int32 HexsToChars( IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
+		private static Int32 HexsToChars( [NotNull] IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
 			if ( hex ) {
 				guidChars[ offset++ ] = '0';
 				guidChars[ offset++ ] = 'x';

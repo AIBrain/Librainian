@@ -40,16 +40,17 @@ namespace Librainian.Financial.Containers.Wallets {
 	using System.Linq;
 	using Currency.BankNotes;
 	using Currency.Coins;
+	using JetBrains.Annotations;
 
 	public class CashDrawer : Wallet {
 
-		public Boolean Fund( params IBankNote[] bankNotes ) {
+		public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {
 			if ( null == bankNotes ) { throw new ArgumentNullException( nameof( bankNotes ) ); }
 
 			return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
 		}
 
-		public Boolean Fund( params ICoin[] coins ) {
+		public Boolean Fund( [NotNull] params ICoin[] coins ) {
 			if ( null == coins ) { throw new ArgumentNullException( nameof( coins ) ); }
 
 			return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );

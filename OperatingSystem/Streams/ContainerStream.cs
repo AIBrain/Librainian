@@ -38,6 +38,7 @@ namespace Librainian.OperatingSystem.Streams {
 
 	using System;
 	using System.IO;
+	using JetBrains.Annotations;
 
 	public abstract class ContainerStream : Stream {
 
@@ -65,7 +66,7 @@ namespace Librainian.OperatingSystem.Streams {
 
 		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
 
-		protected ContainerStream( Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
+		protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
 
 	}
 

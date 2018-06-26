@@ -59,7 +59,8 @@ namespace Librainian.Graphics {
 
 	public static class Images {
 
-		public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
+		[NotNull]
+		public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
 			if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) { throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." ); }
 
 			if ( baselineLocations.Count != registerLocations.Count ) {
@@ -367,6 +368,7 @@ namespace Librainian.Graphics {
 			return false;
 		}
 
+		[NotNull]
 		public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
 			if ( imgToResize is null ) { throw new ArgumentNullException( nameof( imgToResize ) ); }
 
@@ -458,6 +460,7 @@ namespace Librainian.Graphics {
 			///     <para>.tif</para>
 			/// </summary>
 			/// <seealso cref="http://wikipedia.org/wiki/TIFF" />
+			[NotNull]
 			public static String Tiff => ".tif";
 
 		}

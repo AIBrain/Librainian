@@ -38,10 +38,11 @@ namespace Librainian.Extensions {
 
 	using System.Collections.Generic;
 	using System.Linq;
+	using JetBrains.Annotations;
 
 	public static class Combiner {
 
-		public static IEnumerable<T> Append<T>( this IEnumerable<T> a, IEnumerable<T> b ) {
+		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, IEnumerable<T> b ) {
 			foreach ( var item in a ) { yield return item; }
 
 			foreach ( var item in b ) { yield return item; }
@@ -67,13 +68,13 @@ namespace Librainian.Extensions {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		public static IEnumerable<T> Append<T>( this IEnumerable<T> a, T b ) {
+		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, T b ) {
 			foreach ( var item in a ) { yield return item; }
 
 			yield return b;
 		}
 
-		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( this IEnumerable<IEnumerable<T>> sequences ) {
+		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
 			IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
 
 			return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
@@ -83,15 +84,16 @@ namespace Librainian.Extensions {
 			} );
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combinations<T>( params IEnumerable<T>[] input ) {
+		public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
 			IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
 
 			return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinationss() ) );
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combinationss<T>( this IEnumerable<T> input ) => input.Select( item => new[] { item } );
+		[NotNull]
+		public static IEnumerable<IEnumerable<T>> Combinationss<T>( [NotNull] this IEnumerable<T> input ) => input.Select( item => new[] { item } );
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<IEnumerable<T>> groupAs, IEnumerable<IEnumerable<T>> groupBs ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
 			var found = false;
 
 			var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
@@ -107,7 +109,7 @@ namespace Librainian.Extensions {
 			foreach ( var groupB in bs ) { yield return groupB; }
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, IEnumerable<IEnumerable<T>> b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
 			var found = false;
 
 			foreach ( var bGroup in b ) {
@@ -119,7 +121,7 @@ namespace Librainian.Extensions {
 			if ( !found ) { yield return a; }
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
 			var found = false;
 
 			foreach ( var aGroup in a ) {
@@ -131,7 +133,7 @@ namespace Librainian.Extensions {
 			if ( !found ) { yield return b; }
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, IEnumerable<IEnumerable<T>> b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
 			var found = false;
 
 			foreach ( var bGroup in b ) {
@@ -143,7 +145,7 @@ namespace Librainian.Extensions {
 			if ( !found ) { yield return new[] { a }; }
 		}
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<IEnumerable<T>> a, T b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, T b ) {
 			var found = false;
 
 			foreach ( var aGroup in a ) {
@@ -155,7 +157,8 @@ namespace Librainian.Extensions {
 			if ( !found ) { yield return new[] { b }; }
 		}
 
-		public static T[][] FastPowerSet<T>( this T[] seq ) {
+		[NotNull]
+		public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
 			var powerSet = new T[ 1 << seq.Length ][];
 			powerSet[ 0 ] = new T[ 0 ];
 

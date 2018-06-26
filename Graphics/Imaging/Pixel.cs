@@ -132,6 +132,7 @@ namespace Librainian.Graphics.Imaging {
 
 		public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
 
+		[NotNull]
 		public static explicit operator Byte[]( Pixel pixel ) => new[] { pixel.Checksum, pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue };
 
 		/// <summary>

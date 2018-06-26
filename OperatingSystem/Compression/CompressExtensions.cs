@@ -54,6 +54,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="data"></param>
 		/// <param name="compressionLevel"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Byte[] Compress( [NotNull] this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
 			if ( data is null ) { throw new ArgumentNullException( nameof( data ) ); }
 
@@ -75,6 +76,7 @@ namespace Librainian.OperatingSystem.Compression {
 			return Compress( text, Encoding.Default );
 		}
 
+		[NotNull]
 		public static Byte[] Compress( [NotNull] this String text, [NotNull] Encoding encoding ) {
 			if ( text is null ) { throw new ArgumentNullException( nameof( text ) ); }
 
@@ -88,7 +90,8 @@ namespace Librainian.OperatingSystem.Compression {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static async Task<String> CompressAsync( this String text ) {
+		[ItemNotNull]
+		public static async Task<String> CompressAsync( [NotNull] this String text ) {
 			var buffer = Encoding.Unicode.GetBytes( text );
 
 			using ( var streamIn = new MemoryStream( buffer ) ) {
@@ -100,6 +103,7 @@ namespace Librainian.OperatingSystem.Compression {
 			}
 		}
 
+		[NotNull]
 		public static Byte[] Decompress( [NotNull] this Byte[] data ) {
 			if ( data is null ) { throw new ArgumentNullException( nameof( data ) ); }
 
@@ -117,7 +121,8 @@ namespace Librainian.OperatingSystem.Compression {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static async Task<String> DecompressAsync( this String text ) {
+		[ItemNotNull]
+		public static async Task<String> DecompressAsync( [NotNull] this String text ) {
 			var buffer = Convert.FromBase64String( text );
 
 			using ( var streamIn = new MemoryStream( buffer ) ) {
@@ -135,6 +140,7 @@ namespace Librainian.OperatingSystem.Compression {
 			return DecompressToString( data, Encoding.Default );
 		}
 
+		[NotNull]
 		public static String DecompressToString( [NotNull] this Byte[] data, [NotNull] Encoding encoding ) {
 			if ( data is null ) { throw new ArgumentNullException( nameof( data ) ); }
 
@@ -148,7 +154,8 @@ namespace Librainian.OperatingSystem.Compression {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static String FromCompressedBase64( this String text ) {
+		[NotNull]
+		public static String FromCompressedBase64( [NotNull] this String text ) {
 
 			using ( var streamOut = new MemoryStream() ) {
 				var buffer = Convert.FromBase64String( text );
@@ -166,7 +173,8 @@ namespace Librainian.OperatingSystem.Compression {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static String ToCompressedBase64( this String text ) {
+		[NotNull]
+		public static String ToCompressedBase64( [NotNull] this String text ) {
 			using ( var streamOut = new MemoryStream() ) {
 				var buffer = Encoding.Unicode.GetBytes( text );
 

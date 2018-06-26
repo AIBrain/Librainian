@@ -40,6 +40,7 @@ namespace Librainian.Collections {
 	using System.Collections.Concurrent;
 	using System.Linq;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Magic;
 
 	public class TrainingQueue : ABetterClassDispose {
@@ -48,6 +49,7 @@ namespace Librainian.Collections {
 
 		private ManualResetEvent Bob { get; } = new ManualResetEvent( initialState: false );
 
+		[CanBeNull]
 		public TrainingQueueItem Dequeue() => this.Items.Remove();
 
 		/// <summary>

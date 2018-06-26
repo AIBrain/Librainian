@@ -37,6 +37,7 @@
 namespace Librainian.OperatingSystem {
 
 	using System;
+	using JetBrains.Annotations;
 	using Parsing;
 	using WMI;
 
@@ -77,6 +78,7 @@ namespace Librainian.OperatingSystem {
 		//Return a hardware identifier
 
 		//BIOS Identifier
+		[NotNull]
 		private static String BiosId() =>
 			WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" ) + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" ) +
 			WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" ) + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" ) + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
@@ -107,6 +109,7 @@ namespace Librainian.OperatingSystem {
 		}
 
 		//Main physical hard drive ID
+		[NotNull]
 		private static String DiskId() =>
 			WMIExtensions.Identifier( "Win32_DiskDrive", "Model" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Signature" ) +
 			WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
@@ -115,11 +118,13 @@ namespace Librainian.OperatingSystem {
 		private static String MacId() => WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
 
 		//Motherboard ID
+		[NotNull]
 		private static String MotherboardId() =>
 			WMIExtensions.Identifier( "Win32_BaseBoard", "Model" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Name" ) +
 			WMIExtensions.Identifier( "Win32_BaseBoard", "SerialNumber" );
 
 		//Primary video controller ID
+		[NotNull]
 		private static String VideoId() => WMIExtensions.Identifier( "Win32_VideoController", "DriverVersion" ) + WMIExtensions.Identifier( "Win32_VideoController", "Name" );
 
 	}

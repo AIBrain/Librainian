@@ -39,6 +39,7 @@ namespace Librainian.Threading {
 	using System;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using NUnit.Framework;
 
 	public static class ActorExtensions {
@@ -47,7 +48,8 @@ namespace Librainian.Threading {
 		///     ".....and....ACTION!"
 		/// </summary>
 		/// <param name="actor"></param>
-		public static async Task<Actor> Act( this Actor actor ) {
+		[ItemNotNull]
+		public static async Task<Actor> Act( [NotNull] this Actor actor ) {
 
 			//var cancel = new CancellationToken( false );
 			foreach ( var player in actor.Actions.GetConsumingEnumerable().Where( player1 => null != player1 ) ) {
@@ -86,14 +88,15 @@ namespace Librainian.Threading {
 			Console.WriteLine( answer );
 		}
 
-		public static Actor LimitActing( this Actor actor, TimeSpan timeSpan, Action onTimeout ) {
+		[NotNull]
+		public static Actor LimitActing( [NotNull] this Actor actor, TimeSpan timeSpan, Action onTimeout ) {
 			actor.Current.ActingTimeout = timeSpan; //if there was a value already there, just overwrite it.
 			actor.Current.OnTimeout = onTimeout; //if there was a value already there, just overwrite it.
 
 			return actor;
 		}
 
-		public static Actor Then( this Actor actor, Action action ) {
+		public static Actor Then( [NotNull] this Actor actor, Action action ) {
 			if ( null == actor.Current.OnSuccess ) {
 				actor.Current.OnSuccess = action;
 

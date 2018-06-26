@@ -38,17 +38,22 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Linq.Expressions;
+	using JetBrains.Annotations;
 
 	public static class BooleanPredicateBuilder {
 
-		public static Expression<Func<TTt, Boolean>> And<TTt>( this Expression<Func<TTt, Boolean>> expr1, Expression<Func<TTt, Boolean>> expr2 ) =>
+		[NotNull]
+		public static Expression<Func<TTt, Boolean>> And<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
 			Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
+		[NotNull]
 		public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
 
-		public static Expression<Func<TTt, Boolean>> Or<TTt>( this Expression<Func<TTt, Boolean>> expr1, Expression<Func<TTt, Boolean>> expr2 ) =>
+		[NotNull]
+		public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
 			Expression.Lambda<Func<TTt, Boolean>>( Expression.OrElse( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
+		[NotNull]
 		public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;
 
 	}

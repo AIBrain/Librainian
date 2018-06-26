@@ -38,13 +38,14 @@ namespace Librainian.Financial.Containers.Wallets {
 
 	using System;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
 	[Serializable]
 	public class WalletException : InvalidOperationException {
 
-		protected WalletException( SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
+		protected WalletException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
 		public WalletException( String message ) : base( message ) { }
 

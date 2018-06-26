@@ -70,6 +70,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
+		[CanBeNull]
 		public String this[ UInt64 key ] {
 			get => this.Ints[ key ];
 
@@ -92,7 +93,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="word"></param>
 		/// <returns></returns>
-		public Boolean Contains( String word ) {
+		public Boolean Contains( [CanBeNull] String word ) {
 			if ( String.IsNullOrEmpty( word ) ) { return false; }
 
 			return this.Words.TryGetValue( word, out _ );
@@ -105,8 +106,10 @@ namespace Librainian.Collections {
 		/// <returns></returns>
 		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out _ );
 
+		[NotNull]
 		public IEnumerable<UInt64> EachInt() => this.Ints.Keys;
 
+		[NotNull]
 		public IEnumerable<String> EachWord() => this.Words.Keys;
 
 		public StringTable( Folder commonName ) {

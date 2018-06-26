@@ -39,6 +39,7 @@ namespace Librainian.Database {
 	using System;
 	using System.Data;
 	using System.Data.OleDb;
+	using JetBrains.Annotations;
 
 	public class OleText {
 
@@ -48,6 +49,7 @@ namespace Librainian.Database {
 
 		private String Path { get; }
 
+		[NotNull]
 		public String[] GetColumnsList( String worksheet ) {
 			String[] columns = { };
 
@@ -66,6 +68,7 @@ namespace Librainian.Database {
 			return columns;
 		}
 
+		[NotNull]
 		public DataSet GetWorkplace() {
 			using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
 				using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
@@ -78,6 +81,7 @@ namespace Librainian.Database {
 			}
 		}
 
+		[NotNull]
 		public DataTable GetWorksheet( String worksheet ) {
 			using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
 				using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
@@ -90,6 +94,7 @@ namespace Librainian.Database {
 			}
 		}
 
+		[NotNull]
 		public String[] GetWorksheetList() {
 			String[] worksheets = { };
 

@@ -62,6 +62,7 @@ namespace Librainian.Persistence {
 		[JsonProperty]
 		public Document AutoSaveDocument { get; set; }
 
+		[CanBeNull]
 		public IReadOnlyDictionary<String, String> this[ [CanBeNull] String section ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
@@ -80,6 +81,7 @@ namespace Librainian.Persistence {
 		/// <param name="section"></param>
 		/// <param name="key">    </param>
 		/// <returns></returns>
+		[CanBeNull]
 		public String this[ [CanBeNull] String section, [CanBeNull] String key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
@@ -105,13 +107,14 @@ namespace Librainian.Persistence {
 			}
 		}
 
+		[NotNull]
 		public IEnumerable<String> Sections => this.Data.Keys;
 
 		[JsonProperty]
 		[NotNull]
 		private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
 
-		private Boolean WriteSection( Document document, String section ) {
+		private Boolean WriteSection( [NotNull] Document document, [NotNull] String section ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
@@ -137,7 +140,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		private async Task<Boolean> WriteSectionAsync( Document document, String section ) {
+		private async Task<Boolean> WriteSectionAsync( [NotNull] Document document, [NotNull] String section ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
@@ -163,7 +166,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		private Boolean WriteSectionJSON( Document document, String section ) {
+		private Boolean WriteSectionJSON( Document document, [NotNull] String section ) {
 			if ( !this.Data.TryGetValue( section, out var dict ) ) {
 				return false; //section not found
 			}
@@ -174,11 +177,13 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
+		[NotNull]
 		[DebuggerStepThrough]
 		public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
 
+		[NotNull]
 		[DebuggerStepThrough]
-		public static String EncodeSection( String section ) {
+		public static String EncodeSection( [NotNull] String section ) {
 			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
 			return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
@@ -218,7 +223,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public Boolean Add( Document document ) {
+		public Boolean Add( [NotNull] Document document ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			if ( !document.Exists() ) { return false; }
@@ -283,6 +288,7 @@ namespace Librainian.Persistence {
 		///     Return the entire structure as a JSON formatted String.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public String AsJSON() {
 			var tempDocument = Document.GetTempDocument();
 
@@ -315,7 +321,7 @@ namespace Librainian.Persistence {
 		/// <param name="document"> </param>
 		/// <param name="overwrite"></param>
 		/// <returns></returns>
-		public Boolean Save( Document document, Boolean overwrite = true ) {
+		public Boolean Save( [NotNull] Document document, Boolean overwrite = true ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			if ( document.Exists() ) {
@@ -334,7 +340,7 @@ namespace Librainian.Persistence {
 		/// <param name="document"> </param>
 		/// <param name="overwrite"></param>
 		/// <returns></returns>
-		public async Task<Boolean> SaveAsync( Document document, Boolean overwrite = true ) {
+		public async Task<Boolean> SaveAsync( [NotNull] Document document, Boolean overwrite = true ) {
 			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			if ( document.Exists() ) {
@@ -348,14 +354,14 @@ namespace Librainian.Persistence {
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( String section ) {
+		public Boolean TryRemove( [NotNull] String section ) {
 			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
 			return this.Data.TryRemove( section, out var dict );
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( String section, String key ) {
+		public Boolean TryRemove( [NotNull] String section, String key ) {
 			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
 			if ( !this.Data.ContainsKey( section ) ) { return false; }
@@ -383,7 +389,7 @@ namespace Librainian.Persistence {
 		///     Entire document dictionary is saved on any change.
 		/// </summary>
 		/// <param name="autoSaveDocument"></param>
-		public IniFile( Document autoSaveDocument ) : this() {
+		public IniFile( [NotNull] Document autoSaveDocument ) : this() {
 			this.AutoSaveDocument = autoSaveDocument;
 			this.Add( autoSaveDocument );
 		}

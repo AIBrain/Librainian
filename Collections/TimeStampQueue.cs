@@ -42,6 +42,7 @@ namespace Librainian.Collections {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -51,6 +52,7 @@ namespace Librainian.Collections {
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+		[NotNull]
 		public IEnumerable<T> Items => this.Queue.Select( selector: item => item.Item );
 
 		[JsonProperty]
@@ -61,7 +63,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns>Returns the DateTime the data was queued.</returns>
-		public DateTime Add( T item ) {
+		public DateTime Add( [CanBeNull] T item ) {
 			if ( null == item ) { return default; }
 
 			this.Queue.Enqueue( item: new WithTime<T>( item: item ) );
@@ -69,7 +71,7 @@ namespace Librainian.Collections {
 			return new WithTime<T>( item ).TimeStamp;
 		}
 
-		public void AddRange( params T[] items ) {
+		public void AddRange( [CanBeNull] params T[] items ) {
 			if ( null != items ) { Parallel.ForEach( source: items, body: obj => this.Add( item: obj ) ); }
 		}
 
@@ -89,12 +91,14 @@ namespace Librainian.Collections {
 		///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public IEnumerable<T> NextAll() => this.Queue.Select( selector: o => this.Next() );
 
 		/// <summary>
 		///     Returns the next Object in the <see cref="Queue" /> or null.
 		/// </summary>
 		/// <returns></returns>
+		[CanBeNull]
 		public WithTime<T> Pull() => this.Queue.TryDequeue( result: out var temp ) ? temp : default;
 
 	}

@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Section.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "Section.cs" was last formatted by Protiguous on 2018/06/04 at 4:23 PM.
 
@@ -59,16 +59,26 @@ namespace Librainian.Persistence {
 	[JsonObject]
 	public class Section : IEquatable<Section> {
 
-		public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
+		[JsonProperty( IsReference = false, ItemIsReference = false )]
+		private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
 		/// <summary>
 		///     Automatically remove any key where there is no value. Defaults to true.
 		/// </summary>
+		[JsonIgnore]
 		public Boolean AutoCleanup { get; set; } = true;
 
 		[JsonIgnore]
+		[NotNull]
+		public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
+
+		[JsonIgnore]
+		[NotNull]
+		public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
+
+		[JsonIgnore]
 		[CanBeNull]
-		public String this[ [CanBeNull] String key ] {
+		public String this[[CanBeNull] String key] {
 			[CanBeNull]
 			get {
 				if ( key is null ) { return null; }
@@ -82,20 +92,9 @@ namespace Librainian.Persistence {
 				if ( value is null && this.AutoCleanup ) {
 					this.Data.TryRemove( key, out _ ); //a little cleanup
 				}
-				else { this.Data[ key ] = value; }
+				else { this.Data[key] = value; }
 			}
 		}
-
-		[JsonIgnore]
-		[NotNull]
-		public IReadOnlyList<String> Keys => ( IReadOnlyList<String> ) this.Data.Keys;
-
-		[JsonIgnore]
-		[NotNull]
-		public IReadOnlyList<String> Values => ( IReadOnlyList<String> ) this.Data.Values;
-
-		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
 		/// <summary>
 		///     Static comparison. Checks references and then keys and then values.
@@ -125,10 +124,12 @@ namespace Librainian.Persistence {
 			await Task.Run( () => {
 				foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
 					if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
-						this[ key ] = value; //whoops, re-add value. Cause: other threads.
+						this[key] = value; //whoops, re-add value. Cause: other threads.
 					}
 				}
 			} ).NoUI();
+
+		public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
 
 		public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this, right: obj as Section );
 
@@ -147,7 +148,7 @@ namespace Librainian.Persistence {
 
 				return await Task.Run( () => {
 					if ( JsonConvert.DeserializeObject( that, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
-						Parallel.ForEach( other, pair => this[ pair.Key ] = pair.Value );
+						Parallel.ForEach( other, pair => this[pair.Key] = pair.Value );
 
 						return true;
 					}
@@ -180,7 +181,5 @@ namespace Librainian.Persistence {
 
 			return false;
 		}
-
 	}
-
 }

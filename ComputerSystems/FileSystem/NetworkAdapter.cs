@@ -41,6 +41,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.Linq;
 	using System.Management;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Measurement.Time;
 	using OperatingSystem.WMI;
 
@@ -119,6 +120,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		///     List all the NetworkAdapters
 		/// </summary>
 		/// <returns>The list of all NetworkAdapter of the machine</returns>
+		[NotNull]
 		public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
 
 			//var allNetworkAdapter = new List<NetworkAdapter>();

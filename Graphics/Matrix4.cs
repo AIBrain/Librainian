@@ -38,12 +38,14 @@ namespace Librainian.Graphics {
 
 	using System;
 	using System.Windows.Media.Media3D;
+	using JetBrains.Annotations;
 
 	internal class Matrix4 : Matrix {
 
+		[NotNull]
 		public static Matrix4 NewI() => new Matrix4( new[ , ] { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } } );
 
-		public static Vector3D operator *( Matrix4 matrix4, Vector3D v ) {
+		public static Vector3D operator *( [NotNull] Matrix4 matrix4, Vector3D v ) {
 			var m = matrix4.matrix;
 			var w = m[ 3, 0 ] * v.X + m[ 3, 1 ] * v.Y + m[ 3, 2 ] * v.Z + m[ 3, 3 ];
 
@@ -51,7 +53,8 @@ namespace Librainian.Graphics {
 				( m[ 2, 0 ] * v.X + m[ 2, 1 ] * v.Y + m[ 2, 2 ] * v.Z + m[ 2, 3 ] ) / w );
 		}
 
-		public static Matrix4 operator *( Matrix4 mat1, Matrix4 mat2 ) {
+		[NotNull]
+		public static Matrix4 operator *( [NotNull] Matrix4 mat1, [NotNull] Matrix4 mat2 ) {
 			var m1 = mat1.matrix;
 			var m2 = mat2.matrix;
 			var m3 = new Single[ 4, 4 ];
@@ -75,13 +78,14 @@ namespace Librainian.Graphics {
 			return new Matrix4( m3 );
 		}
 
-		public static Matrix4 operator *( Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
+		[NotNull]
+		public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
 
 		public static Matrix4 I = NewI();
 
 		public Matrix4() : base( 4, 4 ) { }
 
-		public Matrix4( Single[ , ] matrix ) : base( matrix ) {
+		public Matrix4( [NotNull] Single[ , ] matrix ) : base( matrix ) {
 			if ( this.Rows != 4 || this.Cols != 4 ) { throw new ArgumentException(); }
 		}
 

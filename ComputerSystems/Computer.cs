@@ -144,6 +144,7 @@ namespace Librainian.ComputerSystems {
 		/// </summary>
 		/// <remarks>http: //msdn2.microsoft.com/en-us/Library/aa394373(VS.85).aspx</remarks>
 		/// <returns></returns>
+		[NotNull]
 		public String GetCPUDescription() {
 			try {
 				using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
@@ -174,8 +175,10 @@ namespace Librainian.ComputerSystems {
 			return cpuUsage;
 		}
 
+		[NotNull]
 		public IEnumerable<String> GetVersions() => AppDomain.CurrentDomain.GetAssemblies().Select( assembly => $"Assembly: {assembly.GetName().Name}, {assembly.GetName().Version}" );
 
+		[NotNull]
 		public IEnumerable<String> GetWorkingMacAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
 		public void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );

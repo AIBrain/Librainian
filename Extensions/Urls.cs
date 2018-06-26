@@ -41,6 +41,7 @@ namespace Librainian.Extensions {
 	using System.Text;
 	using System.Text.RegularExpressions;
 	using System.Web;
+	using JetBrains.Annotations;
 
 	public static class Urls {
 
@@ -60,23 +61,28 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <param name="input">String to check</param>
 		/// <returns>Boolean</returns>
-		public static Boolean HasValue( this String input ) => !String.IsNullOrEmpty( input );
+		public static Boolean HasValue( [CanBeNull] this String input ) => !String.IsNullOrEmpty( input );
 
-		public static String HtmlAttributeEncode( this String input ) => HttpUtility.HtmlAttributeEncode( input );
+		[CanBeNull]
+		public static String HtmlAttributeEncode( [NotNull] this String input ) => HttpUtility.HtmlAttributeEncode( input );
 
+		[CanBeNull]
 		public static String HtmlDecode( this String input ) => HttpUtility.HtmlDecode( input );
 
-		public static String HtmlEncode( this String input ) => HttpUtility.HtmlEncode( input );
+		[CanBeNull]
+		public static String HtmlEncode( [NotNull] this String input ) => HttpUtility.HtmlEncode( input );
 
-		public static Boolean IsNameOnlyQueryString( this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
+		public static Boolean IsNameOnlyQueryString( [CanBeNull] this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
+		[CanBeNull]
 		public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
 
 		/// <summary>
 		///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
 		///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
 		/// </summary>
-		public static String UrlEncode( this String input ) {
+		[NotNull]
+		public static String UrlEncode( [NotNull] this String input ) {
 			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			const Int32 maxLength = 32766;

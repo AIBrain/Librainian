@@ -39,6 +39,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Cryptography;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Implements a 32-bit CRC hash algorithm compatible with Zip etc.
@@ -63,6 +64,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 		private UInt32[] Table { get; }
 
+		[NotNull]
 		private static UInt32[] InitializeTable( UInt32 polynomial ) {
 			if ( polynomial == DefaultPolynomial && _defaultTable != null ) { return _defaultTable; }
 
@@ -126,8 +128,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 		public static UInt32 Compute( UInt32 seed, Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
 
-		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, Byte[] buffer ) => ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
+		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, [NotNull] Byte[] buffer ) => ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
+		[NotNull]
 		public static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
 			var result = BitConverter.GetBytes( uint32 );
 

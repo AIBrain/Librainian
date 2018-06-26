@@ -92,6 +92,7 @@ namespace Librainian.Internet.Servers {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		/// <seealso cref="Stop" />
+		[NotNull]
 		public Task Run( CancellationToken cancellationToken ) =>
 			Task.Run( async () => {
 				"Webserver running...".Info();

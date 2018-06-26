@@ -39,6 +39,7 @@ namespace Librainian.Database.MMF {
 	using System;
 	using System.IO;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -62,7 +63,7 @@ namespace Librainian.Database.MMF {
 
 		public Int32 Win32ErrorCode { get; }
 
-		protected FileMapIOException( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+		protected FileMapIOException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
 		// construction
 		public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;

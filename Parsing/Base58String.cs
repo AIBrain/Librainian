@@ -40,10 +40,12 @@ namespace Librainian.Parsing {
 	using System.Linq;
 	using System.Numerics;
 	using System.Text;
+	using JetBrains.Annotations;
 
 	public static class Base58String {
 
-		public static String FromByteArray( this Byte[] b ) {
+		[NotNull]
+		public static String FromByteArray( [NotNull] this Byte[] b ) {
 			var sb = new StringBuilder();
 			var bi = new BigInteger( b.Reverse().Concat( new Byte[] { 0x00 } ).ToArray() ); // concat adds sign byte
 
@@ -60,7 +62,8 @@ namespace Librainian.Parsing {
 			return sb.ToString();
 		}
 
-		public static Byte[] ToByteArray( this String s ) {
+		[NotNull]
+		public static Byte[] ToByteArray( [NotNull] this String s ) {
 			BigInteger bi = 0;
 
 			// Decode base58

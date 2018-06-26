@@ -27,12 +27,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 // 
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
 // 
 // ***  Project "Librainian"  ***
-// File "StreamReadException.cs" was last formatted by Protiguous on 2018/06/04 at 3:51 PM.
+// File "StreamReadException.cs" was last formatted by Protiguous on 2018/06/09 at 2:46 PM.
 
 namespace Librainian.Exceptions {
 
@@ -43,7 +44,7 @@ namespace Librainian.Exceptions {
 
 		public StreamReadException( String message ) : base( message ) { }
 
-		public StreamReadException( String message, Exception inner ) : base( message, inner ) { }
+		public StreamReadException( String message, Exception innerException ) : base( message, innerException ) { }
 
 	}
 

@@ -38,6 +38,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>Restricts the value to between -1.0 and 1.0</summary>
@@ -93,7 +94,7 @@ namespace Librainian.Maths.Numbers {
 
 		public static implicit operator Single( Minus1To1 special ) => special.Value;
 
-		public static Minus1To1 Parse( String value ) => new Minus1To1( Single.Parse( value ) );
+		public static Minus1To1 Parse( [NotNull] String value ) => new Minus1To1( Single.Parse( value ) );
 
 		public override String ToString() => $"{this.Value:P}";
 

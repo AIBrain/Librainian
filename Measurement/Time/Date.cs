@@ -110,12 +110,12 @@ namespace Librainian.Measurement.Time {
 
 		public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte ) dateTime.Month, day: ( Byte ) dateTime.Day ) { }
 
-		public Date( Span span ) {
-			this.Year = new Year( span.GetWholeYears() );
+		public Date( [NotNull] SpanOfTime spanOfTime ) {
+			this.Year = new Year( spanOfTime.GetWholeYears() );
 
-			this.Month = span.Months.Value < Month.Minimum ? new Month( Month.Minimum ) : new Month( ( Byte ) span.Months.Value );
+			this.Month = spanOfTime.Months.Value < Month.Minimum ? new Month( Month.Minimum ) : new Month( ( Byte ) spanOfTime.Months.Value );
 
-			this.Day = span.Days.Value < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( Byte ) span.Days.Value );
+			this.Day = spanOfTime.Days.Value < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( Byte ) spanOfTime.Days.Value );
 		}
 
 		//public Date( long year, long month, long day )

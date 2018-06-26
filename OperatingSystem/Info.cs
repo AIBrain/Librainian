@@ -93,7 +93,7 @@ namespace Librainian.OperatingSystem {
 		/// </summary>
 		public static UInt32? ReleaseId() => TryGetRegistryKeyHKLM( CurrentVersion, "ReleaseId", out var value ) ? Convert.ToUInt32( value ) : null;
 
-		public static Boolean TryGetRegistryKeyHKLM( [NotNull] String path, [NotNull] String key, out dynamic value ) {
+		public static Boolean TryGetRegistryKeyHKLM( [NotNull] String path, [NotNull] String key, [CanBeNull] out dynamic value ) {
 			if ( path is null ) { throw new ArgumentNullException( nameof( path ) ); }
 
 			if ( key is null ) { throw new ArgumentNullException( nameof( key ) ); }

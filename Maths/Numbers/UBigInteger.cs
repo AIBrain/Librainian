@@ -189,11 +189,12 @@ namespace Librainian.Maths.Numbers {
 		public Int32 CompareTo( UInt64 other ) => this._internalValue.CompareTo( other: other );
 
 		// ReSharper disable once ImpureMethodCallOnReadonlyValueField
+		[NotNull]
 		public Byte[] ToByteArray() => this._internalValue.ToByteArray();
 
 		public override String ToString() => this._internalValue.ToString();
 
-		public String ToString( String format ) => this._internalValue.ToString( format: format );
+		public String ToString( [NotNull] String format ) => this._internalValue.ToString( format: format );
 
 	}
 

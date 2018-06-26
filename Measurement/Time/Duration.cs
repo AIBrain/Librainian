@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Time {
 	///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
 	///     <para>Internally based upon the total number of microseconds (<see cref="totalMicroseconds" />).</para>
 	/// </summary>
-	/// <seealso cref="Span" />
+	/// <seealso cref="SpanOfTime" />
 	[JsonObject]
 	[Immutable]
 	public struct Duration : IComparable<Duration>, IComparable<TimeSpan> {

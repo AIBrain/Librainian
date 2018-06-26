@@ -1,4 +1,4 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © 1995-2017 to Rick@AIBrain.org and 2018-2018 to Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
@@ -27,12 +27,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "DocumentInfo.cs" was last formatted by Protiguous on 2018/06/07 at 1:06 PM.
+// File "DocumentInfo.cs" was last formatted by Protiguous on 2018/06/22 at 4:12 PM.
 
 namespace Librainian.Persistence {
 
@@ -109,6 +110,7 @@ namespace Librainian.Persistence {
 			this.Length = document.Length;
 			this.CreationTimeUtc = document.Info.CreationTimeUtc;
 			this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
+
 			this.LastScanned = null;
 
 			//attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
@@ -155,9 +157,9 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public static Boolean operator !=( DocumentInfo left, DocumentInfo right ) => !Equals( left, right );
+		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
 
-		public static Boolean operator ==( DocumentInfo left, DocumentInfo right ) => Equals( left, right );
+		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
 		public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
@@ -187,6 +189,7 @@ namespace Librainian.Persistence {
 		public async Task<Boolean> Scan( CancellationToken token ) {
 
 			try {
+				Debug.Write( $"Starting scan on {this.AbsolutePath}..." );
 				var document = new Document( this.AbsolutePath );
 
 				this.Length = document.Length;
@@ -203,6 +206,9 @@ namespace Librainian.Persistence {
 			}
 			catch ( Exception exception ) {
 				exception.More();
+			}
+			finally {
+				Debug.WriteLine( "done." );
 			}
 
 			return false;

@@ -38,6 +38,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -63,8 +64,9 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private Double _value;
 
-		public static implicit operator Double( Minus1To1Ts special ) => special.Value;
+		public static implicit operator Double( [NotNull] Minus1To1Ts special ) => special.Value;
 
+		[NotNull]
 		public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
 
 		public override String ToString() => $"{this.Value:R}";

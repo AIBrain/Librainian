@@ -39,6 +39,7 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Security.Cryptography;
 	using System.Text;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Helper methods for working with <see cref="Guid" />.
@@ -89,7 +90,7 @@ namespace Librainian.Extensions {
 		///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a>
 		///     .
 		/// </remarks>
-		public static Guid Create( Guid namespaceId, String name, Int32 version ) {
+		public static Guid Create( Guid namespaceId, [NotNull] String name, Int32 version ) {
 			if ( name is null ) { throw new ArgumentNullException( nameof( name ) ); }
 
 			if ( version != 3 && version != 5 ) { throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." ); }
@@ -135,7 +136,7 @@ namespace Librainian.Extensions {
 			guid.SwapBytes( 6, 7 );
 		}
 
-		public static void SwapBytes( this Byte[] bytes, Int32 leftIndex, Int32 rightIndex ) {
+		public static void SwapBytes( [NotNull] this Byte[] bytes, Int32 leftIndex, Int32 rightIndex ) {
 			var temp = bytes[ leftIndex ];
 			bytes[ leftIndex ] = bytes[ rightIndex ];
 			bytes[ rightIndex ] = temp;

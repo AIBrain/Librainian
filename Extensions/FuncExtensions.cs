@@ -38,6 +38,7 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Runtime.CompilerServices;
+	using JetBrains.Annotations;
 	using Storage = System.Collections.Concurrent.ConcurrentDictionary<System.Object, System.Object>;
 
 	/// <summary>
@@ -50,6 +51,7 @@ namespace Librainian.Extensions {
 		// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
 		public static TResult ApplyMemoized<TSource, TResult, TParam>( this TSource source, Func<TSource, TParam, TResult> selector, TParam param ) => selector.AsWeakMemoized( source )( param );
 
+		[NotNull]
 		public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, TSource source ) =>
 			param => {
 

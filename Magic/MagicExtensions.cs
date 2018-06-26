@@ -54,12 +54,14 @@ namespace Librainian.Magic {
 		/// <param name="observable"></param>
 		/// <returns></returns>
 		/// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
+		[NotNull]
 		public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) =>
 			Observable.Create<Unit>( observer => observable.Subscribe( _ => { }, onError: observer.OnError, onCompleted: () => {
 				observer.OnNext( Unit.Default );
 				observer.OnCompleted();
 			} ) );
 
+		[NotNull]
 		public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
 
 		/// <summary>
@@ -69,6 +71,7 @@ namespace Librainian.Magic {
 		/// <param name="source"></param>
 		/// <param name="pauser"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static IObservable<T> Pausable<T>( this IObservable<T> source, IObservable<Boolean> pauser ) =>
 			Observable.Create<T>( o => {
 				var paused = new SerialDisposable();
@@ -97,7 +100,7 @@ namespace Librainian.Magic {
 		/// </summary>
 		/// <param name="b"></param>
 		/// <param name="action"></param>
-		public static void Then( this Boolean b, Action action ) {
+		public static void Then( this Boolean b, [CanBeNull] Action action ) {
 			if ( b ) { action?.Invoke(); }
 		}
 

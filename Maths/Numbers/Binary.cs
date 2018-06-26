@@ -65,7 +65,8 @@ namespace Librainian.Maths.Numbers {
 
 		public Int32 Length => this.Booleans.Count;
 
-		public static Binary Concatenate( Binary a, Binary b ) {
+		[NotNull]
+		public static Binary Concatenate( [NotNull] Binary a, [NotNull] Binary b ) {
 			var result = new Binary( new Boolean[ a.Length + b.Length ] );
 			var n = 0;
 
@@ -82,12 +83,14 @@ namespace Librainian.Maths.Numbers {
 			return result;
 		}
 
+		[NotNull]
 		public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
 			var binaryString = Convert.ToString( value, 2 );
 
 			return binaryString.Select( c => c == '1' );
 		}
 
+		[NotNull]
 		public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
 			var toBinary = new List<Boolean>( ConvertToBinary( value ) );
 
@@ -96,7 +99,8 @@ namespace Librainian.Maths.Numbers {
 			return toBinary;
 		}
 
-		public static Binary operator &( Binary a, Binary b ) {
+		[NotNull]
+		public static Binary operator &( [NotNull] Binary a, [NotNull] Binary b ) {
 			if ( a.Length != b.Length ) { throw new ArgumentException( "Binaries must have same length" ); }
 
 			var result = new Boolean[ a.Length ];
@@ -106,7 +110,8 @@ namespace Librainian.Maths.Numbers {
 			return new Binary( result );
 		}
 
-		public static Binary operator ^( Binary a, Binary b ) {
+		[NotNull]
+		public static Binary operator ^( [NotNull] Binary a, [NotNull] Binary b ) {
 			if ( a.Length != b.Length ) { throw new ArgumentException( "Binaries must have same length" ); }
 
 			var result = new Boolean[ a.Length ];
@@ -128,12 +133,12 @@ namespace Librainian.Maths.Numbers {
 			return stringBuilder.ToString();
 		}
 
-		public Binary( IReadOnlyCollection<Boolean> booleans ) {
+		public Binary( [NotNull] IReadOnlyCollection<Boolean> booleans ) {
 			this.Booleans = booleans.ToList();
 			this.Booleans.Capacity = this.Booleans.Count;
 		}
 
-		public Binary( IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> ) binary ) { }
+		public Binary( [NotNull] IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> ) binary ) { }
 
 		public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
 

@@ -43,6 +43,7 @@ namespace Librainian.Maths {
 	using Exceptions;
 	using Extensions;
 	using Internet;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Threading;
 
@@ -88,6 +89,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="fallbackByteCount">How many random bytes to fallback to when the facebook request fails.</param>
 		/// <returns></returns>
+		[ItemNotNull]
 		public static async Task<Byte[]> NextData( Int32 fallbackByteCount = 16 ) {
 			var rootObject = await GetError().NoUI();
 

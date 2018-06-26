@@ -39,6 +39,7 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Cryptography;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Implements a 64-bit CRC hash algorithm for a given polynomial.
@@ -68,6 +69,7 @@ namespace Librainian.Security {
 			return createTable;
 		}
 
+		[NotNull]
 		private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
 			var result = BitConverter.GetBytes( value );
 
@@ -86,6 +88,7 @@ namespace Librainian.Security {
 			return crc;
 		}
 
+		[NotNull]
 		protected static UInt64[] CreateTable( UInt64 polynomial ) {
 			var createTable = new UInt64[ 256 ]; //did they mean 255 here (Byte.MaxValue)??
 
@@ -105,6 +108,7 @@ namespace Librainian.Security {
 
 		protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( seed: this._hash, table: this._table, buffer: buffer, start: start, size: length );
 
+		[NotNull]
 		protected override Byte[] HashFinal() {
 			var hashBuffer = UInt64ToBigEndianBytes( this._hash );
 			this.HashValue = hashBuffer;

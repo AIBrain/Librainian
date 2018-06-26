@@ -40,6 +40,7 @@ namespace Librainian.Database.MMF {
 	using System.Linq;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Check if a Type is a value type
@@ -48,7 +49,7 @@ namespace Librainian.Database.MMF {
 
 		private Type Type { get; }
 
-		private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
+		private static Boolean HasMarshalDefinedSize( [NotNull] MemberInfo info ) {
 			var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
 
 			if ( customAttributes.Length == 0 ) { return false; }

@@ -41,10 +41,12 @@ namespace Librainian.Database {
 	using System.Data;
 	using System.Data.SqlClient;
 	using System.Linq.Expressions;
+	using JetBrains.Annotations;
 
 	public static class GenericPopulator<T> {
 
-		private static Func<SqlDataReader, T> GetReader( IDataRecord reader ) {
+		[NotNull]
+		private static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
 			var readerColumns = new List<String>();
 
 			for ( var index = 0; index < reader.FieldCount; index++ ) { readerColumns.Add( reader.GetName( index ) ); }
@@ -96,7 +98,8 @@ namespace Librainian.Database {
 			return ( Func<SqlDataReader, T> ) resDelegate;
 		}
 
-		public static List<T> CreateList( SqlDataReader reader ) {
+		[NotNull]
+		public static List<T> CreateList( [NotNull] SqlDataReader reader ) {
 			var results = new List<T>();
 			var readRow = GetReader( reader );
 

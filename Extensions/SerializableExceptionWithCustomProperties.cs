@@ -40,6 +40,7 @@ namespace Librainian.Extensions {
 	using System.Collections.Generic;
 	using System.Runtime.Serialization;
 	using System.Security.Permissions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	// Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
@@ -72,7 +73,7 @@ namespace Librainian.Extensions {
 		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 
 		// Constructor should be protected for unsealed classes, private for sealed classes. (The Serializer invokes this constructor through reflection, so it can be private)
-		protected SerializableExceptionWithCustomProperties( SerializationInfo info, StreamingContext context ) : base( info, context ) {
+		protected SerializableExceptionWithCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
 			this.ResourceName = info.GetString( "ResourceName" );
 			this.ValidationErrors = ( IList<String> ) info.GetValue( "ValidationErrors", typeof( IList<String> ) );
 		}

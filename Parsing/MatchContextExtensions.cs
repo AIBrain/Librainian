@@ -38,16 +38,17 @@ namespace Librainian.Parsing {
 
 	using System;
 	using System.Collections.Generic;
+	using JetBrains.Annotations;
 
 	public static class MatchContextExtensions {
 
-		public static IntermediateMatchResultContext<T, TResult> When<T, TResult>( this MatchContext<T, TResult> ctx, T value ) where T : IEquatable<T> {
+		public static IntermediateMatchResultContext<T, TResult> When<T, TResult>( [NotNull] this MatchContext<T, TResult> ctx, T value ) where T : IEquatable<T> {
 			var comp = EqualityComparer<T>.Default;
 
 			return ctx.When( t => comp.Equals( t, value ) );
 		}
 
-		public static IntermediateMatchResultContext<T, TResult> When<T, TResult>( this MatchContext<T, TResult> ctx, T value1, T value2 ) where T : IEquatable<T> {
+		public static IntermediateMatchResultContext<T, TResult> When<T, TResult>( [NotNull] this MatchContext<T, TResult> ctx, T value1, T value2 ) where T : IEquatable<T> {
 			var comp = EqualityComparer<T>.Default;
 
 			return ctx.When( t => comp.Equals( t, value1 ) || comp.Equals( t, value2 ) );

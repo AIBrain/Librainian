@@ -44,6 +44,7 @@ namespace Librainian.Security {
 
 	public static class Encryption2 {
 
+		[NotNull]
 		public static String Decrypt( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
 
 			// TODO: Add Proper Exception Handlers
@@ -71,6 +72,7 @@ namespace Librainian.Security {
 			return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
 		}
 
+		[NotNull]
 		public static String Encrypt( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
 
 			// TODO: Add Proper Exception Handlers

@@ -142,7 +142,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
 
-		public static implicit operator Span( PlanckTimes planckTimes ) => new Span( planckTimes );
+		[NotNull]
+		public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.

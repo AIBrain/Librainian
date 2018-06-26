@@ -40,10 +40,11 @@ namespace Librainian.Extensions {
 	using System.Collections.Generic;
 	using System.Xml;
 	using System.Xml.Linq;
+	using JetBrains.Annotations;
 
 	public static class XMLExtensions {
 
-		private static IEnumerable<XElement> SimpleStreamAxis( String inputUrl, String elementName ) {
+		private static IEnumerable<XElement> SimpleStreamAxis( [NotNull] String inputUrl, String elementName ) {
 			using ( var reader = XmlReader.Create( inputUrl ) ) {
 				reader.MoveToContent();
 

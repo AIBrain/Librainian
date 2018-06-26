@@ -40,6 +40,7 @@ namespace Librainian.Graphics.Imaging {
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Untested.
@@ -112,7 +113,7 @@ namespace Librainian.Graphics.Imaging {
 
 		}
 
-		public ImageFile( String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
+		public ImageFile( [NotNull] String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
 			this.Filename = filename.Trim();
 			var fliTmp = new FileInfo( this.Filename );
 

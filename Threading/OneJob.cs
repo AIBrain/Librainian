@@ -37,6 +37,7 @@
 namespace Librainian.Threading {
 
 	using System;
+	using JetBrains.Annotations;
 	using Maths.Numbers;
 
 	public class OneJob : IComparable<OneJob> {
@@ -60,6 +61,6 @@ namespace Librainian.Threading {
 		///     <paramref name="other" />.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		public Int32 CompareTo( OneJob other ) => this.Priority.CompareTo( other.Priority );
+		public Int32 CompareTo( [NotNull] OneJob other ) => this.Priority.CompareTo( other.Priority );
 	}
 }

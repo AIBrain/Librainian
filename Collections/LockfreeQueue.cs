@@ -40,6 +40,7 @@ namespace Librainian.Collections {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Threading;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Represents a lock-free, thread-safe, first-in, first-out collection of objects.
@@ -182,7 +183,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		public LockfreeQueue() => this._tail = this._head;
 
-		public LockfreeQueue( IEnumerable<T> items ) : this() {
+		public LockfreeQueue( [NotNull] IEnumerable<T> items ) : this() {
 			foreach ( var item in items ) { this.Enqueue( item: item ); }
 		}
 

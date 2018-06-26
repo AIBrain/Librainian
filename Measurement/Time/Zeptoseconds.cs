@@ -133,7 +133,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Attoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToAttoseconds();
 
-		public static implicit operator Span( Zeptoseconds zeptoseconds ) => new Span( zeptoseconds: zeptoseconds.Value );
+		[NotNull]
+		public static implicit operator SpanOfTime( Zeptoseconds zeptoseconds ) => new SpanOfTime( zeptoseconds: zeptoseconds.Value );
 
 		public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) => TimeSpan.FromSeconds( ( Double ) zeptoseconds.Value );
 

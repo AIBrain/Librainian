@@ -40,6 +40,7 @@ namespace Librainian.Extensions {
 	using System.IO;
 	using Exceptions;
 
+	/// <inheritdoc />
 	/// <summary>
 	///     TODO make this class able to use a BigInteger?
 	/// </summary>

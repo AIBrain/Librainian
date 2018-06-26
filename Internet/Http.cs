@@ -76,7 +76,7 @@ namespace Librainian.Internet {
 			}
 		}
 
-		private static void GetAsynchCallback( IAsyncResult result ) {
+		private static void GetAsynchCallback( [NotNull] IAsyncResult result ) {
 			if ( !result.IsCompleted ) { return; }
 
 			( result.AsyncState is HttpWebRequest ).BreakIfFalse(); //heh
@@ -103,9 +103,10 @@ namespace Librainian.Internet {
 			else { Urls[ response.ResponseUri ] = document; }
 		}
 
-		public static String Get( String url ) => Get( new Uri( url ) );
+		public static String Get( [NotNull] String url ) => Get( new Uri( url ) );
 
-		public static String Get( Uri uri ) {
+		[CanBeNull]
+		public static String Get( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
 			if ( !uri.IsWellFormedOriginalString() ) { return null; }
@@ -151,10 +152,10 @@ namespace Librainian.Internet {
 		}
 
 		[CanBeNull]
-		public static IAsyncResult GetAsync( String url ) => GetAsync( new Uri( url ) );
+		public static IAsyncResult GetAsync( [NotNull] String url ) => GetAsync( new Uri( url ) );
 
 		[CanBeNull]
-		public static IAsyncResult GetAsync( Uri uri ) {
+		public static IAsyncResult GetAsync( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
 			if ( !uri.IsWellFormedOriginalString() ) { return null; }
@@ -180,7 +181,8 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="uri"></param>
 		/// <returns></returns>
-		public static IAsyncResult GetStart( Uri uri ) {
+		[CanBeNull]
+		public static IAsyncResult GetStart( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
 			if ( !uri.IsWellFormedOriginalString() ) { return null; }
@@ -204,9 +206,10 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="url"></param>
 		/// <returns></returns>
-		public static String Peek( String url ) => Peek( new Uri( url ) );
+		public static String Peek( [NotNull] String url ) => Peek( new Uri( url ) );
 
-		public static String Peek( Uri uri ) {
+		[NotNull]
+		public static String Peek( [NotNull] Uri uri ) {
 			if ( !uri.IsWellFormedOriginalString() ) { return String.Empty; }
 
 			if ( !Urls.ContainsKey( uri ) ) { return String.Empty; }
@@ -223,7 +226,8 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="url"></param>
 		/// <returns></returns>
-		public static IAsyncResult Poke( String url ) {
+		[CanBeNull]
+		public static IAsyncResult Poke( [NotNull] String url ) {
 			var uri = new Uri( url );
 
 			if ( !uri.IsWellFormedOriginalString() ) { return null; }
@@ -237,13 +241,13 @@ namespace Librainian.Internet {
 		///     Pump messages while waiting forever for a response to be populated for this url.
 		/// </summary>
 		/// <param name="url"></param>
-		public static void Wait( String url ) => Wait( new Uri( url ) );
+		public static void Wait( [NotNull] String url ) => Wait( new Uri( url ) );
 
 		/// <summary>
 		///     Pump messages while waiting forever for a response to be populated for this uri.
 		/// </summary>
 		/// <param name="uri"></param>
-		public static void Wait( Uri uri ) {
+		public static void Wait( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
 			if ( !uri.IsWellFormedOriginalString() ) { return; }

@@ -41,6 +41,7 @@ namespace Librainian.Internet.Wiki {
 	using System.Net;
 	using System.Xml;
 	using System.Xml.Linq;
+	using JetBrains.Annotations;
 	using Parsing;
 
 	public class WikiPedia {
@@ -106,6 +107,7 @@ namespace Librainian.Internet.Wiki {
 		//    }
 		//}
 
+		[CanBeNull]
 		public static IEnumerable<String> GetCategories( String titles ) {
 			try {
 				var uri = new Uri( $"http://wikipedia.org/w/api.php?action=query&prop=categories&format=xml&titles={titles}" );
@@ -142,6 +144,7 @@ namespace Librainian.Internet.Wiki {
 			}
 		}
 
+		[CanBeNull]
 		public static XElement GetWikiData( String title ) {
 			try {
 				var webRequest = ( HttpWebRequest ) WebRequest.Create( "http://wikipedia.org/wiki/" + "Special:Export/" + title );

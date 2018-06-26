@@ -39,6 +39,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	using System;
 	using System.Linq;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>A simple struct for a <see cref="Second" />.</summary>
@@ -62,16 +63,18 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <summary>Allow this class to be visibly cast to a <see cref="SByte" />.</summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static explicit operator SByte( Second value ) => ( SByte ) value.Value;
+		public static explicit operator SByte( [NotNull] Second value ) => ( SByte ) value.Value;
 
 		/// <summary>Allow this class to be read as a <see cref="Byte" />.</summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static implicit operator Byte( Second value ) => value.Value;
+		public static implicit operator Byte( [NotNull] Second value ) => value.Value;
 
+		[NotNull]
 		public static implicit operator Second( Byte value ) => new Second( value );
 
 		/// <summary>Provide the next second.</summary>
+		[NotNull]
 		public Second Next( out Boolean tocked ) {
 			tocked = false;
 			var next = this.Value + 1;
@@ -85,6 +88,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		}
 
 		/// <summary>Provide the previous second.</summary>
+		[NotNull]
 		public Second Previous( out Boolean tocked ) {
 			tocked = false;
 			var next = this.Value - 1;

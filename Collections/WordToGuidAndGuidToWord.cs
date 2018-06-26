@@ -52,8 +52,10 @@ namespace Librainian.Collections {
 
 		public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
 
+		[NotNull]
 		public IEnumerable<Guid> EachGuid => this.Guids.Keys;
 
+		[NotNull]
 		public IEnumerable<String> EachWord => this.Words.Keys;
 
 		[JsonIgnore]
@@ -64,7 +66,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public Guid this[ String key ] {
+		public Guid this[ [CanBeNull] String key ] {
 			get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[ key ];
 
 			set {

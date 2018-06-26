@@ -44,6 +44,7 @@ namespace Librainian.Security {
 	using System.Linq;
 	using System.Windows.Forms;
 	using Graphics.Video;
+	using JetBrains.Annotations;
 
 	public class CryptUtility {
 
@@ -84,7 +85,8 @@ namespace Librainian.Security {
 		/// <summary>Combines all key files and passwords into one key stream</summary>
 		/// <param name="keys">The keys to combine</param>
 		/// <returns>The resulting key stream</returns>
-		private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
+		[NotNull]
+		private static MemoryStream GetKeyStream( [NotNull] IReadOnlyList<FilePasswordPair> keys ) {
 
 			//Xor the keys an their passwords
 			var keyStreams = new MemoryStream[ keys.Count ];
@@ -121,7 +123,7 @@ namespace Librainian.Security {
 			return resultKeyStream;
 		}
 
-		private static Byte GetReverseKeyByte( Stream keyStream ) {
+		private static Byte GetReverseKeyByte( [NotNull] Stream keyStream ) {
 
 			//jump to reverse-read position and read from the end of the stream
 			var keyPosition = keyStream.Position;
@@ -347,7 +349,7 @@ namespace Librainian.Security {
 		/// </param>
 		/// <param name="imageFiles"></param>
 		/// <param name="keys"></param>
-		private static void HideOrExtract( ref Stream messageStream, CarrierImage[] imageFiles, IReadOnlyList<FilePasswordPair> keys, Boolean splitBytes, Boolean extract ) {
+		private static void HideOrExtract( [NotNull] ref Stream messageStream, [NotNull] CarrierImage[] imageFiles, [NotNull] IReadOnlyList<FilePasswordPair> keys, Boolean splitBytes, Boolean extract ) {
 			var aviWriter = new AviWriter();
 			var aviReader = new AviReader();
 
@@ -542,7 +544,7 @@ namespace Librainian.Security {
 			return bitmapInfo;
 		}
 
-		private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, Stream keyStream, ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps,
+		private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, [NotNull] Stream keyStream, ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps,
 			ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo ) {
 
 			//Repeat the key, if it is shorter than the message
@@ -622,7 +624,7 @@ namespace Librainian.Security {
 			}
 		}
 
-		private static void SaveBitmap( Bitmap bitmap, String fileName ) {
+		private static void SaveBitmap( [NotNull] Bitmap bitmap, [NotNull] String fileName ) {
 			var fileNameLower = fileName.ToLower();
 
 			var format = ImageFormat.Bmp;
@@ -677,6 +679,7 @@ namespace Librainian.Security {
 			}
 		}
 
+		[NotNull]
 		private static String UnTrimColorString( String color, Int32 desiredLength ) {
 			var difference = desiredLength - color.Length;
 
@@ -688,6 +691,7 @@ namespace Librainian.Security {
 		/// <summary>Combines key file and password using XOR</summary>
 		/// <param name="key">The key/password pair to combine</param>
 		/// <returns>The stream created from key and password</returns>
+		[NotNull]
 		public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
 			var fileStream = new FileStream( key.FileName, mode: FileMode.Open );
 			var resultStream = new MemoryStream();
@@ -720,7 +724,7 @@ namespace Librainian.Security {
 		/// <param name="messageStream">Empty stream to receive the message</param>
 		/// <param name="imageFiles"></param>
 		/// <param name="splitBytes"></param>
-		public static void ExtractMessageFromBitmap( CarrierImage[] imageFiles, FilePasswordPair[] keys, ref Stream messageStream, Boolean splitBytes ) =>
+		public static void ExtractMessageFromBitmap( [NotNull] CarrierImage[] imageFiles, [NotNull] FilePasswordPair[] keys, [NotNull] ref Stream messageStream, Boolean splitBytes ) =>
 			HideOrExtract( messageStream: ref messageStream, imageFiles: imageFiles, keys: keys, splitBytes: splitBytes, extract: true );
 
 		/// <summary>Hides a message in a bitmap</summary>
@@ -728,7 +732,7 @@ namespace Librainian.Security {
 		/// <param name="imageFiles"></param>
 		/// <param name="keys"></param>
 		/// <param name="splitBytes"></param>
-		public static void HideMessageInBitmap( Stream messageStream, CarrierImage[] imageFiles, FilePasswordPair[] keys, Boolean splitBytes ) {
+		public static void HideMessageInBitmap( Stream messageStream, [NotNull] CarrierImage[] imageFiles, [NotNull] FilePasswordPair[] keys, Boolean splitBytes ) {
 			HideOrExtract( messageStream: ref messageStream, imageFiles: imageFiles, keys: keys, splitBytes: splitBytes, extract: false );
 
 			// ReSharper disable once RedundantAssignment

@@ -38,6 +38,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Linq;
+	using JetBrains.Annotations;
 	using Numbers;
 
 	public static class Bits {
@@ -62,6 +63,7 @@ namespace Librainian.Maths {
 
 		public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
 
+		[NotNull]
 		public static String ToString( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
 
 		public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );

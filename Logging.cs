@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Logging.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +23,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
-// File "Logging.cs" was last formatted by Protiguous on 2018/06/04 at 4:02 PM.
+// File "Logging.cs" was last formatted by Protiguous on 2018/06/10 at 9:13 AM.
 
 namespace Librainian {
 
@@ -59,14 +60,21 @@ namespace Librainian {
 	/// </summary>
 	public static class Logging {
 
+		private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
+
 		public static Boolean HasConsoleBeenAllocated { get; private set; }
+
+		static Logging() =>
+					ConsoleListener = new ConsoleListenerWithTimePrefix {
+						IndentSize = 1
+					};
 
 		/// <summary>
 		///     <seealso cref="Before" />
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
-		public static void After( [CallerMemberName] String method = null ) {
+		public static void After( [CanBeNull] [CallerMemberName] String method = null ) {
 			$"After - {method ?? String.Empty}".WriteLine();
 			ConsoleListener.IndentLevel--;
 		}
@@ -76,14 +84,20 @@ namespace Librainian {
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
-		public static void Before( [CallerMemberName] String method = null ) {
+		public static void Before( [CanBeNull] [CallerMemberName] String method = null ) {
 			ConsoleListener.IndentLevel++;
 			$"Before - {method ?? String.Empty}".WriteLine();
 		}
 
 		[DebuggerStepThrough]
-		public static void Break( this Exception exception ) {
-			if ( !String.IsNullOrEmpty( exception.Message ) ) { Debug.WriteLine( exception.ToString() ); }
+		public static void Break( [NotNull] this Exception exception ) {
+			if ( exception == null ) {
+				throw new ArgumentNullException( paramName: nameof( exception ) );
+			}
+
+			if ( !String.IsNullOrEmpty( exception.Message ) ) {
+				Debug.WriteLine( exception.ToString() );
+			}
 
 			Break();
 		}
@@ -92,23 +106,43 @@ namespace Librainian {
 		///     <see cref="Debugger.Break" /> if a <see cref="Debugger" /> is attached.
 		/// </summary>
 		public static void Break() {
-			if ( Debugger.IsAttached ) { Debugger.Break(); }
+			if ( Debugger.IsAttached ) {
+				Debugger.Break();
+			}
+		}
+
+		public static void Break( TrimmedString message ) {
+			Debug.WriteLine( message );
+			Break();
+		}
+
+		public static void Break( TrimmedString message, [NotNull] params Object[] args ) {
+			Debug.WriteLine( message, args );
+			Break();
 		}
 
 		[DebuggerStepThrough]
 		public static void BreakIfFalse( this Boolean condition, String message = "" ) {
-			if ( condition ) { return; }
+			if ( condition ) {
+				return;
+			}
 
-			if ( !String.IsNullOrEmpty( message ) ) { Debug.WriteLine( message ); }
+			if ( !String.IsNullOrEmpty( message ) ) {
+				Debug.WriteLine( message );
+			}
 
 			Break();
 		}
 
 		[DebuggerStepThrough]
 		public static void BreakIfTrue( this Boolean condition, String message = "" ) {
-			if ( !condition ) { return; }
+			if ( !condition ) {
+				return;
+			}
 
-			if ( !String.IsNullOrEmpty( message ) ) { Debug.WriteLine( message ); }
+			if ( !String.IsNullOrEmpty( message ) ) {
+				Debug.WriteLine( message );
+			}
 
 			Break();
 		}
@@ -118,7 +152,7 @@ namespace Librainian {
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
-		public static void Enter( [CallerMemberName] String method = null ) {
+		public static void Enter( [CanBeNull] [CallerMemberName] String method = null ) {
 			$"Entering {method ?? String.Empty}".WriteLine();
 			ConsoleListener.IndentLevel++;
 		}
@@ -133,7 +167,9 @@ namespace Librainian {
 		/// <param name="message"></param>
 		[DebuggerStepThrough]
 		public static void Error( [CanBeNull] this String message ) {
-			if ( message != null ) { $"Error: {message}".WriteLine(); }
+			if ( message != null ) {
+				$"Error: {message}".WriteLine();
+			}
 		}
 
 		/// <summary>
@@ -141,13 +177,13 @@ namespace Librainian {
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
-		public static void Exit( [CallerMemberName] String method = "" ) {
+		public static void Exit( [CanBeNull] [CallerMemberName] String method = "" ) {
 			ConsoleListener.IndentLevel--;
 			$"Exited {method ?? String.Empty}".WriteLine();
 		}
 
 		[DebuggerStepThrough]
-		public static void Finalized( [CallerMemberName] String method = "" ) => $"Finalized: {method ?? String.Empty}".WriteLine();
+		public static void Finalized( [CanBeNull] [CallerMemberName] String method = "" ) => $"Finalized: {method ?? String.Empty}".WriteLine();
 
 		/// <summary>
 		///     Gets the number of frames in the <see cref="StackTrace" />
@@ -167,7 +203,9 @@ namespace Librainian {
 			GC.Collect( generation: 1, mode: GCCollectionMode.Forced, blocking: true );
 			var after = GC.GetTotalMemory( forceFullCollection: false );
 
-			if ( after < before ) { $"{before - after} bytes freed by the garbage collector.".Info(); }
+			if ( after < before ) {
+				$"{before - after} bytes freed by the garbage collector.".Info();
+			}
 		}
 
 		/// <summary>
@@ -178,6 +216,7 @@ namespace Librainian {
 		///     </para>
 		/// </summary>
 		/// <param name="message"></param>
+		[NotNull]
 		[DebuggerStepThrough]
 		public static String Info( [CanBeNull] this String message ) {
 			$"Info: {message ?? String.Empty}".WriteLine();
@@ -194,6 +233,7 @@ namespace Librainian {
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="method"> </param>
+		[NotNull]
 		[DebuggerStepThrough]
 		public static String Message( [CanBeNull] this String message, [CallerMemberName] String method = "" ) {
 			$"{method.NullIfEmpty() ?? "?"}: {message}".WriteLine();
@@ -209,6 +249,7 @@ namespace Librainian {
 		/// <param name="sourceFilePath">  </param>
 		/// <param name="sourceLineNumber"></param>
 		/// <remarks>My catchall for exceptions I don't want to deal with, but where I still want to see the exception.</remarks>
+		[NotNull]
 		[DebuggerStepThrough]
 		public static Exception More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "",
 			[CallerLineNumber] Int32 sourceLineNumber = 0 ) {
@@ -220,20 +261,25 @@ namespace Librainian {
 			message.Append( $" [Source: {sourceFilePath}]\r\n" );
 			message.Append( $" [Line: {sourceLineNumber}]\r\n" );
 
-			if ( method != null ) { ConsoleListener.Fail( method, message.ToString() ); }
+			if ( method != null ) {
+				ConsoleListener.Fail( method, message.ToString() );
+			}
 
 			Break();
 
 			return exception;
 		}
 
+		[Obsolete( "Won't allocate a console in higher .NET frameworks." )]
 		public static void Shutdown( Boolean linger = true ) {
-			if ( !HasConsoleBeenAllocated ) { return; }
+			if ( !HasConsoleBeenAllocated ) {
+				return;
+			}
 
 			"Shutting down".WriteColor( ConsoleColor.White, ConsoleColor.Blue );
 
 			if ( linger ) {
-				var stopwatch = StopWatch.StartNew();
+				var stopwatch = Stopwatch.StartNew();
 
 				while ( stopwatch.Elapsed < Seconds.One ) {
 					Thread.Sleep( Hertz.OneHundredTwenty );
@@ -251,6 +297,7 @@ namespace Librainian {
 		///     <para>Start <see cref="ProfileOptimization" />.</para>
 		/// </summary>
 		/// <returns></returns>
+		[Obsolete( "Won't allocate a console in higher .NET frameworks." )]
 		public static Boolean Startup() {
 			try {
 				HasConsoleBeenAllocated = NativeMethods.AllocConsole();
@@ -268,7 +315,9 @@ namespace Librainian {
 
 				return HasConsoleBeenAllocated;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) {
+				exception.More();
+			}
 
 			return false;
 		}
@@ -299,11 +348,5 @@ namespace Librainian {
 		/// <param name="category"></param>
 		[DebuggerStepThrough]
 		public static void WriteLine( this String message, [CanBeNull] String category = null ) => ConsoleListener.WriteLine( message, category );
-
-		private static readonly ConsoleListenerWithTimePrefix ConsoleListener;
-
-		static Logging() => ConsoleListener = new ConsoleListenerWithTimePrefix { IndentSize = 1 };
-
 	}
-
 }

@@ -86,7 +86,7 @@ namespace Librainian.ComputerSystems.Devices {
 		/// </summary>
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
-		public virtual Int32 CompareTo( Object obj ) {
+		public virtual Int32 CompareTo( [NotNull] Object obj ) {
 			if ( obj is Device device ) { return this.Index.CompareTo( device.Index ); }
 
 			throw new ArgumentException();
@@ -177,6 +177,7 @@ namespace Librainian.ComputerSystems.Devices {
 		/// <summary>
 		///     Gets the device's parent device or null if this device has not parent.
 		/// </summary>
+		[CanBeNull]
 		public Device Parent() {
 			if ( this._parent != null ) { return this._parent; }
 
@@ -188,7 +189,7 @@ namespace Librainian.ComputerSystems.Devices {
 			return this._parent;
 		}
 
-		public Device( DeviceClass deviceClass, [NotNull] NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
+		public Device( [NotNull] DeviceClass deviceClass, [NotNull] NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
 			this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
 			this.Path = path; // may be null
 			this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );

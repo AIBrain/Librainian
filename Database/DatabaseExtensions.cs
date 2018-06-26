@@ -58,6 +58,7 @@ namespace Librainian.Database {
 	[Immutable]
 	public struct SqlServerInstance {
 
+		[NotNull]
 		public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
 		public String Edition { get; set; }
@@ -78,7 +79,7 @@ namespace Librainian.Database {
 		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
 		[CanBeNull]
-		private static T CreateItemFromRow<T>( DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
+		private static T CreateItemFromRow<T>( [CanBeNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
 			if ( row is null ) {
 				return default;
 			}
@@ -149,7 +150,8 @@ namespace Librainian.Database {
 		/// </summary>
 		/// <param name="serviceName"></param>
 		/// <returns></returns>
-		public static String GetInstanceNameFromServiceName( String serviceName ) {
+		[NotNull]
+		public static String GetInstanceNameFromServiceName( [CanBeNull] String serviceName ) {
 			if ( String.IsNullOrEmpty( serviceName ) ) { return String.Empty; }
 
 			if ( serviceName.Like( "MSSQLSERVER" ) ) { return serviceName; }
@@ -172,6 +174,7 @@ namespace Librainian.Database {
 		/// <param name="wmiNamespace">The wmi namespace to connect to</param>
 		/// <param name="propertyName">The property name whose value is required</param>
 		/// <returns></returns>
+		[NotNull]
 		public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
 			if ( serviceName is null ) { throw new ArgumentNullException( nameof( serviceName ) ); }
 
@@ -194,7 +197,7 @@ namespace Librainian.Database {
 			foreach ( var instance in EnumerateSqlInstances() ) { Console.WriteLine( instance ); }
 		}
 
-		public static void StartSqlBrowserService( IEnumerable<String> activeMachines ) {
+		public static void StartSqlBrowserService( [NotNull] IEnumerable<String> activeMachines ) {
 			var myService = new ServiceController { ServiceName = "SQLBrowser" };
 
 			foreach ( var machine in activeMachines ) {
@@ -270,6 +273,7 @@ namespace Librainian.Database {
 		/// <copyright>
 		///     Based from http://codereview.stackexchange.com/q/40891
 		/// </copyright>
+		[NotNull]
 		public static DataSet ToDataSet<T>( this IEnumerable<T> list ) {
 			var ds = new DataSet();
 			ds.Tables.Add( list.ToDataTable() );
@@ -287,7 +291,8 @@ namespace Librainian.Database {
 		/// <copyright>
 		///     Based from http://codereview.stackexchange.com/q/40891
 		/// </copyright>
-		public static DataTable ToDataTable<T>( this IEnumerable<T> list ) {
+		[NotNull]
+		public static DataTable ToDataTable<T>( [NotNull] this IEnumerable<T> list ) {
 			var elementType = typeof( T );
 
 			var t = new DataTable();
@@ -315,7 +320,8 @@ namespace Librainian.Database {
 			return t;
 		}
 
-		public static DataTable ToDataTable( this SqlDataReader dataReader ) {
+		[NotNull]
+		public static DataTable ToDataTable( [CanBeNull] this SqlDataReader dataReader ) {
 			var table = new DataTable();
 			table.BeginLoadData();
 
@@ -326,7 +332,8 @@ namespace Librainian.Database {
 			return table;
 		}
 
-		public static IEnumerable<T> ToList<T>( this DataTable table ) {
+		[NotNull]
+		public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
 			var properties = GetPropertiesForType<T>();
 			IList<T> result = new List<T>();
 
@@ -338,8 +345,10 @@ namespace Librainian.Database {
 			return result;
 		}
 
+		[NotNull]
 		public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) => new SqlParameter( parameterName, value ) { Value = value };
 
+		[NotNull]
 		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
 
 		/*

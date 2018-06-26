@@ -92,6 +92,7 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private Double _bVotes;
 
+		[NotNull]
 		public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
 			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
 
@@ -152,6 +153,7 @@ namespace Librainian.Maths.Numbers {
 			if ( this.B <= 0 ) { this.B = 0; }
 		}
 
+		[NotNull]
 		public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
 		/// <summary>No vote for either.</summary>

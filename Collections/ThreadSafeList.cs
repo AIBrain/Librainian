@@ -42,6 +42,7 @@ namespace Librainian.Collections {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Threading;
@@ -129,7 +130,7 @@ namespace Librainian.Collections {
 		/// </summary>
 		/// <param name="collection"></param>
 		/// <param name="asParallel"></param>
-		public void AddRange( IEnumerable<T> collection, Boolean asParallel = true ) {
+		public void AddRange( [CanBeNull] IEnumerable<T> collection, Boolean asParallel = true ) {
 			if ( null == collection ) { return; }
 
 			lock ( this.Items ) { this.Items.AddRange( collection: asParallel ? collection.AsParallel() : collection ); }
@@ -139,6 +140,7 @@ namespace Librainian.Collections {
 		///     Returns a new copy of all items in the <see cref="List{T}" />.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
 			lock ( this.Items ) { return asParallel ? new List<T>( collection: this.Items.AsParallel() ) : new List<T>( collection: this.Items ); }
 		}
@@ -157,7 +159,7 @@ namespace Librainian.Collections {
 		///     <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
 		///     method.
 		/// </param>
-		public void ForAll( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
+		public void ForAll( [NotNull] Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
 			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
 			var wrapper = new Action<T>( obj => {
@@ -199,7 +201,7 @@ namespace Librainian.Collections {
 		///     <see cref="Parallel.ForEach{TSource}(System.Collections.Generic.IEnumerable{TSource},System.Action{TSource})" />
 		///     method.
 		/// </param>
-		public void ForEach( Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
+		public void ForEach( [NotNull] Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
 			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
 			var wrapper = new Action<T>( obj => {
@@ -267,7 +269,7 @@ namespace Librainian.Collections {
 		/// <param name="item"></param>
 		/// <param name="rest"></param>
 		/// <returns></returns>
-		public Boolean TryTakeOneCopyRest( out T item, out List<T> rest ) {
+		public Boolean TryTakeOneCopyRest( out T item, [CanBeNull] out List<T> rest ) {
 			lock ( this.Items ) {
 				var count = this.Items.Count;
 
@@ -286,7 +288,7 @@ namespace Librainian.Collections {
 			return false;
 		}
 
-		public ThreadSafeList( IEnumerable<T> items = null ) => this.AddRange( collection: items );
+		public ThreadSafeList( [CanBeNull] IEnumerable<T> items = null ) => this.AddRange( collection: items );
 
 	}
 

@@ -1,21 +1,21 @@
 ﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ConcurrentSet.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +23,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
-// File "ConcurrentSet.cs" was last formatted by Protiguous on 2018/06/04 at 3:43 PM.
+// File "ConcurrentSet.cs" was last formatted by Protiguous on 2018/06/15 at 7:20 PM.
 
 namespace Librainian.Collections {
 
@@ -41,6 +42,8 @@ namespace Librainian.Collections {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -49,6 +52,11 @@ namespace Librainian.Collections {
 	/// <remarks>http://stackoverflow.com/questions/4306936/how-to-implement-concurrenthashset-in-net</remarks>
 	[JsonObject]
 	public class ConcurrentSet<T> : ISet<T> {
+
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
 
 		/// <summary>
 		///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
@@ -60,6 +68,17 @@ namespace Librainian.Collections {
 		///     Gets the number of elements in the set.
 		/// </summary>
 		public Int32 Count => this.Dictionary.Count;
+
+		/// <summary>
+		///     Gets a value that indicates if the set is empty.
+		/// </summary>
+		public Boolean IsEmpty => this.Dictionary.IsEmpty;
+
+		public ConcurrentSet() { }
+
+		public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( other: items );
+
+		public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( other: items );
 
 		/// <summary>
 		///     Adds an element to the current set and returns a value to indicate if the element was successfully added.
@@ -109,7 +128,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection of items to remove from the set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public void ExceptWith( IEnumerable<T> other ) {
-			foreach ( var item in other ) { this.TryRemove( item: item ); }
+			foreach ( var item in other ) {
+				this.TryRemove( item: item );
+			}
 		}
 
 		/// <summary>
@@ -127,9 +148,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection to compare to the current set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public void IntersectWith( IEnumerable<T> other ) {
-			var enumerable = other as IList<T> ?? other.ToArray();
+			var list = other as IList<T> ?? other.ToArray();
 
-			foreach ( var item in this.Where( item => !enumerable.Contains( item: item ) ) ) { this.TryRemove( item: item ); }
+			Parallel.ForEach( this.AsParallel().Where( item => !list.Contains( item: item ) ), item => this.TryRemove( item: item ) );
 		}
 
 		/// <summary>
@@ -139,9 +160,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection to compare to the current set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
-			var enumerable = other as IList<T> ?? other.ToArray();
+			var list = other as IList<T> ?? other.ToArray();
 
-			return this.Count != enumerable.Count && this.IsSubsetOf( other: enumerable );
+			return this.Count != list.Count && this.IsSubsetOf( other: list );
 		}
 
 		/// <summary>
@@ -154,9 +175,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection to compare to the current set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
-			var enumerable = other as IList<T> ?? other.ToArray();
+			var list = other as IList<T> ?? other.ToArray();
 
-			return this.Count != enumerable.Count && this.IsSupersetOf( other: enumerable );
+			return this.Count != list.Count && this.IsSupersetOf( other: list );
 		}
 
 		/// <summary>
@@ -166,9 +187,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection to compare to the current set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public Boolean IsSubsetOf( IEnumerable<T> other ) {
-			var enumerable = other as IList<T> ?? other.ToArray();
+			var list = other as IList<T> ?? other.ToArray();
 
-			return this.AsParallel().All( enumerable.Contains );
+			return this.AsParallel().All( list.Contains );
 		}
 
 		/// <summary>
@@ -202,7 +223,7 @@ namespace Librainian.Collections {
 		///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
 		///     read-only.
 		/// </exception>
-		public Boolean Remove( T item ) => this.TryRemove( item: item );
+		public Boolean Remove( T item ) => item != null && this.TryRemove( item: item );
 
 		/// <summary>
 		///     Determines whether the current set and the specified collection contain the same elements.
@@ -211,9 +232,9 @@ namespace Librainian.Collections {
 		/// <param name="other">The collection to compare to the current set.</param>
 		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public Boolean SetEquals( IEnumerable<T> other ) {
-			var enumerable = other as IList<T> ?? other.ToArray();
+			var list = other as IList<T> ?? other.ToArray();
 
-			return this.Count == enumerable.Count && enumerable.AsParallel().All( this.Contains );
+			return this.Count == list.Count && list.AsParallel().All( this.Contains );
 		}
 
 		/// <summary>
@@ -225,55 +246,17 @@ namespace Librainian.Collections {
 		public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
 		/// <summary>
-		///     Modifies the current set so that it contains all elements that are present in both the current set and in the
-		///     specified collection.
-		/// </summary>
-		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
-		public void UnionWith( IEnumerable<T> other ) {
-			foreach ( var item in other ) { this.TryAdd( item: item ); }
-		}
-
-		/// <summary>
-		///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
-		/// </summary>
-		/// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-		/// <exception cref="T:System.NotSupportedException">
-		///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
-		///     read-only.
-		/// </exception>
-		/// <exception cref="ArgumentException"></exception>
-		void ICollection<T>.Add( T item ) {
-			if ( item != null && !this.Add( item: item ) ) { throw new ArgumentException( "Item already exists in set." ); }
-		}
-
-		/// <summary>
-		///     Returns an enumerator that iterates through a collection.
-		/// </summary>
-		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-		/// <summary>
-		///     Gets a value that indicates if the set is empty.
-		/// </summary>
-		public Boolean IsEmpty => this.Dictionary.IsEmpty;
-
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
-
-		/// <summary>
-		///     Returns a copy of the keys to an array.
+		///     Returns a copy of the items to an array.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public T[] ToArray() => this.Dictionary.Keys.ToArray();
 
-		public Boolean TryAdd( T item ) => this.Dictionary.TryAdd( item, null );
+		public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
 
-		public Boolean TryGet( T item ) => this.Dictionary.TryGetValue( item, out _ );
+		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out _ );
 
-		public Boolean TryRemove( T item ) => this.Dictionary.TryRemove( item, out _ );
+		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out _ );
 
 		public Boolean TryTakeAny( out T item ) {
 			foreach ( var pair in this.Dictionary ) {
@@ -287,12 +270,37 @@ namespace Librainian.Collections {
 			return false;
 		}
 
-		public ConcurrentSet() { }
+		/// <summary>
+		///     Modifies the current set so that it contains all elements that are present in both the current set and in the
+		///     specified collection.
+		/// </summary>
+		/// <param name="other">The collection to compare to the current set.</param>
+		/// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+		public void UnionWith( IEnumerable<T> other ) {
+			foreach ( var item in other ) {
+				this.TryAdd( item: item );
+			}
+		}
 
-		public ConcurrentSet( params T[] items ) => this.UnionWith( other: items );
+		/// <summary>
+		///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+		/// </summary>
+		/// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+		/// <exception cref="T:System.NotSupportedException">
+		///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
+		///     read-only.
+		/// </exception>
+		/// <exception cref="ArgumentException"></exception>
+		void ICollection<T>.Add( T item ) {
+			if ( item != null && !this.Add( item: item ) ) {
+				throw new ArgumentException( "Item already exists in set." );
+			}
+		}
 
-		public ConcurrentSet( IEnumerable<T> items ) => this.UnionWith( other: items );
-
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
-
 }

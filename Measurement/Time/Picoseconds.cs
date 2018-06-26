@@ -153,7 +153,8 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
-		public static implicit operator Span( Picoseconds picoseconds ) => new Span( picoseconds: picoseconds );
+		[NotNull]
+		public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
 
 		public static Picoseconds operator -( Picoseconds nanoseconds ) => new Picoseconds( nanoseconds.Value * -1 );
 

@@ -75,7 +75,7 @@ namespace Librainian.OperatingSystem.Compression {
 			this.NullStream.Seek( 0, SeekOrigin.Begin ); //rewind our 'position' so we don't overrun a long
 		}
 
-		public void FeedItData( Document document ) {
+		public void FeedItData( [NotNull] Document document ) {
 			var data = document.AsBytes().ToArray();
 			this.FeedItData( data );
 		}

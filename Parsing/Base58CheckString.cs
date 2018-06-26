@@ -39,6 +39,7 @@ namespace Librainian.Parsing {
 	using System;
 	using System.Linq;
 	using System.Security.Cryptography;
+	using JetBrains.Annotations;
 
 	public static class Base58CheckString {
 
@@ -51,6 +52,7 @@ namespace Librainian.Parsing {
 			}
 		}
 
+		[NotNull]
 		public static Byte[] ToByteArray( String s, out Byte version ) {
 			var b = s.ToByteArray();
 
@@ -65,6 +67,7 @@ namespace Librainian.Parsing {
 			}
 		}
 
+		[NotNull]
 		public static Byte[] ToByteArray( String s ) => ToByteArray( s, out var b );
 
 	}

@@ -38,13 +38,14 @@ namespace Librainian.Financial.Containers.Banking {
 
 	using System;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
 	[Serializable]
 	public class BankException : InvalidOperationException {
 
-		protected BankException( SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
+		protected BankException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
 		public BankException( String message ) : base( message ) { }
 

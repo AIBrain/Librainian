@@ -37,8 +37,8 @@
 namespace Librainian.Maths.Ranges {
 
 	using System;
-	using System.Diagnostics.Contracts;
 	using System.Runtime.Serialization;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>Represents a Decimal range with minimum and maximum values</summary>
@@ -68,7 +68,7 @@ namespace Librainian.Maths.Ranges {
 		/// <returns>
 		///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
 		/// </returns>
-		[Pure]
+		[System.Diagnostics.Contracts.Pure]
 		public Boolean IsInside( Decimal x ) => this.Min <= x && x <= this.Max;
 
 		/// <summary>Check if the specified range is inside this range</summary>
@@ -76,16 +76,16 @@ namespace Librainian.Maths.Ranges {
 		/// <returns>
 		///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
 		/// </returns>
-		[Pure]
-		public Boolean IsInside( DecimalRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
+		[System.Diagnostics.Contracts.Pure]
+		public Boolean IsInside( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
 		/// <summary>Check if the specified range overlaps with this range</summary>
 		/// <param name="range">Range to check for overlapping</param>
 		/// <returns>
 		///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
 		/// </returns>
-		[Pure]
-		public Boolean IsOverlapping( DecimalRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
+		[System.Diagnostics.Contracts.Pure]
+		public Boolean IsOverlapping( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
 
 		public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
 

@@ -38,9 +38,11 @@ namespace Librainian.OperatingSystem.WMI {
 
 	using System;
 	using System.Management;
+	using JetBrains.Annotations;
 
 	public static class WMIExtensions {
 
+		[NotNull]
 		public static String Identifier( String wmiClass, String wmiProperty, String wmiMustBeTrue ) {
 			using ( var managementClass = new ManagementClass( wmiClass ) ) {
 				var instances = managementClass.GetInstances();
@@ -59,6 +61,7 @@ namespace Librainian.OperatingSystem.WMI {
 			return String.Empty;
 		}
 
+		[NotNull]
 		public static String Identifier( String wmiClass, String wmiProperty ) {
 			using ( var managementClass = new ManagementClass( wmiClass ) ) {
 				var instances = managementClass.GetInstances();
@@ -77,7 +80,8 @@ namespace Librainian.OperatingSystem.WMI {
 			return String.Empty;
 		}
 
-		public static ManagementObjectCollection QueryWMI( String machineName, String scope, String query ) {
+		[NotNull]
+		public static ManagementObjectCollection QueryWMI( String machineName, String scope, [NotNull] String query ) {
 			var conn = new ConnectionOptions();
 			var nameSpace = @"\\";
 			nameSpace += machineName != String.Empty ? machineName : ".";
@@ -89,7 +93,8 @@ namespace Librainian.OperatingSystem.WMI {
 			return moSearcher.Get();
 		}
 
-		public static ManagementObjectCollection WmiQuery( String query ) {
+		[NotNull]
+		public static ManagementObjectCollection WmiQuery( [NotNull] String query ) {
 			var oQuery = new ObjectQuery( query );
 
 			using ( var oSearcher = new ManagementObjectSearcher( oQuery ) ) { return oSearcher.Get(); }

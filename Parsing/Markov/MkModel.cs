@@ -53,6 +53,7 @@ namespace Librainian.Parsing.Markov {
 
 		public readonly String Name;
 
+		[NotNull]
 		public String GenerateRandomCorpus( Int32 numberOfWords ) {
 			if ( !this._markovChains.Any() ) { return String.Empty; }
 

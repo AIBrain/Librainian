@@ -40,6 +40,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
+	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	public partial class FolderBag {
@@ -48,7 +49,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 		public class Node : IEquatable<Node>, IComparable<Node> {
 
-			public Int32 CompareTo( Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
+			public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
 
 			public Boolean Equals( Node other ) => Equals( this, other );
 

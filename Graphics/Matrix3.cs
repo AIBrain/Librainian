@@ -38,18 +38,21 @@ namespace Librainian.Graphics {
 
 	using System;
 	using System.Windows.Media.Media3D;
+	using JetBrains.Annotations;
 
 	public class Matrix3 : Matrix {
 
+		[NotNull]
 		public static Matrix3 I() => new Matrix3( new[ , ] { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } } );
 
-		public static Vector3D operator *( Matrix3 matrix3, Vector3D v ) {
+		public static Vector3D operator *( [NotNull] Matrix3 matrix3, Vector3D v ) {
 			var m = matrix3.matrix;
 
 			return new Vector3D( m[ 0, 0 ] * v.X + m[ 0, 1 ] * v.Y + m[ 0, 2 ] * v.Z, m[ 1, 0 ] * v.X + m[ 1, 1 ] * v.Y + m[ 1, 2 ] * v.Z, m[ 2, 0 ] * v.X + m[ 2, 1 ] * v.Y + m[ 2, 2 ] * v.Z );
 		}
 
-		public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
+		[NotNull]
+		public static Matrix3 operator *( [NotNull] Matrix3 mat1, [NotNull] Matrix3 mat2 ) {
 			var m1 = mat1.matrix;
 			var m2 = mat2.matrix;
 			var m3 = new Single[ 3, 3 ];
@@ -66,11 +69,12 @@ namespace Librainian.Graphics {
 			return new Matrix3( m3 );
 		}
 
-		public static Matrix3 operator *( Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
+		[NotNull]
+		public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
 
 		public Matrix3() : base( 3, 3 ) { }
 
-		public Matrix3( Single[ , ] matrix ) : base( matrix ) {
+		public Matrix3( [NotNull] Single[ , ] matrix ) : base( matrix ) {
 			if ( this.Rows != 3 || this.Cols != 3 ) { throw new ArgumentException(); }
 		}
 

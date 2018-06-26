@@ -1,21 +1,21 @@
 // Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "FolderExtensions.cs" belongs to Rick@AIBrain.org and
 // Protiguous@Protiguous.com unless otherwise specified or the original license has
 // been overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // Donations, royalties from any software that uses any of our code, or license fees can be paid
 // to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,14 +23,14 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we might have available.
-// 
+//
 // ***  Project "Librainian"  ***
 // File "FolderExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:46 PM.
 
@@ -39,6 +39,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
 	using System.Security.Permissions;
@@ -47,7 +48,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 	using System.Threading.Tasks;
 	using System.Windows.Forms;
 	using JetBrains.Annotations;
-	using Measurement.Time;
 	using Parsing;
 	using Threading;
 
@@ -55,6 +55,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 		public static Char[] InvalidPathChars { get; } = Path.GetInvalidPathChars();
 
+		[NotNull]
 		public static String CleanupForFolder( [NotNull] this String foldername ) {
 			if ( String.IsNullOrWhiteSpace( foldername ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( foldername ) ); }
 
@@ -88,6 +89,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// <param name="overwriteDestinationDocuments"></param>
 		/// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
 			Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
 			if ( sourceFolder is null ) { throw new ArgumentNullException( nameof( sourceFolder ) ); }
@@ -122,7 +124,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 					if ( !destinationDocument.Exists() ) { return; }
 
-					statistics.BytesCopied = ( UInt64 ) destinationDocument.Size();
+					statistics.BytesCopied = ( UInt64 )destinationDocument.Size();
 
 					if ( crc ) { statistics.BytesCopied *= 2; }
 
@@ -161,7 +163,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 			//Next, check subfolders, beginning with the first drive.
 			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var drive in Drive.GetDrives() ) {
+			foreach ( var drive in Disk.GetDrives() ) {
 				var folders = drive.GetFolders();
 
 				// ReSharper disable once LoopCanBePartlyConvertedToQuery
@@ -184,6 +186,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<String> SplitPath( [NotNull] String path ) {
 			if ( String.IsNullOrWhiteSpace( value: path ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) ); }
 
@@ -195,6 +198,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// </summary>
 		/// <param name="info"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
 			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
 
@@ -209,7 +213,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// <param name="tryFor"></param>
 		/// <returns></returns>
 		public static Boolean? TryDeleting( this Folder folder, TimeSpan tryFor ) {
-			var stopwatch = StopWatch.StartNew();
+			var stopwatch = Stopwatch.StartNew();
 			TryAgain:
 
 			try {
@@ -237,7 +241,5 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 			return null;
 		}
-
 	}
-
 }

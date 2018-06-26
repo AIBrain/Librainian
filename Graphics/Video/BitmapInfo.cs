@@ -38,6 +38,7 @@ namespace Librainian.Graphics.Video {
 
 	using System;
 	using System.Drawing;
+	using JetBrains.Annotations;
 
 	public struct BitmapInfo {
 
@@ -56,7 +57,7 @@ namespace Librainian.Graphics.Video {
 		//path and name of the bitmap file
 		public String SourceFileName;
 
-		public void LoadBitmap( String fileName ) {
+		public void LoadBitmap( [NotNull] String fileName ) {
 			this.Bitmap = new Bitmap( fileName );
 			this.SourceFileName = fileName;
 		}

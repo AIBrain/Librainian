@@ -39,6 +39,7 @@ namespace Librainian.OperatingSystem.Streams {
 	using System;
 	using System.IO;
 	using System.Text;
+	using JetBrains.Annotations;
 
 	/// <summary>
 	/// </summary>
@@ -49,6 +50,7 @@ namespace Librainian.OperatingSystem.Streams {
 
 		private UnicodeEncoding StreamEncoding { get; }
 
+		[NotNull]
 		public String ReadString() {
 			var len = this.IOStream.ReadByte() * 256;
 			len += this.IOStream.ReadByte();
@@ -58,7 +60,7 @@ namespace Librainian.OperatingSystem.Streams {
 			return this.StreamEncoding.GetString( inBuffer );
 		}
 
-		public Int32 WriteString( String outString ) {
+		public Int32 WriteString( [NotNull] String outString ) {
 			var outBuffer = this.StreamEncoding.GetBytes( outString );
 			var len = outBuffer.Length;
 

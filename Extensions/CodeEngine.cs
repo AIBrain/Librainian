@@ -40,6 +40,7 @@ namespace Librainian.Extensions {
 	using System.CodeDom.Compiler;
 	using System.IO;
 	using System.Reflection;
+	using JetBrains.Annotations;
 	using Microsoft.CSharp;
 	using NUnit.Framework;
 	using Persistence;
@@ -83,6 +84,7 @@ namespace Librainian.Extensions {
 
 		}
 
+		[NotNull]
 		private static String DefaultCode() =>
 			@"
 using System;
@@ -192,7 +194,7 @@ namespace Coding
 
 		public CodeEngine( String sourcePath, Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
 
-		public CodeEngine( Guid id, String sourcePath, Action<String> output ) {
+		public CodeEngine( Guid id, [NotNull] String sourcePath, [CanBeNull] Action<String> output ) {
 			if ( null != output ) { this.Output = output; }
 
 			//if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
