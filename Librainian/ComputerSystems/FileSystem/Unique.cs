@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Unique.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "Unique.cs" was last formatted by Protiguous on 2018/06/10 at 1:10 PM.
+// File "Unique.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -62,6 +67,25 @@ namespace Librainian.ComputerSystems.FileSystem {
 		private const Int32 EOFMarker = -1;
 
 		/// <summary>
+		///     A <see cref="Unique" /> that points to nowhere.
+		/// </summary>
+		public static readonly Unique Empty = new Unique();
+
+		/// <summary>
+		///     Just an easier to use mnemonic.
+		/// </summary>
+		[JsonIgnore]
+		public TrimmedString Location => this.U;
+
+		/// <summary>
+		///     The location/directory/path/file/name/whatever.ext
+		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
+		/// </summary>
+		[NotNull]
+		[JsonProperty]
+		public String U { get; }
+
+		/// <summary>
 		///     What effect will this have down the road?
 		/// </summary>
 		private Unique() => this.U = String.Empty;
@@ -83,25 +107,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 				throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
 			}
 		}
-
-		/// <summary>
-		///     A <see cref="Unique" /> that points to nowhere.
-		/// </summary>
-		public static readonly Unique Empty = new Unique();
-
-		/// <summary>
-		///     Just an easier to use mnemonic.
-		/// </summary>
-		[JsonIgnore]
-		public TrimmedString Location => this.U;
-
-		/// <summary>
-		///     The location/directory/path/file/name/whatever.ext
-		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
-		/// </summary>
-		[NotNull]
-		[JsonProperty]
-		public String U { get; }
 
 		/// <summary>
 		///     Static comparison.
@@ -184,7 +189,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 							yield break;
 						}
 
-						yield return ( Byte )a;
+						yield return ( Byte ) a;
 					}
 				}
 			}
@@ -316,7 +321,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 					try {
 						await client.OpenReadTaskAsync( this.ToUri() ).NoUI();
 
-						var header = client.ResponseHeaders["Content-Length"];
+						var header = client.ResponseHeaders[ "Content-Length" ];
 
 						if ( Int64.TryParse( header, out var result ) ) {
 							return result;

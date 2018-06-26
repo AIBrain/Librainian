@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Minus1To1.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Minus1To1.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Minus1To1.cs" was last formatted by Protiguous on 2018/06/04 at 4:06 PM.
+// File "Minus1To1.cs" was last formatted by Protiguous on 2018/06/26 at 1:20 AM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -50,17 +56,17 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private Single _value;
 
-		public Single Value {
-			get => this._value;
-
-			private set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
-		}
-
 		public const Single MaxValue = 1f;
 
 		public const Single MinValue = -1f;
 
 		public const Single NeutralValue = 0f;
+
+		public Single Value {
+			get => this._value;
+
+			private set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
+		}
 
 		/// <summary>
 		///     <para>Initializes a random number between -1.0 and 1.0.</para>
@@ -72,7 +78,9 @@ namespace Librainian.Maths.Numbers {
 			if ( !value.HasValue ) {
 				value = Randem.NextSingle( MinValue, MaxValue );
 
-				if ( Randem.NextBoolean() ) { value = -value.Value; }
+				if ( Randem.NextBoolean() ) {
+					value = -value.Value;
+				}
 			}
 
 			this.Value = value.Value;
@@ -97,7 +105,5 @@ namespace Librainian.Maths.Numbers {
 		public static Minus1To1 Parse( [NotNull] String value ) => new Minus1To1( Single.Parse( value ) );
 
 		public override String ToString() => $"{this.Value:P}";
-
 	}
-
 }

@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "DoubleConverter.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "DoubleConverter.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "DoubleConverter.cs" was last formatted by Protiguous on 2018/06/04 at 3:49 PM.
+// File "DoubleConverter.cs" was last formatted by Protiguous on 2018/06/26 at 12:58 AM.
 
 namespace Librainian.Converters {
 
@@ -54,11 +60,17 @@ namespace Librainian.Converters {
 		/// <returns>A String representation of the Double's exact System.Decimal value.</returns>
 		[NotNull]
 		public static String ToExactString( this Double d ) {
-			if ( Double.IsPositiveInfinity( d ) ) { return "+Infinity"; }
+			if ( Double.IsPositiveInfinity( d ) ) {
+				return "+Infinity";
+			}
 
-			if ( Double.IsNegativeInfinity( d ) ) { return "-Infinity"; }
+			if ( Double.IsNegativeInfinity( d ) ) {
+				return "-Infinity";
+			}
 
-			if ( Double.IsNaN( d ) ) { return "NaN"; }
+			if ( Double.IsNaN( d ) ) {
+				return "NaN";
+			}
 
 			// Translate the Double into sign, exponent and mantissa.
 			var bits = BitConverter.DoubleToInt64Bits( d );
@@ -70,16 +82,22 @@ namespace Librainian.Converters {
 
 			// Subnormal numbers; exponent is effectively one higher, but there's no extra
 			// normalisation bit in the mantissa
-			if ( exponent == 0 ) { exponent++; }
+			if ( exponent == 0 ) {
+				exponent++;
+			}
 
 			// Normal numbers; leave exponent as it is but add extra bit to the front of the mantissa
-			else { mantissa = mantissa | ( 1L << 52 ); }
+			else {
+				mantissa = mantissa | ( 1L << 52 );
+			}
 
 			// Bias the exponent. It's actually biased by 1023, but we're treating the mantissa as
 			// m.0 rather than 0.m, so we need to subtract another 52 from it.
 			exponent -= 1075;
 
-			if ( mantissa == 0 ) { return "0"; }
+			if ( mantissa == 0 ) {
+				return "0";
+			}
 
 			/* Normalize */
 			while ( ( mantissa & 1 ) == 0 ) {
@@ -94,22 +112,26 @@ namespace Librainian.Converters {
 			// If the exponent is less than 0, we need to repeatedly divide by 2 - which is the
 			// equivalent of multiplying by 5 and dividing by 10.
 			if ( exponent < 0 ) {
-				for ( var i = 0; i < -exponent; i++ ) { ad.MultiplyBy( 5 ); }
+				for ( var i = 0; i < -exponent; i++ ) {
+					ad.MultiplyBy( 5 );
+				}
 
 				ad.Shift( -exponent );
 			}
 
 			// Otherwise, we need to repeatedly multiply by 2
 			else {
-				for ( var i = 0; i < exponent; i++ ) { ad.MultiplyBy( 2 ); }
+				for ( var i = 0; i < exponent; i++ ) {
+					ad.MultiplyBy( 2 );
+				}
 			}
 
 			// Finally, return the String with an appropriate sign
-			if ( negative ) { return "-" + ad; }
+			if ( negative ) {
+				return "-" + ad;
+			}
 
 			return ad.ToString();
 		}
-
 	}
-
 }

@@ -1,4 +1,46 @@
-﻿namespace Librainian.Persistence {
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "StringKVPTable.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we *might* make available.
+//
+// ***  Project "Librainian"  ***
+// File "StringKVPTable.cs" was last formatted by Protiguous on 2018/06/26 at 1:39 AM.
+
+namespace Librainian.Persistence {
 
 	using System;
 	using System.Collections;
@@ -23,7 +65,8 @@
 
 	/// <summary>
 	///     <para>
-	///         Allows the <see cref="PersistentDictionary{String,String}" /> class to persist a <see cref="KeyValuePair{TKey,TValue}"/> of base64 compressed strings.
+	///         Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist a
+	///         <see cref="KeyValuePair{TKey,TValue}" /> of base64 compressed strings.
 	///     </para>
 	/// </summary>
 	/// <seealso cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
@@ -34,28 +77,6 @@
 		[JsonProperty]
 		[NotNull]
 		private PersistentDictionary<String, String> Dictionary { get; }
-
-		// ReSharper disable once NotNullMemberIsNotInitialized
-		private StringKVPTable() => throw new NotImplementedException();
-
-		/// <summary>
-		///     Return true if we can read/write in the <see cref="Folder" /> .
-		/// </summary>
-		/// <returns></returns>
-		private Boolean TestForReadWriteAccess() {
-			try {
-				if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
-					var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
-					document.AppendText( text: text );
-					document.TryDeleting( tryFor: Seconds.Five );
-
-					return true;
-				}
-			}
-			catch { }
-
-			return false;
-		}
 
 		/// <summary>
 		///     No path given?
@@ -70,6 +91,69 @@
 		public ICollection<String> Keys => this.Dictionary.Keys;
 
 		public ICollection<String> Values => this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64() ) as ICollection<String> ?? new Collection<String>();
+
+		/// <summary>
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public String this[ [NotNull] String key ] {
+			[CanBeNull]
+			get {
+				if ( key == null ) {
+					throw new ArgumentNullException( paramName: nameof( key ) );
+				}
+
+				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
+			}
+
+			set {
+				if ( key == null ) {
+					throw new ArgumentNullException( paramName: nameof( key ) );
+				}
+
+				if ( String.IsNullOrEmpty( value ) ) {
+					this.Dictionary.Remove( key );
+
+					return;
+				}
+
+				this.Dictionary[ key ] = value.ToCompressedBase64();
+			}
+		}
+
+		[CanBeNull]
+		public String this[ [NotNull] params String[] keys ] {
+			[CanBeNull]
+			get {
+				if ( keys == null ) {
+					throw new ArgumentNullException( paramName: nameof( keys ) );
+				}
+
+				var key = this.BuildKey( keys );
+
+				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
+			}
+
+			set {
+				if ( keys == null ) {
+					throw new ArgumentNullException( paramName: nameof( keys ) );
+				}
+
+				var key = this.BuildKey( keys );
+
+				if ( String.IsNullOrEmpty( value ) ) {
+					this.Dictionary.Remove( key );
+
+					return;
+				}
+
+				this.Dictionary[ key ] = value.ToCompressedBase64();
+			}
+		}
+
+		// ReSharper disable once NotNullMemberIsNotInitialized
+		private StringKVPTable() => throw new NotImplementedException();
 
 		// ReSharper disable once NotNullMemberIsNotInitialized
 		public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder, applicationName: null, subFolder: tableName ) ) { }
@@ -113,69 +197,27 @@
 		public StringKVPTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
 
 		/// <summary>
+		///     Return true if we can read/write in the <see cref="Folder" /> .
 		/// </summary>
-		/// <param name="key"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public String this[[NotNull] String key] {
-			[CanBeNull]
-			get {
-				if ( key == null ) {
-					throw new ArgumentNullException( paramName: nameof( key ) );
-				}
+		private Boolean TestForReadWriteAccess() {
+			try {
+				if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
+					var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
+					document.AppendText( text: text );
+					document.TryDeleting( tryFor: Seconds.Five );
 
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
+					return true;
+				}
 			}
+			catch { }
 
-			set {
-				if ( key == null ) {
-					throw new ArgumentNullException( paramName: nameof( key ) );
-				}
-
-				if ( String.IsNullOrEmpty( value ) ) {
-					this.Dictionary.Remove( key );
-
-					return;
-				}
-
-				this.Dictionary[key] = value.ToCompressedBase64();
-			}
+			return false;
 		}
 
-		[CanBeNull]
-		public String this[[NotNull] params String[] keys] {
+		public void Add( String key, String value ) => this[ key ] = value;
 
-			[CanBeNull]
-			get {
-				if ( keys == null ) {
-					throw new ArgumentNullException( paramName: nameof( keys ) );
-				}
-
-				var key = this.BuildKey( keys );
-
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
-			}
-
-			set {
-				if ( keys == null ) {
-					throw new ArgumentNullException( paramName: nameof( keys ) );
-				}
-
-				var key = this.BuildKey( keys );
-
-				if ( String.IsNullOrEmpty( value ) ) {
-					this.Dictionary.Remove( key );
-
-					return;
-				}
-
-				this.Dictionary[key] = value.ToCompressedBase64();
-			}
-		}
-
-		public void Add( String key, String value ) => this[key] = value;
-
-		public void Add( KeyValuePair<String, String> item ) => this[item.Key] = item.Value;
+		public void Add( KeyValuePair<String, String> item ) => this[ item.Key ] = item.Value;
 
 		public String BuildKey( [NotNull] params String[] objs ) {
 			if ( objs == null ) {
@@ -215,7 +257,7 @@
 		}
 
 		/// <summary>
-		/// Force all changes to be written to disk.
+		///     Force all changes to be written to disk.
 		/// </summary>
 		public void Flush() => this.Dictionary.Flush();
 
@@ -276,6 +318,10 @@
 			return this.Dictionary.Remove( item: asItem );
 		}
 
+		public void Save() {
+			this.Flush(); //should be all that's needed..
+		}
+
 		/// <summary>
 		///     Returns a string that represents the current object.
 		/// </summary>
@@ -288,7 +334,7 @@
 			}
 
 			if ( !this.Dictionary.ContainsKey( key ) ) {
-				this[key] = value;
+				this[ key ] = value;
 			}
 		}
 
@@ -314,6 +360,7 @@
 
 			if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
 				value = storedValue.FromCompressedBase64();
+
 				return true;
 			}
 
@@ -333,10 +380,5 @@
 		/// </summary>
 		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-		public void Save() {
-			this.Flush();	//should be all that's needed..
-		}
-
 	}
 }

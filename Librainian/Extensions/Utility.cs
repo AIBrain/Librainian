@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Utility.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Utility.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Utility.cs" was last formatted by Protiguous on 2018/06/04 at 3:53 PM.
+// File "Utility.cs" was last formatted by Protiguous on 2018/06/26 at 1:04 AM.
 
 namespace Librainian.Extensions {
 
@@ -45,9 +51,9 @@ namespace Librainian.Extensions {
 
 	public static class Utility {
 
-		public static DummyXMLResolver DummyXMLResolver { get; } = new DummyXMLResolver();
-
 		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+		public static DummyXMLResolver DummyXMLResolver { get; } = new DummyXMLResolver();
 
 		/// <summary>
 		///     Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
@@ -55,7 +61,9 @@ namespace Librainian.Extensions {
 		/// <param name="text">   </param>
 		/// <param name="yOffset"></param>
 		public static void AtEndOfLine( [CanBeNull] this String text, Int32 yOffset = 0 ) {
-			if ( String.IsNullOrEmpty( text ) ) { return; }
+			if ( String.IsNullOrEmpty( text ) ) {
+				return;
+			}
 
 			try {
 				ConsoleOutputSynch.EnterUpgradeableReadLock();
@@ -67,21 +75,35 @@ namespace Librainian.Extensions {
 					Console.CursorVisible = false;
 					yOffset = oldTop + yOffset;
 
-					while ( yOffset < 0 ) { yOffset++; }
+					while ( yOffset < 0 ) {
+						yOffset++;
+					}
 
-					while ( yOffset >= Console.WindowHeight ) { yOffset--; }
+					while ( yOffset >= Console.WindowHeight ) {
+						yOffset--;
+					}
 
 					Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: yOffset );
 					Console.Write( text );
 					Console.SetCursorPosition( left: oldLeft, top: oldTop );
 					Console.CursorVisible = true;
 				}
-				catch ( ArgumentOutOfRangeException exception ) { exception.More(); }
-				catch ( IOException exception ) { exception.More(); }
-				catch ( SecurityException exception ) { exception.More(); }
-				finally { ConsoleOutputSynch.ExitWriteLock(); }
+				catch ( ArgumentOutOfRangeException exception ) {
+					exception.More();
+				}
+				catch ( IOException exception ) {
+					exception.More();
+				}
+				catch ( SecurityException exception ) {
+					exception.More();
+				}
+				finally {
+					ConsoleOutputSynch.ExitWriteLock();
+				}
 			}
-			finally { ConsoleOutputSynch.ExitUpgradeableReadLock(); }
+			finally {
+				ConsoleOutputSynch.ExitUpgradeableReadLock();
+			}
 		}
 
 		//    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 1 ), top: 0 );
@@ -144,7 +166,9 @@ namespace Librainian.Extensions {
 		//}
 
 		public static void TopRight( [CanBeNull] String text ) {
-			if ( String.IsNullOrEmpty( text ) ) { return; }
+			if ( String.IsNullOrEmpty( text ) ) {
+				return;
+			}
 
 			try {
 				ConsoleOutputSynch.EnterUpgradeableReadLock();
@@ -159,9 +183,13 @@ namespace Librainian.Extensions {
 					Console.SetCursorPosition( left: oldLeft, top: oldTop );
 					Console.CursorVisible = true;
 				}
-				finally { ConsoleOutputSynch.ExitWriteLock(); }
+				finally {
+					ConsoleOutputSynch.ExitWriteLock();
+				}
 			}
-			finally { ConsoleOutputSynch.ExitUpgradeableReadLock(); }
+			finally {
+				ConsoleOutputSynch.ExitUpgradeableReadLock();
+			}
 		}
 
 		public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black, [CanBeNull] params Object[] parms ) {
@@ -217,7 +245,5 @@ namespace Librainian.Extensions {
 				}
 			}
 		}
-
 	}
-
 }

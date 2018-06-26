@@ -1,20 +1,25 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Logging.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "Logging.cs" was last formatted by Protiguous on 2018/06/10 at 9:13 AM.
+// File "Logging.cs" was last formatted by Protiguous on 2018/06/26 at 1:16 AM.
 
 namespace Librainian {
 
@@ -53,6 +58,64 @@ namespace Librainian {
 	using Parsing;
 	using Threading;
 
+	public enum LoggingLevel : Byte {
+
+		/// <summary>
+		///     The root of all extra information.
+		/// </summary>
+		Trace = 0,
+
+		/// <summary>
+		///     Just debugging information please.
+		/// </summary>
+		Debug,
+
+		/// <summary>
+		///     I need more info than <see cref="Debug" />.
+		/// </summary>
+		Info,
+
+		/// <summary>
+		///     Okay, I didn't need that much!
+		/// </summary>
+		Verbose,
+
+		/// <summary>
+		///     A simple warning happened. Fix it and continue.
+		/// </summary>
+		Warning,
+
+		/// <summary>
+		///     Requires user input to fix, and then continue.
+		/// </summary>
+		Error,
+
+		/// <summary>
+		///     It happens.
+		/// </summary>
+		Exception,
+
+		/// <summary>
+		///     An exception we can recover from.
+		/// </summary>
+		Critical,
+
+		/// <summary>
+		///     The program must stop soon, before any damage is done.
+		/// </summary>
+		Fatal,
+
+		/// <summary>
+		///     The fabric of space-time needs repaired before execution can continue.
+		/// </summary>
+		SubspaceTear,
+
+		/// <summary>
+		///     The program needs Divine Intervention before any execution can continue.
+		/// </summary>
+		God
+	}
+
 	/// <summary>
 	///     A class to help with exception handling and plain ol' simple time+logging to the Console.
 	///     <para>I feel like this is a rereinvented wheel..</para>
@@ -65,9 +128,9 @@ namespace Librainian {
 		public static Boolean HasConsoleBeenAllocated { get; private set; }
 
 		static Logging() =>
-					ConsoleListener = new ConsoleListenerWithTimePrefix {
-						IndentSize = 1
-					};
+			ConsoleListener = new ConsoleListenerWithTimePrefix {
+				IndentSize = 1
+			};
 
 		/// <summary>
 		///     <seealso cref="Before" />
@@ -349,63 +412,4 @@ namespace Librainian {
 		[DebuggerStepThrough]
 		public static void WriteLine( this String message, [CanBeNull] String category = null ) => ConsoleListener.WriteLine( message, category );
 	}
-
-	public enum LoggingLevel : Byte {
-
-		/// <summary>
-		///     The root of all extra information.
-		/// </summary>
-		Trace = 0,
-
-		/// <summary>
-		///     Just debugging information please.
-		/// </summary>
-		Debug,
-
-		/// <summary>
-		///     I need more info than <see cref="Debug" />.
-		/// </summary>
-		Info,
-
-		/// <summary>
-		///     Okay, I didn't need that much!
-		/// </summary>
-		Verbose,
-
-		/// <summary>
-		///     A simple warning happened. Fix it and continue.
-		/// </summary>
-		Warning,
-
-		/// <summary>
-		///     Requires user input to fix, and then continue.
-		/// </summary>
-		Error,
-
-		/// <summary>
-		///     It happens.
-		/// </summary>
-		Exception,
-
-		/// <summary>
-		///     An exception we can recover from.
-		/// </summary>
-		Critical,
-
-		/// <summary>
-		///     The program must stop soon, before any damage is done.
-		/// </summary>
-		Fatal,
-
-		/// <summary>
-		/// The fabric of space-time needs repaired before execution can continue.
-		/// </summary>
-		SubspaceTear,
-
-		/// <summary>
-		/// The program needs Divine Intervention before any execution can continue.
-		/// </summary>
-		God
-	}
-
 }

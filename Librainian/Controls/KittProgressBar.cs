@@ -1,22 +1,44 @@
-﻿// Copyright 2015 Rick@AIBrain.org.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This source code contained in "KittProgressBar.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Donations and Royalties can be paid via
-// PayPal: paypal@aibrain.org
-// bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-// litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
-// "Librainian/KittProgressBar.cs" was last cleaned by Rick on 2015/06/12 at 2:52 PM
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com .
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we *might* make available.
+//
+// ***  Project "Librainian"  ***
+// File "KittProgressBar.cs" was last formatted by Protiguous on 2018/06/26 at 12:57 AM.
 
 namespace Librainian.Controls {
 
@@ -30,17 +52,29 @@ namespace Librainian.Controls {
 	[DefaultEvent( "ValueChanged" )]
 	[Obsolete( "Under construction!" )]
 	public class KittProgressBar : UserControl {
+
 		private readonly Timer mGlowAnimation = new Timer();
+
 		private Boolean _mAnimate = true;
+
 		private Color _mBackgroundColor = Color.FromArgb( 201, 201, 201 );
+
 		private Int32 _mGlowPosition = -325;
+
 		private Color _mHighlightColor = Color.White;
+
 		private Int32 _mMaxValue = 100;
+
 		private Container components;
+
 		private Color mEndColor = Color.FromArgb( 0, 211, 40 );
+
 		private Color mGlowColor = Color.FromArgb( 150, 255, 255, 255 );
+
 		private Int32 mMinValue;
+
 		private Color mStartColor = Color.FromArgb( 210, 0, 0 );
+
 		private Int32 mValue;
 
 		/// <summary>Whether the glow is animated.</summary>
@@ -52,12 +86,14 @@ namespace Librainian.Controls {
 
 			set {
 				this._mAnimate = value;
+
 				if ( value ) {
 					this.mGlowAnimation.Start();
 				}
 				else {
 					this.mGlowAnimation.Stop();
 				}
+
 				this.Invalidate();
 			}
 		}
@@ -76,8 +112,8 @@ namespace Librainian.Controls {
 		}
 
 		/// <summary>
-		/// The end color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000, 163,
-		/// 211 = Blue 000, 211, 040 = Green
+		///     The end color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000, 163,
+		///     211 = Blue 000, 211, 040 = Green
 		/// </summary>
 		[Category( "Bar" )]
 		[DefaultValue( typeof( Color ), "0, 211, 40" )]
@@ -126,9 +162,11 @@ namespace Librainian.Controls {
 
 			set {
 				this._mMaxValue = value;
+
 				if ( value > this.MaxValue ) {
 					this.Value = this.MaxValue;
 				}
+
 				if ( this.Value < this.MaxValue ) {
 					this.mGlowAnimation.Start();
 				}
@@ -147,6 +185,7 @@ namespace Librainian.Controls {
 
 			set {
 				this.mMinValue = value;
+
 				if ( value < this.MinValue ) {
 					this.Value = this.MinValue;
 				}
@@ -157,9 +196,9 @@ namespace Librainian.Controls {
 		}
 
 		/// <summary>
-		/// The start color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000,
-		/// 163, 211 = Blue 000, 211, 040
-		/// = Green
+		///     The start color for the progress bar. 210, 000, 000 = Red 210, 202, 000 = Yellow 000,
+		///     163, 211 = Blue 000, 211, 040
+		///     = Green
 		/// </summary>
 		[Category( "Bar" )]
 		[DefaultValue( typeof( Color ), "210, 0, 0" )]
@@ -184,10 +223,13 @@ namespace Librainian.Controls {
 				if ( value > this.MaxValue || value < this.MinValue ) {
 					return;
 				}
+
 				this.mValue = value;
+
 				if ( value < this.MaxValue ) {
 					this.mGlowAnimation.Start();
 				}
+
 				if ( value == this.MaxValue ) {
 					this.mGlowAnimation.Stop();
 				}
@@ -218,9 +260,11 @@ namespace Librainian.Controls {
 			this.SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 			this.SetStyle( ControlStyles.UserPaint, true );
 			this.BackColor = Color.Transparent;
+
 			if ( !InDesignMode() ) {
 				this.mGlowAnimation.Tick += this.mGlowAnimation_Tick;
 				this.mGlowAnimation.Interval = 15;
+
 				if ( this.Value < this.MaxValue ) {
 					this.mGlowAnimation.Start();
 				}
@@ -241,10 +285,11 @@ namespace Librainian.Controls {
 			if ( disposing ) {
 				this.components?.Dispose();
 			}
+
 			base.Dispose( disposing );
 		}
 
-		private static Boolean InDesignMode() => ( LicenseManager.UsageMode == LicenseUsageMode.Designtime );
+		private static Boolean InDesignMode() => LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
 		private static GraphicsPath RoundRect( RectangleF r, Single r1, Single r2, Single r3, Single r4 ) {
 			Single x = r.X, y = r.Y, w = r.Width, h = r.Height;
@@ -257,6 +302,7 @@ namespace Librainian.Controls {
 			rr.AddLine( x + w - r3, y + h, x + r4, y + h );
 			rr.AddBezier( x + r4, y + h, x, y + h, x, y + h - r4, x, y + h - r4 );
 			rr.AddLine( x, y + h - r4, x, y + r1 );
+
 			return rr;
 		}
 
@@ -281,8 +327,9 @@ namespace Librainian.Controls {
 
 		private void DrawBar( Graphics g ) {
 			var r = new Rectangle( 1, 2, this.Width - 3, this.Height - 3 ) {
-				Width = ( Int32 )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
+				Width = ( Int32 ) ( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
 			};
+
 			g.FillRectangle( new SolidBrush( this.GetIntermediateColor() ), r );
 		}
 
@@ -291,23 +338,34 @@ namespace Librainian.Controls {
 			var lg = new LinearGradientBrush( lr, Color.White, Color.White, LinearGradientMode.Horizontal );
 
 			var lc = new ColorBlend( 3 ) {
-				Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
-				Positions = new[] { 0.0F, 0.2F, 1.0F }
+				Colors = new[] {
+					Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent
+				},
+				Positions = new[] {
+					0.0F, 0.2F, 1.0F
+				}
 			};
+
 			lg.InterpolationColors = lc;
 
 			lr.X--;
 			g.FillRectangle( lg, lr );
 
 			var rr = new Rectangle( this.Width - 3, 2, 15, this.Height - 3 ) {
-				X = ( Int32 )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width ) - 14
+				X = ( Int32 ) ( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width ) - 14
 			};
+
 			var rg = new LinearGradientBrush( rr, Color.Black, Color.Black, LinearGradientMode.Horizontal );
 
 			var rc = new ColorBlend( 3 ) {
-				Colors = new[] { Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent },
-				Positions = new[] { 0.0F, 0.8F, 1.0F }
+				Colors = new[] {
+					Color.Transparent, Color.FromArgb( 40, 0, 0, 0 ), Color.Transparent
+				},
+				Positions = new[] {
+					0.0F, 0.8F, 1.0F
+				}
 			};
+
 			rg.InterpolationColors = rc;
 
 			g.FillRectangle( rg, rr );
@@ -318,14 +376,20 @@ namespace Librainian.Controls {
 			var lgb = new LinearGradientBrush( r, Color.White, Color.White, LinearGradientMode.Horizontal );
 
 			var cb = new ColorBlend( 4 ) {
-				Colors = new[] { Color.Transparent, this.GlowColor, this.GlowColor, Color.Transparent },
-				Positions = new[] { 0.0F, 0.5F, 0.6F, 1.0F }
+				Colors = new[] {
+					Color.Transparent, this.GlowColor, this.GlowColor, Color.Transparent
+				},
+				Positions = new[] {
+					0.0F, 0.5F, 0.6F, 1.0F
+				}
 			};
+
 			lgb.InterpolationColors = cb;
 
 			var clip = new Rectangle( 1, 2, this.Width - 3, this.Height - 3 ) {
-				Width = ( Int32 )( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
+				Width = ( Int32 ) ( this.Value * 1.0F / ( this.MaxValue - this.MinValue ) * this.Width )
 			};
+
 			g.SetClip( clip );
 			g.FillRectangle( lgb, r );
 			g.ResetClip();
@@ -376,30 +440,33 @@ namespace Librainian.Controls {
 			Int32 ca = c.A, cr = c.R, cg = c.G, cb = c.B;
 			Int32 c2a = c2.A, c2r = c2.R, c2g = c2.G, c2b = c2.B;
 
-			var a = ( Int32 )Math.Abs( ca + ( ca - c2a ) * pc );
-			var r = ( Int32 )Math.Abs( cr - ( ( cr - c2r ) * pc ) );
-			var g = ( Int32 )Math.Abs( cg - ( ( cg - c2g ) * pc ) );
-			var b = ( Int32 )Math.Abs( cb - ( ( cb - c2b ) * pc ) );
+			var a = ( Int32 ) Math.Abs( ca + ( ca - c2a ) * pc );
+			var r = ( Int32 ) Math.Abs( cr - ( cr - c2r ) * pc );
+			var g = ( Int32 ) Math.Abs( cg - ( cg - c2g ) * pc );
+			var b = ( Int32 ) Math.Abs( cb - ( cb - c2b ) * pc );
 
 			if ( a > 255 ) {
 				a = 255;
 			}
+
 			if ( r > 255 ) {
 				r = 255;
 			}
+
 			if ( g > 255 ) {
 				g = 255;
 			}
+
 			if ( b > 255 ) {
 				b = 255;
 			}
 
-			return ( Color.FromArgb( a, r, g, b ) );
+			return Color.FromArgb( a, r, g, b );
 		}
 
 		/// <summary>
-		/// Required method for Designer support - do not modify the contents of this method with
-		/// the code editor.
+		///     Required method for Designer support - do not modify the contents of this method with
+		///     the code editor.
 		/// </summary>
 		private void InitializeComponent() {
 			this.SuspendLayout();
@@ -413,9 +480,11 @@ namespace Librainian.Controls {
 		private void mGlowAnimation_Tick( Object sender, EventArgs e ) {
 			if ( this.Animate ) {
 				this._mGlowPosition += 4;
+
 				if ( this._mGlowPosition > this.Width ) {
 					this._mGlowPosition = -300;
 				}
+
 				this.Invalidate();
 			}
 			else {

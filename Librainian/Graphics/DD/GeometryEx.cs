@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "GeometryEx.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "GeometryEx.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "GeometryEx.cs" was last formatted by Protiguous on 2018/06/04 at 3:55 PM.
+// File "GeometryEx.cs" was last formatted by Protiguous on 2018/06/26 at 1:07 AM.
 
 namespace Librainian.Graphics.DD {
 
@@ -74,7 +80,9 @@ namespace Librainian.Graphics.DD {
 
 			//Vertical line, slope is divideByZero error!
 			if ( Math.Abs( line.X1 - line.X2 ) < Single.Epsilon ) {
-				if ( Math.Abs( point.X - line.X1 ) < Single.Epsilon && heightIsRight ) { return Intersection.Tangent; }
+				if ( Math.Abs( point.X - line.X1 ) < Single.Epsilon && heightIsRight ) {
+					return Intersection.Tangent;
+				}
 
 				return Intersection.None;
 			}
@@ -89,13 +97,19 @@ namespace Librainian.Graphics.DD {
 
 			// Fail if either line segment is zero-length.
 			if ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon ||
-			     Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) { return Intersection.None; }
+			     Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
+				return Intersection.None;
+			}
 
 			if ( Math.Abs( line1.X1 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y1 ) < Single.Epsilon ||
-			     Math.Abs( line1.X2 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y1 ) < Single.Epsilon ) { return Intersection.Intersection; }
+			     Math.Abs( line1.X2 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y1 ) < Single.Epsilon ) {
+				return Intersection.Intersection;
+			}
 
 			if ( Math.Abs( line1.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y2 ) < Single.Epsilon ||
-			     Math.Abs( line1.X2 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y2 ) < Single.Epsilon ) { return Intersection.Intersection; }
+			     Math.Abs( line1.X2 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y2 ) < Single.Epsilon ) {
+				return Intersection.Intersection;
+			}
 
 			// (1) Translate the system so that point A is on the origin.
 			line1.X2 -= line1.X1;
@@ -119,13 +133,17 @@ namespace Librainian.Graphics.DD {
 			line2.X2 = ( Single ) newX;
 
 			// Fail if segment C-D doesn't cross line A-B.
-			if ( line2.Y1 < 0 && line2.Y2 < 0 || line2.Y1 >= 0 && line2.Y2 >= 0 ) { return Intersection.None; }
+			if ( line2.Y1 < 0 && line2.Y2 < 0 || line2.Y1 >= 0 && line2.Y2 >= 0 ) {
+				return Intersection.None;
+			}
 
 			// (3) Discover the position of the intersection point along line A-B.
 			Double posAb = line2.X2 + ( line2.X1 - line2.X2 ) * line2.Y2 / ( line2.Y2 - line2.Y1 );
 
 			// Fail if segment C-D crosses line A-B outside of segment A-B.
-			if ( posAb < 0 || posAb > distAb ) { return Intersection.None; }
+			if ( posAb < 0 || posAb > distAb ) {
+				return Intersection.None;
+			}
 
 			// (4) Apply the discovered position to line A-B in the original coordinate system.
 			return Intersection.Intersection;
@@ -137,7 +155,9 @@ namespace Librainian.Graphics.DD {
 
 				case 1:
 
-					if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) { return Intersection.Tangent; }
+					if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) {
+						return Intersection.Tangent;
+					}
 
 					return Intersection.None;
 
@@ -149,12 +169,16 @@ namespace Librainian.Graphics.DD {
 			var n = polygon.Length;
 			var p1 = polygon[ 0 ];
 
-			if ( point == p1 ) { return Intersection.Tangent; }
+			if ( point == p1 ) {
+				return Intersection.Tangent;
+			}
 
 			for ( i = 1; i <= n; i++ ) {
 				var p2 = polygon[ i % n ];
 
-				if ( point == p2 ) { return Intersection.Tangent; }
+				if ( point == p2 ) {
+					return Intersection.Tangent;
+				}
 
 				if ( point.Y > Math.Min( p1.Y, p2.Y ) ) {
 					if ( point.Y <= Math.Max( p1.Y, p2.Y ) ) {
@@ -162,7 +186,9 @@ namespace Librainian.Graphics.DD {
 							if ( Math.Abs( p1.Y - p2.Y ) > Single.Epsilon ) {
 								Double xinters = ( point.Y - p1.Y ) * ( p2.X - p1.X ) / ( p2.Y - p1.Y ) + p1.X;
 
-								if ( Math.Abs( p1.X - p2.X ) < Single.Epsilon || point.X <= xinters ) { counter++; }
+								if ( Math.Abs( p1.X - p2.X ) < Single.Epsilon || point.X <= xinters ) {
+									counter++;
+								}
 							}
 						}
 					}
@@ -173,7 +199,5 @@ namespace Librainian.Graphics.DD {
 
 			return counter % 2 == 1 ? Intersection.Containment : Intersection.None;
 		}
-
 	}
-
 }

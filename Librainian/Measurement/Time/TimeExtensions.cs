@@ -1,20 +1,25 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TimeExtensions.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "TimeExtensions.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -27,12 +32,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "TimeExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 4:16 PM.
+// File "TimeExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:32 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -54,23 +60,37 @@ namespace Librainian.Measurement.Time {
 
 	public static class TimeExtensions {
 
+		/// <summary>
+		///     The ISO 8601 format string.
+		///     <span>Doesn't make a good filename because of the :</span>
+		/// </summary>
+		public const String Iso8601Format = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+
+		public static TimeSpan? AverageDateTimePrecision;
+
+		public static DateTime StarDateOrigin = new DateTime( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
+
 		private static DateTime ExtractDate( [NotNull] String input, [NotNull] String pattern, IFormatProvider culture ) {
 			var dt = DateTime.MinValue;
 			var regex = new Regex( pattern );
 
-			if ( !regex.IsMatch( input ) ) { return dt; }
+			if ( !regex.IsMatch( input ) ) {
+				return dt;
+			}
 
 			var matches = regex.Matches( input );
-			var match = matches[0];
-			var ms = Convert.ToInt64( match.Groups[1].Value );
+			var match = matches[ 0 ];
+			var ms = Convert.ToInt64( match.Groups[ 1 ].Value );
 			var epoch = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 			dt = epoch.AddMilliseconds( ms );
 
 			// adjust if time zone modifier present
-			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[3].Value ) ) { return dt; }
+			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[ 3 ].Value ) ) {
+				return dt;
+			}
 
-			var mod = DateTime.ParseExact( match.Groups[3].Value, "HHmm", culture );
-			dt = match.Groups[2].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
+			var mod = DateTime.ParseExact( match.Groups[ 3 ].Value, "HHmm", culture );
+			dt = match.Groups[ 2 ].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
 
 			return dt;
 		}
@@ -81,20 +101,12 @@ namespace Librainian.Measurement.Time {
 				"M/d/yyyy h:mm:ss tt" // default format for invariant culture
 			};
 
-			if ( DateTime.TryParseExact( input, formats, culture, DateTimeStyles.None, out var date ) ) { return date; }
+			if ( DateTime.TryParseExact( input, formats, culture, DateTimeStyles.None, out var date ) ) {
+				return date;
+			}
 
 			return DateTime.TryParse( input, culture, DateTimeStyles.None, out date ) ? date : default;
 		}
-
-		/// <summary>
-		///     The ISO 8601 format string.
-		/// <span>Doesn't make a good filename because of the :</span>
-		/// </summary>
-		public const String Iso8601Format = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-
-		public static TimeSpan? AverageDateTimePrecision;
-
-		public static DateTime StarDateOrigin = new DateTime( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
 
 		/// <summary>
 		///     Adds the given number of business days to the <see cref="DateTime" />.
@@ -107,7 +119,9 @@ namespace Librainian.Measurement.Time {
 			var unsignedDays = Math.Abs( days );
 
 			for ( var i = 0; i < unsignedDays; i++ ) {
-				do { current = current.AddDays( sign ); } while ( current.DayOfWeek == DayOfWeek.Saturday || current.DayOfWeek == DayOfWeek.Sunday );
+				do {
+					current = current.AddDays( sign );
+				} while ( current.DayOfWeek == DayOfWeek.Saturday || current.DayOfWeek == DayOfWeek.Sunday );
 			}
 
 			return current;
@@ -146,11 +160,13 @@ namespace Librainian.Measurement.Time {
 		public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
 
 		public static DateTime Average( [NotNull] this IEnumerable<DateTime> dates ) {
-			if ( dates is null ) { throw new ArgumentNullException( nameof( dates ) ); }
+			if ( dates is null ) {
+				throw new ArgumentNullException( nameof( dates ) );
+			}
 
 			var ticks = dates.Select( time => time.Ticks ).Average();
 
-			return new DateTime( ( Int64 )ticks );
+			return new DateTime( ( Int64 ) ticks );
 		}
 
 		/// <summary>
@@ -185,7 +201,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
 		/// <returns></returns>
-		public static TimeSpan Divide( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
+		public static TimeSpan Divide( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks / scalar ) );
 
 		/// <summary>
 		///     Reduce a <see cref="TimeSpan" /> by a <paramref name="scalar" /> amount.
@@ -201,7 +217,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
 		/// <returns></returns>
-		public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
+		public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks / scalar ) );
 
 		/// <summary>
 		///     <para>Returns the last millisecond of the given <paramref name="date" />.</para>
@@ -223,8 +239,12 @@ namespace Librainian.Measurement.Time {
 		/// <param name="progress">   Progress done so far from 0.0 to 1.0</param>
 		/// <returns></returns>
 		public static TimeSpan EstimateTimeRemaining( this TimeSpan timeElapsed, Double progress ) {
-			if ( progress <= Double.Epsilon ) { progress = Double.Epsilon; }
-			else if ( progress >= 1.0 ) { progress = 1.0; }
+			if ( progress <= Double.Epsilon ) {
+				progress = Double.Epsilon;
+			}
+			else if ( progress >= 1.0 ) {
+				progress = 1.0;
+			}
 
 			var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
 			var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
@@ -307,7 +327,9 @@ namespace Librainian.Measurement.Time {
 		}
 
 		public static TimeSpan GetAverageDateTimePrecision() {
-			if ( AverageDateTimePrecision.HasValue ) { return AverageDateTimePrecision.Value; }
+			if ( AverageDateTimePrecision.HasValue ) {
+				return AverageDateTimePrecision.Value;
+			}
 
 			$"Performing {Environment.ProcessorCount} timeslice calibrations.".WriteLine();
 			AverageDateTimePrecision = new Milliseconds( 0.To( Environment.ProcessorCount ).Select( i => GetDateTimePrecision() ).Average( span => span.TotalMilliseconds ) );
@@ -320,7 +342,9 @@ namespace Librainian.Measurement.Time {
 			var then = DateTime.UtcNow.Ticks;
 			var now = DateTime.UtcNow.Ticks;
 
-			while ( then == now ) { now = DateTime.UtcNow.Ticks; }
+			while ( then == now ) {
+				now = DateTime.UtcNow.Ticks;
+			}
 
 			var result = new Milliseconds( TimeSpan.FromTicks( now - then ).TotalMilliseconds );
 
@@ -391,10 +415,14 @@ namespace Librainian.Measurement.Time {
 		public static Boolean IsLeapYear( this Int64 year ) {
 
 			// not divisible by 4? not a leap year
-			if ( year % 4 != 0 ) { return false; }
+			if ( year % 4 != 0 ) {
+				return false;
+			}
 
 			// divisible by 4 and not divisible by 100? always a leap year
-			if ( year % 100 != 0 ) { return true; }
+			if ( year % 100 != 0 ) {
+				return true;
+			}
 
 			// divisible by 4 and 100? Only a leap year if also divisible by 400
 			return year % 400 == 0;
@@ -425,9 +453,13 @@ namespace Librainian.Measurement.Time {
 		public static DateTime LastDayOfWeek( this DateTime date ) {
 			var month = date.Month;
 
-			while ( month == date.Month && date.DayOfWeek != DayOfWeek.Saturday ) { date = date.AddDays( 1 ); }
+			while ( month == date.Month && date.DayOfWeek != DayOfWeek.Saturday ) {
+				date = date.AddDays( 1 );
+			}
 
-			if ( date.Month != month ) { date = date.AddDays( -1 ); }
+			if ( date.Month != month ) {
+				date = date.AddDays( -1 );
+			}
 
 			return date;
 		}
@@ -489,12 +521,12 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Multiplies a timespan by a double value
 		/// </summary>
-		public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) => TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+		public static TimeSpan Multiply( this TimeSpan multiplicand, Double multiplier ) => TimeSpan.FromTicks( ( Int64 ) ( multiplicand.Ticks * multiplier ) );
 
 		/// <summary>
 		///     Multiplies a timespan by a decimal value
 		/// </summary>
-		public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) => TimeSpan.FromTicks( ( Int64 )( multiplicand.Ticks * multiplier ) );
+		public static TimeSpan Multiply( this TimeSpan multiplicand, Decimal multiplier ) => TimeSpan.FromTicks( ( Int64 ) ( multiplicand.Ticks * multiplier ) );
 
 		/// <summary>
 		///     Multiplies a timespan by an integer value
@@ -505,7 +537,9 @@ namespace Librainian.Measurement.Time {
 		///     Returns first next occurrence of specified <see cref="DayOfWeek" />.
 		/// </summary>
 		public static DateTime Next( this DateTime start, DayOfWeek day ) {
-			do { start = start.NextDay(); } while ( start.DayOfWeek != day );
+			do {
+				start = start.NextDay();
+			} while ( start.DayOfWeek != day );
 
 			return start;
 		}
@@ -546,7 +580,9 @@ namespace Librainian.Measurement.Time {
 			var nextYear = start.Year + 1;
 			var numberOfDaysInSameMonthNextYear = DateTime.DaysInMonth( nextYear, start.Month );
 
-			if ( numberOfDaysInSameMonthNextYear >= start.Day ) { return new DateTime( nextYear, start.Month, start.Day, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind ); }
+			if ( numberOfDaysInSameMonthNextYear >= start.Day ) {
+				return new DateTime( nextYear, start.Month, start.Day, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
+			}
 
 			var differenceInDays = start.Day - numberOfDaysInSameMonthNextYear;
 			var dateTime = new DateTime( nextYear, start.Month, numberOfDaysInSameMonthNextYear, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
@@ -586,9 +622,13 @@ namespace Librainian.Measurement.Time {
 				return epoch.AddSeconds( unix );
 			}
 
-			if ( input.Contains( "/Date(" ) ) { return ExtractDate( input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture ); }
+			if ( input.Contains( "/Date(" ) ) {
+				return ExtractDate( input, @"\\?/Date\((-?\d+)(-|\+)?([0-9]{4})?\)\\?/", culture );
+			}
 
-			if ( !input.Contains( "new Date(" ) ) { return ParseFormattedDate( input, culture ); }
+			if ( !input.Contains( "new Date(" ) ) {
+				return ParseFormattedDate( input, culture );
+			}
 
 			input = input.Replace( " ", "" );
 
@@ -600,7 +640,9 @@ namespace Librainian.Measurement.Time {
 		///     Returns first next occurrence of specified <see cref="DayOfWeek" />.
 		/// </summary>
 		public static DateTime Previous( this DateTime start, DayOfWeek day ) {
-			do { start = start.PreviousDay(); } while ( start.DayOfWeek != day );
+			do {
+				start = start.PreviousDay();
+			} while ( start.DayOfWeek != day );
 
 			return start;
 		}
@@ -641,7 +683,9 @@ namespace Librainian.Measurement.Time {
 			var previousYear = start.Year - 1;
 			var numberOfDaysInSameMonthPreviousYear = DateTime.DaysInMonth( previousYear, start.Month );
 
-			if ( numberOfDaysInSameMonthPreviousYear >= start.Day ) { return new DateTime( previousYear, start.Month, start.Day, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind ); }
+			if ( numberOfDaysInSameMonthPreviousYear >= start.Day ) {
+				return new DateTime( previousYear, start.Month, start.Day, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
+			}
 
 			var differenceInDays = start.Day - numberOfDaysInSameMonthPreviousYear;
 			var dateTime = new DateTime( previousYear, start.Month, numberOfDaysInSameMonthPreviousYear, start.Hour, start.Minute, start.Second, start.Millisecond, start.Kind );
@@ -654,34 +698,44 @@ namespace Librainian.Measurement.Time {
 
 			switch ( rt ) {
 				case RoundTo.Second: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
 
-						if ( dateTime.Millisecond >= 500 ) { rounded = rounded.AddSeconds( 1 ); }
-
-						break;
+					if ( dateTime.Millisecond >= 500 ) {
+						rounded = rounded.AddSeconds( 1 );
 					}
+
+					break;
+				}
 				case RoundTo.Minute: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
 
-						if ( dateTime.Second >= 30 ) { rounded = rounded.AddMinutes( 1 ); }
-
-						break;
+					if ( dateTime.Second >= 30 ) {
+						rounded = rounded.AddMinutes( 1 );
 					}
+
+					break;
+				}
 				case RoundTo.Hour: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
 
-						if ( dateTime.Minute >= 30 ) { rounded = rounded.AddHours( 1 ); }
-
-						break;
+					if ( dateTime.Minute >= 30 ) {
+						rounded = rounded.AddHours( 1 );
 					}
+
+					break;
+				}
 				case RoundTo.Day: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
 
-						if ( dateTime.Hour >= 12 ) { rounded = rounded.AddDays( 1 ); }
-
-						break;
+					if ( dateTime.Hour >= 12 ) {
+						rounded = rounded.AddDays( 1 );
 					}
-				default: { throw new ArgumentOutOfRangeException( nameof( rt ) ); }
+
+					break;
+				}
+				default: {
+					throw new ArgumentOutOfRangeException( nameof( rt ) );
+				}
 			}
 
 			return rounded;
@@ -803,22 +857,44 @@ namespace Librainian.Measurement.Time {
 			//    sb.AppendFormat( " {0} week", timeSpan.Days / 7 );
 			//}
 			//else
-			if ( timeSpan.Days > 1 ) { sb.Append( $" {timeSpan.Days:R} days" ); }
-			else if ( timeSpan.Days == 1 ) { sb.Append( $" {timeSpan.Days:R} day" ); }
+			if ( timeSpan.Days > 1 ) {
+				sb.Append( $" {timeSpan.Days:R} days" );
+			}
+			else if ( timeSpan.Days == 1 ) {
+				sb.Append( $" {timeSpan.Days:R} day" );
+			}
 
-			if ( timeSpan.Hours > 1 ) { sb.Append( $" {timeSpan.Hours:n0} hours" ); }
-			else if ( timeSpan.Hours == 1 ) { sb.Append( $" {timeSpan.Hours} hour" ); }
+			if ( timeSpan.Hours > 1 ) {
+				sb.Append( $" {timeSpan.Hours:n0} hours" );
+			}
+			else if ( timeSpan.Hours == 1 ) {
+				sb.Append( $" {timeSpan.Hours} hour" );
+			}
 
-			if ( timeSpan.Minutes > 1 ) { sb.Append( $" {timeSpan.Minutes:n0} minutes" ); }
-			else if ( timeSpan.Minutes == 1 ) { sb.Append( $" {timeSpan.Minutes} minute" ); }
+			if ( timeSpan.Minutes > 1 ) {
+				sb.Append( $" {timeSpan.Minutes:n0} minutes" );
+			}
+			else if ( timeSpan.Minutes == 1 ) {
+				sb.Append( $" {timeSpan.Minutes} minute" );
+			}
 
-			if ( timeSpan.Seconds > 1 ) { sb.Append( $" {timeSpan.Seconds:n0} seconds" ); }
-			else if ( timeSpan.Seconds == 1 ) { sb.Append( $" {timeSpan.Seconds} second" ); }
+			if ( timeSpan.Seconds > 1 ) {
+				sb.Append( $" {timeSpan.Seconds:n0} seconds" );
+			}
+			else if ( timeSpan.Seconds == 1 ) {
+				sb.Append( $" {timeSpan.Seconds} second" );
+			}
 
-			if ( timeSpan.Milliseconds > 1 ) { sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" ); }
-			else if ( timeSpan.Milliseconds == 1 ) { sb.Append( $" {timeSpan.Milliseconds} millisecond" ); }
+			if ( timeSpan.Milliseconds > 1 ) {
+				sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
+			}
+			else if ( timeSpan.Milliseconds == 1 ) {
+				sb.Append( $" {timeSpan.Milliseconds} millisecond" );
+			}
 
-			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) { sb.Append( " 0 milliseconds " ); }
+			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
+				sb.Append( " 0 milliseconds " );
+			}
 
 			return sb.ToString().Trim();
 		}
@@ -831,23 +907,41 @@ namespace Librainian.Measurement.Time {
 		public static String Simpler( this Duration duration ) {
 			var sb = new StringBuilder();
 
-			if ( Math.Abs( duration.Years ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Years - 1 ) <= Double.Epsilon ? " {0:R} year" : " {0:R} years", duration.Years ); }
+			if ( Math.Abs( duration.Years ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Years - 1 ) <= Double.Epsilon ? " {0:R} year" : " {0:R} years", duration.Years );
+			}
 
-			if ( Math.Abs( duration.Weeks ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Weeks - 1 ) <= Double.Epsilon ? " {0:R} week" : " {0:R} weeks", duration.Weeks ); }
+			if ( Math.Abs( duration.Weeks ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Weeks - 1 ) <= Double.Epsilon ? " {0:R} week" : " {0:R} weeks", duration.Weeks );
+			}
 
-			if ( Math.Abs( duration.Days ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Days - 1 ) <= Double.Epsilon ? " {0:R} day" : " {0:R} days", duration.Days ); }
+			if ( Math.Abs( duration.Days ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Days - 1 ) <= Double.Epsilon ? " {0:R} day" : " {0:R} days", duration.Days );
+			}
 
-			if ( Math.Abs( duration.Hours ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Hours - 1 ) <= Double.Epsilon ? " {0:R} hour" : " {0:R} hours", duration.Hours ); }
+			if ( Math.Abs( duration.Hours ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Hours - 1 ) <= Double.Epsilon ? " {0:R} hour" : " {0:R} hours", duration.Hours );
+			}
 
-			if ( Math.Abs( duration.Minutes ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Minutes - 1 ) <= Double.Epsilon ? " {0:R} minute" : " {0:R} minutes", duration.Minutes ); }
+			if ( Math.Abs( duration.Minutes ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Minutes - 1 ) <= Double.Epsilon ? " {0:R} minute" : " {0:R} minutes", duration.Minutes );
+			}
 
-			if ( Math.Abs( duration.Seconds ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Seconds - 1 ) <= Double.Epsilon ? " {0:R} second" : " {0:R} seconds", duration.Seconds ); }
+			if ( Math.Abs( duration.Seconds ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Seconds - 1 ) <= Double.Epsilon ? " {0:R} second" : " {0:R} seconds", duration.Seconds );
+			}
 
-			if ( Math.Abs( duration.Milliseconds ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Milliseconds - 1 ) <= Double.Epsilon ? " {0:R} millisecond" : " {0:R} milliseconds", duration.Milliseconds ); }
+			if ( Math.Abs( duration.Milliseconds ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Milliseconds - 1 ) <= Double.Epsilon ? " {0:R} millisecond" : " {0:R} milliseconds", duration.Milliseconds );
+			}
 
-			if ( Math.Abs( duration.Microseconds ) >= Double.Epsilon ) { sb.AppendFormat( Math.Abs( duration.Microseconds - 1 ) <= Double.Epsilon ? " {0:R} microsecond" : " {0:R} microseconds", duration.Microseconds ); }
+			if ( Math.Abs( duration.Microseconds ) >= Double.Epsilon ) {
+				sb.AppendFormat( Math.Abs( duration.Microseconds - 1 ) <= Double.Epsilon ? " {0:R} microsecond" : " {0:R} microseconds", duration.Microseconds );
+			}
 
-			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) { sb.Append( " 0 microseconds " ); }
+			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
+				sb.Append( " 0 microseconds " );
+			}
 
 			return sb.ToString().Trim();
 		}
@@ -876,11 +970,15 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="value"></param>
 		public static void ThrowIfOutOfDecimalRange( this Double value ) {
-			value.Should().BeInRange( ( Double )Decimal.MinValue, ( Double )Decimal.MaxValue );
+			value.Should().BeInRange( ( Double ) Decimal.MinValue, ( Double ) Decimal.MaxValue );
 
-			if ( value < ( Double )Decimal.MinValue ) { throw new OverflowException( Constants.ValueIsTooLow ); }
+			if ( value < ( Double ) Decimal.MinValue ) {
+				throw new OverflowException( Constants.ValueIsTooLow );
+			}
 
-			if ( value > ( Double )Decimal.MaxValue ) { throw new OverflowException( Constants.ValueIsTooHigh ); }
+			if ( value > ( Double ) Decimal.MaxValue ) {
+				throw new OverflowException( Constants.ValueIsTooHigh );
+			}
 		}
 
 		/// <summary>
@@ -913,15 +1011,19 @@ namespace Librainian.Measurement.Time {
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
 		/// <returns></returns>
-		public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks * scalar ) );
+		public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 ) ( timeSpan.Ticks * scalar ) );
 
 		// if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
 		[NotNull]
 		public static SpanOfTime TimeStatement( [CanBeNull] this Action action ) {
 			var one = Stopwatch.StartNew();
 
-			try { action?.Invoke(); }
-			catch ( Exception exception ) { exception.More(); }
+			try {
+				action?.Invoke();
+			}
+			catch ( Exception exception ) {
+				exception.More();
+			}
 
 			return new SpanOfTime( one.Elapsed );
 		}
@@ -959,7 +1061,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Decimal ToStarDate( this DateTime earthDateTime ) {
 			var earthToStarDateDiff = earthDateTime - StarDateOrigin;
-			var millisecondConversion = ( Decimal )earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
+			var millisecondConversion = ( Decimal ) earthToStarDateDiff.TotalMilliseconds / 34367056.4m;
 			var starDate = Math.Floor( millisecondConversion * 100 ) / 100;
 
 			return Math.Round( starDate, 2, MidpointRounding.AwayFromZero );
@@ -973,13 +1075,13 @@ namespace Librainian.Measurement.Time {
 		public static UInt64 ToUnixTimestamp( this DateTime date ) {
 			var diff = date - Epochs.Unix;
 
-			return ( UInt64 )diff.TotalSeconds;
+			return ( UInt64 ) diff.TotalSeconds;
 		}
 
 		public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
 			try {
 				if ( date.Year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-					dateTime = new DateTime( year: ( Int32 )date.Year.Value, month: date.Month.Value, day: date.Day.Value );
+					dateTime = new DateTime( year: ( Int32 ) date.Year.Value, month: date.Month.Value, day: date.Day.Value );
 
 					return true;
 				}

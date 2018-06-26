@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2017 to Rick@AIBrain.org and 2018-2018 to Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DocumentInfo.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -33,7 +38,7 @@
 // Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "DocumentInfo.cs" was last formatted by Protiguous on 2018/06/22 at 4:12 PM.
+// File "DocumentInfo.cs" was last formatted by Protiguous on 2018/06/26 at 1:38 AM.
 
 namespace Librainian.Persistence {
 
@@ -115,9 +120,9 @@ namespace Librainian.Persistence {
 
 			//attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
 			this.ScanningTask = new Task( () => Parallel.Invoke( new ParallelOptions {
-				CancellationToken = this.CancellationTokenSource.Token,
-				MaxDegreeOfParallelism = 3
-			}, async () => this.CRC32 = await document.CRC32Async( this.CancellationTokenSource.Token ).NoUI(),
+					CancellationToken = this.CancellationTokenSource.Token,
+					MaxDegreeOfParallelism = 3
+				}, async () => this.CRC32 = await document.CRC32Async( this.CancellationTokenSource.Token ).NoUI(),
 				async () => this.CRC64 = await document.CRC64Async( this.CancellationTokenSource.Token ).NoUI(),
 				async () => this.AddHash = await document.CalcHashInt32Async( this.CancellationTokenSource.Token ).NoUI() ), this.CancellationTokenSource.Token );
 		}
@@ -200,7 +205,7 @@ namespace Librainian.Persistence {
 
 				this.LastScanned = DateTime.UtcNow;
 
-				Data.ScannedDocuments[this.AbsolutePath] = this;
+				Data.ScannedDocuments[ this.AbsolutePath ] = this;
 
 				return true;
 			}

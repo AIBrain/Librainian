@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Surfer.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Surfer.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Surfer.cs" was last formatted by Protiguous on 2018/06/04 at 4:00 PM.
+// File "Surfer.cs" was last formatted by Protiguous on 2018/06/26 at 1:13 AM.
 
 namespace Librainian.Internet {
 
@@ -60,7 +66,9 @@ namespace Librainian.Internet {
 
 					return this._downloadInProgressStatus;
 				}
-				finally { this._downloadInProgressAccess.ExitReadLock(); }
+				finally {
+					this._downloadInProgressAccess.ExitReadLock();
+				}
 			}
 
 			private set {
@@ -68,7 +76,9 @@ namespace Librainian.Internet {
 					this._downloadInProgressAccess.EnterWriteLock();
 					this._downloadInProgressStatus = value;
 				}
-				finally { this._downloadInProgressAccess.ExitWriteLock(); }
+				finally {
+					this._downloadInProgressAccess.ExitWriteLock();
+				}
 			}
 		}
 
@@ -94,7 +104,10 @@ namespace Librainian.Internet {
 				var value = match.Groups[ 1 ].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-				var i = new UriLinkItem { Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty ) };
+				var i = new UriLinkItem {
+					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
+					Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
+				};
 
 				yield return i;
 			}
@@ -106,7 +119,9 @@ namespace Librainian.Internet {
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public Boolean Surf( [CanBeNull] String address ) {
-			if ( String.IsNullOrWhiteSpace( address ) ) { return false; }
+			if ( String.IsNullOrWhiteSpace( address ) ) {
+				return false;
+			}
 
 			try {
 				var uri = new Uri( uriString: address );
@@ -126,16 +141,22 @@ namespace Librainian.Internet {
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public Boolean Surf( [CanBeNull] Uri address ) {
-			if ( null == address ) { return false; }
+			if ( null == address ) {
+				return false;
+			}
 
 			try {
-				if ( this._pastUrls.Contains( address ) ) { return false; }
+				if ( this._pastUrls.Contains( address ) ) {
+					return false;
+				}
 
 				this._urls.Enqueue( item: address );
 
 				return true;
 			}
-			finally { this.StartNextDownload(); }
+			finally {
+				this.StartNextDownload();
+			}
 		}
 
 		internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
@@ -152,15 +173,21 @@ namespace Librainian.Internet {
 			Task.Factory.StartNew( () => {
 				Thread.Yield();
 
-				if ( this.DownloadInProgress ) { return; }
+				if ( this.DownloadInProgress ) {
+					return;
+				}
 
-				if ( !this._urls.TryDequeue( result: out var address ) ) { return; }
+				if ( !this._urls.TryDequeue( result: out var address ) ) {
+					return;
+				}
 
 				this.DownloadInProgress = true;
 				$"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
 				this._webclient.DownloadStringAsync( address: address, userToken: address );
 			} ).ContinueWith( t => {
-				if ( this._urls.Any() ) { this.StartNextDownload(); }
+				if ( this._urls.Any() ) {
+					this.StartNextDownload();
+				}
 			} );
 
 		/// <summary>
@@ -169,10 +196,16 @@ namespace Librainian.Internet {
 		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
 
 		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
-			this._webclient = new WebClient { CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default ) };
+			this._webclient = new WebClient {
+				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
+			};
 
-			if ( null != onDownloadStringCompleted ) { this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e ); }
-			else { this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted; }
+			if ( null != onDownloadStringCompleted ) {
+				this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
+			}
+			else {
+				this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
+			}
 
 			//System.Net.WebUtility
 			//System.HttpStyleUriParser
@@ -192,7 +225,5 @@ namespace Librainian.Internet {
                 } );
             */
 		}
-
 	}
-
 }

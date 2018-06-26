@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "SimpleWebServer.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "SimpleWebServer.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "SimpleWebServer.cs" was last formatted by Protiguous on 2018/06/04 at 4:00 PM.
+// File "SimpleWebServer.cs" was last formatted by Protiguous on 2018/06/26 at 1:12 AM.
 
 namespace Librainian.Internet.Servers {
 
@@ -62,10 +68,6 @@ namespace Librainian.Internet.Servers {
 	[UsedImplicitly]
 	public class SimpleWebServer : ABetterClassDispose {
 
-		public Boolean IsReadyForRequests { get; private set; }
-
-		public String NotReadyBecause { get; private set; }
-
 		/// <summary>
 		/// </summary>
 		[NotNull]
@@ -75,6 +77,61 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		[CanBeNull]
 		private readonly Func<HttpListenerRequest, String> _responderMethod;
+
+		public Boolean IsReadyForRequests { get; private set; }
+
+		public String NotReadyBecause { get; private set; }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="prefixes"></param>
+		/// <param name="method">  </param>
+		/// <exception cref="HttpListenerException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
+			this.ImNotReady( String.Empty );
+
+			this._httpListener.Should().NotBeNull( "this._httpListener is null." );
+
+			if ( !HttpListener.IsSupported ) {
+				HttpListener.IsSupported.Should().BeTrue( "Needs Windows XP SP2, Server 2003, or later." );
+				this.ImNotReady( because: "HttpListener is not supported." );
+
+				return;
+			}
+
+			prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
+
+			if ( prefixes is null || !prefixes.Any() ) {
+				this.ImNotReady( because: "URI prefixes are required." );
+
+				return;
+			}
+
+			method.Should().NotBeNull( "A responder method is required" );
+
+			if ( method is null ) {
+				this.ImNotReady( because: "A responder method is required" );
+
+				return;
+			}
+
+			foreach ( var prefix in prefixes ) {
+				this._httpListener.Prefixes.Add( prefix );
+			}
+
+			this._responderMethod = method;
+
+			try {
+				this._httpListener.Start();
+				this.IsReadyForRequests = true;
+			}
+			catch {
+				this.ImNotReady( because: "The httpListener did not Start()." );
+			}
+		}
+
+		public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
 
 		private void ImNotReady( String because ) {
 			this.IsReadyForRequests = false;
@@ -104,7 +161,9 @@ namespace Librainian.Internet.Servers {
 						await Task.Run( async () => {
 							var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
 
-							if ( listenerContext is null ) { return; }
+							if ( listenerContext is null ) {
+								return;
+							}
 
 							var responderMethod = this._responderMethod;
 
@@ -143,61 +202,14 @@ namespace Librainian.Internet.Servers {
 		public void Stop() {
 			using ( this._httpListener ) {
 				try {
-					if ( this._httpListener.IsListening ) { this._httpListener.Stop(); }
+					if ( this._httpListener.IsListening ) {
+						this._httpListener.Stop();
+					}
 				}
 				catch ( ObjectDisposedException ) { }
 
 				this._httpListener.Close();
 			}
 		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="prefixes"></param>
-		/// <param name="method">  </param>
-		/// <exception cref="HttpListenerException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
-			this.ImNotReady( String.Empty );
-
-			this._httpListener.Should().NotBeNull( "this._httpListener is null." );
-
-			if ( !HttpListener.IsSupported ) {
-				HttpListener.IsSupported.Should().BeTrue( "Needs Windows XP SP2, Server 2003, or later." );
-				this.ImNotReady( because: "HttpListener is not supported." );
-
-				return;
-			}
-
-			prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
-
-			if ( prefixes is null || !prefixes.Any() ) {
-				this.ImNotReady( because: "URI prefixes are required." );
-
-				return;
-			}
-
-			method.Should().NotBeNull( "A responder method is required" );
-
-			if ( method is null ) {
-				this.ImNotReady( because: "A responder method is required" );
-
-				return;
-			}
-
-			foreach ( var prefix in prefixes ) { this._httpListener.Prefixes.Add( prefix ); }
-
-			this._responderMethod = method;
-
-			try {
-				this._httpListener.Start();
-				this.IsReadyForRequests = true;
-			}
-			catch { this.ImNotReady( because: "The httpListener did not Start()." ); }
-		}
-
-		public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
-
 	}
-
 }

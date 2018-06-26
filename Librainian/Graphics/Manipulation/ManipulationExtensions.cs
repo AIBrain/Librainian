@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ManipulationExtensions.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "ManipulationExtensions.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "ManipulationExtensions.cs" was last formatted by Protiguous on 2018/06/04 at 3:57 PM.
+// File "ManipulationExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:09 AM.
 
 namespace Librainian.Graphics.Manipulation {
 
@@ -82,7 +88,9 @@ namespace Librainian.Graphics.Manipulation {
 
 					// for each pixel in the pixelate size, set it to the center color
 					for ( var x = xx; x < xx + pixelateSize && x < image.Width; x++ ) {
-						for ( var y = yy; y < yy + pixelateSize && y < image.Height; y++ ) { pixelated.SetPixel( x, y, pixel ); }
+						for ( var y = yy; y < yy + pixelateSize && y < image.Height; y++ ) {
+							pixelated.SetPixel( x, y, pixel );
+						}
 					}
 				}
 			}
@@ -95,7 +103,9 @@ namespace Librainian.Graphics.Manipulation {
 
 		[CanBeNull]
 		public static Bitmap LoadAndResize( Document document, Single multiplier ) {
-			if ( !multiplier.IsNumber() ) { return null; }
+			if ( !multiplier.IsNumber() ) {
+				return null;
+			}
 
 			try {
 				var image = Image.FromFile( document.FullPathWithFileName );
@@ -103,8 +113,12 @@ namespace Librainian.Graphics.Manipulation {
 
 				return new Bitmap( image, newSize );
 			}
-			catch ( FileNotFoundException ) { return null; }
-			catch ( OutOfMemoryException ) { return null; }
+			catch ( FileNotFoundException ) {
+				return null;
+			}
+			catch ( OutOfMemoryException ) {
+				return null;
+			}
 		}
 
 		[NotNull]
@@ -120,7 +134,23 @@ namespace Librainian.Graphics.Manipulation {
 				var attributes = new ImageAttributes();
 
 				//create the grayscale ColorMatrix
-				var colorMatrix = new ColorMatrix( new[] { new[] { .3f, .3f, .3f, 0, 0 }, new[] { .59f, .59f, .59f, 0, 0 }, new[] { .11f, .11f, .11f, 0, 0 }, new[] { 0.0f, 0, 0, 1, 0 }, new[] { 0.0f, 0, 0, 0, 1 } } );
+				var colorMatrix = new ColorMatrix( new[] {
+					new[] {
+						.3f, .3f, .3f, 0, 0
+					},
+					new[] {
+						.59f, .59f, .59f, 0, 0
+					},
+					new[] {
+						.11f, .11f, .11f, 0, 0
+					},
+					new[] {
+						0.0f, 0, 0, 1, 0
+					},
+					new[] {
+						0.0f, 0, 0, 0, 1
+					}
+				} );
 
 				//set the color matrix attribute
 				attributes.SetColorMatrix( colorMatrix );
@@ -132,7 +162,5 @@ namespace Librainian.Graphics.Manipulation {
 
 			return newBitmap;
 		}
-
 	}
-
 }

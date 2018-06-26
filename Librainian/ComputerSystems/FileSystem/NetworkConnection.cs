@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "NetworkConnection.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "NetworkConnection.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "NetworkConnection.cs" was last formatted by Protiguous on 2018/06/04 at 3:47 PM.
+// File "NetworkConnection.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -71,7 +77,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		Tree = 0x0a,
 
 		Ndscontainer = 0x0b
-
 	}
 
 	public enum ResourceDisplayType {
@@ -99,7 +104,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		RESOURCEDISPLAYTYPE_TREE,
 
 		RESOURCEDISPLAYTYPE_NDSCONTAINER
-
 	}
 
 	public enum ResourceScope {
@@ -113,7 +117,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		Recent,
 
 		Context
-
 	}
 
 	public enum ResourceType {
@@ -125,7 +128,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		Print = 2,
 
 		Reserved = 8
-
 	}
 
 	public enum ResourceUsage {
@@ -141,7 +143,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		RESOURCEUSAGE_ATTACHED = 0x00000010,
 
 		RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -166,7 +167,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 		public ResourceScope Scope;
 
 		public Int32 Usage;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -187,19 +187,34 @@ namespace Librainian.ComputerSystems.FileSystem {
 		public String lpProvider = null;
 
 		public String lpRemoteName = null;
-
 	}
 
 	public class NetworkConnection : IDisposable {
 
-		public void Dispose() {
-			this.Dispose( true );
-			GC.SuppressFinalize( this );
-		}
-
 		private String NetworkName { get; }
 
-		~NetworkConnection() { this.Dispose( false ); }
+		public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
+			this.NetworkName = networkName;
+
+			var netResource = new NetResource {
+				Scope = ResourceScope.GlobalNetwork,
+				ResourceType = ResourceType.Disk,
+				DisplayType = ResourceDisplaytype.Share,
+				RemoteName = networkName
+			};
+
+			var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
+
+			var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
+
+			if ( result != 0 ) {
+				throw new Win32Exception( result, "Error connecting to remote share" );
+			}
+		}
+
+		~NetworkConnection() {
+			this.Dispose( false );
+		}
 
 		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
@@ -215,18 +230,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 			return NetworkInterface.GetIsNetworkAvailable();
 		}
 
-		public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
-			this.NetworkName = networkName;
-
-			var netResource = new NetResource { Scope = ResourceScope.GlobalNetwork, ResourceType = ResourceType.Disk, DisplayType = ResourceDisplaytype.Share, RemoteName = networkName };
-
-			var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
-
-			var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
-
-			if ( result != 0 ) { throw new Win32Exception( result, "Error connecting to remote share" ); }
+		public void Dispose() {
+			this.Dispose( true );
+			GC.SuppressFinalize( this );
 		}
-
 	}
-
 }

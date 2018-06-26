@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ThreadSafeList.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "ThreadSafeList.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "ThreadSafeList.cs" was last formatted by Protiguous on 2018/06/04 at 3:44 PM.
+// File "ThreadSafeList.cs" was last formatted by Protiguous on 2018/06/26 at 12:52 AM.
 
 namespace Librainian.Collections {
 
@@ -57,73 +63,56 @@ namespace Librainian.Collections {
 	[DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
 	public sealed class ThreadSafeList<T> : IList<T> {
 
-		public Int32 Count {
-			get {
-				lock ( this.Items ) { return this.Items.Count; }
-			}
-		}
-
-		public Boolean IsReadOnly => false;
-
-		public T this[ Int32 index ] {
-			get {
-				lock ( this.Items ) { return this.Items[ index: index ]; }
-			}
-
-			set {
-				lock ( this.Items ) { this.Items[ index: index ] = value; }
-			}
-		}
-
-		public void Add( T item ) {
-			lock ( this.Items ) { this.Items.Add( item: item ); }
-		}
-
-		public void Clear() {
-			lock ( this.Items ) { this.Items.Clear(); }
-		}
-
-		public Boolean Contains( T item ) {
-			lock ( this.Items ) { return this.Items.Contains( item: item ); }
-		}
-
-		public void CopyTo( T[] array, Int32 arrayIndex ) {
-			lock ( this.Items ) { this.Items.CopyTo( array: array, arrayIndex: arrayIndex ); }
-		}
-
-		public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
-
-		public Int32 IndexOf( T item ) {
-			lock ( this.Items ) { return this.Items.IndexOf( item: item ); }
-		}
-
-		public void Insert( Int32 index, T item ) {
-			lock ( this.Items ) { this.Items.Insert( index: index, item: item ); }
-		}
-
-		public Boolean Remove( T item ) {
-			lock ( this.Items ) { return this.Items.Remove( item: item ); }
-		}
-
-		public void RemoveAt( Int32 index ) {
-			lock ( this.Items ) { this.Items.RemoveAt( index: index ); }
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-		public Int64 LongCount {
-			get {
-				lock ( this.Items ) { return this.Items.LongCount(); }
-			}
-		}
-
 		/// <summary>
 		///     TODO replace the locks with a ReaderWriterLockSlim
 		/// </summary>
 		[JsonProperty]
 		private List<T> Items { get; } = new List<T>();
 
-		public async Task AddAsync( T item ) => await Task.Run( () => { this.TryAdd( item: item ); } ).NoUI();
+		public Int32 Count {
+			get {
+				lock ( this.Items ) {
+					return this.Items.Count;
+				}
+			}
+		}
+
+		public Boolean IsReadOnly => false;
+
+		public Int64 LongCount {
+			get {
+				lock ( this.Items ) {
+					return this.Items.LongCount();
+				}
+			}
+		}
+
+		public T this[ Int32 index ] {
+			get {
+				lock ( this.Items ) {
+					return this.Items[ index: index ];
+				}
+			}
+
+			set {
+				lock ( this.Items ) {
+					this.Items[ index: index ] = value;
+				}
+			}
+		}
+
+		public ThreadSafeList( [CanBeNull] IEnumerable<T> items = null ) => this.AddRange( collection: items );
+
+		public void Add( T item ) {
+			lock ( this.Items ) {
+				this.Items.Add( item: item );
+			}
+		}
+
+		public async Task AddAsync( T item ) =>
+			await Task.Run( () => {
+				this.TryAdd( item: item );
+			} ).NoUI();
 
 		/// <summary>
 		///     Add in an enumerable of items.
@@ -131,9 +120,19 @@ namespace Librainian.Collections {
 		/// <param name="collection"></param>
 		/// <param name="asParallel"></param>
 		public void AddRange( [CanBeNull] IEnumerable<T> collection, Boolean asParallel = true ) {
-			if ( null == collection ) { return; }
+			if ( null == collection ) {
+				return;
+			}
 
-			lock ( this.Items ) { this.Items.AddRange( collection: asParallel ? collection.AsParallel() : collection ); }
+			lock ( this.Items ) {
+				this.Items.AddRange( collection: asParallel ? collection.AsParallel() : collection );
+			}
+		}
+
+		public void Clear() {
+			lock ( this.Items ) {
+				this.Items.Clear();
+			}
 		}
 
 		/// <summary>
@@ -142,7 +141,21 @@ namespace Librainian.Collections {
 		/// <returns></returns>
 		[NotNull]
 		public List<T> Clone( Boolean asParallel = false /*is order guaranteed if true? Based upon ParallelEnumerableWrapper it seems it would be.*/ ) {
-			lock ( this.Items ) { return asParallel ? new List<T>( collection: this.Items.AsParallel() ) : new List<T>( collection: this.Items ); }
+			lock ( this.Items ) {
+				return asParallel ? new List<T>( collection: this.Items.AsParallel() ) : new List<T>( collection: this.Items );
+			}
+		}
+
+		public Boolean Contains( T item ) {
+			lock ( this.Items ) {
+				return this.Items.Contains( item: item );
+			}
+		}
+
+		public void CopyTo( T[] array, Int32 arrayIndex ) {
+			lock ( this.Items ) {
+				this.Items.CopyTo( array: array, arrayIndex: arrayIndex );
+			}
 		}
 
 		/// <summary>
@@ -160,10 +173,14 @@ namespace Librainian.Collections {
 		///     method.
 		/// </param>
 		public void ForAll( [NotNull] Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
+			if ( action is null ) {
+				throw new ArgumentNullException( nameof( action ) );
+			}
 
 			var wrapper = new Action<T>( obj => {
-				try { action( obj ); }
+				try {
+					action( obj );
+				}
 				catch ( ArgumentNullException ) {
 
 					//if a null gets into the list then swallow an ArgumentNullException so we can continue adding
@@ -173,15 +190,27 @@ namespace Librainian.Collections {
 			if ( performActionOnClones ) {
 				var clones = this.Clone( asParallel: asParallel );
 
-				if ( asParallel ) { clones.AsParallel().ForAll( wrapper ); }
-				else if ( inParallel ) { Parallel.ForEach( source: clones, body: wrapper ); }
-				else { clones.ForEach( wrapper ); }
+				if ( asParallel ) {
+					clones.AsParallel().ForAll( wrapper );
+				}
+				else if ( inParallel ) {
+					Parallel.ForEach( source: clones, body: wrapper );
+				}
+				else {
+					clones.ForEach( wrapper );
+				}
 			}
 			else {
 				lock ( this.Items ) {
-					if ( asParallel ) { this.Items.AsParallel().ForAll( wrapper ); }
-					else if ( inParallel ) { Parallel.ForEach( source: this.Items, body: wrapper ); }
-					else { this.Items.ForEach( wrapper ); }
+					if ( asParallel ) {
+						this.Items.AsParallel().ForAll( wrapper );
+					}
+					else if ( inParallel ) {
+						Parallel.ForEach( source: this.Items, body: wrapper );
+					}
+					else {
+						this.Items.ForEach( wrapper );
+					}
 				}
 			}
 		}
@@ -202,10 +231,14 @@ namespace Librainian.Collections {
 		///     method.
 		/// </param>
 		public void ForEach( [NotNull] Action<T> action, Boolean performActionOnClones = true, Boolean asParallel = true, Boolean inParallel = false ) {
-			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
+			if ( action is null ) {
+				throw new ArgumentNullException( nameof( action ) );
+			}
 
 			var wrapper = new Action<T>( obj => {
-				try { action( obj ); }
+				try {
+					action( obj );
+				}
 				catch ( ArgumentNullException ) {
 
 					//if a null gets into the list then swallow an ArgumentNullException so we can continue adding
@@ -215,16 +248,54 @@ namespace Librainian.Collections {
 			if ( performActionOnClones ) {
 				var clones = this.Clone( asParallel: asParallel );
 
-				if ( asParallel ) { clones.AsParallel().ForAll( wrapper ); }
-				else if ( inParallel ) { Parallel.ForEach( source: clones, body: wrapper ); }
-				else { clones.ForEach( wrapper ); }
+				if ( asParallel ) {
+					clones.AsParallel().ForAll( wrapper );
+				}
+				else if ( inParallel ) {
+					Parallel.ForEach( source: clones, body: wrapper );
+				}
+				else {
+					clones.ForEach( wrapper );
+				}
 			}
 			else {
 				lock ( this.Items ) {
-					if ( asParallel ) { this.Items.AsParallel().ForAll( wrapper ); }
-					else if ( inParallel ) { Parallel.ForEach( source: this.Items, body: wrapper ); }
-					else { this.Items.ForEach( wrapper ); }
+					if ( asParallel ) {
+						this.Items.AsParallel().ForAll( wrapper );
+					}
+					else if ( inParallel ) {
+						Parallel.ForEach( source: this.Items, body: wrapper );
+					}
+					else {
+						this.Items.ForEach( wrapper );
+					}
 				}
+			}
+		}
+
+		public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
+
+		public Int32 IndexOf( T item ) {
+			lock ( this.Items ) {
+				return this.Items.IndexOf( item: item );
+			}
+		}
+
+		public void Insert( Int32 index, T item ) {
+			lock ( this.Items ) {
+				this.Items.Insert( index: index, item: item );
+			}
+		}
+
+		public Boolean Remove( T item ) {
+			lock ( this.Items ) {
+				return this.Items.Remove( item: item );
+			}
+		}
+
+		public void RemoveAt( Int32 index ) {
+			lock ( this.Items ) {
+				this.Items.RemoveAt( index: index );
 			}
 		}
 
@@ -288,8 +359,6 @@ namespace Librainian.Collections {
 			return false;
 		}
 
-		public ThreadSafeList( [CanBeNull] IEnumerable<T> items = null ) => this.AddRange( collection: items );
-
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
-
 }

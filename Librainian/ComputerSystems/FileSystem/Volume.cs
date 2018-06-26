@@ -1,20 +1,25 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Volume.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "Volume.cs" was last formatted by Protiguous on 2018/06/14 at 5:32 PM.
+// File "Volume.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -106,11 +111,11 @@ namespace Librainian.ComputerSystems.FileSystem {
 				}
 
 				if ( bytesReturned > 0 ) {
-					var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
+					var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
 					for ( var i = 0; i < numberOfDiskExtents; i++ ) {
 						var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) );
-						var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
+						var extent = ( NativeMethods.DISK_EXTENT ) Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
 						numbers.Add( extent.DiskNumber );
 					}
 				}
@@ -177,7 +182,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		public String GetVolumeName() {
 			var sb = new StringBuilder( 1024 );
 
-			if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
+			if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 ) sb.Capacity ) ) {
 
 				// throw new Win32Exception(Marshal.GetLastWin32Error());
 				return null;

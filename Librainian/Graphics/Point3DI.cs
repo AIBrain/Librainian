@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Point3DI.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Point3DI.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Point3DI.cs" was last formatted by Protiguous on 2018/06/04 at 3:58 PM.
+// File "Point3DI.cs" was last formatted by Protiguous on 2018/06/26 at 1:10 AM.
 
 namespace Librainian.Graphics {
 
@@ -44,6 +50,11 @@ namespace Librainian.Graphics {
 	/// </summary>
 	/// <remarks>Culled from the file CPI.Plot3D.cs I don't know where that file came from otherwise I'd attribute it!</remarks>
 	public struct Point3Di : IEquatable<Point3Di> {
+
+		/// <summary>
+		///     The maximum distance two coordinates can be from each other for them to be considered approximately equal.
+		/// </summary>
+		public const Int32 Tolerance = 0;
 
 		/// <summary>
 		///     The point's X coordinate.
@@ -59,11 +70,6 @@ namespace Librainian.Graphics {
 		///     The point's Z coordinate.
 		/// </summary>
 		public Int32 Z { get; }
-
-		/// <summary>
-		///     The maximum distance two coordinates can be from each other for them to be considered approximately equal.
-		/// </summary>
-		public const Int32 Tolerance = 0;
 
 		/// <summary>
 		///     Instantiates a new Point3D.
@@ -160,7 +166,5 @@ namespace Librainian.Graphics {
 		/// </summary>
 		/// <returns>A String representing the point's XYZ coordinates.</returns>
 		public override String ToString() => $"[{this.X}, {this.Y}, {this.Z}]";
-
 	}
-
 }

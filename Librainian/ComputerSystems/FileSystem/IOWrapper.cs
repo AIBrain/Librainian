@@ -1,20 +1,25 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IOWrapper.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -27,12 +32,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "IOWrapper.cs" was last formatted by Protiguous on 2018/06/04 at 3:47 PM.
+// File "IOWrapper.cs" was last formatted by Protiguous on 2018/06/26 at 12:55 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -72,7 +78,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 				var pDest = pAlloc;
 				var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-				if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+				if ( !fResult ) {
+					throw new Exception( Marshal.GetLastWin32Error().ToString() );
+				}
 
 				handle.Free();
 
@@ -88,25 +96,31 @@ namespace Librainian.ComputerSystems.FileSystem {
                     } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
                 */
 
-				var extentCount = ( Int32 )Marshal.PtrToStructure( pDest, typeof( Int32 ) );
+				var extentCount = ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
 
-				pDest = ( IntPtr )( ( Int64 )pDest + 4 );
+				pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
-				var startingVcn = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+				var startingVcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
 				Debug.Assert( startingVcn == 0 );
 
-				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+				pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
 				// now pDest points at an array of pairs of Int64s.
 
-				var retVal = Array.CreateInstance( typeof( Int64 ), new[] { extentCount, 2 } );
+				var retVal = Array.CreateInstance( typeof( Int64 ), new[] {
+					extentCount, 2
+				} );
 
 				for ( var i = 0; i < extentCount; i++ ) {
 					for ( var j = 0; j < 2; j++ ) {
-						var v = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
-						retVal.SetValue( v, new[] { i, j } );
-						pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+						var v = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+
+						retVal.SetValue( v, new[] {
+							i, j
+						} );
+
+						pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 					}
 				}
 
@@ -152,7 +166,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 				var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-				if ( !result ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+				if ( !result ) {
+					throw new Exception( Marshal.GetLastWin32Error().ToString() );
+				}
 
 				handle.Free();
 
@@ -165,23 +181,25 @@ namespace Librainian.ComputerSystems.FileSystem {
                        BYTE Buffer[1];
                   } VOLUME_BITMAP_BUFFER, *PVOLUME_BITMAP_BUFFER;
                 */
-				var startingLcn = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+				var startingLcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
 				Debug.Assert( startingLcn == 0 );
 
-				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
-				var bitmapSize = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+				pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
+				var bitmapSize = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-				var byteSize = ( Int32 )( bitmapSize / 8 );
+				var byteSize = ( Int32 ) ( bitmapSize / 8 );
 				byteSize++; // round up - even with no remainder
 
-				var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
+				var bitmapBegin = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
-				var byteArr = new Byte[byteSize];
+				var byteArr = new Byte[ byteSize ];
 
 				Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
-				var retVal = new BitArray( byteArr ) { Length = ( Int32 )bitmapSize };
+				var retVal = new BitArray( byteArr ) {
+					Length = ( Int32 ) bitmapSize
+				};
 
 				// truncate to exact cluster count
 				return retVal;
@@ -216,15 +234,22 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 				hFile = OpenFile( path );
 
-				var mfd = new MoveFileData { HFile = hFile, StartingVcn = vcn, StartingLcn = lcn, ClusterCount = count };
+				var mfd = new MoveFileData {
+					HFile = hFile,
+					StartingVcn = vcn,
+					StartingLcn = lcn,
+					ClusterCount = count
+				};
 
 				var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
 				var p = handle.AddrOfPinnedObject();
-				var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
+				var bufSize = ( UInt32 ) Marshal.SizeOf( mfd );
 
 				var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
 
-				if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+				if ( !fResult ) {
+					throw new Exception( Marshal.GetLastWin32Error().ToString() );
+				}
 
 				handle.Free();
 			}
@@ -237,7 +262,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 		public static IntPtr OpenFile( String path ) {
 			var hFile = NativeMethods.CreateFile( path, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-			if ( hFile.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+			if ( hFile.IsInvalid ) {
+				throw new Exception( Marshal.GetLastWin32Error().ToString() );
+			}
 
 			return hFile.DangerousGetHandle();
 		}
@@ -245,7 +272,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 		public static IntPtr OpenVolume( String deviceName ) {
 			var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, FileAccess.ReadWrite, FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-			if ( hDevice.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+			if ( hDevice.IsInvalid ) {
+				throw new Exception( Marshal.GetLastWin32Error().ToString() );
+			}
 
 			return hDevice.DangerousGetHandle();
 		}

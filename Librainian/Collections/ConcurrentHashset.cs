@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConcurrentHashset.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "ConcurrentHashset.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "ConcurrentHashset.cs" was last formatted by Protiguous on 2018/06/09 at 1:02 PM.
+// File "ConcurrentHashset.cs" was last formatted by Protiguous on 2018/06/26 at 12:50 AM.
 
 namespace Librainian.Collections {
 
@@ -63,7 +68,7 @@ namespace Librainian.Collections {
 
 		public Int32 Count => this.Set.Count;
 
-		public ConcurrentHashset( [CanBeNull] IEnumerable<T> list = null ) : this( ( UInt16 )Environment.ProcessorCount ) => this.AddRange( list );
+		public ConcurrentHashset( [CanBeNull] IEnumerable<T> list = null ) : this( ( UInt16 ) Environment.ProcessorCount ) => this.AddRange( list );
 
 		public ConcurrentHashset( UInt16 concurrency ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, 3 );
 
@@ -72,7 +77,7 @@ namespace Librainian.Collections {
 				return;
 			}
 
-			this.Set[item] = null;
+			this.Set[ item ] = null;
 		}
 
 		public void AddRange( [CanBeNull] IEnumerable<T> items ) {
@@ -132,7 +137,7 @@ namespace Librainian.Collections {
 				return false;
 			}
 
-			this.Set[item] = tag;
+			this.Set[ item ] = tag;
 
 			return true;
 		}

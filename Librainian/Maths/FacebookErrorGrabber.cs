@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "FacebookErrorGrabber.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2018/06/04 at 4:03 PM.
+// File "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2018/06/26 at 1:17 AM.
 
 namespace Librainian.Maths {
 
@@ -48,31 +54,6 @@ namespace Librainian.Maths {
 	using Threading;
 
 	public static class FacebookErrorGrabber {
-
-		[JsonObject]
-		public struct FaceBookError {
-
-			[JsonProperty( propertyName: "code" )]
-			public Int32 Code { get; set; }
-
-			[JsonProperty( propertyName: "fbtrace_id" )]
-			public String FbtraceID { get; set; }
-
-			[JsonProperty( propertyName: "message" )]
-			public String Message { get; set; }
-
-			[JsonProperty( propertyName: "type" )]
-			public String Type { get; set; }
-
-		}
-
-		[JsonObject]
-		public struct FaceBookRootObject {
-
-			[JsonProperty( propertyName: "error" )]
-			internal FaceBookError Error { get; }
-
-		}
 
 		/// <summary>
 		///     See also <seealso cref="Randem" />.
@@ -99,12 +80,16 @@ namespace Librainian.Maths {
 				var buffer = Encoding.UTF8.GetBytes( data );
 
 				//mix up the response a bit with our own rng.
-				foreach ( var _ in buffer ) { buffer.Swap( Randem.NextByte(), Randem.NextByte() ); }
+				foreach ( var _ in buffer ) {
+					buffer.Swap( Randem.NextByte(), Randem.NextByte() );
+				}
 
 				return buffer;
 			}
 
-			if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
+			if ( !fallbackByteCount.Any() ) {
+				throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." );
+			}
 
 			var fallback = new Byte[ fallbackByteCount ];
 			Randem.Instance.NextBytes( fallback );
@@ -124,8 +109,29 @@ namespace Librainian.Maths {
 			return BitConverter.ToInt64( bytes, 0 );
 		}
 
+		[JsonObject]
+		public struct FaceBookError {
+
+			[JsonProperty( propertyName: "code" )]
+			public Int32 Code { get; set; }
+
+			[JsonProperty( propertyName: "fbtrace_id" )]
+			public String FbtraceID { get; set; }
+
+			[JsonProperty( propertyName: "message" )]
+			public String Message { get; set; }
+
+			[JsonProperty( propertyName: "type" )]
+			public String Type { get; set; }
+		}
+
+		[JsonObject]
+		public struct FaceBookRootObject {
+
+			[JsonProperty( propertyName: "error" )]
+			internal FaceBookError Error { get; }
+		}
 	}
 
 	public static partial class Randem { }
-
 }

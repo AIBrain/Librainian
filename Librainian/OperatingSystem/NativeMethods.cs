@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "NativeMethods.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "NativeMethods.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,17 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "NativeMethods.cs" was last formatted by Protiguous on 2018/06/10 at 12:33 PM.
+// File "NativeMethods.cs" was last formatted by Protiguous on 2018/06/26 at 1:35 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -55,447 +60,6 @@ namespace Librainian.OperatingSystem {
 
 	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
 	public static class NativeMethods {
-
-		[Flags]
-		public enum AllocationType : UInt32 {
-
-			COMMIT = 0x1000,
-
-			RESERVE = 0x2000,
-
-			RESET = 0x80000,
-
-			LARGE_PAGES = 0x20000000,
-
-			PHYSICAL = 0x400000,
-
-			TOP_DOWN = 0x100000,
-
-			WRITE_WATCH = 0x200000
-
-		}
-
-		public enum FILE_INFO_BY_HANDLE_CLASS {
-
-			FileBasicInfo = 0,
-
-			FileStandardInfo = 1,
-
-			FileNameInfo = 2,
-
-			FileRenameInfo = 3,
-
-			FileDispositionInfo = 4,
-
-			FileAllocationInfo = 5,
-
-			FileEndOfFileInfo = 6,
-
-			FileStreamInfo = 7,
-
-			FileCompressionInfo = 8,
-
-			FileAttributeTagInfo = 9,
-
-			FileIdBothDirectoryInfo = 10, // 0x0A
-
-			FileIdBothDirectoryRestartInfo = 11, // 0xB
-
-			FileIoPriorityHintInfo = 12, // 0xC
-
-			FileRemoteProtocolInfo = 13, // 0xD
-
-			FileFullDirectoryInfo = 14, // 0xE
-
-			FileFullDirectoryRestartInfo = 15, // 0xF
-
-			FileStorageInfo = 16, // 0x10
-
-			FileAlignmentInfo = 17, // 0x11
-
-			FileIdInfo = 18, // 0x12
-
-			FileIdExtdDirectoryInfo = 19, // 0x13
-
-			FileIdExtdDirectoryRestartInfo = 20, // 0x14
-
-			MaximumFileInfoByHandlesClass
-
-		}
-
-		[Flags]
-		public enum HeapFlags {
-
-			HEAP_NO_SERIALIZE = 0x1,
-
-			HEAP_GENERATE_EXCEPTIONS = 0x4,
-
-			HEAP_ZERO_MEMORY = 0x8
-
-		}
-
-		[Flags]
-		public enum MemoryProtection : UInt32 {
-
-			EXECUTE = 0x10,
-
-			EXECUTE_READ = 0x20,
-
-			EXECUTE_READWRITE = 0x40,
-
-			EXECUTE_WRITECOPY = 0x80,
-
-			NOACCESS = 0x01,
-
-			READONLY = 0x02,
-
-			READWRITE = 0x04,
-
-			WRITECOPY = 0x08,
-
-			GUARD_Modifierflag = 0x100,
-
-			NOCACHE_Modifierflag = 0x200,
-
-			WRITECOMBINE_Modifierflag = 0x400
-
-		}
-
-		public enum PLATFORM_ID {
-
-			PlatformIDDos = 300,
-
-			PlatformIDOs2 = 400,
-
-			PlatformIDNt = 500,
-
-			PlatformIDOsf = 600,
-
-			PlatformIDVms = 700
-
-		}
-
-		public enum PNP_VETO_TYPE {
-
-			Ok,
-
-			TypeUnknown,
-
-			LegacyDevice,
-
-			PendingClose,
-
-			WindowsApp,
-
-			WindowsService,
-
-			OutstandingOpen,
-
-			Device,
-
-			Driver,
-
-			IllegalDeviceRequest,
-
-			InsufficientPower,
-
-			NonDisableable,
-
-			LegacyDriver
-
-		}
-
-		[Flags]
-		public enum Sv101Types : UInt32 {
-
-			SvTypeWorkstation = 0x00000001,
-
-			SvTypeServer = 0x00000002,
-
-			SvTypeSqlserver = 0x00000004,
-
-			SvTypeDomainCtrl = 0x00000008,
-
-			SvTypeDomainBakctrl = 0x00000010,
-
-			SvTypeTimeSource = 0x00000020,
-
-			SvTypeAfp = 0x00000040,
-
-			SvTypeNovell = 0x00000080,
-
-			SvTypeDomainMember = 0x00000100,
-
-			SvTypePrintqServer = 0x00000200,
-
-			SvTypeDialinServer = 0x00000400,
-
-			SvTypeXenixServer = 0x00000800,
-
-			SvTypeServerUnix = 0x00000800,
-
-			SvTypeNt = 0x00001000,
-
-			SvTypeWfw = 0x00002000,
-
-			SvTypeServerMfpn = 0x00004000,
-
-			SvTypeServerNt = 0x00008000,
-
-			SvTypePotentialBrowser = 0x00010000,
-
-			SvTypeBackupBrowser = 0x00020000,
-
-			SvTypeMasterBrowser = 0x00040000,
-
-			SvTypeDomainMaster = 0x00080000,
-
-			SvTypeServerOsf = 0x00100000,
-
-			SvTypeServerVms = 0x00200000,
-
-			SvTypeWindows = 0x00400000,
-
-			SvTypeDfs = 0x00800000,
-
-			SvTypeClusterNt = 0x01000000,
-
-			SvTypeTerminalserver = 0x02000000,
-
-			SvTypeClusterVsNt = 0x04000000,
-
-			SvTypeDce = 0x10000000,
-
-			SvTypeAlternateXport = 0x20000000,
-
-			SvTypeLocalListOnly = 0x40000000,
-
-			SvTypeDomainEnum = 0x80000000,
-
-			SvTypeAll = 0xFFFFFFFF
-
-		}
-
-		[SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
-		[StructLayout( LayoutKind.Sequential )]
-		public struct ATA_PASS_THROUGH_EX {
-
-			public UInt16 Length;
-
-			public UInt16 AtaFlags;
-
-			public readonly Byte PathId;
-
-			public readonly Byte TargetId;
-
-			public readonly Byte Lun;
-
-			public readonly Byte ReservedAsUchar;
-
-			public UInt32 DataTransferLength;
-
-			public UInt32 TimeOutValue;
-
-			public readonly UInt32 ReservedAsUlong;
-
-			public IntPtr DataBufferOffset;
-
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-			public Byte[] PreviousTaskFile;
-
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
-			public Byte[] CurrentTaskFile;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct ATAIdentifyDeviceQuery {
-
-			public ATA_PASS_THROUGH_EX header;
-
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-			public UInt16[] data;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
-
-			public readonly UInt32 Version;
-
-			public readonly UInt32 Size;
-
-			[MarshalAs( UnmanagedType.U1 )]
-			public readonly Boolean IncursSeekPenalty;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct DISK_EXTENT {
-
-			public readonly Int32 DiskNumber;
-
-			public readonly Int64 StartingOffset;
-
-			public readonly Int64 ExtentLength;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-		public struct FILE_ID_BOTH_DIR_INFO {
-
-			public readonly UInt32 NextEntryOffset;
-
-			public readonly UInt32 FileIndex;
-
-			public LargeInteger CreationTime;
-
-			public LargeInteger LastAccessTime;
-
-			public LargeInteger LastWriteTime;
-
-			public LargeInteger ChangeTime;
-
-			public LargeInteger EndOfFile;
-
-			public LargeInteger AllocationSize;
-
-			public readonly UInt32 FileAttributes;
-
-			public readonly UInt32 FileNameLength;
-
-			public readonly UInt32 EaSize;
-
-			public readonly Char ShortNameLength;
-
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
-			public readonly String ShortName;
-
-			public LargeInteger FileId;
-
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
-			public readonly String FileName;
-
-		}
-
-		/// <summary>
-		///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
-		///     100-nanosecond intervals since January 1, 1601 (UTC)."
-		/// </summary>
-		/// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
-		[StructLayout( LayoutKind.Sequential )]
-		public struct Filetime {
-
-			public readonly UInt32 dwLowDateTime;
-
-			public readonly UInt32 dwHighDateTime;
-
-		}
-
-		[StructLayout( LayoutKind.Explicit )]
-		public struct LargeInteger {
-
-			[FieldOffset( 0 )]
-			public Int32 Low;
-
-			[FieldOffset( 4 )]
-			public Int32 High;
-
-			[FieldOffset( 0 )]
-			public readonly Int64 QuadPart;
-
-			/// <summary>
-			///     use only when QuadPart cannot be passed
-			/// </summary>
-			/// <returns></returns>
-			public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
-
-			// just for demonstration
-			public static LargeInteger FromInt64( Int64 value ) =>
-				new LargeInteger {
-					Low = ( Int32 ) value,
-					High = ( Int32 ) ( value >> 32 )
-				};
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct ServerInfo101 {
-
-			[MarshalAs( UnmanagedType.U4 )]
-			public readonly UInt32 sv101_platform_id;
-
-			[MarshalAs( UnmanagedType.LPWStr )]
-			public readonly String sv101_name;
-
-			[MarshalAs( UnmanagedType.U4 )]
-			public readonly UInt32 sv101_version_major;
-
-			[MarshalAs( UnmanagedType.U4 )]
-			public readonly UInt32 sv101_version_minor;
-
-			[MarshalAs( UnmanagedType.U4 )]
-			public readonly UInt32 sv101_type;
-
-			[MarshalAs( UnmanagedType.LPWStr )]
-			public readonly String sv101_comment;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct STORAGE_DEVICE_NUMBER {
-
-			public Int32 DeviceType;
-
-			public Int32 DeviceNumber;
-
-			public Int32 PartitionNumber;
-
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		public struct STORAGE_PROPERTY_QUERY {
-
-			public UInt32 PropertyId;
-
-			public UInt32 QueryType;
-
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
-			public readonly Byte[] AdditionalParameters;
-
-		}
-
-		/// <summary>
-		///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
-		///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
-		/// </summary>
-		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
-		public struct Win32FindData {
-
-			public readonly FileAttributes dwFileAttributes;
-
-			public Filetime ftCreationTime;
-
-			public Filetime ftLastAccessTime;
-
-			public Filetime ftLastWriteTime;
-
-			public readonly UInt32 nFileSizeHigh;
-
-			public readonly UInt32 nFileSizeLow;
-
-			public readonly UInt32 dwReserved0;
-
-			public readonly UInt32 dwReserved1;
-
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
-			public readonly String cFileName;
-
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
-			public readonly String cAlternateFileName;
-
-		}
 
 		public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
 
@@ -569,27 +133,237 @@ namespace Librainian.OperatingSystem {
 
 		public const Int32 WM_DEVICECHANGE = 0x0219;
 
+		[Flags]
+		public enum AllocationType : UInt32 {
+
+			COMMIT = 0x1000,
+
+			RESERVE = 0x2000,
+
+			RESET = 0x80000,
+
+			LARGE_PAGES = 0x20000000,
+
+			PHYSICAL = 0x400000,
+
+			TOP_DOWN = 0x100000,
+
+			WRITE_WATCH = 0x200000
+		}
+
+		public enum FILE_INFO_BY_HANDLE_CLASS {
+
+			FileBasicInfo = 0,
+
+			FileStandardInfo = 1,
+
+			FileNameInfo = 2,
+
+			FileRenameInfo = 3,
+
+			FileDispositionInfo = 4,
+
+			FileAllocationInfo = 5,
+
+			FileEndOfFileInfo = 6,
+
+			FileStreamInfo = 7,
+
+			FileCompressionInfo = 8,
+
+			FileAttributeTagInfo = 9,
+
+			FileIdBothDirectoryInfo = 10, // 0x0A
+
+			FileIdBothDirectoryRestartInfo = 11, // 0xB
+
+			FileIoPriorityHintInfo = 12, // 0xC
+
+			FileRemoteProtocolInfo = 13, // 0xD
+
+			FileFullDirectoryInfo = 14, // 0xE
+
+			FileFullDirectoryRestartInfo = 15, // 0xF
+
+			FileStorageInfo = 16, // 0x10
+
+			FileAlignmentInfo = 17, // 0x11
+
+			FileIdInfo = 18, // 0x12
+
+			FileIdExtdDirectoryInfo = 19, // 0x13
+
+			FileIdExtdDirectoryRestartInfo = 20, // 0x14
+
+			MaximumFileInfoByHandlesClass
+		}
+
+		[Flags]
+		public enum HeapFlags {
+
+			HEAP_NO_SERIALIZE = 0x1,
+
+			HEAP_GENERATE_EXCEPTIONS = 0x4,
+
+			HEAP_ZERO_MEMORY = 0x8
+		}
+
+		[Flags]
+		public enum MemoryProtection : UInt32 {
+
+			EXECUTE = 0x10,
+
+			EXECUTE_READ = 0x20,
+
+			EXECUTE_READWRITE = 0x40,
+
+			EXECUTE_WRITECOPY = 0x80,
+
+			NOACCESS = 0x01,
+
+			READONLY = 0x02,
+
+			READWRITE = 0x04,
+
+			WRITECOPY = 0x08,
+
+			GUARD_Modifierflag = 0x100,
+
+			NOCACHE_Modifierflag = 0x200,
+
+			WRITECOMBINE_Modifierflag = 0x400
+		}
+
+		public enum PLATFORM_ID {
+
+			PlatformIDDos = 300,
+
+			PlatformIDOs2 = 400,
+
+			PlatformIDNt = 500,
+
+			PlatformIDOsf = 600,
+
+			PlatformIDVms = 700
+		}
+
+		public enum PNP_VETO_TYPE {
+
+			Ok,
+
+			TypeUnknown,
+
+			LegacyDevice,
+
+			PendingClose,
+
+			WindowsApp,
+
+			WindowsService,
+
+			OutstandingOpen,
+
+			Device,
+
+			Driver,
+
+			IllegalDeviceRequest,
+
+			InsufficientPower,
+
+			NonDisableable,
+
+			LegacyDriver
+		}
+
+		[Flags]
+		public enum Sv101Types : UInt32 {
+
+			SvTypeWorkstation = 0x00000001,
+
+			SvTypeServer = 0x00000002,
+
+			SvTypeSqlserver = 0x00000004,
+
+			SvTypeDomainCtrl = 0x00000008,
+
+			SvTypeDomainBakctrl = 0x00000010,
+
+			SvTypeTimeSource = 0x00000020,
+
+			SvTypeAfp = 0x00000040,
+
+			SvTypeNovell = 0x00000080,
+
+			SvTypeDomainMember = 0x00000100,
+
+			SvTypePrintqServer = 0x00000200,
+
+			SvTypeDialinServer = 0x00000400,
+
+			SvTypeXenixServer = 0x00000800,
+
+			SvTypeServerUnix = 0x00000800,
+
+			SvTypeNt = 0x00001000,
+
+			SvTypeWfw = 0x00002000,
+
+			SvTypeServerMfpn = 0x00004000,
+
+			SvTypeServerNt = 0x00008000,
+
+			SvTypePotentialBrowser = 0x00010000,
+
+			SvTypeBackupBrowser = 0x00020000,
+
+			SvTypeMasterBrowser = 0x00040000,
+
+			SvTypeDomainMaster = 0x00080000,
+
+			SvTypeServerOsf = 0x00100000,
+
+			SvTypeServerVms = 0x00200000,
+
+			SvTypeWindows = 0x00400000,
+
+			SvTypeDfs = 0x00800000,
+
+			SvTypeClusterNt = 0x01000000,
+
+			SvTypeTerminalserver = 0x02000000,
+
+			SvTypeClusterVsNt = 0x04000000,
+
+			SvTypeDce = 0x10000000,
+
+			SvTypeAlternateXport = 0x20000000,
+
+			SvTypeLocalListOnly = 0x40000000,
+
+			SvTypeDomainEnum = 0x80000000,
+
+			SvTypeAll = 0xFFFFFFFF
+		}
+
 		[DllImport( "kernel32.dll" )]
 		public static extern Boolean AllocConsole();
-
-		//[DllImport( "kernel32.dll", SetLastError = true )]
-		//public static extern IntPtr CreateFile( String lpFileName, JunctionPoint.EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, JunctionPoint.ECreationDisposition dwCreationDisposition, JunctionPoint.EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
-
-		//[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-		//public static extern IntPtr CreateFile( String lpFileName, Int32 dwDesiredAccess, Int32 dwShareMode, IntPtr lpSecurityAttributes, Int32 dwCreationDisposition, Int32 dwFlagsAndAttributes, IntPtr hTemplateFile );
-
-		//[DllImport( "kernel32.dll", SetLastError = true )]
-		//public static extern IntPtr CreateFile( String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "avifil32.dll" )]
 		public static extern Int32 AVIFileCreateStream( Int32 pfile, out IntPtr ppavi, ref Avi.Avistreaminfo ptrStreaminfo );
 
+		//[DllImport( "kernel32.dll", SetLastError = true )]
+		//public static extern IntPtr CreateFile( String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 		[DllImport( "avifil32.dll" )]
 		public static extern void AVIFileExit();
 
+		//[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
+		//public static extern IntPtr CreateFile( String lpFileName, Int32 dwDesiredAccess, Int32 dwShareMode, IntPtr lpSecurityAttributes, Int32 dwCreationDisposition, Int32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 		[DllImport( "avifil32.dll" )]
 		public static extern Int32 AVIFileGetStream( Int32 pfile, out IntPtr ppavi, Int32 fccType, Int32 lParam );
 
+		//[DllImport( "kernel32.dll", SetLastError = true )]
+		//public static extern IntPtr CreateFile( String lpFileName, JunctionPoint.EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, JunctionPoint.ECreationDisposition dwCreationDisposition, JunctionPoint.EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 		[DllImport( "avifil32.dll" )]
 		public static extern void AVIFileInit();
 
@@ -642,17 +416,14 @@ namespace Librainian.OperatingSystem {
 		public static extern Int32 CM_Get_Parent( ref Int32 pdnDevInst, UInt32 dnDevInst, Int32 ulFlags );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode )]
-		public static extern Int32 CM_Request_Device_Eject( UInt32 dnDevInst, out PNP_VETO_TYPE pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength,
-			Int32 ulFlags );
+		public static extern Int32 CM_Request_Device_Eject( UInt32 dnDevInst, out PNP_VETO_TYPE pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
 
 		[DllImport( "setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Unicode )]
-		public static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength,
-			Int32 ulFlags );
+		public static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode,
-			IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes,
-			IntPtr hTemplateFile );
+			IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, Int32 flProtect, Int32 dwMaximumSizeLow, Int32 dwMaximumSizeHigh, String lpName );
@@ -662,12 +433,12 @@ namespace Librainian.OperatingSystem {
 			UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize,
-			out Int32 pBytesReturned, IntPtr lpOverlapped );
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned,
+			IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll" )]
-		public static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize,
-			ref Int32 lpBytesReturned, IntPtr lpOverlapped );
+		public static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize, ref Int32 lpBytesReturned,
+			IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", SetLastError = true )]
 		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize,
@@ -676,18 +447,18 @@ namespace Librainian.OperatingSystem {
 		//[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
 		//public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 		[DllImport( "Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, ref Int64 inBuffer, Int32 inBufferSize, ref Int64 outBuffer, Int32 outBufferSize,
-			ref Int32 bytesReturned, [In] ref NativeOverlapped overlapped );
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, ref Int64 inBuffer, Int32 inBufferSize, ref Int64 outBuffer, Int32 outBufferSize, ref Int32 bytesReturned,
+			[In] ref NativeOverlapped overlapped );
 
 		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref STORAGE_PROPERTY_QUERY lpInBuffer, UInt32 nInBufferSize,
-			ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref STORAGE_PROPERTY_QUERY lpInBuffer, UInt32 nInBufferSize, ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer,
+			UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref ATAIdentifyDeviceQuery lpInBuffer, UInt32 nInBufferSize,
-			ref ATAIdentifyDeviceQuery lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref ATAIdentifyDeviceQuery lpInBuffer, UInt32 nInBufferSize, ref ATAIdentifyDeviceQuery lpOutBuffer,
+			UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "advapi32.dll", CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern Int32 DuplicateToken( IntPtr hToken, Int32 impersonationLevel, ref IntPtr hNewToken );
@@ -757,8 +528,8 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
 
 		[DllImport( "kernel32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-		public static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer,
-			UInt32 nSize, IntPtr arguments );
+		public static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer, UInt32 nSize,
+			IntPtr arguments );
 
 		[DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true )]
 		public static extern Boolean FreeConsole();
@@ -894,8 +665,8 @@ namespace Librainian.OperatingSystem {
 		public static extern Int64 mciSendString( String strCommand, StringBuilder strReturn, Int32 iReturnLength, IntPtr hwndCallback );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Boolean MoveFileWithProgress( [MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine,
-			IntPtr lpData, MoveFileFlags dwFlags );
+		public static extern Boolean MoveFileWithProgress( [MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName, String lpNewFileName, CopyProgressRoutine lpProgressRoutine, IntPtr lpData,
+			MoveFileFlags dwFlags );
 
 		/// <summary>
 		///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
@@ -919,8 +690,8 @@ namespace Librainian.OperatingSystem {
 		/// <returns></returns>
 		/// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
 		[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
-		public static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread,
-			ref Int32 totalentries, Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
+		public static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread, ref Int32 totalentries,
+			Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
@@ -980,12 +751,12 @@ namespace Librainian.OperatingSystem {
 		//[DllImport( "setupapi.dll" )]
 		//public static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, Int64 enumerator, IntPtr hwndParent, Int32 flags );
 		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Auto )]
-		public static extern Boolean SetupDiGetDeviceInterfaceDetail( IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData,
-			Int32 deviceInterfaceDetailDataSize, ref Int32 requiredSize, SP_DEVINFO_DATA deviceInfoData );
+		public static extern Boolean SetupDiGetDeviceInterfaceDetail( IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData, Int32 deviceInterfaceDetailDataSize,
+			ref Int32 requiredSize, SP_DEVINFO_DATA deviceInfoData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
-		public static extern Boolean SetupDiGetDeviceRegistryProperty( IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, UInt32 property, out UInt32 propertyRegDataType,
-			Byte[] propertyBuffer, UInt32 propertyBufferSize, out UInt32 requiredSize );
+		public static extern Boolean SetupDiGetDeviceRegistryProperty( IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, UInt32 property, out UInt32 propertyRegDataType, Byte[] propertyBuffer,
+			UInt32 propertyBufferSize, out UInt32 requiredSize );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true )]
 		public static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent, Int32 openFlags,
@@ -1008,11 +779,7 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean VirtualFree( UIntPtr lpAddress, UIntPtr dwSize, UInt32 dwFreeType );
 
 		[DllImport( "mpr.dll", BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Int32 WNetAddConnection2( NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username,
-			Int32 flags );
-
-		//[DllImport("Mpr.dll", EntryPoint="WNetAddConnection2", CallingConvention=CallingConvention.Winapi)]
-		//private static extern ErrorCodes WNetAddConnection2( NETRESOURCE lpNetResource,ref String lpPassword,ref     String lpUsername, UInt32 dwFlags );
+		public static extern Int32 WNetAddConnection2( NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, Int32 flags );
 
 		/// <summary>
 		///     This must be used if NETRESOURCE is defined as a struct???
@@ -1023,11 +790,222 @@ namespace Librainian.OperatingSystem {
 		/// <param name="flags">      </param>
 		/// <returns></returns>
 		[DllImport( "mpr.dll" )]
-		public static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username,
-			UInt32 flags );
+		public static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password, [MarshalAs( UnmanagedType.LPWStr )] String username, UInt32 flags );
 
+		//[DllImport("Mpr.dll", EntryPoint="WNetAddConnection2", CallingConvention=CallingConvention.Winapi)]
+		//private static extern ErrorCodes WNetAddConnection2( NETRESOURCE lpNetResource,ref String lpPassword,ref     String lpUsername, UInt32 dwFlags );
 		[DllImport( "mpr.dll" )]
 		public static extern Int32 WNetCancelConnection2( [MarshalAs( UnmanagedType.LPWStr )] String name, Int32 flags, Boolean force );
+
+		[SuppressMessage( "Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable" )]
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ATA_PASS_THROUGH_EX {
+
+			public UInt16 Length;
+
+			public UInt16 AtaFlags;
+
+			public readonly Byte PathId;
+
+			public readonly Byte TargetId;
+
+			public readonly Byte Lun;
+
+			public readonly Byte ReservedAsUchar;
+
+			public UInt32 DataTransferLength;
+
+			public UInt32 TimeOutValue;
+
+			public readonly UInt32 ReservedAsUlong;
+
+			public IntPtr DataBufferOffset;
+
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+			public Byte[] PreviousTaskFile;
+
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
+			public Byte[] CurrentTaskFile;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ATAIdentifyDeviceQuery {
+
+			public ATA_PASS_THROUGH_EX header;
+
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+			public UInt16[] data;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
+
+			public readonly UInt32 Version;
+
+			public readonly UInt32 Size;
+
+			[MarshalAs( UnmanagedType.U1 )]
+			public readonly Boolean IncursSeekPenalty;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct DISK_EXTENT {
+
+			public readonly Int32 DiskNumber;
+
+			public readonly Int64 StartingOffset;
+
+			public readonly Int64 ExtentLength;
+		}
+
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+		public struct FILE_ID_BOTH_DIR_INFO {
+
+			public readonly UInt32 NextEntryOffset;
+
+			public readonly UInt32 FileIndex;
+
+			public LargeInteger CreationTime;
+
+			public LargeInteger LastAccessTime;
+
+			public LargeInteger LastWriteTime;
+
+			public LargeInteger ChangeTime;
+
+			public LargeInteger EndOfFile;
+
+			public LargeInteger AllocationSize;
+
+			public readonly UInt32 FileAttributes;
+
+			public readonly UInt32 FileNameLength;
+
+			public readonly UInt32 EaSize;
+
+			public readonly Char ShortNameLength;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 12 )]
+			public readonly String ShortName;
+
+			public LargeInteger FileId;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
+			public readonly String FileName;
+		}
+
+		/// <summary>
+		///     Win32 FILETIME structure. The win32 documentation says this: "Contains a 64-bit value representing the number of
+		///     100-nanosecond intervals since January 1, 1601 (UTC)."
+		/// </summary>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
+		[StructLayout( LayoutKind.Sequential )]
+		public struct Filetime {
+
+			public readonly UInt32 dwLowDateTime;
+
+			public readonly UInt32 dwHighDateTime;
+		}
+
+		[StructLayout( LayoutKind.Explicit )]
+		public struct LargeInteger {
+
+			[FieldOffset( 0 )]
+			public Int32 Low;
+
+			[FieldOffset( 4 )]
+			public Int32 High;
+
+			[FieldOffset( 0 )]
+			public readonly Int64 QuadPart;
+
+			/// <summary>
+			///     use only when QuadPart cannot be passed
+			/// </summary>
+			/// <returns></returns>
+			public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
+
+			// just for demonstration
+			public static LargeInteger FromInt64( Int64 value ) =>
+				new LargeInteger {
+					Low = ( Int32 ) value,
+					High = ( Int32 ) ( value >> 32 )
+				};
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct ServerInfo101 {
+
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_platform_id;
+
+			[MarshalAs( UnmanagedType.LPWStr )]
+			public readonly String sv101_name;
+
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_version_major;
+
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_version_minor;
+
+			[MarshalAs( UnmanagedType.U4 )]
+			public readonly UInt32 sv101_type;
+
+			[MarshalAs( UnmanagedType.LPWStr )]
+			public readonly String sv101_comment;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct STORAGE_DEVICE_NUMBER {
+
+			public Int32 DeviceType;
+
+			public Int32 DeviceNumber;
+
+			public Int32 PartitionNumber;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct STORAGE_PROPERTY_QUERY {
+
+			public UInt32 PropertyId;
+
+			public UInt32 QueryType;
+
+			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
+			public readonly Byte[] AdditionalParameters;
+		}
+
+		/// <summary>
+		///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
+		///     FindFirstFile, FindFirstFileEx, or FindNextFile function."
+		/// </summary>
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
+		public struct Win32FindData {
+
+			public readonly FileAttributes dwFileAttributes;
+
+			public Filetime ftCreationTime;
+
+			public Filetime ftLastAccessTime;
+
+			public Filetime ftLastWriteTime;
+
+			public readonly UInt32 nFileSizeHigh;
+
+			public readonly UInt32 nFileSizeLow;
+
+			public readonly UInt32 dwReserved0;
+
+			public readonly UInt32 dwReserved1;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxPath )]
+			public readonly String cFileName;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+			public readonly String cAlternateFileName;
+		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
 		public class SP_DEVICE_INTERFACE_DATA {
@@ -1039,7 +1017,6 @@ namespace Librainian.OperatingSystem {
 			public Guid InterfaceClassGuid;
 
 			private IntPtr Reserved;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, Pack = 2 )]
@@ -1048,7 +1025,6 @@ namespace Librainian.OperatingSystem {
 			public Int32 cbSize;
 
 			public Int16 devicePath;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Auto )]
@@ -1061,9 +1037,6 @@ namespace Librainian.OperatingSystem {
 			public UInt32 devInst;
 
 			public IntPtr reserved;
-
 		}
-
 	}
-
 }

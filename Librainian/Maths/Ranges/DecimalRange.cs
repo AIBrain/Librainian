@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "DecimalRange.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "DecimalRange.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "DecimalRange.cs" was last formatted by Protiguous on 2018/06/04 at 4:07 PM.
+// File "DecimalRange.cs" was last formatted by Protiguous on 2018/06/26 at 1:21 AM.
 
 namespace Librainian.Maths.Ranges {
 
@@ -48,6 +54,8 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject]
 	public class DecimalRange {
 
+		public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
+
 		/// <summary>Maximum value</summary>
 		[JsonProperty]
 		[OptionalField]
@@ -62,6 +70,15 @@ namespace Librainian.Maths.Ranges {
 		[JsonProperty]
 		[OptionalField]
 		public readonly Decimal Range;
+
+		/// <summary>Initializes a new instance of the <see cref="DecimalRange" /> class</summary>
+		/// <param name="min">Minimum value of the range</param>
+		/// <param name="max">Maximum value of the range</param>
+		public DecimalRange( Decimal min, Decimal max ) {
+			this.Min = Math.Min( min, max );
+			this.Max = Math.Max( min, max );
+			this.Range = this.Max - this.Min;
+		}
 
 		/// <summary>Check if the specified value is inside this range</summary>
 		/// <param name="x">Value to check</param>
@@ -86,18 +103,5 @@ namespace Librainian.Maths.Ranges {
 		/// </returns>
 		[System.Diagnostics.Contracts.Pure]
 		public Boolean IsOverlapping( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
-
-		public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
-
-		/// <summary>Initializes a new instance of the <see cref="DecimalRange" /> class</summary>
-		/// <param name="min">Minimum value of the range</param>
-		/// <param name="max">Maximum value of the range</param>
-		public DecimalRange( Decimal min, Decimal max ) {
-			this.Min = Math.Min( min, max );
-			this.Max = Math.Max( min, max );
-			this.Range = this.Max - this.Min;
-		}
-
 	}
-
 }

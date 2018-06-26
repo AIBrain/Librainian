@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Matrix3X3.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Matrix3X3.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Matrix3X3.cs" was last formatted by Protiguous on 2018/06/04 at 3:57 PM.
+// File "Matrix3X3.cs" was last formatted by Protiguous on 2018/06/26 at 1:09 AM.
 
 namespace Librainian.Graphics {
 
@@ -45,15 +51,25 @@ namespace Librainian.Graphics {
 	/// <seealso cref="http://stackoverflow.com/a/8696503/956364" />
 	public class Matrix3X3 : ICloneable {
 
-		/// <summary>
-		///     Creates a new object that is a copy of the current instance.
-		/// </summary>
-		/// <returns>A new object that is a copy of this instance.</returns>
-		public Object Clone() {
-			var coeffCopy = ( Double[] ) this._coeffs.Clone();
+		private const Int32 _M11 = 0;
 
-			return new Matrix3X3( coeffCopy );
-		}
+		private const Int32 _M12 = 1;
+
+		private const Int32 _M13 = 2;
+
+		private const Int32 _M21 = 3;
+
+		private const Int32 _M22 = 4;
+
+		private const Int32 _M23 = 5;
+
+		private const Int32 _M31 = 6;
+
+		private const Int32 _M32 = 7;
+
+		private const Int32 _M33 = 8;
+
+		private readonly Double[] _coeffs;
 
 		/// <summary>
 		///     Gets the determinant of the matrix
@@ -212,7 +228,52 @@ namespace Librainian.Graphics {
 			set => this._coeffs[ _M32 ] = value;
 		}
 
-		private readonly Double[] _coeffs;
+		/// <summary>
+		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+		/// </summary>
+		public Matrix3X3() => this._coeffs = new Double[ 9 ];
+
+		/// <summary>
+		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+		/// </summary>
+		/// <param name="coefficients">
+		///     The coefficients to initialise. The number of elements of the array should be equal to 9,
+		///     else an exception will be thrown
+		/// </param>
+		public Matrix3X3( [NotNull] Double[] coefficients ) {
+			if ( coefficients.GetLength( 0 ) != 9 ) {
+				throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
+			}
+
+			this._coeffs = coefficients;
+		}
+
+		/// <summary>
+		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
+		/// </summary>
+		/// <param name="m11">The M11 coefficient</param>
+		/// <param name="m12">The M12 coefficien</param>
+		/// <param name="m13">The M13 coefficien</param>
+		/// <param name="m21">The M21 coefficien</param>
+		/// <param name="m22">The M22 coefficien</param>
+		/// <param name="m23">The M23 coefficien</param>
+		/// <param name="m31">The M31 coefficien</param>
+		/// <param name="m32">The M32 coefficien</param>
+		/// <param name="m33">The M33 coefficien</param>
+		public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) =>
+			this._coeffs = new[] {
+				m11, m12, m13, m21, m22, m23, m31, m32, m33
+			};
+
+		/// <summary>
+		///     Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public Object Clone() {
+			var coeffCopy = ( Double[] ) this._coeffs.Clone();
+
+			return new Matrix3X3( coeffCopy );
+		}
 
 		/// <summary>
 		///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
@@ -268,7 +329,9 @@ namespace Librainian.Graphics {
 
 			// Compute the determinant
 
-			if ( this.Determinant.Near( 0.0 ) ) { throw new Exception( "Unable to invert the matrix as it is singular" ); }
+			if ( this.Determinant.Near( 0.0 ) ) {
+				throw new Exception( "Unable to invert the matrix as it is singular" );
+			}
 
 			// Scale the matrix by 1/determinant
 			tempMat.Scale( 1.0 / this.Determinant );
@@ -355,57 +418,5 @@ namespace Librainian.Graphics {
 			this._coeffs[ 7 ] *= scalar;
 			this._coeffs[ 8 ] *= scalar;
 		}
-
-		private const Int32 _M11 = 0;
-
-		private const Int32 _M12 = 1;
-
-		private const Int32 _M13 = 2;
-
-		private const Int32 _M21 = 3;
-
-		private const Int32 _M22 = 4;
-
-		private const Int32 _M23 = 5;
-
-		private const Int32 _M31 = 6;
-
-		private const Int32 _M32 = 7;
-
-		private const Int32 _M33 = 8;
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-		/// </summary>
-		public Matrix3X3() => this._coeffs = new Double[ 9 ];
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-		/// </summary>
-		/// <param name="coefficients">
-		///     The coefficients to initialise. The number of elements of the array should be equal to 9,
-		///     else an exception will be thrown
-		/// </param>
-		public Matrix3X3( [NotNull] Double[] coefficients ) {
-			if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
-
-			this._coeffs = coefficients;
-		}
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
-		/// </summary>
-		/// <param name="m11">The M11 coefficient</param>
-		/// <param name="m12">The M12 coefficien</param>
-		/// <param name="m13">The M13 coefficien</param>
-		/// <param name="m21">The M21 coefficien</param>
-		/// <param name="m22">The M22 coefficien</param>
-		/// <param name="m23">The M23 coefficien</param>
-		/// <param name="m31">The M31 coefficien</param>
-		/// <param name="m32">The M32 coefficien</param>
-		/// <param name="m33">The M33 coefficien</param>
-		public Matrix3X3( Double m11, Double m12, Double m13, Double m21, Double m22, Double m23, Double m31, Double m32, Double m33 ) => this._coeffs = new[] { m11, m12, m13, m21, m22, m23, m31, m32, m33 };
-
 	}
-
 }

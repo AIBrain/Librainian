@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Versus.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Versus.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Versus.cs" was last formatted by Protiguous on 2018/06/04 at 4:08 PM.
+// File "Versus.cs" was last formatted by Protiguous on 2018/06/26 at 1:22 AM.
 
 namespace Librainian.Maths {
 
@@ -50,6 +56,23 @@ namespace Librainian.Maths {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class Versus {
 
+		/// <summary>ONLY used in the getter and setter.</summary>
+		[JsonProperty]
+		private Int64 _failures;
+
+		/// <summary>ONLY used in the getter and setter.</summary>
+		[JsonProperty]
+		private Int64 _successes;
+
+		/// <summary>One failure.</summary>
+		public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
+
+		/// <summary>One success.</summary>
+		public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
+
+		/// <summary>None for either.</summary>
+		public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
+
 		public Int64 Failures {
 			get => Thread.VolatileRead( ref this._failures );
 
@@ -64,13 +87,10 @@ namespace Librainian.Maths {
 
 		public Int64 Total => this.Successes + this.Failures;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Int64 _failures;
-
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Int64 _successes;
+		public Versus( Int64 successes = 0, Int64 failures = 0 ) {
+			this.Successes = successes;
+			this.Failures = failures;
+		}
 
 		[NotNull]
 		public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
@@ -90,7 +110,9 @@ namespace Librainian.Maths {
 					return ( Single ) result;
 				}
 			}
-			catch ( DivideByZeroException exception ) { exception.More(); }
+			catch ( DivideByZeroException exception ) {
+				exception.More();
+			}
 
 			return 0;
 		}
@@ -104,7 +126,9 @@ namespace Librainian.Maths {
 			try {
 				var total = this.Total;
 
-				if ( total.Near( 0 ) ) { return 0; }
+				if ( total.Near( 0 ) ) {
+					return 0;
+				}
 
 				var chance = new BigRational( this.Successes, total );
 
@@ -118,21 +142,5 @@ namespace Librainian.Maths {
 		}
 
 		public override String ToString() => $"{this.SuccessPercentage():P1} successes vs {this.FailurePercentage():p1} failures out of {this.Total} total.";
-
-		/// <summary>One failure.</summary>
-		public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
-
-		/// <summary>One success.</summary>
-		public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
-
-		/// <summary>None for either.</summary>
-		public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
-
-		public Versus( Int64 successes = 0, Int64 failures = 0 ) {
-			this.Successes = successes;
-			this.Failures = failures;
-		}
-
 	}
-
 }

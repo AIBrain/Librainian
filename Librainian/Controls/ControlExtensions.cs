@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ControlExtensions.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "ControlExtensions.cs" was last formatted by Protiguous on 2018/06/12 at 6:11 PM.
+// File "ControlExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 12:57 AM.
 
 namespace Librainian.Controls {
 
@@ -65,7 +70,7 @@ namespace Librainian.Controls {
 
 		public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) => box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
 
-		public static void AppendLineInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )( () => box.AppendLine( text, color, args ) ) );
+		public static void AppendLineInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker ) ( () => box.AppendLine( text, color, args ) ) );
 
 		public static void AppendText( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) {
 			text = String.Format( text, args );
@@ -87,14 +92,14 @@ namespace Librainian.Controls {
 			box.ScrollToCaret();
 		}
 
-		public static void AppendTextInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )( () => box.AppendText( text, color, args ) ) );
+		public static void AppendTextInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker ) ( () => box.AppendText( text, color, args ) ) );
 
 		public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
 			blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-			var r = ( Byte )( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
-			var g = ( Byte )( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
-			var b = ( Byte )( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
+			var r = ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
+			var g = ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
+			var b = ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
 
 			return Color.FromArgb( r, g, b );
 		}
@@ -116,7 +121,7 @@ namespace Librainian.Controls {
 				return false;
 			}
 
-			return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
+			return control.InvokeRequired ? ( Boolean ) control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
 		}
 
 		/// <summary>
@@ -340,7 +345,7 @@ namespace Librainian.Controls {
 				return default;
 			}
 
-			return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
+			return control.InvokeRequired ? ( Color ) control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
 		}
 
 		/// <summary>
@@ -369,10 +374,6 @@ namespace Librainian.Controls {
 			window.WindowState = WindowState.Maximized;
 			window.WindowStyle = WindowStyle.None;
 		}
-
-
-		[CanBeNull]
-		public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [CanBeNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke => invokable.Invoke( function, arguments ) as T;
 
 		/// <summary>
 		///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
@@ -428,6 +429,10 @@ namespace Librainian.Controls {
 			}
 		}
 
+		[CanBeNull]
+		public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [CanBeNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke =>
+			invokable.Invoke( function, arguments ) as T;
+
 		public static Boolean IsFullScreen( [NotNull] this Window window ) => window.WindowState == WindowState.Maximized && window.WindowStyle == WindowStyle.None;
 
 		public static Boolean IsMinimized( [NotNull] this Window window ) => window.WindowState == WindowState.Minimized;
@@ -447,13 +452,13 @@ namespace Librainian.Controls {
 				throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
 			}
 
-			if ( Int32.TryParse( settings[name, nameof( Point.X )], out var x ) && Int32.TryParse( settings[name, nameof( Point.Y )], out var y ) ) {
+			if ( Int32.TryParse( settings[ name, nameof( Point.X ) ], out var x ) && Int32.TryParse( settings[ name, nameof( Point.Y ) ], out var y ) ) {
 				form.SuspendLayout();
 				form.Location( new Point( x, y ) );
 				form.ResumeLayout();
 			}
 
-			if ( Int32.TryParse( settings[name, nameof( form.Size.Width )], out var width ) && Int32.TryParse( settings[name, nameof( form.Size.Height )], out var height ) ) {
+			if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) && Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
 				form.SuspendLayout();
 				form.Size( new Size( width, height ) );
 				form.ResumeLayout();
@@ -474,14 +479,14 @@ namespace Librainian.Controls {
 			}
 
 			var key = settings.BuildKey( name, nameof( form.Location ) );
-			var point = settings[key].Deserialize<Point>();
+			var point = settings[ key ].Deserialize<Point>();
 
 			if ( point.X != 0 || point.Y != 0 ) {
 				form.Location( point );
 			}
 
 			key = settings.BuildKey( name, nameof( form.Size ) );
-			var size = settings[key].Deserialize<Size>();
+			var size = settings[ key ].Deserialize<Size>();
 
 			if ( size.Height != 0 || size.Width != 0 ) {
 
@@ -503,14 +508,14 @@ namespace Librainian.Controls {
 			}
 
 			var key = settings.BuildKey( name, nameof( form.Location ) );
-			var point = settings[key].Deserialize<Point>();
+			var point = settings[ key ].Deserialize<Point>();
 
 			if ( point.X != 0 || point.Y != 0 ) {
 				form.Location( point );
 			}
 
 			key = settings.BuildKey( name, nameof( form.Size ) );
-			var size = settings[key].Deserialize<Size>();
+			var size = settings[ key ].Deserialize<Size>();
 
 			if ( size.Height != 0 || size.Width != 0 ) {
 
@@ -544,7 +549,7 @@ namespace Librainian.Controls {
 		public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
 			transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-			return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
+			return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
 		}
 
 		public static async Task MarqueeAsync( [CanBeNull] this Control control, TimeSpan timeSpan, [CanBeNull] String message ) {
@@ -574,7 +579,7 @@ namespace Librainian.Controls {
 				return 0;
 			}
 
-			return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
+			return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
 		}
 
 		/// <summary>
@@ -602,7 +607,7 @@ namespace Librainian.Controls {
 				return 0;
 			}
 
-			return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
+			return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
 		}
 
 		/// <summary>
@@ -708,7 +713,7 @@ namespace Librainian.Controls {
 			}
 
 			while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
-				var item = browser.Document.GetElementsByTagName( tagName )[0];
+				var item = browser.Document.GetElementsByTagName( tagName )[ 0 ];
 				item.OuterHtml = String.Empty;
 				browser.BeginInvoke( new Action( browser.Update ) );
 			}
@@ -750,11 +755,11 @@ namespace Librainian.Controls {
 
 			var name = form.Name ?? "UnknownForm";
 
-			settings[name, nameof( form.Size.Width )] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
-			settings[name, nameof( form.Size.Height )] = form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
+			settings[ name, nameof( form.Size.Width ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
+			settings[ name, nameof( form.Size.Height ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
 
-			settings[name, nameof( form.Location.X )] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
-			settings[name, nameof( form.Location.Y )] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
+			settings[ name, nameof( form.Location.X ) ] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
+			settings[ name, nameof( form.Location.Y ) ] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
 		}
 
 		public static void SavePosition( [NotNull] this Form form, String name, [NotNull] PersistTable<String, String> settings ) {
@@ -771,10 +776,10 @@ namespace Librainian.Controls {
 			}
 
 			var key = settings.BuildKey( name, nameof( form.Location ) );
-			settings[key] = form.Location.ToJSON();
+			settings[ key ] = form.Location.ToJSON();
 
 			key = settings.BuildKey( name, nameof( form.Size ) );
-			settings[key] = form.Size.ToJSON();
+			settings[ key ] = form.Size.ToJSON();
 		}
 
 		public static void SavePosition( [NotNull] this Form form, String name, [NotNull] StringKVPTable settings ) {
@@ -791,10 +796,10 @@ namespace Librainian.Controls {
 			}
 
 			var key = settings.BuildKey( name, nameof( form.Location ) );
-			settings[key] = form.Location.ToJSON();
+			settings[ key ] = form.Location.ToJSON();
 
 			key = settings.BuildKey( name, nameof( form.Size ) );
-			settings[key] = form.Size.ToJSON();
+			settings[ key ] = form.Size.ToJSON();
 		}
 
 		/// <summary>
@@ -817,7 +822,7 @@ namespace Librainian.Controls {
 				return new Size();
 			}
 
-			return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+			return form.InvokeRequired ? ( Size ) form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
 		}
 
 		/// <summary>
@@ -1023,8 +1028,8 @@ namespace Librainian.Controls {
 		public static Int32 ToBGR( this Color thisColor ) => ( thisColor.B << 16 ) | ( thisColor.G << 8 ) | ( thisColor.R << 0 );
 
 		/// <summary>
-		/// Returns <see cref="CheckState.Checked"/> if true, on, set, checked, or 1.
-		/// Otherwise <see cref="CheckState.Unchecked"/>.
+		///     Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1.
+		///     Otherwise <see cref="CheckState.Unchecked" />.
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
@@ -1094,7 +1099,7 @@ namespace Librainian.Controls {
 				throw new ArgumentNullException( paramName: nameof( control ) );
 			}
 
-			return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
+			return control.InvokeRequired ? ( Decimal ) control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
 		}
 
 		/// <summary>
@@ -1107,7 +1112,7 @@ namespace Librainian.Controls {
 				throw new ArgumentNullException( paramName: nameof( control ) );
 			}
 
-			return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
+			return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
 		}
 
 		/// <summary>

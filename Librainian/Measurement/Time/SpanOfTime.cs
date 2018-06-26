@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SpanOfTime.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "SpanOfTime.cs" was last formatted by Protiguous on 2018/06/10 at 9:54 AM.
+// File "SpanOfTime.cs" was last formatted by Protiguous on 2018/06/26 at 1:31 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -62,11 +67,9 @@ namespace Librainian.Measurement.Time {
 	[Immutable]
 	public class SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
-		internal PlanckTimes TotalPlanckTimes { get; }
-
-		public static readonly SpanOfTime Bytey = new SpanOfTime( yoctoseconds: Byte.MaxValue, zeptoseconds: Byte.MaxValue, attoseconds: Byte.MaxValue, femtoseconds: Byte.MaxValue,
-			picoseconds: Byte.MaxValue, nanoseconds: Byte.MaxValue, microseconds: Byte.MaxValue, milliseconds: Byte.MaxValue, seconds: Byte.MaxValue, minutes: Byte.MaxValue, hours: Byte.MaxValue,
-			days: Byte.MaxValue, weeks: Byte.MaxValue, months: Byte.MaxValue, years: Byte.MaxValue );
+		public static readonly SpanOfTime Bytey = new SpanOfTime( yoctoseconds: Byte.MaxValue, zeptoseconds: Byte.MaxValue, attoseconds: Byte.MaxValue, femtoseconds: Byte.MaxValue, picoseconds: Byte.MaxValue,
+			nanoseconds: Byte.MaxValue, microseconds: Byte.MaxValue, milliseconds: Byte.MaxValue, seconds: Byte.MaxValue, minutes: Byte.MaxValue, hours: Byte.MaxValue, days: Byte.MaxValue, weeks: Byte.MaxValue,
+			months: Byte.MaxValue, years: Byte.MaxValue );
 
 		// TODO get a real answer here. lol.
 		public static readonly SpanOfTime Forever = new SpanOfTime( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue,
@@ -85,6 +88,8 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// </summary>
 		public static readonly SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
+
+		internal PlanckTimes TotalPlanckTimes { get; }
 
 		/// <summary>
 		/// </summary>
@@ -251,7 +256,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="normalize"></param>
 		public SpanOfTime( TimeSpan timeSpan, Boolean normalize = true ) : this(
 			milliseconds:
-			timeSpan.Ticks / ( Decimal )TimeSpan
+			timeSpan.Ticks / ( Decimal ) TimeSpan
 				.TicksPerMillisecond /*, milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days*/ ) { }
 
 		/// <summary>
@@ -275,12 +280,11 @@ namespace Librainian.Measurement.Time {
 		/// <param name="years"></param>
 		/// <param name="yoctoseconds"></param>
 		/// <param name="zeptoseconds"></param>
-		public SpanOfTime( Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default, Femtoseconds femtoseconds = default,
-			Picoseconds picoseconds = default, Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, Seconds seconds = default,
-			Minutes minutes = default, Hours hours = default, Days days = default, Weeks weeks = default, Months months = default, Years years = default ) : this(
-			yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value,
-			nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value, seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value,
-			days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) { }
+		public SpanOfTime( Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default, Femtoseconds femtoseconds = default, Picoseconds picoseconds = default,
+			Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, Seconds seconds = default, Minutes minutes = default, Hours hours = default,
+			Days days = default, Weeks weeks = default, Months months = default, Years years = default ) : this( yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value,
+			attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value,
+			seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) { }
 
 		/// <summary>
 		/// </summary>
@@ -300,8 +304,8 @@ namespace Librainian.Measurement.Time {
 		/// <param name="months"></param>
 		/// <param name="years"></param>
 		public SpanOfTime( BigRational? yoctoseconds = null, BigRational? zeptoseconds = null, BigRational? attoseconds = null, BigRational? femtoseconds = null, BigRational? picoseconds = null,
-			BigRational? nanoseconds = null, BigRational? microseconds = null, BigRational? milliseconds = null, BigRational? seconds = null, BigRational? minutes = null,
-			BigRational? hours = null, BigRational? days = null, BigRational? weeks = null, BigRational? months = null, BigRational? years = null ) {
+			BigRational? nanoseconds = null, BigRational? microseconds = null, BigRational? milliseconds = null, BigRational? seconds = null, BigRational? minutes = null, BigRational? hours = null,
+			BigRational? days = null, BigRational? weeks = null, BigRational? months = null, BigRational? years = null ) {
 
 			//TODO Unit testing needed to verify the math.
 
@@ -406,8 +410,8 @@ namespace Librainian.Measurement.Time {
 			var months = left.Months + right.Months;
 			var years = left.Years + right.Years;
 
-			return new SpanOfTime( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds,
-				nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, years: years );
+			return new SpanOfTime( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds, nanoseconds: nanoseconds,
+				microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months, years: years );
 		}
 
 		///// <summary>
@@ -460,8 +464,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="spanOfTime"></param>
 		/// <returns></returns>
 		public static implicit operator TimeSpan( [NotNull] SpanOfTime spanOfTime ) =>
-			new TimeSpan( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
-				( Int32 )spanOfTime.Milliseconds.Value );
+			new TimeSpan( ( Int32 ) spanOfTime.Days.Value, ( Int32 ) spanOfTime.Hours.Value, ( Int32 ) spanOfTime.Minutes.Value, ( Int32 ) spanOfTime.Seconds.Value, ( Int32 ) spanOfTime.Milliseconds.Value );
 
 		/// <summary>
 		///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
@@ -662,7 +665,7 @@ namespace Librainian.Measurement.Time {
 			mill += this.Hours.ToMinutes().ToSeconds().ToMilliseconds();
 			mill += this.Days.ToHours().ToMinutes().ToSeconds().ToMilliseconds();
 
-			return ( Double )mill.Value;
+			return ( Double ) mill.Value;
 		}
 
 		/// <summary>
@@ -671,8 +674,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
 		/// <filterpriority>2</filterpriority>
 		public override Int32 GetHashCode() =>
-			HashingExtensions.GetHashCodes( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds,
-				this.Seconds, this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years );
+			HashingExtensions.GetHashCodes( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds,
+				this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years );
 
 		/// <summary>
 		///     <para>
@@ -682,7 +685,7 @@ namespace Librainian.Measurement.Time {
 		public BigInteger GetWholeYears() {
 			var span = new SpanOfTime( this.TotalPlanckTimes );
 
-			return ( BigInteger )span.Years.Value;
+			return ( BigInteger ) span.Years.Value;
 		}
 
 		[Pure]

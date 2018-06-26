@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Images.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "Images.cs" was last formatted by Protiguous on 2018/06/04 at 3:56 PM.
+// File "Images.cs" was last formatted by Protiguous on 2018/06/26 at 1:08 AM.
 
 namespace Librainian.Graphics {
 
@@ -61,7 +67,9 @@ namespace Librainian.Graphics {
 
 		[NotNull]
 		public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
-			if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) { throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." ); }
+			if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
+				throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
+			}
 
 			if ( baselineLocations.Count != registerLocations.Count ) {
 				throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
@@ -115,31 +123,45 @@ namespace Librainian.Graphics {
 
 		[CanBeNull]
 		public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
-			if ( null == item ) { return null; }
+			if ( null == item ) {
+				return null;
+			}
 
 			var value = Encoding.ASCII.GetString( item.Value );
 
-			if ( value.EndsWith( "\0", StringComparison.Ordinal ) ) { value = value.Replace( "\0", String.Empty ); }
+			if ( value.EndsWith( "\0", StringComparison.Ordinal ) ) {
+				value = value.Replace( "\0", String.Empty );
+			}
 
-			if ( value == "0000:00:00 00:00:00" ) { return null; }
+			if ( value == "0000:00:00 00:00:00" ) {
+				return null;
+			}
 
-			if ( DateTime.TryParse( value, out var result ) ) { return result; }
+			if ( DateTime.TryParse( value, out var result ) ) {
+				return result;
+			}
 
-			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) { return result; }
+			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+				return result;
+			}
 
 			return null;
 		}
 
 		[CanBeNull]
 		public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document, DateTime oldestDate, DateTime youngestDate ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+			if ( document is null ) {
+				throw new ArgumentNullException( nameof( document ) );
+			}
 
 			return document.Info.ImageCreationBestGuess( oldestDate, youngestDate );
 		}
 
 		[CanBeNull]
 		public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info, DateTime oldestDate, DateTime youngestDate ) {
-			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
+			if ( info is null ) {
+				throw new ArgumentNullException( nameof( info ) );
+			}
 
 			try {
 				var justName = Path.GetFileNameWithoutExtension( info.FullName );
@@ -147,16 +169,22 @@ namespace Librainian.Graphics {
 				var bestGuesses = new List<DateTime>();
 
 				if ( info.InternalImageGetDateTime( out var imageCreationBestGuess ) ) {
-					if ( imageCreationBestGuess.HasValue ) { bestGuesses.Add( imageCreationBestGuess.Value ); }
+					if ( imageCreationBestGuess.HasValue ) {
+						bestGuesses.Add( imageCreationBestGuess.Value );
+					}
 				}
 
 				bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
 				if ( bestGuesses.Any() ) {
 #if DEBUG
-					if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) { Logging.Break(); }
+					if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
+						Logging.Break();
+					}
 
-					if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) { Logging.Break(); }
+					if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
+						Logging.Break();
+					}
 #endif
 
 					return bestGuesses.Min();
@@ -171,30 +199,44 @@ namespace Librainian.Graphics {
 				var mostlyDigits = new StringBuilder( justName.Length );
 
 				foreach ( var c in justName ) {
-					if ( Char.IsDigit( c ) ) { mostlyDigits.Append( c ); }
-					else { mostlyDigits.Append( ParsingExtensions.Singlespace ); }
+					if ( Char.IsDigit( c ) ) {
+						mostlyDigits.Append( c );
+					}
+					else {
+						mostlyDigits.Append( ParsingExtensions.Singlespace );
+					}
 				}
 
 				var digits = mostlyDigits.ToString().Trim();
 
-				var patternsYmd = new[] { "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd" };
+				var patternsYmd = new[] {
+					"yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd"
+				};
 
 				DateTime bestGuess;
 
 				foreach ( var pattern in patternsYmd ) {
 					if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-						if ( pattern == "yyyyMMdd HHmmss" && bestGuess.Between( oldestDate, youngestDate ) ) { return bestGuess; }
+						if ( pattern == "yyyyMMdd HHmmss" && bestGuess.Between( oldestDate, youngestDate ) ) {
+							return bestGuess;
+						}
 
-						if ( pattern == "yyyyMMdd" && bestGuess.Between( oldestDate, youngestDate ) ) { return bestGuess; }
+						if ( pattern == "yyyyMMdd" && bestGuess.Between( oldestDate, youngestDate ) ) {
+							return bestGuess;
+						}
 
 						bestGuesses.Add( bestGuess );
 					}
 				}
 
-				var patternsDmy = new[] { "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy" };
+				var patternsDmy = new[] {
+					"ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
+				};
 
 				foreach ( var pattern in patternsDmy ) {
-					if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) { bestGuesses.Add( bestGuess ); }
+					if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+						bestGuesses.Add( bestGuess );
+					}
 				}
 
 				// per http://stackoverflow.com/q/51224/956364
@@ -202,7 +244,9 @@ namespace Librainian.Graphics {
 					@"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
 
 				foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-					if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) { bestGuesses.Add( bestGuess ); }
+					if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+						bestGuesses.Add( bestGuess );
+					}
 				}
 
 				//per http://stackoverflow.com/a/669758/956364
@@ -210,7 +254,9 @@ namespace Librainian.Graphics {
 					@"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
 
 				foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-					if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) { bestGuesses.Add( bestGuess ); }
+					if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+						bestGuesses.Add( bestGuess );
+					}
 				}
 
 				bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
@@ -222,9 +268,13 @@ namespace Librainian.Graphics {
 
 				if ( bestGuesses.Any() ) {
 #if DEBUG
-					if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) { Logging.Break(); }
+					if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
+						Logging.Break();
+					}
 
-					if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) { Logging.Break(); }
+					if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
+						Logging.Break();
+					}
 #endif
 
 					return bestGuesses.Min();
@@ -264,7 +314,9 @@ namespace Librainian.Graphics {
 		/// <param name="document"></param>
 		/// <returns></returns>
 		public static Boolean IsaValidImage( [NotNull] this Document document ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+			if ( document is null ) {
+				throw new ArgumentNullException( nameof( document ) );
+			}
 
 			var info = new FileInfo( document.FullPathWithFileName );
 
@@ -296,13 +348,17 @@ namespace Librainian.Graphics {
 		/// <param name="file"></param>
 		/// <returns></returns>
 		public static Boolean IsaValidImage( [CanBeNull] this FileInfo file ) {
-			if ( null == file ) { return false; }
+			if ( null == file ) {
+				return false;
+			}
 
 			try {
 
 				//if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
 
-				using ( Image.FromFile( file.FullName ) ) { return true; }
+				using ( Image.FromFile( file.FullName ) ) {
+					return true;
+				}
 			}
 			catch ( NotSupportedException ) { }
 			catch ( OutOfMemoryException ) { }
@@ -310,7 +366,9 @@ namespace Librainian.Graphics {
 			catch ( InvalidOperationException ) { }
 			catch ( FileNotFoundException ) { }
 			catch ( IOException ) { }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) {
+				exception.More();
+			}
 
 			return false;
 		}
@@ -337,9 +395,13 @@ namespace Librainian.Graphics {
 		/// <param name="fileB"></param>
 		/// <returns></returns>
 		public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
-			if ( null == fileA || null == fileB ) { return false; }
+			if ( null == fileA || null == fileB ) {
+				return false;
+			}
 
-			if ( !fileA.Exists() || !fileB.Exists() ) { return false; }
+			if ( !fileA.Exists() || !fileB.Exists() ) {
+				return false;
+			}
 
 			try {
 				var imageA = await Task.Run( () => Image.FromFile( fileA.FullPathWithFileName ) );
@@ -370,7 +432,9 @@ namespace Librainian.Graphics {
 
 		[NotNull]
 		public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
-			if ( imgToResize is null ) { throw new ArgumentNullException( nameof( imgToResize ) ); }
+			if ( imgToResize is null ) {
+				throw new ArgumentNullException( nameof( imgToResize ) );
+			}
 
 			var sourceWidth = imgToResize.Width;
 			var sourceHeight = imgToResize.Height;
@@ -402,14 +466,18 @@ namespace Librainian.Graphics {
 		/// <param name="bestGuess"></param>
 		/// <returns></returns>
 		private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
-			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
+			if ( info is null ) {
+				throw new ArgumentNullException( nameof( info ) );
+			}
 
 			bestGuess = null;
 
 			try {
 				info.Refresh();
 
-				if ( !info.Exists ) { return false; }
+				if ( !info.Exists ) {
+					return false;
+				}
 
 				using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
 					if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
@@ -462,7 +530,6 @@ namespace Librainian.Graphics {
 			/// <seealso cref="http://wikipedia.org/wiki/TIFF" />
 			[NotNull]
 			public static String Tiff => ".tif";
-
 		}
 
 		public static class PropertyList {
@@ -472,7 +539,6 @@ namespace Librainian.Graphics {
 			public const Int32 DateTimeOriginal = 0x9003;
 
 			public const Int32 PropertyTagDateTime = 0x132;
-
 		}
 
 		/// <summary>
@@ -573,7 +639,8 @@ namespace Librainian.Graphics {
 			ImageColorMap =
 				0x0140, // A color map for palette color images. This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images. In a palette-color image, a pixel value is used to index into an RGB lookup table.
 
-			ImageHalftoneHints = 0x0141, // The purpose of the HalftoneHints field is to convey to the halftone function the range of gray levels within a colorimetrically-specified image that should retain tonal detail.
+			ImageHalftoneHints =
+				0x0141, // The purpose of the HalftoneHints field is to convey to the halftone function the range of gray levels within a colorimetrically-specified image that should retain tonal detail.
 
 			ImageTileWidth = 0x0142, // The tile width in pixels. This is the number of columns in each tile.
 
@@ -821,7 +888,8 @@ namespace Librainian.Graphics {
 			ImageAsShotNeutral =
 				0xc628, // Specifies the selected white balance at time of capture, encoded as the coordinates of a perfectly neutral color in linear reference space values. The inclusion of this tag precludes the inclusion of the AsShotWhiteXY tag.
 
-			ImageAsShotWhiteXy = 0xc629, // Specifies the selected white balance at time of capture, encoded as x-y chromaticity coordinates. The inclusion of this tag precludes the inclusion of the AsShotNeutral tag.
+			ImageAsShotWhiteXy =
+				0xc629, // Specifies the selected white balance at time of capture, encoded as x-y chromaticity coordinates. The inclusion of this tag precludes the inclusion of the AsShotNeutral tag.
 
 			ImageBaselineExposure =
 				0xc62a, // Camera models vary in the trade-off they make between highlight headroom and shadow noise. Some leave a significant amount of highlight headroom during a normal exposure. This allows significant negative exposure compensation to be applied during raw conversion, but also means normal exposures will contain more shadow noise. Other models leave less headroom during normal exposures. This allows for less negative exposure compensation, but results in lower shadow noise for normal exposures. Because of these differences, a raw converter needs to vary the zero point of its exposure compensation control from model to model. BaselineExposure specifies by how much (in EV units) to move the zero point. Positive values result in brighter default results, while negative values result in darker default results.
@@ -921,7 +989,8 @@ namespace Librainian.Graphics {
 
 			ImageProfileEmbedPolicy = 0xc6fd, // This tag contains information about the usage rules for the associated camera profile.
 
-			ImageProfileCopyright = 0xc6fe, // A UTF-8 encoded string containing the copyright information for the camera profile. This string always should be preserved along with the other camera profile tags.
+			ImageProfileCopyright =
+				0xc6fe, // A UTF-8 encoded string containing the copyright information for the camera profile. This string always should be preserved along with the other camera profile tags.
 
 			ImageForwardMatrix1 = 0xc714, // This tag defines a matrix that maps white balanced camera colors to XYZ D50 colors.
 
@@ -938,7 +1007,8 @@ namespace Librainian.Graphics {
 			ImagePreviewColorSpace =
 				0xc71a, // This tag specifies the color space in which the rendered preview in this IFD is stored. The default value for this tag is sRGB for color previews and Gray Gamma 2.2 for monochrome previews.
 
-			ImagePreviewDateTime = 0xc71b, // This tag is an ASCII string containing the name of the date/time at which the preview stored in the IFD was rendered. The date/time is encoded using ISO 8601 format.
+			ImagePreviewDateTime =
+				0xc71b, // This tag is an ASCII string containing the name of the date/time at which the preview stored in the IFD was rendered. The date/time is encoded using ISO 8601 format.
 
 			ImageRawImageDigest =
 				0xc71c, // This tag is an MD5 digest of the raw image data. All pixels in the image are processed in row-scan order. Each pixel is zero padded to 16 or 32 bits deep (16-bit for data less than or equal to 16 bits deep, 32-bit otherwise). The data for each pixel is processed in little-endian byte order.
@@ -1031,7 +1101,8 @@ namespace Librainian.Graphics {
 
 			PhotoMakerNote = 0x927c, // A tag for manufacturers of Exif writers to record any desired information. The contents are up to the manufacturer.
 
-			PhotoUserComment = 0x9286, // A tag for Exif users to write keywords or comments on the image besides those in <ImageDescription>, and without the character code limitations of the <ImageDescription> tag.
+			PhotoUserComment =
+				0x9286, // A tag for Exif users to write keywords or comments on the image besides those in <ImageDescription>, and without the character code limitations of the <ImageDescription> tag.
 
 			PhotoSubSecTime = 0x9290, // A tag used to record fractions of seconds for the <DateTime> tag.
 
@@ -1083,7 +1154,8 @@ namespace Librainian.Graphics {
 			PhotoCustomRendered =
 				0xa401, // This tag indicates the use of special processing on image data, such as rendering geared to output. When special processing is performed, the reader is expected to disable or minimize any further processing.
 
-			PhotoExposureMode = 0xa402, // This tag indicates the exposure mode set when the image was shot. In auto-bracketing mode, the camera shoots a series of frames of the same scene at different exposure settings.
+			PhotoExposureMode =
+				0xa402, // This tag indicates the exposure mode set when the image was shot. In auto-bracketing mode, the camera shoots a series of frames of the same scene at different exposure settings.
 
 			PhotoWhiteBalance = 0xa403, // This tag indicates the white balance mode set when the image was shot.
 
@@ -1092,7 +1164,8 @@ namespace Librainian.Graphics {
 			PhotoFocalLengthIn35MmFilm =
 				0xa405, // This tag indicates the equivalent focal length assuming a 35mm film camera, in mm. A value of 0 means the focal length is unknown. Note that this tag differs from the <FocalLength> tag.
 
-			PhotoSceneCaptureType = 0xa406, // This tag indicates the type of scene that was shot. It can also be used to record the mode in which the image was shot. Note that this differs from the <SceneType> tag.
+			PhotoSceneCaptureType =
+				0xa406, // This tag indicates the type of scene that was shot. It can also be used to record the mode in which the image was shot. Note that this differs from the <SceneType> tag.
 
 			PhotoGainControl = 0xa407, // This tag indicates the degree of overall image gain adjustment.
 
@@ -1331,9 +1404,6 @@ namespace Librainian.Graphics {
 			HalftoneScreen = 0x500F,
 
 			HalftoneShape = 0x500D
-
 		}
-
 	}
-
 }

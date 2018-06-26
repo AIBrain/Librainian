@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Document.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "Document.cs" was last formatted by Protiguous on 2018/06/09 at 1:40 PM.
+// File "Document.cs" was last formatted by Protiguous on 2018/06/26 at 12:54 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -76,9 +81,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public class Document : ABetterClassDispose, IEquatable<Document>, IEnumerable<Byte>, IComparable<Document> {
-
-		// ReSharper disable once NotNullMemberIsNotInitialized
-		private Document() => throw new NotImplementedException( "Private contructor is not allowed." );
 
 		public Boolean DeleteAfterClose { get; }
 
@@ -123,6 +125,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 			}
 		}
 
+		// ReSharper disable once NotNullMemberIsNotInitialized
+		private Document() => throw new NotImplementedException( "Private contructor is not allowed." );
+
 		public Document( [NotNull] String fullPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: fullPath, path2: filename ),
 			deleteAfterClose: deleteAfterClose ) { }
 
@@ -151,11 +156,10 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 		public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: info.FullName, deleteAfterClose: deleteAfterClose ) { }
 
-		public Document( [NotNull] Folder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPath: folder.FullName, filename: filename,
-			deleteAfterClose: deleteAfterClose ) { }
+		public Document( [NotNull] Folder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPath: folder.FullName, filename: filename, deleteAfterClose: deleteAfterClose ) { }
 
-		public Document( [NotNull] Folder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: folder.FullName, path2: document.FileName() ),
-			deleteAfterClose: deleteAfterClose ) { }
+		public Document( [NotNull] Folder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this(
+			fullPathWithFilename: Path.Combine( path1: folder.FullName, path2: document.FileName() ), deleteAfterClose: deleteAfterClose ) { }
 
 		/// <summary>
 		///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -266,7 +270,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 						yield break;
 					}
 
-					yield return ( Byte )a;
+					yield return ( Byte ) a;
 				}
 			}
 		}
@@ -282,7 +286,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 			//TODO will wrapping this in a BufferedStream be any faster? Or is the buffersize okay?
 
-			using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, ( Int32 )Constants.Sizes.OneGigaByte ) ) {
+			using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, ( Int32 ) Constants.Sizes.OneGigaByte ) ) {
 
 				if ( !stream.CanRead ) {
 					throw new NotSupportedException( $"Cannot read from file stream on {this.FullPathWithFileName}" );
@@ -356,7 +360,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 							await client.DownloadFileTaskAsync( sourceAddress, destination.FullPathWithFileName ).NoUI();
 
-							return (true, stopwatch.Elapsed);
+							return ( true, stopwatch.Elapsed );
 						}
 					}
 				}
@@ -384,7 +388,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 				exception.More();
 			}
 
-			return (false, stopwatch.Elapsed);
+			return ( false, stopwatch.Elapsed );
 		}
 
 		/// <summary>
@@ -423,7 +427,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 			var webClient = new WebClient();
 
 			webClient.DownloadProgressChanged += ( sender, args ) => {
-				var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
+				var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
 				onProgress?.Invoke( percentage );
 			};
 
@@ -441,7 +445,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 			try {
 				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt32 )this.Size();
+					var size = ( UInt32 ) this.Size();
 
 					var crc32 = new Crc32( polynomial: size, seed: size );
 
@@ -478,7 +482,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 				}
 
 				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt32 )this.Size();
+					var size = ( UInt32 ) this.Size();
 
 					var crc32 = new Crc32( polynomial: size, seed: size );
 
@@ -518,7 +522,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 				}
 
 				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt64 )this.Size();
+					var size = ( UInt64 ) this.Size();
 					var crc64 = new Crc64( polynomial: size, seed: size );
 
 					return BitConverter.ToInt64( crc64.ComputeHash( fileStream ), 0 );
@@ -556,7 +560,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 					return null;
 				}
 
-				var size = ( UInt64 )this.Size();
+				var size = ( UInt64 ) this.Size();
 
 				var crc64 = new Crc64( polynomial: size, seed: size );
 
@@ -638,17 +642,17 @@ namespace Librainian.ComputerSystems.FileSystem {
 
 			try {
 				if ( !source.IsWellFormedOriginalString() ) {
-					return (new DownloadException( $"Could not use source Uri '{source}'." ), null);
+					return ( new DownloadException( $"Could not use source Uri '{source}'." ), null );
 				}
 
 				using ( var webClient = new WebClient() ) {
 					await webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName ).NoUI();
 
-					return (null, webClient.ResponseHeaders);
+					return ( null, webClient.ResponseHeaders );
 				}
 			}
 			catch ( Exception exception ) {
-				return (exception, null);
+				return ( exception, null );
 			}
 		}
 
@@ -703,7 +707,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 			}
 
 			if ( oursize <= Int32.MaxValue ) {
-				return ( Int32 )oursize;
+				return ( Int32 ) oursize;
 			}
 
 			return Int32.MaxValue;
@@ -1007,18 +1011,18 @@ namespace Librainian.ComputerSystems.FileSystem {
 			}
 
 			if ( !destination.IsWellFormedOriginalString() ) {
-				return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null);
+				return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null );
 			}
 
 			try {
 				using ( var webClient = new WebClient() ) {
 					await webClient.UploadFileTaskAsync( destination, this.FullPathWithFileName ).NoUI();
 
-					return (null, webClient.ResponseHeaders);
+					return ( null, webClient.ResponseHeaders );
 				}
 			}
 			catch ( Exception exception ) {
-				return (exception, null);
+				return ( exception, null );
 			}
 		}
 

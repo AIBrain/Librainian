@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "MathUtils.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "MathUtils.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "MathUtils.cs" was last formatted by Protiguous on 2018/06/04 at 3:57 PM.
+// File "MathUtils.cs" was last formatted by Protiguous on 2018/06/26 at 1:09 AM.
 
 namespace Librainian.Graphics {
 
@@ -46,6 +52,27 @@ namespace Librainian.Graphics {
 	using Maths;
 
 	public static class MathUtils {
+
+		public static readonly Vector3D XAxis = new Vector3D( 1, 0, 0 );
+
+		//---------------------------------------------------------------------------
+		//
+		// (c) Copyright Microsoft Corporation. This source is subject to the Microsoft Limited Permissive
+		// License. See
+		// http://www.microsoft.com/resources/sharedsource/licensingbasics/limitedpermissivelicense.mspx All
+		// other rights reserved.
+		//
+		// This file is part of the 3D Tools for Windows Presentation Foundation project. For more
+		// information, see:
+		//
+		// http: //CodePlex.com/Wiki/View.aspx?ProjectName=3DTools
+		//
+		//---------------------------------------------------------------------------
+		public static readonly Vector3D YAxis = new Vector3D( 0, 1, 0 );
+
+		public static readonly Vector3D ZAxis = new Vector3D( 0, 0, 1 );
+
+		public static readonly Matrix3D ZeroMatrix = new Matrix3D( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
 		private static Matrix3D GetHomogeneousToViewportTransform( Rect viewport ) {
 			var scaleX = viewport.Width / 2;
@@ -123,14 +150,20 @@ namespace Librainian.Graphics {
 			var worldTransform = Matrix3D.Identity;
 			viewport = null;
 
-			if ( !( visual is Visual3D ) ) { throw new ArgumentException( "Must be of type Visual3D.", nameof( visual ) ); }
+			if ( !( visual is Visual3D ) ) {
+				throw new ArgumentException( "Must be of type Visual3D.", nameof( visual ) );
+			}
 
 			while ( visual != null ) {
-				if ( !( visual is ModelVisual3D ) ) { break; }
+				if ( !( visual is ModelVisual3D ) ) {
+					break;
+				}
 
 				var transform = ( Transform3D ) visual.GetValue( ModelVisual3D.TransformProperty );
 
-				if ( transform != null ) { worldTransform.Append( transform.Value ); }
+				if ( transform != null ) {
+					worldTransform.Append( transform.Value );
+				}
 
 				visual = VisualTreeHelper.GetParent( visual );
 			}
@@ -186,7 +219,9 @@ namespace Librainian.Graphics {
 			var vp3Dv = VisualTreeHelper.GetParent( vp.Children[ 0 ] ) as Viewport3DVisual;
 			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
-			if ( !transformationResultOk ) { return new Point( 0, 0 ); }
+			if ( !transformationResultOk ) {
+				return new Point( 0, 0 );
+			}
 
 			var pb = m.Transform( p3D );
 			var p2D = new Point( pb.X, pb.Y );
@@ -198,7 +233,9 @@ namespace Librainian.Graphics {
 			var vp3Dv = VisualTreeHelper.GetParent( dependencyObject ) as Viewport3DVisual;
 			var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
-			if ( !transformationResultOk ) { return new Point( 0, 0 ); }
+			if ( !transformationResultOk ) {
+				return new Point( 0, 0 );
+			}
 
 			var pb = m.Transform( p3D );
 			var p2D = new Point( pb.X, pb.Y );
@@ -220,9 +257,13 @@ namespace Librainian.Graphics {
 			var y = radius * Math.Sin( TranslateAngleToRadian( angle ) );
 
 			// TODO: Try to find the best way to calculate circle point
-			if ( orientation.Equals( new Point3D() ) ) { orientation = new Point3D( 1, 1, 0 ); }
+			if ( orientation.Equals( new Point3D() ) ) {
+				orientation = new Point3D( 1, 1, 0 );
+			}
 
-			if ( orientation.X.Near( 0 ) ) { return new Point3D( x * orientation.X, x * orientation.Y, y * orientation.Z ); }
+			if ( orientation.X.Near( 0 ) ) {
+				return new Point3D( x * orientation.X, x * orientation.Y, y * orientation.Z );
+			}
 
 			return new Point3D( x * orientation.X, y * orientation.Y, y * orientation.Z );
 		}
@@ -234,20 +275,30 @@ namespace Librainian.Graphics {
 			var step = 360.0 / quantity;
 			Double angle = 0;
 
-			for ( var i = 0; i < quantity; i++, angle += step ) { circlePoints[ i ] = GetCirclePoint( angle, radius, orientation ); }
+			for ( var i = 0; i < quantity; i++, angle += step ) {
+				circlePoints[ i ] = GetCirclePoint( angle, radius, orientation );
+			}
 
 			return circlePoints;
 		}
 
 		/// <summary>Computes the effective projection matrix for the given camera.</summary>
 		public static Matrix3D GetProjectionMatrix( [NotNull] Camera camera, Double aspectRatio ) {
-			if ( camera is null ) { throw new ArgumentNullException( nameof( camera ) ); }
+			if ( camera is null ) {
+				throw new ArgumentNullException( nameof( camera ) );
+			}
 
-			if ( camera is PerspectiveCamera perspectiveCamera ) { return GetProjectionMatrix( perspectiveCamera, aspectRatio ); }
+			if ( camera is PerspectiveCamera perspectiveCamera ) {
+				return GetProjectionMatrix( perspectiveCamera, aspectRatio );
+			}
 
-			if ( camera is OrthographicCamera orthographicCamera ) { return GetProjectionMatrix( orthographicCamera, aspectRatio ); }
+			if ( camera is OrthographicCamera orthographicCamera ) {
+				return GetProjectionMatrix( orthographicCamera, aspectRatio );
+			}
 
-			if ( camera is MatrixCamera matrixCamera ) { return matrixCamera.ProjectionMatrix; }
+			if ( camera is MatrixCamera matrixCamera ) {
+				return matrixCamera.ProjectionMatrix;
+			}
 
 			throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
 		}
@@ -259,18 +310,26 @@ namespace Librainian.Graphics {
 			var step = endAngle / resolution;
 			var angle = startAngle;
 
-			for ( var i = 0; i < resolution + 1; i++, angle += step ) { circlePoints[ i ] = GetCirclePoint( angle, radius, orientation ); }
+			for ( var i = 0; i < resolution + 1; i++, angle += step ) {
+				circlePoints[ i ] = GetCirclePoint( angle, radius, orientation );
+			}
 
 			return circlePoints;
 		}
 
 		/// <summary>Computes the effective view matrix for the given camera.</summary>
 		public static Matrix3D GetViewMatrix( [NotNull] Camera camera ) {
-			if ( camera is null ) { throw new ArgumentNullException( nameof( camera ) ); }
+			if ( camera is null ) {
+				throw new ArgumentNullException( nameof( camera ) );
+			}
 
-			if ( camera is ProjectionCamera projectionCamera ) { return GetViewMatrix( projectionCamera ); }
+			if ( camera is ProjectionCamera projectionCamera ) {
+				return GetViewMatrix( projectionCamera );
+			}
 
-			if ( camera is MatrixCamera matrixCamera ) { return matrixCamera.ViewMatrix; }
+			if ( camera is MatrixCamera matrixCamera ) {
+				return matrixCamera.ViewMatrix;
+			}
 
 			throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
 		}
@@ -368,7 +427,9 @@ namespace Librainian.Graphics {
 		public static Boolean TryNormalize( ref Vector3D v ) {
 			var length = v.Length;
 
-			if ( length.Near( 0 ) ) { return false; }
+			if ( length.Near( 0 ) ) {
+				return false;
+			}
 
 			v /= length;
 
@@ -390,7 +451,9 @@ namespace Librainian.Graphics {
 			var to2D = GetWorldTransformationMatrix( visual, out viewport );
 			to2D.Append( TryWorldToViewportTransform( viewport, out success ) );
 
-			if ( !success ) { return ZeroMatrix; }
+			if ( !success ) {
+				return ZeroMatrix;
+			}
 
 			return to2D;
 		}
@@ -409,7 +472,9 @@ namespace Librainian.Graphics {
 			var toViewSpace = GetWorldTransformationMatrix( visual, out viewport );
 			toViewSpace.Append( TryWorldToCameraTransform( viewport, out success ) );
 
-			if ( !success ) { return ZeroMatrix; }
+			if ( !success ) {
+				return ZeroMatrix;
+			}
 
 			return toViewSpace;
 		}
@@ -426,18 +491,24 @@ namespace Librainian.Graphics {
 				var result = Matrix3D.Identity;
 				var camera = visual.Camera;
 
-				if ( camera is null ) { return ZeroMatrix; }
+				if ( camera is null ) {
+					return ZeroMatrix;
+				}
 
 				var viewport = visual.Viewport;
 
-				if ( viewport == Rect.Empty ) { return ZeroMatrix; }
+				if ( viewport == Rect.Empty ) {
+					return ZeroMatrix;
+				}
 
 				var cameraTransform = camera.Transform;
 
 				if ( cameraTransform != null ) {
 					var m = cameraTransform.Value;
 
-					if ( !m.HasInverse ) { return ZeroMatrix; }
+					if ( !m.HasInverse ) {
+						return ZeroMatrix;
+					}
 
 					m.Invert();
 					result.Append( m );
@@ -480,11 +551,17 @@ namespace Librainian.Graphics {
 		public static Vector VectorOnPlaneYozProjection( Vector3D a ) => new Vector( a.Y, a.Z );
 
 		public static Vector VectorProjectionOnPlane( Vector3D a, Vector3D plane ) {
-			if ( plane.X.Near( 0 ) ) { return new Vector( a.Y * plane.Y, a.Z * plane.Z ); }
+			if ( plane.X.Near( 0 ) ) {
+				return new Vector( a.Y * plane.Y, a.Z * plane.Z );
+			}
 
-			if ( plane.Y.Near( 0 ) ) { return new Vector( a.X * plane.X, a.Z * plane.Z ); }
+			if ( plane.Y.Near( 0 ) ) {
+				return new Vector( a.X * plane.X, a.Z * plane.Z );
+			}
 
-			if ( plane.Z.Near( 0 ) ) { return new Vector( a.X * plane.X, a.Y * plane.Y ); }
+			if ( plane.Z.Near( 0 ) ) {
+				return new Vector( a.X * plane.X, a.Y * plane.Y );
+			}
 
 			throw new ArgumentException( "The vector 'plane' doesn't contain at least one coordinate equals 0" );
 
@@ -492,28 +569,5 @@ namespace Librainian.Graphics {
 		}
 
 		public static Double VectorProjectionOnVector( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-
-		public static readonly Vector3D XAxis = new Vector3D( 1, 0, 0 );
-
-		//---------------------------------------------------------------------------
-		//
-		// (c) Copyright Microsoft Corporation. This source is subject to the Microsoft Limited Permissive
-		// License. See
-		// http://www.microsoft.com/resources/sharedsource/licensingbasics/limitedpermissivelicense.mspx All
-		// other rights reserved.
-		//
-		// This file is part of the 3D Tools for Windows Presentation Foundation project. For more
-		// information, see:
-		//
-		// http: //CodePlex.com/Wiki/View.aspx?ProjectName=3DTools
-		//
-		//---------------------------------------------------------------------------
-		public static readonly Vector3D YAxis = new Vector3D( 0, 1, 0 );
-
-		public static readonly Vector3D ZAxis = new Vector3D( 0, 0, 1 );
-
-		public static readonly Matrix3D ZeroMatrix = new Matrix3D( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
-
 	}
-
 }

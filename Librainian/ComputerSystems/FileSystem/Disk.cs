@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2017 to Rick@AIBrain.org and 2018-2018 to Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Disk.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "Disk.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -33,7 +38,7 @@
 // Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "Disk.cs" was last formatted by Protiguous on 2018/06/25 at 7:29 PM.
+// File "Disk.cs" was last formatted by Protiguous on 2018/06/26 at 12:54 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -60,11 +65,11 @@ namespace Librainian.ComputerSystems.FileSystem {
 		[NotNull]
 		public String RootDirectory => this.Info.RootDirectory.Name;
 
-		public Disk( [NotNull] Document document ) : this( document.FullPathWithFileName[0] ) { }
+		public Disk( [NotNull] Document document ) : this( document.FullPathWithFileName[ 0 ] ) { }
 
-		public Disk( [NotNull] Folder folder ) : this( folder.FullName[0] ) { }
+		public Disk( [NotNull] Folder folder ) : this( folder.FullName[ 0 ] ) { }
 
-		public Disk( [NotNull] String fullpath ) : this( fullpath[0] ) { }
+		public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
 
 		public Disk( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
 
@@ -90,7 +95,7 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// <returns></returns>
 		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
 
-		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
+		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 ) this.Info.AvailableFreeSpace : 0;
 
 		public IEnumerable<Folder> GetFolders( String searchPattern = "*" ) {
 			var root = new Folder( this.Info.RootDirectory );

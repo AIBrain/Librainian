@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "NetworkAdapter.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "NetworkAdapter.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "NetworkAdapter.cs" was last formatted by Protiguous on 2018/06/04 at 3:47 PM.
+// File "NetworkAdapter.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
 
 namespace Librainian.ComputerSystems.FileSystem {
 
@@ -71,6 +77,44 @@ namespace Librainian.ComputerSystems.FileSystem {
 		/// </summary>
 		public Int32 NetEnabled { get; }
 
+		public NetworkAdapter( Int32 deviceId, String name, Int32 netEnabled, Int32 netConnectionStatus ) {
+			this.DeviceId = deviceId;
+			this.Name = name;
+			this.NetEnabled = netEnabled;
+			this.NetConnectionStatus = netConnectionStatus;
+		}
+
+		public NetworkAdapter( Int32 deviceId ) {
+			var strWQuery = $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {deviceId}";
+
+			try {
+				var networkAdapters = WMIExtensions.WmiQuery( strWQuery );
+
+				var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
+
+				if ( null == crtNetworkAdapter ) {
+					return;
+				}
+
+				this.DeviceId = deviceId;
+
+				this.Name = crtNetworkAdapter[ "ProductName" ].ToString();
+
+				this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 ) EnumNetEnabledStatus.Enabled : ( Int32 ) EnumNetEnabledStatus.Disabled;
+
+				this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
+			}
+			catch ( NullReferenceException ) {
+
+				// If there is no a network adapter which deviceid equates to the argument
+				// "deviceId" just to construct a none exists network adapter
+				this.DeviceId = -1;
+				this.Name = String.Empty;
+				this.NetEnabled = 0;
+				this.NetConnectionStatus = -1;
+			}
+		}
+
 		/// <summary>
 		///     Enum the Operation result of Enable and Disable Network Adapter
 		/// </summary>
@@ -81,7 +125,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 			Unknow,
 
 			Success
-
 		}
 
 		///// <summary>
@@ -113,7 +156,6 @@ namespace Librainian.ComputerSystems.FileSystem {
 			Unknown,
 
 			Enabled
-
 		}
 
 		/// <summary>
@@ -153,7 +195,9 @@ namespace Librainian.ComputerSystems.FileSystem {
 				try {
 					var networkAdapters = WMIExtensions.WmiQuery( $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
 
-					foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) { crtNetworkAdapter = networkAdapter; }
+					foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters select o as ManagementObject ) {
+						crtNetworkAdapter = networkAdapter;
+					}
 
 					crtNetworkAdapter?.InvokeMethod( strOperation, null );
 
@@ -187,51 +231,17 @@ namespace Librainian.ComputerSystems.FileSystem {
 				var networkAdapters = WMIExtensions.WmiQuery( $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
 
 				foreach ( var networkAdapter in networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ) ) {
-					if ( Convert.ToBoolean( networkAdapter[ "NetEnabled" ].ToString() ) ) { netEnabled = ( Int32 ) EnumNetEnabledStatus.Enabled; }
-					else { netEnabled = ( Int32 ) EnumNetEnabledStatus.Disabled; }
+					if ( Convert.ToBoolean( networkAdapter[ "NetEnabled" ].ToString() ) ) {
+						netEnabled = ( Int32 ) EnumNetEnabledStatus.Enabled;
+					}
+					else {
+						netEnabled = ( Int32 ) EnumNetEnabledStatus.Disabled;
+					}
 				}
 			}
 			catch ( NullReferenceException ) { }
 
 			return netEnabled;
 		}
-
-		public NetworkAdapter( Int32 deviceId, String name, Int32 netEnabled, Int32 netConnectionStatus ) {
-			this.DeviceId = deviceId;
-			this.Name = name;
-			this.NetEnabled = netEnabled;
-			this.NetConnectionStatus = netConnectionStatus;
-		}
-
-		public NetworkAdapter( Int32 deviceId ) {
-			var strWQuery = $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {deviceId}";
-
-			try {
-				var networkAdapters = WMIExtensions.WmiQuery( strWQuery );
-
-				var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
-
-				if ( null == crtNetworkAdapter ) { return; }
-
-				this.DeviceId = deviceId;
-
-				this.Name = crtNetworkAdapter[ "ProductName" ].ToString();
-
-				this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 ) EnumNetEnabledStatus.Enabled : ( Int32 ) EnumNetEnabledStatus.Disabled;
-
-				this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
-			}
-			catch ( NullReferenceException ) {
-
-				// If there is no a network adapter which deviceid equates to the argument
-				// "deviceId" just to construct a none exists network adapter
-				this.DeviceId = -1;
-				this.Name = String.Empty;
-				this.NetEnabled = 0;
-				this.NetConnectionStatus = -1;
-			}
-		}
-
 	}
-
 }

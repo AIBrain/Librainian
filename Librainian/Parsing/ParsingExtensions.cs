@@ -1,20 +1,25 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ParsingExtensions.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,10 +35,10 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "ParsingExtensions.cs" was last formatted by Protiguous on 2018/06/12 at 5:19 PM.
+// File "ParsingExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:37 AM.
 
 namespace Librainian.Parsing {
 
@@ -68,15 +73,15 @@ namespace Librainian.Parsing {
 	public static class ParsingExtensions {
 
 		public static Lazy<String> AllLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() ) );
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).OrderBy( c => c ).ToArray() ) );
 
 		[NotNull]
 		public static Lazy<String> AllLowercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsLower ).OrderBy( c => c ).ToArray() ) );
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsLower ).OrderBy( c => c ).ToArray() ) );
 
 		[NotNull]
 		public static Lazy<String> AllUppercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() ) );
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Distinct().Where( Char.IsLetter ).Where( Char.IsUpper ).OrderBy( c => c ).ToArray() ) );
 
 		public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
 
@@ -274,7 +279,7 @@ namespace Librainian.Parsing {
 			return dict;
 		}
 
-		public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 )text.Where( c => c == character ).LongCount();
+		public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 ) text.Where( c => c == character ).LongCount();
 
 		/// <summary>
 		///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -311,12 +316,12 @@ namespace Librainian.Parsing {
 			var maxi = length1;
 			var maxj = length2;
 
-			var dCurrent = new Int32[maxi + 1];
-			var dMinus1 = new Int32[maxi + 1];
-			var dMinus2 = new Int32[maxi + 1];
+			var dCurrent = new Int32[ maxi + 1 ];
+			var dMinus1 = new Int32[ maxi + 1 ];
+			var dMinus2 = new Int32[ maxi + 1 ];
 
 			for ( var i = 0; i <= maxi; i++ ) {
-				dCurrent[i] = i;
+				dCurrent[ i ] = i;
 			}
 
 			var jm1 = 0;
@@ -331,25 +336,25 @@ namespace Librainian.Parsing {
 
 				// Initialize
 				var minDistance = Int32.MaxValue;
-				dCurrent[0] = j;
+				dCurrent[ 0 ] = j;
 				var im1 = 0;
 				var im2 = -1;
 
 				for ( var i = 1; i <= maxi; i++ ) {
-					var cost = source[im1] == target[jm1] ? 0 : 1;
+					var cost = source[ im1 ] == target[ jm1 ] ? 0 : 1;
 
-					var del = dCurrent[im1] + 1;
-					var ins = dMinus1[i] + 1;
-					var sub = dMinus1[im1] + cost;
+					var del = dCurrent[ im1 ] + 1;
+					var ins = dMinus1[ i ] + 1;
+					var sub = dMinus1[ im1 ] + cost;
 
 					//Fastest execution for min value of 3 integers
 					var min = del > ins ? ( ins > sub ? sub : ins ) : ( del > sub ? sub : del );
 
-					if ( i > 1 && j > 1 && source[im2] == target[jm1] && source[im1] == target[j - 2] ) {
-						min = Math.Min( min, dMinus2[im2] + cost );
+					if ( i > 1 && j > 1 && source[ im2 ] == target[ jm1 ] && source[ im1 ] == target[ j - 2 ] ) {
+						min = Math.Min( min, dMinus2[ im2 ] + cost );
 					}
 
-					dCurrent[i] = min;
+					dCurrent[ i ] = min;
 
 					if ( min < minDistance ) {
 						minDistance = min;
@@ -366,20 +371,20 @@ namespace Librainian.Parsing {
 				}
 			}
 
-			var result = dCurrent[maxi];
+			var result = dCurrent[ maxi ];
 
 			return result > threshold ? Int32.MaxValue : result;
 		}
 
 		public static Int32 EditDistanceParallel( [NotNull] this String s1, [NotNull] String s2 ) {
-			var dist = new Int32[s1.Length + 1, s2.Length + 1];
+			var dist = new Int32[ s1.Length + 1, s2.Length + 1 ];
 
 			for ( var i = 0; i <= s1.Length; i++ ) {
-				dist[i, 0] = i;
+				dist[ i, 0 ] = i;
 			}
 
 			for ( var j = 0; j <= s2.Length; j++ ) {
-				dist[0, j] = j;
+				dist[ 0, j ] = j;
 			}
 
 			var numBlocks = Environment.ProcessorCount * 4;
@@ -387,12 +392,12 @@ namespace Librainian.Parsing {
 			ParallelAlgorithms.Wavefront( ( startI, endI, startJ, endJ ) => {
 				for ( var i = startI + 1; i <= endI; i++ ) {
 					for ( var j = startJ + 1; j <= endJ; j++ ) {
-						dist[i, j] = s1[i - 1] == s2[j - 1] ? dist[i - 1, j - 1] : 1 + Math.Min( dist[i - 1, j], Math.Min( dist[i, j - 1], dist[i - 1, j - 1] ) );
+						dist[ i, j ] = s1[ i - 1 ] == s2[ j - 1 ] ? dist[ i - 1, j - 1 ] : 1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
 					}
 				}
 			}, s1.Length, s2.Length, numBlocks, numBlocks );
 
-			return dist[s1.Length, s2.Length];
+			return dist[ s1.Length, s2.Length ];
 		}
 
 		/// <summary>
@@ -459,7 +464,7 @@ namespace Librainian.Parsing {
 
 			// Upgrade the escaping to RFC 3986, if necessary.
 			foreach ( var t in UriRfc3986CharsToEscape ) {
-				escaped.Replace( t, Uri.HexEscape( t[0] ) );
+				escaped.Replace( t, Uri.HexEscape( t[ 0 ] ) );
 			}
 
 			// Return the fully-RFC3986-escaped String.
@@ -510,7 +515,7 @@ namespace Librainian.Parsing {
 			var bigInteger = numeratorShiftedToEnoughDigits / rational.Denominator;
 			var toBeFormatted = bigInteger.ToString();
 			var builder = new StringBuilder();
-			builder.Append( toBeFormatted[0] );
+			builder.Append( toBeFormatted[ 0 ] );
 			builder.Append( "." );
 			builder.Append( toBeFormatted.Substring( 1, numberOfDigits - 1 ) );
 
@@ -544,7 +549,7 @@ namespace Librainian.Parsing {
 
 			// do the encoding
 			foreach ( var index in s.Select( t => AllUppercaseLetters.Value.IndexOf( t ) ).Where( index => index >= 0 ) ) {
-				coded.Append( codes[index] );
+				coded.Append( codes[ index ] );
 			}
 
 			// okay, so here's how this goes . . . the first thing I do is assign the coded String so that i can regex replace on it
@@ -561,7 +566,7 @@ namespace Librainian.Parsing {
 			result = cleanup.Replace( result, String.Empty );
 
 			// return the first character followed by the coded String
-			return $"{s[0]}{result}";
+			return $"{s[ 0 ]}{result}";
 		}
 
 		/// <summary>
@@ -828,13 +833,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -859,13 +864,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -890,13 +895,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -921,13 +926,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -952,13 +957,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -983,13 +988,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -1014,13 +1019,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-				PluralCache[singular] = singular;
+				PluralCache[ singular ] = singular;
 
 				return singular;
 			}
 
 			var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-			PluralCache[singular] = pluralized;
+			PluralCache[ singular ] = pluralized;
 
 			return pluralized;
 		}
@@ -1051,7 +1056,7 @@ namespace Librainian.Parsing {
 
 			var stringInfo = new StringInfo( s );
 
-			return ( UInt64 )stringInfo.LengthInTextElements;
+			return ( UInt64 ) stringInfo.LengthInTextElements;
 		}
 
 		[NotNull]
@@ -1164,30 +1169,30 @@ namespace Librainian.Parsing {
 		[NotNull]
 		public static String ReverseWords( [NotNull] this String myString ) {
 			var length = myString.Length;
-			var tokens = new Char[length];
+			var tokens = new Char[ length ];
 			var position = 0;
 			Int32 lastIndex;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				if ( myString[i] != ' ' ) {
+				if ( myString[ i ] != ' ' ) {
 					continue;
 				}
 
 				lastIndex = length - position;
 
 				for ( var k = i + 1; k < lastIndex; k++ ) {
-					tokens[position] = myString[k];
+					tokens[ position ] = myString[ k ];
 					position++;
 				}
 
-				tokens[position] = ' ';
+				tokens[ position ] = ' ';
 				position++;
 			}
 
 			lastIndex = myString.Length - position;
 
 			for ( var i = 0; i < lastIndex; i++ ) {
-				tokens[position] = myString[i];
+				tokens[ position ] = myString[ i ];
 				position++;
 			}
 
@@ -1391,7 +1396,7 @@ namespace Librainian.Parsing {
 			}
 
 			Single threshold = Math.Max( source.Length, compare.Length );
-			var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 )threshold );
+			var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
 			//TODO votes.ForB ???
 			similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1451,7 +1456,7 @@ namespace Librainian.Parsing {
 
 			var res = Enumerable.Range( 0, s.Length ).Select( index => new {
 				index,
-				ch = s[index]
+				ch = s[ index ]
 			} ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 			return res;
@@ -1528,11 +1533,11 @@ namespace Librainian.Parsing {
 			var output = input.StripTags( allowedTags );
 
 			/* Lambda functions */
-			String HrefMatch( Match m ) => m.Groups[1].Value + "href..;,;.." + m.Groups[2].Value;
+			String HrefMatch( Match m ) => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
 
-			String ClassMatch( Match m ) => m.Groups[1].Value + "class..;,;.." + m.Groups[2].Value;
+			String ClassMatch( Match m ) => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
 
-			String UnsafeMatch( Match m ) => m.Groups[1].Value + m.Groups[4].Value;
+			String UnsafeMatch( Match m ) => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
 
 			/* Allow the "href" attribute */
 			output = new Regex( "(<a.*)href=(.*>)" ).Replace( output, HrefMatch );
@@ -1669,7 +1674,7 @@ namespace Librainian.Parsing {
 			var n = Math.Abs( number );
 			var lt = n % 100;
 
-			return number + OrdinalSuffixes[lt >= 11 && lt <= 13 ? 0 : n % 10];
+			return number + OrdinalSuffixes[ lt >= 11 && lt <= 13 ? 0 : n % 10 ];
 		}
 
 		/// <summary>
@@ -1689,24 +1694,24 @@ namespace Librainian.Parsing {
 			var joinString = removeUnderscores ? String.Empty : "_";
 			var words = text.Split( ' ' );
 
-			if ( words.Length <= 1 && !words[0].IsUpperCase() ) {
-				return String.Concat( words[0].Substring( 0, 1 ).ToUpper( culture ), words[0].Substring( 1 ) );
+			if ( words.Length <= 1 && !words[ 0 ].IsUpperCase() ) {
+				return String.Concat( words[ 0 ].Substring( 0, 1 ).ToUpper( culture ), words[ 0 ].Substring( 1 ) );
 			}
 
 			for ( var i = 0; i < words.Length; i++ ) {
-				if ( words[i].Length <= 0 ) {
+				if ( words[ i ].Length <= 0 ) {
 					continue;
 				}
 
-				var word = words[i];
+				var word = words[ i ];
 				var restOfWord = word.Substring( 1 );
 
 				if ( restOfWord.IsUpperCase() ) {
 					restOfWord = restOfWord.ToLower( culture );
 				}
 
-				var firstChar = Char.ToUpper( word[0], culture );
-				words[i] = String.Concat( firstChar, restOfWord );
+				var firstChar = Char.ToUpper( word[ 0 ], culture );
+				words[ i ] = String.Concat( firstChar, restOfWord );
 			}
 
 			return String.Join( joinString, words );
@@ -1784,13 +1789,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( number < 20 ) {
-				words += UnitsMap[number];
+				words += UnitsMap[ number ];
 			}
 			else {
-				words += TensMap[number / 10];
+				words += TensMap[ number / 10 ];
 
 				if ( number % 10 > 0 ) {
-					words += "-" + UnitsMap[number % 10];
+					words += "-" + UnitsMap[ number % 10 ];
 				}
 			}
 
@@ -1812,9 +1817,9 @@ namespace Librainian.Parsing {
 				return "minus " + ToVerbalWord( Math.Abs( number ) );
 			}
 
-			var intPortion = ( Int32 )number;
+			var intPortion = ( Int32 ) number;
 			var fraction = ( number - intPortion ) * 100;
-			var decPortion = ( Int32 )fraction;
+			var decPortion = ( Int32 ) fraction;
 
 			var words = ToVerbalWord( intPortion );
 

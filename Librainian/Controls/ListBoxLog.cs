@@ -1,21 +1,26 @@
-// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ListBoxLog.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "ListBoxLog.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "ListBoxLog.cs" was last formatted by Protiguous on 2018/06/04 at 3:48 PM.
+// File "ListBoxLog.cs" was last formatted by Protiguous on 2018/06/26 at 12:58 AM.
 
 namespace Librainian.Controls {
 
@@ -50,7 +56,12 @@ namespace Librainian.Controls {
 	/// </summary>
 	public sealed class ListBoxLog : ABetterClassDispose {
 
-		public Boolean Paused { get; }
+		private const Int32 DefaultMaxLinesInListbox = 2000;
+
+		/// <summary>
+		///     <seealso cref="FormatALogEventMessage" />
+		/// </summary>
+		private const String DefaultMessageFormat = "{4}>{8}";
 
 		private ListBox Box { get; set; }
 
@@ -59,6 +70,37 @@ namespace Librainian.Controls {
 		private Int32 MaxEntriesInListBox { get; }
 
 		private String MessageFormat { get; }
+
+		public Boolean Paused { get; }
+
+		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
+
+		public ListBoxLog( [NotNull] ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+
+			this.Box = listBox;
+			this.MessageFormat = messageFormat;
+			this.MaxEntriesInListBox = maxLinesInListbox;
+
+			this.Paused = false;
+
+			this.CanAdd = listBox.IsHandleCreated;
+
+			this.Box.SelectionMode = SelectionMode.MultiExtended;
+
+			this.Box.HandleCreated += this.OnHandleCreated;
+			this.Box.HandleDestroyed += this.OnHandleDestroyed;
+			this.Box.DrawItem += this.DrawItemHandler;
+			this.Box.KeyDown += this.KeyDownHandler;
+
+			var menuItems = new[] {
+				new MenuItem( "Copy", this.CopyMenuOnClickHandler )
+			};
+
+			this.Box.ContextMenu = new ContextMenu( menuItems );
+			this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
+
+			this.Box.DrawMode = DrawMode.OwnerDrawFixed;
+		}
 
 		~ListBoxLog() => this.Dispose();
 
@@ -109,19 +151,27 @@ namespace Librainian.Controls {
 		private void AddALogEntryLine( [NotNull] Object item ) {
 			this.Box.Items.Add( item );
 
-			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) { this.Box.Items.RemoveAt( 0 ); }
+			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
+				this.Box.Items.RemoveAt( 0 );
+			}
 
-			if ( !this.Paused ) { this.Box.TopIndex = this.Box.Items.Count - 1; }
+			if ( !this.Paused ) {
+				this.Box.TopIndex = this.Box.Items.Count - 1;
+			}
 		}
 
 		private void CopyMenuOnClickHandler( Object sender, EventArgs e ) => this.CopyToClipboard();
 
 		private void CopyMenuPopupHandler( Object sender, EventArgs e ) {
-			if ( sender is ContextMenu menu ) { menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0; }
+			if ( sender is ContextMenu menu ) {
+				menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
+			}
 		}
 
 		private void CopyToClipboard() {
-			if ( !this.Box.SelectedItems.Count.Any() ) { return; }
+			if ( !this.Box.SelectedItems.Count.Any() ) {
+				return;
+			}
 
 			var selectedItemsAsRTFText = new StringBuilder();
 			selectedItemsAsRTFText.AppendLine( @"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}" );
@@ -142,7 +192,9 @@ namespace Librainian.Controls {
 		}
 
 		private void DrawItemHandler( Object sender, [NotNull] DrawItemEventArgs e ) {
-			if ( e.Index < 0 ) { return; }
+			if ( e.Index < 0 ) {
+				return;
+			}
 
 			e.DrawBackground();
 			e.DrawFocusRectangle();
@@ -185,13 +237,17 @@ namespace Librainian.Controls {
 					break;
 			}
 
-			if ( logEvent.LoggingLevel == LoggingLevel.Critical ) { e.Graphics.FillRectangle( new SolidBrush( Color.Red ), e.Bounds ); }
+			if ( logEvent.LoggingLevel == LoggingLevel.Critical ) {
+				e.Graphics.FillRectangle( new SolidBrush( Color.Red ), e.Bounds );
+			}
 
 			e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), new Font( "Hack", 8.25f, FontStyle.Regular ), new SolidBrush( color ), e.Bounds );
 		}
 
 		private void KeyDownHandler( Object sender, [NotNull] KeyEventArgs e ) {
-			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) { this.CopyToClipboard(); }
+			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
+				this.CopyToClipboard();
+			}
 		}
 
 		private void OnHandleCreated( Object sender, EventArgs e ) => this.CanAdd = true;
@@ -199,15 +255,21 @@ namespace Librainian.Controls {
 		private void OnHandleDestroyed( Object sender, EventArgs e ) => this.CanAdd = false;
 
 		private void WriteEvent( [CanBeNull] LogEvent logEvent ) {
-			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent ); }
+			if ( logEvent != null && this.CanAdd ) {
+				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent );
+			}
 		}
 
 		private void WriteEventLine( [CanBeNull] LogEvent logEvent ) {
-			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent ); }
+			if ( logEvent != null && this.CanAdd ) {
+				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent );
+			}
 		}
 
 		public override void DisposeManaged() {
-			if ( this.Box is null ) { return; }
+			if ( this.Box is null ) {
+				return;
+			}
 
 			this.CanAdd = false;
 
@@ -250,43 +312,6 @@ namespace Librainian.Controls {
 				this.LoggingLevel = loggingLevel;
 				this.Message = message;
 			}
-
 		}
-
-		private const Int32 DefaultMaxLinesInListbox = 2000;
-
-		/// <summary>
-		///     <seealso cref="FormatALogEventMessage" />
-		/// </summary>
-		private const String DefaultMessageFormat = "{4}>{8}";
-
-		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
-
-		public ListBoxLog( [NotNull] ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
-
-			this.Box = listBox;
-			this.MessageFormat = messageFormat;
-			this.MaxEntriesInListBox = maxLinesInListbox;
-
-			this.Paused = false;
-
-			this.CanAdd = listBox.IsHandleCreated;
-
-			this.Box.SelectionMode = SelectionMode.MultiExtended;
-
-			this.Box.HandleCreated += this.OnHandleCreated;
-			this.Box.HandleDestroyed += this.OnHandleDestroyed;
-			this.Box.DrawItem += this.DrawItemHandler;
-			this.Box.KeyDown += this.KeyDownHandler;
-
-			var menuItems = new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) };
-
-			this.Box.ContextMenu = new ContextMenu( menuItems );
-			this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
-
-			this.Box.DrawMode = DrawMode.OwnerDrawFixed;
-		}
-
 	}
-
 }

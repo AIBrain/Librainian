@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "WebServer.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "WebServer.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "WebServer.cs" was last formatted by Protiguous on 2018/06/04 at 4:00 PM.
+// File "WebServer.cs" was last formatted by Protiguous on 2018/06/26 at 1:12 AM.
 
 namespace Librainian.Internet.Servers {
 
@@ -43,13 +49,15 @@ namespace Librainian.Internet.Servers {
 
 	public class WebServer : ABetterClassDispose {
 
+		private readonly HttpListener _httpListener;
+
+		private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
+
 		public Boolean IsRunning { get; private set; }
 
 		public String Prefix { get; set; }
 
-		private readonly HttpListener _httpListener;
-
-		private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
+		protected WebServer() => this._httpListener = new HttpListener();
 
 		private static void ListenerCallback( IAsyncResult ar ) {
 
@@ -75,16 +83,14 @@ namespace Librainian.Internet.Servers {
 		public override void DisposeManaged() => this._listenForNextRequest?.Dispose();
 
 		public void Start() {
-			if ( String.IsNullOrEmpty( this.Prefix ) ) { throw new InvalidOperationException( "Specify prefix" ); }
+			if ( String.IsNullOrEmpty( this.Prefix ) ) {
+				throw new InvalidOperationException( "Specify prefix" );
+			}
 
 			this._httpListener.Prefixes.Clear();
 			this._httpListener.Prefixes.Add( this.Prefix );
 			this._httpListener.Start();
 			ThreadPool.QueueUserWorkItem( this.Listen );
 		}
-
-		protected WebServer() => this._httpListener = new HttpListener();
-
 	}
-
 }

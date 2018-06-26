@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// our source code, binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CountDownWatch.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "CountDownWatch.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -27,12 +32,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we *might* make available.
 //
 // ***  Project "Librainian"  ***
-// File "CountDownWatch.cs" was last formatted by Protiguous on 2018/06/04 at 4:13 PM.
+// File "CountDownWatch.cs" was last formatted by Protiguous on 2018/06/26 at 1:28 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -95,7 +101,9 @@ namespace Librainian.Measurement.Time {
 		/// <param name="countdown"></param>
 		/// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
 		public CountDownWatch( TimeSpan countdown, [CanBeNull] Action liftoff = null ) {
-			if ( countdown < TimeSpan.Zero ) { throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." ); }
+			if ( countdown < TimeSpan.Zero ) {
+				throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." );
+			}
 
 			this.Countdown = countdown;
 			this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
@@ -105,7 +113,9 @@ namespace Librainian.Measurement.Time {
 					this._hasLaunched = true;
 					liftoff?.Invoke();
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) {
+					exception.More();
+				}
 			};
 		}
 
@@ -114,9 +124,13 @@ namespace Librainian.Measurement.Time {
 		public Boolean IsRunning() => this._isRunning;
 
 		public TimeSpan Remaining() {
-			if ( this.IsRunning() ) { return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted ); }
+			if ( this.IsRunning() ) {
+				return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
+			}
 
-			if ( this.HasLaunched() ) { return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted ); }
+			if ( this.HasLaunched() ) {
+				return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted );
+			}
 
 			throw new InvalidOperationException( "???" );
 		}

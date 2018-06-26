@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "SpeechOutput.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// our source code, binaries, libraries, projects, or solutions.
+//
+// This source code contained in "SpeechOutput.cs" belongs to Protiguous@Protiguous.com
+// and Rick@AIBrain.org and unless otherwise specified or the original license has been
+// overwritten by automatic formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
+// license and our Thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-// 
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//    paypal@AIBrain.Org
+//    (We're still looking into other solutions! Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,17 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com .
-// 
+//
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-// 
+// Feel free to browse any source code we *might* make available.
+//
 // ***  Project "Librainian"  ***
-// File "SpeechOutput.cs" was last formatted by Protiguous on 2018/06/04 at 4:25 PM.
+// File "SpeechOutput.cs" was last formatted by Protiguous on 2018/06/26 at 1:41 AM.
 
 using System;
 
@@ -56,11 +62,17 @@ namespace Librainian.Speech {
 			return synthesizer;
 		}, isThreadSafe: true );
 
+		public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
+
 		public void AttachEvents( [CanBeNull] Action<EventArgs> speechFeedbackEvent = null ) {
 			try {
-				if ( null == speechFeedbackEvent ) { return; }
+				if ( null == speechFeedbackEvent ) {
+					return;
+				}
 
-				if ( this.Synthesizer.Value is null ) { return; }
+				if ( this.Synthesizer.Value is null ) {
+					return;
+				}
 
 				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
 				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
@@ -69,7 +81,9 @@ namespace Librainian.Speech {
 				this.Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
 				this.Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) {
+				exception.More();
+			}
 		}
 
 		[NotNull]
@@ -89,15 +103,23 @@ namespace Librainian.Speech {
 		public void Speak( [CanBeNull] String message, Boolean interruptTalking = false, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium,
 			PromptVolume volume = PromptVolume.NotSet ) {
 			try {
-				if ( String.IsNullOrEmpty( message ) ) { return; }
+				if ( String.IsNullOrEmpty( message ) ) {
+					return;
+				}
 
 				message = message.Trim();
 
-				if ( String.IsNullOrEmpty( message ) ) { return; }
+				if ( String.IsNullOrEmpty( message ) ) {
+					return;
+				}
 
-				if ( message.StartsWith( "ECHO:" ) ) { message = message.Substring( "ECHO:".Length ); }
+				if ( message.StartsWith( "ECHO:" ) ) {
+					message = message.Substring( "ECHO:".Length );
+				}
 
-				if ( message.StartsWith( "INFO:" ) ) { message = message.Substring( "INFO:".Length ); }
+				if ( message.StartsWith( "INFO:" ) ) {
+					message = message.Substring( "INFO:".Length );
+				}
 
 				if ( message.Contains( "AIBrain" ) ) {
 					message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
@@ -105,18 +127,30 @@ namespace Librainian.Speech {
 
 				message = message.Trim();
 
-				if ( interruptTalking /*&& this.IsTalking()*/ ) { this.StopTalking(); }
+				if ( interruptTalking /*&& this.IsTalking()*/ ) {
+					this.StopTalking();
+				}
 
 				var prompt = new PromptBuilder(); //7.5
 
-				var promptStyle = new PromptStyle { Volume = volume, Emphasis = emphasis, Rate = promptRate };
+				var promptStyle = new PromptStyle {
+					Volume = volume,
+					Emphasis = emphasis,
+					Rate = promptRate
+				};
 
 				if ( emphasis == PromptEmphasis.None ) {
-					if ( message.EndsWith( "!" ) ) { promptStyle.Emphasis = PromptEmphasis.Strong; }
+					if ( message.EndsWith( "!" ) ) {
+						promptStyle.Emphasis = PromptEmphasis.Strong;
+					}
 
-					if ( message.EndsWith( "!!" ) ) { promptStyle.Volume = PromptVolume.Loud; }
+					if ( message.EndsWith( "!!" ) ) {
+						promptStyle.Volume = PromptVolume.Loud;
+					}
 
-					if ( message.EndsWith( "!!!" ) ) { promptStyle.Volume = PromptVolume.ExtraLoud; }
+					if ( message.EndsWith( "!!!" ) ) {
+						promptStyle.Volume = PromptVolume.ExtraLoud;
+					}
 				}
 
 				prompt.StartStyle( promptStyle );
@@ -125,7 +159,9 @@ namespace Librainian.Speech {
 
 				this.Synthesizer.Value.SpeakAsync( prompt );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) {
+				exception.More();
+			}
 		}
 
 		public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();
@@ -139,9 +175,5 @@ namespace Librainian.Speech {
 				Application.DoEvents();
 			}
 		}
-
-		public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
-
 	}
-
 }
