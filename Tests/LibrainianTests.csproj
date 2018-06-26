@@ -73,12 +73,6 @@
     <Compile Include="TimeSystemTimersTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Librainian.csproj">
-      <Project>{722e3411-b605-4af8-adea-d2d18bc9cd2c}</Project>
-      <Name>Librainian</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
@@ -94,6 +88,12 @@
     <PackageReference Include="NUnit">
       <Version>3.10.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Librainian\Librainian.csproj">
+      <Project>{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}</Project>
+      <Name>Librainian</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

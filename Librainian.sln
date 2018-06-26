@@ -3,35 +3,50 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librainian", "Librainian.csproj", "{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianTests", "Tests\LibrainianTests.csproj", "{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librainian", "Librainian\Librainian.csproj", "{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 		Single Image|Any CPU = Single Image|Any CPU
+		Single Image|x64 = Single Image|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|Any CPU.ActiveCfg = Single Image|Any CPU
-		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|Any CPU.Build.0 = Single Image|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Debug|x64.Build.0 = Debug|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Release|x64.ActiveCfg = Release|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Release|x64.Build.0 = Release|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Single Image|Any CPU.ActiveCfg = Single Image|Any CPU
 		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Single Image|Any CPU.Build.0 = Single Image|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Single Image|x64.ActiveCfg = Single Image|Any CPU
+		{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}.Single Image|x64.Build.0 = Single Image|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|x64.ActiveCfg = Debug|x64
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Debug|x64.Build.0 = Debug|x64
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|x64.ActiveCfg = Release|x64
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Release|x64.Build.0 = Release|x64
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|Any CPU.ActiveCfg = Single Image|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|Any CPU.Build.0 = Single Image|Any CPU
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|x64.ActiveCfg = Single Image|x64
+		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|x64.Build.0 = Single Image|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 	EndGlobalSection
 EndGlobal

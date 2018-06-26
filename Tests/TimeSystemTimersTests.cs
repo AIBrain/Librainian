@@ -29,22 +29,19 @@
 
 namespace LibrainianTests {
 
-    using System;
-    using System.Diagnostics;
-    using System.Threading;
-    using Librainian.Measurement.Time;
-    using Librainian.Threading;
-    using NUnit.Framework;
-    using Timer = System.Timers.Timer;
+	using System;
+	using System.Threading;
+	using NUnit.Framework;
 
-    [TestFixture]
-    public static class TimeSystemTimers {
+	[TestFixture]
+	public static class TimeSystemTimers {
 
-        private static Int64 _threadingCounter;
+		private static Int64 _threadingCounter;
 
-        private static void Callback( Object state ) => Interlocked.Increment( ref _threadingCounter );
+		private static void Callback( Object state ) => Interlocked.Increment( ref _threadingCounter );
 
-        public static UInt64 RunSystemTimerTest( Span howLong ) {
+		/*
+        public static UInt64 RunSystemTimerTest( TimeSpan howLong ) {
             var counter = 0UL;
 
             try {
@@ -71,13 +68,16 @@ namespace LibrainianTests {
 
             return counter;
         }
+		*/
 
-        [Test]
-        public static void RunTests() {
-            Console.WriteLine( RunSystemTimerTest( Milliseconds.One ) );
-            Console.WriteLine( RunThreadingTimerTest( Milliseconds.One ) );
-        }
+		[Test]
+		public static void RunTests() {
 
+			//Console.WriteLine( RunSystemTimerTest( Milliseconds.One ) );
+			//Console.WriteLine( RunThreadingTimerTest( Milliseconds.One ) );
+		}
+
+		/*
         public static UInt64 RunThreadingTimerTest( Span howLong ) {
             _threadingCounter = 0;
 
@@ -103,5 +103,6 @@ namespace LibrainianTests {
 
             return ( UInt64 )_threadingCounter;
         }
-    }
+		*/
+	}
 }
