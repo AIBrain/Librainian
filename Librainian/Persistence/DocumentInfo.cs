@@ -1,26 +1,26 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
-//
-// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
-//
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,17 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// ***  Project "Librainian"  ***
-// File "DocumentInfo.cs" was last formatted by Protiguous on 2018/06/26 at 1:38 AM.
+// 
+// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2018/07/10 at 6:17 PM.
 
 namespace Librainian.Persistence {
 
@@ -46,7 +45,7 @@ namespace Librainian.Persistence {
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ComputerSystems.FileSystem;
+	using ComputerSystem.FileSystem;
 	using JetBrains.Annotations;
 	using Maths.Hashings;
 	using Newtonsoft.Json;
@@ -58,6 +57,8 @@ namespace Librainian.Persistence {
 	[Serializable]
 	[JsonObject]
 	public class DocumentInfo : IEquatable<DocumentInfo> {
+
+		public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
 		private Int64? _length;
 
@@ -71,7 +72,8 @@ namespace Librainian.Persistence {
 		[JsonProperty]
 		public Int32? AddHash { get; private set; }
 
-		public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+		[JsonIgnore]
+		public CancellationToken CancellationToken { get; set; }
 
 		[JsonProperty]
 		public Int32? CRC32 { get; private set; }
@@ -106,9 +108,7 @@ namespace Librainian.Persistence {
 		public Task ScanningTask { get; private set; }
 
 		public DocumentInfo( [NotNull] Document document ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( paramName: nameof( document ) );
-			}
+			if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
 			this.AbsolutePath = document.FullPathWithFileName;
 
@@ -120,11 +120,28 @@ namespace Librainian.Persistence {
 
 			//attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
 			this.ScanningTask = new Task( () => Parallel.Invoke( new ParallelOptions {
-					CancellationToken = this.CancellationTokenSource.Token,
+					CancellationToken = this.CancellationToken,
 					MaxDegreeOfParallelism = 3
-				}, async () => this.CRC32 = await document.CRC32Async( this.CancellationTokenSource.Token ).NoUI(),
-				async () => this.CRC64 = await document.CRC64Async( this.CancellationTokenSource.Token ).NoUI(),
-				async () => this.AddHash = await document.CalcHashInt32Async( this.CancellationTokenSource.Token ).NoUI() ), this.CancellationTokenSource.Token );
+				}, async () => this.CRC32 = await document.CRC32Async( this.CancellationToken ).NoUI(), async () => this.CRC64 = await document.CRC64Async( this.CancellationToken ).NoUI(),
+				async () => this.AddHash = await document.CalcHashInt32Async( this.CancellationToken ).NoUI() ), this.CancellationToken );
+		}
+
+		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
+			if ( left == null ) { throw new ArgumentNullException( paramName: nameof( left ) ); }
+
+			if ( right == null ) { throw new ArgumentNullException( paramName: nameof( right ) ); }
+
+			if ( !left.Length.HasValue || !right.Length.HasValue || !left.CreationTimeUtc.HasValue || !right.CreationTimeUtc.HasValue || !left.LastWriteTimeUtc.HasValue || !right.LastWriteTimeUtc.HasValue ) {
+				return null;
+			}
+
+			if ( left.Length.Value != right.Length.Value || left.CreationTimeUtc.Value != right.CreationTimeUtc.Value || left.LastWriteTimeUtc.Value != right.LastWriteTimeUtc.Value ) { return true; }
+
+			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || !left.CRC32.HasValue || !right.CRC32.HasValue || !left.CRC64.HasValue || !right.CRC64.HasValue ) { return true; }
+
+			if ( left.AddHash.Value != right.AddHash.Value || left.CRC32.Value != right.CRC32.Value || left.CRC64.Value != right.CRC64.Value ) { return true; }
+
+			return false;
 		}
 
 		/// <summary>
@@ -138,9 +155,7 @@ namespace Librainian.Persistence {
 				return true; //this is true for null==null, right?
 			}
 
-			if ( left is null || right is null ) {
-				return false;
-			}
+			if ( left is null || right is null ) { return false; }
 
 			if ( left.LastScanned is null || right.LastScanned is null ) {
 				return false; //the files need to be ran through Update() before we can compare them.
@@ -152,7 +167,7 @@ namespace Librainian.Persistence {
 						if ( left.CRC64.HasValue && right.CRC64.HasValue && left.CRC64.Value == right.CRC64.Value ) {
 
 							//Okay, we've compared by 3 different hashes. File should be unique by now.
-							//the chances of collisions are so low, I won't even bother worrying about it happening in my lifetime.
+							//The chances of 3 collisions is so low.. I won't even bother worrying about it happening in my lifetime.
 							return true;
 						}
 					}
@@ -165,8 +180,6 @@ namespace Librainian.Persistence {
 		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
 
 		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
-
-		public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
 		public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
@@ -201,24 +214,39 @@ namespace Librainian.Persistence {
 				this.CreationTimeUtc = document.Info.CreationTimeUtc;
 				this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
 
-				await this.ScanningTask.NoUI();
+				var record = Data.ScannedDocuments[ this.AbsolutePath ];
 
-				this.LastScanned = DateTime.UtcNow;
+				var needScanned = false;
 
-				Data.ScannedDocuments[ this.AbsolutePath ] = this;
+				if ( record is null ) {
+					needScanned = true;
+
+					goto TheTask;
+				}
+
+				if ( AreEitherDifferent( this, record ) == true ) { needScanned = true; }
+
+				TheTask:
+
+				if ( needScanned ) {
+					if ( token.IsCancellationRequested ) { return false; }
+
+					await this.ScanningTask.NoUI();
+					this.LastScanned = DateTime.UtcNow;
+				}
+
+				if ( record is null ) { Data.ScannedDocuments[ this.AbsolutePath ] = this; }
 
 				return true;
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
-			finally {
-				Debug.WriteLine( "done." );
-			}
+			catch ( Exception exception ) { exception.More(); }
+			finally { Debug.WriteLine( "done." ); }
 
 			return false;
 		}
 
-		public override String ToString() => $"{this.AbsolutePath}={this.Length} bytes";
+		public override String ToString() => $"{this.AbsolutePath}={this.Length ?? -1} bytes";
+
 	}
+
 }

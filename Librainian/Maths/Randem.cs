@@ -56,7 +56,7 @@ namespace Librainian.Maths {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Collections;
-	using ComputerSystems;
+	using ComputerSystem;
 	using Extensions;
 	using FluentAssertions;
 	using Hashings;

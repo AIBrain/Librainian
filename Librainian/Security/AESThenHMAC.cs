@@ -46,6 +46,7 @@ namespace Librainian.Security {
 	using System.IO;
 	using System.Security.Cryptography;
 	using System.Text;
+	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
 
@@ -168,7 +169,7 @@ namespace Librainian.Security {
 		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-		[NotNull]
+		[CanBeNull]
 		public static String SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
@@ -177,7 +178,8 @@ namespace Librainian.Security {
 			var cipherText = Convert.FromBase64String( s: encryptedMessage );
 			var plainText = SimpleDecrypt( encryptedMessage: cipherText, cryptKey: cryptKey, authKey: authKey, nonSecretPayloadLength: nonSecretPayloadLength );
 
-			return Encoding.UTF8.GetString( bytes: plainText );
+			return plainText == null ? null : Encoding.UTF8.GetString( bytes: plainText );
+
 		}
 
 		/// <summary>
@@ -190,16 +192,25 @@ namespace Librainian.Security {
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="System.ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
-		[NotNull]
-		public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
+		[CanBeNull]
+		public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
+			}
+
+			if ( String.IsNullOrEmpty( value: password ) ) {
+				throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( password ) );
+			}
+
+			if ( !nonSecretPayloadLength.Any() ) {
+				throw new ArgumentOutOfRangeException( paramName: nameof( nonSecretPayloadLength ) );
 			}
 
 			var cipherText = Convert.FromBase64String( s: encryptedMessage );
 			var plainText = SimpleDecryptWithPassword( encryptedMessage: cipherText, password: password, nonSecretPayloadLength: nonSecretPayloadLength );
 
-			return Encoding.UTF8.GetString( bytes: plainText );
+			return plainText == null ? null : Encoding.UTF8.GetString( bytes: plainText );
+
 		}
 
 		/// <summary>

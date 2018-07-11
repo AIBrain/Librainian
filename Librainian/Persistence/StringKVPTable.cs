@@ -50,7 +50,7 @@ namespace Librainian.Persistence {
 	using System.IO;
 	using System.Linq;
 	using Collections;
-	using ComputerSystems.FileSystem;
+	using ComputerSystem.FileSystem;
 	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Magic;
@@ -160,6 +160,9 @@ namespace Librainian.Persistence {
 
 		// ReSharper disable once NotNullMemberIsNotInitialized
 		public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder, tableName ) ) { }
+
+		// ReSharper disable once NotNullMemberIsNotInitialized
+		public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder ) specialFolder, subFolder, tableName ) ) { }
 
 		// ReSharper disable once NotNullMemberIsNotInitialized
 		public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }

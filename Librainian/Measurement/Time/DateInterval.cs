@@ -42,6 +42,8 @@
 
 namespace Librainian.Measurement.Time {
 
+	using System;
+
 	/// <summary>
 	///     Used when calculating the difference between two <see cref="DateTime" /> instances
 	///     with the <see cref="DateSpan" /> class.

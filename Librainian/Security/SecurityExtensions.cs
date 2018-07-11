@@ -1,26 +1,26 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
-//
-// This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
-//
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,17 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// ***  Project "Librainian"  ***
-// File "SecurityExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:41 AM.
+// 
+// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 6:23 PM.
 
 namespace Librainian.Security {
 
@@ -46,29 +45,18 @@ namespace Librainian.Security {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Linq;
 	using System.Runtime.InteropServices;
 	using System.Security;
 	using System.Security.Cryptography;
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ComputerSystems.FileSystem;
+	using ComputerSystem.FileSystem;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Mono.Math;
 	using Threading;
 
 	public static class SecurityExtensions {
-
-		/// <summary>
-		///     Not very secure. Oh well.
-		/// </summary>
-		public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
-
-		public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
-
-		public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
 		/// <summary>
 		/// </summary>
@@ -98,13 +86,20 @@ namespace Librainian.Security {
 		/// </summary>
 		public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
+		/// <summary>
+		///     Not very secure. Oh well.
+		/// </summary>
+		public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
+
+		public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
+
+		public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
+
 		[NotNull]
 		private static Byte[] Uid( [NotNull] String s ) {
 			var numArray = new Byte[ s.Length ];
 
-			for ( var i = 0; i < s.Length; i++ ) {
-				numArray[ i ] = ( Byte ) ( s[ index: i ] & '\u007F' );
-			}
+			for ( var i = 0; i < s.Length; i++ ) { numArray[ i ] = ( Byte ) ( s[ index: i ] & '\u007F' ); }
 
 			return numArray;
 		}
@@ -113,9 +108,7 @@ namespace Librainian.Security {
 			await Task.Run( function: () => {
 				var md5Hasher = MD5s.Value;
 
-				using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) {
-					return md5Hasher.ComputeHash( fs );
-				}
+				using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) { return md5Hasher.ComputeHash( fs ); }
 			} ).NoUI();
 
 		[NotNull]
@@ -125,22 +118,16 @@ namespace Librainian.Security {
 
 				return ToSecureString( input: Encoding.Unicode.GetString( bytes: decryptedData ) );
 			}
-			catch {
-				return new SecureString();
-			}
+			catch { return new SecureString(); }
 		}
 
 		[NotNull]
 		public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
 
 			// This is the variable that will be returned to the user
-			if ( decryptValue is null ) {
-				throw new ArgumentNullException( nameof( decryptValue ) );
-			}
+			if ( decryptValue is null ) { throw new ArgumentNullException( nameof( decryptValue ) ); }
 
-			if ( privateKey is null ) {
-				throw new ArgumentNullException( nameof( privateKey ) );
-			}
+			if ( privateKey is null ) { throw new ArgumentNullException( nameof( privateKey ) ); }
 
 			var decryptedValue = String.Empty;
 
@@ -169,12 +156,8 @@ namespace Librainian.Security {
 				// Extract our decrypted byte array into a String value to return to our user
 				decryptedValue = Encoding.UTF8.GetString( bytes: plainTextValue );
 			}
-			catch ( CryptographicException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( CryptographicException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return decryptedValue;
 		}
@@ -195,13 +178,9 @@ namespace Librainian.Security {
 		public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
 
 			// This is the variable that will be returned to the user
-			if ( stringToEncrypt is null ) {
-				throw new ArgumentNullException( nameof( stringToEncrypt ) );
-			}
+			if ( stringToEncrypt is null ) { throw new ArgumentNullException( nameof( stringToEncrypt ) ); }
 
-			if ( publicKey is null ) {
-				throw new ArgumentNullException( nameof( publicKey ) );
-			}
+			if ( publicKey is null ) { throw new ArgumentNullException( nameof( publicKey ) ); }
 
 			var encryptedValue = String.Empty;
 
@@ -230,40 +209,10 @@ namespace Librainian.Security {
 				// Extract our encrypted byte array into a String value to return to our user
 				encryptedValue = Convert.ToBase64String( inArray: bytesEncrypted );
 			}
-			catch ( CryptographicException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( CryptographicException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return encryptedValue;
-		}
-
-		[NotNull]
-		public static String GenerateKey( String username, Decimal version = 9.2M ) {
-			username = ( username ?? String.Empty ).Trim();
-
-			if ( String.IsNullOrEmpty( username ) ) {
-				return String.Empty;
-			}
-
-			var value = ( Int32 ) version;
-			var num = ( Int32 ) ( ( version - value ) * new Decimal( 10 ) );
-			var num1 = username.Aggregate( seed: 0, func: ( current, t ) => ( ( current << 7 ) + t ) % 0xfff1 );
-
-			var bigInteger = new BigInteger( inData: Uid( s: username ) );
-			bigInteger.SetBit( bitNum: 0 );
-
-			var integer1 = BigInteger.Parse( number: "5675452544727795816938431027316696995782983680" );
-			integer1 += new BigInteger( bi: value * 0x3e8 + num ) << 72;
-			integer1 += new BigInteger( bi: num1 );
-
-			var integer2 = BigInteger.Parse( number: "3483968730802868401158985191529641621586542542912639916793" );
-			var modulus = BigInteger.Parse( number: "3483968730802868401158985191409366916534934371594468194468" );
-			integer1 = integer1.ModPow( exp: bigInteger.ModInverse( modulus: modulus ), n: integer2 );
-
-			return $"{1}-{Convert.ToBase64String( inArray: integer1.GetBytes() )}";
 		}
 
 		[NotNull]
@@ -276,23 +225,13 @@ namespace Librainian.Security {
 				var n1 = n & 15;
 				var n2 = ( n >> 4 ) & 15;
 
-				if ( n2 > 9 ) {
-					s += ( ( Char ) ( n2 - 10 + 'A' ) ).ToString();
-				}
-				else {
-					s += n2.ToString();
-				}
+				if ( n2 > 9 ) { s += ( ( Char ) ( n2 - 10 + 'A' ) ).ToString(); }
+				else { s += n2.ToString(); }
 
-				if ( n1 > 9 ) {
-					s += ( ( Char ) ( n1 - 10 + 'A' ) ).ToString();
-				}
-				else {
-					s += n1.ToString();
-				}
+				if ( n1 > 9 ) { s += ( ( Char ) ( n1 - 10 + 'A' ) ).ToString(); }
+				else { s += n1.ToString(); }
 
-				if ( i + 1 != bt.Count && ( i + 1 ) % 2 == 0 ) {
-					s += "-";
-				}
+				if ( i + 1 != bt.Count && ( i + 1 ) % 2 == 0 ) { s += "-"; }
 			}
 
 			return s;
@@ -303,9 +242,7 @@ namespace Librainian.Security {
 		/// <param name="s"></param>
 		/// <returns></returns>
 		public static String GetMD5Hash( [NotNull] this String s ) {
-			using ( MD5 md5 = new MD5CryptoServiceProvider() ) {
-				return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString();
-			}
+			using ( MD5 md5 = new MD5CryptoServiceProvider() ) { return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString(); }
 		}
 
 		/// <summary>
@@ -315,9 +252,7 @@ namespace Librainian.Security {
 		/// <returns></returns>
 		[CanBeNull]
 		public static String MD5( [NotNull] this FileInfo file ) {
-			if ( !file.Exists ) {
-				return null;
-			}
+			if ( !file.Exists ) { return null; }
 
 			var p = new Process {
 				StartInfo = {
@@ -338,9 +273,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static Byte[] Sha256( [NotNull] this Byte[] input ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA256Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
 		}
@@ -354,13 +287,9 @@ namespace Librainian.Security {
 		/// <returns></returns>
 		[NotNull]
 		public static Byte[] Sha256( [NotNull] this String input, Encoding encoding = null ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-			if ( null == encoding ) {
-				encoding = Encoding.UTF8;
-			}
+			if ( null == encoding ) { encoding = Encoding.UTF8; }
 
 			return encoding.GetBytes( s: input ).Sha256();
 		}
@@ -373,22 +302,16 @@ namespace Librainian.Security {
 		/// <param name="encoding"></param>
 		/// <returns></returns>
 		public static Byte[] Sha384( [NotNull] this String input, Encoding encoding = null ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-			if ( null == encoding ) {
-				encoding = Encoding.UTF8;
-			}
+			if ( null == encoding ) { encoding = Encoding.UTF8; }
 
 			return encoding.GetBytes( s: input ).Sha384();
 		}
 
 		[NotNull]
 		public static Byte[] Sha384( [NotNull] this Byte[] input ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA384Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
 		}
@@ -401,22 +324,16 @@ namespace Librainian.Security {
 		/// <param name="encoding"></param>
 		/// <returns></returns>
 		public static Byte[] Sha512( [NotNull] this String input, Encoding encoding = null ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-			if ( null == encoding ) {
-				encoding = Encoding.Unicode;
-			}
+			if ( null == encoding ) { encoding = Encoding.Unicode; }
 
 			return encoding.GetBytes( s: input ).Sha512();
 		}
 
 		[NotNull]
 		public static Byte[] Sha512( [NotNull] this Byte[] input ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			return SHA512Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
 		}
@@ -425,42 +342,30 @@ namespace Librainian.Security {
 		public static String ToHexString( [NotNull] this Byte[] bytes ) {
 			var sb = new StringBuilder( bytes.Length * 2 );
 
-			foreach ( var b in bytes ) {
-				sb.Append( b.ToString( "X2" ).ToUpper() );
-			}
+			foreach ( var b in bytes ) { sb.Append( b.ToString( "X2" ).ToUpper() ); }
 
 			return sb.ToString();
 		}
 
 		public static String ToInsecureString( [NotNull] this SecureString input ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			String returnValue;
 			var ptr = Marshal.SecureStringToBSTR( s: input );
 
-			try {
-				returnValue = Marshal.PtrToStringBSTR( ptr: ptr );
-			}
-			finally {
-				Marshal.ZeroFreeBSTR( s: ptr );
-			}
+			try { returnValue = Marshal.PtrToStringBSTR( ptr: ptr ); }
+			finally { Marshal.ZeroFreeBSTR( s: ptr ); }
 
 			return returnValue;
 		}
 
 		[NotNull]
 		public static SecureString ToSecureString( [NotNull] this String input ) {
-			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
-			}
+			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
 
 			var secure = new SecureString();
 
-			foreach ( var c in input ) {
-				secure.AppendChar( c: c );
-			}
+			foreach ( var c in input ) { secure.AppendChar( c: c ); }
 
 			secure.MakeReadOnly();
 
@@ -471,9 +376,7 @@ namespace Librainian.Security {
 			md5 = null;
 
 			try {
-				if ( document is null || !File.Exists( "md5sum.exe" ) || !document.Exists() ) {
-					return false;
-				}
+				if ( document is null || !File.Exists( "md5sum.exe" ) || !document.Exists() ) { return false; }
 
 				var p = new Process {
 					StartInfo = {
@@ -491,9 +394,7 @@ namespace Librainian.Security {
 
 				return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
@@ -737,5 +638,7 @@ namespace Librainian.Security {
 				return false;
 			}
 		}
+
 	}
+
 }

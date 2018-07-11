@@ -62,7 +62,7 @@ namespace Librainian.Persistence {
 	using System.Windows.Forms;
 	using CodeFluent.Runtime.BinaryServices;
 	using Collections;
-	using ComputerSystems.FileSystem;
+	using ComputerSystem.FileSystem;
 	using Converters;
 	using FluentAssertions;
 	using JetBrains.Annotations;
@@ -504,15 +504,12 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Deserialize from an IsolatedStorageFile.
 		/// </summary>
-		/// <param name="fullPathAndFileName" />
-		/// <param name="onLoad">              </param>
 		/// <param name="feedback">            </param>
 		/// <returns></returns>
 		/// <summary>
 		///     Deserialize from an IsolatedStorageFile.
 		/// </summary>
 		/// <param name="fileName" />
-		/// <param name="feedback">  </param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
 		[CanBeNull]
@@ -862,15 +859,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract( Namespace =
 		///     "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField] to serialize (both public and
-		///     private). <br /> Properties have to have both the Getter and the Setter. <br />
-		/// </summary>
-		/// <typeparam name="TSource"></typeparam>
-		/// <param name="objectToSerialize"></param>
-		/// <param name="fileName">         </param>
-		/// <returns>Returns True if the object was saved.</returns>
-		/// <summary>
-		///     Persist an object to an IsolatedStorageFile. <br /> Mark class with [DataContract( Namespace =
-		///     "http://Protiguous.com" )] <br /> Mark fields with [DataMember, OptionalField] to serialize (both public and
 		///     private). <br /> Fields cannot have JUST the Getter or the Setter, has to have both. <br />
 		/// </summary>
 		/// <typeparam name="TSource"></typeparam>
@@ -1153,7 +1141,14 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public static String Settings( String key ) => Environment.SpecialFolder.CommonApplicationData.Settings( key );
+		[CanBeNull]
+		public static String Settings( [NotNull] String key ) {
+			if ( key == null ) {
+				throw new ArgumentNullException( paramName: nameof( key ) );
+			}
+
+			return Environment.SpecialFolder.CommonApplicationData.Settings( key );
+		}
 
 		/// <summary>
 		///     Return the value of the given <paramref name="key" />.
@@ -1162,7 +1157,11 @@ namespace Librainian.Persistence {
 		/// <param name="key">          </param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String Settings( this Environment.SpecialFolder specialFolder, String key ) {
+		public static String Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
+			if ( key == null ) {
+				throw new ArgumentNullException( paramName: nameof( key ) );
+			}
+
 			try {
 				var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
 
@@ -1170,9 +1169,8 @@ namespace Librainian.Persistence {
 			}
 			catch ( ConfigurationErrorsException exception ) {
 				exception.More();
-
-				return null;
 			}
+			return null;
 		}
 
 		[Test]

@@ -46,7 +46,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Diagnostics;
 	using System.Globalization;
 	using System.Numerics;
-	using ComputerSystems;
+	using ComputerSystem;
 	using Extensions;
 	using Hashings;
 	using JetBrains.Annotations;

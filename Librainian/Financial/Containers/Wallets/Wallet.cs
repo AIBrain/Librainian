@@ -55,6 +55,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	using JetBrains.Annotations;
 	using Magic;
 	using Maths;
+	using Measurement.Currency;
 	using Newtonsoft.Json;
 	using NUnit.Framework;
 

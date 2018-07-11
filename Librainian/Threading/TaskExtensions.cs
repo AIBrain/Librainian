@@ -245,6 +245,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) {
 			if ( task == null ) {
 				throw new ArgumentNullException( paramName: nameof( task ) );
@@ -259,6 +260,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) {
 			if ( task == null ) {
 				throw new ArgumentNullException( paramName: nameof( task ) );

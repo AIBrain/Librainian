@@ -43,6 +43,7 @@
 namespace Librainian.Exceptions.Warnings {
 
 	using System;
+	using System.Diagnostics;
 	using Parsing;
 
 	/// <inheritdoc />
