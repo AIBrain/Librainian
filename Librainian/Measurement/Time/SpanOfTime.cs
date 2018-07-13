@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "SpanOfTime.cs" was last formatted by Protiguous on 2018/06/26 at 1:31 AM.
+// Project: "Librainian", "SpanOfTime.cs" was last formatted by Protiguous on 2018/07/13 at 1:30 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -67,27 +66,11 @@ namespace Librainian.Measurement.Time {
 	[Immutable]
 	public class SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
-		public static readonly SpanOfTime Bytey = new SpanOfTime( yoctoseconds: Byte.MaxValue, zeptoseconds: Byte.MaxValue, attoseconds: Byte.MaxValue, femtoseconds: Byte.MaxValue, picoseconds: Byte.MaxValue,
-			nanoseconds: Byte.MaxValue, microseconds: Byte.MaxValue, milliseconds: Byte.MaxValue, seconds: Byte.MaxValue, minutes: Byte.MaxValue, hours: Byte.MaxValue, days: Byte.MaxValue, weeks: Byte.MaxValue,
-			months: Byte.MaxValue, years: Byte.MaxValue );
+		public Int32 CompareTo( [NotNull] SpanOfTime other ) => CompareTo( this, other );
 
-		// TODO get a real answer here. lol.
-		public static readonly SpanOfTime Forever = new SpanOfTime( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue,
-			picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue,
-			hours: Decimal.MaxValue, days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue, years: Decimal.MaxValue );
+		public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
 
-		/// <summary>
-		/// </summary>
-		/// <summary>
-		///     <para>1 of each measure of time</para>
-		/// </summary>
-		public static readonly SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
-
-		public static readonly SpanOfTime Infinity = Forever;
-
-		/// <summary>
-		/// </summary>
-		public static readonly SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
+		Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
 
 		internal PlanckTimes TotalPlanckTimes { get; }
 
@@ -186,12 +169,32 @@ namespace Librainian.Measurement.Time {
 		[JsonProperty]
 		public Zeptoseconds Zeptoseconds { get; }
 
+		public static readonly SpanOfTime Bytey = new SpanOfTime( yoctoseconds: Byte.MaxValue, zeptoseconds: Byte.MaxValue, attoseconds: Byte.MaxValue, femtoseconds: Byte.MaxValue, picoseconds: Byte.MaxValue,
+			nanoseconds: Byte.MaxValue, microseconds: Byte.MaxValue, milliseconds: Byte.MaxValue, seconds: Byte.MaxValue, minutes: Byte.MaxValue, hours: Byte.MaxValue, days: Byte.MaxValue, weeks: Byte.MaxValue,
+			months: Byte.MaxValue, years: Byte.MaxValue );
+
+		// TODO get a real answer here. lol.
+		public static readonly SpanOfTime Forever = new SpanOfTime( yoctoseconds: Decimal.MaxValue, zeptoseconds: Decimal.MaxValue, attoseconds: Decimal.MaxValue, femtoseconds: Decimal.MaxValue,
+			picoseconds: Decimal.MaxValue, nanoseconds: Decimal.MaxValue, microseconds: Decimal.MaxValue, milliseconds: Decimal.MaxValue, seconds: Decimal.MaxValue, minutes: Decimal.MaxValue, hours: Decimal.MaxValue,
+			days: Decimal.MaxValue, weeks: Decimal.MaxValue, months: Decimal.MaxValue, years: Decimal.MaxValue );
+
+		/// <summary>
+		/// </summary>
+		/// <summary>
+		///     <para>1 of each measure of time</para>
+		/// </summary>
+		public static readonly SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+
+		public static readonly SpanOfTime Infinity = Forever;
+
+		/// <summary>
+		/// </summary>
+		public static readonly SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
+
 		public SpanOfTime( BigInteger planckTimes ) {
 			planckTimes.Should().BeGreaterOrEqualTo( BigInteger.Zero );
 
-			if ( planckTimes < BigInteger.Zero ) {
-				throw new ArgumentOutOfRangeException( nameof( planckTimes ), "Must be greater than or equal to 0." );
-			}
+			if ( planckTimes < BigInteger.Zero ) { throw new ArgumentOutOfRangeException( nameof( planckTimes ), "Must be greater than or equal to 0." ); }
 
 			//NOTE is the order here important?
 			this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
@@ -256,8 +259,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="normalize"></param>
 		public SpanOfTime( TimeSpan timeSpan, Boolean normalize = true ) : this(
 			milliseconds:
-			timeSpan.Ticks / ( Decimal ) TimeSpan
-				.TicksPerMillisecond /*, milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days*/ ) { }
+			timeSpan.Ticks / ( Decimal ) TimeSpan.TicksPerMillisecond /*, milliseconds: timeSpan.Milliseconds, seconds: timeSpan.Seconds, minutes: timeSpan.Minutes, hours: timeSpan.Hours, days: timeSpan.Days*/ ) { }
 
 		/// <summary>
 		///     <para>
@@ -281,10 +283,10 @@ namespace Librainian.Measurement.Time {
 		/// <param name="yoctoseconds"></param>
 		/// <param name="zeptoseconds"></param>
 		public SpanOfTime( Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default, Femtoseconds femtoseconds = default, Picoseconds picoseconds = default,
-			Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, Seconds seconds = default, Minutes minutes = default, Hours hours = default,
-			Days days = default, Weeks weeks = default, Months months = default, Years years = default ) : this( yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value,
-			attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value,
-			seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) { }
+			Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, Seconds seconds = default, Minutes minutes = default, Hours hours = default, Days days = default,
+			Weeks weeks = default, Months months = default, Years years = default ) : this( yoctoseconds: yoctoseconds.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value,
+			femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value, milliseconds: milliseconds.Value, seconds: seconds.Value,
+			minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) { }
 
 		/// <summary>
 		/// </summary>
@@ -526,15 +528,11 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static SpanOfTime TryParse( [CanBeNull] String text ) {
 			try {
-				if ( null == text ) {
-					return Zero;
-				}
+				if ( null == text ) { return Zero; }
 
 				text = text.Trim();
 
-				if ( text.IsNullOrWhiteSpace() ) {
-					return Zero;
-				}
+				if ( text.IsNullOrWhiteSpace() ) { return Zero; }
 
 				if ( TimeSpan.TryParse( text, out var result ) ) {
 					return new SpanOfTime( result ); //cheat and use the existing TimeSpan parsing code...
@@ -547,33 +545,25 @@ namespace Librainian.Measurement.Time {
 				if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
 					text = text.Before( "milliseconds" );
 
-					if ( text.IsJustNumbers( out units ) ) {
-						return new SpanOfTime( milliseconds: units );
-					}
+					if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( milliseconds: units ); }
 				}
 
 				if ( text.EndsWith( "millisecond", StringComparison.InvariantCultureIgnoreCase ) ) {
 					text = text.Before( "millisecond" );
 
-					if ( text.IsJustNumbers( out units ) ) {
-						return new SpanOfTime( milliseconds: units );
-					}
+					if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( milliseconds: units ); }
 				}
 
 				if ( text.EndsWith( "seconds", StringComparison.InvariantCultureIgnoreCase ) ) {
 					text = text.Before( "seconds" );
 
-					if ( text.IsJustNumbers( out units ) ) {
-						return new SpanOfTime( seconds: units );
-					}
+					if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: units ); }
 				}
 
 				if ( text.EndsWith( "second", StringComparison.InvariantCultureIgnoreCase ) ) {
 					text = text.Before( "second" );
 
-					if ( text.IsJustNumbers( out units ) ) {
-						return new SpanOfTime( seconds: units );
-					}
+					if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: units ); }
 				}
 
 				//TODO parse for more, even multiple  2 days, 3 hours, and 4 minutes etc...
@@ -624,10 +614,6 @@ namespace Librainian.Measurement.Time {
 			return counter;
 		}
 
-		public Int32 CompareTo( [NotNull] SpanOfTime other ) => CompareTo( this, other );
-
-		public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
-
 		/// <summary>
 		///     Indicates whether this instance and a specified object are equal.
 		/// </summary>
@@ -638,9 +624,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="obj">Another object to compare to.</param>
 		/// <filterpriority>2</filterpriority>
 		public override Boolean Equals( [CanBeNull] Object obj ) {
-			if ( obj is null ) {
-				return false;
-			}
+			if ( obj is null ) { return false; }
 
 			return obj is SpanOfTime span && Equals( this, span );
 		}
@@ -674,8 +658,8 @@ namespace Librainian.Measurement.Time {
 		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
 		/// <filterpriority>2</filterpriority>
 		public override Int32 GetHashCode() =>
-			HashingExtensions.GetHashCodes( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds,
-				this.Minutes, this.Hours, this.Days, this.Weeks, this.Months, this.Years );
+			HashingExtensions.GetHashCodes( this.Yoctoseconds, this.Zeptoseconds, this.Attoseconds, this.Femtoseconds, this.Picoseconds, this.Nanoseconds, this.Microseconds, this.Milliseconds, this.Seconds, this.Minutes,
+				this.Hours, this.Days, this.Weeks, this.Months, this.Years );
 
 		/// <summary>
 		///     <para>
@@ -692,74 +676,40 @@ namespace Librainian.Measurement.Time {
 		public override String ToString() {
 			var bob = new Queue<String>( 20 );
 
-			if ( this.Years.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Years.ToString() );
-			}
+			if ( this.Years.Value != Decimal.Zero ) { bob.Enqueue( this.Years.ToString() ); }
 
-			if ( this.Months.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Months.ToString() );
-			}
+			if ( this.Months.Value != Decimal.Zero ) { bob.Enqueue( this.Months.ToString() ); }
 
-			if ( this.Weeks.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Weeks.ToString() );
-			}
+			if ( this.Weeks.Value != Decimal.Zero ) { bob.Enqueue( this.Weeks.ToString() ); }
 
-			if ( this.Days.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Days.ToString() );
-			}
+			if ( this.Days.Value != Decimal.Zero ) { bob.Enqueue( this.Days.ToString() ); }
 
-			if ( this.Hours.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Hours.ToString() );
-			}
+			if ( this.Hours.Value != Decimal.Zero ) { bob.Enqueue( this.Hours.ToString() ); }
 
-			if ( this.Minutes.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Minutes.ToString() );
-			}
+			if ( this.Minutes.Value != Decimal.Zero ) { bob.Enqueue( this.Minutes.ToString() ); }
 
-			if ( this.Seconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Seconds.ToString() );
-			}
+			if ( this.Seconds.Value != Decimal.Zero ) { bob.Enqueue( this.Seconds.ToString() ); }
 
-			if ( this.Milliseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Milliseconds.ToString() );
-			}
+			if ( this.Milliseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Milliseconds.ToString() ); }
 
-			if ( this.Microseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Microseconds.ToString() );
-			}
+			if ( this.Microseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Microseconds.ToString() ); }
 
-			if ( this.Nanoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Nanoseconds.ToString() );
-			}
+			if ( this.Nanoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Nanoseconds.ToString() ); }
 
-			if ( this.Picoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Picoseconds.ToString() );
-			}
+			if ( this.Picoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Picoseconds.ToString() ); }
 
-			if ( this.Femtoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Femtoseconds.ToString() );
-			}
+			if ( this.Femtoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Femtoseconds.ToString() ); }
 
-			if ( this.Attoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Attoseconds.ToString() );
-			}
+			if ( this.Attoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Attoseconds.ToString() ); }
 
-			if ( this.Zeptoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Zeptoseconds.ToString() );
-			}
+			if ( this.Zeptoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Zeptoseconds.ToString() ); }
 
-			if ( this.Yoctoseconds.Value != Decimal.Zero ) {
-				bob.Enqueue( this.Yoctoseconds.ToString() );
-			}
+			if ( this.Yoctoseconds.Value != Decimal.Zero ) { bob.Enqueue( this.Yoctoseconds.ToString() ); }
 
-			if ( this.PlanckTimes.Value != BigInteger.Zero ) {
-				bob.Enqueue( this.PlanckTimes.ToString() );
-			}
+			if ( this.PlanckTimes.Value != BigInteger.Zero ) { bob.Enqueue( this.PlanckTimes.ToString() ); }
 
 			return bob.ToStrings( ", ", ", and " );
 		}
-
-		Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
 
 		/*
                 public String ApproximatelySeconds() {

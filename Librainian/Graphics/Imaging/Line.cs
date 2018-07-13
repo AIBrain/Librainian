@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Line.cs" was last formatted by Protiguous on 2018/06/26 at 1:08 AM.
+// Project: "Librainian", "Line.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -98,31 +97,6 @@ namespace Librainian.Graphics.Imaging {
 		public Boolean Equals( Line other ) => Equal( this, other );
 
 		/// <summary>
-		///     Returns the zero-based <see cref="Pixel" /> or null if not found.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public Pixel? this[ UInt64 index ] {
-			get {
-				var pixels = this.Pixels;
-
-				if ( index <= this.Count ) {
-					return pixels[ index ];
-				}
-
-				return null;
-			}
-
-			set {
-				var pixels = this.Pixels;
-
-				if ( value.HasValue && index <= this.Count ) {
-					pixels[ index ] = value.Value;
-				}
-			}
-		}
-
-		/// <summary>
 		///     Checksum of the pixels (to guard against corruption).
 		/// </summary>
 		/// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
@@ -149,14 +123,43 @@ namespace Librainian.Graphics.Imaging {
 		[NotNull]
 		public Pixel[] Pixels;
 
+		/// <summary>
+		///     Returns the zero-based <see cref="Pixel" /> or null if not found.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public Pixel? this[ UInt64 index ] {
+			get {
+				var pixels = this.Pixels;
+
+				if ( index <= this.Count ) { return pixels[ index ]; }
+
+				return null;
+			}
+
+			set {
+				var pixels = this.Pixels;
+
+				if ( value.HasValue && index <= this.Count ) { pixels[ index ] = value.Value; }
+			}
+		}
+
+		/// <summary>
+		///     Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.
+		/// </summary>
+		/// <param name="pixels"></param>
+		public Line( [NotNull] Pixel[] pixels ) {
+			this.Pixels = pixels.ToArray();
+			this.Count = ( UInt64 ) this.Pixels.LongLength;
+			this.Checksum = CalculateChecksumAsync( this.Pixels ).Result;
+		}
+
 		public static async Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) =>
 			await Task.Run( () => {
 				var checksum = UInt64.MinValue;
 
 				foreach ( var pixel in pixels ) {
-					unchecked {
-						checksum = ( checksum + ( UInt64 ) pixel.GetHashCode() ) / 2;
-					}
+					unchecked { checksum = ( checksum + ( UInt64 ) pixel.GetHashCode() ) / 2; }
 				}
 
 				return checksum;
@@ -169,29 +172,13 @@ namespace Librainian.Graphics.Imaging {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
-			if ( left is null || right is null ) {
-				return false;
-			}
+			if ( left is null || right is null ) { return false; }
 
-			if ( left.Checksum != right.Checksum ) {
-				return false;
-			}
+			if ( left.Checksum != right.Checksum ) { return false; }
 
-			if ( left.Count != right.Count ) {
-				return false;
-			}
+			if ( left.Count != right.Count ) { return false; }
 
 			return left.Pixels.SequenceEqual( right.Pixels );
-		}
-
-		/// <summary>
-		///     Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.
-		/// </summary>
-		/// <param name="pixels"></param>
-		public Line( [NotNull] Pixel[] pixels ) {
-			this.Pixels = pixels.ToArray();
-			this.Count = ( UInt64 ) this.Pixels.LongLength;
-			this.Checksum = CalculateChecksumAsync( this.Pixels ).Result;
 		}
 	}
 }

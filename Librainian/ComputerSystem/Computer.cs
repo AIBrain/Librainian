@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Computer.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Computer.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Computer.cs" was last formatted by Protiguous on 2018/06/26 at 12:53 AM.
+// Project: "Librainian", "Computer.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
 
 namespace Librainian.ComputerSystem {
 
@@ -90,9 +89,7 @@ namespace Librainian.ComputerSystem {
 						return total;
 					}
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return 0;
 			}
@@ -103,9 +100,7 @@ namespace Librainian.ComputerSystem {
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx" />
 		public UInt64 TotalPhysicalMemory {
 			get {
-				try {
-					return this.Info.TotalPhysicalMemory;
-				}
+				try { return this.Info.TotalPhysicalMemory; }
 				catch ( Exception exception ) {
 					exception.More();
 
@@ -119,9 +114,7 @@ namespace Librainian.ComputerSystem {
 			// Initialize the list to a counter-per-processor:
 			this.UtilizationCounters = new HashSet<PerformanceCounter>( Environment.ProcessorCount );
 
-			for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
-				this.UtilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
-			}
+			for ( var i = 0; i < Environment.ProcessorCount; i++ ) { this.UtilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) ); }
 
 			this.Info = new ComputerInfo(); // TODO how slow is this class? The code behind it doesn't *look* slow..
 		}
@@ -171,16 +164,12 @@ namespace Librainian.ComputerSystem {
 				using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
 					var sb = new StringBuilder();
 
-					foreach ( var result in searcher.Get() ) {
-						sb.Append( $"{result[ "Name" ]} with {result[ "NumberOfCores" ]} cores" );
-					}
+					foreach ( var result in searcher.Get() ) { sb.Append( $"{result[ "Name" ]} with {result[ "NumberOfCores" ]} cores" ); }
 
 					return sb.ToString();
 				}
 			}
-			catch ( Exception ex ) {
-				return $"WMI Error: {ex.Message}";
-			}
+			catch ( Exception ex ) { return $"WMI Error: {ex.Message}"; }
 		}
 
 		/// <summary>
@@ -206,8 +195,7 @@ namespace Librainian.ComputerSystem {
 		public IEnumerable<String> GetVersions() => AppDomain.CurrentDomain.GetAssemblies().Select( assembly => $"Assembly: {assembly.GetName().Name}, {assembly.GetName().Version}" );
 
 		[NotNull]
-		public IEnumerable<String> GetWorkingMacAddresses() =>
-			from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
+		public IEnumerable<String> GetWorkingMacAddresses() => from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
 		public void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );
 
@@ -238,14 +226,10 @@ namespace Librainian.ComputerSystem {
 			public Single? CPU() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -253,14 +237,10 @@ namespace Librainian.ComputerSystem {
 			public Single? D3D() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -268,14 +248,10 @@ namespace Librainian.ComputerSystem {
 			public Single? Disk() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -283,14 +259,10 @@ namespace Librainian.ComputerSystem {
 			public Single? Graphics() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -298,27 +270,19 @@ namespace Librainian.ComputerSystem {
 			public Single? Memory() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
 
 			public Object TimeTaken() {
 				try {
-					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						return queryObj[ "TimeTaken" ];
-					}
+					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) { return queryObj[ "TimeTaken" ]; }
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -326,14 +290,10 @@ namespace Librainian.ComputerSystem {
 			public Int32? WinSAT_AssessmentState() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}
@@ -341,14 +301,10 @@ namespace Librainian.ComputerSystem {
 			public Single? WinSPRLevel() {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-						if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) {
-							return result;
-						}
+						if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) {
-					exception.More();
-				}
+				catch ( ManagementException exception ) { exception.More(); }
 
 				return null;
 			}

@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Wiktionary.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Wiktionary.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Wiktionary.cs" was last formatted by Protiguous on 2018/06/26 at 1:13 AM.
+// Project: "Librainian", "Wiktionary.cs" was last formatted by Protiguous on 2018/07/10 at 9:12 PM.
 
 namespace Librainian.Internet.Wiki {
 
@@ -49,8 +48,6 @@ namespace Librainian.Internet.Wiki {
 
 	public class Wiktionary {
 
-		private static DateTime _lastWikiResponse = DateTime.MinValue;
-
 		/// <summary>Use String.Format to enter the search parameter.</summary>
 		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
@@ -60,9 +57,7 @@ namespace Librainian.Internet.Wiki {
 		/// <summary>Returns true if Wiki has responded within the past 15 minutes.</summary>
 		public static Boolean DoesWikiRespond {
 			get {
-				if ( ( DateTime.UtcNow - _lastWikiResponse ).TotalMinutes <= 15 ) {
-					return true;
-				}
+				if ( ( DateTime.UtcNow - _lastWikiResponse ).TotalMinutes <= 15 ) { return true; }
 
 				var response = Http.Get( String.Format( BaseQuery, "wiki" ) );
 
@@ -76,6 +71,8 @@ namespace Librainian.Internet.Wiki {
 			}
 		}
 
+		private static DateTime _lastWikiResponse = DateTime.MinValue;
+
 		static Wiktionary() {
 			if ( DoesWikiRespond ) {
 
@@ -88,19 +85,13 @@ namespace Librainian.Internet.Wiki {
 		/// <returns></returns>
 		[NotNull]
 		public static String Wiki( [CanBeNull] String baseWord ) {
-			if ( String.IsNullOrEmpty( baseWord ) ) {
-				return String.Empty;
-			}
+			if ( String.IsNullOrEmpty( baseWord ) ) { return String.Empty; }
 
-			if ( !DoesWikiRespond ) {
-				return String.Empty;
-			}
+			if ( !DoesWikiRespond ) { return String.Empty; }
 
 			var wiki = Http.Get( String.Format( BaseQuery, baseWord ) );
 
-			if ( !wiki.Contains( "Definition from Wiktionary" ) ) {
-				return String.Empty;
-			}
+			if ( !wiki.Contains( "Definition from Wiktionary" ) ) { return String.Empty; }
 
 			_lastWikiResponse = DateTime.UtcNow;
 

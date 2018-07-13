@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HttpProcessor.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "HttpProcessor.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "HttpProcessor.cs" was last formatted by Protiguous on 2018/06/26 at 1:12 AM.
+// Project: "Librainian", "HttpProcessor.cs" was last formatted by Protiguous on 2018/07/10 at 9:10 PM.
 
 namespace Librainian.Internet.Servers {
 
@@ -57,25 +56,8 @@ namespace Librainian.Internet.Servers {
 
 	public class HttpProcessor : ABetterClassDispose {
 
-		private const Int32 BufSize = 4096;
-
-		private static readonly Int32 MaxPostSize = 10 * ( Int32 ) Constants.Sizes.OneMegaByte;
-
 		// 10MB
 		private readonly X509Certificate2 _sslCertificate;
-
-		private Stream _inputStream;
-
-		private Int32 _isLanConnection = -1;
-
-		private String _remoteIpAddress;
-
-		private Byte[] _remoteIpAddressBytes;
-
-		/// <summary>
-		///     A flag that is set when WriteSuccess(), WriteFailure(), or WriteRedirect() is called. If the
-		/// </summary>
-		private Boolean _responseWritten;
 
 		/// <summary>
 		///     The base Uri for this Server, containing its host name and port.
@@ -104,6 +86,19 @@ namespace Librainian.Internet.Servers {
 		///     The underlying tcpClient which handles the network connection.
 		/// </summary>
 		public readonly TcpClient TcpClient;
+
+		private Stream _inputStream;
+
+		private Int32 _isLanConnection = -1;
+
+		private String _remoteIpAddress;
+
+		private Byte[] _remoteIpAddressBytes;
+
+		/// <summary>
+		///     A flag that is set when WriteSuccess(), WriteFailure(), or WriteRedirect() is called. If the
+		/// </summary>
+		private Boolean _responseWritten;
 
 		/// <summary>
 		///     The Http method used. i.e. "POST" or "GET"
@@ -177,9 +172,7 @@ namespace Librainian.Internet.Servers {
 		[CanBeNull]
 		private Byte[] RemoteIpAddressBytes {
 			get {
-				if ( this._remoteIpAddressBytes != null ) {
-					return this._remoteIpAddressBytes;
-				}
+				if ( this._remoteIpAddressBytes != null ) { return this._remoteIpAddressBytes; }
 
 				try {
 					if ( this.TcpClient != null ) {
@@ -188,9 +181,7 @@ namespace Librainian.Internet.Servers {
 						}
 					}
 				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 
 				return this._remoteIpAddressBytes;
 			}
@@ -201,22 +192,20 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		public String RemoteIpAddress {
 			get {
-				if ( !String.IsNullOrEmpty( this._remoteIpAddress ) ) {
-					return this._remoteIpAddress;
-				}
+				if ( !String.IsNullOrEmpty( this._remoteIpAddress ) ) { return this._remoteIpAddress; }
 
 				try {
-					if ( this.TcpClient != null ) {
-						this._remoteIpAddress = this.TcpClient.Client.RemoteEndPoint.ToString().Split( ':' )[ 0 ];
-					}
+					if ( this.TcpClient != null ) { this._remoteIpAddress = this.TcpClient.Client.RemoteEndPoint.ToString().Split( ':' )[ 0 ]; }
 				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 
 				return this._remoteIpAddress;
 			}
 		}
+
+		private const Int32 BufSize = 4096;
+
+		private static readonly Int32 MaxPostSize = 10 * ( Int32 ) Constants.Sizes.OneMegaByte;
 
 		public HttpProcessor( [NotNull] TcpClient s, HttpServer srv, [CanBeNull] X509Certificate2 sslCertificate = null ) {
 			this._sslCertificate = sslCertificate;
@@ -239,12 +228,8 @@ namespace Librainian.Internet.Servers {
 			var arguments = new SortedList<String, String>();
 			var idx = queryString.IndexOf( '?' );
 
-			if ( idx > -1 ) {
-				queryString = queryString.Substring( idx + 1 );
-			}
-			else if ( requireQuestionMark ) {
-				return arguments;
-			}
+			if ( idx > -1 ) { queryString = queryString.Substring( idx + 1 ); }
+			else if ( requireQuestionMark ) { return arguments; }
 
 			idx = queryString.LastIndexOf( '#' );
 			String hash = null;
@@ -263,23 +248,15 @@ namespace Librainian.Internet.Servers {
 					var key = HttpUtility.UrlDecode( argument[ 0 ] );
 
 					if ( null != key ) {
-						if ( !preserveKeyCharacterCase ) {
-							key = key.ToLower();
-						}
+						if ( !preserveKeyCharacterCase ) { key = key.ToLower(); }
 
-						if ( arguments.TryGetValue( key, out var existingValue ) ) {
-							arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] );
-						}
-						else {
-							arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] );
-						}
+						if ( arguments.TryGetValue( key, out var existingValue ) ) { arguments[ key ] += "," + HttpUtility.UrlDecode( argument[ 1 ] ); }
+						else { arguments[ key ] = HttpUtility.UrlDecode( argument[ 1 ] ); }
 					}
 				}
 			}
 
-			if ( hash != null ) {
-				arguments[ "#" ] = hash;
-			}
+			if ( hash != null ) { arguments[ "#" ] = hash; }
 
 			return arguments;
 		}
@@ -292,13 +269,9 @@ namespace Librainian.Internet.Servers {
 		///     header, this will write a generic failure header.
 		/// </summary>
 		private void HandleGetRequest() {
-			try {
-				this.Srv.HandleGetRequest( this );
-			}
+			try { this.Srv.HandleGetRequest( this ); }
 			finally {
-				if ( !this._responseWritten ) {
-					this.WriteFailure();
-				}
+				if ( !this._responseWritten ) { this.WriteFailure(); }
 			}
 		}
 
@@ -338,9 +311,7 @@ namespace Librainian.Internet.Servers {
 							var numread = this._inputStream.Read( buf, 0, Math.Min( BufSize, toRead ) );
 
 							if ( numread == 0 ) {
-								if ( toRead == 0 ) {
-									break;
-								}
+								if ( toRead == 0 ) { break; }
 
 								SimpleHttpLogger.LogVerbose( "client disconnected during post" );
 
@@ -373,15 +344,11 @@ namespace Librainian.Internet.Servers {
 
 					this.Srv.HandlePostRequest( this, null );
 				}
-				else {
-					this.Srv.HandlePostRequest( this, new StreamReader( ms ) );
-				}
+				else { this.Srv.HandlePostRequest( this, new StreamReader( ms ) ); }
 			}
 			finally {
 				try {
-					if ( !this._responseWritten ) {
-						this.WriteFailure();
-					}
+					if ( !this._responseWritten ) { this.WriteFailure(); }
 				}
 				catch ( Exception ) {
 
@@ -397,18 +364,12 @@ namespace Librainian.Internet.Servers {
 			var request = StreamReadLine( this._inputStream );
 			var tokens = request.Split( ' ' );
 
-			if ( tokens.Length != 3 ) {
-				throw new Exception( "invalid http request line: " + request );
-			}
+			if ( tokens.Length != 3 ) { throw new Exception( "invalid http request line: " + request ); }
 
 			this.HttpMethod = tokens[ 0 ].ToUpper();
 
-			if ( tokens[ 1 ].StartsWith( "http://" ) || tokens[ 1 ].StartsWith( "https://" ) ) {
-				this.RequestUrl = new Uri( tokens[ 1 ] );
-			}
-			else {
-				this.RequestUrl = new Uri( this.BaseUriThisServer, tokens[ 1 ] );
-			}
+			if ( tokens[ 1 ].StartsWith( "http://" ) || tokens[ 1 ].StartsWith( "https://" ) ) { this.RequestUrl = new Uri( tokens[ 1 ] ); }
+			else { this.RequestUrl = new Uri( this.BaseUriThisServer, tokens[ 1 ] ); }
 
 			this.HttpProtocolVersionstring = tokens[ 2 ];
 		}
@@ -422,9 +383,7 @@ namespace Librainian.Internet.Servers {
 			while ( ( line = StreamReadLine( this._inputStream ) ) != "" ) {
 				var separator = line.IndexOf( ':' );
 
-				if ( separator == -1 ) {
-					throw new Exception( "invalid http header line: " + line );
-				}
+				if ( separator == -1 ) { throw new Exception( "invalid http header line: " + line ); }
 
 				var name = line.Substring( 0, separator );
 				var pos = separator + 1;
@@ -471,25 +430,17 @@ namespace Librainian.Internet.Servers {
 					this.RequestCookies = Cookies.FromString( this.GetHeaderValue( "Cookie", "" ) );
 
 					try {
-						if ( this.HttpMethod.Equals( "GET" ) ) {
-							this.HandleGetRequest();
-						}
-						else if ( this.HttpMethod.Equals( "POST" ) ) {
-							this.HandlePostRequest();
-						}
+						if ( this.HttpMethod.Equals( "GET" ) ) { this.HandleGetRequest(); }
+						else if ( this.HttpMethod.Equals( "POST" ) ) { this.HandlePostRequest(); }
 					}
 					catch ( Exception e ) {
-						if ( !IsOrdinaryDisconnectException( e ) ) {
-							SimpleHttpLogger.Log( e );
-						}
+						if ( !IsOrdinaryDisconnectException( e ) ) { SimpleHttpLogger.Log( e ); }
 
 						this.WriteFailure( "500 Internal Server Error" );
 					}
 				}
 				catch ( Exception e ) {
-					if ( !IsOrdinaryDisconnectException( e ) ) {
-						SimpleHttpLogger.LogVerbose( e );
-					}
+					if ( !IsOrdinaryDisconnectException( e ) ) { SimpleHttpLogger.LogVerbose( e ); }
 
 					this.WriteFailure( "400 Bad Request", "The request cannot be fulfilled due to bad syntax." );
 				}
@@ -501,24 +452,14 @@ namespace Librainian.Internet.Servers {
 				this.RawOutputStream = null;
 			}
 			catch ( Exception ex ) {
-				if ( !IsOrdinaryDisconnectException( ex ) ) {
-					SimpleHttpLogger.LogVerbose( ex );
-				}
+				if ( !IsOrdinaryDisconnectException( ex ) ) { SimpleHttpLogger.LogVerbose( ex ); }
 			}
 			finally {
-				try {
-					this.TcpClient?.Close();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.LogVerbose( ex );
-				}
+				try { this.TcpClient?.Close(); }
+				catch ( Exception ex ) { SimpleHttpLogger.LogVerbose( ex ); }
 
-				try {
-					tcpStream?.Close();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.LogVerbose( ex );
-				}
+				try { tcpStream?.Close(); }
+				catch ( Exception ex ) { SimpleHttpLogger.LogVerbose( ex ); }
 			}
 		}
 
@@ -528,18 +469,12 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="httpProcessor"></param>
 		public static Boolean GetIsLanConnection( [NotNull] HttpProcessor httpProcessor ) {
-			if ( httpProcessor._isLanConnection != -1 ) {
-				return httpProcessor._isLanConnection == 1;
-			}
+			if ( httpProcessor._isLanConnection != -1 ) { return httpProcessor._isLanConnection == 1; }
 
 			var remoteBytes = httpProcessor.RemoteIpAddressBytes;
 
-			if ( remoteBytes is null || remoteBytes.Length != 4 ) {
-				httpProcessor._isLanConnection = 0;
-			}
-			else if ( remoteBytes[ 0 ] == 127 && remoteBytes[ 1 ] == 0 && remoteBytes[ 2 ] == 0 && remoteBytes[ 3 ] == 1 ) {
-				httpProcessor._isLanConnection = 1;
-			}
+			if ( remoteBytes is null || remoteBytes.Length != 4 ) { httpProcessor._isLanConnection = 0; }
+			else if ( remoteBytes[ 0 ] == 127 && remoteBytes[ 1 ] == 0 && remoteBytes[ 2 ] == 0 && remoteBytes[ 3 ] == 1 ) { httpProcessor._isLanConnection = 1; }
 			else {
 
 				// If the first 3 bytes of any local address matches the first 3 bytes of the local address, then the remote address is in the same class C range as this address.
@@ -561,9 +496,7 @@ namespace Librainian.Internet.Servers {
 					}
 				}
 
-				if ( httpProcessor._isLanConnection != 1 ) {
-					httpProcessor._isLanConnection = 0;
-				}
+				if ( httpProcessor._isLanConnection != 1 ) { httpProcessor._isLanConnection = 0; }
 			}
 
 			return httpProcessor._isLanConnection == 1;
@@ -573,8 +506,7 @@ namespace Librainian.Internet.Servers {
 			if ( ex is IOException ) {
 				if ( ex.InnerException is SocketException ) {
 					if ( ex.InnerException.Message.Contains( "An established connection was aborted by the software in your host machine" ) ||
-					     ex.InnerException.Message.Contains( "An existing connection was forcibly closed by the remote host" ) ||
-					     ex.InnerException.Message.Contains( "The socket has been shut down" ) /* Mono/Linux */ ) {
+					     ex.InnerException.Message.Contains( "An existing connection was forcibly closed by the remote host" ) || ex.InnerException.Message.Contains( "The socket has been shut down" ) /* Mono/Linux */ ) {
 						return true; // Connection aborted.  This happens often enough that reporting it can be excessive.
 					}
 				}
@@ -590,17 +522,11 @@ namespace Librainian.Internet.Servers {
 			while ( true ) {
 				var nextChar = inputStream.ReadByte();
 
-				if ( nextChar == '\n' ) {
-					break;
-				}
+				if ( nextChar == '\n' ) { break; }
 
-				if ( nextChar == '\r' ) {
-					continue;
-				}
+				if ( nextChar == '\r' ) { continue; }
 
-				if ( nextChar == -1 ) {
-					break;
-				}
+				if ( nextChar == -1 ) { break; }
 
 				data.Append( Convert.ToChar( nextChar ) );
 			}
@@ -645,9 +571,7 @@ namespace Librainian.Internet.Servers {
 		public String GetHeaderValue( String name, [CanBeNull] String defaultValue = null ) {
 			name = name.ToLower();
 
-			if ( !this.HttpHeaders.TryGetValue( name, out var value ) ) {
-				value = defaultValue;
-			}
+			if ( !this.HttpHeaders.TryGetValue( name, out var value ) ) { value = defaultValue; }
 
 			return value;
 		}
@@ -679,9 +603,7 @@ namespace Librainian.Internet.Servers {
 		public Boolean GetPostBoolParam( String key ) {
 			var param = this.GetPostParam( key );
 
-			if ( param == "1" || param.ToLower() == "true" ) {
-				return true;
-			}
+			if ( param == "1" || param.ToLower() == "true" ) { return true; }
 
 			return false;
 		}
@@ -693,13 +615,9 @@ namespace Librainian.Internet.Servers {
 		/// <param name="defaultValue"></param>
 		/// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
 		public Double GetPostDoubleParam( [CanBeNull] String key, Double defaultValue = 0 ) {
-			if ( key is null ) {
-				return defaultValue;
-			}
+			if ( key is null ) { return defaultValue; }
 
-			if ( Double.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
-				return value;
-			}
+			if ( Double.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) { return value; }
 
 			return defaultValue;
 		}
@@ -711,13 +629,9 @@ namespace Librainian.Internet.Servers {
 		/// <param name="defaultValue"></param>
 		/// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
 		public Int32 GetPostIntParam( [CanBeNull] String key, Int32 defaultValue = 0 ) {
-			if ( key is null ) {
-				return defaultValue;
-			}
+			if ( key is null ) { return defaultValue; }
 
-			if ( Int32.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) {
-				return value;
-			}
+			if ( Int32.TryParse( this.GetPostParam( key.ToLower() ), out var value ) ) { return value; }
 
 			return defaultValue;
 		}
@@ -728,13 +642,9 @@ namespace Librainian.Internet.Servers {
 		/// <param name="key">A case insensitive key.</param>
 		/// <returns>The value of the key, or empty String if the key does not exist or has no value.</returns>
 		public String GetPostParam( [CanBeNull] String key ) {
-			if ( key is null ) {
-				return "";
-			}
+			if ( key is null ) { return ""; }
 
-			if ( this.PostParams.TryGetValue( key.ToLower(), out var value ) ) {
-				return value;
-			}
+			if ( this.PostParams.TryGetValue( key.ToLower(), out var value ) ) { return value; }
 
 			return "";
 		}
@@ -751,9 +661,7 @@ namespace Librainian.Internet.Servers {
 		public Boolean GetQsBoolParam( String key ) {
 			var param = this.GetQsParam( key );
 
-			if ( param == "1" || param.ToLower() == "true" ) {
-				return true;
-			}
+			if ( param == "1" || param.ToLower() == "true" ) { return true; }
 
 			return false;
 		}
@@ -765,9 +673,7 @@ namespace Librainian.Internet.Servers {
 		/// <param name="defaultValue"></param>
 		/// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
 		public Double GetQsDoubleParam( [CanBeNull] String key, Double defaultValue = 0 ) {
-			if ( key is null ) {
-				return defaultValue;
-			}
+			if ( key is null ) { return defaultValue; }
 
 			return Double.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ? value : defaultValue;
 		}
@@ -779,13 +685,9 @@ namespace Librainian.Internet.Servers {
 		/// <param name="defaultValue"></param>
 		/// <returns>The value of the key, or [defaultValue] if the key does not exist or has no suitable value.</returns>
 		public Int32 GetQsIntParam( [CanBeNull] String key, Int32 defaultValue = 0 ) {
-			if ( key is null ) {
-				return defaultValue;
-			}
+			if ( key is null ) { return defaultValue; }
 
-			if ( Int32.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ) {
-				return value;
-			}
+			if ( Int32.TryParse( this.GetQsParam( key.ToLower() ), out var value ) ) { return value; }
 
 			return defaultValue;
 		}
@@ -796,13 +698,9 @@ namespace Librainian.Internet.Servers {
 		/// <param name="key">A case insensitive key.</param>
 		/// <returns>The value of the key, or empty String if the key does not exist or has no value.</returns>
 		public String GetQsParam( [CanBeNull] String key ) {
-			if ( key is null ) {
-				return "";
-			}
+			if ( key is null ) { return ""; }
 
-			if ( this.QueryString.TryGetValue( key.ToLower(), out var value ) ) {
-				return value;
-			}
+			if ( this.QueryString.TryGetValue( key.ToLower(), out var value ) ) { return value; }
 
 			return "";
 		}
@@ -825,12 +723,8 @@ namespace Librainian.Internet.Servers {
 			this.OutputStream.WriteLine( "Connection: close" );
 			this.OutputStream.WriteLine( "" );
 
-			if ( description is null ) {
-				this.OutputStream.WriteLine( code );
-			}
-			else if ( description != "" ) {
-				this.OutputStream.WriteLine( description );
-			}
+			if ( description is null ) { this.OutputStream.WriteLine( code ); }
+			else if ( description != "" ) { this.OutputStream.WriteLine( description ); }
 		}
 
 		/// <summary>
@@ -854,29 +748,20 @@ namespace Librainian.Internet.Servers {
 		/// <param name="contentLength">    (OPTIONAL) The length of your response, in bytes, if you know it.</param>
 		/// <param name="responseCode">     </param>
 		/// <param name="additionalHeaders"></param>
-		public void WriteSuccess( [CanBeNull] String contentType = "text/html", Int64 contentLength = -1, String responseCode = "200 OK",
-			[CanBeNull] List<KeyValuePair<String, String>> additionalHeaders = null ) {
+		public void WriteSuccess( [CanBeNull] String contentType = "text/html", Int64 contentLength = -1, String responseCode = "200 OK", [CanBeNull] List<KeyValuePair<String, String>> additionalHeaders = null ) {
 			this._responseWritten = true;
 			this.OutputStream.WriteLine( "HTTP/1.1 " + responseCode );
 
-			if ( !String.IsNullOrEmpty( contentType ) ) {
-				this.OutputStream.WriteLine( "Content-Type: " + contentType );
-			}
+			if ( !String.IsNullOrEmpty( contentType ) ) { this.OutputStream.WriteLine( "Content-Type: " + contentType ); }
 
-			if ( contentLength > -1 ) {
-				this.OutputStream.WriteLine( "Content-Length: " + contentLength );
-			}
+			if ( contentLength > -1 ) { this.OutputStream.WriteLine( "Content-Length: " + contentLength ); }
 
 			var cookieStr = this.ResponseCookies.ToString();
 
-			if ( !String.IsNullOrEmpty( cookieStr ) ) {
-				this.OutputStream.WriteLine( cookieStr );
-			}
+			if ( !String.IsNullOrEmpty( cookieStr ) ) { this.OutputStream.WriteLine( cookieStr ); }
 
 			if ( additionalHeaders != null ) {
-				foreach ( var header in additionalHeaders ) {
-					this.OutputStream.WriteLine( header.Key + ": " + header.Value );
-				}
+				foreach ( var header in additionalHeaders ) { this.OutputStream.WriteLine( header.Key + ": " + header.Value ); }
 			}
 
 			this.OutputStream.WriteLine( "Connection: close" );

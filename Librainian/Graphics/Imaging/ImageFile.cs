@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ImageFile.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "ImageFile.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "ImageFile.cs" was last formatted by Protiguous on 2018/06/26 at 1:08 AM.
+// Project: "Librainian", "ImageFile.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -53,6 +52,27 @@ namespace Librainian.Graphics.Imaging {
 	///     Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/
 	/// </summary>
 	internal class ImageFile {
+
+		public enum Types {
+
+			FileNotFound,
+
+			FileEmpty,
+
+			FileNull,
+
+			FileTooLarge,
+
+			FileUnrecognized,
+
+			PNG,
+
+			JPG,
+
+			GIFa,
+
+			GIFb
+		}
 
 		private readonly Byte[] _abEndGIF = {
 			0, 59
@@ -102,15 +122,11 @@ namespace Librainian.Graphics.Imaging {
 				this.FileType = Types.FileUnrecognized; // default if found
 
 				// check file has data...
-				if ( fliTmp.Length == 0 ) {
-					this.FileType = Types.FileEmpty;
-				}
+				if ( fliTmp.Length == 0 ) { this.FileType = Types.FileEmpty; }
 				else {
 
 					// check file isn't like stupid crazy big
-					if ( fliTmp.Length > maxFileSize ) {
-						this.FileType = Types.FileTooLarge;
-					}
+					if ( fliTmp.Length > maxFileSize ) { this.FileType = Types.FileTooLarge; }
 					else {
 
 						// load the whole file
@@ -121,9 +137,7 @@ namespace Librainian.Graphics.Imaging {
 
 						if ( abtTmp[ abtTmp.Length - 1 ] == 0 ) {
 							for ( var i = abtTmp.Length - 1; i > -1; i-- ) {
-								if ( abtTmp[ i ] == 0 ) {
-									continue;
-								}
+								if ( abtTmp[ i ] == 0 ) { continue; }
 
 								iLength = i;
 
@@ -132,9 +146,7 @@ namespace Librainian.Graphics.Imaging {
 						}
 
 						// check that there is actual data
-						if ( iLength == 0 ) {
-							this.FileType = Types.FileNull;
-						}
+						if ( iLength == 0 ) { this.FileType = Types.FileNull; }
 						else {
 							this.EndingNullBytes = abtTmp.Length - iLength;
 
@@ -142,18 +154,10 @@ namespace Librainian.Graphics.Imaging {
 							Array.Resize( ref abtTmp, iLength );
 
 							// get the file type
-							if ( _StartsWith( abtTmp, this._abTagPNG ) ) {
-								this.FileType = Types.PNG;
-							}
-							else if ( _StartsWith( abtTmp, this._abTagJPG ) ) {
-								this.FileType = Types.JPG;
-							}
-							else if ( _StartsWith( abtTmp, this._abTagGIFa ) ) {
-								this.FileType = Types.GIFa;
-							}
-							else if ( _StartsWith( abtTmp, this._abTagGIFb ) ) {
-								this.FileType = Types.GIFb;
-							}
+							if ( _StartsWith( abtTmp, this._abTagPNG ) ) { this.FileType = Types.PNG; }
+							else if ( _StartsWith( abtTmp, this._abTagJPG ) ) { this.FileType = Types.JPG; }
+							else if ( _StartsWith( abtTmp, this._abTagGIFa ) ) { this.FileType = Types.GIFa; }
+							else if ( _StartsWith( abtTmp, this._abTagGIFb ) ) { this.FileType = Types.GIFb; }
 
 							// check the file is complete
 							switch ( this.FileType ) {
@@ -187,34 +191,11 @@ namespace Librainian.Graphics.Imaging {
 							}
 
 							// get rid of ending null bytes at caller's option
-							if ( this.IsComplete && cullEndingNullBytes ) {
-								File.WriteAllBytes( this.Filename, abtTmp );
-							}
+							if ( this.IsComplete && cullEndingNullBytes ) { File.WriteAllBytes( this.Filename, abtTmp ); }
 						}
 					}
 				}
 			}
-		}
-
-		public enum Types {
-
-			FileNotFound,
-
-			FileEmpty,
-
-			FileNull,
-
-			FileTooLarge,
-
-			FileUnrecognized,
-
-			PNG,
-
-			JPG,
-
-			GIFa,
-
-			GIFb
 		}
 
 		private static Boolean _EndsWidth( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
@@ -231,9 +212,7 @@ namespace Librainian.Graphics.Imaging {
 		private static Boolean _StartsWith( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
 			var blRet = false;
 
-			if ( search.Length() <= data.Length() ) {
-				blRet = !search.Where( ( t, i ) => data[ i ] != t ).Any();
-			}
+			if ( search.Length() <= data.Length() ) { blRet = !search.Where( ( t, i ) => data[ i ] != t ).Any(); }
 
 			return blRet; // RETURN
 		}

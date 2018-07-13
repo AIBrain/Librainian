@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Volatiles.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Volatiles.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Volatiles.cs" was last formatted by Protiguous on 2018/06/26 at 1:44 AM.
+// Project: "Librainian", "Volatiles.cs" was last formatted by Protiguous on 2018/07/13 at 1:42 AM.
 
 namespace Librainian.Threading {
 
@@ -433,9 +432,7 @@ namespace Librainian.Threading {
 			}
 
 			private static Boolean ToBool( Int32 value ) {
-				if ( value != False && value != True ) {
-					throw new ArgumentOutOfRangeException( nameof( value ) );
-				}
+				if ( value != False && value != True ) { throw new ArgumentOutOfRangeException( nameof( value ) ); }
 
 				return value == True;
 			}
@@ -923,10 +920,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		public class BooleanArray {
 
-			private const Int32 False = 0;
-
-			private const Int32 True = 1;
-
 			private readonly Int32[] _array;
 
 			/// <summary>
@@ -934,14 +927,16 @@ namespace Librainian.Threading {
 			/// </summary>
 			public Int32 Length => this._array.Length;
 
+			private const Int32 False = 0;
+
+			private const Int32 True = 1;
+
 			/// <summary>
 			///     Create a new <see cref="BooleanArray" /> of a given length
 			/// </summary>
 			/// <param name="length">Length of the array</param>
 			public BooleanArray( Int32 length ) {
-				if ( length <= 0 ) {
-					throw new ArgumentOutOfRangeException( nameof( length ) );
-				}
+				if ( length <= 0 ) { throw new ArgumentOutOfRangeException( nameof( length ) ); }
 
 				this._array = new Int32[ length ];
 			}
@@ -953,9 +948,7 @@ namespace Librainian.Threading {
 			public BooleanArray( [NotNull] IEnumerable<Boolean> array ) => this._array = array.Select( selector: ToInt ).ToArray();
 
 			private static Boolean ToBool( Int32 value ) {
-				if ( value != False && value != True ) {
-					throw new ArgumentOutOfRangeException( nameof( value ) );
-				}
+				if ( value != False && value != True ) { throw new ArgumentOutOfRangeException( nameof( value ) ); }
 
 				return value == True;
 			}
@@ -1080,9 +1073,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			/// <param name="length">Length of the array</param>
 			public IntegerArray( Int32 length ) {
-				if ( length <= 0 ) {
-					throw new ArgumentOutOfRangeException( nameof( length ) );
-				}
+				if ( length <= 0 ) { throw new ArgumentOutOfRangeException( nameof( length ) ); }
 
 				this._array = new Int32[ length ];
 			}
@@ -1092,9 +1083,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			/// <param name="array"></param>
 			public IntegerArray( [NotNull] Int32[] array ) {
-				if ( array is null ) {
-					throw new ArgumentNullException( nameof( array ) );
-				}
+				if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
 				this._array = new Int32[ array.Length ];
 				array.CopyTo( array: this._array, index: 0 );
@@ -1115,8 +1104,7 @@ namespace Librainian.Threading {
 			/// <param name="comparand">The comparand (expected value)</param>
 			/// <param name="index">    The index.</param>
 			/// <returns>The original value</returns>
-			public Boolean AtomicCompareExchange( Int32 index, Int32 newValue, Int32 comparand ) =>
-				Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
+			public Boolean AtomicCompareExchange( Int32 index, Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
 
 			/// <summary>
 			///     Atomically increment the current value and return the new value
@@ -1232,9 +1220,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			/// <param name="length">Length of the array</param>
 			public LongArray( Int32 length ) {
-				if ( length <= 0 ) {
-					throw new ArgumentOutOfRangeException( nameof( length ) );
-				}
+				if ( length <= 0 ) { throw new ArgumentOutOfRangeException( nameof( length ) ); }
 
 				this._array = new Int64[ length ];
 			}
@@ -1244,9 +1230,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			/// <param name="array"></param>
 			public LongArray( [NotNull] Int64[] array ) {
-				if ( array is null ) {
-					throw new ArgumentNullException( nameof( array ) );
-				}
+				if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
 
 				this._array = new Int64[ array.Length ];
 				array.CopyTo( array: this._array, index: 0 );
@@ -1267,8 +1251,7 @@ namespace Librainian.Threading {
 			/// <param name="comparand">The comparand (expected value)</param>
 			/// <param name="index">    The index.</param>
 			/// <returns>The original value</returns>
-			public Boolean AtomicCompareExchange( Int32 index, Int64 newValue, Int64 comparand ) =>
-				Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
+			public Boolean AtomicCompareExchange( Int32 index, Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
 
 			/// <summary>
 			///     Atomically increment the current value and return the new value
@@ -1384,9 +1367,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			/// <param name="length">Length of the array</param>
 			public ReferenceArray( Int32 length ) {
-				if ( length <= 0 ) {
-					throw new ArgumentOutOfRangeException( nameof( length ) );
-				}
+				if ( length <= 0 ) { throw new ArgumentOutOfRangeException( nameof( length ) ); }
 
 				this._array = new T[ length ];
 			}
@@ -1405,8 +1386,7 @@ namespace Librainian.Threading {
 			/// <param name="comparand">The comparand (expected value)</param>
 			/// <param name="index">    The index.</param>
 			/// <returns>The original value</returns>
-			public Boolean AtomicCompareExchange( Int32 index, T newValue, [CanBeNull] T comparand ) =>
-				Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
+			public Boolean AtomicCompareExchange( Int32 index, T newValue, [CanBeNull] T comparand ) => Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
 
 			/// <summary>
 			///     Atomically set the value to the given updated value

@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "MathExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:18 AM.
+// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
 
 namespace Librainian.Maths {
 
@@ -61,18 +60,20 @@ namespace Librainian.Maths {
 
 	public static class MathExtensions {
 
+		public delegate Int32 FibonacciCalculator( Int32 n );
+
 		/// <summary>
 		///     Table used for reversing bits.
 		/// </summary>
 		private static readonly Byte[] BitReverseTable256 = {
-			0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8, 0x04,
-			0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4, 0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC, 0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC, 0x02, 0x82,
-			0x42, 0xC2, 0x22, 0xA2, 0x62, 0xE2, 0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2, 0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA, 0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA, 0x06, 0x86, 0x46,
-			0xC6, 0x26, 0xA6, 0x66, 0xE6, 0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6, 0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE, 0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE, 0x01, 0x81, 0x41, 0xC1,
-			0x21, 0xA1, 0x61, 0xE1, 0x11, 0x91, 0x51, 0xD1, 0x31, 0xB1, 0x71, 0xF1, 0x09, 0x89, 0x49, 0xC9, 0x29, 0xA9, 0x69, 0xE9, 0x19, 0x99, 0x59, 0xD9, 0x39, 0xB9, 0x79, 0xF9, 0x05, 0x85, 0x45, 0xC5, 0x25,
-			0xA5, 0x65, 0xE5, 0x15, 0x95, 0x55, 0xD5, 0x35, 0xB5, 0x75, 0xF5, 0x0D, 0x8D, 0x4D, 0xCD, 0x2D, 0xAD, 0x6D, 0xED, 0x1D, 0x9D, 0x5D, 0xDD, 0x3D, 0xBD, 0x7D, 0xFD, 0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3,
-			0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3, 0x33, 0xB3, 0x73, 0xF3, 0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB, 0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB, 0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67,
-			0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7, 0x77, 0xF7, 0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
+			0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8, 0x04, 0x84,
+			0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4, 0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC, 0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC, 0x02, 0x82, 0x42, 0xC2,
+			0x22, 0xA2, 0x62, 0xE2, 0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2, 0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA, 0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA, 0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6,
+			0x66, 0xE6, 0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6, 0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE, 0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE, 0x01, 0x81, 0x41, 0xC1, 0x21, 0xA1, 0x61, 0xE1,
+			0x11, 0x91, 0x51, 0xD1, 0x31, 0xB1, 0x71, 0xF1, 0x09, 0x89, 0x49, 0xC9, 0x29, 0xA9, 0x69, 0xE9, 0x19, 0x99, 0x59, 0xD9, 0x39, 0xB9, 0x79, 0xF9, 0x05, 0x85, 0x45, 0xC5, 0x25, 0xA5, 0x65, 0xE5, 0x15, 0x95,
+			0x55, 0xD5, 0x35, 0xB5, 0x75, 0xF5, 0x0D, 0x8D, 0x4D, 0xCD, 0x2D, 0xAD, 0x6D, 0xED, 0x1D, 0x9D, 0x5D, 0xDD, 0x3D, 0xBD, 0x7D, 0xFD, 0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3, 0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3,
+			0x33, 0xB3, 0x73, 0xF3, 0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB, 0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB, 0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67, 0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7,
+			0x77, 0xF7, 0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 		};
 
 		// you may want to pass this and use generics to allow more or less bits
@@ -80,15 +81,13 @@ namespace Librainian.Maths {
 		///     Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.
 		/// </summary>
 		private static readonly UInt32[] FibonacciLookup = {
-			1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887,
-			9227465, 14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073
+			1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465,
+			14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073
 		};
 
 		private static readonly Byte[] RGBRGB565565 = {
 			5, 6, 5, 5, 6, 5
 		};
-
-		public delegate Int32 FibonacciCalculator( Int32 n );
 
 		/// <summary>
 		///     <para>Add <paramref name="tax" /> of <paramref name="number" /> to <paramref name="number" />.</para>
@@ -237,9 +236,7 @@ namespace Librainian.Maths {
 			var strNumber = numberToConvert.ToString();
 			var currentNumber = String.Empty;
 
-			for ( var i = 0; i < howManyBytes; i++ ) {
-				convertedNumber[ i ] = 0xff;
-			}
+			for ( var i = 0; i < howManyBytes; i++ ) { convertedNumber[ i ] = 0xff; }
 
 			for ( var i = 0; i < strNumber.Length; i++ ) {
 				currentNumber += strNumber[ index: i ];
@@ -249,9 +246,7 @@ namespace Librainian.Maths {
 					convertedNumber[ i / 2 ] |= ( Byte ) ( ( Int32.Parse( s: currentNumber ) % 10 ) << 4 );
 				}
 
-				if ( i % 2 == 0 ) {
-					continue;
-				}
+				if ( i % 2 == 0 ) { continue; }
 
 				var value = Int32.Parse( s: currentNumber );
 				convertedNumber[ ( i - 1 ) / 2 ] = ( Byte ) ( value % 10 );
@@ -270,9 +265,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this Int64 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
+			for ( i = 0; value != 0; i++ ) { value &= value - 1; }
 
 			return i;
 		}
@@ -285,9 +278,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this UInt64 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
+			for ( i = 0; value != 0; i++ ) { value &= value - 1; }
 
 			return i;
 		}
@@ -300,9 +291,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this Int32 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
+			for ( i = 0; value != 0; i++ ) { value &= value - 1; }
 
 			return i;
 		}
@@ -315,9 +304,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this UInt32 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
+			for ( i = 0; value != 0; i++ ) { value &= value - 1; }
 
 			return i;
 		}
@@ -330,9 +317,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this Int16 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( Int16 ) ( value - 1 );
-			}
+			for ( i = 0; value != 0; i++ ) { value &= ( Int16 ) ( value - 1 ); }
 
 			return i;
 		}
@@ -345,9 +330,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this UInt16 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( UInt16 ) ( value - 1 );
-			}
+			for ( i = 0; value != 0; i++ ) { value &= ( UInt16 ) ( value - 1 ); }
 
 			return i;
 		}
@@ -360,9 +343,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this Byte value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( Byte ) ( value - 1 );
-			}
+			for ( i = 0; value != 0; i++ ) { value &= ( Byte ) ( value - 1 ); }
 
 			return i;
 		}
@@ -375,9 +356,7 @@ namespace Librainian.Maths {
 		public static Int32 CountBits( this SByte value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( SByte ) ( value - 1 );
-			}
+			for ( i = 0; value != 0; i++ ) { value &= ( SByte ) ( value - 1 ); }
 
 			return i;
 		}
@@ -400,9 +379,7 @@ namespace Librainian.Maths {
 			for ( var i = 0; i < 3; i++ ) {
 				var a = ( Int32 ) ( ( Int32 ) d / Math.Pow( x: 10, y: i ) ) % 10;
 
-				for ( var j = 0; j < 4; j++ ) {
-					input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
-				}
+				for ( var j = 0; j < 4; j++ ) { input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0; }
 			}
 
 			output[ 0 ] = input[ 0 ];
@@ -418,9 +395,7 @@ namespace Librainian.Maths {
 
 			var sb = new StringBuilder();
 
-			for ( var i = 9; i >= 0; i-- ) {
-				sb.Append( output[ i ] ? '1' : '0' );
-			}
+			for ( var i = 9; i >= 0; i-- ) { sb.Append( output[ i ] ? '1' : '0' ); }
 
 			return sb.ToString();
 		}
@@ -528,9 +503,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Int32 gcd( this Int32 x, Int32 y ) {
 			while ( true ) {
-				if ( y == 0 ) {
-					return x;
-				}
+				if ( y == 0 ) { return x; }
 
 				var x1 = x;
 				x = y;
@@ -547,9 +520,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Int64 gcd( this Int64 x, Int64 y ) {
 			while ( true ) {
-				if ( y == 0 ) {
-					return x;
-				}
+				if ( y == 0 ) { return x; }
 
 				var x1 = x;
 				x = y;
@@ -600,12 +571,8 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Int32 GCD2( Int32 x, Int32 y ) {
 			while ( x != y ) {
-				if ( x > y ) {
-					x = x - y;
-				}
-				else {
-					y = y - x;
-				}
+				if ( x > y ) { x = x - y; }
+				else { y = y - x; }
 			}
 
 			return x;
@@ -620,12 +587,8 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Int64 GCD2( Int64 x, Int64 y ) {
 			while ( x != y ) {
-				if ( x > y ) {
-					x = x - y;
-				}
-				else {
-					y = y - x;
-				}
+				if ( x > y ) { x = x - y; }
+				else { y = y - x; }
 			}
 
 			return x;
@@ -744,9 +707,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static BigRational IfLessThanZeroThenZero( this BigRational? number ) {
-			if ( !number.HasValue || number <= BigRational.Zero ) {
-				return BigRational.Zero;
-			}
+			if ( !number.HasValue || number <= BigRational.Zero ) { return BigRational.Zero; }
 
 			return number.Value;
 		}
@@ -766,9 +727,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Boolean IsNumber( this Single value ) {
-			if ( Single.IsNaN( f: value ) ) {
-				return false;
-			}
+			if ( Single.IsNaN( f: value ) ) { return false; }
 
 			return !Single.IsInfinity( f: value );
 		}
@@ -776,9 +735,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Boolean IsNumber( this Double value ) {
-			if ( Double.IsNaN( d: value ) ) {
-				return false;
-			}
+			if ( Double.IsNaN( d: value ) ) { return false; }
 
 			return !Double.IsInfinity( d: value );
 		}
@@ -842,13 +799,9 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double LogFactorial( this Int32 n ) {
-			if ( n < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if ( n < 0 ) { throw new ArgumentOutOfRangeException(); }
 
-			if ( n <= 254 ) {
-				return Constants.Logfactorialtable[ n ];
-			}
+			if ( n <= 254 ) { return Constants.Logfactorialtable[ n ]; }
 
 			var x = n + 1d;
 
@@ -863,9 +816,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double LogOnePlusX( this Double x ) {
-			if ( x <= -1.0 ) {
-				throw new ArgumentOutOfRangeException( nameof( x ), $"Invalid input argument: {x}" );
-			}
+			if ( x <= -1.0 ) { throw new ArgumentOutOfRangeException( nameof( x ), $"Invalid input argument: {x}" ); }
 
 			if ( Math.Abs( x ) > 1e-4 ) {
 
@@ -902,9 +853,7 @@ namespace Librainian.Maths {
 		public static Boolean Near( this BigRational number, BigRational target ) {
 			var difference = number - target;
 
-			if ( difference < BigRational.Zero ) {
-				difference = -difference;
-			}
+			if ( difference < BigRational.Zero ) { difference = -difference; }
 
 			return difference <= Constants.EpsilonDecimal;
 		}
@@ -963,9 +912,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal NthRoot( this Decimal baseValue, Int32 n ) {
-			if ( n == 1 ) {
-				return baseValue;
-			}
+			if ( n == 1 ) { return baseValue; }
 
 			Decimal deltaX;
 			var x = 0.1M;
@@ -1019,9 +966,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this Int64 value ) {
 			Int64 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1036,9 +981,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this UInt64 value ) {
 			UInt64 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1053,9 +996,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this Int32 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1070,9 +1011,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this UInt32 value ) {
 			UInt32 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1087,9 +1026,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this Int16 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1104,9 +1041,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this UInt16 value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1121,9 +1056,7 @@ namespace Librainian.Maths {
 		public static Boolean Parity( this SByte value ) {
 			Int32 i;
 
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
+			for ( i = 0; value != 0; value >>= 1 ) { i += value & 1; }
 
 			return i % 2 == 1;
 		}
@@ -1163,9 +1096,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal Pow( this Decimal baseValue, Int32 n ) {
-			for ( var i = 0; i < n - 1; i++ ) {
-				baseValue *= baseValue;
-			}
+			for ( var i = 0; i < n - 1; i++ ) { baseValue *= baseValue; }
 
 			return baseValue;
 		}
@@ -1186,9 +1117,7 @@ namespace Librainian.Maths {
 			for ( var i = e.Count - 1; i >= 0; --i ) {
 				a *= a;
 
-				if ( e[ index: i ] ) {
-					a *= x;
-				}
+				if ( e[ index: i ] ) { a *= x; }
 			}
 
 			return a;
@@ -1236,8 +1165,7 @@ namespace Librainian.Maths {
 		/// <param name="source">Source value to reverse</param>
 		/// <returns>Input value with reversed bits</returns>
 		public static Int32 ReverseBits( this Int32 source ) =>
-			( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) |
-			BitReverseTable256[ ( source >> 24 ) & 0xff ];
+			( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ];
 
 		/// <summary>
 		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -1318,9 +1246,7 @@ namespace Librainian.Maths {
 		public static Double SigmoidNeg1To1( this Double value ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( d: value ) );
 
 		public static Double Slope( [NotNull] this List<TimeProgression> data ) {
-			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
-			}
+			if ( data is null ) { throw new ArgumentNullException( nameof( data ) ); }
 
 			var averageX = data.Average( d => d.MillisecondsPassed );
 			var averageY = data.Average( d => d.Progress );
@@ -1388,9 +1314,7 @@ namespace Librainian.Maths {
 				smallest.Should().NotBe( unexpected: Double.NegativeInfinity );
 				smallest.Should().NotBe( unexpected: Double.PositiveInfinity );
 
-				if ( !sorted.TakeLast( item: out var largest ) ) {
-					largest = 1;
-				}
+				if ( !sorted.TakeLast( item: out var largest ) ) { largest = 1; }
 
 				largest.Should().NotBe( unexpected: Double.NaN );
 				largest.Should().NotBe( unexpected: Double.NegativeInfinity );
@@ -1439,9 +1363,7 @@ namespace Librainian.Maths {
 		public static UInt64 SubtractWithoutUnderFlow( this UInt64 left, UInt64 right ) {
 			var integer = new UBigInteger( left ) - new UBigInteger( right );
 
-			if ( integer < new UBigInteger( UInt64.MinValue ) ) {
-				return UInt64.MinValue;
-			}
+			if ( integer < new UBigInteger( UInt64.MinValue ) ) { return UInt64.MinValue; }
 
 			return ( UInt64 ) integer;
 		}
@@ -1473,16 +1395,10 @@ namespace Librainian.Maths {
 		public static IEnumerable<Int32> Through( this Int32 startValue, Int32 end ) {
 			Int32 offset;
 
-			if ( startValue < end ) {
-				offset = 1;
-			}
-			else {
-				offset = -1;
-			}
+			if ( startValue < end ) { offset = 1; }
+			else { offset = -1; }
 
-			for ( var i = startValue; i != end + offset; i += offset ) {
-				yield return i;
-			}
+			for ( var i = startValue; i != end + offset; i += offset ) { yield return i; }
 		}
 
 		/// <summary>
@@ -1493,26 +1409,20 @@ namespace Librainian.Maths {
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
-			if ( step <= 1 ) {
-				step = 1;
-			}
+			if ( step <= 1 ) { step = 1; }
 
 			if ( start <= end ) {
 				for ( var b = start; b <= end; b += step ) {
 					yield return b;
 
-					if ( b == Byte.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( b == Byte.MaxValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 			else {
 				for ( var b = start; b >= end; b -= step ) {
 					yield return b;
 
-					if ( b == Byte.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( b == Byte.MinValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 		}
@@ -1525,13 +1435,9 @@ namespace Librainian.Maths {
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
-			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
-			}
+			if ( start < 0 ) { throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." ); }
 
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+			if ( step == 0UL ) { step = 1UL; }
 
 			var reFrom = ( UInt64 ) start;
 
@@ -1539,18 +1445,14 @@ namespace Librainian.Maths {
 				for ( var ul = reFrom; ul <= end; ul += step ) {
 					yield return ul;
 
-					if ( ul == UInt64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == UInt64.MaxValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 			else {
 				for ( var ul = reFrom; ul >= end; ul -= step ) {
 					yield return ul;
 
-					if ( ul == UInt64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == UInt64.MinValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 		}
@@ -1563,13 +1465,9 @@ namespace Librainian.Maths {
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
-			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
-			}
+			if ( start < 0 ) { throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." ); }
 
-			if ( step == 0 ) {
-				step = 1;
-			}
+			if ( step == 0 ) { step = 1; }
 
 			var reFrom = start; //bug here is the bug if from is less than zero
 
@@ -1577,18 +1475,14 @@ namespace Librainian.Maths {
 				for ( var ul = reFrom; ul <= end; ul += step ) {
 					yield return ul;
 
-					if ( ul == Int32.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == Int32.MaxValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 			else {
 				for ( var ul = reFrom; ul >= end; ul -= step ) {
 					yield return ul;
 
-					if ( ul == Int32.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == Int32.MinValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 		}
@@ -1601,26 +1495,20 @@ namespace Librainian.Maths {
 		/// <param name="step"></param>
 		/// <returns></returns>
 		public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+			if ( step == 0UL ) { step = 1UL; }
 
 			if ( from <= end ) {
 				for ( var ul = from; ul <= end; ul += step ) {
 					yield return ul;
 
-					if ( ul == UInt64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == UInt64.MaxValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 			else {
 				for ( var ul = from; ul >= end; ul -= step ) {
 					yield return ul;
 
-					if ( ul == UInt64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == UInt64.MinValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 		}
@@ -1633,26 +1521,20 @@ namespace Librainian.Maths {
 		/// <param name="step"></param>
 		/// <returns></returns>
 		public static IEnumerable<Int64> To( this Int64 from, Int64 end, Int64 step = 1 ) {
-			if ( step == 0L ) {
-				step = 1L;
-			}
+			if ( step == 0L ) { step = 1L; }
 
 			if ( from <= end ) {
 				for ( var ul = from; ul <= end; ul += step ) {
 					yield return ul;
 
-					if ( ul == Int64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == Int64.MaxValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 			else {
 				for ( var ul = from; ul >= end; ul -= step ) {
 					yield return ul;
 
-					if ( ul == Int64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+					if ( ul == Int64.MinValue ) { yield break; } //special case to deal with overflow
 				}
 			}
 		}
@@ -1665,19 +1547,13 @@ namespace Librainian.Maths {
 		/// <param name="step"></param>
 		/// <returns></returns>
 		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+			if ( step == 0UL ) { step = 1UL; }
 
 			if ( from <= to ) {
-				for ( var ul = from; ul <= to; ul += step ) {
-					yield return ul;
-				}
+				for ( var ul = from; ul <= to; ul += step ) { yield return ul; }
 			}
 			else {
-				for ( var ul = from; ul >= to; ul -= step ) {
-					yield return ul;
-				}
+				for ( var ul = from; ul >= to; ul -= step ) { yield return ul; }
 			}
 		}
 
@@ -1700,21 +1576,15 @@ namespace Librainian.Maths {
 		/// <param name="step"></param>
 		/// <returns></returns>
 		public static IEnumerable<BigInteger> To( this Int64 from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+			if ( step == 0UL ) { step = 1UL; }
 
 			BigInteger reFrom = from;
 
 			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
-					yield return ul;
-				}
+				for ( var ul = reFrom; ul <= to; ul += step ) { yield return ul; }
 			}
 			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
-					yield return ul;
-				}
+				for ( var ul = reFrom; ul >= to; ul -= step ) { yield return ul; }
 			}
 		}
 
@@ -1726,21 +1596,15 @@ namespace Librainian.Maths {
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		public static IEnumerable<BigRational> To( this Int32 start, BigRational to, BigRational step ) {
-			if ( step < 0 ) {
-				step = 1;
-			}
+			if ( step < 0 ) { step = 1; }
 
 			BigRational reFrom = start;
 
 			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
-					yield return ul;
-				}
+				for ( var ul = reFrom; ul <= to; ul += step ) { yield return ul; }
 			}
 			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
-					yield return ul;
-				}
+				for ( var ul = reFrom; ul >= to; ul -= step ) { yield return ul; }
 			}
 		}
 
@@ -1761,72 +1625,44 @@ namespace Librainian.Maths {
 			if ( !step.HasValue ) {
 				TimeSpan diff;
 
-				if ( from > to ) {
-					diff = from - from;
-				}
-				else {
-					diff = to - from;
-				}
+				if ( from > to ) { diff = from - from; }
+				else { diff = to - from; }
 
-				if ( diff.TotalDays > 1 ) {
-					step = Days.One;
-				}
-				else if ( diff.TotalHours > 1 ) {
-					step = Hours.One;
-				}
-				else if ( diff.TotalMinutes > 1 ) {
-					step = Minutes.One;
-				}
-				else if ( diff.TotalSeconds > 1 ) {
-					step = Seconds.One;
-				}
-				else {
-					step = Milliseconds.One;
-				}
+				if ( diff.TotalDays > 1 ) { step = Days.One; }
+				else if ( diff.TotalHours > 1 ) { step = Hours.One; }
+				else if ( diff.TotalMinutes > 1 ) { step = Minutes.One; }
+				else if ( diff.TotalSeconds > 1 ) { step = Seconds.One; }
+				else { step = Milliseconds.One; }
 			}
 
 			if ( from > to ) {
-				if ( !step.HasValue ) {
-					yield break;
-				}
+				if ( !step.HasValue ) { yield break; }
 
-				for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) {
-					yield return dateTime;
-				}
+				for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) { yield return dateTime; }
 			}
 			else {
-				if ( !step.HasValue ) {
-					yield break;
-				}
+				if ( !step.HasValue ) { yield break; }
 
-				for ( var dateTime = from; dateTime <= to; dateTime += step.Value ) {
-					yield return dateTime;
-				}
+				for ( var dateTime = from; dateTime <= to; dateTime += step.Value ) { yield return dateTime; }
 			}
 		}
 
 		public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
 			var count = end - start + 1.0f;
 
-			for ( var idx = 0.0f; idx < count; idx += step ) {
-				yield return start + idx;
-			}
+			for ( var idx = 0.0f; idx < count; idx += step ) { yield return start + idx; }
 		}
 
 		public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
 			var count = end - start + 1.0;
 
-			for ( var idx = 0.0; idx < count; idx += step ) {
-				yield return start + idx;
-			}
+			for ( var idx = 0.0; idx < count; idx += step ) { yield return start + idx; }
 		}
 
 		public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
 			var count = end - start + 1;
 
-			for ( var i = 0; i < count; i++ ) {
-				yield return start + i;
-			}
+			for ( var i = 0; i < count; i++ ) { yield return start + i; }
 		}
 
 		/// <summary>
@@ -1839,19 +1675,13 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[NotNull]
 		public static String ToStringWithBase( this Int32 number, Int32 @base, Int32 minDigits = 1 ) {
-			if ( minDigits < 1 ) {
-				minDigits = 1;
-			}
+			if ( minDigits < 1 ) { minDigits = 1; }
 
-			if ( number == 0 ) {
-				return new String( c: '0', count: minDigits );
-			}
+			if ( number == 0 ) { return new String( c: '0', count: minDigits ); }
 
 			var s = "";
 
-			if ( @base < 2 || @base > Constants.NumberBaseChars.Length ) {
-				return s;
-			}
+			if ( @base < 2 || @base > Constants.NumberBaseChars.Length ) { return s; }
 
 			var neg = false;
 
@@ -1868,9 +1698,7 @@ namespace Librainian.Maths {
 				n /= b;
 			}
 
-			if ( neg ) {
-				s = "-" + s;
-			}
+			if ( neg ) { s = "-" + s; }
 
 			return s;
 		}
@@ -1893,41 +1721,29 @@ namespace Librainian.Maths {
 		public static Boolean TryParse( [CanBeNull] this String numberString, out BigRational result ) {
 			result = BigRational.Zero;
 
-			if ( null == numberString ) {
-				return false;
-			}
+			if ( null == numberString ) { return false; }
 
 			numberString = numberString.Trim();
 
-			if ( numberString.IsNullOrEmpty() ) {
-				return false;
-			}
+			if ( numberString.IsNullOrEmpty() ) { return false; }
 
 			var parts = numberString.Split( '/' ).ToList();
 
-			if ( parts.Count != 2 ) {
-				return false;
-			}
+			if ( parts.Count != 2 ) { return false; }
 
 			var top = parts.TakeFirst();
 
-			if ( top.IsNullOrWhiteSpace() ) {
-				return false;
-			}
+			if ( top.IsNullOrWhiteSpace() ) { return false; }
 
 			top = top.Trim();
 
 			var bottom = parts.TakeLast();
 
-			if ( String.IsNullOrWhiteSpace( bottom ) ) {
-				return false;
-			}
+			if ( String.IsNullOrWhiteSpace( bottom ) ) { return false; }
 
 			parts.Should().BeEmpty();
 
-			if ( parts.Count > 0 ) {
-				return false;
-			}
+			if ( parts.Count > 0 ) { return false; }
 
 			BigInteger.TryParse( top, result: out var numerator );
 
@@ -1941,9 +1757,7 @@ namespace Librainian.Maths {
 		public static Boolean TrySplitDecimal( this Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
 			var theString = value.ToString( "R" );
 
-			if ( !theString.Contains( "." ) ) {
-				theString += ".0";
-			}
+			if ( !theString.Contains( "." ) ) { theString += ".0"; }
 
 			var split = theString.Split( '.' );
 			split.Should().HaveCount( expected: 2, because: "otherwise invalid" );

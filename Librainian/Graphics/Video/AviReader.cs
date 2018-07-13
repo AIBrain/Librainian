@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "AviReader.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "AviReader.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "AviReader.cs" was last formatted by Protiguous on 2018/06/26 at 1:10 AM.
+// Project: "Librainian", "AviReader.cs" was last formatted by Protiguous on 2018/07/10 at 9:08 PM.
 
 namespace Librainian.Graphics.Video {
 
@@ -107,9 +106,7 @@ namespace Librainian.Graphics.Video {
 		/// <param name="position">   Position of the frame</param>
 		/// <param name="dstFileName">Name ofthe file to store the bitmap</param>
 		public void ExportBitmap( Int32 position, [NotNull] String dstFileName ) {
-			if ( position > this.CountFrames ) {
-				throw new Exception( "Invalid frame position" );
-			}
+			if ( position > this.CountFrames ) { throw new Exception( "Invalid frame position" ); }
 
 			//Decompress the frame and return a pointer to the DIB
 			var pDib = NativeMethods.AVIStreamGetFrame( this._getFrameObject, this._firstFrame + position );
@@ -121,9 +118,7 @@ namespace Librainian.Graphics.Video {
 			/*if(bih.biBitCount < 24){
 				throw new Exception("Not enough colors! DIB color depth is less than 24 bit.");
 			}else */
-			if ( bih.biSizeImage < 1 ) {
-				throw new Exception( "Exception in AVIStreamGetFrame: Not bitmap decompressed." );
-			}
+			if ( bih.biSizeImage < 1 ) { throw new Exception( "Exception in AVIStreamGetFrame: Not bitmap decompressed." ); }
 
 			//Copy the image
 			var bitmapData = new Byte[ bih.biSizeImage ];
@@ -186,16 +181,12 @@ namespace Librainian.Graphics.Video {
 			//Open the file
 			var result = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, Avi.OfShareDenyWrite, 0 );
 
-			if ( result != 0 ) {
-				throw new Exception( "Exception in AVIFileOpen: " + result );
-			}
+			if ( result != 0 ) { throw new Exception( "Exception in AVIFileOpen: " + result ); }
 
 			//Get the video stream
 			result = NativeMethods.AVIFileGetStream( this._aviFile, out this._aviStream, Avi.StreamtypeVideo, 0 );
 
-			if ( result != 0 ) {
-				throw new Exception( "Exception in AVIFileGetStream: " + result );
-			}
+			if ( result != 0 ) { throw new Exception( "Exception in AVIFileGetStream: " + result ); }
 
 			this._firstFrame = NativeMethods.AVIStreamStart( this._aviStream.ToInt32() );
 			this.CountFrames = NativeMethods.AVIStreamLength( this._aviStream.ToInt32() );
@@ -203,9 +194,7 @@ namespace Librainian.Graphics.Video {
 			this._streamInfo = new Avi.Avistreaminfo();
 			result = NativeMethods.AVIStreamInfo( this._aviStream.ToInt32(), ref this._streamInfo, Marshal.SizeOf( this._streamInfo ) );
 
-			if ( result != 0 ) {
-				throw new Exception( "Exception in AVIStreamInfo: " + result );
-			}
+			if ( result != 0 ) { throw new Exception( "Exception in AVIStreamInfo: " + result ); }
 
 			//Open frames
 
@@ -227,9 +216,7 @@ namespace Librainian.Graphics.Video {
 			this._getFrameObject = NativeMethods.AVIStreamGetFrameOpen( this._aviStream, ref bih ); //force function to return 24bit DIBS
 
 			//getFrameObject = Avi.AVIStreamGetFrameOpen(aviStream, 0); //return any bitmaps
-			if ( this._getFrameObject == 0 ) {
-				throw new Exception( "Exception in AVIStreamGetFrameOpen!" );
-			}
+			if ( this._getFrameObject == 0 ) { throw new Exception( "Exception in AVIStreamGetFrameOpen!" ); }
 		}
 	}
 }

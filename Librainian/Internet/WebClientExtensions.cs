@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "WebClientExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "WebClientExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "WebClientExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:13 AM.
+// Project: "Librainian", "WebClientExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
 
 namespace Librainian.Internet {
 
@@ -67,9 +66,7 @@ namespace Librainian.Internet {
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
 		public static WebClient Add( [NotNull] this WebClient client, CancellationToken? token ) {
-			if ( client == null ) {
-				throw new ArgumentNullException( paramName: nameof( client ) );
-			}
+			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
 			token?.Register( client.CancelAsync );
 
@@ -85,13 +82,9 @@ namespace Librainian.Internet {
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
 		public static WebClient Add( [NotNull] this WebClient client, TimeSpan? timeout ) {
-			if ( client == null ) {
-				throw new ArgumentNullException( paramName: nameof( client ) );
-			}
+			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
-			if ( timeout.HasValue ) {
-				new CancellationTokenSource( timeout.Value ).Token.Register( client.CancelAsync );
-			}
+			if ( timeout.HasValue ) { new CancellationTokenSource( timeout.Value ).Token.Register( client.CancelAsync ); }
 
 			return client;
 		}
@@ -105,9 +98,7 @@ namespace Librainian.Internet {
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
 		public static WebClient Add( [NotNull] this WebClient client, TimeSpan? timeout, CancellationToken? token ) {
-			if ( client == null ) {
-				throw new ArgumentNullException( paramName: nameof( client ) );
-			}
+			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
 			return client.Add( token ).Add( timeout );
 		}
@@ -118,13 +109,9 @@ namespace Librainian.Internet {
 		/// <param name="token"></param>
 		/// <returns>A Task that contains the downloaded data.</returns>
 		public static async Task<Byte[]> DownloadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
-			if ( webClient is null ) {
-				throw new ArgumentNullException( paramName: nameof( webClient ) );
-			}
+			if ( webClient is null ) { throw new ArgumentNullException( paramName: nameof( webClient ) ); }
 
-			if ( String.IsNullOrWhiteSpace( value: address ) ) {
-				throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
-			}
+			if ( String.IsNullOrWhiteSpace( value: address ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) ); }
 
 			return await DownloadDataTask( webClient.Add( token ), new Uri( address ) ).NoUI();
 		}
@@ -134,20 +121,12 @@ namespace Librainian.Internet {
 		/// <param name="address">The URI from which to download data.</param>
 		/// <returns>A Task that contains the downloaded data.</returns>
 		public static async Task<Byte[]> DownloadDataTask( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
-			if ( webClient is null ) {
-				throw new ArgumentNullException( paramName: nameof( webClient ) );
-			}
+			if ( webClient is null ) { throw new ArgumentNullException( paramName: nameof( webClient ) ); }
 
-			if ( address is null ) {
-				throw new ArgumentNullException( paramName: nameof( address ) );
-			}
+			if ( address is null ) { throw new ArgumentNullException( paramName: nameof( address ) ); }
 
-			try {
-				return await webClient.DownloadDataTaskAsync( address ).NoUI();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			try { return await webClient.DownloadDataTaskAsync( address ).NoUI(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return null;
 		}
@@ -157,13 +136,9 @@ namespace Librainian.Internet {
 		/// <param name="address">The URI for which the stream should be opened.</param>
 		/// <returns>A Task that contains the opened stream.</returns>
 		public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, TrimmedString address ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( paramName: nameof( webClient ) );
-			}
+			if ( webClient == null ) { throw new ArgumentNullException( paramName: nameof( webClient ) ); }
 
-			if ( address.IsEmpty ) {
-				throw new ArgumentEmptyException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
-			}
+			if ( address.IsEmpty ) { throw new ArgumentEmptyException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) ); }
 
 			return OpenReadTask( webClient, new Uri( address ) );
 		}
@@ -173,13 +148,9 @@ namespace Librainian.Internet {
 		/// <param name="address">The URI for which the stream should be opened.</param>
 		/// <returns>A Task that contains the opened stream.</returns>
 		public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( paramName: nameof( webClient ) );
-			}
+			if ( webClient == null ) { throw new ArgumentNullException( paramName: nameof( webClient ) ); }
 
-			if ( address == null ) {
-				throw new ArgumentNullException( paramName: nameof( address ) );
-			}
+			if ( address == null ) { throw new ArgumentNullException( paramName: nameof( address ) ); }
 
 			var taskCompletionSource = new TaskCompletionSource<Stream>( address );
 
@@ -187,9 +158,7 @@ namespace Librainian.Internet {
 
 			webClient.OpenReadCompleted += Handler;
 
-			try {
-				webClient.OpenReadAsync( address, taskCompletionSource );
-			}
+			try { webClient.OpenReadAsync( address, taskCompletionSource ); }
 			catch ( Exception exception ) {
 				webClient.OpenReadCompleted -= Handler;
 				taskCompletionSource.TrySetException( exception );
@@ -211,17 +180,11 @@ namespace Librainian.Internet {
 		/// <param name="method">The HTTP method that should be used to open the stream.</param>
 		/// <returns>A Task that contains the opened stream.</returns>
 		public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, [NotNull] Uri address, TrimmedString method ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( paramName: nameof( webClient ) );
-			}
+			if ( webClient == null ) { throw new ArgumentNullException( paramName: nameof( webClient ) ); }
 
-			if ( address == null ) {
-				throw new ArgumentNullException( paramName: nameof( address ) );
-			}
+			if ( address == null ) { throw new ArgumentNullException( paramName: nameof( address ) ); }
 
-			if ( method.IsEmpty ) {
-				throw new ArgumentEmptyException( message: "Value cannot be empty.", paramName: nameof( method ) );
-			}
+			if ( method.IsEmpty ) { throw new ArgumentEmptyException( message: "Value cannot be empty.", paramName: nameof( method ) ); }
 
 			var taskCompletionSource = new TaskCompletionSource<Stream>( address );
 
@@ -230,9 +193,7 @@ namespace Librainian.Internet {
 			webClient.OpenWriteCompleted += Handler;
 
 			// Start the async work
-			try {
-				webClient.OpenWriteAsync( address, method, taskCompletionSource );
-			}
+			try { webClient.OpenWriteAsync( address, method, taskCompletionSource ); }
 			catch ( Exception exc ) {
 
 				// If something goes wrong kicking off the async work, unregister the callback and
@@ -270,9 +231,7 @@ namespace Librainian.Internet {
 			webClient.UploadDataCompleted += Handler;
 
 			// Start the async work
-			try {
-				webClient.UploadDataAsync( address, method, data, tcs );
-			}
+			try { webClient.UploadDataAsync( address, method, data, tcs ); }
 			catch ( Exception exc ) {
 
 				// If something goes wrong kicking off the async work, unregister the callback and
@@ -310,9 +269,7 @@ namespace Librainian.Internet {
 			webClient.UploadFileCompleted += Handler;
 
 			// Start the async work
-			try {
-				webClient.UploadFileAsync( address, method, fileName, tcs );
-			}
+			try { webClient.UploadFileAsync( address, method, fileName, tcs ); }
 			catch ( Exception exc ) {
 
 				// If something goes wrong kicking off the async work, unregister the callback and
@@ -350,9 +307,7 @@ namespace Librainian.Internet {
 			webClient.UploadStringCompleted += Handler;
 
 			// Start the async work
-			try {
-				webClient.UploadStringAsync( address, method, data, tcs );
-			}
+			try { webClient.UploadStringAsync( address, method, data, tcs ); }
 			catch ( Exception exc ) {
 
 				// If something goes wrong kicking off the async work, unregister the callback and

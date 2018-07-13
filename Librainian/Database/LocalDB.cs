@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "LocalDB.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "LocalDB.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "LocalDB.cs" was last formatted by Protiguous on 2018/06/26 at 12:59 AM.
+// Project: "Librainian", "LocalDB.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
 
 namespace Librainian.Database {
 
@@ -78,13 +77,9 @@ namespace Librainian.Database {
 
 		// ReSharper disable once NotNullMemberIsNotInitialized
 		public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
-			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
-				throw new ArgumentNullException( nameof( databaseName ) );
-			}
+			if ( String.IsNullOrWhiteSpace( databaseName ) ) { throw new ArgumentNullException( nameof( databaseName ) ); }
 
-			if ( databaseLocation is null ) {
-				databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
-			}
+			if ( databaseLocation is null ) { databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName ); }
 
 			this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
 			this.WriteTimeout = timeoutForWrites.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
@@ -132,21 +127,15 @@ namespace Librainian.Database {
 
 		public async Task DetachDatabaseAsync() {
 			try {
-				if ( this.Connection.State == ConnectionState.Closed ) {
-					await this.Connection.OpenAsync();
-				}
+				if ( this.Connection.State == ConnectionState.Closed ) { await this.Connection.OpenAsync(); }
 
 				using ( var cmd = this.Connection.CreateCommand() ) {
 					cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );
 					await cmd.ExecuteNonQueryAsync();
 				}
 			}
-			catch ( SqlException exception ) {
-				exception.More();
-			}
-			catch ( DbException exception ) {
-				exception.More();
-			}
+			catch ( SqlException exception ) { exception.More(); }
+			catch ( DbException exception ) { exception.More(); }
 		}
 
 		public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );

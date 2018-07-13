@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Folder.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Folder.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Folder.cs" was last formatted by Protiguous on 2018/06/26 at 12:55 AM.
+// Project: "Librainian", "Folder.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -66,6 +65,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 	[Immutable]
 	[Serializable]
 	public class Folder : IEquatable<Folder> {
+
+		public Boolean Equals( Folder other ) => Equals( this, other );
 
 		/// <summary>
 		///     "/"
@@ -108,13 +109,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		public Folder( TrimmedString fullPath ) {
-			if ( fullPath.IsEmpty ) {
-				throw new ArgumentNullException( nameof( fullPath ) );
-			}
+			if ( fullPath.IsEmpty ) { throw new ArgumentNullException( nameof( fullPath ) ); }
 
-			if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
-				throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
-			}
+			if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) { throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" ); }
 
 			this.Info = directoryInfo ?? throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
 		}
@@ -152,8 +149,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, String subFolder, String subSubfolder, String subSubSubfolder ) : this(
-			Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder,
-				subSubfolder, subSubSubfolder ) ) { }
+			Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder, subSubfolder,
+				subSubSubfolder ) ) { }
 
 		///// <summary>
 		/////     <para>
@@ -214,13 +211,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		public static Boolean Equals( [CanBeNull] Folder left, [CanBeNull] Folder right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
+			if ( ReferenceEquals( left, right ) ) { return true; }
 
-			if ( left is null || right is null ) {
-				return false;
-			}
+			if ( left is null || right is null ) { return false; }
 
 			return left.FullName.Is( right.FullName );
 		}
@@ -232,13 +225,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static Folder GetTempFolder() {
 			var tempFolder = new Folder( Path.GetTempPath() );
 
-			if ( tempFolder.Exists() ) {
-				return tempFolder;
-			}
+			if ( tempFolder.Exists() ) { return tempFolder; }
 
-			if ( tempFolder.Create() ) {
-				return tempFolder;
-			}
+			if ( tempFolder.Create() ) { return tempFolder; }
 
 			throw new DirectoryNotFoundException( $"Unable to create the user's temp folder `{tempFolder.FullName}`." );
 		}
@@ -261,15 +250,11 @@ namespace Librainian.ComputerSystem.FileSystem {
 			folder = null;
 
 			try {
-				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return false;
-				}
+				if ( String.IsNullOrWhiteSpace( path ) ) { return false; }
 
 				path = path.Trim();
 
-				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return false;
-				}
+				if ( String.IsNullOrWhiteSpace( path ) ) { return false; }
 
 				DirectoryInfo dirInfo;
 
@@ -301,19 +286,13 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <returns></returns>
 		[ItemNotNull]
 		public IEnumerable<Folder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = true ) {
-			if ( String.IsNullOrEmpty( searchPattern ) ) {
-				yield break;
-			}
+			if ( String.IsNullOrEmpty( searchPattern ) ) { yield break; }
 
 			if ( randomize ) {
-				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( info => Randem.Next() ) ) {
-					yield return new Folder( fileInfo.FullName );
-				}
+				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( info => Randem.Next() ) ) { yield return new Folder( fileInfo.FullName ); }
 			}
 			else {
-				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) {
-					yield return new Folder( fileInfo.FullName );
-				}
+				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) { yield return new Folder( fileInfo.FullName ); }
 			}
 		}
 
@@ -332,26 +311,18 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <seealso cref="Delete"></seealso>
 		public Boolean Create() {
 			try {
-				if ( this.Exists() ) {
-					return true;
-				}
+				if ( this.Exists() ) { return true; }
 
 				try {
-					if ( this.Info.Parent?.Exists == false ) {
-						new Folder( this.Info.Parent.FullName ).Create();
-					}
+					if ( this.Info.Parent?.Exists == false ) { new Folder( this.Info.Parent.FullName ).Create(); }
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				this.Info.Create();
 
 				return this.Exists();
 			}
-			catch ( IOException ) {
-				return false;
-			}
+			catch ( IOException ) { return false; }
 		}
 
 		/// <summary>
@@ -381,15 +352,11 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				return true;
 			}
-			catch ( ArgumentException exception ) {
-				exception.More();
-			}
+			catch ( ArgumentException exception ) { exception.More(); }
 			catch ( SecurityException ) { }
 
 			return false;
 		}
-
-		public Boolean Equals( Folder other ) => Equals( this, other );
 
 		/// <summary>
 		///     Returns true if the <see cref="Folder" /> currently exists.
@@ -423,9 +390,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			if ( !this.Info.Exists ) {
 				this.Refresh();
 
-				if ( !this.Info.Exists ) {
-					return Enumerable.Empty<Document>();
-				}
+				if ( !this.Info.Exists ) { return Enumerable.Empty<Document>(); }
 			}
 
 			return this.Info.BetterEnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
@@ -442,13 +407,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		[ItemNotNull]
 		public IEnumerable<Folder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
-			if ( String.IsNullOrEmpty( searchPattern ) ) {
-				yield break;
-			}
+			if ( String.IsNullOrEmpty( searchPattern ) ) { yield break; }
 
-			foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
-				yield return new Folder( fileInfo.FullName );
-			}
+			foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) { yield return new Folder( fileInfo.FullName ); }
 		}
 
 		public override Int32 GetHashCode() => this.FullName.GetHashCode();

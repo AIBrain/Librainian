@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Surfer.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Surfer.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Surfer.cs" was last formatted by Protiguous on 2018/06/26 at 1:13 AM.
+// Project: "Librainian", "Surfer.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
 
 namespace Librainian.Internet {
 
@@ -56,32 +55,6 @@ namespace Librainian.Internet {
 
 	public class Surfer : ABetterClassDispose {
 
-		/// <summary>
-		///     Returns True if a download is currently in progress
-		/// </summary>
-		public Boolean DownloadInProgress {
-			get {
-				try {
-					this._downloadInProgressAccess.EnterReadLock();
-
-					return this._downloadInProgressStatus;
-				}
-				finally {
-					this._downloadInProgressAccess.ExitReadLock();
-				}
-			}
-
-			private set {
-				try {
-					this._downloadInProgressAccess.EnterWriteLock();
-					this._downloadInProgressStatus = value;
-				}
-				finally {
-					this._downloadInProgressAccess.ExitWriteLock();
-				}
-			}
-		}
-
 		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
 		private readonly ConcurrentBag<Uri> _pastUrls = new ConcurrentBag<Uri>();
@@ -92,6 +65,55 @@ namespace Librainian.Internet {
 		private readonly WebClient _webclient;
 
 		private Boolean _downloadInProgressStatus;
+
+		/// <summary>
+		///     Returns True if a download is currently in progress
+		/// </summary>
+		public Boolean DownloadInProgress {
+			get {
+				try {
+					this._downloadInProgressAccess.EnterReadLock();
+
+					return this._downloadInProgressStatus;
+				}
+				finally { this._downloadInProgressAccess.ExitReadLock(); }
+			}
+
+			private set {
+				try {
+					this._downloadInProgressAccess.EnterWriteLock();
+					this._downloadInProgressStatus = value;
+				}
+				finally { this._downloadInProgressAccess.ExitWriteLock(); }
+			}
+		}
+
+		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
+			this._webclient = new WebClient {
+				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
+			};
+
+			if ( null != onDownloadStringCompleted ) { this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e ); }
+			else { this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted; }
+
+			//System.Net.WebUtility
+			//System.HttpStyleUriParser
+			/*
+            var urls = new[] { "http://www.google.com", "http://www.yahoo.com" };
+
+            Task.Factory.ContinueWhenAll(
+                urls.Select( url => Task.Factory.StartNew( u => {
+                    using ( var client = new WebClient() ) {
+                        return client.DownloadString( ( String )u );
+                    }
+                }, url ) ).ToArray(), tasks => {
+                    var results = tasks.Select( t => t.Result );
+                    foreach ( var html in results ) {
+                        Console.WriteLine( html );
+                    }
+                } );
+            */
+		}
 
 		public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, [NotNull] String webpage ) {
 
@@ -119,9 +141,7 @@ namespace Librainian.Internet {
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public Boolean Surf( [CanBeNull] String address ) {
-			if ( String.IsNullOrWhiteSpace( address ) ) {
-				return false;
-			}
+			if ( String.IsNullOrWhiteSpace( address ) ) { return false; }
 
 			try {
 				var uri = new Uri( uriString: address );
@@ -141,22 +161,16 @@ namespace Librainian.Internet {
 		/// <param name="address"></param>
 		/// <returns></returns>
 		public Boolean Surf( [CanBeNull] Uri address ) {
-			if ( null == address ) {
-				return false;
-			}
+			if ( null == address ) { return false; }
 
 			try {
-				if ( this._pastUrls.Contains( address ) ) {
-					return false;
-				}
+				if ( this._pastUrls.Contains( address ) ) { return false; }
 
 				this._urls.Enqueue( item: address );
 
 				return true;
 			}
-			finally {
-				this.StartNextDownload();
-			}
+			finally { this.StartNextDownload(); }
 		}
 
 		internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
@@ -173,57 +187,20 @@ namespace Librainian.Internet {
 			Task.Factory.StartNew( () => {
 				Thread.Yield();
 
-				if ( this.DownloadInProgress ) {
-					return;
-				}
+				if ( this.DownloadInProgress ) { return; }
 
-				if ( !this._urls.TryDequeue( result: out var address ) ) {
-					return;
-				}
+				if ( !this._urls.TryDequeue( result: out var address ) ) { return; }
 
 				this.DownloadInProgress = true;
 				$"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
 				this._webclient.DownloadStringAsync( address: address, userToken: address );
 			} ).ContinueWith( t => {
-				if ( this._urls.Any() ) {
-					this.StartNextDownload();
-				}
+				if ( this._urls.Any() ) { this.StartNextDownload(); }
 			} );
 
 		/// <summary>
 		///     Dispose any disposable members.
 		/// </summary>
 		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
-
-		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
-			this._webclient = new WebClient {
-				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
-			};
-
-			if ( null != onDownloadStringCompleted ) {
-				this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
-			}
-			else {
-				this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
-			}
-
-			//System.Net.WebUtility
-			//System.HttpStyleUriParser
-			/*
-            var urls = new[] { "http://www.google.com", "http://www.yahoo.com" };
-
-            Task.Factory.ContinueWhenAll(
-                urls.Select( url => Task.Factory.StartNew( u => {
-                    using ( var client = new WebClient() ) {
-                        return client.DownloadString( ( String )u );
-                    }
-                }, url ) ).ToArray(), tasks => {
-                    var results = tasks.Select( t => t.Result );
-                    foreach ( var html in results ) {
-                        Console.WriteLine( html );
-                    }
-                } );
-            */
-		}
 	}
 }

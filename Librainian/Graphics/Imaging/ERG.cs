@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ERG.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "ERG.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "ERG.cs" was last formatted by Protiguous on 2018/06/26 at 1:08 AM.
+// Project: "Librainian", "ERG.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -72,13 +71,6 @@ namespace Librainian.Graphics.Imaging {
 	[JsonObject]
 	public class Erg {
 
-		public static readonly String Extension = ".erg";
-
-		/// <summary>
-		///     Human readable file header.
-		/// </summary>
-		public static readonly String Header = "ERG0.1";
-
 		/// <summary>
 		///     EXIF metadata
 		/// </summary>
@@ -104,45 +96,40 @@ namespace Librainian.Graphics.Imaging {
 
 		public UInt32 Width { get; private set; }
 
+		public static readonly String Extension = ".erg";
+
+		/// <summary>
+		///     Human readable file header.
+		/// </summary>
+		public static readonly String Header = "ERG0.1";
+
 		public Erg() => this.Checksum = UInt64.MaxValue;
 
 		public async Task<UInt64> CalculateChecksumAsync() =>
 			await Task.Run( () => {
-				unchecked {
-					return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels );
-				}
+				unchecked { return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels ); }
 			} );
 
 		public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
-			try {
-				return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).NoUI();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			try { return await this.TryAdd( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).NoUI(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
 
 		public async Task<Boolean> TryAdd( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-			if ( bitmap is null ) {
-				return false;
-			}
+			if ( bitmap is null ) { return false; }
 
 			var stopwatch = Stopwatch.StartNew();
 
 			return await Task.Run( () => {
 				var width = bitmap.Width;
 
-				if ( width < UInt32.MinValue ) {
-					return false;
-				}
+				if ( width < UInt32.MinValue ) { return false; }
 
 				var height = bitmap.Height;
 
-				if ( height < UInt32.MinValue ) {
-					return false;
-				}
+				if ( height < UInt32.MinValue ) { return false; }
 
 				this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
 
@@ -161,13 +148,9 @@ namespace Librainian.Graphics.Imaging {
 				var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
 
 				Parallel.For( 0, this.Height, y => {
-					if ( stopwatch.Elapsed > timeout ) {
-						return;
-					}
+					if ( stopwatch.Elapsed > timeout ) { return; }
 
-					if ( cancellationToken.IsCancellationRequested ) {
-						return;
-					}
+					if ( cancellationToken.IsCancellationRequested ) { return; }
 
 					for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
 						var color = bitmap.GetPixel( ( Int32 ) x, ( Int32 ) y );

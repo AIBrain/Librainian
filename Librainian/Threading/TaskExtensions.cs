@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "TaskExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:44 AM.
+// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
 
 namespace Librainian.Threading {
 
@@ -75,9 +74,7 @@ namespace Librainian.Threading {
 
 				case TaskStatus.Faulted:
 
-					if ( completedTask.Exception != null ) {
-						completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
-					}
+					if ( completedTask.Exception != null ) { completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions ); }
 
 					break;
 
@@ -98,9 +95,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[Obsolete( "Does not work as intended." )]
 		public static Task AddCancellation( [NotNull] this Task task, CancellationToken token ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			return Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) );
 		}
@@ -115,15 +110,11 @@ namespace Librainian.Threading {
 		[Obsolete( "Does not work as intended." )]
 		[ItemNotNull]
 		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, CancellationToken token ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) ).NoUI();
 
-			if ( t != task ) {
-				throw new OperationCanceledException( "timeout" );
-			}
+			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
 
 			return task.Result;
 		}
@@ -140,16 +131,12 @@ namespace Librainian.Threading {
 		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
 		[Obsolete( "Does not work as intended." )]
 		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
-			if ( task is null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task is null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			try {
 				var winning = await Task.WhenAny( task, Task.Delay( timeout, token ) ).NoUI();
 
-				if ( winning != task ) {
-					throw new OperationCanceledException( "cancelled" );
-				}
+				if ( winning != task ) { throw new OperationCanceledException( "cancelled" ); }
 
 				return task.Result;
 			}
@@ -169,9 +156,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[NotNull]
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( [NotNull] this IEnumerable<Task<T>> source ) {
-			if ( source == null ) {
-				throw new ArgumentNullException( paramName: nameof( source ) );
-			}
+			if ( source == null ) { throw new ArgumentNullException( paramName: nameof( source ) ); }
 
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -200,9 +185,7 @@ namespace Librainian.Threading {
 		/// </example>
 		[NotNull]
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
-			if ( tasks == null ) {
-				throw new ArgumentNullException( paramName: nameof( tasks ) );
-			}
+			if ( tasks == null ) { throw new ArgumentNullException( paramName: nameof( tasks ) ); }
 
 			var inputTasks = tasks.ToList();
 			var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
@@ -216,17 +199,14 @@ namespace Librainian.Threading {
 			var nextTaskIndex = -1;
 
 			void Continuation( Task<T> completed ) {
-				if ( completed == null ) {
-					throw new ArgumentNullException( paramName: nameof( completed ) );
-				}
+				if ( completed == null ) { throw new ArgumentNullException( paramName: nameof( completed ) ); }
 
 				var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
 				bucket.TrySetResult( result: completed );
 			}
 
 			foreach ( var inputTask in inputTasks ) {
-				inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None, continuationOptions: TaskContinuationOptions.ExecuteSynchronously,
-					scheduler: TaskScheduler.Default );
+				inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None, continuationOptions: TaskContinuationOptions.ExecuteSynchronously, scheduler: TaskScheduler.Default );
 			}
 
 			return results;
@@ -247,9 +227,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			return task.ConfigureAwait( false );
 		}
@@ -262,9 +240,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			return task.ConfigureAwait( false );
 		}
@@ -276,9 +252,7 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
-			}
+			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
 			await Task.Delay( delay: delay );
 			await Task.Run( job );
@@ -291,9 +265,7 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this SpanOfTime delay, [NotNull] Action job ) {
-			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
-			}
+			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -306,9 +278,7 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
-			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
-			}
+			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -321,9 +291,7 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
-			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
-			}
+			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -336,9 +304,7 @@ namespace Librainian.Threading {
 		/// <param name="job">  </param>
 		/// <returns></returns>
 		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
-			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
-			}
+			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
 
 			await Task.Delay( delay: delay ).NoUI();
 			await Task.Run( job ).NoUI();
@@ -350,33 +316,23 @@ namespace Librainian.Threading {
 			//    throw new ArgumentNullException( "next" );
 			//}
 
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( task => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						next();
 						tcs.TrySetResult( null );
 					}
-					catch ( Exception ex ) {
-						tcs.TrySetException( ex );
-					}
+					catch ( Exception ex ) { tcs.TrySetException( ex ); }
 				}
 			} );
 
@@ -385,51 +341,33 @@ namespace Librainian.Threading {
 
 		[Obsolete( "use continuewith", true )]
 		public static Task<T2> Then<T2>( [NotNull] this Task first, [NotNull] Func<Task<T2>> next ) {
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( obj => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						var t = next();
 
-						if ( t is null ) {
-							tcs.TrySetCanceled();
-						}
+						if ( t is null ) { tcs.TrySetCanceled(); }
 						else {
 							t.ContinueWith( obj1 => {
 								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) {
-										tcs.TrySetException( t.Exception.InnerExceptions );
-									}
+									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
 								}
-								else if ( t.IsCanceled ) {
-									tcs.TrySetCanceled();
-								}
-								else {
-									tcs.TrySetResult( t.Result );
-								}
+								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
+								else { tcs.TrySetResult( t.Result ); }
 							}, TaskContinuationOptions.ExecuteSynchronously );
 						}
 					}
-					catch ( Exception exc ) {
-						tcs.TrySetException( exc );
-					}
+					catch ( Exception exc ) { tcs.TrySetException( exc ); }
 				}
 			}, TaskContinuationOptions.ExecuteSynchronously );
 
@@ -437,33 +375,23 @@ namespace Librainian.Threading {
 		}
 
 		public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Action<T1> next ) {
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( task => {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						next( first.Result );
 						tcs.TrySetResult( null );
 					}
-					catch ( Exception ex ) {
-						tcs.TrySetException( ex );
-					}
+					catch ( Exception ex ) { tcs.TrySetException( ex ); }
 				}
 			} );
 
@@ -471,51 +399,33 @@ namespace Librainian.Threading {
 		}
 
 		public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task> next ) {
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( delegate {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						var t = next( first.Result );
 
-						if ( t is null ) {
-							tcs.TrySetCanceled();
-						}
+						if ( t is null ) { tcs.TrySetCanceled(); }
 						else {
 							t.ContinueWith( delegate {
 								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) {
-										tcs.TrySetException( t.Exception.InnerExceptions );
-									}
+									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
 								}
-								else if ( t.IsCanceled ) {
-									tcs.TrySetCanceled();
-								}
-								else {
-									tcs.TrySetResult( null );
-								}
+								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
+								else { tcs.TrySetResult( null ); }
 							}, TaskContinuationOptions.ExecuteSynchronously );
 						}
 					}
-					catch ( Exception exc ) {
-						tcs.TrySetException( exc );
-					}
+					catch ( Exception exc ) { tcs.TrySetException( exc ); }
 				}
 			}, TaskContinuationOptions.ExecuteSynchronously );
 
@@ -523,33 +433,23 @@ namespace Librainian.Threading {
 		}
 
 		public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, T2> next ) {
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( delegate {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						var result = next( first.Result );
 						tcs.TrySetResult( result );
 					}
-					catch ( Exception ex ) {
-						tcs.TrySetException( ex );
-					}
+					catch ( Exception ex ) { tcs.TrySetException( ex ); }
 				}
 			} );
 
@@ -557,51 +457,33 @@ namespace Librainian.Threading {
 		}
 
 		public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task<T2>> next ) {
-			if ( first is null ) {
-				throw new ArgumentNullException( nameof( first ) );
-			}
+			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
-			if ( next is null ) {
-				throw new ArgumentNullException( nameof( next ) );
-			}
+			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
 
 			var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
 
 			first.ContinueWith( delegate {
 				if ( first.IsFaulted ) {
-					if ( first.Exception != null ) {
-						tcs.TrySetException( first.Exception.InnerExceptions );
-					}
+					if ( first.Exception != null ) { tcs.TrySetException( first.Exception.InnerExceptions ); }
 				}
-				else if ( first.IsCanceled ) {
-					tcs.TrySetCanceled();
-				}
+				else if ( first.IsCanceled ) { tcs.TrySetCanceled(); }
 				else {
 					try {
 						var t = next( first.Result );
 
-						if ( t is null ) {
-							tcs.TrySetCanceled();
-						}
+						if ( t is null ) { tcs.TrySetCanceled(); }
 						else {
 							t.ContinueWith( delegate {
 								if ( t.IsFaulted ) {
-									if ( t.Exception != null ) {
-										tcs.TrySetException( t.Exception.InnerExceptions );
-									}
+									if ( t.Exception != null ) { tcs.TrySetException( t.Exception.InnerExceptions ); }
 								}
-								else if ( t.IsCanceled ) {
-									tcs.TrySetCanceled();
-								}
-								else {
-									tcs.TrySetResult( t.Result );
-								}
+								else if ( t.IsCanceled ) { tcs.TrySetCanceled(); }
+								else { tcs.TrySetResult( t.Result ); }
 							}, TaskContinuationOptions.ExecuteSynchronously );
 						}
 					}
-					catch ( Exception exc ) {
-						tcs.TrySetException( exc );
-					}
+					catch ( Exception exc ) { tcs.TrySetException( exc ); }
 				}
 			}, TaskContinuationOptions.ExecuteSynchronously );
 
@@ -616,15 +498,11 @@ namespace Librainian.Threading {
 		/// <param name="item">  </param>
 		/// <param name="token"></param>
 		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, T item, CancellationToken token ) {
-			if ( target is null ) {
-				throw new ArgumentNullException( nameof( target ) );
-			}
+			if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
 			while ( true ) {
 
-				if ( await target.SendAsync( item, token ).NoUI() || token.IsCancellationRequested ) {
-					break;
-				}
+				if ( await target.SendAsync( item, token ).NoUI() || token.IsCancellationRequested ) { break; }
 
 				await Task.Delay( 16, token ).NoUI();
 			}
@@ -636,9 +514,7 @@ namespace Librainian.Threading {
 		/// <param name="task"></param>
 		/// <returns></returns>
 		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			return task.ConfigureAwait( true );
 		}
@@ -650,9 +526,7 @@ namespace Librainian.Threading {
 		/// <param name="task"></param>
 		/// <returns></returns>
 		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			return task.ConfigureAwait( true );
 		}
@@ -692,19 +566,13 @@ namespace Librainian.Threading {
 		/// <param name="condition"> </param>
 		[CanBeNull]
 		public static Timer When( this TimeSpan afterDelay, [NotNull] Func<Boolean> condition, [NotNull] Action action ) {
-			if ( condition is null ) {
-				throw new ArgumentNullException( nameof( condition ) );
-			}
+			if ( condition is null ) { throw new ArgumentNullException( nameof( condition ) ); }
 
-			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
-			}
+			if ( action is null ) { throw new ArgumentNullException( nameof( action ) ); }
 
 			try {
 				return afterDelay.CreateTimer( () => {
-					if ( condition() ) {
-						action();
-					}
+					if ( condition() ) { action(); }
 				} ).Once().AndStart();
 			}
 			catch ( Exception exception ) {
@@ -725,15 +593,11 @@ namespace Librainian.Threading {
 		[Obsolete( "Does not work as intended." )]
 		[ItemNotNull]
 		public static async Task<T> WithTimeout<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
-			if ( task == null ) {
-				throw new ArgumentNullException( paramName: nameof( task ) );
-			}
+			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
 			var t = await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI();
 
-			if ( t != task ) {
-				throw new OperationCanceledException( "timeout" );
-			}
+			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
 
 			return task.Result;
 		}
@@ -748,26 +612,14 @@ namespace Librainian.Threading {
 		[NotNull]
 		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
 			() => {
-				try {
-					pre?.Invoke();
-				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				try { pre?.Invoke(); }
+				catch ( Exception exception ) { exception.More(); }
 
-				try {
-					action?.Invoke();
-				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				try { action?.Invoke(); }
+				catch ( Exception exception ) { exception.More(); }
 
-				try {
-					post?.Invoke();
-				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				try { post?.Invoke(); }
+				catch ( Exception exception ) { exception.More(); }
 			};
 
 		/* Concept class
@@ -806,9 +658,7 @@ namespace Librainian.Threading {
 		/// <param name="selector"></param>
 		/// <returns></returns>
 		public static async Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
-			if ( selector is null ) {
-				throw new ArgumentNullException( nameof( selector ) );
-			}
+			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
 
 			return await Task.Run( selector ).NoUI();
 		}
@@ -822,9 +672,7 @@ namespace Librainian.Threading {
 		/// <param name="input">   </param>
 		/// <returns></returns>
 		public static async Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
-			if ( selector is null ) {
-				throw new ArgumentNullException( nameof( selector ) );
-			}
+			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
 
 			return await Task.Run( () => selector( input ) ).NoUI();
 		}
@@ -849,13 +697,9 @@ namespace Librainian.Threading {
 						var stopwatch = Stopwatch.StartNew();
 						action();
 
-						if ( stopwatch.Elapsed > ( andTookLongerThan ?? Milliseconds.ThreeHundredThirtyThree ) ) {
-							$"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine();
-						}
+						if ( stopwatch.Elapsed > ( andTookLongerThan ?? Milliseconds.ThreeHundredThirtyThree ) ) { $"{callerMemberName} took {stopwatch.Elapsed.Simpler()}.".WriteLine(); }
 					}
-					else {
-						action();
-					}
+					else { action(); }
 
 					return true;
 				}
@@ -865,14 +709,10 @@ namespace Librainian.Threading {
 				Logging.Garbage();
 				attempts--;
 
-				if ( attempts.Any() ) {
-					goto TryAgain;
-				}
+				if ( attempts.Any() ) { goto TryAgain; }
 			}
 			catch ( Exception exception ) {
-				if ( null != onException ) {
-					return onException.Wrap();
-				}
+				if ( null != onException ) { return onException.Wrap(); }
 
 				exception.More();
 			}

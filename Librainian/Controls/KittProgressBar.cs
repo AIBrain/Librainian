@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "KittProgressBar.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "KittProgressBar.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "KittProgressBar.cs" was last formatted by Protiguous on 2018/06/26 at 12:57 AM.
+// Project: "Librainian", "KittProgressBar.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
 namespace Librainian.Controls {
 
@@ -77,6 +76,15 @@ namespace Librainian.Controls {
 
 		private Int32 mValue;
 
+		/// <summary>When the MaxValue property is changed.</summary>
+		public delegate void MaxChangedHandler( Object sender, EventArgs e );
+
+		/// <summary>When the MinValue property is changed.</summary>
+		public delegate void MinChangedHandler( Object sender, EventArgs e );
+
+		/// <summary>When the Value property is changed.</summary>
+		public delegate void ValueChangedHandler( Object sender, EventArgs e );
+
 		/// <summary>Whether the glow is animated.</summary>
 		[Category( "Highlights and Glows" )]
 		[DefaultValue( typeof( Boolean ), "true" )]
@@ -87,12 +95,8 @@ namespace Librainian.Controls {
 			set {
 				this._mAnimate = value;
 
-				if ( value ) {
-					this.mGlowAnimation.Start();
-				}
-				else {
-					this.mGlowAnimation.Stop();
-				}
+				if ( value ) { this.mGlowAnimation.Start(); }
+				else { this.mGlowAnimation.Stop(); }
 
 				this.Invalidate();
 			}
@@ -163,13 +167,9 @@ namespace Librainian.Controls {
 			set {
 				this._mMaxValue = value;
 
-				if ( value > this.MaxValue ) {
-					this.Value = this.MaxValue;
-				}
+				if ( value > this.MaxValue ) { this.Value = this.MaxValue; }
 
-				if ( this.Value < this.MaxValue ) {
-					this.mGlowAnimation.Start();
-				}
+				if ( this.Value < this.MaxValue ) { this.mGlowAnimation.Start(); }
 
 				this.MaxChanged?.Invoke( this, EventArgs.Empty );
 				this.Invalidate();
@@ -186,9 +186,7 @@ namespace Librainian.Controls {
 			set {
 				this.mMinValue = value;
 
-				if ( value < this.MinValue ) {
-					this.Value = this.MinValue;
-				}
+				if ( value < this.MinValue ) { this.Value = this.MinValue; }
 
 				this.MinChanged?.Invoke( this, EventArgs.Empty );
 				this.Invalidate();
@@ -220,33 +218,18 @@ namespace Librainian.Controls {
 			get => this.mValue;
 
 			set {
-				if ( value > this.MaxValue || value < this.MinValue ) {
-					return;
-				}
+				if ( value > this.MaxValue || value < this.MinValue ) { return; }
 
 				this.mValue = value;
 
-				if ( value < this.MaxValue ) {
-					this.mGlowAnimation.Start();
-				}
+				if ( value < this.MaxValue ) { this.mGlowAnimation.Start(); }
 
-				if ( value == this.MaxValue ) {
-					this.mGlowAnimation.Stop();
-				}
+				if ( value == this.MaxValue ) { this.mGlowAnimation.Stop(); }
 
 				this.ValueChanged?.Invoke( this, EventArgs.Empty );
 				this.Invalidate();
 			}
 		}
-
-		/// <summary>When the MaxValue property is changed.</summary>
-		public event MaxChangedHandler MaxChanged;
-
-		/// <summary>When the MinValue property is changed.</summary>
-		public event MinChangedHandler MinChanged;
-
-		/// <summary>When the Value property is changed.</summary>
-		public event ValueChangedHandler ValueChanged;
 
 		/// <summary>Create the control and initialize it.</summary>
 		public KittProgressBar() {
@@ -265,26 +248,22 @@ namespace Librainian.Controls {
 				this.mGlowAnimation.Tick += this.mGlowAnimation_Tick;
 				this.mGlowAnimation.Interval = 15;
 
-				if ( this.Value < this.MaxValue ) {
-					this.mGlowAnimation.Start();
-				}
+				if ( this.Value < this.MaxValue ) { this.mGlowAnimation.Start(); }
 			}
 		}
 
 		/// <summary>When the MaxValue property is changed.</summary>
-		public delegate void MaxChangedHandler( Object sender, EventArgs e );
+		public event MaxChangedHandler MaxChanged;
 
 		/// <summary>When the MinValue property is changed.</summary>
-		public delegate void MinChangedHandler( Object sender, EventArgs e );
+		public event MinChangedHandler MinChanged;
 
 		/// <summary>When the Value property is changed.</summary>
-		public delegate void ValueChangedHandler( Object sender, EventArgs e );
+		public event ValueChangedHandler ValueChanged;
 
 		/// <summary>Clean up any resources being used.</summary>
 		protected override void Dispose( Boolean disposing ) {
-			if ( disposing ) {
-				this.components?.Dispose();
-			}
+			if ( disposing ) { this.components?.Dispose(); }
 
 			base.Dispose( disposing );
 		}
@@ -445,21 +424,13 @@ namespace Librainian.Controls {
 			var g = ( Int32 ) Math.Abs( cg - ( cg - c2g ) * pc );
 			var b = ( Int32 ) Math.Abs( cb - ( cb - c2b ) * pc );
 
-			if ( a > 255 ) {
-				a = 255;
-			}
+			if ( a > 255 ) { a = 255; }
 
-			if ( r > 255 ) {
-				r = 255;
-			}
+			if ( r > 255 ) { r = 255; }
 
-			if ( g > 255 ) {
-				g = 255;
-			}
+			if ( g > 255 ) { g = 255; }
 
-			if ( b > 255 ) {
-				b = 255;
-			}
+			if ( b > 255 ) { b = 255; }
 
 			return Color.FromArgb( a, r, g, b );
 		}
@@ -481,9 +452,7 @@ namespace Librainian.Controls {
 			if ( this.Animate ) {
 				this._mGlowPosition += 4;
 
-				if ( this._mGlowPosition > this.Width ) {
-					this._mGlowPosition = -300;
-				}
+				if ( this._mGlowPosition > this.Width ) { this._mGlowPosition = -300; }
 
 				this.Invalidate();
 			}

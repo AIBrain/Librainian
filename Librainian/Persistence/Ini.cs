@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Ini.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Ini.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Ini.cs" was last formatted by Protiguous on 2018/06/26 at 1:38 AM.
+// Project: "Librainian", "Ini.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
 
 namespace Librainian.Persistence {
 
@@ -61,6 +60,16 @@ namespace Librainian.Persistence {
 	/// </summary>
 	[JsonObject]
 	public class Ini : IEquatable<Ini> {
+
+		/// <summary>
+		///     Indicates whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>
+		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
+		public Boolean Equals( Ini other ) => Equals( this, other );
 
 		/// <summary>
 		///     [Header] <see cref="Environment.NewLine" /> Key=Value <see cref="Environment.NewLine" />
@@ -92,30 +101,20 @@ namespace Librainian.Persistence {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
-				if ( section is null ) {
-					return null;
-				}
+				if ( section is null ) { return null; }
 
-				if ( key is null ) {
-					return null;
-				}
+				if ( key is null ) { return null; }
 
 				return this.Data[ section ]?[ key ];
 			}
 
 			[DebuggerStepThrough]
 			set {
-				if ( section is null ) {
-					return;
-				}
+				if ( section is null ) { return; }
 
-				if ( key is null ) {
-					return;
-				}
+				if ( key is null ) { return; }
 
-				if ( this.Data.TryGetValue( section, out var result ) ) {
-					result[ key ] = value;
-				}
+				if ( this.Data.TryGetValue( section, out var result ) ) { result[ key ] = value; }
 				else {
 
 					//is this threadsafe? another thread could pop in between the TryGetValue() above, and the Add() here.
@@ -136,13 +135,9 @@ namespace Librainian.Persistence {
 		public Ini( [NotNull] Document document, CancellationTokenSource cancellationSource = null ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.Folder.Exists() ) {
-				this.Document.Folder.Create();
-			}
+			if ( !this.Document.Folder.Exists() ) { this.Document.Folder.Create(); }
 
-			if ( cancellationSource is null ) {
-				cancellationSource = new CancellationTokenSource( delay: Seconds.Ten );
-			}
+			if ( cancellationSource is null ) { cancellationSource = new CancellationTokenSource( delay: Seconds.Ten ); }
 
 			this.Reload().Wait( cancellationToken: cancellationSource.Token );
 		}
@@ -155,17 +150,11 @@ namespace Librainian.Persistence {
 		/// <param name="value">  </param>
 		/// <returns></returns>
 		private Boolean Add( [NotNull] String section, [NotNull] String key, String value ) {
-			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
-			}
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
-			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
-			}
+			if ( key is null ) { throw new ArgumentNullException( nameof( key ) ); }
 
-			if ( this.Data.TryGetValue( section, out var result ) ) {
-				result[ key ] = value;
-			}
+			if ( this.Data.TryGetValue( section, out var result ) ) { result[ key ] = value; }
 			else {
 				this.Data[ section ] = new Section {
 					[ key ] = value
@@ -182,13 +171,9 @@ namespace Librainian.Persistence {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		public static Boolean Equals( Ini left, Ini right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
+			if ( ReferenceEquals( left, right ) ) { return true; }
 
-			if ( ReferenceEquals( left, default ) || ReferenceEquals( default, right ) ) {
-				return false;
-			}
+			if ( ReferenceEquals( left, default ) || ReferenceEquals( default, right ) ) { return false; }
 
 			return left.ID.Equals( right.ID );
 		}
@@ -221,16 +206,12 @@ namespace Librainian.Persistence {
 		/// <param name="iniFile"></param>
 		/// <returns></returns>
 		public Boolean Add( [CanBeNull] IniFile iniFile ) {
-			if ( null == iniFile ) {
-				return false;
-			}
+			if ( null == iniFile ) { return false; }
 
 			Parallel.ForEach( source: iniFile.Sections.AsParallel(), body: section => {
 				var dictionary = iniFile[ section: section ];
 
-				if ( dictionary != null ) {
-					Parallel.ForEach( source: dictionary.AsParallel(), body: pair => this.Add( section: section, pair.Key, pair.Value ) );
-				}
+				if ( dictionary != null ) { Parallel.ForEach( source: dictionary.AsParallel(), body: pair => this.Add( section: section, pair.Key, pair.Value ) ); }
 			} );
 
 			return true;
@@ -245,16 +226,6 @@ namespace Librainian.Persistence {
 
 			return !this.Data.Keys.Any();
 		}
-
-		/// <summary>
-		///     Indicates whether the current object is equal to another object of the same type.
-		/// </summary>
-		/// <param name="other">An object to compare with this object.</param>
-		/// <returns>
-		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public Boolean Equals( Ini other ) => Equals( this, other );
 
 		/// <summary>
 		///     Determines whether the specified object is equal to the current object.
@@ -277,16 +248,12 @@ namespace Librainian.Persistence {
 
 			return await Task.Run( function: () => {
 
-				if ( document?.Exists() != true ) {
-					return false;
-				}
+				if ( document?.Exists() != true ) { return false; }
 
 				try {
 					var data = document.LoadJSON<ConcurrentDictionary<String, Section>>();
 
-					if ( data is null ) {
-						return false;
-					}
+					if ( data is null ) { return false; }
 
 					var result = Parallel.ForEach( source: data.Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
 						body: section => Parallel.ForEach( source: data[ section ].Keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive,
@@ -294,9 +261,7 @@ namespace Librainian.Persistence {
 
 					return result.IsCompleted;
 				}
-				catch ( JsonException exception ) {
-					exception.More();
-				}
+				catch ( JsonException exception ) { exception.More(); }
 				catch ( IOException exception ) {
 
 					//file in use by another app
@@ -320,26 +285,18 @@ namespace Librainian.Persistence {
 
 		[DebuggerStepThrough]
 		public Boolean TryRemove( [NotNull] String section ) {
-			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
-			}
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
 			return this.Data.TryRemove( section, out _ );
 		}
 
 		[DebuggerStepThrough]
 		public Boolean TryRemove( [NotNull] String section, String key ) {
-			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
-			}
+			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
 
-			if ( !this.Data.ContainsKey( section ) ) {
-				return false;
-			}
+			if ( !this.Data.ContainsKey( section ) ) { return false; }
 
-			if ( !this.Data[ section ].Keys.Contains( key ) ) {
-				return false;
-			}
+			if ( !this.Data[ section ].Keys.Contains( key ) ) { return false; }
 
 			this.Data[ section ][ key ] = null;
 
@@ -356,13 +313,9 @@ namespace Librainian.Persistence {
 			var document = this.Document;
 
 			return await Task.Run( function: () => {
-				if ( document is null ) {
-					return false;
-				}
+				if ( document is null ) { return false; }
 
-				if ( document.Exists() ) {
-					document.Delete();
-				}
+				if ( document.Exists() ) { document.Delete(); }
 
 				return this.Data.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
 			}, cancellationToken: cancellationToken );

@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "EAPCommon.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "EAPCommon.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "EAPCommon.cs" was last formatted by Protiguous on 2018/06/26 at 1:11 AM.
+// Project: "Librainian", "EAPCommon.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
 
 namespace Librainian.Internet {
 
@@ -49,40 +48,23 @@ namespace Librainian.Internet {
 
 	public static class EapCommon {
 
-		public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult,
-			[NotNull] Action unregisterHandler ) {
-			if ( taskCompletionSource == null ) {
-				throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) );
-			}
+		public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult, [NotNull] Action unregisterHandler ) {
+			if ( taskCompletionSource == null ) { throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) ); }
 
-			if ( e == null ) {
-				throw new ArgumentNullException( paramName: nameof( e ) );
-			}
+			if ( e == null ) { throw new ArgumentNullException( paramName: nameof( e ) ); }
 
-			if ( getResult == null ) {
-				throw new ArgumentNullException( paramName: nameof( getResult ) );
-			}
+			if ( getResult == null ) { throw new ArgumentNullException( paramName: nameof( getResult ) ); }
 
-			if ( unregisterHandler == null ) {
-				throw new ArgumentNullException( paramName: nameof( unregisterHandler ) );
-			}
+			if ( unregisterHandler == null ) { throw new ArgumentNullException( paramName: nameof( unregisterHandler ) ); }
 
 			try {
 				if ( e.UserState == taskCompletionSource ) {
-					if ( e.Cancelled ) {
-						taskCompletionSource.TrySetCanceled();
-					}
-					else if ( e.Error != null ) {
-						taskCompletionSource.TrySetException( e.Error );
-					}
-					else {
-						taskCompletionSource.TrySetResult( getResult() );
-					}
+					if ( e.Cancelled ) { taskCompletionSource.TrySetCanceled(); }
+					else if ( e.Error != null ) { taskCompletionSource.TrySetException( e.Error ); }
+					else { taskCompletionSource.TrySetResult( getResult() ); }
 				}
 			}
-			finally {
-				unregisterHandler();
-			}
+			finally { unregisterHandler(); }
 		}
 	}
 }

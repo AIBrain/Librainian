@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Unique.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
+// Project: "Librainian", "Unique.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -64,12 +63,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 	[Serializable]
 	public class Unique : IEquatable<Unique> {
 
-		private const Int32 EOFMarker = -1;
-
-		/// <summary>
-		///     A <see cref="Unique" /> that points to nowhere.
-		/// </summary>
-		public static readonly Unique Empty = new Unique();
+		public Boolean Equals( Unique other ) => Equals( this, other );
 
 		/// <summary>
 		///     Just an easier to use mnemonic.
@@ -85,6 +79,13 @@ namespace Librainian.ComputerSystem.FileSystem {
 		[JsonProperty]
 		public String U { get; }
 
+		private const Int32 EOFMarker = -1;
+
+		/// <summary>
+		///     A <see cref="Unique" /> that points to nowhere.
+		/// </summary>
+		public static readonly Unique Empty = new Unique();
+
 		/// <summary>
 		///     What effect will this have down the road?
 		/// </summary>
@@ -96,16 +97,10 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <exception cref="ArgumentEmptyException">When <paramref name="location" /> was parsed down to nothing.</exception>
 		/// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
 		protected Unique( TrimmedString location ) {
-			if ( location.IsEmpty ) {
-				throw new ArgumentEmptyException( "Location cannot be null or whitespace." );
-			}
+			if ( location.IsEmpty ) { throw new ArgumentEmptyException( "Location cannot be null or whitespace." ); }
 
-			if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) {
-				this.U = uri.AbsoluteUri;
-			}
-			else {
-				throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
-			}
+			if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) { this.U = uri.AbsoluteUri; }
+			else { throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" ); }
 		}
 
 		/// <summary>
@@ -115,13 +110,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		public static Boolean Equals( Unique left, Unique right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
+			if ( ReferenceEquals( left, right ) ) { return true; }
 
-			if ( left is null || right is null ) {
-				return false;
-			}
+			if ( left is null || right is null ) { return false; }
 
 			return String.Equals( left.U, right.U, StringComparison.Ordinal );
 		}
@@ -178,16 +169,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public IEnumerable<Byte> AsBytes( CancellationToken? token = null, TimeSpan? timeout = null ) {
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
-					if ( stream?.CanRead != true ) {
-						yield break;
-					}
+					if ( stream?.CanRead != true ) { yield break; }
 
 					while ( true ) {
 						var a = stream.ReadByte();
 
-						if ( a == EOFMarker ) {
-							yield break;
-						}
+						if ( a == EOFMarker ) { yield break; }
 
 						yield return ( Byte ) a;
 					}
@@ -203,16 +190,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
-					if ( stream?.CanRead != true ) {
-						yield break;
-					}
+					if ( stream?.CanRead != true ) { yield break; }
 
 					while ( true ) {
 						var a = stream.ReadByte();
 
-						if ( a == EOFMarker ) {
-							yield break;
-						}
+						if ( a == EOFMarker ) { yield break; }
 
 						var b = stream.ReadByte();
 
@@ -240,16 +223,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
-					if ( stream?.CanRead != true ) {
-						yield break;
-					}
+					if ( stream?.CanRead != true ) { yield break; }
 
 					while ( true ) {
 						var a = stream.ReadByte();
 
-						if ( a == EOFMarker ) {
-							yield break;
-						}
+						if ( a == EOFMarker ) { yield break; }
 
 						var b = stream.ReadByte();
 
@@ -291,8 +270,6 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		public override Boolean Equals( Object obj ) => Equals( this, obj as Unique );
 
-		public Boolean Equals( Unique other ) => Equals( this, other );
-
 		public override Int32 GetHashCode() => this.U.GetHashCode();
 
 		/// <summary>
@@ -323,18 +300,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 						var header = client.ResponseHeaders[ "Content-Length" ];
 
-						if ( Int64.TryParse( header, out var result ) ) {
-							return result;
-						}
+						if ( Int64.TryParse( header, out var result ) ) { return result; }
 					}
-					catch ( WebException exception ) {
-						exception.More();
-					}
+					catch ( WebException exception ) { exception.More(); }
 				}
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			return -1;
 		}
@@ -342,13 +313,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		[CanBeNull]
 		public DirectoryInfo ToDirectoryInfo() {
 			try {
-				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) {
-					return new DirectoryInfo( this.ToUri().AbsolutePath );
-				}
+				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) { return new DirectoryInfo( this.ToUri().AbsolutePath ); }
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			return null;
 		}
@@ -357,13 +324,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public FileInfo ToFileInfo() {
 			try {
 
-				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) {
-					return new FileInfo( this.ToUri().AbsolutePath );
-				}
+				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) { return new FileInfo( this.ToUri().AbsolutePath ); }
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			return null;
 		}

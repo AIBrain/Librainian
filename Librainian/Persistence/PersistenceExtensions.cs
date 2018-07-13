@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PersistenceExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "PersistenceExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "PersistenceExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:39 AM.
+// Project: "Librainian", "PersistenceExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
 
 namespace Librainian.Persistence {
 
@@ -77,12 +76,20 @@ namespace Librainian.Persistence {
 
 	public static class PersistenceExtensions {
 
+		public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
+
+			//ContractResolver = new MyContractResolver(),
+			TypeNameHandling = TypeNameHandling.Auto,
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.Objects
+		};
+
 		public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
 			var document = new Document( DataFolder.Value, Application.ExecutablePath + ".data" );
 
-			if ( !document.Exists() ) {
-				document.AppendText( String.Empty );
-			}
+			if ( !document.Exists() ) { document.AppendText( String.Empty ); }
 
 			return document;
 		} );
@@ -96,9 +103,7 @@ namespace Librainian.Persistence {
 		public static readonly Lazy<Folder> DataFolder = new Lazy<Folder>( () => {
 			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
-			if ( !folder.Exists() ) {
-				folder.Create();
-			}
+			if ( !folder.Exists() ) { folder.Create(); }
 
 			return folder;
 		} );
@@ -162,16 +167,6 @@ namespace Librainian.Persistence {
 		//}
 		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
-		public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
-
-			//ContractResolver = new MyContractResolver(),
-			TypeNameHandling = TypeNameHandling.Auto,
-			NullValueHandling = NullValueHandling.Ignore,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-			PreserveReferencesHandling = PreserveReferencesHandling.Objects
-		};
-
 		/// <summary>
 		///     Can the file be read from at this moment in time ?
 		/// </summary>
@@ -181,32 +176,16 @@ namespace Librainian.Persistence {
 		private static Boolean FileCanBeRead( IsolatedStorageFile isf, String fileName ) {
 			try {
 				using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					try {
-						return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0;
-					}
-					catch ( ArgumentException exception ) {
-						exception.More();
-					}
+					try { return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0; }
+					catch ( ArgumentException exception ) { exception.More(); }
 				}
 			}
-			catch ( IsolatedStorageException exception ) {
-				exception.More();
-			}
-			catch ( ArgumentNullException exception ) {
-				exception.More();
-			}
-			catch ( ArgumentException exception ) {
-				exception.More();
-			}
-			catch ( DirectoryNotFoundException exception ) {
-				exception.More();
-			}
-			catch ( FileNotFoundException exception ) {
-				exception.More();
-			}
-			catch ( ObjectDisposedException exception ) {
-				exception.More();
-			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( ArgumentNullException exception ) { exception.More(); }
+			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( DirectoryNotFoundException exception ) { exception.More(); }
+			catch ( FileNotFoundException exception ) { exception.More(); }
+			catch ( ObjectDisposedException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -215,9 +194,7 @@ namespace Librainian.Persistence {
 		private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
 			var path = Path.Combine( Environment.GetFolderPath( specialFolder ), nameof( Settings ) );
 
-			if ( !Directory.Exists( path ) ) {
-				Directory.CreateDirectory( path );
-			}
+			if ( !Directory.Exists( path ) ) { Directory.CreateDirectory( path ); }
 
 			var destinationFile = Path.Combine( path, "StaticSettings.exe" );
 
@@ -239,21 +216,15 @@ namespace Librainian.Persistence {
 		/// <exception cref="System.Xml.XmlException"></exception>
 		[CanBeNull]
 		public static TType Deserialize<TType>( this String storedAsString ) {
-			try {
-				return storedAsString.FromJSON<TType>();
-			}
-			catch ( SerializationException exception ) {
-				exception.More();
-			}
+			try { return storedAsString.FromJSON<TType>(); }
+			catch ( SerializationException exception ) { exception.More(); }
 
 			return default;
 		}
 
 		[CanBeNull]
 		public static TSource Deserialize<TSource>( [NotNull] Stream stream, [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
-			if ( null == stream ) {
-				throw new ArgumentNullException( nameof( stream ) );
-			}
+			if ( null == stream ) { throw new ArgumentNullException( nameof( stream ) ); }
 
 			using ( var cs = new ProgressStream( stream ) ) {
 
@@ -267,20 +238,16 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat,
-			[CanBeNull] IProgress<Single> progress = null, String extension = ".xml" ) where TKey : IComparable<TKey> {
+		public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat, [CanBeNull] IProgress<Single> progress = null,
+			String extension = ".xml" ) where TKey : IComparable<TKey> {
 			try {
 
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( null == toDictionary ) {
-					return false;
-				}
+				if ( null == toDictionary ) { return false; }
 
-				if ( folder?.Exists() != true ) {
-					return false;
-				}
+				if ( folder?.Exists() != true ) { return false; }
 
 				var fileCount = UInt64.MinValue;
 				var before = toDictionary.LongCount();
@@ -305,18 +272,12 @@ namespace Librainian.Persistence {
 							try {
 								var tuple = line.Deserialize<Tuple<TKey, TValue>>();
 
-								if ( tuple != null ) {
-									toDictionary[ tuple.Item1 ] = tuple.Item2;
-								}
+								if ( tuple != null ) { toDictionary[ tuple.Item1 ] = tuple.Item2; }
 							}
-							catch ( Exception lineexception ) {
-								lineexception.More();
-							}
+							catch ( Exception lineexception ) { lineexception.More(); }
 						} );
 					}
-					catch ( Exception exception ) {
-						exception.More();
-					}
+					catch ( Exception exception ) { exception.More(); }
 				}
 
 				var after = toDictionary.LongCount();
@@ -326,9 +287,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			//finally {
 			//    //Report.Exit();
@@ -342,16 +301,12 @@ namespace Librainian.Persistence {
 				var myType = isf.GetType();
 				var myFields = myType.GetFields( bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
 
-				if ( myFields.All( f => f.Name != "m_RootDir" ) ) {
-					return false;
-				}
+				if ( myFields.All( f => f.Name != "m_RootDir" ) ) { return false; }
 
 				var myField = myType.GetField( name: "m_RootDir", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
 				var path = myField?.GetValue( isf ) as String;
 
-				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return false;
-				}
+				if ( String.IsNullOrWhiteSpace( path ) ) { return false; }
 
 				try {
 					var dir = new DirectoryInfo( path );
@@ -359,22 +314,14 @@ namespace Librainian.Persistence {
 					if ( dir.Exists ) {
 						var result = dir.SetCompression( true );
 
-						if ( result ) {
-							$"Enabled compression in IsolatedStorage @ {path}".WriteLine();
-						}
+						if ( result ) { $"Enabled compression in IsolatedStorage @ {path}".WriteLine(); }
 
 						return result;
 					}
 				}
-				catch ( SecurityException exception ) {
-					exception.More();
-				}
-				catch ( ArgumentException exception ) {
-					exception.More();
-				}
-				catch ( PathTooLongException exception ) {
-					exception.More();
-				}
+				catch ( SecurityException exception ) { exception.More(); }
+				catch ( ArgumentException exception ) { exception.More(); }
+				catch ( PathTooLongException exception ) { exception.More(); }
 			}
 
 			return false;
@@ -401,20 +348,14 @@ namespace Librainian.Persistence {
 		[Obsolete]
 		public static T Load<T>( [CanBeNull] String fileName ) where T : class, new() {
 			try {
-				if ( String.IsNullOrEmpty( fileName ) ) {
-					return new T();
-				}
+				if ( String.IsNullOrEmpty( fileName ) ) { return new T(); }
 
 				using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 					var dir = Path.GetDirectoryName( fileName );
 
-					if ( !String.IsNullOrEmpty( dir ) ) {
-						isf.CreateDirectory( dir );
-					}
+					if ( !String.IsNullOrEmpty( dir ) ) { isf.CreateDirectory( dir ); }
 
-					if ( 0 == isf.GetFileNames( fileName ).GetLength( 0 ) ) {
-						return new T();
-					}
+					if ( 0 == isf.GetFileNames( fileName ).GetLength( 0 ) ) { return new T(); }
 
 					try {
 						using ( var isfs = new IsolatedStorageFileStream( fileName, FileMode.Open, FileAccess.Read, isf ) ) {
@@ -424,27 +365,18 @@ namespace Librainian.Persistence {
 							return obj;
 						}
 					}
-					catch ( SerializationException exception ) {
-						exception.More();
-					}
-					catch ( IsolatedStorageException exception ) {
-						exception.More();
-					}
+					catch ( SerializationException exception ) { exception.More(); }
+					catch ( IsolatedStorageException exception ) { exception.More(); }
 				}
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			return new T();
 		}
 
 		//[Obsolete( "Use JSON methods" )]
-		public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, [CanBeNull] ProgressChangedEventHandler feedback = null )
-			where TSource : class {
-			if ( fullPathAndFileName is null ) {
-				throw new ArgumentNullException( nameof( fullPathAndFileName ) );
-			}
+		public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null, [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
+			if ( fullPathAndFileName is null ) { throw new ArgumentNullException( nameof( fullPathAndFileName ) ); }
 
 			try {
 				if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fullPathAndFileName ) ) {
@@ -452,9 +384,7 @@ namespace Librainian.Persistence {
 						using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 							var dir = Path.GetDirectoryName( fullPathAndFileName ) ?? String.Empty;
 
-							if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
-								isf.CreateDirectory( dir );
-							}
+							if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) { isf.CreateDirectory( dir ); }
 
 							if ( isf.FileExists( fullPathAndFileName ) && FileCanBeRead( isf, fullPathAndFileName ) ) {
 								try {
@@ -469,34 +399,22 @@ namespace Librainian.Persistence {
 											result = Deserialize<TSource>( stream: decompress, feedback: feedback );
 										}
 									}
-									else {
-										result = Deserialize<TSource>( stream: isfs, feedback: feedback );
-									}
+									else { result = Deserialize<TSource>( stream: isfs, feedback: feedback ); }
 
 									onLoad?.Invoke( result );
 
 									return true;
 								}
-								catch ( InvalidOperationException exception ) {
-									exception.More();
-								}
-								catch ( ArgumentNullException exception ) {
-									exception.More();
-								}
-								catch ( SerializationException exception ) {
-									exception.More();
-								}
-								catch ( Exception exception ) {
-									exception.More();
-								}
+								catch ( InvalidOperationException exception ) { exception.More(); }
+								catch ( ArgumentNullException exception ) { exception.More(); }
+								catch ( SerializationException exception ) { exception.More(); }
+								catch ( Exception exception ) { exception.More(); }
 							}
 						}
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) {
-				exception.More();
-			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -515,22 +433,16 @@ namespace Librainian.Persistence {
 		[CanBeNull]
 		[Obsolete( "Use JSON serializers" )]
 		public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters ) where TSource : class, new() {
-			if ( fileName is null ) {
-				throw new ArgumentNullException( nameof( fileName ) );
-			}
+			if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
-			if ( parameters is null ) {
-				throw new ArgumentNullException( nameof( parameters ) );
-			}
+			if ( parameters is null ) { throw new ArgumentNullException( nameof( parameters ) ); }
 
 			try {
 				if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
 					using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 						var dir = Path.GetDirectoryName( fileName );
 
-						if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
-							isf.CreateDirectory( dir );
-						}
+						if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) { isf.CreateDirectory( dir ); }
 
 						if ( isf.FileExists( fileName ) && FileCanBeRead( isf, fileName ) ) {
 							try {
@@ -538,33 +450,19 @@ namespace Librainian.Persistence {
 								var ext = Path.GetExtension( fileName );
 								var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
-								if ( !useCompression ) {
-									return Deserialize<TSource>( stream: isfs, feedback: feedback );
-								}
+								if ( !useCompression ) { return Deserialize<TSource>( stream: isfs, feedback: feedback ); }
 
-								using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-									return Deserialize<TSource>( stream: decompress, feedback: feedback );
-								}
+								using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) { return Deserialize<TSource>( stream: decompress, feedback: feedback ); }
 							}
-							catch ( InvalidOperationException exception ) {
-								exception.More();
-							}
-							catch ( ArgumentNullException exception ) {
-								exception.More();
-							}
-							catch ( SerializationException exception ) {
-								exception.More();
-							}
-							catch ( Exception exception ) {
-								exception.More();
-							}
+							catch ( InvalidOperationException exception ) { exception.More(); }
+							catch ( ArgumentNullException exception ) { exception.More(); }
+							catch ( SerializationException exception ) { exception.More(); }
+							catch ( Exception exception ) { exception.More(); }
 						}
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) {
-				exception.More();
-			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
 
 			return new TSource();
 		}
@@ -580,20 +478,14 @@ namespace Librainian.Persistence {
 			obj = default;
 
 			try {
-				if ( String.IsNullOrEmpty( fileName ) ) {
-					return false;
-				}
+				if ( String.IsNullOrEmpty( fileName ) ) { return false; }
 
 				using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 					var dir = Path.GetDirectoryName( fileName );
 
-					if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
-						isf.CreateDirectory( dir );
-					}
+					if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) { isf.CreateDirectory( dir ); }
 
-					if ( !isf.FileExists( fileName ) ) {
-						return false;
-					}
+					if ( !isf.FileExists( fileName ) ) { return false; }
 
 					var deletefile = false;
 
@@ -601,9 +493,7 @@ namespace Librainian.Persistence {
 						using ( var test = isf.OpenFile( fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) ) {
 							var length = test.Seek( 0, SeekOrigin.End );
 
-							if ( length <= 3 ) {
-								deletefile = true;
-							}
+							if ( length <= 3 ) { deletefile = true; }
 						}
 					}
 					catch ( IsolatedStorageException exception ) {
@@ -635,13 +525,9 @@ namespace Librainian.Persistence {
 						var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
 						if ( useCompression ) {
-							using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-								obj = ( T ) serializer.ReadObject( stream: decompress );
-							}
+							using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) { obj = ( T ) serializer.ReadObject( stream: decompress ); }
 						}
-						else {
-							obj = ( T ) serializer.ReadObject( stream: isfs );
-						}
+						else { obj = ( T ) serializer.ReadObject( stream: isfs ); }
 
 						return !Equals( obj, default );
 					}
@@ -667,9 +553,7 @@ namespace Librainian.Persistence {
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) {
-				exception.More();
-			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -685,34 +569,24 @@ namespace Librainian.Persistence {
 		/// <param name="compression"></param>
 		/// <returns></returns>
 		public static Boolean Save<TSource>( this TSource objectToSerialize, [NotNull] String attribute, Document destination, CompressionLevel compression = CompressionLevel.Fastest ) {
-			if ( attribute.IsNullOrWhiteSpace() ) {
-				throw new ArgumentNullException( nameof( attribute ) );
-			}
+			if ( attribute.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( attribute ) ); }
 
 			try {
 
 				var json = objectToSerialize.ToJSON();
 
-				if ( json.IsNullOrWhiteSpace() ) {
-					return false;
-				}
+				if ( json.IsNullOrWhiteSpace() ) { return false; }
 
 				var data = Encoding.Unicode.GetBytes( json ).Compress( CompressionLevel.Fastest );
 
 				var filename = $"{destination.FullPathWithFileName}:{attribute}";
 
-				using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) {
-					fs.Write( data, 0, data.Length );
-				}
+				using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Write, mode: FileMode.Create, share: FileShare.None ) ) { fs.Write( data, 0, data.Length ); }
 
 				return true;
 			}
-			catch ( SerializationException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( SerializationException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
@@ -727,13 +601,9 @@ namespace Librainian.Persistence {
 		/// <returns>Returns True if the object was saved.</returns>
 		[Obsolete( "Not in use yet." )]
 		public static Boolean SaveCollection<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] String fileName ) {
-			if ( collection is null ) {
-				throw new ArgumentNullException( nameof( collection ) );
-			}
+			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
-			if ( String.IsNullOrWhiteSpace( fileName ) ) {
-				throw new ArgumentNullException( nameof( fileName ) );
-			}
+			if ( String.IsNullOrWhiteSpace( fileName ) ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			return collection.Saver( fileName: fileName );
 		}
@@ -748,13 +618,9 @@ namespace Librainian.Persistence {
 		/// <returns>Returns True if the object was saved.</returns>
 		[Obsolete( "Not in use yet." )]
 		public static Boolean SaveCollection<T>( [NotNull] this ConcurrentList<T> collection, [NotNull] String fileName ) where T : class {
-			if ( collection is null ) {
-				throw new ArgumentNullException( nameof( collection ) );
-			}
+			if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
-			if ( String.IsNullOrWhiteSpace( fileName ) ) {
-				throw new ArgumentNullException( nameof( fileName ) );
-			}
+			if ( String.IsNullOrWhiteSpace( fileName ) ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			return collection.Saver( fileName: fileName );
 		}
@@ -765,27 +631,19 @@ namespace Librainian.Persistence {
 			//TODO pass in a backup flag to save the newest copy with the backup time.
 			// or a Backup class ?
 
-			if ( null == objectToSerialize ) {
-				return false;
-			}
+			if ( null == objectToSerialize ) { return false; }
 
-			if ( fileName is null ) {
-				throw new ArgumentNullException( nameof( fileName ) );
-			}
+			if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			try {
-				if ( !IsolatedStorageFile.IsEnabled || String.IsNullOrWhiteSpace( fileName ) ) {
-					return false;
-				}
+				if ( !IsolatedStorageFile.IsEnabled || String.IsNullOrWhiteSpace( fileName ) ) { return false; }
 
 				using ( var _ = new FileSingleton( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
 					using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 						try {
 							var dir = Path.GetDirectoryName( fileName ) ?? String.Empty;
 
-							if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
-								isf.CreateDirectory( dir );
-							}
+							if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) { isf.CreateDirectory( dir ); }
 						}
 						catch ( IsolatedStorageException exception ) {
 							exception.More();
@@ -808,50 +666,30 @@ namespace Librainian.Persistence {
 
 							var context = new StreamingContext( StreamingContextStates.All );
 
-							var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false,
-								assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null /*surrogateSelector*/ );
+							var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false, assemblyFormat: FormatterAssemblyStyle.Simple,
+								surrogateSelector: null /*surrogateSelector*/ );
 
 							var extension = Path.GetExtension( fileName );
 							var useCompression = !String.IsNullOrWhiteSpace( extension ) && extension.EndsWith( "Z", ignoreCase: true, culture: null );
 
 							if ( useCompression ) {
-								using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
-									serializer.Serialize( compress, objectToSerialize );
-								}
+								using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) { serializer.Serialize( compress, objectToSerialize ); }
 							}
-							else {
-								serializer.Serialize( isfs, objectToSerialize );
-							}
+							else { serializer.Serialize( isfs, objectToSerialize ); }
 
 							return true;
 						}
-						catch ( InvalidDataContractException exception ) {
-							exception.More();
-						}
-						catch ( SerializationException exception ) {
-							exception.More();
-						}
-						catch ( QuotaExceededException exception ) {
-							exception.More();
-						}
-						catch ( ArgumentNullException exception ) {
-							exception.More();
-						}
-						catch ( ArgumentException exception ) {
-							exception.More();
-						}
+						catch ( InvalidDataContractException exception ) { exception.More(); }
+						catch ( SerializationException exception ) { exception.More(); }
+						catch ( QuotaExceededException exception ) { exception.More(); }
+						catch ( ArgumentNullException exception ) { exception.More(); }
+						catch ( ArgumentException exception ) { exception.More(); }
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) {
-				exception.More();
-			}
-			catch ( SecurityException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( SecurityException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
@@ -866,22 +704,16 @@ namespace Librainian.Persistence {
 		/// <param name="fileName"></param>
 		/// <returns>Returns True if the object was saved.</returns>
 		public static Boolean SaveValue<TSource>( this TSource obj, [NotNull] String fileName ) where TSource : struct {
-			if ( fileName is null ) {
-				throw new ArgumentNullException( nameof( fileName ) );
-			}
+			if ( fileName is null ) { throw new ArgumentNullException( nameof( fileName ) ); }
 
 			try {
-				if ( String.IsNullOrEmpty( fileName ) ) {
-					return false;
-				}
+				if ( String.IsNullOrEmpty( fileName ) ) { return false; }
 
 				try {
 					using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
 						String dir;
 
-						try {
-							dir = Path.GetDirectoryName( fileName );
-						}
+						try { dir = Path.GetDirectoryName( fileName ); }
 						catch ( PathTooLongException exception ) {
 							exception.More();
 
@@ -894,9 +726,7 @@ namespace Librainian.Persistence {
 						}
 
 						if ( !String.IsNullOrEmpty( dir ) && !isf.DirectoryExists( dir ) ) {
-							try {
-								isf.CreateDirectory( dir );
-							}
+							try { isf.CreateDirectory( dir ); }
 							catch ( IsolatedStorageException exception ) {
 								exception.More();
 
@@ -914,9 +744,7 @@ namespace Librainian.Persistence {
 							var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
 							if ( useCompression ) {
-								using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
-									serializer.WriteObject( compress, obj );
-								}
+								using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) { serializer.WriteObject( compress, obj ); }
 							}
 							else {
 								serializer.WriteObject( isfs, obj );
@@ -925,33 +753,17 @@ namespace Librainian.Persistence {
 
 							return true;
 						}
-						catch ( InvalidDataContractException exception ) {
-							exception.More();
-						}
-						catch ( SerializationException exception ) {
-							exception.More();
-						}
-						catch ( QuotaExceededException exception ) {
-							exception.More();
-						}
-						catch ( ArgumentNullException exception ) {
-							exception.More();
-						}
-						catch ( ArgumentException exception ) {
-							exception.More();
-						}
+						catch ( InvalidDataContractException exception ) { exception.More(); }
+						catch ( SerializationException exception ) { exception.More(); }
+						catch ( QuotaExceededException exception ) { exception.More(); }
+						catch ( ArgumentNullException exception ) { exception.More(); }
+						catch ( ArgumentException exception ) { exception.More(); }
 					}
 				}
-				catch ( IsolatedStorageException exception ) {
-					exception.More();
-				}
+				catch ( IsolatedStorageException exception ) { exception.More(); }
 			}
-			catch ( SecurityException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( SecurityException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
@@ -976,9 +788,7 @@ namespace Librainian.Persistence {
 		/// </exception>
 		[CanBeNull]
 		public static String Serialize<TType>( [NotNull] this TType obj ) {
-			if ( Equals( obj, default ) ) {
-				throw new ArgumentNullException( nameof( obj ) );
-			}
+			if ( Equals( obj, default ) ) { throw new ArgumentNullException( nameof( obj ) ); }
 
 			try {
 
@@ -989,12 +799,8 @@ namespace Librainian.Persistence {
 
 				//}
 			}
-			catch ( SerializationException exception ) {
-				exception.More();
-			}
-			catch ( InvalidDataContractException exception ) {
-				exception.More();
-			}
+			catch ( SerializationException exception ) { exception.More(); }
+			catch ( InvalidDataContractException exception ) { exception.More(); }
 
 			return null;
 		}
@@ -1012,30 +818,20 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, String calledWhat,
 			[CanBeNull] IProgress<Single> progress = null, String extension = ".xml" ) where TKey : IComparable<TKey> {
-			if ( null == dictionary ) {
-				return false;
-			}
+			if ( null == dictionary ) { return false; }
 
-			if ( null == folder ) {
-				return false;
-			}
+			if ( null == folder ) { return false; }
 
-			if ( !dictionary.Any() ) {
-				return false;
-			}
+			if ( !dictionary.Any() ) { return false; }
 
 			try {
 
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( !folder.Exists() ) {
-					folder.Create();
-				}
+				if ( !folder.Exists() ) { folder.Create(); }
 
-				if ( !folder.Exists() ) {
-					throw new DirectoryNotFoundException( folder.FullName );
-				}
+				if ( !folder.Exists() ) { throw new DirectoryNotFoundException( folder.FullName ); }
 
 				var itemCount = ( UInt64 ) dictionary.LongCount();
 
@@ -1087,9 +883,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( Exception exception ) { exception.More(); }
 
 			//finally {
 			//    //Report.Exit();
@@ -1117,21 +911,15 @@ namespace Librainian.Persistence {
 				var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
 				var settings = configFile.AppSettings.Settings;
 
-				if ( settings[ key ] is null ) {
-					settings.Add( key, value );
-				}
-				else {
-					settings[ key ].Value = value;
-				}
+				if ( settings[ key ] is null ) { settings.Add( key, value ); }
+				else { settings[ key ].Value = value; }
 
 				configFile.Save( ConfigurationSaveMode.Modified );
 				ConfigurationManager.RefreshSection( configFile.AppSettings.SectionInformation.Name );
 
 				return true;
 			}
-			catch ( ConfigurationErrorsException exception ) {
-				exception.More();
-			}
+			catch ( ConfigurationErrorsException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -1143,9 +931,7 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		[CanBeNull]
 		public static String Settings( [NotNull] String key ) {
-			if ( key == null ) {
-				throw new ArgumentNullException( paramName: nameof( key ) );
-			}
+			if ( key == null ) { throw new ArgumentNullException( paramName: nameof( key ) ); }
 
 			return Environment.SpecialFolder.CommonApplicationData.Settings( key );
 		}
@@ -1158,18 +944,15 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		[CanBeNull]
 		public static String Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
-			if ( key == null ) {
-				throw new ArgumentNullException( paramName: nameof( key ) );
-			}
+			if ( key == null ) { throw new ArgumentNullException( paramName: nameof( key ) ); }
 
 			try {
 				var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPathWithFileName );
 
 				return configFile.AppSettings.Settings[ key ]?.Value;
 			}
-			catch ( ConfigurationErrorsException exception ) {
-				exception.More();
-			}
+			catch ( ConfigurationErrorsException exception ) { exception.More(); }
+
 			return null;
 		}
 
@@ -1204,22 +987,16 @@ namespace Librainian.Persistence {
 		/// <seealso cref="TrySave{TKey}" />
 		/// <returns></returns>
 		public static Boolean TryLoad<TSource>( [NotNull] this String attribute, out TSource value, String location = null ) {
-			if ( attribute is null ) {
-				throw new ArgumentNullException( nameof( attribute ) );
-			}
+			if ( attribute is null ) { throw new ArgumentNullException( nameof( attribute ) ); }
 
 			value = default;
 
 			try {
-				if ( location.IsNullOrWhiteSpace() ) {
-					location = DataFolder.Value.FullName;
-				}
+				if ( location.IsNullOrWhiteSpace() ) { location = DataFolder.Value.FullName; }
 
 				var filename = $"{location}:{attribute}";
 
-				if ( !NtfsAlternateStream.Exists( filename ) ) {
-					return false;
-				}
+				if ( !NtfsAlternateStream.Exists( filename ) ) { return false; }
 
 				using ( var fs = NtfsAlternateStream.Open( filename, access: FileAccess.Read, mode: FileMode.Open, share: FileShare.None ) ) {
 					var serializer = new NetDataContractSerializer();
@@ -1228,18 +1005,10 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( InvalidOperationException exception ) {
-				exception.More();
-			}
-			catch ( ArgumentNullException exception ) {
-				exception.More();
-			}
-			catch ( SerializationException exception ) {
-				exception.More();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-			}
+			catch ( InvalidOperationException exception ) { exception.More(); }
+			catch ( ArgumentNullException exception ) { exception.More(); }
+			catch ( SerializationException exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.More(); }
 
 			return false;
 		}
@@ -1254,13 +1023,9 @@ namespace Librainian.Persistence {
 		/// <param name="formatting"></param>
 		/// <returns></returns>
 		public static Boolean TrySave<TKey>( this TKey @object, [NotNull] Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( paramName: nameof( document ) );
-			}
+			if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
-			if ( overwrite && document.Exists() ) {
-				document.Delete();
-			}
+			if ( overwrite && document.Exists() ) { document.Delete(); }
 
 			using ( var snag = new FileSingleton( document.Info ) ) {
 				snag.Snagged.Should().BeTrue();

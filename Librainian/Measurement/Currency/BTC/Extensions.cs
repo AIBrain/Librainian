@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Extensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Extensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Extensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:23 AM.
+// Project: "Librainian", "Extensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -66,33 +65,23 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="coinWallet"></param>
 		/// <param name="coins"></param>
 		public static void Deposit( [NotNull] this CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
 			coins = coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>();
 
-			foreach ( var pair in coins ) {
-				coinWallet.Deposit( coin: pair.Key, quantity: pair.Value );
-			}
+			foreach ( var pair in coins ) { coinWallet.Deposit( coin: pair.Key, quantity: pair.Value ); }
 		}
 
 		public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] params KeyValuePair<ICoin, UInt64>[] sourceAmounts ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
 			Fund( coinWallet, sourceAmounts.AsEnumerable() );
 		}
 
 		public static void Fund( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
-			if ( null == sourceAmounts ) {
-				return;
-			}
+			if ( null == sourceAmounts ) { return; }
 
 			Parallel.ForEach( sourceAmounts, pair => coinWallet.Deposit( pair.Key, pair.Value ) );
 		}
@@ -106,9 +95,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="optimalAmountOfCoin"></param>
 		/// <returns></returns>
 		public static Decimal Fund( [NotNull] this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
 			var leftOverFund = Decimal.Zero;
 			coinWallet.Deposit( optimalAmountOfCoin ? amount.Optimal( ref leftOverFund ) : amount.UnOptimal( ref leftOverFund ) );
@@ -159,9 +146,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		}
 
 		public static String SimplerBTC( [NotNull] this SimpleBitcoinWallet wallet ) {
-			if ( wallet is null ) {
-				throw new ArgumentNullException( nameof( wallet ) );
-			}
+			if ( wallet is null ) { throw new ArgumentNullException( nameof( wallet ) ); }
 
 			return wallet.Balance.SimplerBTC();
 		}
@@ -180,9 +165,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <returns></returns>
 		[NotNull]
 		public static String SimplerBTC( this Decimal btc, [NotNull] String coinSuffix = "BTC" ) {
-			if ( coinSuffix is null ) {
-				throw new ArgumentNullException( nameof( coinSuffix ) );
-			}
+			if ( coinSuffix is null ) { throw new ArgumentNullException( nameof( coinSuffix ) ); }
 
 			btc = btc.Sanitize();
 
@@ -210,9 +193,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="sourceAmounts"></param>
 		/// <returns></returns>
 		public static Task StartDeposit( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
 			sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>();
 			var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
@@ -231,9 +212,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		[NotNull]
 		public static Task<ConcurrentDictionary<ICoin, UInt64>> StartTransfer( [CanBeNull] this CoinWallet source, [CanBeNull] CoinWallet target ) =>
 			Task.Run( () => {
-				if ( null == source || null == target ) {
-					return new ConcurrentDictionary<ICoin, UInt64>();
-				}
+				if ( null == source || null == target ) { return new ConcurrentDictionary<ICoin, UInt64>(); }
 
 				return new ConcurrentDictionary<ICoin, UInt64>( Transfer( source, target ) );
 			} );
@@ -257,20 +236,14 @@ namespace Librainian.Measurement.Currency.BTC {
 
 		[NotNull]
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target ) {
-			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
-			}
+			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
-			if ( target is null ) {
-				throw new ArgumentNullException( nameof( target ) );
-			}
+			if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
 			var transferred = new ConcurrentDictionary<ICoin, UInt64>();
 
 			foreach ( var pair in source ) {
-				if ( !source.Transfer( target, pair ) ) {
-					continue;
-				}
+				if ( !source.Transfer( target, pair ) ) { continue; }
 
 				var denomination = pair.Key;
 				var count = pair.Value;
@@ -281,13 +254,9 @@ namespace Librainian.Measurement.Currency.BTC {
 		}
 
 		public static Boolean Transfer( [NotNull] this CoinWallet source, [NotNull] CoinWallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
-			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
-			}
+			if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
-			if ( target is null ) {
-				throw new ArgumentNullException( nameof( target ) );
-			}
+			if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
 			return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
 		}
@@ -299,9 +268,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		/// <param name="sourceAmounts"></param>
 		/// <returns></returns>
 		public static Task Transfer( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
-			if ( coinWallet is null ) {
-				throw new ArgumentNullException( nameof( coinWallet ) );
-			}
+			if ( coinWallet is null ) { throw new ArgumentNullException( nameof( coinWallet ) ); }
 
 			var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
 			bsfasd.Complete();

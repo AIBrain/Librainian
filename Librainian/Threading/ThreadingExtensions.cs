@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ThreadingExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "ThreadingExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "ThreadingExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:44 AM.
+// Project: "Librainian", "ThreadingExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
 
 namespace Librainian.Threading {
 
@@ -141,9 +140,7 @@ namespace Librainian.Threading {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
-				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-					action?.Invoke();
-				}
+				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) { action?.Invoke(); }
 			};
 		}
 
@@ -164,9 +161,7 @@ namespace Librainian.Threading {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
-				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-					action?.Invoke( parameter );
-				}
+				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) { action?.Invoke( parameter ); }
 			};
 		}
 
@@ -180,13 +175,9 @@ namespace Librainian.Threading {
 			Thread.BeginThreadAffinity();
 			Thread.BeginCriticalRegion();
 
-			if ( !lowPriority ) {
-				return;
-			}
+			if ( !lowPriority ) { return; }
 
-			if ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) {
-				Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-			}
+			if ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) { Thread.CurrentThread.Priority = ThreadPriority.Lowest; }
 		}
 
 		/// <summary>
@@ -196,13 +187,9 @@ namespace Librainian.Threading {
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		public static UInt64 CalcSizeInBytes<T>( this T obj ) {
-			if ( Equals( obj, default ) ) {
-				return 0;
-			}
+			if ( Equals( obj, default ) ) { return 0; }
 
-			if ( obj.GetSizeOfPrimitives( out var sizeInBytes ) ) {
-				return sizeInBytes;
-			}
+			if ( obj.GetSizeOfPrimitives( out var sizeInBytes ) ) { return sizeInBytes; }
 
 			var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
@@ -229,9 +216,7 @@ namespace Librainian.Threading {
 				//ObjectActivator compiled = ( ObjectActivator )lambda.Compile();
 
 				if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
-					if ( !( value is IList list ) ) {
-						continue;
-					}
+					if ( !( value is IList list ) ) { continue; }
 
 					sizeInBytes = list.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
 
@@ -250,9 +235,7 @@ namespace Librainian.Threading {
 				}
 
 				if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
-					if ( value is IEnumerable enumerable ) {
-						sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
-					}
+					if ( value is IEnumerable enumerable ) { sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() ); }
 
 					continue;
 				}
@@ -260,15 +243,11 @@ namespace Librainian.Threading {
 				if ( field.FieldType.IsArray ) {
 					var bob = field.GetValue( obj );
 
-					if ( null == bob ) {
-						continue;
-					}
+					if ( null == bob ) { continue; }
 
 					var list = List( bob );
 
-					foreach ( var o in list ) {
-						sizeInBytes += o.CalcSizeInBytes();
-					}
+					foreach ( var o in list ) { sizeInBytes += o.CalcSizeInBytes(); }
 
 					continue;
 				}
@@ -321,16 +300,12 @@ namespace Librainian.Threading {
 		/// <param name="thread">  </param>
 		/// <param name="timeSpan"></param>
 		public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
-			if ( null == thread ) {
-				throw new ArgumentNullException( nameof( thread ) );
-			}
+			if ( null == thread ) { throw new ArgumentNullException( nameof( thread ) ); }
 
 			var stopwatch = Stopwatch.StartNew();
 			var tenth = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
 
-			if ( tenth > Seconds.One ) {
-				tenth = Seconds.One;
-			}
+			if ( tenth > Seconds.One ) { tenth = Seconds.One; }
 
 			var toggle = true;
 
@@ -338,12 +313,8 @@ namespace Librainian.Threading {
 				Application.DoEvents();
 				toggle = !toggle;
 
-				if ( toggle ) {
-					Thread.Sleep( tenth );
-				}
-				else {
-					Thread.Yield();
-				}
+				if ( toggle ) { Thread.Sleep( tenth ); }
+				else { Thread.Yield(); }
 			} while ( stopwatch.Elapsed < timeSpan );
 		}
 
@@ -449,9 +420,7 @@ namespace Librainian.Threading {
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
-			if ( obj is null ) {
-				throw new ArgumentNullException( nameof( obj ) );
-			}
+			if ( obj is null ) { throw new ArgumentNullException( nameof( obj ) ); }
 
 			return Marshal.SizeOf( obj );
 		}
@@ -469,29 +438,19 @@ namespace Librainian.Threading {
 		/// <param name="times"> </param>
 		/// <param name="action"></param>
 		public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
-			if ( action is null ) {
-				return;
-			}
+			if ( action is null ) { return; }
 
-			for ( var i = 0; i < Math.Abs( times ); i++ ) {
-				action();
-			}
+			for ( var i = 0; i < Math.Abs( times ); i++ ) { action(); }
 		}
 
 		public static void Repeat( [CanBeNull] this Action action, Int32 times ) {
-			if ( action is null ) {
-				return;
-			}
+			if ( action is null ) { return; }
 
-			for ( var i = 0; i < Math.Abs( times ); i++ ) {
-				action();
-			}
+			for ( var i = 0; i < Math.Abs( times ); i++ ) { action(); }
 		}
 
 		public static void RepeatAction( this Int32 counter, [CanBeNull] Action action ) {
-			if ( null == action ) {
-				return;
-			}
+			if ( null == action ) { return; }
 
 			Parallel.For( 1, counter, i => action() );
 		}
@@ -506,13 +465,9 @@ namespace Librainian.Threading {
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
 		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null, Boolean inParallel = true ) {
-			if ( actions == null ) {
-				throw new ArgumentNullException( paramName: nameof( actions ) );
-			}
+			if ( actions == null ) { throw new ArgumentNullException( paramName: nameof( actions ) ); }
 
-			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
-				output( description );
-			}
+			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) { output( description ); }
 
 			if ( inParallel ) {
 				var result = Parallel.ForEach( actions, action => action?.Invoke() );
@@ -520,9 +475,7 @@ namespace Librainian.Threading {
 				return result.IsCompleted;
 			}
 
-			foreach ( var action in actions ) {
-				action?.Invoke();
-			}
+			foreach ( var action in actions ) { action?.Invoke(); }
 
 			return true;
 		}
@@ -536,13 +489,9 @@ namespace Librainian.Threading {
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
 		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null, Boolean inParallel = true ) {
-			if ( functions == null ) {
-				throw new ArgumentNullException( paramName: nameof( functions ) );
-			}
+			if ( functions == null ) { throw new ArgumentNullException( paramName: nameof( functions ) ); }
 
-			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
-				output( description );
-			}
+			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) { output( description ); }
 
 			if ( inParallel ) {
 				var result = Parallel.ForEach( functions, func => func?.Invoke() );
@@ -550,9 +499,7 @@ namespace Librainian.Threading {
 				return result.IsCompleted;
 			}
 
-			foreach ( var function in functions ) {
-				function?.Invoke();
-			}
+			foreach ( var function in functions ) { function?.Invoke(); }
 
 			return true;
 		}
@@ -562,9 +509,7 @@ namespace Librainian.Threading {
 			public Int64 CallsAllowed;
 
 			public ContextCallOnlyXTimes( Int64 times ) {
-				if ( times <= 0 ) {
-					times = 0;
-				}
+				if ( times <= 0 ) { times = 0; }
 
 				this.CallsAllowed = times;
 			}

@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "WordToGuidAndGuidToWord.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "WordToGuidAndGuidToWord.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/06/26 at 12:53 AM.
+// Project: "Librainian", "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
 
 namespace Librainian.Collections {
 
@@ -82,13 +81,9 @@ namespace Librainian.Collections {
 			get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[ key ];
 
 			set {
-				if ( String.IsNullOrEmpty( key ) ) {
-					return;
-				}
+				if ( String.IsNullOrEmpty( key ) ) { return; }
 
-				if ( this.Words.ContainsKey( key ) && value == this.Words[ key ] ) {
-					return;
-				}
+				if ( this.Words.ContainsKey( key ) && value == this.Words[ key ] ) { return; }
 
 				this.Words[ key ] = value;
 				this[ value ] = key;
@@ -106,26 +101,20 @@ namespace Librainian.Collections {
 			get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[ key ];
 
 			set {
-				if ( Guid.Empty.Equals( g: key ) ) {
-					return;
-				}
+				if ( Guid.Empty.Equals( g: key ) ) { return; }
 
 				//Are they removing the guid from both lists?
 				if ( String.IsNullOrEmpty( value ) ) {
 					this.Guids.TryRemove( key, out var oldstringfortheguid );
 
-					if ( String.IsNullOrEmpty( oldstringfortheguid ) ) {
-						return;
-					}
+					if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
 
 					this.Words.TryRemove( oldstringfortheguid, out var oldguid );
 					oldguid.Equals( g: key ).BreakIfFalse();
 					this.IsDirty = true;
 				}
 				else {
-					if ( this.Guids.ContainsKey( key ) && value == this.Guids[ key ] ) {
-						return;
-					}
+					if ( this.Guids.ContainsKey( key ) && value == this.Guids[ key ] ) { return; }
 
 					this.Guids[ key ] = value;
 					this.IsDirty = true;
@@ -136,9 +125,7 @@ namespace Librainian.Collections {
 		public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
 
 		public void Clear() {
-			if ( this.Words.IsEmpty && this.Guids.IsEmpty ) {
-				return;
-			}
+			if ( this.Words.IsEmpty && this.Guids.IsEmpty ) { return; }
 
 			this.Words.Clear();
 			this.Guids.Clear();
@@ -151,9 +138,7 @@ namespace Librainian.Collections {
 		/// <param name="theWord"></param>
 		/// <returns></returns>
 		public Boolean Contains( [NotNull] String theWord ) {
-			if ( theWord is null ) {
-				throw new ArgumentNullException( nameof( theWord ) );
-			}
+			if ( theWord is null ) { throw new ArgumentNullException( nameof( theWord ) ); }
 
 			return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
 		}

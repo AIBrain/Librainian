@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HistogramaDesenat.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "HistogramaDesenat.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "HistogramaDesenat.cs" was last formatted by Protiguous on 2018/06/26 at 12:57 AM.
+// Project: "Librainian", "HistogramaDesenat.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
 namespace Librainian.Controls {
 
@@ -55,27 +54,6 @@ namespace Librainian.Controls {
 	/// </summary>
 	/// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control" />
 	public class HistogramaDesenat : UserControl {
-
-		[Category( "Histogram Options" )]
-		[Description( "The color used within the control" )]
-		public Color DisplayColor { get; } = Color.Black;
-
-		//this gives the vertical unit used to scale our values
-		//this gives the horizontal unit used to scale our values
-		//the offset, in pixels, from the control margins.
-		[Category( "Histogram Options" )]
-		[Description( "The distance from the margins for the histogram" )]
-		public Int32 Offset {
-			set {
-				if ( value > 0 ) {
-					this._myOffset = value;
-				}
-			}
-
-			get => this._myOffset;
-		}
-
-		private Font MyFont { get; } = new Font( "Tahoma", 10 );
 
 		/// <summary>
 		///     Required designer variable.
@@ -95,6 +73,36 @@ namespace Librainian.Controls {
 		private Single _myXUnit;
 
 		private Single _myYUnit;
+
+		[Category( "Histogram Options" )]
+		[Description( "The color used within the control" )]
+		public Color DisplayColor { get; } = Color.Black;
+
+		//this gives the vertical unit used to scale our values
+		//this gives the horizontal unit used to scale our values
+		//the offset, in pixels, from the control margins.
+		[Category( "Histogram Options" )]
+		[Description( "The distance from the margins for the histogram" )]
+		public Int32 Offset {
+			set {
+				if ( value > 0 ) { this._myOffset = value; }
+			}
+
+			get => this._myOffset;
+		}
+
+		private Font MyFont { get; } = new Font( "Tahoma", 10 );
+
+		public HistogramaDesenat() {
+
+			// This call is required by the Windows.Forms Form Designer.
+			this.InitializeComponent();
+
+			// TODO: Add any initialization after the InitializeComponent call
+
+			this.Paint += this.HistogramaDesenat_Paint;
+			this.Resize += this.HistogramaDesenat_Resize;
+		}
 
 		private void ComputeXyUnitValues() {
 			this._myYUnit = ( Single ) ( this.Height - 2 * this._myOffset ) / this._myMaxValue;
@@ -126,9 +134,7 @@ namespace Librainian.Controls {
 		}
 
 		private void HistogramaDesenat_Paint( Object sender, PaintEventArgs e ) {
-			if ( !this._myIsDrawing ) {
-				return;
-			}
+			if ( !this._myIsDrawing ) { return; }
 
 			var g = e.Graphics;
 			var myPen = new Pen( new SolidBrush( this.DisplayColor ), this._myXUnit );
@@ -141,9 +147,7 @@ namespace Librainian.Controls {
 					new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
 
 				//We plot the coresponding index for the maximum value.
-				if ( this._myValues[ i ] != this._myMaxValue ) {
-					continue;
-				}
+				if ( this._myValues[ i ] != this._myMaxValue ) { continue; }
 
 				var mySize = g.MeasureString( i.ToString(), this.MyFont );
 
@@ -163,9 +167,7 @@ namespace Librainian.Controls {
 		}
 
 		private void HistogramaDesenat_Resize( Object sender, EventArgs e ) {
-			if ( this._myIsDrawing ) {
-				this.ComputeXyUnitValues();
-			}
+			if ( this._myIsDrawing ) { this.ComputeXyUnitValues(); }
 
 			this.Refresh();
 		}
@@ -193,17 +195,6 @@ namespace Librainian.Controls {
 			this._myMaxValue = this.GetMaxim( this._myValues );
 
 			this.ComputeXyUnitValues();
-		}
-
-		public HistogramaDesenat() {
-
-			// This call is required by the Windows.Forms Form Designer.
-			this.InitializeComponent();
-
-			// TODO: Add any initialization after the InitializeComponent call
-
-			this.Paint += this.HistogramaDesenat_Paint;
-			this.Resize += this.HistogramaDesenat_Resize;
 		}
 	}
 }

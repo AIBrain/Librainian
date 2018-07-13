@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HttpServer.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "HttpServer.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "HttpServer.cs" was last formatted by Protiguous on 2018/06/26 at 1:12 AM.
+// Project: "Librainian", "HttpServer.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
 
 namespace Librainian.Internet.Servers {
 
@@ -60,9 +59,7 @@ namespace Librainian.Internet.Servers {
 
 		private readonly Thread _thrHttps;
 
-		private TcpListener _secureListener;
-
-		private TcpListener _unsecureListener;
+		internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
 
 		/// <summary>If &gt; -1, the Server is listening for http connections on this port.</summary>
 		protected readonly Int32 Port;
@@ -70,9 +67,11 @@ namespace Librainian.Internet.Servers {
 		/// <summary>If &gt; -1, the Server is listening for https connections on this port.</summary>
 		protected readonly Int32 SecurePort;
 
-		protected volatile Boolean StopRequested;
+		private TcpListener _secureListener;
 
-		internal readonly List<Byte[]> LocalIPv4Addresses = new List<Byte[]>();
+		private TcpListener _unsecureListener;
+
+		protected volatile Boolean StopRequested;
 
 		/// <summary></summary>
 		/// <param name="port">
@@ -96,13 +95,9 @@ namespace Librainian.Internet.Servers {
 			this.SecurePort = httpsPort;
 			this._sslCertificate = cert;
 
-			if ( this.Port > 65535 || this.Port < -1 ) {
-				this.Port = -1;
-			}
+			if ( this.Port > 65535 || this.Port < -1 ) { this.Port = -1; }
 
-			if ( this.SecurePort > 65535 || this.SecurePort < -1 ) {
-				this.SecurePort = -1;
-			}
+			if ( this.SecurePort > 65535 || this.SecurePort < -1 ) { this.SecurePort = -1; }
 
 			if ( this.Port > -1 ) {
 				this._thrHttp = new Thread( this.Listen ) {
@@ -140,9 +135,7 @@ namespace Librainian.Internet.Servers {
 				if ( addr.AddressFamily == AddressFamily.InterNetwork ) {
 					var bytes = addr.GetAddressBytes();
 
-					if ( bytes.Length == 4 ) {
-						this.LocalIPv4Addresses.Add( bytes );
-					}
+					if ( bytes.Length == 4 ) { this.LocalIPv4Addresses.Add( bytes ); }
 				}
 			}
 		}
@@ -165,12 +158,8 @@ namespace Librainian.Internet.Servers {
 				try {
 					listener = new TcpListener( IPAddress.Any, isSecureListener ? this.SecurePort : this.Port );
 
-					if ( isSecureListener ) {
-						this._secureListener = listener;
-					}
-					else {
-						this._unsecureListener = listener;
-					}
+					if ( isSecureListener ) { this._secureListener = listener; }
+					else { this._unsecureListener = listener; }
 
 					listener.Start();
 
@@ -196,9 +185,7 @@ namespace Librainian.Internet.Servers {
 								outputStream.WriteLine( "Server too busy" );
 							}
 						}
-						catch ( ThreadAbortException ) {
-							throw;
-						}
+						catch ( ThreadAbortException ) { throw; }
 						catch ( Exception ex ) {
 							if ( DateTime.Now.Hour != innerLastError.Hour || DateTime.Now.DayOfYear != innerLastError.DayOfYear ) {
 
@@ -207,27 +194,21 @@ namespace Librainian.Internet.Servers {
 								innerErrorCount = 0;
 							}
 
-							if ( ++innerErrorCount > 10 ) {
-								throw;
-							}
+							if ( ++innerErrorCount > 10 ) { throw; }
 
 							SimpleHttpLogger.Log( ex, "Inner Error count this hour: " + innerErrorCount );
 							Thread.Sleep( 1 );
 						}
 					}
 				}
-				catch ( ThreadAbortException ) {
-					this.StopRequested = true;
-				}
+				catch ( ThreadAbortException ) { this.StopRequested = true; }
 				catch ( Exception ex ) {
 					if ( DateTime.Now.DayOfYear != lastError.DayOfYear || DateTime.Now.Year != lastError.Year ) {
 						lastError = DateTime.Now;
 						errorCount = 0;
 					}
 
-					if ( ++errorCount > 100 ) {
-						throw;
-					}
+					if ( ++errorCount > 100 ) { throw; }
 
 					SimpleHttpLogger.Log( ex, "Restarting listener. Error count today: " + errorCount );
 					threwExceptionOuter = true;
@@ -237,14 +218,10 @@ namespace Librainian.Internet.Servers {
 						if ( listener != null ) {
 							listener.Stop();
 
-							if ( threwExceptionOuter ) {
-								Thread.Sleep( 1000 );
-							}
+							if ( threwExceptionOuter ) { Thread.Sleep( 1000 ); }
 						}
 					}
-					catch ( ThreadAbortException ) {
-						this.StopRequested = true;
-					}
+					catch ( ThreadAbortException ) { this.StopRequested = true; }
 					catch ( Exception ) {
 
 						// ignored
@@ -281,13 +258,9 @@ namespace Librainian.Internet.Servers {
 
 			if ( timeToWait > 0 ) {
 				try {
-					if ( this._thrHttp?.IsAlive == true ) {
-						this._thrHttp.Join( timeToWait );
-					}
+					if ( this._thrHttp?.IsAlive == true ) { this._thrHttp.Join( timeToWait ); }
 				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 
 			stopwatch.Stop();
@@ -295,13 +268,9 @@ namespace Librainian.Internet.Servers {
 
 			if ( timeToWait > 0 ) {
 				try {
-					if ( this._thrHttps?.IsAlive == true ) {
-						this._thrHttps.Join( timeToWait );
-					}
+					if ( this._thrHttps?.IsAlive == true ) { this._thrHttps.Join( timeToWait ); }
 				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 		}
 
@@ -313,54 +282,32 @@ namespace Librainian.Internet.Servers {
 
 		/// <summary>Stops listening for connections.</summary>
 		public void Stop() {
-			if ( this.StopRequested ) {
-				return;
-			}
+			if ( this.StopRequested ) { return; }
 
 			this.StopRequested = true;
 
 			if ( this._unsecureListener != null ) {
-				try {
-					this._unsecureListener.Stop();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				try { this._unsecureListener.Stop(); }
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 
 			if ( this._secureListener != null ) {
-				try {
-					this._secureListener.Stop();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				try { this._secureListener.Stop(); }
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 
 			if ( this._thrHttp != null ) {
-				try {
-					this._thrHttp.Abort();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				try { this._thrHttp.Abort(); }
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 
 			if ( this._thrHttps != null ) {
-				try {
-					this._thrHttps.Abort();
-				}
-				catch ( Exception ex ) {
-					SimpleHttpLogger.Log( ex );
-				}
+				try { this._thrHttps.Abort(); }
+				catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 			}
 
-			try {
-				this.StopServer();
-			}
-			catch ( Exception ex ) {
-				SimpleHttpLogger.Log( ex );
-			}
+			try { this.StopServer(); }
+			catch ( Exception ex ) { SimpleHttpLogger.Log( ex ); }
 		}
 
 		/// <summary>

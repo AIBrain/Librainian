@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "IOWrapper.cs" was last formatted by Protiguous on 2018/06/26 at 12:55 AM.
+// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -54,6 +53,27 @@ namespace Librainian.ComputerSystem.FileSystem {
 	/// </summary>
 	/// <seealso cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
 	public class IOWrapper {
+
+		private const UInt32 ErrorInsufficientBuffer = 122;
+
+		private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+		private const UInt32 FileReadAttributes = 0x0080;
+
+		private const UInt32 FileShareDelete = 0x00000004;
+
+		// CreateFile constants
+		private const UInt32 FileShareRead = 0x00000001;
+
+		private const UInt32 FileShareWrite = 0x00000002;
+
+		private const UInt32 FileWriteAttributes = 0x0100;
+
+		private const UInt32 GenericRead = 0x80000000;
+
+		private const UInt32 GenericWrite = 0x40000000;
+
+		private const UInt32 OpenExisting = 3;
 
 		/// <summary>
 		///     returns a 2*number of extents array - the vcn and the lcn as pairs
@@ -78,9 +98,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				var pDest = pAlloc;
 				var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-				if ( !fResult ) {
-					throw new Exception( Marshal.GetLastWin32Error().ToString() );
-				}
+				if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
 				handle.Free();
 
@@ -166,9 +184,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-				if ( !result ) {
-					throw new Exception( Marshal.GetLastWin32Error().ToString() );
-				}
+				if ( !result ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
 				handle.Free();
 
@@ -247,9 +263,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
 
-				if ( !fResult ) {
-					throw new Exception( Marshal.GetLastWin32Error().ToString() );
-				}
+				if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
 				handle.Free();
 			}
@@ -262,9 +276,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static IntPtr OpenFile( String path ) {
 			var hFile = NativeMethods.CreateFile( path, FileAccess.ReadWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-			if ( hFile.IsInvalid ) {
-				throw new Exception( Marshal.GetLastWin32Error().ToString() );
-			}
+			if ( hFile.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
 			return hFile.DangerousGetHandle();
 		}
@@ -272,9 +284,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static IntPtr OpenVolume( String deviceName ) {
 			var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, FileAccess.ReadWrite, FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-			if ( hDevice.IsInvalid ) {
-				throw new Exception( Marshal.GetLastWin32Error().ToString() );
-			}
+			if ( hDevice.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
 
 			return hDevice.DangerousGetHandle();
 		}
@@ -300,26 +310,5 @@ namespace Librainian.ComputerSystem.FileSystem {
 			public Int64 StartingVcn;
 #pragma warning restore 414
 		}
-
-		private const UInt32 ErrorInsufficientBuffer = 122;
-
-		private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-		private const UInt32 FileReadAttributes = 0x0080;
-
-		private const UInt32 FileShareDelete = 0x00000004;
-
-		// CreateFile constants
-		private const UInt32 FileShareRead = 0x00000001;
-
-		private const UInt32 FileShareWrite = 0x00000002;
-
-		private const UInt32 FileWriteAttributes = 0x0100;
-
-		private const UInt32 GenericRead = 0x80000000;
-
-		private const UInt32 GenericWrite = 0x40000000;
-
-		private const UInt32 OpenExisting = 3;
 	}
 }

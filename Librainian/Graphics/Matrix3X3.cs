@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Matrix3X3.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Matrix3X3.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Matrix3X3.cs" was last formatted by Protiguous on 2018/06/26 at 1:09 AM.
+// Project: "Librainian", "Matrix3X3.cs" was last formatted by Protiguous on 2018/07/10 at 9:08 PM.
 
 namespace Librainian.Graphics {
 
@@ -51,23 +50,15 @@ namespace Librainian.Graphics {
 	/// <seealso cref="http://stackoverflow.com/a/8696503/956364" />
 	public class Matrix3X3 : ICloneable {
 
-		private const Int32 _M11 = 0;
+		/// <summary>
+		///     Creates a new object that is a copy of the current instance.
+		/// </summary>
+		/// <returns>A new object that is a copy of this instance.</returns>
+		public Object Clone() {
+			var coeffCopy = ( Double[] ) this._coeffs.Clone();
 
-		private const Int32 _M12 = 1;
-
-		private const Int32 _M13 = 2;
-
-		private const Int32 _M21 = 3;
-
-		private const Int32 _M22 = 4;
-
-		private const Int32 _M23 = 5;
-
-		private const Int32 _M31 = 6;
-
-		private const Int32 _M32 = 7;
-
-		private const Int32 _M33 = 8;
+			return new Matrix3X3( coeffCopy );
+		}
 
 		private readonly Double[] _coeffs;
 
@@ -228,6 +219,24 @@ namespace Librainian.Graphics {
 			set => this._coeffs[ _M32 ] = value;
 		}
 
+		private const Int32 _M11 = 0;
+
+		private const Int32 _M12 = 1;
+
+		private const Int32 _M13 = 2;
+
+		private const Int32 _M21 = 3;
+
+		private const Int32 _M22 = 4;
+
+		private const Int32 _M23 = 5;
+
+		private const Int32 _M31 = 6;
+
+		private const Int32 _M32 = 7;
+
+		private const Int32 _M33 = 8;
+
 		/// <summary>
 		///     Initializes a new instance of the <see cref="Matrix3X3" /> class.
 		/// </summary>
@@ -241,9 +250,7 @@ namespace Librainian.Graphics {
 		///     else an exception will be thrown
 		/// </param>
 		public Matrix3X3( [NotNull] Double[] coefficients ) {
-			if ( coefficients.GetLength( 0 ) != 9 ) {
-				throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
-			}
+			if ( coefficients.GetLength( 0 ) != 9 ) { throw new Exception( "The number of coefficients passed in to the constructor must be 9" ); }
 
 			this._coeffs = coefficients;
 		}
@@ -264,16 +271,6 @@ namespace Librainian.Graphics {
 			this._coeffs = new[] {
 				m11, m12, m13, m21, m22, m23, m31, m32, m33
 			};
-
-		/// <summary>
-		///     Creates a new object that is a copy of the current instance.
-		/// </summary>
-		/// <returns>A new object that is a copy of this instance.</returns>
-		public Object Clone() {
-			var coeffCopy = ( Double[] ) this._coeffs.Clone();
-
-			return new Matrix3X3( coeffCopy );
-		}
 
 		/// <summary>
 		///     Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception
@@ -329,9 +326,7 @@ namespace Librainian.Graphics {
 
 			// Compute the determinant
 
-			if ( this.Determinant.Near( 0.0 ) ) {
-				throw new Exception( "Unable to invert the matrix as it is singular" );
-			}
+			if ( this.Determinant.Near( 0.0 ) ) { throw new Exception( "Unable to invert the matrix as it is singular" ); }
 
 			// Scale the matrix by 1/determinant
 			tempMat.Scale( 1.0 / this.Determinant );

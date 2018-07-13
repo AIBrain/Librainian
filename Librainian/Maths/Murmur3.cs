@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Murmur3.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Murmur3.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Murmur3.cs" was last formatted by Protiguous on 2018/06/26 at 1:18 AM.
+// Project: "Librainian", "Murmur3.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
 
 namespace Librainian.Maths {
 
@@ -51,10 +50,6 @@ namespace Librainian.Maths {
 	/// <seealso cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
 	public class Murmur3 {
 
-		private const UInt64 C1 = 0x87c37b91114253d5L;
-
-		private const UInt64 C2 = 0x4cf5ad432745937fL;
-
 		private readonly UInt32 _seed;
 
 		private UInt64 _h1;
@@ -62,6 +57,10 @@ namespace Librainian.Maths {
 		private UInt64 _h2;
 
 		private UInt64 _length;
+
+		private const UInt64 C1 = 0x87c37b91114253d5L;
+
+		private const UInt64 C2 = 0x4cf5ad432745937fL;
 
 		public const UInt64 ReadSize = 16;
 
@@ -132,9 +131,7 @@ namespace Librainian.Maths {
 			}
 
 			// if the input MOD 16 != 0
-			if ( remaining > 0 ) {
-				this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos );
-			}
+			if ( remaining > 0 ) { this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos ); }
 		}
 
 		private void ProcessBytesRemaining( [NotNull] Byte[] bb, UInt64 remaining, Int32 pos ) {

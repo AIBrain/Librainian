@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "HashingExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 1:17 AM.
+// Project: "Librainian", "HashingExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
 
 namespace Librainian.Maths.Hashings {
 
@@ -96,9 +95,7 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="fileInfo"></param>
 		/// <returns></returns>
 		public static Int32 CalcHash( [NotNull] this FileInfo fileInfo ) {
-			if ( fileInfo is null ) {
-				throw new ArgumentNullException( nameof( fileInfo ) );
-			}
+			if ( fileInfo is null ) { throw new ArgumentNullException( nameof( fileInfo ) ); }
 
 			return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
 		}
@@ -109,15 +106,11 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="document"></param>
 		/// <returns></returns>
 		public static Int32 CalcHash( [NotNull] this Document document ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
-			}
+			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			var fileInfo = new FileInfo( document.FullPathWithFileName );
 
-			if ( fileInfo is null ) {
-				throw new NullReferenceException( "fileInfo" );
-			}
+			if ( fileInfo is null ) { throw new NullReferenceException( "fileInfo" ); }
 
 			return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
 		}
@@ -128,31 +121,23 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="document"></param>
 		/// <returns></returns>
 		public static Int32 CalcHashInt32( [NotNull] this Document document ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
-			}
+			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
 
 			var fileInfo = new FileInfo( document.FullPathWithFileName );
 
-			if ( fileInfo is null ) {
-				throw new NullReferenceException( "fileInfo" );
-			}
+			if ( fileInfo is null ) { throw new NullReferenceException( "fileInfo" ); }
 
 			var result = 0;
 
 			foreach ( var b in document.AsInt32() ) {
-				unchecked {
-					result += Deterministic( b );
-				}
+				unchecked { result += Deterministic( b ); }
 			}
 
 			return result;
 		}
 
 		public static async Task<Int32> CalcHashInt32Async( [NotNull] this Document document, CancellationToken token ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( paramName: nameof( document ) );
-			}
+			if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
 			return await Task.Run( () => document.CalcHashInt32(), token ).NoUI();
 		}
@@ -221,9 +206,7 @@ namespace Librainian.Maths.Hashings {
 		}
 
 		public static Byte GetHashCodeByte<TLeft>( [NotNull] this TLeft objectA, Byte maximum = Byte.MaxValue ) {
-			if ( Equals( objectA, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
 				var hashA = ( Byte ) objectA.GetHashCode();
@@ -240,13 +223,9 @@ namespace Librainian.Maths.Hashings {
 		[Pure]
 		public static Int32 GetHashCodes<T>( [CanBeNull] params T[] objects ) {
 			unchecked {
-				if ( objects is null ) {
-					return 0;
-				}
+				if ( objects is null ) { return 0; }
 
-				if ( !objects.Any() ) {
-					return objects.GetHashCode();
-				}
+				if ( !objects.Any() ) { return objects.GetHashCode(); }
 
 				var objectA = objects[ 0 ];
 				var hashA = objectA.GetHashCode();
@@ -263,13 +242,9 @@ namespace Librainian.Maths.Hashings {
 		[Pure]
 		public static Int32 GetHashCodes( [CanBeNull] params Object[] objects ) {
 			unchecked {
-				if ( objects is null ) {
-					return 0;
-				}
+				if ( objects is null ) { return 0; }
 
-				if ( !objects.Any() ) {
-					return objects.GetHashCode();
-				}
+				if ( !objects.Any() ) { return objects.GetHashCode(); }
 
 				var objectA = objects[ 0 ];
 				var hashA = objectA.GetHashCode();
@@ -288,13 +263,9 @@ namespace Librainian.Maths.Hashings {
 		/// <param name="objectB"></param>
 		/// <returns></returns>
 		public static Int32 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-			if ( Equals( objectA, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) ) { return 0; }
 
-			if ( Equals( objectB, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectB, default ) ) { return 0; }
 
 			var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
 
@@ -302,9 +273,7 @@ namespace Librainian.Maths.Hashings {
 		}
 
 		public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
-			if ( Equals( objectA, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
 				var hashA = ( UInt16 ) objectA.GetHashCode();
@@ -314,9 +283,7 @@ namespace Librainian.Maths.Hashings {
 		}
 
 		public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA, UInt32 maximum = UInt32.MaxValue ) {
-			if ( Equals( objectA, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
 				var hashA = ( UInt32 ) objectA.GetHashCode();
@@ -326,9 +293,7 @@ namespace Librainian.Maths.Hashings {
 		}
 
 		public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA, UInt64 maximum = UInt64.MaxValue ) {
-			if ( Equals( objectA, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) ) { return 0; }
 
 			unchecked {
 				var hashA = ( UInt64 ) objectA.GetHashCode();
@@ -348,9 +313,7 @@ namespace Librainian.Maths.Hashings {
 		/// <returns></returns>
 		[Pure]
 		public static Int32 GetHashMerge<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-			if ( Equals( objectA, default ) || Equals( objectB, default ) ) {
-				return 0;
-			}
+			if ( Equals( objectA, default ) || Equals( objectB, default ) ) { return 0; }
 
 			unchecked {
 				var hashA = objectA.GetHashCode();

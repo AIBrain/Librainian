@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "UInt256.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "UInt256.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "UInt256.cs" was last formatted by Protiguous on 2018/06/26 at 1:20 AM.
+// Project: "Librainian", "UInt256.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -77,13 +76,9 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		public UInt256( Byte[] value ) {
-			if ( value.Length > 32 && !( value.Length == 33 && value[ 32 ] == 0 ) ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if ( value.Length > 32 && !( value.Length == 33 && value[ 32 ] == 0 ) ) { throw new ArgumentOutOfRangeException(); }
 
-			if ( value.Length < 32 ) {
-				value = value.Concat( new Byte[ 32 - value.Length ] );
-			}
+			if ( value.Length < 32 ) { value = value.Concat( new Byte[ 32 - value.Length ] ); }
 
 			// convert parts and store
 			this._part1 = value.ToUInt64( 24 );
@@ -95,15 +90,11 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		public UInt256( Int32 value ) : this( value.GetBytes() ) {
-			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if ( value < 0 ) { throw new ArgumentOutOfRangeException(); }
 		}
 
 		public UInt256( Int64 value ) : this( value.GetBytes() ) {
-			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if ( value < 0 ) { throw new ArgumentOutOfRangeException(); }
 		}
 
 		public UInt256( UInt32 value ) : this( value.GetBytes() ) { }
@@ -111,9 +102,7 @@ namespace Librainian.Maths.Numbers {
 		public UInt256( UInt64 value ) : this( value.GetBytes() ) { }
 
 		public UInt256( BigInteger value ) : this( value.ToByteArray() ) {
-			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
+			if ( value < 0 ) { throw new ArgumentOutOfRangeException(); }
 		}
 
 		public static UInt256 DivRem( UInt256 dividend, UInt256 divisor, out UInt256 remainder ) {
@@ -130,9 +119,7 @@ namespace Librainian.Maths.Numbers {
 		//TODO properly taken into account host endianness
 		public static UInt256 FromByteArray( [NotNull] Byte[] buffer ) {
 			unchecked {
-				if ( buffer.Length != 32 ) {
-					throw new ArgumentException();
-				}
+				if ( buffer.Length != 32 ) { throw new ArgumentException(); }
 
 				var part1 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
 				var part2 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 8 ) );
@@ -172,37 +159,23 @@ namespace Librainian.Maths.Numbers {
 		public static UInt256 operator ~( UInt256 value ) => new UInt256( ~value._part1, ~value._part2, ~value._part3, ~value._part4 );
 
 		public static Boolean operator <( UInt256 left, UInt256 right ) {
-			if ( left._part1 < right._part1 ) {
-				return true;
-			}
+			if ( left._part1 < right._part1 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 < right._part2 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 < right._part2 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) { return true; }
 
 			return left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4;
 		}
 
 		public static Boolean operator <=( UInt256 left, UInt256 right ) {
-			if ( left._part1 < right._part1 ) {
-				return true;
-			}
+			if ( left._part1 < right._part1 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 < right._part2 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 < right._part2 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 < right._part3 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 < right._part4 ) { return true; }
 
 			return left == right;
 		}
@@ -210,37 +183,23 @@ namespace Librainian.Maths.Numbers {
 		public static Boolean operator ==( UInt256 left, UInt256 right ) => left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 == right._part4;
 
 		public static Boolean operator >( UInt256 left, UInt256 right ) {
-			if ( left._part1 > right._part1 ) {
-				return true;
-			}
+			if ( left._part1 > right._part1 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 > right._part2 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 > right._part2 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) { return true; }
 
 			return left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4;
 		}
 
 		public static Boolean operator >=( UInt256 left, UInt256 right ) {
-			if ( left._part1 > right._part1 ) {
-				return true;
-			}
+			if ( left._part1 > right._part1 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 > right._part2 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 > right._part2 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 > right._part3 ) { return true; }
 
-			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4 ) {
-				return true;
-			}
+			if ( left._part1 == right._part1 && left._part2 == right._part2 && left._part3 == right._part3 && left._part4 > right._part4 ) { return true; }
 
 			return left == right;
 		}
@@ -258,25 +217,17 @@ namespace Librainian.Maths.Numbers {
 		public static UInt256 Pow( UInt256 value, Int32 exponent ) => new UInt256( BigInteger.Pow( value.ToBigInteger(), exponent ) );
 
 		public Int32 CompareTo( UInt256 other ) {
-			if ( this == other ) {
-				return 0;
-			}
+			if ( this == other ) { return 0; }
 
-			if ( this < other ) {
-				return -1;
-			}
+			if ( this < other ) { return -1; }
 
-			if ( this > other ) {
-				return +1;
-			}
+			if ( this > other ) { return +1; }
 
 			throw new Exception();
 		}
 
 		public override Boolean Equals( Object obj ) {
-			if ( !( obj is UInt256 ) ) {
-				return false;
-			}
+			if ( !( obj is UInt256 ) ) { return false; }
 
 			var other = ( UInt256 ) obj;
 

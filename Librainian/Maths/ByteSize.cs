@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ByteSize.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "ByteSize.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "ByteSize.cs" was last formatted by Protiguous on 2018/06/26 at 1:17 AM.
+// Project: "Librainian", "ByteSize.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
 
 namespace Librainian.Maths {
 
@@ -99,29 +98,17 @@ namespace Librainian.Maths {
 			get {
 
 				// Absolute value is used to deal with negative values
-				if ( Math.Abs( this.PetaBytes ) >= 1 ) {
-					return PetaByteSymbol;
-				}
+				if ( Math.Abs( this.PetaBytes ) >= 1 ) { return PetaByteSymbol; }
 
-				if ( Math.Abs( this.TeraBytes ) >= 1 ) {
-					return TeraByteSymbol;
-				}
+				if ( Math.Abs( this.TeraBytes ) >= 1 ) { return TeraByteSymbol; }
 
-				if ( Math.Abs( this.GigaBytes ) >= 1 ) {
-					return GigaByteSymbol;
-				}
+				if ( Math.Abs( this.GigaBytes ) >= 1 ) { return GigaByteSymbol; }
 
-				if ( Math.Abs( this.MegaBytes ) >= 1 ) {
-					return MegaByteSymbol;
-				}
+				if ( Math.Abs( this.MegaBytes ) >= 1 ) { return MegaByteSymbol; }
 
-				if ( Math.Abs( this.KiloBytes ) >= 1 ) {
-					return KiloByteSymbol;
-				}
+				if ( Math.Abs( this.KiloBytes ) >= 1 ) { return KiloByteSymbol; }
 
-				if ( Math.Abs( this.Bytes ) >= 1 ) {
-					return ByteSymbol;
-				}
+				if ( Math.Abs( this.Bytes ) >= 1 ) { return ByteSymbol; }
 
 				return BitSymbol;
 			}
@@ -131,29 +118,17 @@ namespace Librainian.Maths {
 			get {
 
 				// Absolute value is used to deal with negative values
-				if ( Math.Abs( this.PetaBytes ) >= 1 ) {
-					return this.PetaBytes;
-				}
+				if ( Math.Abs( this.PetaBytes ) >= 1 ) { return this.PetaBytes; }
 
-				if ( Math.Abs( this.TeraBytes ) >= 1 ) {
-					return this.TeraBytes;
-				}
+				if ( Math.Abs( this.TeraBytes ) >= 1 ) { return this.TeraBytes; }
 
-				if ( Math.Abs( this.GigaBytes ) >= 1 ) {
-					return this.GigaBytes;
-				}
+				if ( Math.Abs( this.GigaBytes ) >= 1 ) { return this.GigaBytes; }
 
-				if ( Math.Abs( this.MegaBytes ) >= 1 ) {
-					return this.MegaBytes;
-				}
+				if ( Math.Abs( this.MegaBytes ) >= 1 ) { return this.MegaBytes; }
 
-				if ( Math.Abs( this.KiloBytes ) >= 1 ) {
-					return this.KiloBytes;
-				}
+				if ( Math.Abs( this.KiloBytes ) >= 1 ) { return this.KiloBytes; }
 
-				if ( Math.Abs( this.Bytes ) >= 1 ) {
-					return this.Bytes;
-				}
+				if ( Math.Abs( this.Bytes ) >= 1 ) { return this.Bytes; }
 
 				return this.Bits;
 			}
@@ -212,9 +187,7 @@ namespace Librainian.Maths {
 		public static ByteSize Parse( String s ) {
 
 			// Arg checking
-			if ( String.IsNullOrWhiteSpace( s ) ) {
-				throw new ArgumentNullException( nameof( s ), "String is null or whitespace" );
-			}
+			if ( String.IsNullOrWhiteSpace( s ) ) { throw new ArgumentNullException( nameof( s ), "String is null or whitespace" ); }
 
 			// Get the index of the first non-digit character
 			s = s.TrimStart(); // Protect against leading spaces
@@ -234,9 +207,7 @@ namespace Librainian.Maths {
 				}
 			}
 
-			if ( found == false ) {
-				throw new FormatException( $"No byte indicator found in value '{s}'." );
-			}
+			if ( found == false ) { throw new FormatException( $"No byte indicator found in value '{s}'." ); }
 
 			var lastNumber = num;
 
@@ -245,9 +216,7 @@ namespace Librainian.Maths {
 			var sizePart = s.Substring( lastNumber, s.Length - lastNumber ).Trim();
 
 			// Get the numeric part
-			if ( !Double.TryParse( numberPart, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.CurrentInfo, out var number ) ) {
-				throw new FormatException( $"No number found in value '{s}'." );
-			}
+			if ( !Double.TryParse( numberPart, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.CurrentInfo, out var number ) ) { throw new FormatException( $"No number found in value '{s}'." ); }
 
 			// Get the magnitude part
 			switch ( sizePart ) {
@@ -328,18 +297,12 @@ namespace Librainian.Maths {
 		public Int32 CompareTo( ByteSize other ) => this.Bits.CompareTo( other.Bits );
 
 		public override Boolean Equals( Object value ) {
-			if ( value is null ) {
-				return false;
-			}
+			if ( value is null ) { return false; }
 
 			ByteSize other;
 
-			if ( value is ByteSize size ) {
-				other = size;
-			}
-			else {
-				return false;
-			}
+			if ( value is ByteSize size ) { other = size; }
+			else { return false; }
 
 			return this.Equals( other );
 		}
@@ -361,46 +324,28 @@ namespace Librainian.Maths {
 		public String ToString( String format ) => this.ToString( format, CultureInfo.CurrentCulture );
 
 		public String ToString( String format, IFormatProvider provider ) {
-			if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) {
-				format = "0.## " + format;
-			}
+			if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) { format = "0.## " + format; }
 
-			if ( provider is null ) {
-				provider = CultureInfo.CurrentCulture;
-			}
+			if ( provider is null ) { provider = CultureInfo.CurrentCulture; }
 
 			Boolean Has( String s ) => format.IndexOf( s, StringComparison.CurrentCultureIgnoreCase ) != -1;
 
 			String Output( Double n ) => n.ToString( format, provider );
 
-			if ( Has( "PB" ) ) {
-				return Output( this.PetaBytes );
-			}
+			if ( Has( "PB" ) ) { return Output( this.PetaBytes ); }
 
-			if ( Has( "TB" ) ) {
-				return Output( this.TeraBytes );
-			}
+			if ( Has( "TB" ) ) { return Output( this.TeraBytes ); }
 
-			if ( Has( "GB" ) ) {
-				return Output( this.GigaBytes );
-			}
+			if ( Has( "GB" ) ) { return Output( this.GigaBytes ); }
 
-			if ( Has( "MB" ) ) {
-				return Output( this.MegaBytes );
-			}
+			if ( Has( "MB" ) ) { return Output( this.MegaBytes ); }
 
-			if ( Has( "KB" ) ) {
-				return Output( this.KiloBytes );
-			}
+			if ( Has( "KB" ) ) { return Output( this.KiloBytes ); }
 
 			// Byte and Bit symbol must be case-sensitive
-			if ( format.IndexOf( ByteSymbol ) != -1 ) {
-				return Output( this.Bytes );
-			}
+			if ( format.IndexOf( ByteSymbol ) != -1 ) { return Output( this.Bytes ); }
 
-			if ( format.IndexOf( BitSymbol ) != -1 ) {
-				return Output( this.Bits );
-			}
+			if ( format.IndexOf( BitSymbol ) != -1 ) { return Output( this.Bits ); }
 
 			return $"{this.LargestWholeNumberValue.ToString( format, provider )} {this.LargestWholeNumberSymbol}";
 		}

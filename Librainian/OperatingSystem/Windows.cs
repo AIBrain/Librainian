@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Windows.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Windows.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Windows.cs" was last formatted by Protiguous on 2018/06/26 at 1:36 AM.
+// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -65,8 +64,7 @@ namespace Librainian.OperatingSystem {
 		private const String PATH = "PATH";
 
 		[CanBeNull]
-		public static readonly Lazy<Document> CommandPrompt =
-			new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullName, path2: "cmd.exe" ) ), isThreadSafe: true );
+		public static readonly Lazy<Document> CommandPrompt = new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullName, path2: "cmd.exe" ) ), isThreadSafe: true );
 
 		[CanBeNull]
 		public static readonly Lazy<Document> IrfanView64 =
@@ -81,9 +79,7 @@ namespace Librainian.OperatingSystem {
 		public static readonly Lazy<Document> PowerShell = new Lazy<Document>( () => {
 			var document = FindDocument( fullname: Path.Combine( path1: PowerShellFolder.Value.FullName, path2: "powershell.exe" ) );
 
-			if ( null == document ) {
-				throw new FileNotFoundException( "Unable to locate powershell.exe." );
-			}
+			if ( null == document ) { throw new FileNotFoundException( "Unable to locate powershell.exe." ); }
 
 			return document;
 		}, isThreadSafe: true );
@@ -92,9 +88,7 @@ namespace Librainian.OperatingSystem {
 		public static readonly Lazy<Folder> PowerShellFolder = new Lazy<Folder>( () => {
 			var folder = FindFolder( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullName, path2: @"WindowsPowerShell\v1.0" ) );
 
-			if ( null == folder ) {
-				throw new DirectoryNotFoundException( "Unable to locate Windows PowerShell folder." );
-			}
+			if ( null == folder ) { throw new DirectoryNotFoundException( "Unable to locate Windows PowerShell folder." ); }
 
 			return folder;
 		}, isThreadSafe: true );
@@ -114,68 +108,48 @@ namespace Librainian.OperatingSystem {
 		/// </summary>
 		/// <returns></returns>
 		public static void CleanUpPATH( Boolean reportToConsole = false ) {
-			if ( reportToConsole ) {
-				"Attempting to verify and fix the PATH environment.".WriteLine();
-			}
+			if ( reportToConsole ) { "Attempting to verify and fix the PATH environment.".WriteLine(); }
 
 			var currentPath = GetCurrentPATH().Trim();
 
 			if ( String.IsNullOrWhiteSpace( currentPath ) ) {
 				"Unable to obtain the current PATH variable.".Error();
 
-				if ( reportToConsole ) {
-					"Exiting subroutine. No changes have been made to the PATH variable.".WriteLine();
-				}
+				if ( reportToConsole ) { "Exiting subroutine. No changes have been made to the PATH variable.".WriteLine(); }
 
 				return;
 			}
 
 			var justpaths = currentPath.Split( separator: PathSeparator, options: StringSplitOptions.RemoveEmptyEntries ).ToHashSet();
 
-			if ( reportToConsole ) {
-				$"Found PATH list with {justpaths.Count} entries.".WriteLine();
-			}
+			if ( reportToConsole ) { $"Found PATH list with {justpaths.Count} entries.".WriteLine(); }
 
 			var pathsData = new ConcurrentDictionary<String, Folder>( concurrencyLevel: Environment.ProcessorCount, capacity: justpaths.Count );
 
-			foreach ( var s in justpaths ) {
-				pathsData[ s ] = new Folder( fullPath: s );
-			}
+			foreach ( var s in justpaths ) { pathsData[ s ] = new Folder( fullPath: s ); }
 
-			if ( reportToConsole ) {
-				"Examining entries...".WriteLine();
-			}
+			if ( reportToConsole ) { "Examining entries...".WriteLine(); }
 
 			foreach ( var pair in pathsData.Where( pair => !pair.Value.Exists() ) ) {
-				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-					$"Removing nonexistent folder `{dummy.FullName}` from PATH".WriteLine();
-				}
+				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) { $"Removing nonexistent folder `{dummy.FullName}` from PATH".WriteLine(); }
 			}
 
 			foreach ( var pair in pathsData.Where( pair => !pair.Value.GetFolders( "*" ).Any() && !pair.Value.GetDocuments().Any() ) ) {
-				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-					$"Removing empty folder {dummy.FullName} from PATH".WriteLine();
-				}
+				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) { $"Removing empty folder {dummy.FullName} from PATH".WriteLine(); }
 			}
 
-			if ( reportToConsole ) {
-				"Rebuilding PATH entries...".WriteLine();
-			}
+			if ( reportToConsole ) { "Rebuilding PATH entries...".WriteLine(); }
 
 			var rebuiltPath = pathsData.Values.OrderByDescending( info => info.FullName.Length ).Select( info => info.FullName ).ToStrings( ";" );
 
-			if ( reportToConsole ) {
-				"Applying new PATH entries...".WriteLine();
-			}
+			if ( reportToConsole ) { "Applying new PATH entries...".WriteLine(); }
 
 			Environment.SetEnvironmentVariable( variable: PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
 		}
 
 		public static Boolean CreateRestorePoint( String description = null ) {
 			try {
-				if ( String.IsNullOrWhiteSpace( description ) ) {
-					description = DateTime.Now.ToLongDateTime();
-				}
+				if ( String.IsNullOrWhiteSpace( description ) ) { description = DateTime.Now.ToLongDateTime(); }
 
 				var oScope = new ManagementScope( @"\\localhost\root\default" );
 				var oPath = new ManagementPath( "SystemRestore" );
@@ -216,9 +190,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return null;
 			} );
@@ -243,9 +215,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return null;
 			} );
@@ -280,9 +250,7 @@ namespace Librainian.OperatingSystem {
 
 					return true;
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return false;
 			} );
@@ -306,25 +274,19 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return null;
 			} );
 
 		[CanBeNull]
 		public static Document FindDocument( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
-			if ( !String.IsNullOrEmpty( okayMessage ) ) {
-				$"Finding {fullname}...".Write();
-			}
+			if ( !String.IsNullOrEmpty( okayMessage ) ) { $"Finding {fullname}...".Write(); }
 
 			var mainDocument = new Document( fullPathWithFilename: fullname );
 
 			if ( mainDocument.Exists() ) {
-				if ( !String.IsNullOrEmpty( okayMessage ) ) {
-					okayMessage.WriteLine();
-				}
+				if ( !String.IsNullOrEmpty( okayMessage ) ) { okayMessage.WriteLine(); }
 
 				return mainDocument;
 			}
@@ -336,13 +298,9 @@ namespace Librainian.OperatingSystem {
 
 		[CanBeNull]
 		public static Folder FindFolder( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
-			if ( String.IsNullOrWhiteSpace( fullname ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullname ) );
-			}
+			if ( String.IsNullOrWhiteSpace( fullname ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullname ) ); }
 
-			if ( !String.IsNullOrEmpty( okayMessage ) ) {
-				$"Finding {fullname}...".Write();
-			}
+			if ( !String.IsNullOrEmpty( okayMessage ) ) { $"Finding {fullname}...".Write(); }
 
 			var mainFolder = new Folder( fullPath: fullname );
 
@@ -352,9 +310,7 @@ namespace Librainian.OperatingSystem {
 				return null;
 			}
 
-			if ( !String.IsNullOrEmpty( okayMessage ) ) {
-				okayMessage.WriteLine();
-			}
+			if ( !String.IsNullOrEmpty( okayMessage ) ) { okayMessage.WriteLine(); }
 
 			return mainFolder;
 		}
@@ -372,9 +328,7 @@ namespace Librainian.OperatingSystem {
 			try {
 				return await Task.Run( () => {
 					using ( var service = new ServiceController( name: serviceName ) ) {
-						if ( service.Status != ServiceControllerStatus.Running ) {
-							service.Start();
-						}
+						if ( service.Status != ServiceControllerStatus.Running ) { service.Start(); }
 
 						service.WaitForStatus( desiredStatus: ServiceControllerStatus.Running, timeout: timeout );
 
@@ -382,9 +336,7 @@ namespace Librainian.OperatingSystem {
 					}
 				} );
 			}
-			catch ( TimeoutException exception ) {
-				exception.More();
-			}
+			catch ( TimeoutException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -400,9 +352,7 @@ namespace Librainian.OperatingSystem {
 					}
 				} );
 			}
-			catch ( TimeoutException exception ) {
-				exception.More();
-			}
+			catch ( TimeoutException exception ) { exception.More(); }
 
 			return false;
 		}
@@ -410,13 +360,9 @@ namespace Librainian.OperatingSystem {
 		[CanBeNull]
 		public static Task<Process> TryConvert_WithIrfanview( Document inDocument, Document outDocument ) =>
 			Task.Run( () => {
-				if ( IrfanView64 is null ) {
-					return null;
-				}
+				if ( IrfanView64 is null ) { return null; }
 
-				if ( !IrfanView64.Value.Exists() ) {
-					return null;
-				}
+				if ( !IrfanView64.Value.Exists() ) { return null; }
 
 				try {
 					var arguments = $" {inDocument.FullPathWithFileName.Quoted()} /convert={outDocument.FullPathWithFileName.Quoted()} ";
@@ -437,9 +383,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) {
-					exception.More();
-				}
+				catch ( Exception exception ) { exception.More(); }
 
 				return null;
 			} );

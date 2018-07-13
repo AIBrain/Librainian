@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CryptUtility.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "CryptUtility.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "CryptUtility.cs" was last formatted by Protiguous on 2018/06/26 at 1:40 AM.
+// Project: "Librainian", "CryptUtility.cs" was last formatted by Protiguous on 2018/07/13 at 1:38 AM.
 
 namespace Librainian.Security {
 
@@ -100,9 +99,7 @@ namespace Librainian.Security {
 			//Xor the keys an their passwords
 			var keyStreams = new MemoryStream[ keys.Count ];
 
-			for ( var n = 0; n < keys.Count; n++ ) {
-				keyStreams[ n ] = CreateKeyStream( keys[ index: n ] );
-			}
+			for ( var n = 0; n < keys.Count; n++ ) { keyStreams[ n ] = CreateKeyStream( keys[ index: n ] ); }
 
 			//Buffer for the resulting stream
 			var resultKeyStream = new MemoryStream();
@@ -114,9 +111,7 @@ namespace Librainian.Security {
 
 			for ( Int64 n = 0; n <= maxLength; n++ ) {
 				for ( var streamIndex = 0; streamIndex < keyStreams.Length; streamIndex++ ) {
-					if ( keyStreams[ streamIndex ] is null ) {
-						continue;
-					}
+					if ( keyStreams[ streamIndex ] is null ) { continue; }
 
 					var readByte = keyStreams[ streamIndex ].ReadByte();
 
@@ -181,9 +176,7 @@ namespace Librainian.Security {
 
 				Byte currentByte;
 
-				if ( extract ) {
-					currentByte = 0;
-				}
+				if ( extract ) { currentByte = 0; }
 				else {
 					currentByte = ( Byte ) messageStream.ReadByte();
 
@@ -273,8 +266,7 @@ namespace Librainian.Security {
 		/// <param name="bitmapInfo"></param>
 		/// <param name="extract">Hide the message (false) or extract it (true)</param>
 		/// <param name="aviReader"></param>
-		private static void HideBytes( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo,
-			Boolean extract ) {
+		private static void HideBytes( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, BitmapInfo bitmapInfo, Boolean extract ) {
 
 			//Color component to hide the next byte in (0-R, 1-G, 2-B)
 			//Rotates with every hidden byte
@@ -323,9 +315,7 @@ namespace Librainian.Security {
 					//To add a bit of confusion, xor the byte with a byte read from the keyStream
 					var currentByte = messageStream.ReadByte() ^ currentReverseKeyByte;
 
-					if ( imageFiles[ indexBitmaps ].UseGrayscale ) {
-						pixelColor = Color.FromArgb( red: currentByte, green: currentByte, blue: currentByte );
-					}
+					if ( imageFiles[ indexBitmaps ].UseGrayscale ) { pixelColor = Color.FromArgb( red: currentByte, green: currentByte, blue: currentByte ); }
 					else {
 
 						//Change one component of the color to the message-byte
@@ -379,9 +369,7 @@ namespace Librainian.Security {
 			//count available pixels
 			Int64 countPixels = 0;
 
-			for ( indexBitmaps = 0; indexBitmaps < imageFiles.Length; indexBitmaps++ ) {
-				countPixels += imageFiles[ indexBitmaps ].CountPixels;
-			}
+			for ( indexBitmaps = 0; indexBitmaps < imageFiles.Length; indexBitmaps++ ) { countPixels += imageFiles[ indexBitmaps ].CountPixels; }
 
 			//load the first bitmap
 			var bitmapInfo = LoadBitmap( imageFile: imageFiles[ 0 ], aviReader: aviReader, aviWriter: aviWriter );
@@ -505,12 +493,10 @@ namespace Librainian.Security {
 
 			//Loop over the message and hide each byte
 			if ( splitBytes ) {
-				HideBits( keyStream: keyStream, messageStream: messageStream, messageLength: messageLength, aviReader: aviReader, aviWriter: aviWriter, imageFiles: imageFiles, bitmapInfo: bitmapInfo,
-					extract: extract );
+				HideBits( keyStream: keyStream, messageStream: messageStream, messageLength: messageLength, aviReader: aviReader, aviWriter: aviWriter, imageFiles: imageFiles, bitmapInfo: bitmapInfo, extract: extract );
 			}
 			else {
-				HideBytes( keyStream: keyStream, messageStream: messageStream, messageLength: messageLength, aviReader: aviReader, aviWriter: aviWriter, imageFiles: imageFiles, bitmapInfo: bitmapInfo,
-					extract: extract );
+				HideBytes( keyStream: keyStream, messageStream: messageStream, messageLength: messageLength, aviReader: aviReader, aviWriter: aviWriter, imageFiles: imageFiles, bitmapInfo: bitmapInfo, extract: extract );
 			}
 
 			//Close AVI files
@@ -522,9 +508,7 @@ namespace Librainian.Security {
 			var index = fileName.LastIndexOf( "\\", comparisonType: StringComparison.Ordinal ) + 1;
 			fileName = fileName.Substring( startIndex: 0, index ) + TempFileName;
 
-			if ( File.Exists( fileName ) ) {
-				File.Delete( fileName );
-			}
+			if ( File.Exists( fileName ) ) { File.Delete( fileName ); }
 
 			keyStream.Close();
 		}
@@ -538,9 +522,7 @@ namespace Librainian.Security {
 					//first carrier image is a video - extract the first frame
 					aviReader.Open( fileName: imageFile.SourceFileName );
 
-					if ( imageFile.ResultFileName.Length > 0 ) {
-						aviWriter.Open( fileName: imageFile.ResultFileName, frameRate: aviReader.FrameRate );
-					}
+					if ( imageFile.ResultFileName.Length > 0 ) { aviWriter.Open( fileName: imageFile.ResultFileName, frameRate: aviReader.FrameRate ); }
 
 					var fileName = Application.ExecutablePath;
 					var index = fileName.LastIndexOf( "\\", comparisonType: StringComparison.Ordinal ) + 1;
@@ -551,9 +533,7 @@ namespace Librainian.Security {
 					bitmapInfo.AviPosition = 0;
 					bitmapInfo.AviCountFrames = aviReader.CountFrames;
 
-					if ( imageFile.AviMessageBytesToHide != null ) {
-						bitmapInfo.MessageBytesToHide = imageFile.AviMessageBytesToHide[ 0 ];
-					}
+					if ( imageFile.AviMessageBytesToHide != null ) { bitmapInfo.MessageBytesToHide = imageFile.AviMessageBytesToHide[ 0 ]; }
 				}
 				catch ( Exception ) {
 					aviReader.Close();
@@ -574,13 +554,11 @@ namespace Librainian.Security {
 			return bitmapInfo;
 		}
 
-		private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, [NotNull] Stream keyStream, ref Int32 countBytesInCurrentImage,
-			ref Int32 indexBitmaps, ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo ) {
+		private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, [NotNull] Stream keyStream, ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps,
+			ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo ) {
 
 			//Repeat the key, if it is shorter than the message
-			if ( keyStream.Position == keyStream.Length ) {
-				keyStream.Seek( offset: 0, origin: SeekOrigin.Begin );
-			}
+			if ( keyStream.Position == keyStream.Length ) { keyStream.Seek( offset: 0, origin: SeekOrigin.Begin ); }
 
 			//Get the next pixel-count from the key, use "1" if it's 0
 			var currentKeyByte = ( Byte ) keyStream.ReadByte();
@@ -597,9 +575,7 @@ namespace Librainian.Security {
 				pixelPosition.X = currentStepWidth - ( bitmapWidth - pixelPosition.X );
 				pixelPosition.Y++;
 			}
-			else {
-				pixelPosition.X += currentStepWidth;
-			}
+			else { pixelPosition.X += currentStepWidth; }
 
 			//Proceed to next bitmap
 			if ( countBytesInCurrentImage == bitmapInfo.MessageBytesToHide ) {
@@ -654,9 +630,7 @@ namespace Librainian.Security {
 					bitmapWidth = bitmapInfo.Bitmap.Width - 1;
 				}
 
-				if ( pixelPosition.X > bitmapWidth ) {
-					pixelPosition.X = 0;
-				}
+				if ( pixelPosition.X > bitmapWidth ) { pixelPosition.X = 0; }
 			}
 		}
 
@@ -665,12 +639,8 @@ namespace Librainian.Security {
 
 			var format = ImageFormat.Bmp;
 
-			if ( fileNameLower.EndsWith( "tif" ) || fileNameLower.EndsWith( "tiff" ) ) {
-				format = ImageFormat.Tiff;
-			}
-			else if ( fileNameLower.EndsWith( "png" ) ) {
-				format = ImageFormat.Png;
-			}
+			if ( fileNameLower.EndsWith( "tif" ) || fileNameLower.EndsWith( "tiff" ) ) { format = ImageFormat.Tiff; }
+			else if ( fileNameLower.EndsWith( "png" ) ) { format = ImageFormat.Png; }
 
 			//copy the bitmap
 			Image img = new Bitmap( original: bitmap );
@@ -691,9 +661,7 @@ namespace Librainian.Security {
 		private static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
 			var mask = ( Byte ) ( 1 << position );
 
-			if ( newBitValue ) {
-				return ( Byte ) ( b | mask );
-			}
+			if ( newBitValue ) { return ( Byte ) ( b | mask ); }
 
 			return ( Byte ) ( b & ~mask );
 		}
@@ -725,9 +693,7 @@ namespace Librainian.Security {
 		private static String UnTrimColorString( String color, Int32 desiredLength ) {
 			var difference = desiredLength - color.Length;
 
-			if ( difference > 0 ) {
-				color = new String( c: '0', count: difference ) + color;
-			}
+			if ( difference > 0 ) { color = new String( c: '0', count: difference ) + color; }
 
 			return color;
 		}
@@ -753,9 +719,7 @@ namespace Librainian.Security {
 				//proceed to the next letter or repeat the password
 				passwordIndex++;
 
-				if ( passwordIndex == key.Password.Length ) {
-					passwordIndex = 0;
-				}
+				if ( passwordIndex == key.Password.Length ) { passwordIndex = 0; }
 			}
 
 			fileStream.Close();

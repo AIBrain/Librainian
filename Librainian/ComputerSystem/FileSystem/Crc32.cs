@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Crc32.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Crc32.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Crc32.cs" was last formatted by Protiguous on 2018/06/26 at 12:54 AM.
+// Project: "Librainian", "Crc32.cs" was last formatted by Protiguous on 2018/07/10 at 8:53 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -62,19 +61,19 @@ namespace Librainian.ComputerSystem.FileSystem {
 	/// </copyright>
 	public sealed class Crc32 : HashAlgorithm {
 
-		private static UInt32[] _defaultTable;
-
 		private UInt32 _hash;
-
-		public const UInt32 DefaultPolynomial = 3988292384;
-
-		public const UInt32 DefaultSeed = 0xffffffffu;
 
 		private UInt32 Seed { get; }
 
 		private UInt32[] Table { get; }
 
 		public override Int32 HashSize => 32;
+
+		public const UInt32 DefaultPolynomial = 3988292384;
+
+		public const UInt32 DefaultSeed = 0xffffffffu;
+
+		private static UInt32[] _defaultTable;
 
 		public Crc32() : this( DefaultPolynomial, DefaultSeed ) { }
 
@@ -85,9 +84,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		[NotNull]
 		private static UInt32[] InitializeTable( UInt32 polynomial ) {
-			if ( polynomial == DefaultPolynomial && _defaultTable != null ) {
-				return _defaultTable;
-			}
+			if ( polynomial == DefaultPolynomial && _defaultTable != null ) { return _defaultTable; }
 
 			var createTable = new UInt32[ 256 ];
 
@@ -95,20 +92,14 @@ namespace Librainian.ComputerSystem.FileSystem {
 				var entry = ( UInt32 ) i;
 
 				for ( var j = 0; j < 8; j++ ) {
-					if ( ( entry & 1 ) == 1 ) {
-						entry = ( entry >> 1 ) ^ polynomial;
-					}
-					else {
-						entry = entry >> 1;
-					}
+					if ( ( entry & 1 ) == 1 ) { entry = ( entry >> 1 ) ^ polynomial; }
+					else { entry = entry >> 1; }
 				}
 
 				createTable[ i ] = entry;
 			}
 
-			if ( polynomial == DefaultPolynomial ) {
-				_defaultTable = createTable;
-			}
+			if ( polynomial == DefaultPolynomial ) { _defaultTable = createTable; }
 
 			return createTable;
 		}
@@ -133,9 +124,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static UInt32 CalculateHash( UInt32[] table, UInt32 seed, IList<Byte> buffer, Int32 start, Int32 size ) {
 			var crc = seed;
 
-			for ( var i = start; i < size - start; i++ ) {
-				crc = ( crc >> 8 ) ^ table[ buffer[ i ] ^ ( crc & 0xff ) ];
-			}
+			for ( var i = start; i < size - start; i++ ) { crc = ( crc >> 8 ) ^ table[ buffer[ i ] ^ ( crc & 0xff ) ]; }
 
 			return crc;
 		}
@@ -150,9 +139,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
 			var result = BitConverter.GetBytes( uint32 );
 
-			if ( BitConverter.IsLittleEndian ) {
-				Array.Reverse( result );
-			}
+			if ( BitConverter.IsLittleEndian ) { Array.Reverse( result ); }
 
 			return result;
 		}

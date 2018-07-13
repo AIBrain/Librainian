@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Crc64.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Crc64.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Crc64.cs" was last formatted by Protiguous on 2018/06/26 at 1:40 AM.
+// Project: "Librainian", "Crc64.cs" was last formatted by Protiguous on 2018/07/13 at 1:37 AM.
 
 namespace Librainian.Security {
 
@@ -63,9 +62,9 @@ namespace Librainian.Security {
 
 		private UInt64 _hash;
 
-		protected const UInt64 DefaultSeed = 0x0;
-
 		public override Int32 HashSize => 64;
+
+		protected const UInt64 DefaultSeed = 0x0;
 
 		public Crc64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
 			this._table = InitializeTable( polynomial: polynomial );
@@ -74,15 +73,11 @@ namespace Librainian.Security {
 
 		[NotNull]
 		private static UInt64[] InitializeTable( UInt64 polynomial ) {
-			if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) {
-				return Crc64Iso.Table;
-			}
+			if ( polynomial == Crc64Iso.Iso3309Polynomial && Crc64Iso.Table != null ) { return Crc64Iso.Table; }
 
 			var createTable = CreateTable( polynomial: polynomial );
 
-			if ( polynomial == Crc64Iso.Iso3309Polynomial ) {
-				Crc64Iso.Table = createTable;
-			}
+			if ( polynomial == Crc64Iso.Iso3309Polynomial ) { Crc64Iso.Table = createTable; }
 
 			return createTable;
 		}
@@ -91,9 +86,7 @@ namespace Librainian.Security {
 		private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
 			var result = BitConverter.GetBytes( value );
 
-			if ( BitConverter.IsLittleEndian ) {
-				Array.Reverse( array: result );
-			}
+			if ( BitConverter.IsLittleEndian ) { Array.Reverse( array: result ); }
 
 			return result;
 		}
@@ -102,9 +95,7 @@ namespace Librainian.Security {
 			var crc = seed;
 
 			for ( var i = start; i < size; i++ ) {
-				unchecked {
-					crc = ( crc >> 8 ) ^ table[ ( buffer[ index: i ] ^ crc ) & 0xff ];
-				}
+				unchecked { crc = ( crc >> 8 ) ^ table[ ( buffer[ index: i ] ^ crc ) & 0xff ]; }
 			}
 
 			return crc;
@@ -118,12 +109,8 @@ namespace Librainian.Security {
 				var entry = ( UInt64 ) i;
 
 				for ( var j = 0; j < 8; ++j ) {
-					if ( ( entry & 1 ) == 1 ) {
-						entry = ( entry >> 1 ) ^ polynomial;
-					}
-					else {
-						entry = entry >> 1;
-					}
+					if ( ( entry & 1 ) == 1 ) { entry = ( entry >> 1 ) ^ polynomial; }
+					else { entry = entry >> 1; }
 				}
 
 				createTable[ i ] = entry;

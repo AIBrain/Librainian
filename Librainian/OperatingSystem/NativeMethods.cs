@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "NativeMethods.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "NativeMethods.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "NativeMethods.cs" was last formatted by Protiguous on 2018/06/26 at 1:35 AM.
+// Project: "Librainian", "NativeMethods.cs" was last formatted by Protiguous on 2018/07/13 at 1:33 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -60,78 +59,6 @@ namespace Librainian.OperatingSystem {
 
 	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
 	public static class NativeMethods {
-
-		public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
-
-		public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
-
-		public const Int32 DIGCF_PRESENT = 0x00000002;
-
-		public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
-
-		public const Int32 ERROR_INVALID_DATA = 13;
-
-		public const Int32 ERROR_NO_MORE_ITEMS = 259;
-
-		public const UInt32 ErrorMoreData = 234;
-
-		public const UInt32 ErrorSuccess = 0;
-
-		public const UInt32 FILE_ANY_ACCESS = 0;
-
-		public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
-
-		public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
-
-		public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
-
-		public const UInt32 FILE_READ_ACCESS = 0x00000001;
-
-		public const UInt32 FILE_SHARE_READ = 0x00000001;
-
-		public const UInt32 FILE_SHARE_WRITE = 0x00000002;
-
-		public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
-
-		public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
-
-		public const UInt32 GENERIC_READ = 0x80000000;
-
-		public const UInt32 GENERIC_WRITE = 0x40000000;
-
-		public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-
-		public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
-
-		public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
-
-		public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
-
-		public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
-
-		public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
-
-		public const Int32 MaxPath = 260;
-
-		public const UInt32 METHOD_BUFFERED = 0;
-
-		public const UInt32 OPEN_EXISTING = 3;
-
-		public const UInt32 PropertyStandardQuery = 0;
-
-		public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
-
-		public const Int32 SPDRP_CLASS = 0x00000007;
-
-		public const Int32 SPDRP_CLASSGUID = 0x00000008;
-
-		public const Int32 SPDRP_DEVICEDESC = 0x00000000;
-
-		public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
-
-		public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
-
-		public const Int32 WM_DEVICECHANGE = 0x0219;
 
 		[Flags]
 		public enum AllocationType : UInt32 {
@@ -346,6 +273,78 @@ namespace Librainian.OperatingSystem {
 			SvTypeAll = 0xFFFFFFFF
 		}
 
+		public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
+
+		public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
+
+		public const Int32 DIGCF_PRESENT = 0x00000002;
+
+		public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
+
+		public const Int32 ERROR_INVALID_DATA = 13;
+
+		public const Int32 ERROR_NO_MORE_ITEMS = 259;
+
+		public const UInt32 ErrorMoreData = 234;
+
+		public const UInt32 ErrorSuccess = 0;
+
+		public const UInt32 FILE_ANY_ACCESS = 0;
+
+		public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
+
+		public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
+
+		public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
+
+		public const UInt32 FILE_READ_ACCESS = 0x00000001;
+
+		public const UInt32 FILE_SHARE_READ = 0x00000001;
+
+		public const UInt32 FILE_SHARE_WRITE = 0x00000002;
+
+		public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
+
+		public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
+		public const UInt32 GENERIC_READ = 0x80000000;
+
+		public const UInt32 GENERIC_WRITE = 0x40000000;
+
+		public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+
+		public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
+
+		public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
+
+		public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
+
+		public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
+
+		public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
+
+		public const Int32 MaxPath = 260;
+
+		public const UInt32 METHOD_BUFFERED = 0;
+
+		public const UInt32 OPEN_EXISTING = 3;
+
+		public const UInt32 PropertyStandardQuery = 0;
+
+		public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
+
+		public const Int32 SPDRP_CLASS = 0x00000007;
+
+		public const Int32 SPDRP_CLASSGUID = 0x00000008;
+
+		public const Int32 SPDRP_DEVICEDESC = 0x00000000;
+
+		public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
+
+		public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
+
+		public const Int32 WM_DEVICECHANGE = 0x0219;
+
 		[DllImport( "kernel32.dll" )]
 		public static extern Boolean AllocConsole();
 
@@ -422,27 +421,26 @@ namespace Librainian.OperatingSystem {
 		public static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName, Int32 ulNameLength, Int32 ulFlags );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode,
-			IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes,
+			[MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, Int32 flProtect, Int32 dwMaximumSizeLow, Int32 dwMaximumSizeHigh, String lpName );
 
 		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes,
-			UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition,
+			UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
-		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned,
-			IntPtr lpOverlapped );
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll" )]
 		public static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize, ref Int32 lpBytesReturned,
 			IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize,
-			out UInt32 lpBytesReturned, IntPtr lpOverlapped );
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned,
+			IntPtr lpOverlapped );
 
 		//[DllImport( "kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto )]
 		//public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, IntPtr lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
@@ -528,8 +526,7 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean FlushViewOfFile( IntPtr lpBaseAddress, IntPtr dwNumBytesToFlush );
 
 		[DllImport( "kernel32.dll", SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-		public static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer, UInt32 nSize,
-			IntPtr arguments );
+		public static extern UInt32 FormatMessage( UInt32 dwFlags, IntPtr lpSource, UInt32 dwMessageId, UInt32 dwLanguageId, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder lpBuffer, UInt32 nSize, IntPtr arguments );
 
 		[DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = true )]
 		public static extern Boolean FreeConsole();
@@ -738,12 +735,10 @@ namespace Librainian.OperatingSystem {
 		//[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
 		//public static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess, [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, ref Guid interfaceClassGuid, Int32 memberIndex,
-			SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
+		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, ref Guid interfaceClassGuid, Int32 memberIndex, SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, SetLastError = true )]
-		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr hDevInfo, ref SP_DEVINFO_DATA devInfo, ref Guid interfaceClassGuid, UInt32 memberIndex,
-			ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
+		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr hDevInfo, ref SP_DEVINFO_DATA devInfo, ref Guid interfaceClassGuid, UInt32 memberIndex, ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, BestFitMapping = false, ThrowOnUnmappableChar = true )]
 		public static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, [MarshalAs( UnmanagedType.LPTStr )] String enumerator, IntPtr hwndParent, UInt32 flags );
@@ -759,8 +754,7 @@ namespace Librainian.OperatingSystem {
 			UInt32 propertyBufferSize, out UInt32 requiredSize );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-		public static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent, Int32 openFlags,
-			SP_DEVINFO_DATA deviceInfoData );
+		public static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent, Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
 
 		[DllImport( "kernel32.dll", SetLastError = true )]
 		public static extern Boolean UnmapViewOfFile( IntPtr lpBaseAddress );

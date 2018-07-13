@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Volume.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
+// Project: "Librainian", "Volume.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -67,17 +66,11 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
 		public override Int32 CompareTo( Object obj ) {
-			if ( !( obj is Volume device ) ) {
-				throw new ArgumentException();
-			}
+			if ( !( obj is Volume device ) ) { throw new ArgumentException(); }
 
-			if ( this.GetLogicalDrive() is null ) {
-				return 1;
-			}
+			if ( this.GetLogicalDrive() is null ) { return 1; }
 
-			if ( device.GetLogicalDrive() is null ) {
-				return -1;
-			}
+			if ( device.GetLogicalDrive() is null ) { return -1; }
 
 			return String.Compare( this.GetLogicalDrive(), device.GetLogicalDrive(), StringComparison.Ordinal );
 		}
@@ -92,9 +85,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				var hFile = NativeMethods.CreateFile( $@"\\.\{this.GetLogicalDrive()}", 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-				if ( hFile.IsInvalid ) {
-					throw new Win32Exception( Marshal.GetLastWin32Error() );
-				}
+				if ( hFile.IsInvalid ) { throw new Win32Exception( Marshal.GetLastWin32Error() ); }
 
 				const Int32 size = 0x400; // some big size
 				var buffer = Marshal.AllocHGlobal( size );
@@ -106,9 +97,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 						// do nothing here on purpose
 					}
 				}
-				finally {
-					NativeMethods.CloseHandle( hFile.DangerousGetHandle() );
-				}
+				finally { NativeMethods.CloseHandle( hFile.DangerousGetHandle() ); }
 
 				if ( bytesReturned > 0 ) {
 					var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, typeof( Int32 ) );
@@ -136,9 +125,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			var devices = disks.GetDevices().ToList();
 
 			foreach ( var disk in devices ) {
-				foreach ( var _ in this.GetDiskNumbers().Where( index => disk.DiskNumber == index ) ) {
-					yield return disk;
-				}
+				foreach ( var _ in this.GetDiskNumbers().Where( index => disk.DiskNumber == index ) ) { yield return disk; }
 			}
 		}
 
@@ -150,9 +137,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			var volumeName = this.GetVolumeName();
 			String logicalDrive = null;
 
-			if ( volumeName != null ) {
-				( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
-			}
+			if ( volumeName != null ) { ( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive ); }
 
 			return logicalDrive;
 		}
@@ -162,15 +147,11 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// </summary>
 		public override IEnumerable<Device> GetRemovableDevices() {
 			if ( this.GetDisks() is null ) {
-				foreach ( var removableDevice in base.GetRemovableDevices() ) {
-					yield return removableDevice;
-				}
+				foreach ( var removableDevice in base.GetRemovableDevices() ) { yield return removableDevice; }
 			}
 			else {
 				foreach ( var disk in this.GetDisks() ) {
-					foreach ( var device in disk.GetRemovableDevices() ) {
-						yield return device;
-					}
+					foreach ( var device in disk.GetRemovableDevices() ) { yield return device; }
 				}
 			}
 		}

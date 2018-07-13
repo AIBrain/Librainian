@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PriorityQueue.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "PriorityQueue.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "PriorityQueue.cs" was last formatted by Protiguous on 2018/06/26 at 12:52 AM.
+// Project: "Librainian", "PriorityQueue.cs" was last formatted by Protiguous on 2018/07/10 at 8:51 PM.
 
 namespace Librainian.Collections {
 
@@ -56,6 +55,18 @@ namespace Librainian.Collections {
 	[JsonObject]
 	public class PriorityQueue<TValue> : IEnumerable<KeyValuePair<Single, TValue>> {
 
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
+
+		/// <summary>
+		///     Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
+		IEnumerator<KeyValuePair<Single, TValue>> IEnumerable<KeyValuePair<Single, TValue>>.GetEnumerator() => this.Dictionary.GetEnumerator();
+
 		[JsonProperty]
 		[NotNull]
 		private ConcurrentDictionary<Single, TValue> Dictionary { get; } = new ConcurrentDictionary<Single, TValue>( concurrencyLevel: Environment.ProcessorCount, capacity: 1 );
@@ -71,12 +82,6 @@ namespace Librainian.Collections {
 			//    priority += Constants.EpsilonSingle;
 			//}
 			this.Dictionary[ priority ] = item;
-
-		/// <summary>
-		///     Returns an enumerator that iterates through a collection.
-		/// </summary>
-		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
 		//    this.Add( item, priority );
 		//    this.ReNormalize();
@@ -97,36 +102,24 @@ namespace Librainian.Collections {
 		///     Renumber everything to between 0 and 1, evenly distributed and I need it to be *fast*.
 		/// </summary>
 		public void ReNormalize() {
-			if ( this.Dictionary.IsEmpty ) {
-				return;
-			}
+			if ( this.Dictionary.IsEmpty ) { return; }
 
 			var max = this.Dictionary.Max( selector: pair => pair.Key );
 			var min = this.Dictionary.Min( selector: pair => pair.Key );
 			var maxMinusMin = max - min;
 
-			if ( Math.Abs( maxMinusMin ) < Single.Epsilon ) {
-				return;
-			}
+			if ( Math.Abs( maxMinusMin ) < Single.Epsilon ) { return; }
 
 			//I know other items could sneak in in here, but I don't care...
 			foreach ( var key in this.Dictionary.Keys ) {
 				var newPriority = ( key - min ) / maxMinusMin;
 
-				if ( Math.Abs( key - newPriority ) < Single.Epsilon ) {
-					continue;
-				}
+				if ( Math.Abs( key - newPriority ) < Single.Epsilon ) { continue; }
 
 				this.Dictionary.TryRemove( key, out var value );
 				this.Add( item: value, priority: newPriority );
 			}
 		}
-
-		/// <summary>
-		///     Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
-		IEnumerator<KeyValuePair<Single, TValue>> IEnumerable<KeyValuePair<Single, TValue>>.GetEnumerator() => this.Dictionary.GetEnumerator();
 
 		///// <param name="item"></param>
 		///// <param name="positionial"></param>

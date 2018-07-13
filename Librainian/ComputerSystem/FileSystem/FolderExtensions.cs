@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "FolderExtensions.cs" was last formatted by Protiguous on 2018/06/26 at 12:55 AM.
+// Project: "Librainian", "FolderExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -63,16 +62,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		[NotNull]
 		public static String CleanupForFolder( [NotNull] this String foldername ) {
-			if ( String.IsNullOrWhiteSpace( foldername ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( foldername ) );
-			}
+			if ( String.IsNullOrWhiteSpace( foldername ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( foldername ) ); }
 
 			var sb = new StringBuilder( foldername.Length, UInt16.MaxValue / 2 );
 
 			foreach ( var c in foldername ) {
-				if ( !InvalidPathChars.Contains( c ) ) {
-					sb.Append( c );
-				}
+				if ( !InvalidPathChars.Contains( c ) ) { sb.Append( c ); }
 			}
 
 			/*
@@ -102,23 +97,15 @@ namespace Librainian.ComputerSystem.FileSystem {
 		[NotNull]
 		public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
 			Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
-			if ( sourceFolder is null ) {
-				throw new ArgumentNullException( nameof( sourceFolder ) );
-			}
+			if ( sourceFolder is null ) { throw new ArgumentNullException( nameof( sourceFolder ) ); }
 
-			if ( destinationFolder is null ) {
-				throw new ArgumentNullException( nameof( destinationFolder ) );
-			}
+			if ( destinationFolder is null ) { throw new ArgumentNullException( nameof( destinationFolder ) ); }
 
 			var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-			if ( !sourceFolder.DemandPermission( FileIOPermissionAccess.Read ) ) {
-				return documentCopyStatistics;
-			}
+			if ( !sourceFolder.DemandPermission( FileIOPermissionAccess.Read ) ) { return documentCopyStatistics; }
 
-			if ( !destinationFolder.DemandPermission( FileIOPermissionAccess.Write ) ) {
-				return documentCopyStatistics;
-			}
+			if ( !destinationFolder.DemandPermission( FileIOPermissionAccess.Write ) ) { return documentCopyStatistics; }
 
 			var sourceFiles = sourceFolder.GetDocuments( searchPatterns );
 
@@ -131,33 +118,23 @@ namespace Librainian.ComputerSystem.FileSystem {
 						SourceDocument = sourceDocument
 					};
 
-					if ( crc ) {
-						statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
-					}
+					if ( crc ) { statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex(); }
 
 					var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
 
-					if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
-						destinationDocument.Delete();
-					}
+					if ( overwriteDestinationDocuments && destinationDocument.Exists() ) { destinationDocument.Delete(); }
 
 					File.Copy( sourceDocument.FullPathWithFileName, destinationDocument.FullPathWithFileName );
 
-					if ( crc ) {
-						statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
-					}
+					if ( crc ) { statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex(); }
 
 					var endTime = DateTime.UtcNow;
 
-					if ( !destinationDocument.Exists() ) {
-						return;
-					}
+					if ( !destinationDocument.Exists() ) { return; }
 
 					statistics.BytesCopied = ( UInt64 ) destinationDocument.Size();
 
-					if ( crc ) {
-						statistics.BytesCopied *= 2;
-					}
+					if ( crc ) { statistics.BytesCopied *= 2; }
 
 					statistics.TimeTaken = endTime - beginTime;
 					statistics.DestinationDocument = destinationDocument;
@@ -173,9 +150,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		}
 
 		public static IEnumerable<Folder> FindFolder( [NotNull] this String folderName ) {
-			if ( folderName is null ) {
-				throw new ArgumentNullException( nameof( folderName ) );
-			}
+			if ( folderName is null ) { throw new ArgumentNullException( nameof( folderName ) ); }
 
 			//First check across all known drives.
 			var found = false;
@@ -192,9 +167,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				}
 			}
 
-			if ( found ) {
-				yield break;
-			}
+			if ( found ) { yield break; }
 
 			//Next, check subfolders, beginning with the first drive.
 			// ReSharper disable once LoopCanBePartlyConvertedToQuery
@@ -223,9 +196,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <returns></returns>
 		[NotNull]
 		public static IEnumerable<String> SplitPath( [NotNull] String path ) {
-			if ( String.IsNullOrWhiteSpace( value: path ) ) {
-				throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
-			}
+			if ( String.IsNullOrWhiteSpace( value: path ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) ); }
 
 			return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
 		}
@@ -237,9 +208,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <returns></returns>
 		[NotNull]
 		public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
-			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
-			}
+			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
 
 			return SplitPath( info.FullName );
 		}
@@ -256,9 +225,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			TryAgain:
 
 			try {
-				if ( !folder.Exists() ) {
-					return true;
-				}
+				if ( !folder.Exists() ) { return true; }
 
 				Directory.Delete( folder.FullName );
 
@@ -278,9 +245,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			}
 			catch ( UnauthorizedAccessException ) { }
 			catch ( ArgumentNullException ) { }
-			finally {
-				stopwatch.Stop();
-			}
+			finally { stopwatch.Stop(); }
 
 			return null;
 		}

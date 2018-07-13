@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Countable.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Countable.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Countable.cs" was last formatted by Protiguous on 2018/06/26 at 1:19 AM.
+// Project: "Librainian", "Countable.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -65,6 +64,18 @@ namespace Librainian.Maths.Numbers {
 	/// <typeparam name="TKey"></typeparam>
 	[JsonObject]
 	public class Countable<TKey> : ABetterClassDispose, IEnumerable<Tuple<TKey, BigInteger>> {
+
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
+
+		/// <summary>
+		///     Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
+		IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> ) this.GetEnumerator();
 
 		private volatile Boolean _isReadOnly;
 
@@ -97,50 +108,34 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		public BigInteger? this[ [NotNull] TKey key ] {
 			get {
-				if ( key == null ) {
-					throw new ArgumentNullException( nameof( key ) );
-				}
+				if ( key == null ) { throw new ArgumentNullException( nameof( key ) ); }
 
 				var bucket = this.Bucket( key );
 
 				try {
-					if ( bucket.TryEnterReadLock( timeout: this.ReadTimeout ) ) {
-						return this.Dictionary.TryGetValue( key, out var result ) ? result : default;
-					}
+					if ( bucket.TryEnterReadLock( timeout: this.ReadTimeout ) ) { return this.Dictionary.TryGetValue( key, out var result ) ? result : default; }
 				}
 				finally {
-					if ( bucket.IsReadLockHeld ) {
-						bucket.ExitReadLock();
-					}
+					if ( bucket.IsReadLockHeld ) { bucket.ExitReadLock(); }
 				}
 
 				return default;
 			}
 
 			set {
-				if ( key == null ) {
-					throw new ArgumentNullException( nameof( key ) );
-				}
+				if ( key == null ) { throw new ArgumentNullException( nameof( key ) ); }
 
-				if ( this.IsReadOnly ) {
-					return;
-				}
+				if ( this.IsReadOnly ) { return; }
 
-				if ( !value.HasValue ) {
-					return;
-				}
+				if ( !value.HasValue ) { return; }
 
 				var bucket = this.Bucket( key );
 
 				try {
-					if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-						this.Dictionary.TryAdd( key, value.Value );
-					}
+					if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) { this.Dictionary.TryAdd( key, value.Value ); }
 				}
 				finally {
-					if ( bucket.IsWriteLockHeld ) {
-						bucket.ExitWriteLock();
-					}
+					if ( bucket.IsWriteLockHeld ) { bucket.ExitWriteLock(); }
 				}
 			}
 		}
@@ -164,15 +159,11 @@ namespace Librainian.Maths.Numbers {
 
 			TryAgain:
 
-			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
-				return bucket;
-			}
+			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) { return bucket; }
 
 			bucket = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
-			if ( this.Buckets.TryAdd( hash, bucket ) ) {
-				return bucket;
-			}
+			if ( this.Buckets.TryAdd( hash, bucket ) ) { return bucket; }
 
 			goto TryAgain;
 		}
@@ -181,9 +172,7 @@ namespace Librainian.Maths.Numbers {
 		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( selector: Hash );
 
 		public Boolean Add( IEnumerable<TKey> keys ) {
-			if ( this.IsReadOnly ) {
-				return false;
-			}
+			if ( this.IsReadOnly ) { return false; }
 
 			var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: ThreadingExtensions.CPUIntensive, body: key => this.Add( key ) );
 
@@ -193,17 +182,13 @@ namespace Librainian.Maths.Numbers {
 		public Boolean Add( TKey key ) => this.Add( key, amount: BigInteger.One );
 
 		public Boolean Add( TKey key, BigInteger amount ) {
-			if ( this.IsReadOnly ) {
-				return false;
-			}
+			if ( this.IsReadOnly ) { return false; }
 
 			var bucket = this.Bucket( key );
 
 			try {
 				if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-					if ( !this.Dictionary.ContainsKey( key ) ) {
-						this.Dictionary.TryAdd( key, BigInteger.Zero );
-					}
+					if ( !this.Dictionary.ContainsKey( key ) ) { this.Dictionary.TryAdd( key, BigInteger.Zero ); }
 
 					this.Dictionary[ key ] += amount;
 
@@ -211,9 +196,7 @@ namespace Librainian.Maths.Numbers {
 				}
 			}
 			finally {
-				if ( bucket.IsWriteLockHeld ) {
-					bucket.ExitWriteLock();
-				}
+				if ( bucket.IsWriteLockHeld ) { bucket.ExitWriteLock(); }
 			}
 
 			return false;
@@ -232,24 +215,14 @@ namespace Librainian.Maths.Numbers {
 
 		public override void DisposeManaged() => this.Trim();
 
-		/// <summary>
-		///     Returns an enumerator that iterates through a collection.
-		/// </summary>
-		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
-
 		public Boolean Subtract( TKey key, BigInteger amount ) {
-			if ( this.IsReadOnly ) {
-				return false;
-			}
+			if ( this.IsReadOnly ) { return false; }
 
 			var bucket = this.Bucket( key );
 
 			try {
 				if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
-					if ( !this.Dictionary.ContainsKey( key ) ) {
-						this.Dictionary.TryAdd( key, BigInteger.Zero );
-					}
+					if ( !this.Dictionary.ContainsKey( key ) ) { this.Dictionary.TryAdd( key, BigInteger.Zero ); }
 
 					this.Dictionary[ key ] -= amount;
 
@@ -257,9 +230,7 @@ namespace Librainian.Maths.Numbers {
 				}
 			}
 			finally {
-				if ( bucket.IsWriteLockHeld ) {
-					bucket.ExitWriteLock();
-				}
+				if ( bucket.IsWriteLockHeld ) { bucket.ExitWriteLock(); }
 			}
 
 			return false;
@@ -285,11 +256,5 @@ namespace Librainian.Maths.Numbers {
 
 			return !this.IsReadOnly;
 		}
-
-		/// <summary>
-		///     Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
-		IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> ) this.GetEnumerator();
 	}
 }

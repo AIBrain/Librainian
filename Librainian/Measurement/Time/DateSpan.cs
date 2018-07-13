@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DateSpan.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "DateSpan.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "DateSpan.cs" was last formatted by Protiguous on 2018/06/26 at 1:28 AM.
+// Project: "Librainian", "DateSpan.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -110,58 +109,38 @@ namespace Librainian.Measurement.Time {
 				this.Years = end.Year - start.Year;
 
 				if ( this.Years <= 0 ) { }
-				else if ( end.Month < start.Month ) {
-					this.Years--;
-				}
+				else if ( end.Month < start.Month ) { this.Years--; }
 				else if ( end.Month == start.Month ) {
 					if ( end.Day >= start.Day ) {
 						if ( end.Day != start.Day ) { }
-						else if ( end.Hour < start.Hour ) {
-							this.Years--;
-						}
+						else if ( end.Hour < start.Hour ) { this.Years--; }
 						else if ( end.Hour == start.Hour ) {
 							if ( end.Minute >= start.Minute ) {
 								if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-								else {
-									this.Years--;
-								}
+								else { this.Years--; }
 							}
-							else {
-								this.Years--;
-							}
+							else { this.Years--; }
 						}
 					}
-					else {
-						this.Years--;
-					}
+					else { this.Years--; }
 				}
 			}
 
 			{
 				this.Months = end.Month - start.Month;
 
-				if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) {
-					this.Months = 12 - start.Month + end.Month;
-				}
+				if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) { this.Months = 12 - start.Month + end.Month; }
 
 				if ( this.Months <= 0 ) { }
-				else if ( end.Day < start.Day ) {
-					this.Months--;
-				}
+				else if ( end.Day < start.Day ) { this.Months--; }
 				else if ( end.Day == start.Day ) {
-					if ( end.Hour < start.Hour ) {
-						this.Months--;
-					}
+					if ( end.Hour < start.Hour ) { this.Months--; }
 					else if ( end.Hour == start.Hour ) {
 						if ( end.Minute >= start.Minute ) {
 							if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-							else {
-								this.Months--;
-							}
+							else { this.Months--; }
 						}
-						else {
-							this.Months--;
-						}
+						else { this.Months--; }
 					}
 				}
 			}
@@ -169,73 +148,51 @@ namespace Librainian.Measurement.Time {
 			{
 				this.Days = end.Day - start.Day;
 
-				if ( end.Day < start.Day ) {
-					this.Days = DateTime.DaysInMonth( start.Year, start.Month ) - start.Day + end.Day;
-				}
+				if ( end.Day < start.Day ) { this.Days = DateTime.DaysInMonth( start.Year, start.Month ) - start.Day + end.Day; }
 
 				if ( this.Days > 0 ) {
-					if ( end.Hour < start.Hour ) {
-						this.Days--;
-					}
+					if ( end.Hour < start.Hour ) { this.Days--; }
 					else if ( end.Hour == start.Hour ) {
 						if ( end.Minute >= start.Minute ) {
-							if ( end.Minute == start.Minute && end.Second < start.Second ) {
-								this.Days--;
-							}
+							if ( end.Minute == start.Minute && end.Second < start.Second ) { this.Days--; }
 						}
-						else {
-							this.Days--;
-						}
+						else { this.Days--; }
 					}
 
 					this.Weeks = this.Days / 7;
 
 					this.Days = this.Days % 7;
 
-					if ( !excludeEndDate ) {
-						this.Days++;
-					}
+					if ( !excludeEndDate ) { this.Days++; }
 				}
 			}
 
 			{
 				this.Hours = end.Hour - start.Hour;
 
-				if ( end.Hour < start.Hour ) {
-					this.Hours = 24 - start.Hour + end.Hour;
-				}
+				if ( end.Hour < start.Hour ) { this.Hours = 24 - start.Hour + end.Hour; }
 
 				if ( this.Hours <= 0 ) { }
 				else if ( end.Minute >= start.Minute ) {
 					if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-					else {
-						this.Hours--;
-					}
+					else { this.Hours--; }
 				}
-				else {
-					this.Hours--;
-				}
+				else { this.Hours--; }
 			}
 
 			{
 				this.Minutes = end.Minute - start.Minute;
 
-				if ( end.Minute < start.Minute ) {
-					this.Minutes = 60 - start.Minute + end.Minute;
-				}
+				if ( end.Minute < start.Minute ) { this.Minutes = 60 - start.Minute + end.Minute; }
 
 				if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
-				else {
-					this.Minutes--;
-				}
+				else { this.Minutes--; }
 			}
 
 			{
 				this.Seconds = end.Second - start.Second;
 
-				if ( end.Second < start.Second ) {
-					this.Seconds = 60 - start.Second + end.Second;
-				}
+				if ( end.Second < start.Second ) { this.Seconds = 60 - start.Second + end.Second; }
 			}
 		}
 
@@ -258,9 +215,7 @@ namespace Librainian.Measurement.Time {
 
 				case DateInterval.Months:
 
-					if ( span.Years > 0 ) {
-						sum += span.Years * 12;
-					}
+					if ( span.Years > 0 ) { sum += span.Years * 12; }
 
 					sum += span.Months;
 					sum += span.Weeks / 4; // Helps resolve lower resolution
@@ -331,9 +286,7 @@ namespace Librainian.Measurement.Time {
 				for ( var i = 1; i <= span.Months; i++ ) {
 					var month = start.Month + i;
 
-					if ( month >= 13 ) {
-						month -= 12;
-					}
+					if ( month >= 13 ) { month -= 12; }
 
 					sum += DateTime.DaysInMonth( start.Year + span.Years, month );
 				}
@@ -343,9 +296,7 @@ namespace Librainian.Measurement.Time {
 
 			sum += span.Days;
 
-			if ( excludeEndDate ) {
-				sum--;
-			}
+			if ( excludeEndDate ) { sum--; }
 
 			return sum;
 		}

@@ -1,25 +1,25 @@
-// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "JunctionPoint.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "JunctionPoint.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "JunctionPoint.cs" was last formatted by Protiguous on 2018/06/26 at 12:56 AM.
+// Project: "Librainian", "JunctionPoint.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
@@ -54,56 +53,6 @@ namespace Librainian.ComputerSystem.FileSystem {
 	///     Provides access to NTFS junction points in .Net.
 	/// </summary>
 	public static class JunctionPoint {
-
-		/// <summary>
-		///     The data present in the reparse point buffer is invalid.
-		/// </summary>
-		private const Int32 ErrorInvalidReparseData = 4392;
-
-		/// <summary>
-		///     The file or directory is not a reparse point.
-		/// </summary>
-		private const Int32 ErrorNotAReparsePoint = 4390;
-
-		/// <summary>
-		///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
-		/// </summary>
-		private const Int32 ErrorReparseAttributeConflict = 4391;
-
-		/// <summary>
-		///     The tag present in the reparse point buffer is invalid.
-		/// </summary>
-		private const Int32 ErrorReparseTagInvalid = 4393;
-
-		/// <summary>
-		///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
-		/// </summary>
-		private const Int32 ErrorReparseTagMismatch = 4394;
-
-		/// <summary>
-		///     Command to delete the reparse point data base.
-		/// </summary>
-		private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
-
-		/// <summary>
-		///     Command to get the reparse point data block.
-		/// </summary>
-		private const Int32 FsctlGetReparsePoint = 0x000900A8;
-
-		/// <summary>
-		///     Command to set the reparse point data block.
-		/// </summary>
-		private const Int32 FsctlSetReparsePoint = 0x000900A4;
-
-		/// <summary>
-		///     Reparse point tag used to identify mount points and junction points.
-		/// </summary>
-		private const UInt32 IOReparseTagMountPoint = 0xA0000003;
-
-		/// <summary>
-		///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
-		/// </summary>
-		private const String NonInterpretedPathPrefix = @"\??\";
 
 		public enum ECreationDisposition : UInt32 {
 
@@ -196,6 +145,56 @@ namespace Librainian.ComputerSystem.FileSystem {
 			Delete = 0x00000004
 		}
 
+		/// <summary>
+		///     The data present in the reparse point buffer is invalid.
+		/// </summary>
+		private const Int32 ErrorInvalidReparseData = 4392;
+
+		/// <summary>
+		///     The file or directory is not a reparse point.
+		/// </summary>
+		private const Int32 ErrorNotAReparsePoint = 4390;
+
+		/// <summary>
+		///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
+		/// </summary>
+		private const Int32 ErrorReparseAttributeConflict = 4391;
+
+		/// <summary>
+		///     The tag present in the reparse point buffer is invalid.
+		/// </summary>
+		private const Int32 ErrorReparseTagInvalid = 4393;
+
+		/// <summary>
+		///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
+		/// </summary>
+		private const Int32 ErrorReparseTagMismatch = 4394;
+
+		/// <summary>
+		///     Command to delete the reparse point data base.
+		/// </summary>
+		private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
+
+		/// <summary>
+		///     Command to get the reparse point data block.
+		/// </summary>
+		private const Int32 FsctlGetReparsePoint = 0x000900A8;
+
+		/// <summary>
+		///     Command to set the reparse point data block.
+		/// </summary>
+		private const Int32 FsctlSetReparsePoint = 0x000900A4;
+
+		/// <summary>
+		///     Reparse point tag used to identify mount points and junction points.
+		/// </summary>
+		private const UInt32 IOReparseTagMountPoint = 0xA0000003;
+
+		/// <summary>
+		///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
+		/// </summary>
+		private const String NonInterpretedPathPrefix = @"\??\";
+
 		private static String InternalGetTarget( SafeHandle handle ) {
 			var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
 			var outBuffer = Marshal.AllocHGlobal( outBufferSize );
@@ -206,30 +205,22 @@ namespace Librainian.ComputerSystem.FileSystem {
 				if ( !result ) {
 					var error = Marshal.GetLastWin32Error();
 
-					if ( error == ErrorNotAReparsePoint ) {
-						return null;
-					}
+					if ( error == ErrorNotAReparsePoint ) { return null; }
 
 					ThrowLastWin32Error( "Unable to get information about junction point." );
 				}
 
 				var reparseDataBuffer = ( ReparseDataBuffer ) Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
 
-				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
-					return null;
-				}
+				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) { return null; }
 
 				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
 
-				if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
-					targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length );
-				}
+				if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) { targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length ); }
 
 				return targetDir;
 			}
-			finally {
-				Marshal.FreeHGlobal( outBuffer );
-			}
+			finally { Marshal.FreeHGlobal( outBuffer ); }
 		}
 
 		[NotNull]
@@ -237,9 +228,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint,
 				IntPtr.Zero );
 
-			if ( Marshal.GetLastWin32Error() != 0 ) {
-				ThrowLastWin32Error( "Unable to open reparse point." );
-			}
+			if ( Marshal.GetLastWin32Error() != 0 ) { ThrowLastWin32Error( "Unable to open reparse point." ); }
 
 			var reparsePointHandle = new SafeFileHandle( bob.DangerousGetHandle(), true );
 
@@ -262,18 +251,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public static void Create( [NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
 			targetDir = Path.GetFullPath( targetDir );
 
-			if ( !Directory.Exists( targetDir ) ) {
-				throw new IOException( "Target path does not exist or is not a directory." );
-			}
+			if ( !Directory.Exists( targetDir ) ) { throw new IOException( "Target path does not exist or is not a directory." ); }
 
 			if ( Directory.Exists( junctionPoint ) ) {
-				if ( !overwrite ) {
-					throw new IOException( "Directory already exists and overwrite parameter is false." );
-				}
+				if ( !overwrite ) { throw new IOException( "Directory already exists and overwrite parameter is false." ); }
 			}
-			else {
-				Directory.CreateDirectory( junctionPoint );
-			}
+			else { Directory.CreateDirectory( junctionPoint ); }
 
 			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
 				var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
@@ -298,13 +281,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
 
-					if ( !result ) {
-						ThrowLastWin32Error( "Unable to create junction point." );
-					}
+					if ( !result ) { ThrowLastWin32Error( "Unable to create junction point." ); }
 				}
-				finally {
-					Marshal.FreeHGlobal( inBuffer );
-				}
+				finally { Marshal.FreeHGlobal( inBuffer ); }
 			}
 		}
 
@@ -316,9 +295,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="junctionPoint">The junction point path</param>
 		public static void Delete( String junctionPoint ) {
 			if ( !Directory.Exists( junctionPoint ) ) {
-				if ( File.Exists( junctionPoint ) ) {
-					throw new IOException( "Path is not a junction point." );
-				}
+				if ( File.Exists( junctionPoint ) ) { throw new IOException( "Path is not a junction point." ); }
 
 				return;
 			}
@@ -338,20 +315,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
 
-					if ( !result ) {
-						ThrowLastWin32Error( "Unable to delete junction point." );
-					}
+					if ( !result ) { ThrowLastWin32Error( "Unable to delete junction point." ); }
 				}
-				finally {
-					Marshal.FreeHGlobal( inBuffer );
-				}
+				finally { Marshal.FreeHGlobal( inBuffer ); }
 
-				try {
-					Directory.Delete( junctionPoint );
-				}
-				catch ( IOException ex ) {
-					throw new IOException( "Unable to delete junction point.", ex );
-				}
+				try { Directory.Delete( junctionPoint ); }
+				catch ( IOException ex ) { throw new IOException( "Unable to delete junction point.", ex ); }
 			}
 		}
 
@@ -362,9 +331,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <returns>True if the specified path represents a junction point</returns>
 		/// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
 		public static Boolean Exists( String path ) {
-			if ( !Directory.Exists( path ) ) {
-				return false;
-			}
+			if ( !Directory.Exists( path ) ) { return false; }
 
 			using ( var handle = OpenReparsePoint( path, FileAccess.Read ) ) {
 				var target = InternalGetTarget( handle );
@@ -388,9 +355,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
 				var target = InternalGetTarget( handle );
 
-				if ( target is null ) {
-					throw new IOException( "Path is not a junction point." );
-				}
+				if ( target is null ) { throw new IOException( "Path is not a junction point." ); }
 
 				return target;
 			}

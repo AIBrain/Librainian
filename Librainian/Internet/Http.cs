@@ -1,25 +1,25 @@
-﻿// Copyright © Rick@AIBrain.Org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
-// our source code, binaries, libraries, projects, or solutions.
+// our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Http.cs" belongs to Protiguous@Protiguous.com
-// and Rick@AIBrain.org and unless otherwise specified or the original license has been
-// overwritten by automatic formatting.
+// This source code contained in "Http.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our Thanks goes to those Authors. If you find your code in this source code, please
+// license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 //
 // Donations are accepted (for now) via
-//    bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//    paypal@AIBrain.Org
-//    (We're still looking into other solutions! Any ideas?)
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,15 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// ***  Project "Librainian"  ***
-// File "Http.cs" was last formatted by Protiguous on 2018/06/26 at 1:11 AM.
+// Project: "Librainian", "Http.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
 
 namespace Librainian.Internet {
 
@@ -52,6 +51,16 @@ namespace Librainian.Internet {
 	using JetBrains.Annotations;
 
 	public class Http {
+
+		private static Hashtable Urls {
+			get {
+				lock ( Synch ) { return _urls; }
+			}
+
+			set {
+				lock ( Synch ) { _urls = value; }
+			}
+		}
 
 		/*
         public class HtmlDocument : Uri {
@@ -76,65 +85,33 @@ namespace Librainian.Internet {
 
 		private static Hashtable _urls;
 
-		private static Hashtable Urls {
-			get {
-				lock ( Synch ) {
-					return _urls;
-				}
-			}
-
-			set {
-				lock ( Synch ) {
-					_urls = value;
-				}
-			}
-		}
-
 		static Http() => Urls = new Hashtable( 100 );
 
 		private static void GetAsynchCallback( [NotNull] IAsyncResult result ) {
-			if ( !result.IsCompleted ) {
-				return;
-			}
+			if ( !result.IsCompleted ) { return; }
 
 			( result.AsyncState is HttpWebRequest ).BreakIfFalse(); //heh
 			var request = ( HttpWebRequest ) result.AsyncState;
 
 			var response = ( HttpWebResponse ) request.GetResponse();
 
-			if ( response.StatusCode != HttpStatusCode.OK ) {
-				return;
-			}
+			if ( response.StatusCode != HttpStatusCode.OK ) { return; }
 
 			var tempresp = response.GetResponseStream();
 
-			if ( tempresp is null ) {
-				return;
-			}
+			if ( tempresp is null ) { return; }
 
 			var document = new StreamReader( tempresp ).ReadToEnd();
 
-			if ( String.IsNullOrEmpty( document ) ) {
-				return;
-			}
+			if ( String.IsNullOrEmpty( document ) ) { return; }
 
-			if ( !Urls.ContainsKey( request.RequestUri ) ) {
-				Urls.Add( request.RequestUri, document );
-			}
-			else {
-				Urls[ request.RequestUri ] = document;
-			}
+			if ( !Urls.ContainsKey( request.RequestUri ) ) { Urls.Add( request.RequestUri, document ); }
+			else { Urls[ request.RequestUri ] = document; }
 
-			if ( response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) {
-				return;
-			}
+			if ( response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) { return; }
 
-			if ( !Urls.ContainsKey( response.ResponseUri ) ) {
-				Urls.Add( response.ResponseUri, document );
-			}
-			else {
-				Urls[ response.ResponseUri ] = document;
-			}
+			if ( !Urls.ContainsKey( response.ResponseUri ) ) { Urls.Add( response.ResponseUri, document ); }
+			else { Urls[ response.ResponseUri ] = document; }
 		}
 
 		public static String Get( [NotNull] String url ) => Get( new Uri( url ) );
@@ -143,9 +120,7 @@ namespace Librainian.Internet {
 		public static String Get( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return null;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return null; }
 
 			var peek = Peek( uri ); //Got the result in our cache already?
 
@@ -170,20 +145,12 @@ namespace Librainian.Internet {
 				if ( respstrm != null ) {
 					var document = new StreamReader( respstrm ).ReadToEnd();
 
-					if ( Urls.ContainsKey( request.RequestUri ) ) {
-						Urls[ request.RequestUri ] = document;
-					}
-					else {
-						Urls.Add( request.RequestUri, document );
-					}
+					if ( Urls.ContainsKey( request.RequestUri ) ) { Urls[ request.RequestUri ] = document; }
+					else { Urls.Add( request.RequestUri, document ); }
 
 					if ( !response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) {
-						if ( Urls.ContainsKey( response.ResponseUri ) ) {
-							Urls[ response.ResponseUri ] = document;
-						}
-						else {
-							Urls.Add( response.ResponseUri, document );
-						}
+						if ( Urls.ContainsKey( response.ResponseUri ) ) { Urls[ response.ResponseUri ] = document; }
+						else { Urls.Add( response.ResponseUri, document ); }
 					}
 
 					return document;
@@ -202,9 +169,7 @@ namespace Librainian.Internet {
 		public static IAsyncResult GetAsync( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return null;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return null; }
 
 			if ( WebRequest.Create( uri ) is HttpWebRequest request ) {
 				request.AllowAutoRedirect = true;
@@ -231,9 +196,7 @@ namespace Librainian.Internet {
 		public static IAsyncResult GetStart( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return null;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return null; }
 
 			//TODO
 			//DownloadString http1 = new WebClient().DownloadStringAsync;
@@ -258,13 +221,9 @@ namespace Librainian.Internet {
 
 		[NotNull]
 		public static String Peek( [NotNull] Uri uri ) {
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return String.Empty;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return String.Empty; }
 
-			if ( !Urls.ContainsKey( uri ) ) {
-				return String.Empty;
-			}
+			if ( !Urls.ContainsKey( uri ) ) { return String.Empty; }
 
 			var document = Urls[ uri ].ToString();
 
@@ -282,13 +241,9 @@ namespace Librainian.Internet {
 		public static IAsyncResult Poke( [NotNull] String url ) {
 			var uri = new Uri( url );
 
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return null;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return null; }
 
-			if ( Urls.ContainsKey( uri ) ) {
-				Urls.Remove( uri );
-			}
+			if ( Urls.ContainsKey( uri ) ) { Urls.Remove( uri ); }
 
 			return GetAsync( url );
 		}
@@ -306,9 +261,7 @@ namespace Librainian.Internet {
 		public static void Wait( [NotNull] Uri uri ) {
 			uri.IsWellFormedOriginalString().BreakIfFalse();
 
-			if ( !uri.IsWellFormedOriginalString() ) {
-				return;
-			}
+			if ( !uri.IsWellFormedOriginalString() ) { return; }
 
 			while ( String.IsNullOrEmpty( Peek( uri ) ) ) {
 				Thread.Yield();
