@@ -55,12 +55,17 @@ namespace Librainian.Internet {
 
 	public static class Internet {
 
+		[ItemCanBeNull]
 		public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
 			if ( uri == null ) { throw new ArgumentNullException( paramName: nameof( uri ) ); }
 
 			if ( timeout == null ) { timeout = TimeSpan.Zero + Seconds.Seven; }
 
-			var response = await uri.GetWebPageAsync( timeout.Value ).NoUI();
+			var task = uri.GetWebPageAsync( timeout.Value );
+
+			if ( task is null ) { return default; }
+
+			var response = await task.NoUI();
 
 			return JsonConvert.DeserializeObject<T>( response );
 		}
@@ -94,7 +99,7 @@ namespace Librainian.Internet {
 
 				throw new Exception( $"Unable to connect to {url}." );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -108,7 +113,7 @@ namespace Librainian.Internet {
 
 				throw new Exception( $"Unable to parse the url:{url}." );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -123,12 +128,13 @@ namespace Librainian.Internet {
 					CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
 				} ) {
 					client.Add( timeout );
-					var result = await client.DownloadStringTaskAsync( uri ).NoUI();
+					var task = client.DownloadStringTaskAsync( uri );
+					var result = await task.NoUI();
 
 					return result;
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}

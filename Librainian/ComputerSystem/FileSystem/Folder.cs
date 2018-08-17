@@ -49,7 +49,10 @@ namespace Librainian.ComputerSystem.FileSystem {
 	using System.Security;
 	using System.Security.Permissions;
 	using System.Text;
+	using System.Threading;
+	using System.Threading.Tasks;
 	using System.Windows.Forms;
+	using Collections;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
@@ -89,6 +92,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 		[JsonIgnore]
 		public static Char FolderSeparatorChar { get; } = Path.DirectorySeparatorChar;
 
+		/// <summary>
+		///     The <see cref="Folder" /> class is built around <see cref="DirectoryInfo" />.
+		/// </summary>
 		[JsonProperty]
 		[NotNull]
 		public DirectoryInfo Info { get; }
@@ -297,6 +303,32 @@ namespace Librainian.ComputerSystem.FileSystem {
 		}
 
 		/// <summary>
+		/// Return a list of all <see cref="Folder"/> matching the <paramref name="searchPattern"/>.
+		/// </summary>
+		/// <param name="token"></param>
+		/// <param name="searchPattern"></param>
+		/// <param name="randomize">Return the folders in random order.</param>
+		/// <returns></returns>
+		[NotNull]
+		[ItemNotNull]
+		public Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token , [CanBeNull] String searchPattern = "*", Boolean randomize = true ) {
+			return Task.Run( () => {
+				var folders = new List<Folder>();
+
+				folders.AddRange( this.Info.BetterEnumerateDirectories( searchPattern ).Select( fileInfo => new Folder( fileInfo.FullName ) ) );
+
+				folders.RemoveAll( folder => folder is null );  //just in case. probably will never happen, unless BetterEnumerateDirectories() gets goofed up.
+
+				if ( randomize ) {
+					Shufflings.ShuffleByHarker( folders, 1, null,null, token );
+				}
+
+				return folders;
+			}, token );
+
+		}
+
+		/// <summary>
 		///     Returns a copy of the folder instance.
 		/// </summary>
 		/// <returns></returns>
@@ -308,7 +340,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// </summary>
 		/// <returns></returns>
 		/// See also:
-		/// <seealso cref="Delete"></seealso>
+		/// <see cref="Delete"></see>
 		public Boolean Create() {
 			try {
 				if ( this.Exists() ) { return true; }
@@ -316,7 +348,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				try {
 					if ( this.Info.Parent?.Exists == false ) { new Folder( this.Info.Parent.FullName ).Create(); }
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				this.Info.Create();
 
@@ -329,7 +361,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     <para>Returns True if the folder no longer exists.</para>
 		/// </summary>
 		/// <returns></returns>
-		/// <seealso cref="Create"></seealso>
+		/// <see cref="Create"></see>
 		public Boolean Delete() {
 			try {
 
@@ -352,7 +384,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				return true;
 			}
-			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
 			catch ( SecurityException ) { }
 
 			return false;

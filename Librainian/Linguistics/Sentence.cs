@@ -55,8 +55,8 @@ namespace Librainian.Linguistics {
 	/// <summary>
 	///     A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></seealso>
-	/// <seealso cref="Paragraph"></seealso>
+	/// <see cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></see>
+	/// <see cref="Paragraph"></see>
 	[JsonObject]
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]

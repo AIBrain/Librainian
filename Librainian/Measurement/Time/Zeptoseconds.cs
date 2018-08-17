@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Zeptoseconds.cs" was last formatted by Protiguous on 2018/07/13 at 1:31 AM.
+// Project: "Librainian", "Zeptoseconds.cs" was last formatted by Protiguous on 2018/08/15 at 6:18 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
 
 	/// <summary>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Zeptosecond" />
+	/// <see cref="http://wikipedia.org/wiki/Zeptosecond" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
@@ -108,6 +108,8 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public static readonly Zeptoseconds Zero = new Zeptoseconds( 0 );
 
+		public static BigRational InOneSecond { get; } = new BigInteger( 10E21 );
+
 		[JsonProperty]
 		public BigRational Value { get; }
 
@@ -138,10 +140,9 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Attoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToAttoseconds();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Zeptoseconds zeptoseconds ) => new SpanOfTime( zeptoseconds: zeptoseconds.Value );
 
-		public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) => TimeSpan.FromSeconds( ( Double ) zeptoseconds.Value );
+		public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) => TimeSpan.FromSeconds( ( Double )zeptoseconds.Value );
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="zeptoseconds" /> to <see cref="Yoctoseconds" />.
@@ -164,11 +165,11 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Zeptoseconds left, Zeptoseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Zeptoseconds left, Yoctoseconds right ) => left < ( Zeptoseconds ) right;
+		public static Boolean operator <( Zeptoseconds left, Yoctoseconds right ) => left < ( Zeptoseconds )right;
 
 		public static Boolean operator ==( Zeptoseconds left, Zeptoseconds right ) => Equals( left, right );
 
-		public static Boolean operator >( Zeptoseconds left, Yoctoseconds right ) => left > ( Zeptoseconds ) right;
+		public static Boolean operator >( Zeptoseconds left, Yoctoseconds right ) => left > ( Zeptoseconds )right;
 
 		public static Boolean operator >( Zeptoseconds left, Zeptoseconds right ) => left.Value > right.Value;
 
@@ -195,6 +196,9 @@ namespace Librainian.Measurement.Time {
 		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneZeptosecond * this.Value );
 
 		[Pure]
+		public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
+
+		[Pure]
 		public override String ToString() {
 			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
 				var whole = this.Value.GetWholePart();
@@ -202,7 +206,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "zs" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "zs" )}";
 		}

@@ -113,7 +113,7 @@ namespace Librainian.Maths.Numbers {
 	// /* ///
 	// <summary>
 	// /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
-	// to <seealso cref="Percentage.MaxValue" />)</i> ///
+	// to <see cref="Percentage.MaxValue" />)</i> ///
 	// </summary>
 	// ///
 	// <param name="percentage"></param>
@@ -128,7 +128,7 @@ namespace Librainian.Maths.Numbers {
 	// ///
 	// <summary>
 	// /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
-	// to <seealso cref="Percentage.MaxValue" />)</i> ///
+	// to <see cref="Percentage.MaxValue" />)</i> ///
 	// </summary>
 	// ///
 	// <param name="percentage"></param>

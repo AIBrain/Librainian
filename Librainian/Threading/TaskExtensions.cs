@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
+// 
+// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2018/07/25 at 6:34 AM.
 
 namespace Librainian.Threading {
 
@@ -49,13 +49,14 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Measurement.Time;
 	using Timer = System.Timers.Timer;
 
 	/// <summary>
-	///     Execute an <see cref="Action{T}" /> on a <see cref="System.Timers.Timer" />.
+	///     Remember: Tasks are born "hot" unless created with "var task=new Task();".
 	/// </summary>
 	public static class TaskExtensions {
 
@@ -65,7 +66,9 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="completedTask">   </param>
 		/// <param name="completionSource"></param>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		private static void PropagateResult<T>( [NotNull] Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
+
 			switch ( completedTask.Status ) {
 				case TaskStatus.Canceled:
 					completionSource.TrySetCanceled();
@@ -83,68 +86,7 @@ namespace Librainian.Threading {
 
 					break;
 
-				default: throw new ArgumentException( "Task was not completed." );
-			}
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
-		/// <param name="task">             </param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		[Obsolete( "Does not work as intended." )]
-		public static Task AddCancellation( [NotNull] this Task task, CancellationToken token ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) );
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task">             </param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		[Obsolete( "Does not work as intended." )]
-		[ItemNotNull]
-		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, CancellationToken token ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			var t = await Task.WhenAny( task, Task.Delay( TimeSpan.MaxValue, token ) ).NoUI();
-
-			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
-
-			return task.Result;
-		}
-
-		/// <summary>
-		///     "you can even have a timeout using the following simple extension method"
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task">             </param>
-		/// <param name="timeout">          </param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
-		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
-		[Obsolete( "Does not work as intended." )]
-		public static async Task<T> AddCancellation<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
-			if ( task is null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			try {
-				var winning = await Task.WhenAny( task, Task.Delay( timeout, token ) ).NoUI();
-
-				if ( winning != task ) { throw new OperationCanceledException( "cancelled" ); }
-
-				return task.Result;
-			}
-			catch ( TaskCanceledException ) {
-				return Task.FromCanceled<T>( token ).Result; //cancelled?
-			}
-			catch ( OperationCanceledException exception ) {
-				return Task.FromException<T>( exception ).Result; //timeout?
+				default: throw new ArgumentEmptyException( "Task was not completed." );
 			}
 		}
 
@@ -218,6 +160,14 @@ namespace Librainian.Threading {
 		/// <param name="task"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
+		public static Boolean IsDone( [NotNull] this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
+
+		/// <summary>
+		///     Returns true if the <paramref name="task" /> is Completed, Cancelled, or Faulted.
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static Boolean IsTaskDone( [NotNull] this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
 
 		/// <summary>
@@ -226,11 +176,7 @@ namespace Librainian.Threading {
 		/// <param name="task"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return task.ConfigureAwait( false );
-		}
+		public static ConfiguredTaskAwaitable NoUI( [NotNull] this Task task ) => task.ConfigureAwait( false );
 
 		/// <summary>
 		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
@@ -239,88 +185,64 @@ namespace Librainian.Threading {
 		/// <param name="task"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return task.ConfigureAwait( false );
-		}
+		public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) => task.ConfigureAwait( false );
 
 		/// <summary>
-		///     Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" /> .
+		///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
+		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
-
-			await Task.Delay( delay: delay );
-			await Task.Run( job );
-		}
+		[NotNull]
+		public static Task Then( this TimeSpan delay, [NotNull] Action job, CancellationToken token ) => Task.Delay( delay: delay, cancellationToken: token ).ContinueWith( task1 => job(), token );
 
 		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
+		///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
+		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task Then( this SpanOfTime delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
-
-			await Task.Delay( delay: delay ).NoUI();
-			await Task.Run( job ).NoUI();
-		}
+		[NotNull]
+		public static Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken token ) => Task.Delay( delay: delay, cancellationToken: token ).ContinueWith( task1 => job(), token );
 
 		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
+		///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
+		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
-
-			await Task.Delay( delay: delay ).NoUI();
-			await Task.Run( job ).NoUI();
-		}
+		[NotNull]
+		public static Task Then( this Milliseconds delay, [NotNull] Action job, CancellationToken token ) => Task.Delay( delay: delay, cancellationToken: token ).ContinueWith( task1 => job(), token );
 
 		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
+		///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
+		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
-
-			await Task.Delay( delay: delay ).NoUI();
-			await Task.Run( job ).NoUI();
-		}
+		[NotNull]
+		public static Task Then( this Seconds delay, [NotNull] Action job, CancellationToken token ) => Task.Delay( delay: delay, cancellationToken: token ).ContinueWith( task1 => job(), token );
 
 		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
+		///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
+		/// <param name="token"></param>
 		/// <returns></returns>
-		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
-			if ( job is null ) { throw new ArgumentNullException( nameof( job ) ); }
-
-			await Task.Delay( delay: delay ).NoUI();
-			await Task.Run( job ).NoUI();
-		}
+		[NotNull]
+		public static Task Then( this Minutes delay, [NotNull] Action job, CancellationToken token ) => Task.Delay( delay: delay, cancellationToken: token ).ContinueWith( task1 => job(), token );
 
 		public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
+			if ( first == null ) { throw new ArgumentNullException( paramName: nameof( first ) ); }
 
-			//if ( next is null ) {
-			//    throw new ArgumentNullException( "next" );
-			//}
+			if ( next == null ) { throw new ArgumentNullException( paramName: nameof( next ) ); }
 
-			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
-
-			if ( next is null ) { throw new ArgumentNullException( nameof( next ) ); }
-
-			var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
+			var tcs = new TaskCompletionSource<Object>();
 
 			first.ContinueWith( task => {
 				if ( first.IsFaulted ) {
@@ -339,7 +261,6 @@ namespace Librainian.Threading {
 			return tcs.Task;
 		}
 
-		[Obsolete( "use continuewith", true )]
 		public static Task<T2> Then<T2>( [NotNull] this Task first, [NotNull] Func<Task<T2>> next ) {
 			if ( first is null ) { throw new ArgumentNullException( nameof( first ) ); }
 
@@ -501,8 +422,9 @@ namespace Librainian.Threading {
 			if ( target is null ) { throw new ArgumentNullException( nameof( target ) ); }
 
 			while ( true ) {
+				var task = target.SendAsync( item, token );
 
-				if ( await target.SendAsync( item, token ).NoUI() || token.IsCancellationRequested ) { break; }
+				if ( task.IsTaskDone() || await task.NoUI() || token.IsCancellationRequested ) { break; }
 
 				await Task.Delay( 16, token ).NoUI();
 			}
@@ -513,11 +435,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return task.ConfigureAwait( true );
-		}
+		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) => task.ConfigureAwait( true );
 
 		/// <summary>
 		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
@@ -525,16 +443,12 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) {
-			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
-
-			return task.ConfigureAwait( true );
-		}
+		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) => task.ConfigureAwait( true );
 
 		/// <summary>
 		///     <para>Returns true if the task finished before the <paramref name="timeout" />.</para>
 		///     <para>Use this function if the Task does not have a built-in timeout.</para>
-		///     <para>This function does not end the given <paramref name="task" /> if it does timeout.</para>
+		///     <para>Note: This function does not end the given <paramref name="task" /> if it does timeout.</para>
 		/// </summary>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
@@ -576,10 +490,71 @@ namespace Librainian.Threading {
 				} ).Once().AndStart();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return null;
 			}
+		}
+
+		/// <summary>
+		///     await the <paramref name="task" /> with a <paramref name="timeout" /> and/or a <see cref="CancellationToken" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task">             </param>
+		/// <param name="timeout">          </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
+		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
+		[ItemNotNull]
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
+			if ( task is null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+
+			if ( task.IsTaskDone() ) { return task; }
+
+			var delay = Task.Delay( timeout, token );
+			var winning = await Task.WhenAny( task, delay ).NoUI();
+
+			return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
+		}
+
+		/// <summary>
+		///     await the <paramref name="task" /> with a <see cref="CancellationToken" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task">             </param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		[ItemNotNull]
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, CancellationToken token ) {
+			if ( task is null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+
+			if ( task.IsTaskDone() ) { return task; }
+
+			var delay = Task.Delay( TimeSpan.MaxValue, token );
+			var winning = await Task.WhenAny( task, delay ).NoUI();
+
+			return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
+		}
+
+		/// <summary>
+		///     await the <paramref name="task" /> with a <paramref name="timeout" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="task">             </param>
+		/// <param name="timeout">          </param>
+		/// <returns></returns>
+		[ItemNotNull]
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
+			if ( task is null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
+
+			if ( task.IsTaskDone() ) { return task; }
+
+			var token = new CancellationTokenSource( timeout ).Token;
+			var delay = Task.Delay( timeout, token );
+			var winner = await Task.WhenAny( task, delay ).NoUI();
+
+			return winner == task ? task : Task.FromException( new OperationCanceledException( "timeout" ) );
 		}
 
 		/// <summary>
@@ -590,66 +565,35 @@ namespace Librainian.Threading {
 		/// <param name="timeout">          </param>
 		/// <returns></returns>
 		/// <exception cref="OperationCanceledException">on timeout</exception>
-		[Obsolete( "Does not work as intended." )]
+		/// <exception cref="ArgumentNullException"></exception>
 		[ItemNotNull]
-		public static async Task<T> WithTimeout<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
+		public static async Task<Task> WithTimeout<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
 			if ( task == null ) { throw new ArgumentNullException( paramName: nameof( task ) ); }
 
-			var t = await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI();
+			if ( task == await Task.WhenAny( task, Task.Delay( timeout ) ).NoUI() ) { return task; }
 
-			if ( t != task ) { throw new OperationCanceledException( "timeout" ); }
-
-			return task.Result;
+			throw new OperationCanceledException( "timeout" );
 		}
 
 		/// <summary>
 		///     Wrap 3 methods into one.
 		/// </summary>
-		/// <param name="action"></param>
 		/// <param name="pre">   </param>
+		/// <param name="action"></param>
 		/// <param name="post">  </param>
 		/// <returns></returns>
 		[NotNull]
 		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
 			() => {
 				try { pre?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				try { action?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				try { post?.Invoke(); }
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 			};
-
-		/* Concept class
-
-		/// <summary>
-		///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="target"></param>
-		/// <param name="item">  </param>
-		/// <param name="delay"> </param>
-		public static Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
-			if ( target is null ) {
-				throw new ArgumentNullException( nameof( target ) );
-			}
-
-			try {
-				if ( delay < Milliseconds.One ) {
-					delay = Milliseconds.One;
-				}
-
-				return delay.CreateTimer( () => target.Post( item ) ).AndStart();
-			}
-			catch ( Exception exception ) {
-				exception.More();
-
-				throw;
-			}
-		}
-		*/
 
 		/// <summary>
 		///     var result = await Wrap( () =&gt; OldNonAsyncFunction( ) );
@@ -657,11 +601,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="selector"></param>
 		/// <returns></returns>
-		public static async Task<T> Wrap<T>( [NotNull] this Func<T> selector ) {
-			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
-
-			return await Task.Run( selector ).NoUI();
-		}
+		public static async Task<T> Wrap<T>( [NotNull] this Func<T> selector ) => await Task.Run( selector ).NoUI();
 
 		/// <summary>
 		///     var result = await Wrap( () =&gt; OldNonAsyncFunction( "hello world" ) );
@@ -671,11 +611,7 @@ namespace Librainian.Threading {
 		/// <param name="selector"></param>
 		/// <param name="input">   </param>
 		/// <returns></returns>
-		public static async Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) {
-			if ( selector is null ) { throw new ArgumentNullException( nameof( selector ) ); }
-
-			return await Task.Run( () => selector( input ) ).NoUI();
-		}
+		public static async Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) => await Task.Run( () => selector( input ) ).NoUI();
 
 		/// <summary>
 		///     Just a try/catch wrapper for methods.
@@ -705,7 +641,7 @@ namespace Librainian.Threading {
 				}
 			}
 			catch ( OutOfMemoryException lowMemory ) {
-				lowMemory.More();
+				lowMemory.Log();
 				Logging.Garbage();
 				attempts--;
 
@@ -714,10 +650,12 @@ namespace Librainian.Threading {
 			catch ( Exception exception ) {
 				if ( null != onException ) { return onException.Wrap(); }
 
-				exception.More();
+				exception.Log();
 			}
 
 			return false;
 		}
+
 	}
+
 }

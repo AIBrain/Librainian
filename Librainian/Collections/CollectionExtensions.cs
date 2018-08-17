@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "CollectionExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:49 PM.
+// 
+// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2018/07/26 at 1:52 PM.
 
 namespace Librainian.Collections {
 
@@ -53,9 +53,7 @@ namespace Librainian.Collections {
 	using System.Threading.Tasks;
 	using Exceptions;
 	using Extensions;
-	using FluentAssertions;
 	using JetBrains.Annotations;
-	using Maths;
 	using Threading;
 
 	public static class CollectionExtensions {
@@ -343,16 +341,18 @@ namespace Librainian.Collections {
 
 			var aIndex = 0;
 
-			foreach ( var a in self ) {
+			var enumerable = self.ToList();
 
-				foreach ( var b in self.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { return new KeyValuePair<T, T>( a, b ); }
+			foreach ( var a in enumerable ) {
+
+				foreach ( var b in enumerable.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { return new KeyValuePair<T, T>( a, b ); }
 			}
 
 			return null;
 		}
 
 		/// <summary>
-		///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
+		///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection"></param>
@@ -713,252 +713,12 @@ namespace Librainian.Collections {
 			while ( collection.TryTake( item: out var result ) ) { yield return result; }
 		}
 
-		/// <summary>
-		///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="array">     </param>
-		/// <param name="iterations"></param>
-		/// <example>Deck.Shuffle( 7 );</example>
-		[Obsolete( "broken at the moment. seealso Shuffle<List>" )]
-		public static void Shuffle<T>( [NotNull] this T[] array, Int32 iterations = 1 ) {
-			if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
-
-			if ( iterations < 1 ) { iterations = 1; }
-
-			if ( array.Length < 1 ) {
-				return; //nothing to shuffle
-			}
-
-			while ( iterations > 0 ) {
-				iterations--;
-
-				// make a copy of all items
-				var bag = new ConcurrentBag<T>( collection: array );
-				bag.Should().NotBeEmpty();
-				var originalcount = bag.Count;
-
-				var sqrt = ( Int32 ) Math.Sqrt( d: originalcount );
-
-				if ( sqrt <= 1 ) { sqrt = 1; }
-
-				// make some buckets.
-				var buckets = new List<ConcurrentBag<T>>( capacity: sqrt );
-				buckets.AddRange( collection: 1.To( end: sqrt ).Select( selector: i => new ConcurrentBag<T>() ) );
-
-				// pull the items out of the bag, and put them into a random bucket each
-				T item;
-
-				while ( bag.TryTake( result: out item ) ) {
-					var index = 0.Next( maxValue: sqrt );
-					buckets[ index: index ].Add( item: item );
-				}
-
-				bag.Should().BeEmpty( because: "All items should have been taken out of the bag" );
-
-				while ( bag.Count < originalcount ) {
-					var index = 0.Next( maxValue: buckets.Count );
-					var bucket = buckets[ index: index ];
-
-					if ( bucket.TryTake( result: out item ) ) { bag.Add( item: item ); }
-
-					if ( bucket.IsEmpty ) { buckets.Remove( item: bucket ); }
-				}
-
-				bag.Count.Should().Be( expected: originalcount );
-
-				// put them back into the array
-				var newArray = bag.ToArray();
-				newArray.CopyTo( array: array, index: 0 );
-			}
-
-			// Old, !bad! way.
-			//var items = array.Count();
-			//for ( var i = 0; i < items; i++ ) {
-			//    var index1 = randomFunc( 0, items ); //Randem.Next( 0, items );
-			//    var index2 = randomFunc( 0, items ); //Randem.Next( 0, items );
-			//    array.Swap( index1, index2 );
-			//}
-		}
-
-		/// <summary>
-		///     <para>Shuffle a list in <paramref name="iterations" />.</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list">            </param>
-		/// <param name="iterations">      </param>
-		/// <param name="shufflingType">   </param>
-		/// <param name="forHowLong">      </param>
-		/// <param name="orUntilCancelled"></param>
-		/// <example>Deck.Shuffle( 7 );</example>
-		public static void Shuffle<T>( [NotNull] this List<T> list, Int32 iterations = 1, ShufflingType shufflingType = ShufflingType.AutoChoice, TimeSpan? forHowLong = null,
-			[CanBeNull] SimpleCancel orUntilCancelled = null ) {
-			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
-
-			try {
-				if ( !list.Any() ) {
-					return; //nothing to shuffle
-				}
-
-				if ( iterations < 1 ) { iterations = 1; }
-
-				switch ( shufflingType ) {
-					case ShufflingType.ByGuid: {
-						ShuffleByGuid( list: ref list, iterations: iterations );
-					}
-
-						break;
-
-					case ShufflingType.ByRandom: {
-						ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
-					}
-
-						break;
-
-					case ShufflingType.ByHarker: {
-						ShuffleByHarker( list: ref list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
-					}
-
-						break;
-
-					case ShufflingType.ByBags: {
-						ShuffleByBags( list: ref list, iterations: iterations, originalcount: list.LongCount() );
-					}
-
-						break;
-
-					case ShufflingType.AutoChoice: {
-						ShuffleByHarker( list: ref list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
-					}
-
-						break;
-
-					default: throw new ArgumentOutOfRangeException( nameof( shufflingType ) );
-				}
-			}
-			catch ( IndexOutOfRangeException exception ) { exception.More(); }
-		}
-
-		/// <summary>
-		///     Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list">         </param>
-		/// <param name="iterations">   </param>
-		/// <param name="originalcount"></param>
-		public static void ShuffleByBags<T>( ref List<T> list, Int32 iterations, Int64 originalcount ) {
-			var bag = new ConcurrentBag<T>();
-
-			while ( iterations > 0 ) {
-				iterations--;
-
-				bag.AddRange( items: list.AsParallel() );
-				bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
-
-				list.Clear();
-				list.Should().BeEmpty( because: "emptied the original list" );
-
-				list.AddRange( collection: bag );
-				list.LongCount().Should().Be( expected: originalcount );
-
-				bag.RemoveAll();
-			}
-		}
-
 		public static void ShuffleByGuid<T>( ref List<T> list, Int32 iterations = 1 ) {
 			while ( iterations.Any() ) {
 				iterations--;
 				var copy = list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).ToList();
 				list.Clear();
 				list.AddRange( collection: copy.AsParallel() );
-			}
-		}
-
-		/// <summary>
-		///     Fast shuffle. Not guaranteed or tested to be the fastest, but it *should* shuffle *well enough* in reasonable time.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list">            </param>
-		/// <param name="iterations">      </param>
-		/// <param name="forHowLong">      </param>
-		/// <param name="orUntilCancelled"></param>
-		/// <remarks>The while.Any() could be replaced with a for loop.. the count is well known ahead of time.</remarks>
-		public static void ShuffleByHarker<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null ) {
-			if ( list == null ) { throw new ArgumentNullException( nameof( list ) ); }
-
-			var whenStarted = Stopwatch.StartNew();
-			var itemCount = list.Count;
-			var array = list.ToArray();
-
-			if ( orUntilCancelled != null ) {
-				do {
-					var a = 0.Next( maxValue: itemCount );
-					var b = 0.Next( maxValue: itemCount );
-					array.Swap( index1: a, b );
-				} while ( !orUntilCancelled.HaveAnyCancellationsBeenRequested() );
-
-				goto AllDone;
-			}
-
-			if ( forHowLong.HasValue ) {
-				do {
-					var a = 0.Next( maxValue: itemCount );
-					var b = 0.Next( maxValue: itemCount );
-					array.Swap( a, b );
-				} while ( whenStarted.Elapsed < forHowLong.Value );
-
-				goto AllDone;
-			}
-
-			if ( iterations < 1 ) { iterations = 1; }
-
-			if ( iterations.Any() ) {
-				iterations *= itemCount;
-				iterations *= iterations;
-
-				do {
-					iterations--;
-					var a = 0.Next( maxValue: itemCount );
-					var b = 0.Next( maxValue: itemCount );
-					array.Swap( a, b );
-				} while ( iterations.Any() );
-			}
-
-			AllDone:
-			list = array.ToList();
-
-			list.Count.Should().Be( expected: itemCount );
-		}
-
-		public static void ShuffleByHarkerList<T>( [NotNull] ref List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null ) {
-			if ( list == null ) { throw new ArgumentNullException( nameof( list ) ); }
-
-			var itemCount = list.Count;
-
-			if ( orUntilCancelled != null ) {
-				var buffer = new Byte[ 4 * sizeof( UInt32 ) ];
-
-				while ( !orUntilCancelled.HaveAnyCancellationsBeenRequested() ) {
-					Randem.Instance.NextBytes( buffer );
-					var x = 0.Next( maxValue: itemCount );
-					var y = 0.Next( maxValue: itemCount );
-
-					var itemA = list[ x ];
-					var itemB = list[ y ];
-					list.RemoveAt( x );
-					list.RemoveAt( y );
-					list.Insert( 0.Next( maxValue: itemCount ), itemA );
-					list.Insert( 0.Next( maxValue: itemCount ), itemB );
-				}
-			}
-		}
-
-		public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, Int32 iterations = 1 ) {
-			while ( iterations.Any() ) {
-				iterations--;
-				var copy = list.AsParallel().OrderBy( keySelector: o => Randem.Next() ).ThenBy( keySelector: o => Randem.Next() ).ToList();
-				list.Clear();
-				list.AddRange( collection: copy ); //TODO can we just return/replace 'list' with 'copy' instead of addrange?
 			}
 		}
 
@@ -977,7 +737,7 @@ namespace Librainian.Collections {
 			if ( list is null ) { throw new ArgumentNullException( nameof( list ) ); }
 
 			var i = 0;
-			var splits = from item in list group item by i++ % parts into part select part; //.AsEnumerable();
+			var splits = from item in list group item by ++i % parts into part select part;
 
 			return splits;
 		}
@@ -1274,10 +1034,14 @@ namespace Librainian.Collections {
 
 			var aIndex = 0;
 
-			foreach ( var a in self ) {
+			var enumerable = self.ToList();
 
-				foreach ( var b in self.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { yield return new KeyValuePair<T, T>( a, b ); }
+			foreach ( var a in enumerable ) {
+
+				foreach ( var b in enumerable.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) { yield return new KeyValuePair<T, T>( a, b ); }
 			}
 		}
+
 	}
+
 }

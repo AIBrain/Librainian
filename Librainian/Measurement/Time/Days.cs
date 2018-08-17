@@ -104,7 +104,7 @@ namespace Librainian.Measurement.Time {
 		//public const Byte InOneMonth = 31;
 		public static Days Combine( Days left, BigRational days ) => new Days( left.Value + days );
 
-		public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger ) left.Value + days );
+		public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -121,10 +121,9 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Hours( Days days ) => days.ToHours();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days.Value );
 
-		public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double ) days.Value );
+		public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
@@ -149,11 +148,11 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Days left, Hours right ) => left < ( Days ) right;
+		public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
 		public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-		public static Boolean operator >( Days left, Hours right ) => left > ( Days ) right;
+		public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
 		public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
@@ -174,7 +173,9 @@ namespace Librainian.Measurement.Time {
 		public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneDay * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneDay * this.Value );
+
+		public Seconds ToSeconds() => throw new NotImplementedException();
 
 		[Pure]
 		public override String ToString() {
@@ -184,7 +185,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "day" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "day" )}";
 		}

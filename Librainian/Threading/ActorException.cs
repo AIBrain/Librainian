@@ -48,7 +48,7 @@ namespace Librainian.Threading {
 	/// <summary>
 	///     Thrown when the actor fails.
 	/// </summary>
-	/// <seealso cref="Actor" />
+	/// <see cref="Actor" />
 	[Serializable]
 	public class ActorException : Exception {
 

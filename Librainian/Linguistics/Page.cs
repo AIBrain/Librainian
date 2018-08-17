@@ -53,7 +53,7 @@ namespace Librainian.Linguistics {
 	/// <summary>
 	///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
 	/// </summary>
-	/// <seealso cref="Book"></seealso>
+	/// <see cref="Book"></see>
 	[JsonObject]
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]

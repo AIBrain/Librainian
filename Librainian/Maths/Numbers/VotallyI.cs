@@ -123,7 +123,7 @@ namespace Librainian.Maths.Numbers {
 					return ( Double ) result;
 				}
 			}
-			catch ( DivideByZeroException exception ) { exception.More(); }
+			catch ( DivideByZeroException exception ) { exception.Log(); }
 
 			return 0;
 		}
@@ -139,7 +139,7 @@ namespace Librainian.Maths.Numbers {
 				return ( Double ) chance;
 			}
 			catch ( DivideByZeroException exception ) {
-				exception.More();
+				exception.Log();
 
 				return 0;
 			}

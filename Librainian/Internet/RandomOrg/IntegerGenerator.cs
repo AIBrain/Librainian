@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "IntegerGenerator.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
 
-namespace Librainian.Threading.RandomOrg {
+namespace Librainian.Internet.RandomOrg {
 
 	using System;
 	using System.Collections.Generic;
@@ -47,10 +47,11 @@ namespace Librainian.Threading.RandomOrg {
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using Extensions;
-	using Internet;
 	using JetBrains.Annotations;
+	using Librainian.Internet;
 	using Measurement.Time;
 	using Parsing;
+	using Threading;
 
 	public static class RandomDotOrg {
 
@@ -76,7 +77,7 @@ namespace Librainian.Threading.RandomOrg {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
+		/// <see cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
 		public class IntegerGenerator {
 
 			private Int32 _index;

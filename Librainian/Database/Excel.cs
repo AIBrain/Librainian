@@ -83,7 +83,7 @@ namespace Librainian.Database {
 
 				for ( var i = 0; i < columns.Length; i++ ) { columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ]; }
 			}
-			catch ( OleDbException exception ) { exception.More(); }
+			catch ( OleDbException exception ) { exception.Log(); }
 
 			return columns;
 		}
@@ -101,7 +101,7 @@ namespace Librainian.Database {
 					}
 				}
 			}
-			catch ( OleDbException exception ) { exception.More(); }
+			catch ( OleDbException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -122,7 +122,7 @@ namespace Librainian.Database {
 					}
 				}
 			}
-			catch ( OleDbException exception ) { exception.More(); }
+			catch ( OleDbException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -149,7 +149,7 @@ namespace Librainian.Database {
 					while ( worksheets[ i ].EndsWith( "$" ) ) { worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' ); }
 				}
 			}
-			catch ( OleDbException exception ) { exception.More(); }
+			catch ( OleDbException exception ) { exception.Log(); }
 
 			return worksheets;
 		}

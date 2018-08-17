@@ -160,7 +160,6 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Nanoseconds nanoseconds ) => new SpanOfTime( nanoseconds: nanoseconds );
 
 		public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
@@ -179,13 +178,13 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Nanoseconds left, Nanoseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds ) left < right;
+		public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds )left < right;
 
 		public static Boolean operator ==( Nanoseconds left, Nanoseconds right ) => Equals( left, right );
 
 		public static Boolean operator >( Nanoseconds left, Nanoseconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds ) left > right;
+		public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds )left > right;
 
 		public Int32 CompareTo( Nanoseconds other ) => this.Value.CompareTo( other.Value );
 
@@ -206,7 +205,9 @@ namespace Librainian.Measurement.Time {
 		public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneNanosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneNanosecond * this.Value );
+
+		public Seconds ToSeconds() => throw new NotImplementedException();
 
 		[Pure]
 		public override String ToString() {
@@ -216,7 +217,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "ns" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "ns" )}";
 		}

@@ -48,28 +48,26 @@ namespace Librainian.Measurement.Time.Clocks {
 	///     Use with WindowsCE and Silverlight which don't have Stopwatch
 	/// </summary>
 	/// <remarks>
-	///     Based on <seealso cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
+	///     Based on <see cref="http://github.com/amibar/SmartThreadPool/blob/master/SmartThreadPool/Stopwatch.cs" />
 	/// </remarks>
 	internal class MillisecondStopWatch {
 
+		private const Decimal TicksPerMillisecond = 10000.0m;
 		private UInt64 _elapsed;
 
 		private UInt64 _startTimeStamp;
 
 		/// <summary>
 		/// </summary>
-		[NotNull]
 		public SpanOfTime Elapsed => new SpanOfTime( milliseconds: this.GetElapsedDateTimeTicks() / TicksPerMillisecond );
 
 		/// <summary>
 		/// </summary>
 		public Boolean IsRunning { get; private set; }
 
-		private const Decimal TicksPerMillisecond = 10000.0m;
-
 		public MillisecondStopWatch() => this.Reset();
 
-		private static UInt64 GetTimestamp() => ( UInt64 ) DateTime.UtcNow.Ticks;
+		private static UInt64 GetTimestamp() => ( UInt64 )DateTime.UtcNow.Ticks;
 
 		private UInt64 GetElapsedDateTimeTicks() {
 			var elapsed = this._elapsed;

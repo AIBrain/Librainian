@@ -63,7 +63,7 @@ namespace Librainian.Extensions {
 				         "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", options: RegexOptions.Compiled );
 
 		/// <summary>
-		///     <seealso cref="Converters.ConverterExtensions.ToPath" />
+		///     <see cref="Converters.ConverterExtensions.ToPath" />
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
@@ -82,7 +82,7 @@ namespace Librainian.Extensions {
 
 				return result;
 			}
-			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
 
 			return Guid.Empty;
 		}

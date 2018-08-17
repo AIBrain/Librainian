@@ -44,7 +44,6 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using Clocks;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -99,15 +98,15 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// </summary>
 		/// <param name="dateTime"></param>
-		public Time( DateTime dateTime ) : this( hour: ( Byte ) dateTime.Hour, minute: ( Byte ) dateTime.Minute, second: ( Byte ) dateTime.Second, millisecond: ( UInt16 ) dateTime.Millisecond ) { }
+		public Time( DateTime dateTime ) : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( UInt16 )dateTime.Millisecond ) { }
 
 		/// <summary>
 		/// </summary>
 		/// <param name="spanOfTime"></param>
-		public Time( [NotNull] SpanOfTime spanOfTime ) : this( hour: ( Byte ) spanOfTime.Hours.Value, minute: ( Byte ) spanOfTime.Minutes.Value, second: ( Byte ) spanOfTime.Seconds.Value,
-			millisecond: ( UInt16 ) spanOfTime.Milliseconds.Value, microsecond: ( UInt16 ) spanOfTime.Microseconds.Value ) { }
+		public Time( SpanOfTime spanOfTime ) : this( hour: ( Byte )spanOfTime.Hours.Value, minute: ( Byte )spanOfTime.Minutes.Value, second: ( Byte )spanOfTime.Seconds.Value,
+			millisecond: ( UInt16 )spanOfTime.Milliseconds.Value, microsecond: ( UInt16 )spanOfTime.Microseconds.Value ) { }
 
-		public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte ) dateTime.Hour, ( Byte ) dateTime.Minute, ( Byte ) dateTime.Second, ( UInt16 ) dateTime.Millisecond );
+		public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte )dateTime.Hour, ( Byte )dateTime.Minute, ( Byte )dateTime.Second, ( UInt16 )dateTime.Millisecond );
 
 		/// <summary>
 		/// </summary>
@@ -123,13 +122,13 @@ namespace Librainian.Measurement.Time {
 		public static Time Now() {
 			var now = DateTime.Now;
 
-			return new Time( hour: ( Byte ) now.Hour, minute: ( Byte ) now.Minute, second: ( Byte ) now.Second, millisecond: ( UInt16 ) now.Millisecond );
+			return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
 		}
 
 		public static Time UtcNow() {
 			var now = DateTime.UtcNow;
 
-			return new Time( hour: ( Byte ) now.Hour, minute: ( Byte ) now.Minute, second: ( Byte ) now.Second, millisecond: ( UInt16 ) now.Millisecond );
+			return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Librainian.Maths {
 	using Numbers;
 
 	/// <summary>Based on the idea from lavz24.</summary>
-	/// <seealso cref="http://github.com/lavz24/DecimalToRoman/blob/master/DecimalToRoman/Converter.cs" />
+	/// <see cref="http://github.com/lavz24/DecimalToRoman/blob/master/DecimalToRoman/Converter.cs" />
 	public static class RomanConverter {
 
 		/// <summary></summary>

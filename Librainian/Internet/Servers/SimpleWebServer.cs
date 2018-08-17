@@ -143,7 +143,7 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		/// <seealso cref="Stop" />
+		/// <see cref="Stop" />
 		[NotNull]
 		public Task Run( CancellationToken cancellationToken ) =>
 			Task.Run( async () => {

@@ -68,7 +68,7 @@ namespace Librainian.Persistence {
 	///         <see cref="KeyValuePair{TKey,TValue}" /> of base64 compressed strings.
 	///     </para>
 	/// </summary>
-	/// <seealso cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
+	/// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, String> {
@@ -267,7 +267,7 @@ namespace Librainian.Persistence {
 
 				if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) { throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		// ReSharper disable once NotNullMemberIsNotInitialized

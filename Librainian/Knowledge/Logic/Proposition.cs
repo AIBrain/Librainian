@@ -48,7 +48,7 @@ namespace Librainian.Knowledge.Logic {
 	///     "meaning" of a meaningful declarative sentence or (b) the pattern of symbols, marks, or
 	///     sounds that make up a meaningful declarative sentence. The meaning of a proposition includes
 	///     having the quality or property of being either true or false, and as such propositions are
-	///     claimed to be truthbearers. <seealso cref="http://wikipedia.org/wiki/Proposition" />
+	///     claimed to be truthbearers. <see cref="http://wikipedia.org/wiki/Proposition" />
 	/// </summary>
 	[JsonObject]
 	public class Proposition { }

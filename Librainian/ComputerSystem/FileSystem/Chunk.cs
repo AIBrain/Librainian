@@ -165,7 +165,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 					}
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			this.ReadWriteBuffer = new Byte[ 4096 ]; //default. If we can't allocate this few of bytes, then we're in another bigger issue.
 		}

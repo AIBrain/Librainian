@@ -423,7 +423,7 @@ namespace Librainian.Parsing {
 				return sb.ToString().Trim();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return s;
 			}
@@ -434,10 +434,10 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="value">The value to escape.</param>
 		/// <returns>The escaped value.</returns>
-		/// <seealso cref="http://stackoverflow.com/questions/846487/how-to-get-uri-escapedatastring-to-comply-with-rfc-3986" />
-		/// <seealso cref="http://meyerweb.com/eric/tools/dencoder/" />
-		/// <seealso cref="http://www.ietf.org/rfc/rfc2396.txt" />
-		/// <seealso cref="http://msdn.microsoft.com/en-us/Library/vstudio/bb968786(v=vs.100).aspx" />
+		/// <see cref="http://stackoverflow.com/questions/846487/how-to-get-uri-escapedatastring-to-comply-with-rfc-3986" />
+		/// <see cref="http://meyerweb.com/eric/tools/dencoder/" />
+		/// <see cref="http://www.ietf.org/rfc/rfc2396.txt" />
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/vstudio/bb968786(v=vs.100).aspx" />
 		/// <remarks>
 		///     <para>
 		///         The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on RFC 3986 behavior if certain
@@ -585,7 +585,7 @@ namespace Librainian.Parsing {
 
 		/// <summary>
 		///     Add a space Before Each Capital Letter. then lowercase the whole string.
-		///     <para>See also: <seealso cref="AddSpacesBeforeUppercase" /></para>
+		///     <para>See also: <see cref="AddSpacesBeforeUppercase" /></para>
 		/// </summary>
 		/// <param name="word"></param>
 		/// <returns></returns>
@@ -666,7 +666,7 @@ namespace Librainian.Parsing {
 				return sb.ToString();
 			}
 			catch ( Exception error ) {
-				error.More();
+				error.Log();
 
 				return s;
 			}
@@ -676,8 +676,8 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="sentence"></param>
 		/// <returns></returns>
-		/// <seealso cref="Word" />
-		/// <seealso cref="Sentence" />
+		/// <see cref="Word" />
+		/// <see cref="Sentence" />
 		[NotNull]
 		public static IEnumerable<String> JustWords( this String sentence ) {
 			var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
@@ -707,7 +707,7 @@ namespace Librainian.Parsing {
 
 		/// <summary>
 		///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
-		///     <seealso cref="NetDataContractSerializer" /> .
+		///     <see cref="NetDataContractSerializer" /> .
 		/// </summary>
 		/// <param name="bob"></param>
 		/// <returns></returns>
@@ -719,9 +719,9 @@ namespace Librainian.Parsing {
 
 				return me.LongCount();
 			}
-			catch ( InvalidDataContractException exception ) { exception.More(); }
-			catch ( SerializationException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( InvalidDataContractException exception ) { exception.Log(); }
+			catch ( SerializationException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return 0;
 		}
@@ -1053,7 +1053,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="myString"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers" />
+		/// <see cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers" />
 		[NotNull]
 		public static String ReverseWords( [NotNull] this String myString ) {
 			var length = myString.Length;
@@ -1579,7 +1579,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://stackoverflow.com/a/2730393/956364" />
+		/// <see cref="http://stackoverflow.com/a/2730393/956364" />
 		[NotNull]
 		public static String ToVerbalWord( this Int32 number ) {
 			if ( number == 0 ) { return "zero"; }
@@ -1621,7 +1621,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://stackoverflow.com/a/7829529/956364" />
+		/// <see cref="http://stackoverflow.com/a/7829529/956364" />
 		[NotNull]
 		public static String ToVerbalWord( this Decimal number ) {
 			if ( number == 0 ) { return "zero"; }

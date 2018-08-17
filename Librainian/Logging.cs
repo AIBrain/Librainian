@@ -132,7 +132,7 @@ namespace Librainian {
 			};
 
 		/// <summary>
-		///     <seealso cref="Before" />
+		///     <see cref="Before" />
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
@@ -142,7 +142,7 @@ namespace Librainian {
 		}
 
 		/// <summary>
-		///     <seealso cref="After" />
+		///     <see cref="After" />
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
@@ -196,7 +196,7 @@ namespace Librainian {
 		}
 
 		/// <summary>
-		///     <seealso cref="Exit" />.
+		///     <see cref="Exit" />.
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
@@ -208,8 +208,8 @@ namespace Librainian {
 		/// <summary>
 		///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
 		///     <para>
-		///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
-		///         <seealso cref="Error" />.
+		///         See also: <see cref="Message" />, <see cref="Info" />, <see cref="Warning" />, and
+		///         <see cref="Error" />.
 		///     </para>
 		/// </summary>
 		/// <param name="message"></param>
@@ -219,7 +219,7 @@ namespace Librainian {
 		}
 
 		/// <summary>
-		///     <seealso cref="Enter" />
+		///     <see cref="Enter" />
 		/// </summary>
 		/// <param name="method"></param>
 		[DebuggerStepThrough]
@@ -255,8 +255,8 @@ namespace Librainian {
 		/// <summary>
 		///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
 		///     <para>
-		///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
-		///         <seealso cref="Error" />.
+		///         See also: <see cref="Message" />, <see cref="Info" />, <see cref="Warning" />, and
+		///         <see cref="Error" />.
 		///     </para>
 		/// </summary>
 		/// <param name="message"></param>
@@ -271,8 +271,8 @@ namespace Librainian {
 		/// <summary>
 		///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
 		///     <para>
-		///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
-		///         <seealso cref="Error" />.
+		///         See also: <see cref="Message" />, <see cref="Info" />, <see cref="Warning" />, and
+		///         <see cref="Error" />.
 		///     </para>
 		/// </summary>
 		/// <param name="message"></param>
@@ -295,7 +295,7 @@ namespace Librainian {
 		/// <remarks>My catchall for exceptions I don't want to deal with, but where I still want to see the exception.</remarks>
 		[NotNull]
 		[DebuggerStepThrough]
-		public static Exception More( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "",
+		public static Exception Log( [NotNull] this Exception exception, [CanBeNull] [CallerMemberName] String method = "", [CanBeNull] [CallerFilePath] String sourceFilePath = "",
 			[CallerLineNumber] Int32 sourceLineNumber = 0 ) {
 			var message = new StringBuilder();
 			message.Append( $" [Exception: {exception.Message}]\r\n" );
@@ -347,7 +347,7 @@ namespace Librainian {
 				Contract.ContractFailed += ( sender, e ) => {
 					var message = $"Caught Uncaught Contract Failure:\r\nCondition:{e.Condition}\r\nFailureKind:{e.FailureKind}\r\nHandled:{e.Handled}\r\nMessage:{e.Message}";
 					Debugger.IsAttached.BreakIfTrue( message );
-					e.OriginalException.More();
+					e.OriginalException.Log();
 				};
 
 				ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
@@ -355,7 +355,7 @@ namespace Librainian {
 
 				return HasConsoleBeenAllocated;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -363,8 +363,8 @@ namespace Librainian {
 		/// <summary>
 		///     <para>Write the <paramref name="message" /> with <see cref="WriteLine" /></para>
 		///     <para>
-		///         See also: <seealso cref="Message" />, <seealso cref="Info" />, <seealso cref="Warning" />, and
-		///         <seealso cref="Error" />.
+		///         See also: <see cref="Message" />, <see cref="Info" />, <see cref="Warning" />, and
+		///         <see cref="Error" />.
 		///     </para>
 		/// </summary>
 		/// <param name="message"></param>

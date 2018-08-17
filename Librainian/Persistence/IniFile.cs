@@ -167,7 +167,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -193,7 +193,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -204,7 +204,7 @@ namespace Librainian.Persistence {
 			}
 
 			try { return true; }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -249,7 +249,7 @@ namespace Librainian.Persistence {
 
 				if ( retries.Any() ) { goto TryAgain; }
 
-				exception.More();
+				exception.Log();
 			}
 
 			return false;
@@ -270,14 +270,14 @@ namespace Librainian.Persistence {
 			catch ( IOException exception ) {
 
 				//file in use by another app
-				exception.More();
+				exception.Log();
 
 				return false;
 			}
 			catch ( OutOfMemoryException exception ) {
 
 				//file is huge
-				exception.More();
+				exception.Log();
 
 				return false;
 			}

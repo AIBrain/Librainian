@@ -65,8 +65,8 @@ namespace Librainian.Maths.Numbers {
 	///     <para>Rewritten into an immutable struct by Rick@Protiguous.com in August 2014</para>
 	///     <para>Added the parsing ability from the 'clojure' project.</para>
 	/// </summary>
-	/// <seealso cref="http://stackoverflow.com/a/13813535/956364" />
-	/// <seealso cref="http://gist.github.com/nberardi/2667136" />
+	/// <see cref="http://stackoverflow.com/a/13813535/956364" />
+	/// <see cref="http://gist.github.com/nberardi/2667136" />
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Obsolete( "Use BigRational instead." )]
@@ -89,15 +89,15 @@ namespace Librainian.Maths.Numbers {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="http://wikipedia.org/wiki/Exponent" />
+		/// <see cref="http://wikipedia.org/wiki/Exponent" />
 		public readonly Int32 Exponent;
 
 		/// <summary>
 		///     The <see cref="Significand" /> (aka <see cref="Mantissa" />) is the part of a number consisting of its significant
 		///     digits.
 		/// </summary>
-		/// <seealso cref="http://wikipedia.org/wiki/Significand" />
-		/// <seealso cref="Mantissa" />
+		/// <see cref="http://wikipedia.org/wiki/Significand" />
+		/// <see cref="Mantissa" />
 		public readonly BigInteger Significand;
 
 		public Boolean IsEven => this.Significand.IsEven;
@@ -116,7 +116,7 @@ namespace Librainian.Maths.Numbers {
 		/// <summary>
 		///     The significand (aka mantissa) is part of a number consisting of its significant digits.
 		/// </summary>
-		/// <seealso cref="Significand" />
+		/// <see cref="Significand" />
 		public BigInteger Mantissa => this.Significand;
 
 		public Int32 Sign => this.Significand.Sign;

@@ -89,7 +89,7 @@ namespace Librainian.ComputerSystem {
 						return total;
 					}
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return 0;
 			}
@@ -102,7 +102,7 @@ namespace Librainian.ComputerSystem {
 			get {
 				try { return this.Info.TotalPhysicalMemory; }
 				catch ( Exception exception ) {
-					exception.More();
+					exception.Log();
 
 					return 0;
 				}
@@ -147,7 +147,7 @@ namespace Librainian.ComputerSystem {
 				}
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return 0;
 			}
@@ -229,7 +229,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -240,7 +240,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -251,7 +251,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -262,7 +262,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -273,7 +273,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -282,7 +282,7 @@ namespace Librainian.ComputerSystem {
 				try {
 					foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) { return queryObj[ "TimeTaken" ]; }
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -293,7 +293,7 @@ namespace Librainian.ComputerSystem {
 						if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}
@@ -304,7 +304,7 @@ namespace Librainian.ComputerSystem {
 						if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) { return result; }
 					}
 				}
-				catch ( ManagementException exception ) { exception.More(); }
+				catch ( ManagementException exception ) { exception.Log(); }
 
 				return null;
 			}

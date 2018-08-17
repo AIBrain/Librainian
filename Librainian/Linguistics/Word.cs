@@ -67,7 +67,7 @@ namespace Librainian.Linguistics {
 	/// <summary>
 	///     A <see cref="Word" /> is a sequence of <see cref="char" /> .
 	/// </summary>
-	/// <seealso cref="Sentence"></seealso>
+	/// <see cref="Sentence"></see>
 	[JsonObject]
 #pragma warning restore IDE0015 // Use framework type
 	[Immutable]

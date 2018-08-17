@@ -68,7 +68,7 @@ namespace Librainian.Controls {
 		private const Int32 DefaultMaxLinesInListbox = 2000;
 
 		/// <summary>
-		///     <seealso cref="FormatALogEventMessage" />
+		///     <see cref="FormatALogEventMessage" />
 		/// </summary>
 		private const String DefaultMessageFormat = "{4}>{8}";
 

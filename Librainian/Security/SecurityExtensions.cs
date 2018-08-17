@@ -156,8 +156,8 @@ namespace Librainian.Security {
 				// Extract our decrypted byte array into a String value to return to our user
 				decryptedValue = Encoding.UTF8.GetString( bytes: plainTextValue );
 			}
-			catch ( CryptographicException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( CryptographicException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return decryptedValue;
 		}
@@ -209,8 +209,8 @@ namespace Librainian.Security {
 				// Extract our encrypted byte array into a String value to return to our user
 				encryptedValue = Convert.ToBase64String( inArray: bytesEncrypted );
 			}
-			catch ( CryptographicException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( CryptographicException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return encryptedValue;
 		}
@@ -394,7 +394,7 @@ namespace Librainian.Security {
 
 				return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}

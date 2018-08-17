@@ -75,9 +75,9 @@ namespace Librainian.Database {
 
 				return true;
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -106,8 +106,8 @@ namespace Librainian.Database {
 
 				if ( retries.Any() ) { goto TryAgain; }
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -125,8 +125,8 @@ namespace Librainian.Database {
 					return await command.ExecuteNonQueryAsync().NoUI();
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -159,9 +159,9 @@ namespace Librainian.Database {
 					return true;
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -185,7 +185,7 @@ namespace Librainian.Database {
 					return await command.ExecuteReaderAsync().NoUI();
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -216,9 +216,9 @@ namespace Librainian.Database {
 					table.EndLoadData();
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return table;
 		}
@@ -251,8 +251,8 @@ namespace Librainian.Database {
 					return ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) );
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
 
 			return default;
 		}
@@ -297,9 +297,9 @@ namespace Librainian.Database {
 			catch ( InvalidCastException exception ) {
 
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-				exception.More();
+				exception.Log();
 			}
-			catch ( SqlException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
 
 			return default;
 		}
@@ -327,9 +327,9 @@ namespace Librainian.Database {
 					}
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -378,7 +378,7 @@ namespace Librainian.Database {
 
 				return this.SqlConnections.Value;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -405,8 +405,8 @@ namespace Librainian.Database {
 
 					if ( connection.State == ConnectionState.Open ) { return true; }
 				}
-				catch ( SqlException exception ) { exception.More(); }
-				catch ( DbException exception ) { exception.More(); }
+				catch ( SqlException exception ) { exception.Log(); }
+				catch ( DbException exception ) { exception.Log(); }
 			} while ( retries > 0 );
 
 			return false;
@@ -491,9 +491,9 @@ namespace Librainian.Database {
 					return true;
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -524,9 +524,9 @@ namespace Librainian.Database {
 					table.EndLoadData();
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return table;
 		}

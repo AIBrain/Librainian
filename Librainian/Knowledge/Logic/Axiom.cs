@@ -49,7 +49,7 @@ namespace Librainian.Knowledge.Logic {
 	///     demonstrated but considered to be either self-evident, or subject to necessary decision.
 	///     That is to say, an axiom is a logical statement that is assumed to be true. Therefore, its
 	///     truth is taken for granted, and serves as a starting point for deducing and inferring other
-	///     (theory dependent) truths. <seealso cref="http://wikipedia.org/wiki/Postulate" />
+	///     (theory dependent) truths. <see cref="http://wikipedia.org/wiki/Postulate" />
 	/// </summary>
 	[JsonObject]
 	public class Axiom {

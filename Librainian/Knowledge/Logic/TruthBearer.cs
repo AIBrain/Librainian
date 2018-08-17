@@ -45,7 +45,7 @@ namespace Librainian.Knowledge.Logic {
 
 	/// <summary>
 	///     Truthbearer is a term used to designate entities that are either true or false and nothing
-	///     else. <seealso cref="http://wikipedia.org/wiki/Truthbearer" />
+	///     else. <see cref="http://wikipedia.org/wiki/Truthbearer" />
 	/// </summary>
 	[JsonObject]
 	public class TruthBearer { }

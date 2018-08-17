@@ -58,7 +58,7 @@ namespace Librainian.Internet {
 
 		/// <summary>
 		///     <para>Attempt to download the address to a local temp file.</para>
-		///     <para>Reports progress via <paramref name="reportProgress" /> by a <seealso cref="ZeroToOne" />.</para>
+		///     <para>Reports progress via <paramref name="reportProgress" /> by a <see cref="ZeroToOne" />.</para>
 		/// </summary>
 		/// <param name="address"></param>
 		/// <param name="reportProgress"></param>
@@ -100,9 +100,9 @@ namespace Librainian.Internet {
 			}
 			catch ( WebException exception ) {
 				try { onWebException?.Invoke( address, exception.Status ); }
-				catch ( Exception exception2 ) { exception2.More(); }
+				catch ( Exception exception2 ) { exception2.Log(); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 			finally {
 				reportProgress?.Report( ZeroToOne.MaxValue );
 
@@ -142,7 +142,7 @@ namespace Librainian.Internet {
 				Player.Stream = File.OpenRead( bob.FullPathWithFileName );
 
 				try { Player.PlaySync(); }
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 			}
 		}
 	}

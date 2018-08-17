@@ -47,7 +47,7 @@ namespace Librainian.Maths {
 	/// <summary>
 	///     128 bit output, 64 bit platform version
 	/// </summary>
-	/// <seealso cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
+	/// <see cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
 	public class Murmur3 {
 
 		private readonly UInt32 _seed;

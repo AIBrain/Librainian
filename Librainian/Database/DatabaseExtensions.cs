@@ -149,7 +149,7 @@ namespace Librainian.Database {
 				var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
 				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ].ToString() ) );
 			}
-			catch ( ManagementException exception ) { exception.More(); }
+			catch ( ManagementException exception ) { exception.Log(); }
 
 			foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) { yield return root + "\\" + ns; }
 		}
@@ -475,7 +475,7 @@ namespace Librainian.Database {
 					player.Play();
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		/*

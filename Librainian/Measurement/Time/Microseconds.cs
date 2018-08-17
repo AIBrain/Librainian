@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Microseconds.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "Microseconds.cs" was last formatted by Protiguous on 2018/07/26 at 5:23 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -160,7 +160,7 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-		public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double ) microseconds.Value );
+		public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
 
 		public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
 
@@ -178,13 +178,13 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Microseconds left, Microseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds ) left < right;
+		public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds )left < right;
 
 		public static Boolean operator ==( Microseconds left, Microseconds right ) => Equals( left, right );
 
 		public static Boolean operator >( Microseconds left, Microseconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Microseconds left, Milliseconds right ) => ( Milliseconds ) left > right;
+		public static Boolean operator >( Microseconds left, Milliseconds right ) => ( Milliseconds )left > right;
 
 		public Int32 CompareTo( Microseconds other ) => this.Value.CompareTo( other.Value );
 
@@ -205,7 +205,10 @@ namespace Librainian.Measurement.Time {
 		public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMicrosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneMicrosecond * this.Value );
+
+		[Pure]
+		public Seconds ToSeconds() => new Seconds( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 
 		[Pure]
 		public override String ToString() {
@@ -215,7 +218,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "µs" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "µs" )}";
 		}

@@ -149,7 +149,7 @@ namespace Coding
 				return true;
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return false;
 			}
@@ -164,7 +164,7 @@ namespace Coding
 				return true;
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return false;
 			}
@@ -201,7 +201,7 @@ namespace Coding
 					return loResult;
 				}
 				catch ( Exception exception ) {
-					exception.More();
+					exception.Log();
 
 					return null;
 				}

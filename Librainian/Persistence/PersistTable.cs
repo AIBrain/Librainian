@@ -68,7 +68,7 @@ namespace Librainian.Persistence {
 	///         Newtonsoft.Json.
 	///     </para>
 	/// </summary>
-	/// <seealso cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
+	/// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public sealed class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue> where TKey : IComparable<TKey> {
@@ -238,7 +238,7 @@ namespace Librainian.Persistence {
 
 				if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) { throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		// ReSharper disable once NotNullMemberIsNotInitialized

@@ -44,7 +44,7 @@ namespace Librainian.Linguistics {
 	using System;
 
 	/// <summary>Universal Decimal Classification</summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Universal_Decimal_Classification"></seealso>
+	/// <see cref="http://wikipedia.org/wiki/Universal_Decimal_Classification"></see>
 	/// <example>
 	///     539. 120 Theoretical problems of elementary particles physics. Theories and models of
 	///     fundamental interactions.

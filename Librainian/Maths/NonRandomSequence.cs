@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Quota.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "NonRandomSequence.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,22 +37,21 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Quota.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
+// Project: "Librainian", "NonRandomSequence.cs" was last formatted by Protiguous on 2018/08/10 at 4:05 PM.
 
-namespace Librainian.Threading.RandomOrg {
+namespace Librainian.Maths {
 
 	using System;
-	using System.Net;
-	using Internet;
 
-	public static class Quota {
+	/// <summary>
+	///     Not really a 'random' sequence, but it does hit every number eventually.
+	/// </summary>
+	public class NonRandomSequence {
 
-		private const String Unexpected = "Error: unexpected data.";
+		private Int32 _actual;
 
-		public const Int64 Error = Int64.MinValue;
+		public NonRandomSequence( Int32 seed ) => this._actual = seed;
 
-		public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
-
-		public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
+		public Int32 Next() { return this._actual = 16807 * this._actual % Int32.MaxValue; }
 	}
 }

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Seconds.cs" was last formatted by Protiguous on 2018/07/13 at 1:30 AM.
+// Project: "Librainian", "Seconds.cs" was last formatted by Protiguous on 2018/07/31 at 4:43 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -162,7 +162,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Seconds Combine( Seconds left, BigRational seconds ) => new Seconds( left.Value + seconds );
 
-		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger ) left.Value + seconds );
+		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger )left.Value + seconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -186,19 +186,19 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Minutes( Seconds seconds ) => seconds.ToMinutes();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Seconds seconds ) => new SpanOfTime( seconds: seconds );
 
 		/// <summary>
-		///     Returns a <seealso cref="TimeSpan." />
+		///     Returns a <see cref="TimeSpan" />
 		/// </summary>
 		/// <param name="seconds"></param>
 		public static implicit operator TimeSpan( Seconds seconds ) {
-			if ( seconds.Value >= ( Int64 ) TimeSpan.MaxValue.TotalSeconds ) { return TimeSpan.MaxValue; }
 
-			if ( seconds.Value <= ( Int64 ) TimeSpan.MinValue.TotalSeconds ) { return TimeSpan.MinValue; }
+			if ( seconds.Value >= ( Int64 )TimeSpan.MaxValue.TotalSeconds ) { return TimeSpan.MaxValue; }
 
-			return TimeSpan.FromSeconds( ( Double ) seconds.Value );
+			if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) { return TimeSpan.MinValue; }
+
+			return TimeSpan.FromSeconds( ( Double )seconds.Value );
 		}
 
 		public static Seconds operator -( Seconds seconds ) => new Seconds( seconds.Value * -1 );
@@ -217,34 +217,31 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Seconds left, Seconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds ) right;
+		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds )right;
 
-		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes ) left < right;
+		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes )left < right;
 
-		public static Boolean operator ==( Seconds left, Seconds right ) => Equals( left, right );
+		public static Boolean operator ==( Seconds left, Seconds right ) {
+			if ( left == null ) { throw new ArgumentNullException( paramName: nameof( left ) ); }
 
-		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes ) left > right;
+			if ( right == null ) { throw new ArgumentNullException( paramName: nameof( right ) ); }
+
+			return Equals( left, right );
+		}
+
+		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes )left > right;
 
 		public static Boolean operator >( Seconds left, Seconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds ) right;
+		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds )right;
 
 		public Int32 CompareTo( Seconds other ) => this.Value.CompareTo( other.Value );
 
 		public Boolean Equals( Seconds other ) => Equals( this, other );
 
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) { return false; }
-
-			return obj is Seconds seconds && this.Equals( seconds );
-		}
+		public override Boolean Equals( Object obj ) => obj is Seconds seconds && this.Equals( seconds );
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		/*
-                [Pure]
-                public Minutes ToMonths() => new Minutes(this.Value / InOneMonth );
-        */
 
 		[Pure]
 		public Milliseconds ToMilliseconds() => new Milliseconds( this.Value * Milliseconds.InOneSecond );
@@ -256,7 +253,7 @@ namespace Librainian.Measurement.Time {
 		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneSecond * this.Value );
 
 		[Pure]
-		public Seconds ToSeconds() => this;
+		public Seconds ToSeconds() => new Seconds( this.Value );
 
 		[Pure]
 		public override String ToString() {
@@ -266,7 +263,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "second" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "second" )}";
 		}

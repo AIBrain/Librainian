@@ -85,7 +85,7 @@ namespace Librainian.Database {
 
 				for ( var i = 0; i < columns.Length; i++ ) { columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ]; }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return columns;
 		}
@@ -135,7 +135,7 @@ namespace Librainian.Database {
 					worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
 				}
 			}
-			catch ( OleDbException exception ) { exception.More(); }
+			catch ( OleDbException exception ) { exception.Log(); }
 
 			return worksheets;
 		}

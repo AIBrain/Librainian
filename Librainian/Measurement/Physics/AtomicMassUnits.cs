@@ -51,9 +51,9 @@ namespace Librainian.Measurement.Physics {
 	/// <summary>
 	///     Units of mass and energy in ElectronVolts.
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-	/// <seealso cref="http://wikipedia.org/wiki/SI_prefix" />
-	/// <seealso cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
+	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+	/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
+	/// <see cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
 	public struct AtomicMassUnits : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {

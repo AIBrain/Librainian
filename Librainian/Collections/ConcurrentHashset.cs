@@ -52,7 +52,7 @@ namespace Librainian.Collections {
 
 	/// <summary>
 	///     Threadsafe set. Does not allow nulls inside the set.
-	///     <para>Add will throw an <see cref="ArgumentNullException" /> on <seealso cref="Add" /> ing a null</para>
+	///     <para>Add will throw an <see cref="ArgumentNullException" /> on <see cref="Add" /> ing a null</para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <remarks>Class designed by Rick Harker</remarks>

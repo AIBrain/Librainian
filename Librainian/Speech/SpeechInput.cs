@@ -105,7 +105,7 @@ namespace Librainian.Speech {
 		}
 
 		/// <summary>
-		///     <seealso cref="AttachEvent" />
+		///     <see cref="AttachEvent" />
 		/// </summary>
 		/// <param name="action"></param>
 		public void OnRecognizeSentence( Action<String> action ) =>

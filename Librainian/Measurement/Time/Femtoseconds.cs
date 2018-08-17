@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
 
 	/// <summary>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Femtosecond" />
+	/// <see cref="http://wikipedia.org/wiki/Femtosecond" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
@@ -161,7 +161,6 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Femtoseconds femtoseconds ) => new SpanOfTime( femtoseconds: femtoseconds );
 
 		public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
@@ -208,7 +207,9 @@ namespace Librainian.Measurement.Time {
 		public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * PlanckTimes.InOneFemtosecond );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * PlanckTimes.Constants.InOneFemtosecond );
+
+		public Seconds ToSeconds() => throw new NotImplementedException();
 
 		[Pure]
 		public override String ToString() {
@@ -218,7 +219,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "fs" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "fs" )}";
 		}

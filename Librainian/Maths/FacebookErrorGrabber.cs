@@ -55,7 +55,7 @@ namespace Librainian.Maths {
 	public static class FacebookErrorGrabber {
 
 		/// <summary>
-		///     See also <seealso cref="Randem" />.
+		///     See also <see cref="Randem" />.
 		/// </summary>
 		/// <returns></returns>
 		public static async Task<FaceBookRootObject> GetError() {

@@ -50,7 +50,7 @@ namespace Librainian.Measurement {
 	///     Originally based upon the idea from
 	///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
 	/// </summary>
-	/// <seealso cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
+	/// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
 	public static class Benchmark {
 
 		public enum AorB {

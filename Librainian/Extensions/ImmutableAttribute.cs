@@ -52,7 +52,7 @@ namespace Librainian.Extensions {
 	/// <summary>
 	///     Without further ado, here's the ImmutableAttribute itself. Now.. does it work?
 	/// </summary>
-	/// <seealso cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
+	/// <see cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
 	[AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
 	[JsonObject]
 	[MeansImplicitUse]

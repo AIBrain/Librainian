@@ -116,7 +116,6 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Weeks weeks ) => new SpanOfTime( weeks: weeks.Value );
 
 		public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
@@ -133,15 +132,15 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks ) right;
+		public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
 
-		public static Boolean operator <( Weeks left, Months right ) => ( Months ) left < right;
+		public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
 		public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-		public static Boolean operator >( Weeks left, Months right ) => ( Months ) left > right;
+		public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
 
-		public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks ) right;
+		public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
 
 		public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
@@ -168,6 +167,9 @@ namespace Librainian.Measurement.Time {
 		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneWeek * this.Value );
 
 		[Pure]
+		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneWeek );
+
+		[Pure]
 		public override String ToString() {
 			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
 				var whole = this.Value.GetWholePart();
@@ -175,7 +177,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "week" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "week" )}";
 		}

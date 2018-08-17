@@ -59,20 +59,20 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     One <see cref="Years" /> .
 		/// </summary>
-		public static readonly Years One = new Years( 1 );
+		public static Years One { get; } = new Years( 1 );
 
 		/// <summary>
 		/// </summary>
-		public static readonly Years Ten = new Years( 10 );
+		public static Years Ten { get; } = new Years( 10 );
 
 		/// <summary>
 		/// </summary>
-		public static readonly Years Thousand = new Years( 1000 );
+		public static Years Thousand { get; } = new Years( 1000 );
 
 		/// <summary>
 		///     Zero <see cref="Years" />
 		/// </summary>
-		public static readonly Years Zero = new Years( 0 );
+		public static Years Zero { get; } = new Years( 0 );
 
 		[JsonProperty]
 		public BigRational Value { get; }
@@ -101,8 +101,7 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Months( Years years ) => years.ToMonths();
 
-		[NotNull]
-		public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years.Value );
+		public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years );
 
 		public static Years operator -( Years days ) => new Years( days.Value * -1 );
 
@@ -156,7 +155,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "year" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "year" )}";
 		}

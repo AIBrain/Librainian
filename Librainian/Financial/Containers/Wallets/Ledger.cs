@@ -58,7 +58,7 @@ namespace Librainian.Financial.Containers.Wallets {
 				return true;
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return false;
 			}

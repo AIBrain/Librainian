@@ -45,10 +45,10 @@ namespace Librainian.Security {
 	using JetBrains.Annotations;
 
 	/// <summary>
-	///     <seealso cref="Crc64" />
+	///     <see cref="Crc64" />
 	/// </summary>
 	/// <copyright>Damien Guard. All rights reserved.</copyright>
-	/// <seealso cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
 	public class Crc64Iso : Crc64 {
 
 		public const UInt64 Iso3309Polynomial = 0xD800000000000000;

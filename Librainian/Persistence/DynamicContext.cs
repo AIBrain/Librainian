@@ -50,7 +50,7 @@ namespace Librainian.Persistence {
 	using Newtonsoft.Json;
 
 	/// <summary></summary>
-	/// <seealso cref="http://stackoverflow.com/a/4857322/956364" />
+	/// <see cref="http://stackoverflow.com/a/4857322/956364" />
 	[JsonObject]
 	[Serializable]
 	public class DynamicContext : DynamicObject, ISerializable {

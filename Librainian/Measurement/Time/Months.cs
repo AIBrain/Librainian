@@ -106,7 +106,6 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months.Value );
 
 		public static implicit operator Weeks( Months months ) => months.ToWeeks();
@@ -142,7 +141,7 @@ namespace Librainian.Measurement.Time {
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMonth * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneMonth * this.Value );
 
 		[Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
@@ -155,7 +154,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "month" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "month" )}";
 		}

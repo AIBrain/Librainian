@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IQuantityOfTime.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Quota.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,25 +37,22 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IQuantityOfTime.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "Quota.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Internet.RandomOrg {
 
 	using System;
-	using JetBrains.Annotations;
+	using System.Net;
+	using Librainian.Internet;
 
-	public interface IQuantityOfTime {
+	public static class Quota {
 
-		[Pure]
-		Int32 GetHashCode();
+		private const String Unexpected = "Error: unexpected data.";
 
-		[Pure]
-		PlanckTimes ToPlanckTimes();
+		public const Int64 Error = Int64.MinValue;
 
-		[Pure]
-		Seconds ToSeconds();
+		public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
 
-		[Pure]
-		String ToString();
+		public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
 	}
 }

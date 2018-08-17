@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnDay?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -158,7 +158,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnHour?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -171,7 +171,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnMillisecond?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -184,7 +184,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnMinute?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -197,7 +197,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnMonth?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -206,7 +206,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Pause();
 
 			try { this.TickTock(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 			finally { this.Resume(); }
 		}
 
@@ -218,7 +218,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnSecond?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return true;
 		}
@@ -245,7 +245,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			try {
 				if ( fireEvents ) { this.OnYear?.Invoke( this.DateAndTime() ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		/// <summary>

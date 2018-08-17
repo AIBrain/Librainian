@@ -37,18 +37,18 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "PlanckExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "PlanckExtensions.cs" was last formatted by Protiguous on 2018/08/15 at 7:16 PM.
 
 namespace Librainian.Measurement.Time {
 
+	using System;
 	using System.Numerics;
 	using Numerics;
 
 	public static class PlanckExtensions {
 
 		/// <summary>
-		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-		///     return the amount(integer) reduced.
+		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
 		/// </summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
@@ -62,18 +62,31 @@ namespace Librainian.Measurement.Time {
 		}
 
 		/// <summary>
-		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and
-		///     return the amount(integer) reduced.
+		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
 		/// </summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
 		/// <returns></returns>
 		public static BigInteger PullPlancks( this BigRational constant, ref BigInteger planckTimes ) {
 
-			var pullPlancks = ( BigInteger ) ( planckTimes / constant );
-			planckTimes -= ( BigInteger ) ( pullPlancks * constant );
+			var pullPlancks = ( BigInteger )( planckTimes / constant );
+			planckTimes -= ( BigInteger )( pullPlancks * constant );
 
 			return pullPlancks;
+		}
+
+		/// <summary>
+		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
+		/// </summary>
+		/// <param name="constant"></param>
+		/// <param name="planckTimes"></param>
+		/// <returns></returns>
+		public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
+
+			var pullPlancks = BigRational.Divide( planckTimes, constant );
+			planckTimes -= ( BigInteger )BigRational.Multiply( pullPlancks, constant );
+
+			return ( BigInteger )pullPlancks;
 		}
 	}
 }

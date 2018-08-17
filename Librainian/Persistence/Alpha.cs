@@ -144,7 +144,7 @@ namespace Librainian.Persistence {
 					//search drives for free space
 					//report back
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 				finally { LocalResourceDiscoveryTime.Finished = DateTime.UtcNow; }
 
 				return false;
@@ -159,7 +159,7 @@ namespace Librainian.Persistence {
 					//search network/internet? for storage locations
 					//report back
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 				finally { RemoteResourceDiscoveryTime.Finished = DateTime.UtcNow; }
 
 				return false;
@@ -187,7 +187,7 @@ namespace Librainian.Persistence {
 					RemoteDiscoveryTask = Task.Run( () => DiscoverRemoteResources(), RemoteDiscoveryCancellation.Token );
 					await Task.Run( () => Parallel.Invoke( async () => await LocalDiscoveryTask.NoUI(), async () => await RemoteDiscoveryTask.NoUI() ) ).NoUI();
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 				finally { InitializeTime.Finished = DateTime.UtcNow; }
 			}
 

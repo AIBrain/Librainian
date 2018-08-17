@@ -76,7 +76,7 @@ namespace Librainian.Speech {
 				this.Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
 				this.Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		[NotNull]
@@ -136,7 +136,7 @@ namespace Librainian.Speech {
 
 				this.Synthesizer.Value.SpeakAsync( prompt );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();

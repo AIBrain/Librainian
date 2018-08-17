@@ -106,6 +106,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( this.Table, this._hash, buffer, start, length );
 
+		[NotNull]
 		protected override Byte[] HashFinal() {
 			var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );
 			this.HashValue = hashBuffer;

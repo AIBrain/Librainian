@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Time {
 	/// <summary>
 	///     <para>Represents an Era for a HistoricalDate.</para>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Anno_Domini" />
+	/// <see cref="http://wikipedia.org/wiki/Anno_Domini" />
 	public enum Era {
 
 		/// <summary>

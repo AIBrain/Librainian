@@ -74,7 +74,7 @@ namespace Librainian.Persistence {
 		/// <exception cref="ArgumentNullException"></exception>
 		[DebuggerStepThrough]
 		public static TrimmedString BuildKey<T>( [NotNull] params T[] parts ) {
-			if ( parts is null ) { throw new ArgumentNullException( nameof( parts ) ).More(); }
+			if ( parts is null ) { throw new ArgumentNullException( nameof( parts ) ).Log(); }
 
 			if ( parts.Length == 2 && parts[ 1 ] is ConcurrentHashset<SqlParameter> collection ) {
 				var kvp = collection.ToArray().Select( parameter => new {

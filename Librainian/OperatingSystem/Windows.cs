@@ -190,7 +190,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return null;
 			} );
@@ -215,7 +215,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return null;
 			} );
@@ -250,7 +250,7 @@ namespace Librainian.OperatingSystem {
 
 					return true;
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return false;
 			} );
@@ -274,7 +274,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return null;
 			} );
@@ -336,7 +336,7 @@ namespace Librainian.OperatingSystem {
 					}
 				} );
 			}
-			catch ( TimeoutException exception ) { exception.More(); }
+			catch ( TimeoutException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -352,7 +352,7 @@ namespace Librainian.OperatingSystem {
 					}
 				} );
 			}
-			catch ( TimeoutException exception ) { exception.More(); }
+			catch ( TimeoutException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -383,7 +383,7 @@ namespace Librainian.OperatingSystem {
 
 					return Process.Start( startInfo: proc );
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 
 				return null;
 			} );

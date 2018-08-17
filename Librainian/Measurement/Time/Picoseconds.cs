@@ -158,7 +158,6 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
 
 		public static Picoseconds operator -( Picoseconds nanoseconds ) => new Picoseconds( nanoseconds.Value * -1 );
@@ -196,7 +195,9 @@ namespace Librainian.Measurement.Time {
 		public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOnePicosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOnePicosecond * this.Value );
+
+		public Seconds ToSeconds() => throw new NotImplementedException();
 
 		[Pure]
 		public override String ToString() {
@@ -206,7 +207,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "ps" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "ps" )}";
 		}

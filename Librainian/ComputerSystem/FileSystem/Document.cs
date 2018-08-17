@@ -117,7 +117,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     <para>The <see cref="Folder" /> where this <see cref="Document" /> is stored.</para>
 		/// </summary>
 		[NotNull]
-		public Folder Folder => new Folder( fileSystemInfo: this.Info.Directory );
+		public Folder Folder => new Folder( fileSystemInfo: this.Info.Directory ?? throw new ArgumentNullException( nameof( this.Info.Directory ), $"A null FileInfo was passed to {nameof( this.Folder )}()" ) );
 
 		/// <summary>
 		///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
@@ -134,15 +134,15 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public FileInfo Info { get; }
 
 		/// <summary>
-		///     <para>Gets the current <seealso cref="Size" /> of the <see cref="Document" />.</para>
+		///     <para>Gets the current <see cref="Size" /> of the <see cref="Document" />.</para>
 		/// </summary>
 		public Int64 Length {
 			get {
 				try {
 					if ( this.Exists() ) { return this.Info.Length; }
 				}
-				catch ( FileNotFoundException exception ) { exception.More(); }
-				catch ( IOException exception ) { exception.More(); }
+				catch ( FileNotFoundException exception ) { exception.Log(); }
+				catch ( IOException exception ) { exception.Log(); }
 
 				return default;
 			}
@@ -275,7 +275,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 					if ( a == -1 ) { yield break; }
 
-					yield return ( Byte ) a;
+					yield return ( Byte )a;
 				}
 			}
 		}
@@ -289,7 +289,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 			//TODO will wrapping this in a BufferedStream be any faster? Or is the buffersize okay?
 
-			using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, ( Int32 ) Constants.Sizes.OneGigaByte ) ) {
+			using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, ( Int32 )Constants.Sizes.OneGigaByte ) ) {
 
 				if ( !stream.CanRead ) { throw new NotSupportedException( $"Cannot read from file stream on {this.FullPathWithFileName}" ); }
 
@@ -357,7 +357,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 							await client.DownloadFileTaskAsync( sourceAddress, destination.FullPathWithFileName ).NoUI();
 
-							return ( true, stopwatch.Elapsed );
+							return (true, stopwatch.Elapsed);
 						}
 					}
 				}
@@ -381,9 +381,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 				//var destinationBuffer = new BufferedStream( destinationStream, this.GetBufferSize() );
 				//var destinationBinary = new BinaryWriter( destinationBuffer, Encoding.Unicode );
 			}
-			catch ( WebException exception ) { exception.More(); }
+			catch ( WebException exception ) { exception.Log(); }
 
-			return ( false, stopwatch.Elapsed );
+			return (false, stopwatch.Elapsed);
 		}
 
 		/// <summary>
@@ -393,13 +393,15 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="progress">   </param>
 		/// <param name="eta">        </param>
 		/// <returns></returns>
-		public async Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
-			await Task.Run( () => {
+		[NotNull]
+		public Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) {
+			return Task.Run( () => {
 				var computer = new Computer();
 
 				//TODO file monitor/watcher?
 				computer.FileSystem.CopyFile( sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing );
 			} );
+		}
 
 		/// <summary>
 		///     Returns the <see cref="WebClient" /> if a file copy was started.
@@ -414,7 +416,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			var webClient = new WebClient();
 
 			webClient.DownloadProgressChanged += ( sender, args ) => {
-				var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
+				var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
 				onProgress?.Invoke( percentage );
 			};
 
@@ -429,8 +431,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 			if ( !this.Exists() ) { return null; }
 
 			try {
-				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt32 ) this.Size();
+				using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+					var size = ( UInt32 )this.Size();
 
 					var crc32 = new Crc32( polynomial: size, seed: size );
 
@@ -448,14 +450,15 @@ namespace Librainian.ComputerSystem.FileSystem {
 			return null;
 		}
 
-		public async Task<Int32?> CRC32Async( CancellationToken token ) => await Task.Run( () => this.CRC32(), token ).NoUI();
+		[NotNull]
+		public Task<Int32?> CRC32Async( CancellationToken token ) => Task.Run( () => this.CRC32(), token );
 
 		public String CRC32Hex() {
 			try {
 				if ( !this.Exists() ) { return null; }
 
-				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt32 ) this.Size();
+				using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+					var size = ( UInt32 )this.Size();
 
 					var crc32 = new Crc32( polynomial: size, seed: size );
 
@@ -476,14 +479,14 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		public async Task<String> CRC32HexAsync( CancellationToken token ) => await Task.Run( () => this.CRC32Hex(), token ).NoUI();
+		public Task<String> CRC32HexAsync( CancellationToken token ) => Task.Run( () => this.CRC32Hex(), token );
 
 		public Int64? CRC64() {
 			try {
 				if ( !this.Exists() ) { return null; }
 
-				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
-					var size = ( UInt64 ) this.Size();
+				using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+					var size = ( UInt64 )this.Size();
 					var crc64 = new Crc64( polynomial: size, seed: size );
 
 					return BitConverter.ToInt64( crc64.ComputeHash( fileStream ), 0 );
@@ -498,7 +501,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 			return null;
 		}
 
-		public async Task<Int64?> CRC64Async( CancellationToken token ) => await Task.Run( () => this.CRC64(), token ).NoUI();
+		[NotNull]
+		public Task<Int64?> CRC64Async( CancellationToken token ) => Task.Run( () => this.CRC64(), token );
 
 		/// <summary>
 		///     Returns a lowercase hex-string of the hash.
@@ -509,11 +513,11 @@ namespace Librainian.ComputerSystem.FileSystem {
 			try {
 				if ( !this.Exists() ) { return null; }
 
-				var size = ( UInt64 ) this.Size();
+				var size = ( UInt64 )this.Size();
 
 				var crc64 = new Crc64( polynomial: size, seed: size );
 
-				using ( var fileStream = File.Open( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+				using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
 					return crc64.ComputeHash( fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
 				}
 			}
@@ -530,7 +534,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     Returns a lowercase hex-string of the hash.
 		/// </summary>
 		/// <returns></returns>
-		public async Task<String> CRC64HexAsync( CancellationToken token ) => await Task.Run( () => this.CRC64Hex(), token ).NoUI();
+		[NotNull]
+		public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( () => this.CRC64Hex(), token );
 
 		/// <summary>
 		///     <para>Returns true if the <see cref="Document" /> no longer exists.</para>
@@ -578,15 +583,16 @@ namespace Librainian.ComputerSystem.FileSystem {
 			if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
 
 			try {
-				if ( !source.IsWellFormedOriginalString() ) { return ( new DownloadException( $"Could not use source Uri '{source}'." ), null ); }
+				if ( !source.IsWellFormedOriginalString() ) { return (new DownloadException( $"Could not use source Uri '{source}'." ), null); }
 
 				using ( var webClient = new WebClient() ) {
-					await webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName ).NoUI();
+					var download = webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName );
+					await download.NoUI();
 
-					return ( null, webClient.ResponseHeaders );
+					return (null, webClient.ResponseHeaders);
 				}
 			}
-			catch ( Exception exception ) { return ( exception, null ); }
+			catch ( Exception exception ) { return (exception, null); }
 		}
 
 		/// <summary>
@@ -611,7 +617,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
-		/// <seealso cref="Path.GetFileName" />
+		/// <see cref="Path.GetFileName" />
 		[NotNull]
 		public String FileName() => Path.GetFileName( this.FullPathWithFileName );
 
@@ -631,7 +637,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				return default;
 			}
 
-			if ( oursize <= Int32.MaxValue ) { return ( Int32 ) oursize; }
+			if ( oursize <= Int32.MaxValue ) { return ( Int32 )oursize; }
 
 			return Int32.MaxValue;
 		}
@@ -649,7 +655,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				return true;
 			}
-			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
 			catch ( SecurityException ) { }
 
 			return false;
@@ -663,23 +669,25 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// </summary>
 		/// <param name="arguments"></param>
 		/// <param name="verb">     "runas" is elevated</param>
+		/// <param name="useShell"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public async Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas" ) =>
-			await Task.Run( function: () => {
-				try {
-					var info = new ProcessStartInfo( fileName: this.FullPathWithFileName ) {
-						Arguments = arguments ?? String.Empty,
-						UseShellExecute = false,
-						Verb = verb
-					};
+		[NotNull]
+		public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
+			try {
+				var info = new ProcessStartInfo( fileName: this.FullPathWithFileName ) {
+					Arguments = arguments ?? String.Empty,
+					UseShellExecute = useShell,
+					Verb = verb
+				};
 
-					return Process.Start( startInfo: info );
-				}
-				catch ( Exception exception ) { exception.More(); }
+				return Task.Run( () => Process.Start( startInfo: info ) );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
 
-				return null;
-			} );
+				return Task.FromException<Process>( exception );
+			}
+		}
 
 		/// <summary>
 		///     Attempt to return an object Deserialized from this JSON text file.
@@ -700,12 +708,13 @@ namespace Librainian.ComputerSystem.FileSystem {
 					}
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return default;
 		}
 
-		public async Task<T> LoadJSONAsync<T>( CancellationToken token ) => await Task.Run( () => this.LoadJSON<T>(), token ).NoUI();
+		[NotNull]
+		public Task<T> LoadJSONAsync<T>( CancellationToken token ) => Task.Run( () => this.LoadJSON<T>(), token );
 
 		/// <summary>
 		///     <para>Starts a task to <see cref="Move" /> a file to the <paramref name="destination" />.</para>
@@ -715,49 +724,54 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="token"></param>
 		/// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="Move" />.</param>
 		/// <returns></returns>
-		public async Task<Int64?> Move( [NotNull] Document destination, CancellationToken token, Boolean exact = true ) {
+		[NotNull]
+		public Task<Int64> Move( [NotNull] Document destination, CancellationToken token, Boolean exact = true ) {
 			if ( destination is null ) { throw new ArgumentNullException( paramName: nameof( destination ) ); }
 
-			DocumentInfo data = null;
-
-			if ( exact ) {
-				data = new DocumentInfo( this );
-				await data.Scan( token ).NoUI();
-			}
-
-			return await Task.Run( () => {
+			var jane = Task.Run( async () => { 
 				try {
+
+					if ( exact ) {
+						var data = new DocumentInfo( this );
+						var task = data.Scan( token );
+						var result = await task.NoUI();
+
+						if ( destination.Exists() ) {
+							if ( data.CreationTimeUtc.HasValue ) { destination.Info.CreationTime = data.CreationTimeUtc.Value; }
+							if ( data.LastWriteTimeUtc.HasValue ) { destination.Info.CreationTime = data.LastWriteTimeUtc.Value; }
+						}
+					}
+
 					var computer = new Computer();
 
 					computer.FileSystem.MoveFile( sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing );
 
-					return destination.Length();
+					return destination.Size();
 				}
-				catch ( FileNotFoundException exception ) { exception.Break(); }
-				catch ( DirectoryNotFoundException exception ) { exception.Break(); }
-				catch ( PathTooLongException exception ) { exception.Break(); }
-				catch ( IOException exception ) { exception.Break(); }
-				catch ( UnauthorizedAccessException exception ) { exception.Break(); }
-				finally {
-					if ( exact && destination.Exists() ) {
-
-						// ReSharper disable once UseNullPropagationWhenPossible //WTF, this produces the wrong code.
-						if ( data != null ) {
-							if ( data.CreationTimeUtc.HasValue ) { destination.Info.CreationTime = data.CreationTimeUtc.Value; }
-
-							if ( data.LastWriteTimeUtc.HasValue ) { destination.Info.CreationTime = data.LastWriteTimeUtc.Value; }
-						}
-					}
+				catch ( FileNotFoundException exception ) {
+					return Task.FromException<Int64>( exception ).Result;
 				}
+				catch ( DirectoryNotFoundException exception ) {
+					return Task.FromException<Int64>( exception ).Result;
+				}
+				catch ( PathTooLongException exception ) {
+					return Task.FromException<Int64>( exception ).Result;
+				}
+				catch ( IOException exception ) {
+					return Task.FromException<Int64>( exception ).Result;
+				}
+				catch ( UnauthorizedAccessException exception ) {
+					return Task.FromException<Int64>( exception ).Result;
+				}
+			}, token );
 
-				return -1;
-			}, token ).NoUI();
+			return jane;
 		}
 
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
-		/// <seealso cref="Path.GetFileNameWithoutExtension" />
+		/// <see cref="Path.GetFileNameWithoutExtension" />
 		[NotNull]
 		public String Name() => this.FileName();
 
@@ -807,7 +821,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		}
 
 		/// <summary>
-		///     <para>Gets the current <seealso cref="Length" /> of the <see cref="Document" />.</para>
+		///     <para>Gets the current <see cref="Length" /> of the <see cref="Document" />.</para>
 		/// </summary>
 		public Int64 Size() => this.Length;
 
@@ -883,16 +897,16 @@ namespace Librainian.ComputerSystem.FileSystem {
 		public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
 			if ( destination == null ) { throw new ArgumentNullException( nameof( destination ) ); }
 
-			if ( !destination.IsWellFormedOriginalString() ) { return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null ); }
+			if ( !destination.IsWellFormedOriginalString() ) { return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null); }
 
 			try {
 				using ( var webClient = new WebClient() ) {
 					await webClient.UploadFileTaskAsync( destination, this.FullPathWithFileName ).NoUI();
 
-					return ( null, webClient.ResponseHeaders );
+					return (null, webClient.ResponseHeaders);
 				}
 			}
-			catch ( Exception exception ) { return ( exception, null ); }
+			catch ( Exception exception ) { return (exception, null); }
 		}
 	}
 }

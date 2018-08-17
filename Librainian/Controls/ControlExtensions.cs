@@ -47,6 +47,7 @@ namespace Librainian.Controls {
 	using System.Diagnostics;
 	using System.Drawing;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Forms;
@@ -195,7 +196,7 @@ namespace Librainian.Controls {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -280,15 +281,15 @@ namespace Librainian.Controls {
 			} ) ).Once().AndStart();
 		}
 
-		public static async Task FlashWhileBlank( this Control input, [NotNull] Control control ) {
+		public static async Task FlashWhileBlank( this Control input, [NotNull] Control control, CancellationToken token ) {
 			if ( control is null ) { throw new ArgumentNullException( nameof( control ) ); }
 
 			await Seconds.Five.Then( async () => {
 				if ( !input.Text().IsNullOrWhiteSpace() ) { return; }
 
 				control.Flash( Seconds.One );
-				await input.FlashWhileBlank( control ).UI();
-			} ).UI();
+				await input.FlashWhileBlank( control, token ).UI();
+			}, token ).UI();
 		}
 
 		/// <summary>
@@ -297,9 +298,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		public static void Fokus( [CanBeNull] this Control control ) =>
 			control?.InvokeAction( () => {
-				if ( control.IsDisposed ) { return; }
-
-				control.Focus();
+				if ( !control.IsDisposed && control.CanFocus ) { control.Focus(); }
 			} );
 
 		/// <summary>
@@ -538,7 +537,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="action"> </param>
-		/// <seealso cref="InvokeAction" />
+		/// <see cref="InvokeAction" />
 		public static void OnThread( [NotNull] this Control control, [NotNull] Action action ) {
 			if ( control == null ) { throw new ArgumentNullException( paramName: nameof( control ) ); }
 
@@ -573,7 +572,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="delay">  </param>
 		/// <returns></returns>
-		/// <seealso cref="Push" />
+		/// <see cref="Push" />
 		public static void PerformClickThreadSafe( [CanBeNull] this Button control, TimeSpan? delay = null ) => control?.Push( delay );
 
 		/// <summary>
@@ -681,7 +680,7 @@ namespace Librainian.Controls {
 		/// <param name="minimum"></param>
 		/// <param name="value">  </param>
 		/// <param name="maximum"></param>
-		/// <seealso cref="Values" />
+		/// <see cref="Values" />
 		public static void Set( [CanBeNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value, maximum: maximum );
 
 		/// <summary>

@@ -46,7 +46,7 @@ namespace Librainian.Measurement.Time {
 	public static class Epochs {
 
 		/// <summary></summary>
-		/// <seealso cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
+		/// <see cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
 		public static readonly WhenRange Before1PlanckTime = new WhenRange( UniversalDateTime.TheBeginning, UniversalDateTime.One );
 
 		/// <summary>1927</summary>

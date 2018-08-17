@@ -134,8 +134,8 @@ namespace Librainian.Database {
 					await cmd.ExecuteNonQueryAsync();
 				}
 			}
-			catch ( SqlException exception ) { exception.More(); }
-			catch ( DbException exception ) { exception.More(); }
+			catch ( SqlException exception ) { exception.Log(); }
+			catch ( DbException exception ) { exception.Log(); }
 		}
 
 		public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );

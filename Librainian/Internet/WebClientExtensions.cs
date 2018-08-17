@@ -65,26 +65,30 @@ namespace Librainian.Internet {
 		/// <param name="token"></param>
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
-		public static WebClient Add( [NotNull] this WebClient client, CancellationToken? token ) {
+		public static WebClient Add( [NotNull] this WebClient client, CancellationToken token ) {
 			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
-			token?.Register( client.CancelAsync );
+			if ( token == null ) {
+				throw new ArgumentNullException( nameof( token ) );
+			}
+
+			token.Register( client.CancelAsync );
 
 			return client;
 		}
 
 		/// <summary>
 		///     <para>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</para>
-		///     <para>If no timeout is passed in, then nothing happenswith the <paramref name="client" /></para>
 		/// </summary>
 		/// <param name="client"></param>
 		/// <param name="timeout"></param>
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
-		public static WebClient Add( [NotNull] this WebClient client, TimeSpan? timeout ) {
+		public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout ) {
 			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
-			if ( timeout.HasValue ) { new CancellationTokenSource( timeout.Value ).Token.Register( client.CancelAsync ); }
+			var cancel = new CancellationTokenSource( timeout );
+			cancel.Token.Register( client.CancelAsync );
 
 			return client;
 		}
@@ -97,7 +101,7 @@ namespace Librainian.Internet {
 		/// <param name="token"></param>
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
-		public static WebClient Add( [NotNull] this WebClient client, TimeSpan? timeout, CancellationToken? token ) {
+		public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
 			if ( client == null ) { throw new ArgumentNullException( paramName: nameof( client ) ); }
 
 			return client.Add( token ).Add( timeout );
@@ -126,7 +130,7 @@ namespace Librainian.Internet {
 			if ( address is null ) { throw new ArgumentNullException( paramName: nameof( address ) ); }
 
 			try { return await webClient.DownloadDataTaskAsync( address ).NoUI(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}

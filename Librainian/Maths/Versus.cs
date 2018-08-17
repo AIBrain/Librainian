@@ -109,7 +109,7 @@ namespace Librainian.Maths {
 					return ( Single ) result;
 				}
 			}
-			catch ( DivideByZeroException exception ) { exception.More(); }
+			catch ( DivideByZeroException exception ) { exception.Log(); }
 
 			return 0;
 		}
@@ -130,7 +130,7 @@ namespace Librainian.Maths {
 				return ( Single ) chance;
 			}
 			catch ( DivideByZeroException exception ) {
-				exception.More();
+				exception.Log();
 
 				return 0;
 			}

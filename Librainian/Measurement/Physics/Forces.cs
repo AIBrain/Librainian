@@ -44,12 +44,12 @@ namespace Librainian.Measurement.Physics {
 	using System;
 
 	/// <summary></summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Fundamental_interaction" />
+	/// <see cref="http://wikipedia.org/wiki/Fundamental_interaction" />
 	[Flags]
 	public enum Forces {
 
 		/// <summary></summary>
-		/// <seealso cref="http://wikipedia.org/wiki/Gravitation" />
+		/// <see cref="http://wikipedia.org/wiki/Gravitation" />
 		Gravitation = 0x1,
 
 		/// <summary>http: //wikipedia.org/wiki/Electromagnetic_force</summary>

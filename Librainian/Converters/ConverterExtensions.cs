@@ -75,7 +75,7 @@ namespace Librainian.Converters {
 		/// </summary>
 		/// <param name="guid"></param>
 		/// <returns></returns>
-		/// <seealso cref="ToGuid(DateTime)" />
+		/// <see cref="ToGuid(DateTime)" />
 		public static DateTime ToDateTime( this Guid guid ) {
 			try {
 				var bytes = guid.ToByteArray();
@@ -96,7 +96,7 @@ namespace Librainian.Converters {
 
 				return result;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return DateTime.MinValue;
 		}
@@ -137,7 +137,7 @@ namespace Librainian.Converters {
 		/// </summary>
 		/// <param name="dateTime"></param>
 		/// <returns></returns>
-		/// <seealso cref="ToDateTime" />
+		/// <see cref="ToDateTime" />
 		public static Guid ToGuid( this DateTime dateTime ) {
 			try {
 				unchecked {
@@ -217,7 +217,7 @@ namespace Librainian.Converters {
 		/// <param name="guid">    </param>
 		/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
 		/// <returns></returns>
-		/// <seealso cref="GuidExtensions.FromPath" />
+		/// <see cref="GuidExtensions.FromPath" />
 		[NotNull]
 		public static String ToPath( this Guid guid, Boolean reversed = false ) {
 			var a = guid.ToByteArray();

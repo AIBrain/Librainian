@@ -166,12 +166,12 @@ namespace Librainian.Database.MMF {
 			catch ( NotSupportedException exception ) {
 
 				//Console.WriteLine( "{0} is too small for {1}.", size, key );
-				exception.More();
+				exception.Log();
 			}
 			catch ( Exception exception ) {
 
 				//Console.WriteLine( "MemMapCache: Set Failed.\n\t" + ex.Message );
-				exception.More();
+				exception.Log();
 			}
 		}
 

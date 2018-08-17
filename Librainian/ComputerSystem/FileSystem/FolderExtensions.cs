@@ -190,7 +190,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		}
 
 		/// <summary>
-		///     <seealso cref="PathSplitter" />.
+		///     <see cref="PathSplitter" />.
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
@@ -202,7 +202,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		}
 
 		/// <summary>
-		///     <seealso cref="PathSplitter" />.
+		///     <see cref="PathSplitter" />.
 		/// </summary>
 		/// <param name="info"></param>
 		/// <returns></returns>

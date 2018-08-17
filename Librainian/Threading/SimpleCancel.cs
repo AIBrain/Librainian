@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "SimpleCancel.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
+// Project: "Librainian", "SimpleCancel.cs" was last formatted by Protiguous on 2018/07/26 at 1:45 PM.
 
 namespace Librainian.Threading {
 
@@ -49,8 +49,9 @@ namespace Librainian.Threading {
 	using Magic;
 
 	/// <summary>
-	///     A simpler threadsafe way to cancel a <see cref="Task" />. <seealso cref="CancellationToken" />
+	///     <para>A threadsafe way to cancel anything.</para>
 	/// </summary>
+	/// <remarks>Not superior to <see cref="CancellationTokenSource" />, just different. And a class.</remarks>
 	[Experimental( "Somewhat untested. Should work though." )]
 	public sealed class SimpleCancel : ABetterClassDispose {
 

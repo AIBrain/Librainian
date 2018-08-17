@@ -105,7 +105,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Hours Combine( Hours left, BigRational hours ) => new Hours( left.Value + hours );
 
-		public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger ) left.Value + hours );
+		public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -129,10 +129,9 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Hours hours ) => new SpanOfTime( hours );
 
-		public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double ) hours.Value );
+		public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double )hours.Value );
 
 		public static Hours operator -( Hours hours ) => new Hours( hours.Value * -1 );
 
@@ -150,11 +149,11 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Hours left, Hours right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours ) right;
+		public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours )right;
 
 		public static Boolean operator ==( Hours left, Hours right ) => Equals( left, right );
 
-		public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours ) right;
+		public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours )right;
 
 		public static Boolean operator >( Hours left, Hours right ) => left.Value > right.Value;
 
@@ -177,7 +176,9 @@ namespace Librainian.Measurement.Time {
 		public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneHour * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneHour * this.Value );
+
+		public Seconds ToSeconds() => new Seconds( this.Value / Seconds.InOneHour );
 
 		[Pure]
 		public override String ToString() {
@@ -187,7 +188,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "hour" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "hour" )}";
 		}

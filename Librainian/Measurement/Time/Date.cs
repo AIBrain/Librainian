@@ -113,20 +113,20 @@ namespace Librainian.Measurement.Time {
 			this.Day = day;
 		}
 
-		public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte ) dateTime.Month, day: ( Byte ) dateTime.Day ) { }
+		public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( Byte )dateTime.Month, day: ( Byte )dateTime.Day ) { }
 
-		public Date( [NotNull] SpanOfTime spanOfTime ) {
+		public Date( SpanOfTime spanOfTime ) {
 			this.Year = new Year( spanOfTime.GetWholeYears() );
 
-			this.Month = spanOfTime.Months.Value < Month.Minimum ? new Month( Month.Minimum ) : new Month( ( Byte ) spanOfTime.Months.Value );
+			this.Month = spanOfTime.Months.Value < Month.Minimum ? new Month( Month.Minimum ) : new Month( ( Byte )spanOfTime.Months.Value );
 
-			this.Day = spanOfTime.Days.Value < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( Byte ) spanOfTime.Days.Value );
+			this.Day = spanOfTime.Days.Value < Day.MinimumValue ? new Day( Day.MinimumValue ) : new Day( ( Byte )spanOfTime.Days.Value );
 		}
 
 		//public Date( long year, long month, long day )
 		//    : this( year: new Year( year ), month: new Month( month ), day: new Day( day ) ) {
 		//}
-		public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
+		public static implicit operator DateTime? ( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
 
 		public static Boolean operator <( Date left, Date right ) => left.ToSpan().TotalPlanckTimes < right.ToSpan().TotalPlanckTimes;
 

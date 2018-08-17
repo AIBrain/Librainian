@@ -62,8 +62,8 @@ namespace Librainian.Financial.Containers.Wallets {
 	///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
 	///     production.. Use at your own risk. Any tips or ideas? Any dos or don'ts? Email me!
 	/// </summary>
-	/// <seealso cref="SimpleWallet" />
-	/// <seealso cref="Measurement.Currency.BTC.SimpleBitcoinWallet" />
+	/// <see cref="SimpleWallet" />
+	/// <see cref="Measurement.Currency.BTC.SimpleBitcoinWallet" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class Wallet : ABetterClassDispose, IEnumerable<KeyValuePair<IDenomination, UInt64>> {

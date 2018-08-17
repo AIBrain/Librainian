@@ -53,7 +53,7 @@ namespace Librainian.Threading {
 	///     Task.Factory.StartNew(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal
 	///     }, null, TaskCreationOptions.None, PriorityScheduler.BelowNormal);
 	/// </example>
-	/// <seealso cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
+	/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
 	public class PriorityScheduler : TaskScheduler, IDisposable {
 
 		/// <summary>

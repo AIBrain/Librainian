@@ -66,7 +66,7 @@ namespace Librainian.Maths {
 		/// <param name="data"></param>
 		/// <param name="items"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
+		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static Double GeometricMean( [NotNull] this IEnumerable<Double> data, Int32 items ) {
 			var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
 
@@ -84,7 +84,7 @@ namespace Librainian.Maths {
 		/// <param name="data"></param>
 		/// <param name="items"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
+		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static Decimal GeometricMean( [NotNull] this IEnumerable<Decimal> data, Int32 items ) {
 			var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
@@ -102,7 +102,7 @@ namespace Librainian.Maths {
 		/// <param name="data"></param>
 		/// <param name="items"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://wikipedia.org/wiki/Geometric_mean" />
+		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static BigRational GeometricMean( [NotNull] this IEnumerable<BigRational> data, Int32 items ) {
 			var aggregate = data.Aggregate( BigRational.One, ( current, d ) => current * d );
 

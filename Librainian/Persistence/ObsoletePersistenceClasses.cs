@@ -86,7 +86,7 @@ namespace Librainian.Persistence {
 							}
 						}
 						catch ( IsolatedStorageException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
@@ -99,7 +99,7 @@ namespace Librainian.Persistence {
 							}
 						}
 						catch ( IsolatedStorageException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
@@ -123,13 +123,13 @@ namespace Librainian.Persistence {
 
 							return obj != default( TSource );
 						}
-						catch ( InvalidOperationException exception ) { exception.More(); }
-						catch ( ArgumentNullException exception ) { exception.More(); }
+						catch ( InvalidOperationException exception ) { exception.Log(); }
+						catch ( ArgumentNullException exception ) { exception.Log(); }
 						catch ( SerializationException exception ) {
 							deletefile = true;
-							exception.More();
+							exception.Log();
 						}
-						catch ( Exception exception ) { exception.More(); }
+						catch ( Exception exception ) { exception.Log(); }
 
 						try {
 							if ( deletefile ) {
@@ -139,14 +139,14 @@ namespace Librainian.Persistence {
 							}
 						}
 						catch ( IsolatedStorageException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
 
 			return false;
 		}

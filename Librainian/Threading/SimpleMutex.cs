@@ -79,7 +79,7 @@ namespace Librainian.Threading {
 				}
 			}
 			catch ( AbandonedMutexException exception ) {
-				exception.More(); // We now own this mutex. The previous owner didn't release it properly, though.
+				exception.Log(); // We now own this mutex. The previous owner didn't release it properly, though.
 			}
 
 			return mutex;

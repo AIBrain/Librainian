@@ -44,7 +44,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	/// <summary>
 	///     from the Latin: ante meridiem meaning "before midday", or post meridiem "after midday"
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/12-hour_clock" />
+	/// <see cref="http://wikipedia.org/wiki/12-hour_clock" />
 	public enum AMorPM {
 
 		/// <summary>

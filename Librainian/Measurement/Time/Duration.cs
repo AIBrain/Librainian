@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
 	///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
 	///     <para>Internally based upon the total number of microseconds (<see cref="totalMicroseconds" />).</para>
 	/// </summary>
-	/// <seealso cref="SpanOfTime" />
+	/// <see cref="SpanOfTime" />
 	[JsonObject]
 	[Immutable]
 	public struct Duration : IComparable<Duration>, IComparable<TimeSpan> {
@@ -78,11 +78,11 @@ namespace Librainian.Measurement.Time {
 		// ReSharper disable once InconsistentNaming
 		internal Double totalMicroseconds { get; }
 
-		public Double Hours => ( Byte ) ( this.Minutes / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
+		public Double Hours => ( Byte )( this.Minutes / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
 
 		public Double Microseconds => this.totalMicroseconds;
 
-		public Double Seconds => ( Byte ) ( this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
+		public Double Seconds => ( Byte )( this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
 
 		public Double TotalHours => this.TotalMinutes / Measurement.Time.Minutes.InOneHour;
 
@@ -100,9 +100,9 @@ namespace Librainian.Measurement.Time {
 
 		public Double Days => this.Hours / Measurement.Time.Hours.InOneDay % Measurement.Time.Hours.InOneDay;
 
-		public Double Milliseconds => ( UInt16 ) ( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
+		public Double Milliseconds => ( UInt16 )( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
 
-		public Double Minutes => ( Byte ) ( this.Seconds / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
+		public Double Minutes => ( Byte )( this.Seconds / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
 
 		public Double TotalDays => this.TotalHours / Measurement.Time.Hours.InOneDay;
 
@@ -110,21 +110,21 @@ namespace Librainian.Measurement.Time {
 
 		public Double TotalMinutes => this.TotalSeconds / Measurement.Time.Seconds.InOneMinute;
 
-		public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double ) microseconds.Value * MicsPerMicrosecond;
+		public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
 
-		public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double ) milliseconds.Value * MicsPerMillisecond;
+		public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
 
-		public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double ) seconds.Value * MicsPerSecond;
+		public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
 
-		public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double ) minutes.Value * MicsPerMinute;
+		public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
 
-		public Duration( Hours hours ) => this.totalMicroseconds = ( Double ) hours.Value * MicsPerHour;
+		public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
 
-		public Duration( Days days ) => this.totalMicroseconds = ( Double ) days.Value * MicsPerDay;
+		public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
 
-		public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double ) weeks.Value * MicsPerWeek;
+		public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
 
-		public Duration( Years years ) => this.totalMicroseconds = ( Double ) years.Value * MicsPerYear;
+		public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
 
 		public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
 
@@ -135,7 +135,7 @@ namespace Librainian.Measurement.Time {
 
 			var total = times.Select( timeSpan => new Duration( timeSpan ) ).Aggregate( BigRational.Zero, ( current, dur ) => current + dur.totalMicroseconds );
 
-			this.totalMicroseconds = ( Double ) total;
+			this.totalMicroseconds = ( Double )total;
 		}
 
 		public static Duration FromDays( Double value ) => new Duration( new Days( value ) );

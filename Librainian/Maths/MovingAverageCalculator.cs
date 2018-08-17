@@ -53,7 +53,7 @@ namespace Librainian.Maths {
 	///     using these classes. You may not copyright this work, though may use it in
 	///     commercial/copyrighted works. Happy coding. Updated 29 March 2007. Added a Reset() method.
 	/// </remarks>
-	/// <seealso cref="http://drewnoakes.com/code/util/MovingAverageCalculator.html" />
+	/// <see cref="http://drewnoakes.com/code/util/MovingAverageCalculator.html" />
 	public sealed class MovingAverageCalculator {
 
 		private readonly Single[] _values;

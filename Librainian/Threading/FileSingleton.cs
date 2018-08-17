@@ -76,7 +76,7 @@ namespace Librainian.Threading {
 				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: id.ToString( "D" ) );
 				this.Snagged = this.Semaphore.WaitOne( Minutes.One );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace Librainian.Threading {
 				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
 				this.Snagged = this.Semaphore.WaitOne( Minutes.One );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace Librainian.Threading {
 				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
 				this.Snagged = this.Semaphore.WaitOne( Minutes.One );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		/// <summary>

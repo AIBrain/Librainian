@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Spatial {
 	/// <summary>
 	///     A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Degree_(angle)" />
+	/// <see cref="http://wikipedia.org/wiki/Degree_(angle)" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]

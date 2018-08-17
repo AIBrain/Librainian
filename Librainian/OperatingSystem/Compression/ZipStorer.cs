@@ -53,7 +53,7 @@ namespace Librainian.OperatingSystem.Compression {
 	/// <summary>
 	///     Class for compression/decompression file. Represents a Zip file.
 	/// </summary>
-	/// <seealso cref="http://zipstorer.codeplex.com/" />
+	/// <see cref="http://zipstorer.codeplex.com/" />
 	public class ZipStorer : ABetterClassDispose {
 
 		/// <summary>

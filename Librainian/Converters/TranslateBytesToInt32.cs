@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IQuantityOfTime.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "TranslateBytesToInt32.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,25 +37,22 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IQuantityOfTime.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "TranslateBytesToInt32.cs" was last formatted by Protiguous on 2018/07/26 at 2:33 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Converters {
 
 	using System;
-	using JetBrains.Annotations;
+	using System.Runtime.InteropServices;
 
-	public interface IQuantityOfTime {
+	/// <summary>
+	/// </summary>
+	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	public struct TranslateBytesToInt32 {
 
-		[Pure]
-		Int32 GetHashCode();
+		[FieldOffset( offset: 0 )]
+		public Byte[] Bytes;
 
-		[Pure]
-		PlanckTimes ToPlanckTimes();
-
-		[Pure]
-		Seconds ToSeconds();
-
-		[Pure]
-		String ToString();
+		[FieldOffset( offset: 0 )]
+		public readonly Int32[] Ints;
 	}
 }

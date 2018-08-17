@@ -45,7 +45,6 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Numerics;
@@ -163,7 +162,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Milliseconds Combine( Milliseconds left, BigRational milliseconds ) => new Milliseconds( left.Value + milliseconds );
 
-		public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( ( BigInteger ) left.Value + milliseconds );
+		public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( ( BigInteger )left.Value + milliseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -173,7 +172,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static Boolean Equals( Milliseconds left, Milliseconds right ) => left.Value == right.Value;
 
-		public static explicit operator Double( Milliseconds milliseconds ) => ( Double ) milliseconds.Value;
+		public static explicit operator Double( Milliseconds milliseconds ) => ( Double )milliseconds.Value;
 
 		public static implicit operator BigRational( Milliseconds milliseconds ) => milliseconds.Value;
 
@@ -186,10 +185,9 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Seconds( Milliseconds milliseconds ) => milliseconds.ToSeconds();
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Milliseconds milliseconds ) => new SpanOfTime( milliseconds: milliseconds );
 
-		public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( ( Double ) milliseconds.Value );
+		public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( ( Double )milliseconds.Value );
 
 		public static Milliseconds operator -( Milliseconds milliseconds ) => new Milliseconds( milliseconds.Value * -1 );
 
@@ -207,13 +205,13 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Milliseconds left, Milliseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds ) left < right;
+		public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds )left < right;
 
 		public static Boolean operator ==( Milliseconds left, Milliseconds right ) => Equals( left, right );
 
 		public static Boolean operator >( Milliseconds left, Milliseconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds ) left > right;
+		public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds )left > right;
 
 		public Int32 CompareTo( Milliseconds other ) => this.Value.CompareTo( other.Value );
 
@@ -230,7 +228,7 @@ namespace Librainian.Measurement.Time {
 		public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
 		[System.Diagnostics.Contracts.Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMillisecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneMillisecond * this.Value );
 
 		[System.Diagnostics.Contracts.Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
@@ -243,7 +241,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "millisecond" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "millisecond" )}";
 		}

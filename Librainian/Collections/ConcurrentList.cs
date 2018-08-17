@@ -82,7 +82,7 @@ namespace Librainian.Collections {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="AllowModifications" />
+		/// <see cref="AllowModifications" />
 		public Boolean IsReadOnly { get; private set; }
 
 		/// <summary>
@@ -332,7 +332,7 @@ namespace Librainian.Collections {
 		/// <param name="func">                         </param>
 		/// <param name="ignoreAllowModificationsCheck"></param>
 		/// <returns></returns>
-		/// <seealso cref="CatchUp" />
+		/// <see cref="CatchUp" />
 		[CanBeNull]
 		private TFuncResult Write<TFuncResult>( [CanBeNull] Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
 			if ( !ignoreAllowModificationsCheck && !this.AllowModifications() && func != null ) { return default; }
@@ -430,7 +430,7 @@ namespace Librainian.Collections {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="CatchUp" />
+		/// <see cref="CatchUp" />
 		public Boolean AnyWritesPending() => this.InputBuffer?.Any() == true;
 
 		/// <summary>
@@ -461,8 +461,8 @@ namespace Librainian.Collections {
 		///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
 		///     <para>Blocks.</para>
 		/// </summary>
-		/// <seealso cref="AllowModifications" />
-		/// <seealso cref="IsReadOnly" />
+		/// <see cref="AllowModifications" />
+		/// <see cref="IsReadOnly" />
 		public void Complete() {
 			try {
 				this.CatchUp();
@@ -483,7 +483,7 @@ namespace Librainian.Collections {
 		}
 
 		/// <summary>
-		///     The <seealso cref="List{T}.Capacity" /> is resized down to the <seealso cref="List{T}.Count" />.
+		///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.
 		/// </summary>
 		public void FixCapacity() =>
 			this.Write( func: () => {

@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.Streams {
 
 	/// <summary>
 	/// </summary>
-	/// <seealso cref="http://github.com/firepacket/anark.it/" />
+	/// <see cref="http://github.com/firepacket/anark.it/" />
 	public class StreamString {
 
 		private Stream IOStream { get; }

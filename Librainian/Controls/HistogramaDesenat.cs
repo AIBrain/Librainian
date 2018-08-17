@@ -52,7 +52,7 @@ namespace Librainian.Controls {
 	/// <summary>
 	///     Summary description for HistogramaDesenat.
 	/// </summary>
-	/// <seealso cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control" />
+	/// <see cref="http://www.codeproject.com/Articles/12125/A-simple-histogram-displaying-control" />
 	public class HistogramaDesenat : UserControl {
 
 		/// <summary>

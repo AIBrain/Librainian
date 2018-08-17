@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Length {
 	///     <para>defined as being one third of a yard, making it 0.3048 meters exactly.</para>
 	///     <para>The foot is subdivided into 12 inches.</para>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Foot_(unit)" />
+	/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public struct Feet : IComparable<Feet>, IQuantityOfDistance {

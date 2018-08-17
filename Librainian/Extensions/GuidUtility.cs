@@ -49,7 +49,7 @@ namespace Librainian.Extensions {
 	/// <summary>
 	///     Helper methods for working with <see cref="Guid" />.
 	/// </summary>
-	/// <seealso cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs" />
+	/// <see cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs" />
 	public static class GuidUtility {
 
 		/// <summary>

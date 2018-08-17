@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		[NotNull]
 		private Timer Timer { get; }
 
-		private Double UpdateRate { get; } = ( Double ) Fps.Sixty.Value;
+		private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
 
 		public UInt64 Counter {
 			get => Thread.VolatileRead( ref this._counter );
@@ -157,7 +157,7 @@ namespace Librainian.Measurement.Time.Clocks {
 					RunningSlow = this.IsRunningSlow()
 				} );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 			finally {
 				this.LastProgressReport = DateTime.UtcNow;
 				this.Resume();
@@ -184,7 +184,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		///     Total time passed since timer was started.
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
 		public SpanOfTime TotalElapsed() => new SpanOfTime( milliseconds: this.Counter / this.UpdateRate );
 
 		[JsonObject]

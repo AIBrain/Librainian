@@ -53,7 +53,7 @@ namespace Librainian.Security {
 	/// <copyright>
 	///     Damien Guard. All rights reserved.
 	/// </copyright>
-	/// <seealso cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
 	public class Crc64 : HashAlgorithm {
 
 		private readonly UInt64 _seed;

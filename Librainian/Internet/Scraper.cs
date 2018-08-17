@@ -116,7 +116,7 @@ namespace Librainian.Internet {
 				//}
 			}
 			catch ( WebException ) { }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		private static void StartNextScrape() {
@@ -153,14 +153,14 @@ namespace Librainian.Internet {
 
 				web.Request?.BeginGetResponse( RespCallback, web );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
 			try {
 				if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {

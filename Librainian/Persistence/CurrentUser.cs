@@ -159,7 +159,7 @@ namespace Librainian.Persistence {
 					}
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}

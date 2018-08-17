@@ -59,6 +59,7 @@ namespace Librainian.Maths {
 	using Extensions;
 	using FluentAssertions;
 	using Hashings;
+	using Internet.RandomOrg;
 	using JetBrains.Annotations;
 	using Linguistics;
 	using Measurement.Spatial;
@@ -69,7 +70,6 @@ namespace Librainian.Maths {
 	using Parsing;
 	using RandomNameGeneratorLibrary;
 	using Ranges;
-	using Threading.RandomOrg;
 
 	public static partial class Randem {
 
@@ -670,7 +670,7 @@ namespace Librainian.Maths {
 		public static Decimal NextDecimal() {
 			do {
 				try { return NextDecimal( Decimal.Zero, Decimal.One ); }
-				catch ( ArgumentOutOfRangeException exception ) { exception.More(); }
+				catch ( ArgumentOutOfRangeException exception ) { exception.Log(); }
 			} while ( true );
 		}
 
@@ -696,7 +696,7 @@ namespace Librainian.Maths {
 		public static Decimal NextDecimalFullRange() {
 			do {
 				try { return new Decimal( lo: NextInt32(), mid: NextInt32(), hi: NextInt32(), isNegative: NextBoolean(), scale: ( Byte ) 0.Next( maxValue: 9 ) ); }
-				catch ( ArgumentOutOfRangeException exception ) { exception.More(); }
+				catch ( ArgumentOutOfRangeException exception ) { exception.Log(); }
 			} while ( true );
 		}
 
@@ -959,7 +959,7 @@ namespace Librainian.Maths {
 				return span;
 			}
 			catch ( ArgumentOutOfRangeException exception ) {
-				exception.More();
+				exception.Log();
 
 				return min;
 			} //return TimeSpan.FromTicks(min.Ticks + Instance.Next( minValue: minTicks, maxValue: maxTicks ) );
@@ -1099,6 +1099,11 @@ namespace Librainian.Maths {
 			return new Word( word: word );
 		}
 
+		public static void Seed( Int32 newValue ) {
+			//ThreadSafeRandom.Value.Value.reseed???
+		}
+
+		[Obsolete("Huh?")]
 		public static async Task<Boolean> Reseed( CancellationToken cancellationToken, TimeSpan? timeoutSpan = null ) {
 			Int32? seed = null;
 

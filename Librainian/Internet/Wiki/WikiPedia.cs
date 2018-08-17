@@ -143,7 +143,7 @@ namespace Librainian.Internet.Wiki {
 				}
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return null;
 			}
@@ -176,7 +176,7 @@ namespace Librainian.Internet.Wiki {
 				}
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return null;
 			}

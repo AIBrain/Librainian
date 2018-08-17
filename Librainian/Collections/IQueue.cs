@@ -130,9 +130,9 @@ namespace Librainian.Collections {
 		/// <returns>The number of elements processed.</returns>
 		/// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
 		/// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null" />.</exception>
-		/// <seealso cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T})" />
-		/// <seealso cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T},Int32)" />
-		/// <seealso cref="Drain(System.Action{T},Int32)" />
+		/// <see cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T})" />
+		/// <see cref="IBlockingQueue{T}.DrainTo(System.Collections.Generic.ICollection{T},Int32)" />
+		/// <see cref="Drain(System.Action{T},Int32)" />
 		Int32 Drain( Action<T> action );
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace Librainian.Collections {
 		/// <returns>The number of elements processed.</returns>
 		/// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
 		/// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null" />.</exception>
-		/// <seealso cref="Drain(System.Action{T},Int32)" />
+		/// <see cref="Drain(System.Action{T},Int32)" />
 		Int32 Drain( Action<T> action, Predicate<T> criteria );
 
 		/// <summary>
@@ -173,7 +173,7 @@ namespace Librainian.Collections {
 		/// <returns>The number of elements processed.</returns>
 		/// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
 		/// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null" />.</exception>
-		/// <seealso cref="Drain(System.Action{T})" />
+		/// <see cref="Drain(System.Action{T})" />
 		Int32 Drain( Action<T> action, Int32 maxElements );
 
 		/// <summary>
@@ -192,7 +192,7 @@ namespace Librainian.Collections {
 		/// <returns>The number of elements processed.</returns>
 		/// <exception cref="System.InvalidOperationException">If the queue cannot be drained at this time.</exception>
 		/// <exception cref="System.ArgumentNullException">If the specified action is <see langword="null" />.</exception>
-		/// <seealso cref="Drain(System.Action{T})" />
+		/// <see cref="Drain(System.Action{T})" />
 		Int32 Drain( Action<T> action, Int32 maxElements, Predicate<T> criteria );
 
 		/// <summary>

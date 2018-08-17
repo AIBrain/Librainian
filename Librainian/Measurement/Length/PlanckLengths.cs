@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Length {
 
 	/// <summary>
 	/// </summary>
-	/// <seealso cref="http://en.wikipedia.org/wiki/Plank_length" />
+	/// <see cref="http://en.wikipedia.org/wiki/Plank_length" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public struct PlanckLengths : IComparable<PlanckLengths> {

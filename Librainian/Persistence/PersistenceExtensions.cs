@@ -177,15 +177,15 @@ namespace Librainian.Persistence {
 			try {
 				using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
 					try { return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0; }
-					catch ( ArgumentException exception ) { exception.More(); }
+					catch ( ArgumentException exception ) { exception.Log(); }
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
-			catch ( ArgumentNullException exception ) { exception.More(); }
-			catch ( ArgumentException exception ) { exception.More(); }
-			catch ( DirectoryNotFoundException exception ) { exception.More(); }
-			catch ( FileNotFoundException exception ) { exception.More(); }
-			catch ( ObjectDisposedException exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
+			catch ( ArgumentNullException exception ) { exception.Log(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
+			catch ( DirectoryNotFoundException exception ) { exception.Log(); }
+			catch ( FileNotFoundException exception ) { exception.Log(); }
+			catch ( ObjectDisposedException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -217,7 +217,7 @@ namespace Librainian.Persistence {
 		[CanBeNull]
 		public static TType Deserialize<TType>( this String storedAsString ) {
 			try { return storedAsString.FromJSON<TType>(); }
-			catch ( SerializationException exception ) { exception.More(); }
+			catch ( SerializationException exception ) { exception.Log(); }
 
 			return default;
 		}
@@ -274,10 +274,10 @@ namespace Librainian.Persistence {
 
 								if ( tuple != null ) { toDictionary[ tuple.Item1 ] = tuple.Item2; }
 							}
-							catch ( Exception lineexception ) { lineexception.More(); }
+							catch ( Exception lineexception ) { lineexception.Log(); }
 						} );
 					}
-					catch ( Exception exception ) { exception.More(); }
+					catch ( Exception exception ) { exception.Log(); }
 				}
 
 				var after = toDictionary.LongCount();
@@ -287,7 +287,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			//finally {
 			//    //Report.Exit();
@@ -319,9 +319,9 @@ namespace Librainian.Persistence {
 						return result;
 					}
 				}
-				catch ( SecurityException exception ) { exception.More(); }
-				catch ( ArgumentException exception ) { exception.More(); }
-				catch ( PathTooLongException exception ) { exception.More(); }
+				catch ( SecurityException exception ) { exception.Log(); }
+				catch ( ArgumentException exception ) { exception.Log(); }
+				catch ( PathTooLongException exception ) { exception.Log(); }
 			}
 
 			return false;
@@ -365,11 +365,11 @@ namespace Librainian.Persistence {
 							return obj;
 						}
 					}
-					catch ( SerializationException exception ) { exception.More(); }
-					catch ( IsolatedStorageException exception ) { exception.More(); }
+					catch ( SerializationException exception ) { exception.Log(); }
+					catch ( IsolatedStorageException exception ) { exception.Log(); }
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return new T();
 		}
@@ -405,16 +405,16 @@ namespace Librainian.Persistence {
 
 									return true;
 								}
-								catch ( InvalidOperationException exception ) { exception.More(); }
-								catch ( ArgumentNullException exception ) { exception.More(); }
-								catch ( SerializationException exception ) { exception.More(); }
-								catch ( Exception exception ) { exception.More(); }
+								catch ( InvalidOperationException exception ) { exception.Log(); }
+								catch ( ArgumentNullException exception ) { exception.Log(); }
+								catch ( SerializationException exception ) { exception.Log(); }
+								catch ( Exception exception ) { exception.Log(); }
 							}
 						}
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -454,15 +454,15 @@ namespace Librainian.Persistence {
 
 								using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) { return Deserialize<TSource>( stream: decompress, feedback: feedback ); }
 							}
-							catch ( InvalidOperationException exception ) { exception.More(); }
-							catch ( ArgumentNullException exception ) { exception.More(); }
-							catch ( SerializationException exception ) { exception.More(); }
-							catch ( Exception exception ) { exception.More(); }
+							catch ( InvalidOperationException exception ) { exception.Log(); }
+							catch ( ArgumentNullException exception ) { exception.Log(); }
+							catch ( SerializationException exception ) { exception.Log(); }
+							catch ( Exception exception ) { exception.Log(); }
 						}
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
 
 			return new TSource();
 		}
@@ -497,7 +497,7 @@ namespace Librainian.Persistence {
 						}
 					}
 					catch ( IsolatedStorageException exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
@@ -510,7 +510,7 @@ namespace Librainian.Persistence {
 						}
 					}
 					catch ( IsolatedStorageException exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
@@ -532,28 +532,28 @@ namespace Librainian.Persistence {
 						return !Equals( obj, default );
 					}
 					catch ( InvalidOperationException exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
 					catch ( ArgumentNullException exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
 					catch ( SerializationException exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
 					catch ( Exception exception ) {
-						exception.More();
+						exception.Log();
 
 						return false;
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -585,8 +585,8 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( SerializationException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SerializationException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -646,17 +646,17 @@ namespace Librainian.Persistence {
 							if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) { isf.CreateDirectory( dir ); }
 						}
 						catch ( IsolatedStorageException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
 						catch ( PathTooLongException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
 						catch ( ArgumentException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
@@ -679,17 +679,17 @@ namespace Librainian.Persistence {
 
 							return true;
 						}
-						catch ( InvalidDataContractException exception ) { exception.More(); }
-						catch ( SerializationException exception ) { exception.More(); }
-						catch ( QuotaExceededException exception ) { exception.More(); }
-						catch ( ArgumentNullException exception ) { exception.More(); }
-						catch ( ArgumentException exception ) { exception.More(); }
+						catch ( InvalidDataContractException exception ) { exception.Log(); }
+						catch ( SerializationException exception ) { exception.Log(); }
+						catch ( QuotaExceededException exception ) { exception.Log(); }
+						catch ( ArgumentNullException exception ) { exception.Log(); }
+						catch ( ArgumentException exception ) { exception.Log(); }
 					}
 				}
 			}
-			catch ( IsolatedStorageException exception ) { exception.More(); }
-			catch ( SecurityException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( IsolatedStorageException exception ) { exception.Log(); }
+			catch ( SecurityException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -715,12 +715,12 @@ namespace Librainian.Persistence {
 
 						try { dir = Path.GetDirectoryName( fileName ); }
 						catch ( PathTooLongException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
 						catch ( ArgumentException exception ) {
-							exception.More();
+							exception.Log();
 
 							return false;
 						}
@@ -728,7 +728,7 @@ namespace Librainian.Persistence {
 						if ( !String.IsNullOrEmpty( dir ) && !isf.DirectoryExists( dir ) ) {
 							try { isf.CreateDirectory( dir ); }
 							catch ( IsolatedStorageException exception ) {
-								exception.More();
+								exception.Log();
 
 								return false;
 							}
@@ -753,17 +753,17 @@ namespace Librainian.Persistence {
 
 							return true;
 						}
-						catch ( InvalidDataContractException exception ) { exception.More(); }
-						catch ( SerializationException exception ) { exception.More(); }
-						catch ( QuotaExceededException exception ) { exception.More(); }
-						catch ( ArgumentNullException exception ) { exception.More(); }
-						catch ( ArgumentException exception ) { exception.More(); }
+						catch ( InvalidDataContractException exception ) { exception.Log(); }
+						catch ( SerializationException exception ) { exception.Log(); }
+						catch ( QuotaExceededException exception ) { exception.Log(); }
+						catch ( ArgumentNullException exception ) { exception.Log(); }
+						catch ( ArgumentException exception ) { exception.Log(); }
 					}
 				}
-				catch ( IsolatedStorageException exception ) { exception.More(); }
+				catch ( IsolatedStorageException exception ) { exception.Log(); }
 			}
-			catch ( SecurityException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( SecurityException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -799,8 +799,8 @@ namespace Librainian.Persistence {
 
 				//}
 			}
-			catch ( SerializationException exception ) { exception.More(); }
-			catch ( InvalidDataContractException exception ) { exception.More(); }
+			catch ( SerializationException exception ) { exception.Log(); }
+			catch ( InvalidDataContractException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -883,7 +883,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			//finally {
 			//    //Report.Exit();
@@ -919,7 +919,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( ConfigurationErrorsException exception ) { exception.More(); }
+			catch ( ConfigurationErrorsException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -951,7 +951,7 @@ namespace Librainian.Persistence {
 
 				return configFile.AppSettings.Settings[ key ]?.Value;
 			}
-			catch ( ConfigurationErrorsException exception ) { exception.More(); }
+			catch ( ConfigurationErrorsException exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -984,7 +984,7 @@ namespace Librainian.Persistence {
 		/// <param name="attribute"></param>
 		/// <param name="value">    </param>
 		/// <param name="location"> </param>
-		/// <seealso cref="TrySave{TKey}" />
+		/// <see cref="TrySave{TKey}" />
 		/// <returns></returns>
 		public static Boolean TryLoad<TSource>( [NotNull] this String attribute, out TSource value, String location = null ) {
 			if ( attribute is null ) { throw new ArgumentNullException( nameof( attribute ) ); }
@@ -1005,10 +1005,10 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( InvalidOperationException exception ) { exception.More(); }
-			catch ( ArgumentNullException exception ) { exception.More(); }
-			catch ( SerializationException exception ) { exception.More(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( InvalidOperationException exception ) { exception.Log(); }
+			catch ( ArgumentNullException exception ) { exception.Log(); }
+			catch ( SerializationException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}

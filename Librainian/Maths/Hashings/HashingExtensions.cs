@@ -49,7 +49,6 @@ namespace Librainian.Maths.Hashings {
 	using ComputerSystem.FileSystem;
 	using Converters;
 	using JetBrains.Annotations;
-	using Threading;
 
 	public static class HashingExtensions {
 
@@ -136,11 +135,8 @@ namespace Librainian.Maths.Hashings {
 			return result;
 		}
 
-		public static async Task<Int32> CalcHashInt32Async( [NotNull] this Document document, CancellationToken token ) {
-			if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
-
-			return await Task.Run( () => document.CalcHashInt32(), token ).NoUI();
-		}
+		[NotNull]
+		public static Task<Int32> CalcHashInt32Async( [NotNull] this Document document, CancellationToken token ) { return Task.Run( () => document.CalcHashInt32(), token ); }
 
 		public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => ( ( h1 << 5 ) + h1 ) ^ h2;
 
@@ -181,6 +177,7 @@ namespace Librainian.Maths.Hashings {
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
+		/// <remarks>A faster Randem.Reseed would be nice here.</remarks>
 		public static Int32 Deterministic( this Int32 index ) => new Random( index ).Next();
 
 		/// <summary>

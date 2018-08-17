@@ -179,7 +179,7 @@ namespace Librainian.Maths {
 		/// <param name="low"> </param>
 		/// <param name="high"></param>
 		/// <returns></returns>
-		/// <seealso cref="CombineTwoBytesLittleEndianess" />
+		/// <see cref="CombineTwoBytesLittleEndianess" />
 		public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 ) ( high + ( low << 8 ) );
 
 		/// <summary>
@@ -188,7 +188,7 @@ namespace Librainian.Maths {
 		/// <param name="low"> </param>
 		/// <param name="high"></param>
 		/// <returns></returns>
-		/// <seealso cref="CombineTwoBytesHighEndianess" />
+		/// <see cref="CombineTwoBytesHighEndianess" />
 		public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 ) ( low + ( high << 8 ) );
 
 		/// <summary>
@@ -229,7 +229,7 @@ namespace Librainian.Maths {
 		/// <param name="numberToConvert"></param>
 		/// <param name="howManyBytes">   </param>
 		/// <returns></returns>
-		/// <seealso cref="http://github.com/mkadlec/ConvertBigIntToBcd/blob/master/ConvertBigIntToBcd.cs" />
+		/// <see cref="http://github.com/mkadlec/ConvertBigIntToBcd/blob/master/ConvertBigIntToBcd.cs" />
 		[NotNull]
 		public static Byte[] ConvertBigIntToBcd( this Int64 numberToConvert, Int32 howManyBytes ) {
 			var convertedNumber = new Byte[ howManyBytes ];
@@ -908,7 +908,7 @@ namespace Librainian.Maths {
 		/// <param name="baseValue"></param>
 		/// <param name="n">        </param>
 		/// <returns></returns>
-		/// <seealso cref="http://stackoverflow.com/a/18363540/956364" />
+		/// <see cref="http://stackoverflow.com/a/18363540/956364" />
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal NthRoot( this Decimal baseValue, Int32 n ) {
@@ -1107,7 +1107,7 @@ namespace Librainian.Maths {
 		/// <param name="x"></param>
 		/// <param name="n"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://stackoverflow.com/questions/429165/raising-a-Decimal-to-a-power-of-Decimal" />
+		/// <see cref="http://stackoverflow.com/questions/429165/raising-a-Decimal-to-a-power-of-Decimal" />
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal Pow( this Decimal x, UInt32 n ) {
@@ -1240,7 +1240,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
+		/// <see cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double SigmoidNeg1To1( this Double value ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( d: value ) );

@@ -166,7 +166,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Byte> AsBytes( CancellationToken? token = null, TimeSpan? timeout = null ) {
+		public IEnumerable<Byte> AsBytes( CancellationToken token, TimeSpan timeout ) {
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
 					if ( stream?.CanRead != true ) { yield break; }
@@ -186,7 +186,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt16( CancellationToken? token, TimeSpan? timeout ) {
+		public IEnumerable<Int32> AsInt16( CancellationToken token, TimeSpan timeout ) {
 
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
@@ -219,7 +219,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt32( CancellationToken? token, TimeSpan? timeout ) {
+		public IEnumerable<Int32> AsInt32( CancellationToken token, TimeSpan timeout ) {
 
 			using ( var client = new WebClient().Add( timeout, token ) ) {
 				using ( var stream = client.OpenRead( this.ToUri() ) ) {
@@ -292,7 +292,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="token"></param>
 		/// <param name="timeout"></param>
 		/// <returns></returns>
-		public async Task<Int64> Length( CancellationToken? token = null, TimeSpan? timeout = null ) {
+		public async Task<Int64> Length( CancellationToken token, TimeSpan timeout ) {
 			try {
 				using ( var client = new WebClient().Add( timeout, token ) ) {
 					try {
@@ -302,10 +302,10 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 						if ( Int64.TryParse( header, out var result ) ) { return result; }
 					}
-					catch ( WebException exception ) { exception.More(); }
+					catch ( WebException exception ) { exception.Log(); }
 				}
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return -1;
 		}
@@ -315,7 +315,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			try {
 				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) { return new DirectoryInfo( this.ToUri().AbsolutePath ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}
@@ -326,7 +326,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				if ( this.ToUri().AbsoluteUri.StartsWith( Protocols.File, StringComparison.Ordinal ) ) { return new FileInfo( this.ToUri().AbsolutePath ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return null;
 		}

@@ -524,7 +524,7 @@ namespace Librainian.Threading {
                 /// <param name="task">   The task.</param>
                 /// <param name="timeout">The timeout.</param>
                 /// <returns>The new Task that may time out.</returns>
-                /// <seealso cref="http://stackoverflow.com/a/20639723/956364"/>
+                /// <see cref="http://stackoverflow.com/a/20639723/956364"/>
                 public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
                     var result = new TaskCompletionSource<TResult>( task.AsyncState );
                     var timer = new Timer( state =>

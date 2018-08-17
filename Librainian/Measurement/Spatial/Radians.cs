@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Spatial {
 	using Newtonsoft.Json;
 
 	/// <summary>The radian is the standard unit of angular measure.</summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Radian" />
+	/// <see cref="http://wikipedia.org/wiki/Radian" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]

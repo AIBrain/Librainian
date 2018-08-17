@@ -155,9 +155,9 @@ namespace Librainian.Collections {
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
 		/// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-		/// <seealso cref="DrainTo(ICollection{T},Int32)" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T})" />
+		/// <see cref="DrainTo(ICollection{T},Int32)" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T},Int32)" />
 		Int32 DrainTo( ICollection<T> collection );
 
 		/// <summary>
@@ -181,9 +181,9 @@ namespace Librainian.Collections {
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
 		/// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-		/// <seealso cref="DrainTo(ICollection{T},Int32)" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T})" />
+		/// <see cref="DrainTo(ICollection{T},Int32)" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T},Int32)" />
 		Int32 DrainTo( ICollection<T> collection, Predicate<T> predicate );
 
 		/// <summary>
@@ -206,9 +206,9 @@ namespace Librainian.Collections {
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
 		/// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
-		/// <seealso cref="DrainTo(ICollection{T})" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
+		/// <see cref="DrainTo(ICollection{T})" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T})" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T},Int32)" />
 		Int32 DrainTo( ICollection<T> collection, Int32 maxElements );
 
 		/// <summary>
@@ -233,9 +233,9 @@ namespace Librainian.Collections {
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">If the specified collection is <c>null</c>.</exception>
 		/// <exception cref="System.ArgumentException">If <paramref name="collection" /> represents the queue itself.</exception>
-		/// <seealso cref="DrainTo(ICollection{T})" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T})" />
-		/// <seealso cref="IQueue{T}.Drain(System.Action{T},Int32)" />
+		/// <see cref="DrainTo(ICollection{T})" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T})" />
+		/// <see cref="IQueue{T}.Drain(System.Action{T},Int32)" />
 		Int32 DrainTo( ICollection<T> collection, Int32 maxElements, Predicate<T> predicate );
 
 		/// <summary>

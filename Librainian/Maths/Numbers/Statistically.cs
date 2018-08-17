@@ -124,7 +124,7 @@ namespace Librainian.Maths.Numbers {
 
 				if ( !total.Near( 0 ) ) { return this.Downs / total; }
 			}
-			catch ( DivideByZeroException exception ) { exception.More(); }
+			catch ( DivideByZeroException exception ) { exception.Log(); }
 
 			return 0;
 		}
@@ -135,7 +135,7 @@ namespace Librainian.Maths.Numbers {
 
 				if ( !total.Near( 0 ) ) { return this.Ups / total; }
 			}
-			catch ( DivideByZeroException exception ) { exception.More(); }
+			catch ( DivideByZeroException exception ) { exception.Log(); }
 
 			return 0;
 		}

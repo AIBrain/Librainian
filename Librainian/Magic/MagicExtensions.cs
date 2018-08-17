@@ -51,14 +51,14 @@ namespace Librainian.Magic {
 	/// <summary>
 	///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
+	/// <see cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
 	public static class MagicExtensions {
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="observable"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
+		/// <see cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
 		[NotNull]
 		public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) =>
 			Observable.Create<Unit>( observer => observable.Subscribe( _ => { }, onError: observer.OnError, onCompleted: () => {

@@ -105,8 +105,6 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public Task ScanningTask { get; private set; }
-
 		public DocumentInfo( [NotNull] Document document ) {
 			if ( document is null ) { throw new ArgumentNullException( paramName: nameof( document ) ); }
 
@@ -117,13 +115,30 @@ namespace Librainian.Persistence {
 			this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
 
 			this.LastScanned = null;
+		}
 
-			//attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
-			this.ScanningTask = new Task( () => Parallel.Invoke( new ParallelOptions {
-					CancellationToken = this.CancellationToken,
-					MaxDegreeOfParallelism = 3
-				}, async () => this.CRC32 = await document.CRC32Async( this.CancellationToken ).NoUI(), async () => this.CRC64 = await document.CRC64Async( this.CancellationToken ).NoUI(),
-				async () => this.AddHash = await document.CalcHashInt32Async( this.CancellationToken ).NoUI() ), this.CancellationToken );
+		/// <summary>
+		/// Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
+		/// </summary>
+		/// <param name="document"></param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		public async Task GetHashes( [NotNull] Document document, CancellationToken token ) {
+			if ( document == null ) {
+				throw new ArgumentNullException( paramName: nameof( document ) );
+			}
+
+			Debug.Write( $"Starting scans on {this.AbsolutePath}..." );
+
+			var crc32 = document.CRC32Async( this.CancellationToken );
+			var crc64 = document.CRC64Async( this.CancellationToken );
+			var addHash = document.CalcHashInt32Async( this.CancellationToken );
+
+			this.CRC32 = await crc32.NoUI();
+			this.CRC64 = await crc64.NoUI();
+			this.AddHash = await addHash.NoUI();
+
+			await Task.WhenAll( crc32, crc64, addHash ).NoUI();
 		}
 
 		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
@@ -207,14 +222,15 @@ namespace Librainian.Persistence {
 		public async Task<Boolean> Scan( CancellationToken token ) {
 
 			try {
-				Debug.Write( $"Starting scan on {this.AbsolutePath}..." );
+
+				var record = Data.ScannedDocuments[this.AbsolutePath];
+
 				var document = new Document( this.AbsolutePath );
 
 				this.Length = document.Length;
 				this.CreationTimeUtc = document.Info.CreationTimeUtc;
 				this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
 
-				var record = Data.ScannedDocuments[ this.AbsolutePath ];
 
 				var needScanned = false;
 
@@ -231,15 +247,15 @@ namespace Librainian.Persistence {
 				if ( needScanned ) {
 					if ( token.IsCancellationRequested ) { return false; }
 
-					await this.ScanningTask.NoUI();
+					await this.GetHashes( document, token ).NoUI();
 					this.LastScanned = DateTime.UtcNow;
 				}
 
-				if ( record is null ) { Data.ScannedDocuments[ this.AbsolutePath ] = this; }
+				if ( record is null ) { Data.ScannedDocuments[this.AbsolutePath] = this; }
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 			finally { Debug.WriteLine( "done." ); }
 
 			return false;

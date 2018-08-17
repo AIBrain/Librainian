@@ -105,7 +105,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Minutes Combine( Minutes left, BigRational minutes ) => new Minutes( left.Value + minutes );
 
-		public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger ) left.Value + minutes );
+		public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger )left.Value + minutes );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -134,10 +134,9 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="minutes"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static implicit operator SpanOfTime( Minutes minutes ) => new SpanOfTime( minutes );
 
-		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double ) minutes.Value );
+		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
 
 		public static Minutes operator -( Minutes minutes ) => new Minutes( minutes.Value * -1 );
 
@@ -155,17 +154,17 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Minutes left, Hours right ) => ( Hours ) left < right;
+		public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
 
-		public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes ) right;
+		public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
 
 		public static Boolean operator ==( Minutes left, Minutes right ) => Equals( left, right );
 
-		public static Boolean operator >( Minutes left, Hours right ) => ( Hours ) left > right;
+		public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
 
 		public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes ) right;
+		public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
 
 		public Int32 CompareTo( Minutes other ) => this.Value.CompareTo( other.Value );
 
@@ -182,7 +181,7 @@ namespace Librainian.Measurement.Time {
 		public Hours ToHours() => new Hours( this.Value / InOneHour );
 
 		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneMinute * this.Value );
+		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneMinute * this.Value );
 
 		[Pure]
 		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
@@ -195,7 +194,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "minute" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "minute" )}";
 		}

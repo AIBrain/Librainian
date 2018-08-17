@@ -75,7 +75,7 @@ namespace Librainian.Collections {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="AllowModifications" />
+		/// <see cref="AllowModifications" />
 		public Boolean IsReadOnly { get; private set; }
 
 		[CanBeNull]
@@ -223,7 +223,7 @@ namespace Librainian.Collections {
 		/// <summary>
 		///     <para>Tracks count of times this <see cref="ParallelList{TType}" /> has been marked as <see cref="Complete" />.</para>
 		/// </summary>
-		/// <seealso cref="AllowModifications" />
+		/// <see cref="AllowModifications" />
 		private Int64 _markedAsCompleteCounter;
 
 		/// <summary>
@@ -278,7 +278,7 @@ namespace Librainian.Collections {
 
 		/// <summary>
 		/// </summary>
-		/// <seealso cref="CatchUp" />
+		/// <see cref="CatchUp" />
 		public Boolean AnyWritesPending => 0 == this.CountOfItemsWaitingToBeAdded && 0 == this.CountOfItemsWaitingToBeChanged && 0 == this.CountOfItemsWaitingToBeInserted;
 
 		/// <summary>
@@ -367,7 +367,7 @@ namespace Librainian.Collections {
 		/// <param name="func">                         </param>
 		/// <param name="ignoreAllowModificationsCheck"></param>
 		/// <returns></returns>
-		/// <seealso cref="CatchUp" />
+		/// <see cref="CatchUp" />
 		[CanBeNull]
 		private TFuncResult Write<TFuncResult>( [CanBeNull] Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
 			if ( !ignoreAllowModificationsCheck ) {
@@ -512,8 +512,8 @@ namespace Librainian.Collections {
 		/// <summary>
 		///     Signal that this <see cref="ParallelList{TType}" /> will not be modified any more.
 		/// </summary>
-		/// <seealso cref="AllowModifications" />
-		/// <seealso cref="IsReadOnly" />
+		/// <see cref="AllowModifications" />
+		/// <see cref="IsReadOnly" />
 		public void Complete() {
 			try { this.ActionBlock.Complete(); }
 			finally {

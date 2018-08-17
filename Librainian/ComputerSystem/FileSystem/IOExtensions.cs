@@ -76,7 +76,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			try {
 				if ( cancellation?.HaveAnyCancellationsBeenRequested() == false ) { onFindFile?.Invoke( info ); }
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return info;
 		}
@@ -102,12 +102,12 @@ namespace Librainian.ComputerSystem.FileSystem {
 					await sourceStream.FlushAsync().NoUI();
 				}
 			}
-			catch ( UnauthorizedAccessException exception ) { exception.More(); }
-			catch ( ArgumentNullException exception ) { exception.More(); }
-			catch ( DirectoryNotFoundException exception ) { exception.More(); }
-			catch ( PathTooLongException exception ) { exception.More(); }
-			catch ( SecurityException exception ) { exception.More(); }
-			catch ( IOException exception ) { exception.More(); }
+			catch ( UnauthorizedAccessException exception ) { exception.Log(); }
+			catch ( ArgumentNullException exception ) { exception.Log(); }
+			catch ( DirectoryNotFoundException exception ) { exception.Log(); }
+			catch ( PathTooLongException exception ) { exception.Log(); }
+			catch ( SecurityException exception ) { exception.Log(); }
+			catch ( IOException exception ) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -278,16 +278,10 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 			if ( searchPattern is null ) { throw new ArgumentNullException( nameof( searchPattern ) ); }
 
-			//if ( null == target ) {
-			//    yield break;
-			//}
 			var searchPath = Path.Combine( target.FullName, searchPattern );
 
 			using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
 				do {
-
-					//Application.DoEvents();
-
 					if ( hFindFile.IsInvalid ) { break; }
 
 					if ( IsParentOrCurrent( findData ) ) { continue; }
@@ -393,7 +387,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				Assert.True( directoryInfo.Exists );
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 
 				return null;
 			}
@@ -450,7 +444,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 							if ( cancellation.HaveAnyCancellationsBeenRequested() ) { return; }
 
 							try { onEachDirectory?.Invoke( folder ); }
-							catch ( Exception exception ) { exception.More(); }
+							catch ( Exception exception ) { exception.Log(); }
 
 							if ( searchStyle == SearchStyle.FoldersFirst ) {
 								folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
@@ -475,7 +469,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 											return true;
 									}
 
-									ex.More();
+									ex.Log();
 
 									return false;
 								} );
@@ -499,7 +493,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 									return true;
 							}
 
-							ex.More();
+							ex.Log();
 
 							return false;
 						} );
@@ -521,7 +515,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 							return true;
 					}
 
-					ex.More();
+					ex.Log();
 
 					return false;
 				} );
@@ -557,7 +551,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// </summary>
 		/// <param name="info"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
+		/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
 		public static UInt32? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
 			var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory?.Root.FullName, lpSectorsPerCluster: out var sectorsPerCluster, lpBytesPerSector: out var bytesPerSector,
 				lpNumberOfFreeClusters: out var dummy, lpTotalNumberOfClusters: out _ );
@@ -644,7 +638,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 				return true;
 			}
 			catch ( OutOfMemoryException ) { Logging.Garbage(); }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -818,7 +812,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 						return sb.ToString();
 					}
 				}
-				catch ( FileNotFoundException exception ) { exception.More(); }
+				catch ( FileNotFoundException exception ) { exception.Log(); }
 			}
 
 			return String.Empty;
@@ -996,7 +990,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 						}
 					}
 
-					ex.More();
+					ex.Log();
 
 					return false;
 				} );
@@ -1017,7 +1011,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 					}
 				}
 			}
-			catch ( ManagementException exception ) { exception.More(); }
+			catch ( ManagementException exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -1030,7 +1024,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 				return dirInfo.SetCompression( compressed );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}

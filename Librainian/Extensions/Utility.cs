@@ -55,7 +55,7 @@ namespace Librainian.Extensions {
 		public static DummyXMLResolver DummyXMLResolver { get; } = new DummyXMLResolver();
 
 		/// <summary>
-		///     Output the <paramref name="text" /> at the end of the current <seealso cref="Console" /> line.
+		///     Output the <paramref name="text" /> at the end of the current <see cref="Console" /> line.
 		/// </summary>
 		/// <param name="text">   </param>
 		/// <param name="yOffset"></param>
@@ -81,9 +81,9 @@ namespace Librainian.Extensions {
 					Console.SetCursorPosition( left: oldLeft, top: oldTop );
 					Console.CursorVisible = true;
 				}
-				catch ( ArgumentOutOfRangeException exception ) { exception.More(); }
-				catch ( IOException exception ) { exception.More(); }
-				catch ( SecurityException exception ) { exception.More(); }
+				catch ( ArgumentOutOfRangeException exception ) { exception.Log(); }
+				catch ( IOException exception ) { exception.Log(); }
+				catch ( SecurityException exception ) { exception.Log(); }
 				finally { ConsoleOutputSynch.ExitWriteLock(); }
 			}
 			finally { ConsoleOutputSynch.ExitUpgradeableReadLock(); }

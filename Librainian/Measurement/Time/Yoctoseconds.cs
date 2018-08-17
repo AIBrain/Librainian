@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
 
 	/// <summary>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Yoctosecond" />
+	/// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
@@ -67,46 +67,48 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <see cref="Five" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Five = new Yoctoseconds( 5 );
+		public static Yoctoseconds Five = new Yoctoseconds( 5 );
 
 		/// <summary>
 		///     <see cref="One" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds One = new Yoctoseconds( 1 );
+		public static Yoctoseconds One = new Yoctoseconds( 1 );
 
 		/// <summary>
 		///     <see cref="Seven" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Seven = new Yoctoseconds( 7 );
+		public static Yoctoseconds Seven = new Yoctoseconds( 7 );
 
 		/// <summary>
 		///     <see cref="Ten" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Ten = new Yoctoseconds( 10 );
+		public static Yoctoseconds Ten = new Yoctoseconds( 10 );
 
 		/// <summary>
 		///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Thirteen = new Yoctoseconds( 13 );
+		public static Yoctoseconds Thirteen = new Yoctoseconds( 13 );
 
 		/// <summary>
 		///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Thirty = new Yoctoseconds( 30 );
+		public static Yoctoseconds Thirty = new Yoctoseconds( 30 );
 
 		/// <summary>
 		///     <see cref="Three" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Three = new Yoctoseconds( 3 );
+		public static Yoctoseconds Three = new Yoctoseconds( 3 );
 
 		/// <summary>
 		///     <see cref="Two" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static readonly Yoctoseconds Two = new Yoctoseconds( 2 );
+		public static Yoctoseconds Two = new Yoctoseconds( 2 );
 
 		/// <summary>
 		/// </summary>
-		public static readonly Yoctoseconds Zero = new Yoctoseconds( 0 );
+		public static Yoctoseconds Zero = new Yoctoseconds( 0 );
+
+		public static BigRational InOneSecond { get; } = new BigInteger( 10E24 );
 
 		[JsonProperty]
 		public BigRational Value { get; }
@@ -138,7 +140,6 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
-		[NotNull]
 		public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds: yoctoseconds );
 
 		/// <summary>
@@ -184,8 +185,8 @@ namespace Librainian.Measurement.Time {
 		[Pure]
 		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneYoctosecond * this.Value );
 
-		//TODO
-		//[Pure]public Seconds ToSeconds() => new Seconds( this.Value / Seconds. );
+		[Pure]
+		public Seconds ToSeconds() => new Seconds( this.Value * Yoctoseconds.InOneSecond );
 
 		[Pure]
 		public override String ToString() {
@@ -195,7 +196,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "ys" )}";
 			}
 
-			var dec = ( Decimal ) this.Value;
+			var dec = ( Decimal )this.Value;
 
 			return $"{dec} {dec.PluralOf( "ys" )}";
 		}

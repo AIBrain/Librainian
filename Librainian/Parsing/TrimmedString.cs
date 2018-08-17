@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2018/07/13 at 1:35 AM.
+// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2018/08/08 at 6:45 PM.
 
 namespace Librainian.Parsing {
 

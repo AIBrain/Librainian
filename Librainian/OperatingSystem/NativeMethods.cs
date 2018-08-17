@@ -554,7 +554,7 @@ namespace Librainian.OperatingSystem {
 		/// <param name="lpFileName">    </param>
 		/// <param name="lpFileSizeHigh"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
+		/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 		[DllImport( "kernel32.dll" )]
 		public static extern UInt32 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )]
 			String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh );
@@ -568,7 +568,7 @@ namespace Librainian.OperatingSystem {
 		/// <summary>
 		/// </summary>
 		/// <returns></returns>
-		/// <seealso cref="http://www.facepunch.com/showthread.php?t=1312991" />
+		/// <see cref="http://www.facepunch.com/showthread.php?t=1312991" />
 		public static IntPtr GetDesktopHandle() {
 			var desktop = GetDesktopWindow();
 			var progMan = FindWindowEx( desktop, IntPtr.Zero, "Progman", "Program Manager" );
@@ -685,7 +685,7 @@ namespace Librainian.OperatingSystem {
 		/// <param name="domain">      </param>
 		/// <param name="resumeHandle"></param>
 		/// <returns></returns>
-		/// <seealso cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
+		/// <see cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
 		[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum" )]
 		public static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen, ref Int32 entriesread, ref Int32 totalentries,
 			Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );

@@ -205,12 +205,12 @@ namespace Librainian.Measurement.Time {
 			PlanckTimes.One.Should().BeGreaterThan( PlanckTimes.Zero );
 			PlanckTimes.One.Should().Be( PlanckTimes.One );
 			PlanckTimes.One.Should().BeLessThan( Yoctoseconds.One );
-			PlanckTimes.InOneSecond.Should().BeLessThan( PlanckTimes.InOneMinute );
-			PlanckTimes.InOneMinute.Should().BeLessThan( PlanckTimes.InOneHour );
-			PlanckTimes.InOneHour.Should().BeLessThan( PlanckTimes.InOneDay );
-			PlanckTimes.InOneDay.Should().BeLessThan( PlanckTimes.InOneWeek );
-			PlanckTimes.InOneWeek.Should().BeLessThan( PlanckTimes.InOneMonth );
-			PlanckTimes.InOneMonth.Should().BeLessThan( PlanckTimes.InOneYear );
+			PlanckTimes.InOneSecond.Should().BeLessThan( PlanckTimes.Constants.InOneMinute );
+			PlanckTimes.Constants.InOneMinute.Should().BeLessThan( PlanckTimes.Constants.InOneHour );
+			PlanckTimes.Constants.InOneHour.Should().BeLessThan( PlanckTimes.Constants.InOneDay );
+			PlanckTimes.Constants.InOneDay.Should().BeLessThan( PlanckTimes.InOneWeek );
+			PlanckTimes.InOneWeek.Should().BeLessThan( PlanckTimes.Constants.InOneMonth );
+			PlanckTimes.Constants.InOneMonth.Should().BeLessThan( PlanckTimes.InOneYear );
 		}
 
 		[Test]
@@ -243,7 +243,7 @@ namespace Librainian.Measurement.Time {
 
 				SpanOfTime.Bytey.TotalPlanckTimes.Should().BeGreaterThan( SpanOfTime.Identity.TotalPlanckTimes );
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 		}
 
 		[Test]

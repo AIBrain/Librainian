@@ -110,7 +110,7 @@ namespace Librainian.Measurement.Time {
 					this._hasLaunched = true;
 					liftoff?.Invoke();
 				}
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 			};
 		}
 

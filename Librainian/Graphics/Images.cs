@@ -68,7 +68,7 @@ namespace Librainian.Graphics {
 		///     <para>Exif 2.2 Standard (reference: <see cref="http://www.exiv2.org/tags.html" />)</para>
 		/// </summary>
 		/// Pulled from project "ExifOrganizer" @
-		/// <seealso cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs" />
+		/// <see cref="http://github.com/RiJo/ExifOrganizer/blob/master/MetaParser/Parsers/ExifParser.cs" />
 		public enum ExifId {
 
 			ImageProcessingSoftware = 0x000b, // The name and version of the software used to post-process the picture.
@@ -1178,7 +1178,7 @@ namespace Librainian.Graphics {
 			catch ( InvalidOperationException ) { }
 			catch ( FileNotFoundException ) { }
 			catch ( IOException ) { }
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -1327,7 +1327,7 @@ namespace Librainian.Graphics {
 			/// <summary>
 			///     <para>.tif</para>
 			/// </summary>
-			/// <seealso cref="http://wikipedia.org/wiki/TIFF" />
+			/// <see cref="http://wikipedia.org/wiki/TIFF" />
 			[NotNull]
 			public static String Tiff => ".tif";
 		}

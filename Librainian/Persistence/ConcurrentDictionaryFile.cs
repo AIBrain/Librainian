@@ -130,16 +130,16 @@ namespace Librainian.Persistence {
 						return result.IsCompleted;
 					}
 				}
-				catch ( JsonException exception ) { exception.More(); }
+				catch ( JsonException exception ) { exception.Log(); }
 				catch ( IOException exception ) {
 
 					//file in use by another app
-					exception.More();
+					exception.Log();
 				}
 				catch ( OutOfMemoryException exception ) {
 
 					//file is huge
-					exception.More();
+					exception.Log();
 				}
 
 				return false;

@@ -75,10 +75,10 @@ namespace Librainian.Extensions {
 
 				if ( !field.IsLiteral ) { field.SetValue( destination, sourceValue ); }
 			}
-			catch ( TargetException exception ) { exception.More(); }
-			catch ( NotSupportedException exception ) { exception.More(); }
-			catch ( FieldAccessException exception ) { exception.More(); }
-			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( TargetException exception ) { exception.Log(); }
+			catch ( NotSupportedException exception ) { exception.Log(); }
+			catch ( FieldAccessException exception ) { exception.Log(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -128,11 +128,11 @@ namespace Librainian.Extensions {
 				var sourceValue = prop.GetValue( source, null );
 				prop.SetValue( destination, sourceValue, null );
 			}
-			catch ( TargetParameterCountException exception ) { exception.More(); }
-			catch ( TargetException exception ) { exception.More(); }
-			catch ( NotSupportedException exception ) { exception.More(); }
-			catch ( FieldAccessException exception ) { exception.More(); }
-			catch ( ArgumentException exception ) { exception.More(); }
+			catch ( TargetParameterCountException exception ) { exception.Log(); }
+			catch ( TargetException exception ) { exception.Log(); }
+			catch ( NotSupportedException exception ) { exception.Log(); }
+			catch ( FieldAccessException exception ) { exception.Log(); }
+			catch ( ArgumentException exception ) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -297,7 +297,7 @@ namespace Librainian.Extensions {
 
 			foreach ( var key in sourceValue.Keys ) {
 				try { destAsDictionary[ key ] = sourceValue[ key ]; }
-				catch ( Exception exception ) { exception.More(); }
+				catch ( Exception exception ) { exception.Log(); }
 			}
 
 			return true;
@@ -464,7 +464,7 @@ namespace Librainian.Extensions {
                 /// <typeparam name="T"></typeparam>
                 /// <param name="getMethod"></param>
                 /// <returns></returns>
-                /// <seealso cref="http://stackoverflow.com/a/557711"/>
+                /// <see cref="http://stackoverflow.com/a/557711"/>
                 public static T GetProperty<T>( MethodBase getMethod ) {
                     if ( !getMethod.Name.StartsWith( "get_" ) ) {
                         throw new ArgumentException(

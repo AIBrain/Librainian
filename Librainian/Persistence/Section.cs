@@ -161,7 +161,7 @@ namespace Librainian.Persistence {
 					return false;
 				} ).NoUI();
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}
@@ -182,7 +182,7 @@ namespace Librainian.Persistence {
 
 				return true;
 			}
-			catch ( Exception exception ) { exception.More(); }
+			catch ( Exception exception ) { exception.Log(); }
 
 			return false;
 		}

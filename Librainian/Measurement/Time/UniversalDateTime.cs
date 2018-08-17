@@ -45,14 +45,13 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
 	///     <para>Absolute universal date and time.</para>
 	///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
 	/// </summary>
-	/// <seealso cref="http://wikipedia.org/wiki/Lol" />
+	/// <see cref="http://wikipedia.org/wiki/Lol" />
 	[Immutable]
 	[JsonObject]
 	[DebuggerDisplay( "ToString()" )]
@@ -122,7 +121,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="dateTime"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
 			var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
 			var plancksSinceThen = sinceThen.TotalPlanckTimes;
