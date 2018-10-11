@@ -37,370 +37,370 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2018/09/24 at 4:28 AM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using ComputerSystem.FileSystem;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Parsing;
-
-	/// <summary>
-	///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
-	/// </summary>
-	[JsonObject]
-	public class IniFile {
-
-		[JsonProperty]
-		[NotNull]
-		private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
-
-		/// <summary>
-		///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
-		///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
-		/// </summary>
-		[JsonProperty]
-		public Document AutoSaveDocument { get; set; }
-
-		[NotNull]
-		public IEnumerable<String> Sections => this.Data.Keys;
-
-		[CanBeNull]
-		public IReadOnlyDictionary<String, String> this[ [CanBeNull] String section ] {
-			[DebuggerStepThrough]
-			[CanBeNull]
-			get {
-				if ( String.IsNullOrEmpty( section ) ) { return null; }
-
-				if ( !this.Data.ContainsKey( section ) ) { return null; }
-
-				return this.Data.TryGetValue( section, out var result ) ? result : null;
-			}
-		}
-
-		/// <summary>
-		///     If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.
-		/// </summary>
-		/// <param name="section"></param>
-		/// <param name="key">    </param>
-		/// <returns></returns>
-		[CanBeNull]
-		public String this[ [CanBeNull] String section, [CanBeNull] String key ] {
-			[DebuggerStepThrough]
-			[CanBeNull]
-			get {
-				if ( String.IsNullOrEmpty( section ) ) { return null; }
-
-				if ( String.IsNullOrEmpty( key ) ) { return null; }
-
-				if ( !this.Data.ContainsKey( section ) ) { return null; }
-
-				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
-			}
-
-			[DebuggerStepThrough]
-			set {
-				if ( String.IsNullOrEmpty( section ) ) { return; }
-
-				if ( String.IsNullOrEmpty( key ) ) { return; }
-
-				this.Add( section, new KeyValuePair<String, String>( key, value ) );
-
-				if ( null != this.AutoSaveDocument ) { this.Save( this.AutoSaveDocument ); }
-			}
-		}
-
-		private const String PairSeparator = "=";
-
-		private const String SectionBegin = "[";
-
-		private const String SectionEnd = "]";
-
-		public IniFile( String data ) {
-
-			//cheat: write out to temp file, read in, then delete temp file
-			var document = Document.GetTempDocument();
-			document.AppendText( data );
-			this.Add( document );
-			this.AutoSaveDocument = null;
-			document.Delete();
-		}
-
-		/// <summary>
-		///     Entire document dictionary is saved on any change.
-		/// </summary>
-		/// <param name="autoSaveDocument"></param>
-		public IniFile( [NotNull] Document autoSaveDocument ) : this() {
-			this.AutoSaveDocument = autoSaveDocument;
-			this.Add( autoSaveDocument );
-		}
+    using ComputerSystem.FileSystem;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Parsing;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    ///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
+    /// </summary>
+    [JsonObject]
+    public class IniFile {
+
+        private const String PairSeparator = "=";
+
+        private const String SectionBegin = "[";
+
+        private const String SectionEnd = "]";
+
+        [JsonProperty]
+        [NotNull]
+        private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
+
+        /// <summary>
+        ///     <para>WARNING: Set this value AFTER <see cref="Add(Document)" />.</para>
+        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
+        /// </summary>
+        [JsonProperty]
+        public Document AutoSaveDocument { get; set; }
+
+        [NotNull]
+        public IEnumerable<String> Sections => this.Data.Keys;
+
+        [CanBeNull]
+        public IReadOnlyDictionary<String, String> this[[CanBeNull] String section] {
+            [DebuggerStepThrough]
+            [CanBeNull]
+            get {
+                if (String.IsNullOrEmpty(section)) { return null; }
+
+                if (!this.Data.ContainsKey(section)) { return null; }
+
+                return this.Data.TryGetValue(section, out var result) ? result : null;
+            }
+        }
+
+        /// <summary>
+        ///     If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="key">    </param>
+        /// <returns></returns>
+        [CanBeNull]
+        public String this[[CanBeNull] String section, [CanBeNull] String key] {
+            [DebuggerStepThrough]
+            [CanBeNull]
+            get {
+                if (String.IsNullOrEmpty(section)) { return null; }
+
+                if (String.IsNullOrEmpty(key)) { return null; }
+
+                if (!this.Data.ContainsKey(section)) { return null; }
 
-		public IniFile() { }
+                return this.Data[section].TryGetValue(key, out var value) ? value : null;
+            }
+
+            [DebuggerStepThrough]
+            set {
+                if (String.IsNullOrEmpty(section)) { return; }
+
+                if (String.IsNullOrEmpty(key)) { return; }
+
+                this.Add(section, new KeyValuePair<String, String>(key, value));
+
+                if (null != this.AutoSaveDocument) { this.Save(this.AutoSaveDocument); }
+            }
+        }
+
+        public IniFile(String data) {
+
+            //cheat: write out to temp file, read in, then delete temp file
+            var document = Document.GetTempDocument();
+            document.AppendText(data);
+            this.Add(document);
+            this.AutoSaveDocument = null;
+            document.Delete();
+        }
+
+        /// <summary>
+        ///     Entire document dictionary is saved on any change.
+        /// </summary>
+        /// <param name="autoSaveDocument"></param>
+        public IniFile([NotNull] Document autoSaveDocument) : this() {
+            this.AutoSaveDocument = autoSaveDocument;
+            this.Add(autoSaveDocument);
+        }
 
-		private Boolean WriteSection( [NotNull] Document document, [NotNull] String section ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+        public IniFile() { }
 
-			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+        private Boolean WriteSection([NotNull] Document document, [NotNull] String section) {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return false; //section not found
-			}
+            if (section == null) { throw new ArgumentNullException(nameof(section)); }
 
-			try {
-				using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-					writer.Write( EncodeSection( section ) );
+            if (!this.Data.TryGetValue(section, out var dict)) {
+                return false; //section not found
+            }
 
-					foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) { writer.WriteLine( EncodePair( pair ) ); }
+            try {
+                using (var writer = File.AppendText(document.FullPathWithFileName)) {
+                    writer.Write(EncodeSection(section));
 
-					writer.Write( Environment.NewLine );
-					writer.Flush();
-				}
+                    foreach (var pair in dict.OrderBy(pair => pair.Key)) { writer.WriteLine(EncodePair(pair)); }
 
-				return true;
-			}
-			catch ( Exception exception ) { exception.Log(); }
+                    writer.Write(Environment.NewLine);
+                    writer.Flush();
+                }
 
-			return false;
-		}
+                return true;
+            }
+            catch (Exception exception) { exception.Log(); }
 
-		private async Task<Boolean> WriteSectionAsync( [NotNull] Document document, [NotNull] String section ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+            return false;
+        }
 
-			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+        private async Task<Boolean> WriteSectionAsync([NotNull] Document document, [NotNull] String section) {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-			try {
-				if ( !this.Data.TryGetValue( section, out var dict ) ) {
-					return false; //section not found
-				}
+            if (section == null) { throw new ArgumentNullException(nameof(section)); }
 
-				using ( var writer = File.AppendText( document.FullPathWithFileName ) ) {
-					writer.Write( EncodeSection( section ) );
+            try {
+                if (!this.Data.TryGetValue(section, out var dict)) {
+                    return false; //section not found
+                }
 
-					foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) { await writer.WriteAsync( EncodePair( pair ) ); }
+                using (var writer = File.AppendText(document.FullPathWithFileName)) {
+                    writer.Write(EncodeSection(section));
 
-					await writer.WriteLineAsync();
-					await writer.FlushAsync();
-				}
+                    foreach (var pair in dict.OrderBy(pair => pair.Key)) { await writer.WriteAsync(EncodePair(pair)); }
 
-				return true;
-			}
-			catch ( Exception exception ) { exception.Log(); }
+                    await writer.WriteLineAsync();
+                    await writer.FlushAsync();
+                }
 
-			return false;
-		}
+                return true;
+            }
+            catch (Exception exception) { exception.Log(); }
 
-		private Boolean WriteSectionJSON( Document document, [NotNull] String section ) {
-			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return false; //section not found
-			}
+            return false;
+        }
 
-			try { return true; }
-			catch ( Exception exception ) { exception.Log(); }
+        private Boolean WriteSectionJSON(Document document, [NotNull] String section) {
+            if (!this.Data.TryGetValue(section, out var dict)) {
+                return false; //section not found
+            }
 
-			return false;
-		}
+            try { return true; }
+            catch (Exception exception) { exception.Log(); }
 
-		[NotNull]
-		[DebuggerStepThrough]
-		public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
+            return false;
+        }
 
-		[NotNull]
-		[DebuggerStepThrough]
-		public static String EncodeSection( [NotNull] String section ) {
-			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+        [NotNull]
+        [DebuggerStepThrough]
+        public static String EncodePair(KeyValuePair<String, String> pair) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
 
-			return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
-		}
+        [NotNull]
+        [DebuggerStepThrough]
+        public static String EncodeSection([NotNull] String section) {
+            if (section == null) { throw new ArgumentNullException(nameof(section)); }
 
-		/// <summary>
-		///     (Trims whitespaces from section, key, and value.)
-		/// </summary>
-		/// <param name="section"></param>
-		/// <param name="kvp">    </param>
-		/// <returns></returns>
-		public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
-			if ( String.IsNullOrWhiteSpace( section ) ) { throw new ArgumentException( "Argument is null or whitespace", nameof( section ) ); }
+            return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
+        }
 
-			section = section.Trim();
+        /// <summary>
+        ///     (Trims whitespaces from section, key, and value.)
+        /// </summary>
+        /// <param name="section"></param>
+        /// <param name="kvp">    </param>
+        /// <returns></returns>
+        public Boolean Add(String section, KeyValuePair<String, String> kvp) {
+            if (String.IsNullOrWhiteSpace(section)) { throw new ArgumentException("Argument == null or whitespace", nameof(section)); }
 
-			var retries = 10;
-			TryAgain:
+            section = section.Trim();
 
-			lock ( this.Data ) {
-				if ( !this.Data.ContainsKey( section ) ) { this.Data[ section ] = new ConcurrentDictionary<String, String>(); }
-			}
+            var retries = 10;
+            TryAgain:
 
-			try {
-				this.Data[ section ][ kvp.Key.Trim() ] = kvp.Value.Trim();
+            lock (this.Data) {
+                if (!this.Data.ContainsKey(section)) { this.Data[section] = new ConcurrentDictionary<String, String>(); }
+            }
 
-				return null == this.AutoSaveDocument || this.Save( this.AutoSaveDocument );
-			}
-			catch ( KeyNotFoundException exception ) {
-				retries--;
+            try {
+                this.Data[section][kvp.Key.Trim()] = kvp.Value.Trim();
 
-				if ( retries.Any() ) { goto TryAgain; }
+                return null == this.AutoSaveDocument || this.Save(this.AutoSaveDocument);
+            }
+            catch (KeyNotFoundException exception) {
+                retries--;
 
-				exception.Log();
-			}
+                if (retries.Any()) { goto TryAgain; }
 
-			return false;
-		}
+                exception.Log();
+            }
 
-		public Boolean Add( [NotNull] Document document ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+            return false;
+        }
 
-			if ( !document.Exists() ) { return false; }
+        public Boolean Add([NotNull] Document document) {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-			try {
-				var lines = File.ReadLines( document.FullPathWithFileName ).Where( line => !String.IsNullOrWhiteSpace( line ) );
+            if (!document.Exists()) { return false; }
 
-				//.ToList();
+            try {
+                var lines = File.ReadLines(document.FullPathWithFileName).Where(line => !String.IsNullOrWhiteSpace(line));
 
-				return this.Add( lines );
-			}
-			catch ( IOException exception ) {
+                //.ToList();
 
-				//file in use by another app
-				exception.Log();
+                return this.Add(lines);
+            }
+            catch (IOException exception) {
 
-				return false;
-			}
-			catch ( OutOfMemoryException exception ) {
+                //file in use by another app
+                exception.Log();
 
-				//file is huge
-				exception.Log();
+                return false;
+            }
+            catch (OutOfMemoryException exception) {
 
-				return false;
-			}
-		}
+                //file is huge
+                exception.Log();
 
-		public Boolean Add( String text ) {
-			text = text.Replace( Environment.NewLine, "\n" );
+                return false;
+            }
+        }
 
-			var lines = text.Split( new[] {
-				'\n'
-			}, StringSplitOptions.RemoveEmptyEntries );
+        public Boolean Add(String text) {
+            text = text.Replace(Environment.NewLine, "\n");
 
-			return this.Add( lines );
-		}
+            var lines = text.Split(new[] {
+                '\n'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
-		public Boolean Add( [NotNull] IEnumerable<String> lines ) {
-			if ( lines is null ) { throw new ArgumentNullException( nameof( lines ) ); }
+            return this.Add(lines);
+        }
 
-			var counter = 0;
-			var section = String.Empty;
+        public Boolean Add([NotNull] IEnumerable<String> lines) {
+            if (lines == null) { throw new ArgumentNullException(nameof(lines)); }
 
-			foreach ( var line in lines.Where( s => !s.IsNullOrEmpty() ).Select( aline => aline.Trim() ).Where( line => !line.IsNullOrWhiteSpace() ) ) {
-				if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
-					section = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trim();
+            var counter = 0;
+            var section = String.Empty;
 
-					continue;
-				}
+            foreach (var line in lines.Where(s => !s.IsNullOrEmpty()).Select(aline => aline.Trim()).Where(line => !line.IsNullOrWhiteSpace())) {
+                if (line.StartsWith(SectionBegin) && line.EndsWith(SectionEnd)) {
+                    section = line.Substring(SectionBegin.Length, line.Length - (SectionBegin.Length + SectionEnd.Length)).Trim();
 
-				if ( line.Contains( PairSeparator ) ) {
-					var pos = line.IndexOf( PairSeparator, StringComparison.Ordinal );
-					var key = line.Substring( 0, pos ).Trim();
-					var value = line.Substring( pos + PairSeparator.Length );
+                    continue;
+                }
 
-					if ( this.Add( section, new KeyValuePair<String, String>( key, value ) ) ) { counter++; }
-				}
-			}
+                if (line.Contains(PairSeparator)) {
+                    var pos = line.IndexOf(PairSeparator, StringComparison.Ordinal);
+                    var key = line.Substring(0, pos).Trim();
+                    var value = line.Substring(pos + PairSeparator.Length);
 
-			return counter.Any();
-		}
+                    if (this.Add(section, new KeyValuePair<String, String>(key, value))) { counter++; }
+                }
+            }
 
-		/// <summary>
-		///     Return the entire structure as a JSON formatted String.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public String AsJSON() {
-			var tempDocument = Document.GetTempDocument();
+            return counter.Any();
+        }
 
-			var writer = File.CreateText( tempDocument.FullPathWithFileName );
+        /// <summary>
+        ///     Return the entire structure as a JSON formatted String.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public String AsJSON() {
+            var tempDocument = Document.GetTempDocument();
 
-			using ( JsonWriter jw = new JsonTextWriter( writer ) ) {
-				jw.Formatting = Formatting.Indented;
-				var serializer = new JsonSerializer();
-				serializer.Serialize( jw, this.Data );
-			}
+            var writer = File.CreateText(tempDocument.FullPathWithFileName);
 
-			var text = File.ReadAllText( tempDocument.FullPathWithFileName );
+            using (JsonWriter jw = new JsonTextWriter(writer)) {
+                jw.Formatting = Formatting.Indented;
+                var serializer = new JsonSerializer();
+                serializer.Serialize(jw, this.Data);
+            }
 
-			return text;
-		}
+            var text = File.ReadAllText(tempDocument.FullPathWithFileName);
 
-		/// <summary>
-		///     Removes all data from all sections.
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Clear() {
-			Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
+            return text;
+        }
 
-			return !this.Data.Keys.Any();
-		}
+        /// <summary>
+        ///     Removes all data from all sections.
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Clear() {
+            Parallel.ForEach(this.Data.Keys, section => this.TryRemove(section));
 
-		/// <summary>
-		///     Save the data to the specified document, overwriting it by default.
-		/// </summary>
-		/// <param name="document"> </param>
-		/// <param name="overwrite"></param>
-		/// <returns></returns>
-		public Boolean Save( [NotNull] Document document, Boolean overwrite = true ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+            return !this.Data.Keys.Any();
+        }
 
-			if ( document.Exists() ) {
-				if ( overwrite ) { document.Delete(); }
-				else { return false; }
-			}
+        /// <summary>
+        ///     Save the data to the specified document, overwriting it by default.
+        /// </summary>
+        /// <param name="document"> </param>
+        /// <param name="overwrite"></param>
+        /// <returns></returns>
+        public Boolean Save([NotNull] Document document, Boolean overwrite = true) {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-			foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) { this.WriteSection( document, section ); }
+            if (document.Exists()) {
+                if (overwrite) { document.Delete(); }
+                else { return false; }
+            }
 
-			return true;
-		}
+            foreach (var section in this.Data.Keys.OrderBy(section => section)) { this.WriteSection(document, section); }
 
-		/// <summary>
-		///     Save the data to the specified document, overwriting it by default.
-		/// </summary>
-		/// <param name="document"> </param>
-		/// <param name="overwrite"></param>
-		/// <returns></returns>
-		public async Task<Boolean> SaveAsync( [NotNull] Document document, Boolean overwrite = true ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
+            return true;
+        }
 
-			if ( document.Exists() ) {
-				if ( overwrite ) { document.Delete(); }
-				else { return false; }
-			}
+        /// <summary>
+        ///     Save the data to the specified document, overwriting it by default.
+        /// </summary>
+        /// <param name="document"> </param>
+        /// <param name="overwrite"></param>
+        /// <returns></returns>
+        public async Task<Boolean> SaveAsync([NotNull] Document document, Boolean overwrite = true) {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-			foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) { await this.WriteSectionAsync( document, section ); }
+            if (document.Exists()) {
+                if (overwrite) { document.Delete(); }
+                else { return false; }
+            }
 
-			return false;
-		}
+            foreach (var section in this.Data.Keys.OrderBy(section => section)) { await this.WriteSectionAsync(document, section); }
 
-		[DebuggerStepThrough]
-		public Boolean TryRemove( [NotNull] String section ) {
-			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+            return false;
+        }
 
-			return this.Data.TryRemove( section, out var dict );
-		}
+        [DebuggerStepThrough]
+        public Boolean TryRemove([NotNull] String section) {
+            if (section == null) { throw new ArgumentNullException(nameof(section)); }
 
-		[DebuggerStepThrough]
-		public Boolean TryRemove( [NotNull] String section, String key ) {
-			if ( section is null ) { throw new ArgumentNullException( nameof( section ) ); }
+            return this.Data.TryRemove(section, out var dict);
+        }
 
-			if ( !this.Data.ContainsKey( section ) ) { return false; }
+        [DebuggerStepThrough]
+        public Boolean TryRemove([NotNull] String section, String key) {
+            if (section == null) { throw new ArgumentNullException(nameof(section)); }
 
-			return this.Data[ section ].TryRemove( key, out var value );
-		}
-	}
+            if (!this.Data.ContainsKey(section)) { return false; }
+
+            return this.Data[section].TryRemove(key, out var value);
+        }
+    }
 }

@@ -41,237 +41,231 @@
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Maths;
-	using Newtonsoft.Json;
-	using Numerics;
-	using Parsing;
-
-	/// <summary>
-	///     <para>
-	///         Under the International System of Units, since 1967 the second has been defined as the duration of 9192631770
-	///         periods of the radiation corresponding to the transition between the two hyperfine levels of the ground
-	///         state of the caesium 133 atom.
-	///     </para>
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
-
-		/// <summary>
-		///     31536000
-		/// </summary>
-		public const UInt32 InOneCommonYear = 31536000;
-
-		/// <summary>
-		///     86400
-		/// </summary>
-		public const UInt32 InOneDay = 86400;
-
-		/// <summary>
-		///     3600
-		/// </summary>
-		public const UInt16 InOneHour = 3600;
-
-		/// <summary>
-		///     60
-		/// </summary>
-		public const Byte InOneMinute = 60;
-
-		/// <summary>
-		///     2635200 (30.5 days)
-		/// </summary>
-		public const UInt32 InOneMonth = 2635200;
-
-		/// <summary>
-		///     604800
-		/// </summary>
-		public const UInt32 InOneWeek = 604800;
-
-		/// <summary>
-		///     <see cref="Five" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Five { get; } = new Seconds( 5 );
-
-		/// <summary>
-		///     <see cref="One" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds One { get; } = new Seconds( 1 );
-
-		/// <summary>
-		///     <see cref="OnePointFive" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds OnePointFive { get; } = new Seconds( 1.5 );
-
-		/// <summary>
-		///     <see cref="Seven" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Seven { get; } = new Seconds( 7 );
-
-		/// <summary>
-		///     <see cref="Ten" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Ten { get; } = new Seconds( 10 );
-
-		/// <summary>
-		///     <see cref="Thirteen" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Thirteen { get; } = new Seconds( 13 );
-
-		/// <summary>
-		///     <see cref="Thirty" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Thirty { get; } = new Seconds( 30 );
+    using Extensions;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
+    using Parsing;
+    using System;
+    using System.Diagnostics;
+    using System.Numerics;
+
+    /// <summary>
+    ///     <para>
+    ///         Under the International System of Units, since 1967 the second has been defined as the duration of 9192631770
+    ///         periods of the radiation corresponding to the transition between the two hyperfine levels of the ground
+    ///         state of the caesium 133 atom.
+    ///     </para>
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [Immutable]
+    public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
+
+        /// <summary>
+        ///     31536000
+        /// </summary>
+        public const UInt32 InOneCommonYear = 31536000;
+
+        /// <summary>
+        ///     86400
+        /// </summary>
+        public const UInt32 InOneDay = 86400;
+
+        /// <summary>
+        ///     3600
+        /// </summary>
+        public const UInt16 InOneHour = 3600;
+
+        /// <summary>
+        ///     60
+        /// </summary>
+        public const Byte InOneMinute = 60;
+
+        /// <summary>
+        ///     2635200 (30.5 days)
+        /// </summary>
+        public const UInt32 InOneMonth = 2635200;
+
+        /// <summary>
+        ///     604800
+        /// </summary>
+        public const UInt32 InOneWeek = 604800;
+
+        /// <summary>
+        ///     <see cref="Five" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Five { get; } = new Seconds(5);
+
+        /// <summary>
+        ///     <see cref="One" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds One { get; } = new Seconds(1);
+
+        /// <summary>
+        ///     <see cref="OnePointFive" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds OnePointFive { get; } = new Seconds(1.5);
+
+        /// <summary>
+        ///     <see cref="Seven" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Seven { get; } = new Seconds(7);
+
+        /// <summary>
+        ///     <see cref="Ten" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Ten { get; } = new Seconds(10);
+
+        /// <summary>
+        ///     <see cref="Thirteen" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Thirteen { get; } = new Seconds(13);
 
-		/// <summary>
-		///     <see cref="Three" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Three { get; } = new Seconds( 3 );
+        /// <summary>
+        ///     <see cref="Thirty" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Thirty { get; } = new Seconds(30);
 
-		/// <summary>
-		///     <see cref="Twenty" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Twenty { get; } = new Seconds( 20 );
+        /// <summary>
+        ///     <see cref="Three" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Three { get; } = new Seconds(3);
 
-		/// <summary>
-		///     <see cref="Two" /><see cref="Seconds" />.
-		/// </summary>
-		public static Seconds Two { get; } = new Seconds( 2 );
+        /// <summary>
+        ///     <see cref="Twenty" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Twenty { get; } = new Seconds(20);
 
-		/// <summary>
-		/// </summary>
-		public static Seconds Zero { get; } = new Seconds( 0 );
+        /// <summary>
+        ///     <see cref="Two" /><see cref="Seconds" />.
+        /// </summary>
+        public static Seconds Two { get; } = new Seconds(2);
 
-		[JsonProperty]
-		public BigRational Value { get; }
+        /// <summary>
+        /// </summary>
+        public static Seconds Zero { get; } = new Seconds(0);
 
-		public Seconds( Decimal value ) => this.Value = value;
+        [JsonProperty]
+        public BigRational Value { get; }
 
-		public Seconds( BigRational value ) => this.Value = value;
+        public Seconds(Decimal value) => this.Value = value;
 
-		public Seconds( Int64 value ) => this.Value = value;
+        public Seconds(BigRational value) => this.Value = value;
 
-		public Seconds( BigInteger value ) => this.Value = value;
+        public Seconds(Int64 value) => this.Value = value;
 
-		public static Seconds Combine( Seconds left, Seconds right ) => Combine( left, right.Value );
+        public Seconds(BigInteger value) => this.Value = value;
 
-		public static Seconds Combine( Seconds left, BigRational seconds ) => new Seconds( left.Value + seconds );
+        public static Seconds Combine(Seconds left, Seconds right) => Combine(left, right.Value);
 
-		public static Seconds Combine( Seconds left, BigInteger seconds ) => new Seconds( ( BigInteger )left.Value + seconds );
+        public static Seconds Combine(Seconds left, BigRational seconds) => new Seconds(left.Value + seconds);
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( Seconds left, Seconds right ) => left.Value == right.Value;
+        public static Seconds Combine(Seconds left, BigInteger seconds) => new Seconds((BigInteger)left.Value + seconds);
 
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="seconds" /> to <see cref="Milliseconds" />.
-		/// </summary>
-		/// <param name="seconds"></param>
-		/// <returns></returns>
-		public static implicit operator Milliseconds( Seconds seconds ) => seconds.ToMilliseconds();
+        /// <summary>
+        ///     <para>static equality test</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals(Seconds left, Seconds right) => left.Value == right.Value;
 
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="seconds" /> to <see cref="Minutes" />.
-		/// </summary>
-		/// <param name="seconds"></param>
-		/// <returns></returns>
-		public static implicit operator Minutes( Seconds seconds ) => seconds.ToMinutes();
+        /// <summary>
+        ///     Implicitly convert the number of <paramref name="seconds" /> to <see cref="Milliseconds" />.
+        /// </summary>
+        /// <param name="seconds"></param>
+        /// <returns></returns>
+        public static implicit operator Milliseconds(Seconds seconds) => seconds.ToMilliseconds();
 
-		public static implicit operator SpanOfTime( Seconds seconds ) => new SpanOfTime( seconds: seconds );
+        /// <summary>
+        ///     Implicitly convert the number of <paramref name="seconds" /> to <see cref="Minutes" />.
+        /// </summary>
+        /// <param name="seconds"></param>
+        /// <returns></returns>
+        public static implicit operator Minutes(Seconds seconds) => seconds.ToMinutes();
 
-		/// <summary>
-		///     Returns a <see cref="TimeSpan" />
-		/// </summary>
-		/// <param name="seconds"></param>
-		public static implicit operator TimeSpan( Seconds seconds ) {
+        public static implicit operator SpanOfTime(Seconds seconds) => new SpanOfTime(seconds: seconds);
 
-			if ( seconds.Value >= ( Int64 )TimeSpan.MaxValue.TotalSeconds ) { return TimeSpan.MaxValue; }
+        /// <summary>
+        ///     Returns a <see cref="TimeSpan" />
+        /// </summary>
+        /// <param name="seconds"></param>
+        public static implicit operator TimeSpan(Seconds seconds) {
 
-			if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) { return TimeSpan.MinValue; }
+            if (seconds.Value >= (Int64)TimeSpan.MaxValue.TotalSeconds) { return TimeSpan.MaxValue; }
 
-			return TimeSpan.FromSeconds( ( Double )seconds.Value );
-		}
+            if (seconds.Value <= (Int64)TimeSpan.MinValue.TotalSeconds) { return TimeSpan.MinValue; }
 
-		public static Seconds operator -( Seconds seconds ) => new Seconds( seconds.Value * -1 );
+            return TimeSpan.FromSeconds((Double)seconds.Value);
+        }
 
-		public static Seconds operator -( Seconds left, Seconds right ) => Combine( left: left, right: -right );
+        public static Seconds operator -(Seconds seconds) => new Seconds(seconds.Value * -1);
 
-		public static Seconds operator -( Seconds left, Decimal seconds ) => Combine( left, -seconds );
+        public static Seconds operator -(Seconds left, Seconds right) => Combine(left: left, right: -right);
 
-		public static Boolean operator !=( Seconds left, Seconds right ) => !Equals( left, right );
+        public static Seconds operator -(Seconds left, Decimal seconds) => Combine(left, -seconds);
 
-		public static Seconds operator +( Seconds left, Seconds right ) => Combine( left, right );
+        public static Boolean operator !=(Seconds left, Seconds right) => !Equals(left, right);
 
-		public static Seconds operator +( Seconds left, Decimal seconds ) => Combine( left, seconds );
+        public static Seconds operator +(Seconds left, Seconds right) => Combine(left, right);
 
-		public static Seconds operator +( Seconds left, BigInteger seconds ) => Combine( left, seconds );
+        public static Seconds operator +(Seconds left, Decimal seconds) => Combine(left, seconds);
 
-		public static Boolean operator <( Seconds left, Seconds right ) => left.Value < right.Value;
+        public static Seconds operator +(Seconds left, BigInteger seconds) => Combine(left, seconds);
 
-		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds )right;
+        public static Boolean operator <(Seconds left, Seconds right) => left.Value < right.Value;
 
-		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes )left < right;
+        public static Boolean operator <(Seconds left, Milliseconds right) => left < (Seconds)right;
 
-		public static Boolean operator ==( Seconds left, Seconds right ) {
-			if ( left == null ) { throw new ArgumentNullException( paramName: nameof( left ) ); }
+        public static Boolean operator <(Seconds left, Minutes right) => (Minutes)left < right;
 
-			if ( right == null ) { throw new ArgumentNullException( paramName: nameof( right ) ); }
+        public static Boolean operator ==(Seconds left, Seconds right) {
+            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
 
-			return Equals( left, right );
-		}
+            if (right == null) { throw new ArgumentNullException(paramName: nameof(right)); }
 
-		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes )left > right;
+            return Equals(left, right);
+        }
 
-		public static Boolean operator >( Seconds left, Seconds right ) => left.Value > right.Value;
+        public static Boolean operator >(Seconds left, Minutes right) => (Minutes)left > right;
 
-		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds )right;
+        public static Boolean operator >(Seconds left, Seconds right) => left.Value > right.Value;
 
-		public Int32 CompareTo( Seconds other ) => this.Value.CompareTo( other.Value );
+        public static Boolean operator >(Seconds left, Milliseconds right) => left > (Seconds)right;
 
-		public Boolean Equals( Seconds other ) => Equals( this, other );
+        public Int32 CompareTo(Seconds other) => this.Value.CompareTo(other.Value);
 
-		public override Boolean Equals( Object obj ) => obj is Seconds seconds && this.Equals( seconds );
+        public Boolean Equals(Seconds other) => Equals(this, other);
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Boolean Equals(Object obj) => obj is Seconds seconds && this.Equals(seconds);
 
-		[Pure]
-		public Milliseconds ToMilliseconds() => new Milliseconds( this.Value * Milliseconds.InOneSecond );
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		[Pure]
-		public Minutes ToMinutes() => new Minutes( this.Value / InOneMinute );
+        public Milliseconds ToMilliseconds() => new Milliseconds(this.Value * Milliseconds.InOneSecond);
 
-		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneSecond * this.Value );
+        public Minutes ToMinutes() => new Minutes(this.Value / InOneMinute);
 
-		[Pure]
-		public Seconds ToSeconds() => new Seconds( this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(PlanckTimes.InOneSecond * this.Value);
 
-		[Pure]
-		public override String ToString() {
-			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.GetWholePart();
+        public Seconds ToSeconds() => new Seconds(this.Value);
 
-				return $"{whole} {whole.PluralOf( "second" )}";
-			}
+        public override String ToString() {
+            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.GetWholePart();
 
-			var dec = ( Decimal )this.Value;
+                return $"{whole} {whole.PluralOf("second")}";
+            }
 
-			return $"{dec} {dec.PluralOf( "second" )}";
-		}
+            var dec = (Decimal)this.Value;
 
-		[Pure]
-		public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
+            return $"{dec} {dec.PluralOf("second")}";
+        }
 
-		[Pure]
-		public Years ToYears() => new Years( this.Value / InOneCommonYear );
-	}
+        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+
+        public Weeks ToWeeks() => new Weeks(this.Value / InOneWeek);
+
+        public Years ToYears() => new Years(this.Value / InOneCommonYear);
+    }
 }

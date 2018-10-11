@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "NetworkBrowser.cs" was last formatted by Protiguous on 2018/07/10 at 9:10 PM.
+// Project: "Librainian", "NetworkBrowser.cs" was last formatted by Protiguous on 2018/08/23 at 7:41 PM.
 
 namespace Librainian.Internet {
 
@@ -132,7 +132,7 @@ namespace Librainian.Internet {
 						//Must ensure to use correct size of
 						//STRUCTURE to ensure correct
 						//location in memory is pointed to
-						var tmpBuffer = new IntPtr( ( Int32 ) buffer + i * sizeofInfo );
+						var tmpBuffer = new IntPtr( ( Int32 )buffer + i * sizeofInfo );
 
 						//Have now got a pointer to the list
 						//of SV_TYPE_WORKSTATION and
@@ -145,7 +145,7 @@ namespace Librainian.Internet {
 						var svrInfo = Marshal.PtrToStructure( tmpBuffer, typeof( NativeMethods.ServerInfo101 ) );
 
 						//add the PC names to the ArrayList
-						networkComputers.Add( ( NativeMethods.ServerInfo101 ) svrInfo );
+						networkComputers.Add( ( NativeMethods.ServerInfo101 )svrInfo );
 					}
 				}
 			}
@@ -191,10 +191,10 @@ namespace Librainian.Internet {
 					for ( var i = 0; i < entriesread; i++ ) {
 
 						// cast pointer to a SERVER_INFO_101 structure
-						var server = ( NativeMethods.ServerInfo101 ) Marshal.PtrToStructure( ptr, typeof( NativeMethods.ServerInfo101 ) );
+						var server = ( NativeMethods.ServerInfo101 )Marshal.PtrToStructure( ptr, typeof( NativeMethods.ServerInfo101 ) );
 
 						//Cast the pointer to a UInt64 so this addition will work on 32-bit or 64-bit systems.
-						ptr = ( IntPtr ) ( ( UInt64 ) ptr + ( UInt64 ) Marshal.SizeOf( server ) );
+						ptr = ( IntPtr )( ( UInt64 )ptr + ( UInt64 )Marshal.SizeOf( server ) );
 
 						// add the machine name and comment to the arrayList.
 						//You could return the entire structure here if desired

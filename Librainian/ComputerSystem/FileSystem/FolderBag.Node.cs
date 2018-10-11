@@ -39,68 +39,73 @@
 //
 // Project: "Librainian", "FolderBag.Node.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
 
-namespace Librainian.ComputerSystem.FileSystem {
+namespace Librainian.ComputerSystem.FileSystem
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
-	public partial class FolderBag {
+    public partial class FolderBag
+    {
 
-		[JsonObject]
-		[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-		public class Node : IEquatable<Node>, IComparable<Node> {
+        [JsonObject]
+        [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+        public class Node : IEquatable<Node>, IComparable<Node>
+        {
 
-			public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
+            [JsonProperty]
+            public String Data { get; }
 
-			public Boolean Equals( Node other ) => Equals( this, other );
+            public Boolean IsEmpty => !this.SubFolders.Any();
 
-			[JsonProperty]
-			public String Data { get; }
+            [JsonProperty]
+            public Node Parent { get; }
 
-			public Boolean IsEmpty => !this.SubFolders.Any();
+            [JsonProperty]
+            public List<Node> SubFolders { get; } = new List<Node>();
 
-			[JsonProperty]
-			public Node Parent { get; }
+            public Node(String data) => this.Data = data;
 
-			[JsonProperty]
-			public List<Node> SubFolders { get; } = new List<Node>();
+            public Node(String data, Node parent)
+            {
+                this.Data = data;
+                this.Parent = parent;
+            }
 
-			public Node( String data ) => this.Data = data;
+            /// <summary>
+            ///     Static equality check
+            /// </summary>
+            /// <param name="left"></param>
+            /// <param name="rhs"> </param>
+            /// <returns></returns>
+            public static Boolean Equals(Node left, Node rhs)
+            {
+                if (ReferenceEquals(left, rhs)) { return true; }
 
-			public Node( String data, Node parent ) {
-				this.Data = data;
-				this.Parent = parent;
-			}
+                if (left == null || rhs == null) { return false; }
 
-			/// <summary>
-			///     Static equality check
-			/// </summary>
-			/// <param name="left"></param>
-			/// <param name="rhs"> </param>
-			/// <returns></returns>
-			public static Boolean Equals( Node left, Node rhs ) {
-				if ( ReferenceEquals( left, rhs ) ) { return true; }
+                return String.Equals(left.Data, rhs.Data, StringComparison.Ordinal);
+            }
 
-				if ( left is null || rhs is null ) { return false; }
+            public Int32 CompareTo([NotNull] Node other) => String.Compare(this.Data, other.Data, StringComparison.Ordinal);
 
-				return String.Equals( left.Data, rhs.Data, StringComparison.Ordinal );
-			}
+            public Boolean Equals(Node other) => Equals(this, other);
 
-			//public override Boolean Equals( Object obj ) {
-			//    var bob = obj as Node;
-			//    if ( null == bob ) {
-			//        return false;
-			//    }
-			//    return Equals( this, bob );
-			//}
+            //public override Boolean Equals( Object obj ) {
+            //    var bob = obj as Node;
+            //    if ( null == bob ) {
+            //        return false;
+            //    }
+            //    return Equals( this, bob );
+            //}
 
-			public override Int32 GetHashCode() => this.Data.GetHashCode();
+            public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-			public override String ToString() => this.Data;
-		}
-	}
+            public override String ToString() => this.Data;
+        }
+    }
 }

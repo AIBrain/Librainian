@@ -41,82 +41,71 @@
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using System.Linq;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>A simple struct for an <see cref="Hour" />.</para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public struct Hour : IClockPart {
+    /// <summary>
+    ///     <para>A simple struct for an <see cref="Hour" />.</para>
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public struct Hour : IClockPart {
 
-		public static readonly Byte[] ValidHours = Enumerable.Range( start: 0, count: Hours.InOneDay ).Select( i => ( Byte ) i ).OrderBy( b => b ).ToArray();
+        [JsonProperty]
+        public readonly Byte Value;
 
-		[JsonProperty]
-		public readonly Byte Value;
+        public static Hour Maximum { get; } = new Hour( 1 );
 
-		public static Hour Maximum { get; } = new Hour( MaximumValue );
+        public static Hour Minimum { get; } = new Hour( Hours.InOneDay );
 
-		/// <summary>
-		///     should be 23
-		/// </summary>
-		public static Byte MaximumValue { get; } = ValidHours.Max();
+        public Hour( Byte value ) {
+            if ( value < Minimum || value > Maximum ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
 
-		public static Hour Minimum { get; } = new Hour( MinimumValue );
+            this.Value = value;
+        }
 
-		/// <summary>
-		///     should be 0
-		/// </summary>
-		public static Byte MinimumValue { get; } = ValidHours.Min();
+        /// <summary>
+        ///     Allow this class to be visibly cast to a <see cref="SByte" />.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static explicit operator SByte( Hour value ) => ( SByte ) value.Value;
 
-		public Hour( Byte value ) {
-			if ( !ValidHours.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." ); }
+        public static implicit operator Byte( Hour value ) => value.Value;
 
-			this.Value = value;
-		}
+        public static implicit operator Hour( Byte value ) => new Hour( value );
 
-		/// <summary>
-		///     Allow this class to be visibly cast to a <see cref="SByte" />.
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static explicit operator SByte( Hour value ) => ( SByte ) value.Value;
+        /// <summary>
+        ///     Provide the next <see cref="Hour" />.
+        /// </summary>
+        public Hour Next( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value + 1;
 
-		public static implicit operator Byte( Hour value ) => value.Value;
+            if ( next > Maximum ) {
+                next = Minimum;
+                tocked = true;
+            }
 
-		public static implicit operator Hour( Byte value ) => new Hour( value );
+            return ( Byte ) next;
+        }
 
-		/// <summary>
-		///     Provide the next <see cref="Hour" />.
-		/// </summary>
-		public Hour Next( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value + 1;
+        /// <summary>
+        ///     Provide the previous <see cref="Hour" />.
+        /// </summary>
+        public Hour Previous( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value - 1;
 
-			if ( next > MaximumValue ) {
-				next = MinimumValue;
-				tocked = true;
-			}
+            if ( next < Minimum ) {
+                next = Maximum;
+                tocked = true;
+            }
 
-			return ( Byte ) next;
-		}
+            return ( Byte ) next;
+        }
 
-		/// <summary>
-		///     Provide the previous <see cref="Hour" />.
-		/// </summary>
-		public Hour Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value - 1;
+    }
 
-			if ( next < MinimumValue ) {
-				next = MaximumValue;
-				tocked = true;
-			}
-
-			return ( Byte ) next;
-		}
-	}
 }

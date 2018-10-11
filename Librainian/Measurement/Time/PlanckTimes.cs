@@ -41,174 +41,168 @@
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Numerics;
+    using Newtonsoft.Json;
+    using Numerics;
+    using System;
+    using System.Diagnostics;
+    using System.Numerics;
 
-	/// <summary>
-	///     <para>
-	///         In physics, the Planck time (tP) is the unit of time in the system of natural units known as Planck units.
-	///     </para>
-	///     <para>
-	///         It is the time required for light to travel, in a vacuum, a distance of 1 Planck length.
-	///     </para>
-	///     <para>The Planck time is defined as:</para>
-	///     <para>t_P \equiv \sqrt{\frac{\hbar G}{c^5}} ≈ 5.39106(32) × 10−44 s</para>
-	///     <para>
-	///         where: \hbar = h / 2 \pi is the reduced Planck constant (sometimes h is used instead of
-	///         \hbar in the definition[1]) G = gravitational constant c = speed of light in a vacuum
-	///         s is the SI unit of time, the second. The two digits between parentheses denote the
-	///         standard error of the estimated value.
-	///     </para>
-	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/Planck_time" />
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
+    /// <summary>
+    ///     <para>
+    ///         In physics, the Planck time (tP) is the unit of time in the system of natural units known as Planck units.
+    ///     </para>
+    ///     <para>
+    ///         It is the time required for light to travel, in a vacuum, a distance of 1 Planck length.
+    ///     </para>
+    ///     <para>The Planck time is defined as:</para>
+    ///     <para>t_P \equiv \sqrt{\frac{\hbar G}{c^5}} ≈ 5.39106(32) × 10−44 s</para>
+    ///     <para>
+    ///         where: \hbar = h / 2 \pi is the reduced Planck constant (sometimes h is used instead of
+    ///         \hbar in the definition[1]) G = gravitational constant c = speed of light in a vacuum
+    ///         s is the SI unit of time, the second. The two digits between parentheses denote the
+    ///         standard error of the estimated value.
+    ///     </para>
+    /// </summary>
+    /// <see cref="http://wikipedia.org/wiki/Planck_time" />
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [JsonObject]
+    public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
 
-		public const Double InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
+        public const Double InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
 
-		public const Double InOneDay = InOneSecond * Seconds.InOneDay;
+        public const Double InOneDay = InOneSecond * Seconds.InOneDay;
 
-		public const Double InOneFemtosecond = InOnePicosecond / Femtoseconds.InOnePicosecond;
+        public const Double InOneFemtosecond = InOnePicosecond / Femtoseconds.InOnePicosecond;
 
-		public const Double InOneHour = InOneSecond * Seconds.InOneHour;
+        public const Double InOneHour = InOneSecond * Seconds.InOneHour;
 
-		public const Double InOneMicrosecond = InOneMillisecond / Microseconds.InOneMillisecond;
+        public const Double InOneMicrosecond = InOneMillisecond / Microseconds.InOneMillisecond;
 
-		public const Double InOneMillisecond = InOneSecond / Milliseconds.InOneSecond;
+        public const Double InOneMillisecond = InOneSecond / Milliseconds.InOneSecond;
 
-		public const Double InOneMinute = InOneSecond * Seconds.InOneMinute;
+        public const Double InOneMinute = InOneSecond * Seconds.InOneMinute;
 
-		public const Double InOneMonth = InOneSecond * Seconds.InOneMonth;
+        public const Double InOneMonth = InOneSecond * Seconds.InOneMonth;
 
-		public const Double InOneNanosecond = InOneMicrosecond / Nanoseconds.InOneMicrosecond;
+        public const Double InOneNanosecond = InOneMicrosecond / Nanoseconds.InOneMicrosecond;
 
-		public const Double InOnePicosecond = InOneNanosecond / Picoseconds.InOneNanosecond;
+        public const Double InOnePicosecond = InOneNanosecond / Picoseconds.InOneNanosecond;
 
-		/// <summary>
-		///     <para>18550948324478400000 (where did I get this number??? It's so.. specific?)</para>
-		/// </summary>
-		public const Double InOneSecond = 18550948324478E30;
+        /// <summary>
+        ///     <para>18550948324478400000 (where did I get this number??? It's so.. specific?)</para>
+        /// </summary>
+        public const Double InOneSecond = 18550948324478E30;
 
-		public const Double InOneWeek = InOneSecond * Seconds.InOneWeek;
+        public const Double InOneWeek = InOneSecond * Seconds.InOneWeek;
 
-		public const Double InOneYear = InOneSecond * Seconds.InOneCommonYear;
+        public const Double InOneYear = InOneSecond * Seconds.InOneCommonYear;
 
-		public const Double InOneYoctosecond = InOneZeptosecond / Yoctoseconds.InOneZeptosecond;
+        public const Double InOneYoctosecond = InOneZeptosecond / Yoctoseconds.InOneZeptosecond;
 
-		public const Double InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
+        public const Double InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
 
-		/// <summary>
-		///     One <see cref="PlanckTimes" />.
-		/// </summary>
-		public static PlanckTimes One { get; } = new PlanckTimes( 1 );
+        /// <summary>
+        ///     One <see cref="PlanckTimes" />.
+        /// </summary>
+        public static PlanckTimes One { get; } = new PlanckTimes(1);
 
-		/// <summary>
-		///     Two <see cref="PlanckTimes" />.
-		/// </summary>
-		public static PlanckTimes Two { get; } = new PlanckTimes( 2 );
+        /// <summary>
+        ///     Two <see cref="PlanckTimes" />.
+        /// </summary>
+        public static PlanckTimes Two { get; } = new PlanckTimes(2);
 
-		/// <summary>
-		///     Zero <see cref="PlanckTimes" />.
-		/// </summary>
-		public static PlanckTimes Zero { get; } = new PlanckTimes( 0 );
+        /// <summary>
+        ///     Zero <see cref="PlanckTimes" />.
+        /// </summary>
+        public static PlanckTimes Zero { get; } = new PlanckTimes(0);
 
-		[JsonProperty]
-		public BigInteger Value { get; }
+        [JsonProperty]
+        public BigInteger Value { get; }
 
-		public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) { }
+        public PlanckTimes(Int64 value) : this((BigInteger)value) { }
 
-		public PlanckTimes( BigRational value ) : this( value.GetWholePart() ) { }
+        public PlanckTimes(BigRational value) : this(value.GetWholePart()) { }
 
-		public PlanckTimes( BigInteger value ) => this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
+        public PlanckTimes(BigInteger value) => this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
 
-		public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
+        public PlanckTimes(Seconds seconds) : this(seconds.ToPlanckTimes().Value) { }
 
-		public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
+        public PlanckTimes(Years years) : this(years.ToPlanckTimes().Value) { }
 
-		public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
-			if ( left == null ) { throw new ArgumentNullException( paramName: nameof( left ) ); }
+        public static PlanckTimes Combine(PlanckTimes left, PlanckTimes right) {
+            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
 
-			if ( right == null ) { throw new ArgumentNullException( paramName: nameof( right ) ); }
+            if (right == null) { throw new ArgumentNullException(paramName: nameof(right)); }
 
-			return new PlanckTimes( left.Value + right.Value );
-		}
+            return new PlanckTimes(left.Value + right.Value);
+        }
 
-		public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) {
-			if ( left == null ) { throw new ArgumentNullException( paramName: nameof( left ) ); }
+        public static PlanckTimes Combine(PlanckTimes left, BigInteger planckTimes) {
+            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
 
-			return new PlanckTimes( left.Value + planckTimes );
-		}
+            return new PlanckTimes(left.Value + planckTimes);
+        }
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
+        /// <summary>
+        ///     <para>static equality test</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals(PlanckTimes left, PlanckTimes right) => left.Value == right.Value;
 
-		public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
+        public static implicit operator SpanOfTime(PlanckTimes planckTimes) => new SpanOfTime(planckTimes);
 
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.
-		/// </summary>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) {
-			if ( planckTimes == null ) { throw new ArgumentNullException( paramName: nameof( planckTimes ) ); }
+        /// <summary>
+        ///     Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.
+        /// </summary>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static implicit operator Yoctoseconds(PlanckTimes planckTimes) => ToYoctoseconds(planckTimes);
 
-			return ToYoctoseconds( planckTimes );
-		}
+        public static PlanckTimes operator -(PlanckTimes left, BigInteger planckTimes) => Combine(left, -planckTimes);
 
-		public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
+        public static Boolean operator !=(PlanckTimes left, PlanckTimes right) => !Equals(left, right);
 
-		public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) => !Equals( left, right );
+        public static PlanckTimes operator +(PlanckTimes left, PlanckTimes right) => Combine(left, right);
 
-		public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) => Combine( left, right );
+        public static PlanckTimes operator +(PlanckTimes left, BigInteger planckTimes) => Combine(left, planckTimes);
 
-		public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) => Combine( left, planckTimes );
+        public static Boolean operator <(PlanckTimes left, PlanckTimes right) => left.Value < right.Value;
 
-		public static Boolean operator <( PlanckTimes left, PlanckTimes right ) => left.Value < right.Value;
+        public static Boolean operator <=(PlanckTimes left, PlanckTimes right) => left.Value <= right.Value;
 
-		public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) => Equals( left, right );
+        public static Boolean operator ==(PlanckTimes left, PlanckTimes right) => Equals(left, right);
 
-		public static Boolean operator >( PlanckTimes left, PlanckTimes right ) => left.Value > right.Value;
+        public static Boolean operator >(PlanckTimes left, PlanckTimes right) => left.Value > right.Value;
 
-		/// <summary>
-		///     <para>Convert to a larger unit.</para>
-		/// </summary>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) {
-			if ( planckTimes == null ) { throw new ArgumentNullException( paramName: nameof( planckTimes ) ); }
+        public static Boolean operator >=(PlanckTimes left, PlanckTimes right) => left.Value >= right.Value;
 
-			return new Yoctoseconds( planckTimes.Value / ( BigInteger )InOneYoctosecond );
-		}
+        /// <summary>
+        ///     <para>Convert to a larger unit.</para>
+        /// </summary>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static Yoctoseconds ToYoctoseconds(PlanckTimes planckTimes) => new Yoctoseconds(planckTimes.Value / (BigInteger)InOneYoctosecond);
 
-		[Pure]
-		public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo(PlanckTimes other) => this.Value.CompareTo(other.Value);
 
-		public Boolean Equals( PlanckTimes other ) => Equals( this, other );
+        public Boolean Equals(PlanckTimes other) => Equals(this, other);
 
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) { return false; }
+        public override Boolean Equals(Object obj) {
+            if (obj == null) { return false; }
 
-			return obj is PlanckTimes times && this.Equals( times );
-		}
+            return obj is PlanckTimes times && this.Equals(times);
+        }
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value );
+        public PlanckTimes ToPlanckTimes() => this;
 
-		public Seconds ToSeconds() => new Seconds( this.Value * ( BigInteger )InOneSecond );
+        public Seconds ToSeconds() => new Seconds(this.Value * (BigInteger)InOneSecond);
 
-		[Pure]
-		public override String ToString() => $"{this.Value} tP";
-	}
+        public override String ToString() => $"{this.Value} tP";
+
+        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+    }
 }

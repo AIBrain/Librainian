@@ -41,118 +41,110 @@
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using Collections;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Parsing;
-	using Threading;
+    using Collections;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Parsing;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Threading;
 
-	/// <summary>
-	///     Persist a list to and from a JSON formatted text document.
-	/// </summary>
-	[JsonObject]
-	public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
+    /// <summary>
+    ///     Persist a list to and from a JSON formatted text document.
+    /// </summary>
+    [JsonObject]
+    public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
 
-		/// <summary>
-		///     disallow constructor without a document/filename
-		/// </summary>
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		[NotNull]
-		public Document Document { get; set; }
+        /// <summary>
+        ///     disallow constructor without a document/filename
+        /// </summary>
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        [NotNull]
+        public Document Document { get; set; }
 
-		// ReSharper disable once NotNullMemberIsNotInitialized
-		private ConcurrentListFile() => throw new NotImplementedException();
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private ConcurrentListFile() => throw new NotImplementedException();
 
-		/// <summary>
-		///     Persist a dictionary to and from a JSON formatted text document.
-		/// </summary>
-		/// <param name="document"></param>
-		public ConcurrentListFile( [NotNull] Document document ) {
-			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
-			this.Read().Wait(); //TODO I don't like this here.
-		}
+        /// <summary>
+        ///     Persist a dictionary to and from a JSON formatted text document.
+        /// </summary>
+        /// <param name="document"></param>
+        public ConcurrentListFile([NotNull] Document document) {
+            this.Document = document ?? throw new ArgumentNullException(nameof(document));
+            this.Read().Wait(); //TODO I don't like this here.
+        }
 
-		/// <summary>
-		///     Persist a dictionary to and from a JSON formatted text document.
-		///     <para>Defaults to user\appdata\Local\productname\filename</para>
-		/// </summary>
-		/// <param name="filename"></param>
-		public ConcurrentListFile( [NotNull] String filename ) {
-			if ( filename.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( filename ) ); }
+        /// <summary>
+        ///     Persist a dictionary to and from a JSON formatted text document.
+        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
+        /// </summary>
+        /// <param name="filename"></param>
+        public ConcurrentListFile([NotNull] String filename) {
+            if (filename.IsNullOrWhiteSpace()) { throw new ArgumentNullException(nameof(filename)); }
 
-			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
+            var folder = new Folder(Environment.SpecialFolder.LocalApplicationData, Application.ProductName);
 
-			if ( !folder.Exists() ) { folder.Create(); }
+            if (!folder.Exists()) { folder.Create(); }
 
-			this.Document = new Document( folder, filename );
-			this.Read().Wait();
-		}
+            this.Document = new Document(folder, filename);
+            this.Read().Wait();
+        }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() {
-			this.Write().Wait();
-			base.DisposeManaged();
-		}
+        public async Task<Boolean> Read(CancellationToken cancellationToken = default) {
+            if (!this.Document.Exists()) { return false; }
 
-		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
-			if ( !this.Document.Exists() ) { return false; }
+            try {
+                var data = this.Document.LoadJSON<IEnumerable<TValue>>();
 
-			try {
-				var data = this.Document.LoadJSON<IEnumerable<TValue>>();
+                if (data != null) {
+                    await this.AddRangeTask(data).NoUI();
 
-				if ( data != null ) {
-					await this.AddRangeAsync( data ).NoUI();
+                    return true;
+                }
+            }
+            catch (JsonException exception) { exception.Log(); }
+            catch (IOException exception) {
 
-					return true;
-				}
-			}
-			catch ( JsonException exception ) { exception.Log(); }
-			catch ( IOException exception ) {
+                //file in use by another app
+                exception.Log();
+            }
+            catch (OutOfMemoryException exception) {
 
-				//file in use by another app
-				exception.Log();
-			}
-			catch ( OutOfMemoryException exception ) {
+                //file is huge
+                exception.Log();
+            }
 
-				//file is huge
-				exception.Log();
-			}
+            return false;
+        }
 
-			return false;
-		}
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override String ToString() => $"{this.Count} items";
 
-		/// <summary>
-		///     Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.Count} items";
+        /// <summary>
+        ///     Saves the data to the <see cref="Document" />.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<Boolean> Write(CancellationToken token = default) {
+            var document = this.Document;
 
-		/// <summary>
-		///     Saves the data to the <see cref="Document" />.
-		/// </summary>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		public async Task<Boolean> Write( CancellationToken token = default ) {
-			var document = this.Document;
+            return await Task.Run(() => {
+                if (!document.Folder.Exists()) { document.Folder.Create(); }
 
-			return await Task.Run( () => {
-				if ( !document.Folder.Exists() ) { document.Folder.Create(); }
+                if (document.Exists()) { document.Delete(); }
 
-				if ( document.Exists() ) { document.Delete(); }
-
-				return this.TrySave( document, true, Formatting.Indented );
-			}, token ).NoUI();
-		}
-	}
+                return this.TrySave(document, true, Formatting.Indented);
+            }, token).NoUI();
+        }
+    }
 }

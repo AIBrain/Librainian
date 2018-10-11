@@ -39,73 +39,78 @@
 //
 // Project: "Librainian", "Paragraph.cs" was last formatted by Protiguous on 2018/07/10 at 9:13 PM.
 
-namespace Librainian.Linguistics {
+namespace Librainian.Linguistics
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Text;
-	using Collections;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Parsing;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Parsing;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
 
-	/// <summary>
-	///     <para>A <see cref="Paragraph" /> is a sequence of <see cref="Sentence" /> .</para>
-	/// </summary>
-	/// <see cref="Page"></see>
-	[JsonObject]
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	[Serializable]
-	public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
+    /// <summary>
+    ///     <para>A <see cref="Paragraph" /> is a sequence of <see cref="Sentence" /> .</para>
+    /// </summary>
+    /// <see cref="Page"></see>
+    [JsonObject]
+    [Immutable]
+    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [Serializable]
+    public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
 
-		public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
+        [NotNull]
+        [JsonProperty]
+        private List<Sentence> Sentences {
+            get;
+        } = new List<Sentence>();
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static Paragraph Empty { get; } = new Paragraph();
 
-		public Boolean Equals( [CanBeNull] Paragraph other ) {
-			if ( other is null ) { return false; }
+        private Paragraph() { }
 
-			return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
-		}
+        /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
+        /// <param name="paragraph"></param>
+        public Paragraph([CanBeNull] String paragraph) : this(paragraph.ToSentences()) { }
 
-		[NotNull]
-		[JsonProperty]
-		private readonly List<Sentence> Sentences = new List<Sentence>();
+        /// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
+        /// <param name="sentences"></param>
+        public Paragraph([CanBeNull] IEnumerable<Sentence> sentences)
+        {
+            if (sentences != null) { this.Sentences.AddRange(sentences.Where(sentence => sentence != null)); }
 
-		public static Paragraph Empty { get; } = new Paragraph();
+            this.Sentences.TrimExcess();
+        }
 
-		private Paragraph() { }
+        [NotNull]
+        public static implicit operator String([NotNull] Paragraph paragraph) => paragraph.ToString();
 
-		/// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
-		/// <param name="paragraph"></param>
-		public Paragraph( [CanBeNull] String paragraph ) : this( paragraph.ToSentences() ) { }
+        public Boolean Equals([CanBeNull] Paragraph other)
+        {
+            if (other == null) { return false; }
 
-		/// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
-		/// <param name="sentences"></param>
-		public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
-			if ( sentences != null ) { this.Sentences.AddRange( sentences.Where( sentence => sentence != null ) ); }
+            return ReferenceEquals(this, other) || this.Sentences.SequenceEqual(other.Sentences);
+        }
 
-			this.Sentences.Fix();
-		}
+        public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
 
-		[NotNull]
-		public static implicit operator String( [NotNull] Paragraph paragraph ) => paragraph.ToString();
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this.Sentences.GetHashCode();
 
-		/// <summary>Serves as the default hash function. </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Sentences.GetHashCode();
+        public override String ToString()
+        {
+            var sb = new StringBuilder();
 
-		public override String ToString() {
-			var sb = new StringBuilder();
+            foreach (var sentence in this.Sentences) { sb.AppendLine(sentence.ToString()); }
 
-			foreach ( var sentence in this.Sentences ) { sb.AppendLine( sentence.ToString() ); }
+            return sb.ToString();
+        }
 
-			return sb.ToString();
-		}
-	}
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
 }

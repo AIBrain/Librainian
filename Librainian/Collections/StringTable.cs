@@ -41,85 +41,89 @@
 
 namespace Librainian.Collections {
 
-	using System;
-	using System.Collections.Generic;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Persistence;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Persistence;
+    using System;
+    using System.Collections.Generic;
 
-	[JsonObject]
-	public class StringTable {
+    [JsonObject]
+    public class StringTable {
 
-		[JsonProperty]
-		public PersistTable<UInt64, String> Ints { get; }
+        [JsonProperty]
+        public PersistTable<UInt64, String> Ints { get; }
 
-		[JsonProperty]
-		public PersistTable<String, UInt64> Words { get; }
+        [JsonProperty]
+        public PersistTable<String, UInt64> Words { get; }
 
-		/// <summary>
-		///     Get or set the <paramref name="key" /> for this word.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public UInt64 this[ [NotNull] String key ] {
-			get => this.Words.TryGetValue( key, out var result ) ? result : default;
+        /// <summary>
+        ///     Get or set the <paramref name="key" /> for this word.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public UInt64 this[[NotNull] String key] {
+            get => this.Words.TryGetValue(key, out var result) ? result : default;
 
-			set {
-				if ( String.IsNullOrEmpty( key ) ) { return; }
+            set {
+                if (String.IsNullOrEmpty(key)) { return; }
 
-				this.Words[ key ] = value;
-				this.Ints[ value ] = key;
-			}
-		}
+                this.Words[key] = value;
+                this.Ints[value] = key;
+            }
+        }
 
-		/// <summary>
-		///     Get or set the word for this guid.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public String this[ UInt64 key ] {
-			get => this.Ints[ key ];
+        /// <summary>
+        ///     Get or set the word for this guid.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public String this[UInt64 key] {
+            get => this.Ints[key];
 
-			set {
-				this.Words[ value ] = key;
-				this.Ints[ key ] = value;
-			}
-		}
+            set {
+                if (value != null) {
+                    this.Words[value] = key;
+                }
+                this.Ints[key] = value;
+            }
+        }
 
-		public StringTable( Folder commonName ) {
-			this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
-			this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
-		}
+        public StringTable([NotNull] Folder commonName) {
+            if (commonName == null) { throw new ArgumentNullException(paramName: nameof(commonName)); }
 
-		public void Clear() {
-			this.Words.Clear();
-			this.Ints.Clear();
-		}
+            this.Ints = new PersistTable<UInt64, String>(folder: new Folder(folder: commonName, subFolder: nameof(this.Ints)), testForReadWriteAccess: true);
+            this.Words = new PersistTable<String, UInt64>(folder: new Folder(folder: commonName, subFolder: nameof(this.Words)), testForReadWriteAccess: true);
+        }
 
-		/// <summary>
-		///     Returns true if the word is contained in the collections.
-		/// </summary>
-		/// <param name="word"></param>
-		/// <returns></returns>
-		public Boolean Contains( [CanBeNull] String word ) {
-			if ( String.IsNullOrEmpty( word ) ) { return false; }
+        public void Clear() {
+            this.Words.Clear();
+            this.Ints.Clear();
+        }
 
-			return this.Words.TryGetValue( word, out _ );
-		}
+        /// <summary>
+        ///     Returns true if the word is contained in the collections.
+        /// </summary>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public Boolean Contains([CanBeNull] String word) {
+            if (String.IsNullOrEmpty(word)) { return false; }
 
-		/// <summary>
-		///     Returns true if the guid is contained in the collection.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out _ );
+            return this.Words.TryGetValue(word, out _);
+        }
 
-		[NotNull]
-		public IEnumerable<UInt64> EachInt() => this.Ints.Keys;
+        /// <summary>
+        ///     Returns true if the guid is contained in the collection.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Boolean Contains(UInt64 key) => this.Ints.TryGetValue(key, out _);
 
-		[NotNull]
-		public IEnumerable<String> EachWord() => this.Words.Keys;
-	}
+        [NotNull]
+        public IEnumerable<UInt64> EachInt() => this.Ints.Keys;
+
+        [NotNull]
+        public IEnumerable<String> EachWord() => this.Words.Keys;
+    }
 }

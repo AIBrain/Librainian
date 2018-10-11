@@ -39,39 +39,45 @@
 //
 // Project: "Librainian", "ImagingExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
 
-namespace Librainian.Graphics.Imaging {
+namespace Librainian.Graphics.Imaging
+{
 
-	using System;
-	using System.Drawing;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Drawing;
 
-	public static class ImagingExtensions {
+    public static class ImagingExtensions
+    {
 
-		public static Color GetAverageColor( [NotNull] this Bitmap bitmap ) {
-			if ( bitmap is null ) { throw new ArgumentNullException( nameof( bitmap ) ); }
+        public static Color GetAverageColor([NotNull] this Bitmap bitmap)
+        {
+            if (bitmap == null) { throw new ArgumentNullException(nameof(bitmap)); }
 
-			var red = 0;
-			var green = 0;
-			var blue = 0;
+            var red = 0;
+            var green = 0;
+            var blue = 0;
 
-			using ( var faster = new Bitmap( bitmap ) ) {
-				for ( var x = 0; x < bitmap.Width; x++ ) {
-					for ( var y = 0; y < bitmap.Height; y++ ) {
-						var pixel = faster.GetPixel( x, y );
-						red += pixel.R;
-						green += pixel.G;
-						blue += pixel.B;
-					}
-				}
-			}
+            using (var faster = new Bitmap(bitmap))
+            {
+                for (var x = 0; x < bitmap.Width; x++)
+                {
+                    for (var y = 0; y < bitmap.Height; y++)
+                    {
+                        var pixel = faster.GetPixel(x, y);
+                        red += pixel.R;
+                        green += pixel.G;
+                        blue += pixel.B;
+                    }
+                }
+            }
 
-			var total = bitmap.Width * bitmap.Height;
+            var total = bitmap.Width * bitmap.Height;
 
-			red /= total;
-			green /= total;
-			blue /= total;
+            red /= total;
+            green /= total;
+            blue /= total;
 
-			return Color.FromArgb( red, green, blue );
-		}
-	}
+            return Color.FromArgb(red, green, blue);
+        }
+    }
 }

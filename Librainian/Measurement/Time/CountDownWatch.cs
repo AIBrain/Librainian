@@ -130,10 +130,10 @@ namespace Librainian.Measurement.Time {
 			this.WhenStarted = DateTime.UtcNow;
 			this._isRunning = true;
 
-			this.Timer = this.Countdown.CreateTimer( () => {
+			this.Timer = FluentTimer.Start( this.Countdown.Create( () => {
 				this.Stop();
 				this.Liftoff();
-			} ).Once().AndStart();
+			} ).Once() );
 		}
 
 		public void Stop() {

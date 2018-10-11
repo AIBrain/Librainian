@@ -37,149 +37,150 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Hertz.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "Hertz.cs" was last formatted by Protiguous on 2018/08/27 at 3:31 PM.
 
-namespace Librainian.Measurement.Frequency {
+namespace Librainian.Measurement.Frequency
+{
 
-	using System;
-	using System.Diagnostics;
-	using JetBrains.Annotations;
-	using Maths;
-	using Newtonsoft.Json;
-	using NUnit.Framework;
-	using Time;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using NUnit.Framework;
+    using System;
+    using System.Diagnostics;
+    using Time;
 
-	/// <summary>
-	///     http: //wikipedia.org/wiki/Frequency
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class Hertz {
+    /// <summary>
+    ///     http: //wikipedia.org/wiki/Frequency
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    public class Hertz
+    {
 
-		[JsonProperty]
-		private readonly Decimal _value;
+        /// <summary>
+        ///     Fifteen <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz Fifteen = new Hertz(15);
 
-		public Decimal Value => this._value;
+        /// <summary>
+        ///     59. 9 <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz FiftyNinePointNine = new Hertz(59.9);
 
-		/// <summary>
-		///     Fifteen <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz Fifteen = new Hertz( 15 );
+        /// <summary>
+        ///     Five <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz Five = new Hertz(5);
 
-		/// <summary>
-		///     59. 9 <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz FiftyNinePointNine = new Hertz( 59.9 );
+        /// <summary>
+        ///     Five Hundred <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz FiveHundred = new Hertz(500);
 
-		/// <summary>
-		///     Five <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz Five = new Hertz( 5 );
+        /// <summary>
+        ///     111. 1 Hertz <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz Hertz111 = new Hertz(111.1);
 
-		/// <summary>
-		///     Five Hundred <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz FiveHundred = new Hertz( 500 );
+        /// <summary>
+        ///     One <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz One = new Hertz(1);
 
-		/// <summary>
-		///     111. 1 Hertz <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz Hertz111 = new Hertz( 111.1 );
+        /// <summary>
+        ///     120 <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz OneHundredTwenty = new Hertz(120);
 
-		/// <summary>
-		///     One <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz One = new Hertz( 1 );
+        /// <summary>
+        ///     One Thousand Nine <see cref="Hertz" /> (Prime).
+        /// </summary>
+        public static readonly Hertz OneThousandNine = new Hertz(1009);
 
-		/// <summary>
-		///     120 <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz OneHundredTwenty = new Hertz( 120 );
+        /// <summary>
+        ///     Sixty <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz Sixty = new Hertz(60);
 
-		/// <summary>
-		///     One Thousand Nine <see cref="Hertz" /> (Prime).
-		/// </summary>
-		public static readonly Hertz OneThousandNine = new Hertz( 1009 );
+        /// <summary>
+        ///     Ten <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz Ten = new Hertz(10);
 
-		/// <summary>
-		///     Sixty <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz Sixty = new Hertz( 60 );
+        /// <summary>
+        ///     Three <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz Three = new Hertz(3);
 
-		/// <summary>
-		///     Ten <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz Ten = new Hertz( 10 );
+        /// <summary>
+        ///     Three Three Three <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz ThreeHundredThirtyThree = new Hertz(333);
 
-		/// <summary>
-		///     Three <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz Three = new Hertz( 3 );
+        /// <summary>
+        ///     Two <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz Two = new Hertz(2);
 
-		/// <summary>
-		///     Three Three Three <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz ThreeHundredThirtyThree = new Hertz( 333 );
+        /// <summary>
+        ///     Two Hundred <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz TwoHundred = new Hertz(200);
 
-		/// <summary>
-		///     Two <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz Two = new Hertz( 2 );
+        /// <summary>
+        ///     211 <see cref="Hertz" /> (Prime).
+        /// </summary>
+        public static readonly Hertz TwoHundredEleven = new Hertz(211);
 
-		/// <summary>
-		///     Two Hundred <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz TwoHundred = new Hertz( 200 );
+        /// <summary>
+        ///     Two.Five <see cref="Hertz" /> s.
+        /// </summary>
+        public static readonly Hertz TwoPointFive = new Hertz(2.5);
 
-		/// <summary>
-		///     211 <see cref="Hertz" /> (Prime).
-		/// </summary>
-		public static readonly Hertz TwoHundredEleven = new Hertz( 211 );
+        /// <summary>
+        ///     Two Thousand Three <see cref="Hertz" /> (Prime).
+        /// </summary>
+        public static readonly Hertz TwoThousandThree = new Hertz(2003);
 
-		/// <summary>
-		///     Two.Five <see cref="Hertz" /> s.
-		/// </summary>
-		public static readonly Hertz TwoPointFive = new Hertz( 2.5 );
+        //faster WPM than a female (~240wpm)
+        /// <summary>
+        ///     One <see cref="Hertz" />.
+        /// </summary>
+        public static readonly Hertz Zero = new Hertz(0);
 
-		/// <summary>
-		///     Two Thousand Three <see cref="Hertz" /> (Prime).
-		/// </summary>
-		public static readonly Hertz TwoThousandThree = new Hertz( 2003 );
+        [field: JsonProperty]
+        public Decimal Value { get; }
 
-		//faster WPM than a female (~240wpm)
-		/// <summary>
-		///     One <see cref="Hertz" />.
-		/// </summary>
-		public static readonly Hertz Zero = new Hertz( 0 );
+        //faster WPM than a female (~240wpm)
+        static Hertz()
+        {
 
-		//faster WPM than a female (~240wpm)
-		static Hertz() {
+            //Assert.AreSame( Zero, MinValue );
+            Assert.That(One < Two);
+            Assert.That(Ten > One);
 
-			//Assert.AreSame( Zero, MinValue );
-			Assert.That( One < Two );
-			Assert.That( Ten > One );
+            //Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
+        }
 
-			//Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
-		}
+        public Hertz(Decimal frequency)
+        {
+            if (frequency <= 0m.Epsilon()) { this.Value = 0m.Epsilon(); }
+            else { this.Value = frequency >= Decimal.MaxValue ? Decimal.MaxValue : frequency; }
+        }
 
-		public Hertz( Decimal frequency ) {
-			if ( frequency <= 0m.Epsilon() ) { this._value = 0m.Epsilon(); }
-			else { this._value = frequency >= Decimal.MaxValue ? Decimal.MaxValue : frequency; }
-		}
+        public Hertz(UInt64 frequency) : this((Decimal)frequency) { }
 
-		public Hertz( UInt64 frequency ) : this( ( Decimal ) frequency ) { }
+        public Hertz(Double frequency) : this((Decimal)frequency) { }
 
-		public Hertz( Double frequency ) : this( ( Decimal ) frequency ) { }
+        public static implicit operator SpanOfTime([NotNull] Hertz hertz) => new Seconds(1.0m / hertz.Value);
 
-		[NotNull]
-		public static implicit operator SpanOfTime( [NotNull] Hertz hertz ) => new Seconds( 1.0m / hertz.Value );
+        public static implicit operator TimeSpan([NotNull] Hertz hertz) => TimeSpan.FromSeconds((Double)(1.0m / hertz.Value));
 
-		public static implicit operator TimeSpan( [NotNull] Hertz hertz ) => TimeSpan.FromSeconds( ( Double ) ( 1.0m / hertz.Value ) );
+        public static Boolean operator <([NotNull] Hertz left, [NotNull] Hertz rhs) => left.Value.CompareTo(rhs.Value) < 0;
 
-		public static Boolean operator <( [NotNull] Hertz left, [NotNull] Hertz rhs ) => left.Value.CompareTo( rhs.Value ) < 0;
+        public static Boolean operator >([NotNull] Hertz left, [NotNull] Hertz rhs) => left.Value.CompareTo(rhs.Value) > 0;
 
-		public static Boolean operator >( [NotNull] Hertz left, [NotNull] Hertz rhs ) => left.Value.CompareTo( rhs.Value ) > 0;
-
-		public override String ToString() => $"{this.Value} hertz ({( ( TimeSpan ) this ).Simpler()})";
-	}
+        public override String ToString() => $"{this.Value} hertz ({((TimeSpan)this).Simpler()})";
+    }
 }

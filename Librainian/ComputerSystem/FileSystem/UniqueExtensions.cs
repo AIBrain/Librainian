@@ -41,24 +41,32 @@
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using JetBrains.Annotations;
-	using Parsing;
+    using JetBrains.Annotations;
+    using Parsing;
+    using System;
 
-	public static class UniqueExtensions {
+    public static class UniqueExtensions {
 
-		[CanBeNull]
-		public static Unique ToUnique( [CanBeNull] this String location ) => location == null ? null : ( Unique.TryCreate( location, out var unique ) ? unique : null );
+        [NotNull]
+        public static Unique ToUnique([NotNull] this String location) {
+            if (String.IsNullOrWhiteSpace(value: location)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(location)); }
 
-		/// <summary>
-		///     Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.
-		/// </summary>
-		/// <param name="location"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public static Unique ToUnique( this TrimmedString location ) => Unique.TryCreate( location, out var unique ) ? unique : null;
+            return Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+        }
 
-		[CanBeNull]
-		public static Unique ToUnique( [CanBeNull] this Uri location ) => location == null ? null : ( Unique.TryCreate( location, out var unique ) ? unique : null );
-	}
+        /// <summary>
+        ///     Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Unique ToUnique(this TrimmedString location) => Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+
+        [NotNull]
+        public static Unique ToUnique([NotNull] this Uri location) {
+            if (location == null) { throw new ArgumentNullException(paramName: nameof(location)); }
+
+            return Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+        }
+    }
 }

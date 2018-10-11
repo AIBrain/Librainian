@@ -39,84 +39,90 @@
 //
 // Project: "Librainian", "Location.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
 
-namespace Librainian.ComputerSystem.FileSystem {
+namespace Librainian.ComputerSystem.FileSystem
+{
 
-	using System;
-	using System.Collections.Generic;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Points to a local file, a directory, a LAN file, or an internet file.
-	/// </summary>
-	/// <remarks>
-	///     (Stored internally as a string)
-	/// </remarks>
-	public class Location : IEquatable<Location>, IComparable<Location>, IComparable {
+    /// <summary>
+    ///     Points to a local file, a directory, a LAN file, or an internet file.
+    /// </summary>
+    /// <remarks>
+    ///     (Stored internally as a string)
+    /// </remarks>
+    public class Location : IEquatable<Location>, IComparable<Location>, IComparable
+    {
 
-		public Int32 CompareTo( [CanBeNull] Object obj ) {
-			if ( obj is null ) { return 1; }
+        private Int32 HashCode => this.Address.GetHashCode();
 
-			if ( ReferenceEquals( this, obj ) ) { return 0; }
+        /// <summary>
+        ///     A local file, LAN, UNC, or a URI.
+        /// </summary>
+        [NotNull]
+        public String Address { get; }
 
-			if ( !( obj is Location ) ) { throw new ArgumentException( $"Object must be of type {nameof( Location )}" ); }
+        private Location() => this.Address = String.Empty;
 
-			return this.CompareTo( other: ( Location ) obj );
-		}
+        public Location([NotNull] String location)
+        {
+            if (String.IsNullOrWhiteSpace(location)) { throw new ArgumentException("Value cannot be null or whitespace.", nameof(location)); }
 
-		public Int32 CompareTo( Location other ) {
-			if ( ReferenceEquals( this, other ) ) { return 0; }
+            location = location.Trim();
 
-			if ( other is null ) { return 1; }
+            if (String.IsNullOrWhiteSpace(location)) { throw new ArgumentException("Value cannot be null or whitespace.", nameof(location)); }
 
-			return String.Compare( strA: this.Address, strB: other.Address, comparisonType: StringComparison.Ordinal );
-		}
+            this.Address = new Uri(uriString: location).AbsoluteUri;
+        }
 
-		public Boolean Equals( Location other ) => other != null && this.Address == other.Address;
+        public static Boolean Equals([CanBeNull] Location left, [CanBeNull] Location right)
+        {
+            if (left == null && right == null) { return true; }
 
-		private Int32 HashCode => this.Address.GetHashCode();
+            if (left != null && right == null) { return false; }
 
-		/// <summary>
-		///     A local file, LAN, UNC, or a URI.
-		/// </summary>
-		[NotNull]
-		public String Address { get; }
+            if (left == null) { return false; }
 
-		private Location() => this.Address = String.Empty;
+            return left.HashCode == right.HashCode;
+        }
 
-		public Location( [NotNull] String location ) {
-			if ( String.IsNullOrWhiteSpace( location ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) ); }
+        public static Boolean operator !=([CanBeNull] Location left, [CanBeNull] Location right) => !Equals(left: left, right: right);
 
-			location = location.Trim();
+        public static Boolean operator <(Location left, Location right) => Comparer<Location>.Default.Compare(x: left, y: right) < 0;
 
-			if ( String.IsNullOrWhiteSpace( location ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) ); }
+        public static Boolean operator <=(Location left, Location right) => Comparer<Location>.Default.Compare(x: left, y: right) <= 0;
 
-			this.Address = new Uri( uriString: location ).AbsoluteUri;
-		}
+        public static Boolean operator ==([CanBeNull] Location left, [CanBeNull] Location right) => Equals(left: left, right: right);
 
-		public static Boolean Equals( [CanBeNull] Location left, [CanBeNull] Location right ) {
-			if ( left is null && right is null ) { return true; }
+        public static Boolean operator >(Location left, Location right) => Comparer<Location>.Default.Compare(x: left, y: right) > 0;
 
-			if ( left != null && right is null ) { return false; }
+        public static Boolean operator >=(Location left, Location right) => Comparer<Location>.Default.Compare(x: left, y: right) >= 0;
 
-			if ( left is null ) { return false; }
+        public Int32 CompareTo([CanBeNull] Object obj)
+        {
+            if (obj == null) { return 1; }
 
-			return left.HashCode == right.HashCode;
-		}
+            if (ReferenceEquals(this, obj)) { return 0; }
 
-		public static Boolean operator !=( [CanBeNull] Location left, [CanBeNull] Location right ) => !Equals( left: left, right: right );
+            if (!(obj is Location)) { throw new ArgumentException($"Object must be of type {nameof(Location)}"); }
 
-		public static Boolean operator <( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) < 0;
+            return this.CompareTo(other: (Location)obj);
+        }
 
-		public static Boolean operator <=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) <= 0;
+        public Int32 CompareTo(Location other)
+        {
+            if (ReferenceEquals(this, other)) { return 0; }
 
-		public static Boolean operator ==( [CanBeNull] Location left, [CanBeNull] Location right ) => Equals( left: left, right: right );
+            if (other == null) { return 1; }
 
-		public static Boolean operator >( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) > 0;
+            return String.Compare(strA: this.Address, strB: other.Address, comparisonType: StringComparison.Ordinal);
+        }
 
-		public static Boolean operator >=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) >= 0;
+        public Boolean Equals(Location other) => other != null && this.Address == other.Address;
 
-		public override Boolean Equals( Object obj ) => this.Equals( other: obj as Location );
+        public override Boolean Equals(Object obj) => this.Equals(other: obj as Location);
 
-		public override Int32 GetHashCode() => this.HashCode;
-	}
+        public override Int32 GetHashCode() => this.HashCode;
+    }
 }

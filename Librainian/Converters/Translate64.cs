@@ -49,11 +49,11 @@ namespace Librainian.Converters {
 #pragma warning disable IDE0015 // Use framework type
 #pragma warning disable IDE0015 // Use framework type
 
-	/// <summary>
-	///     Struct for combining two <see cref="int" /> (or <see cref="uint" />) to and from a <see cref="ulong" /> (or
-	///     <see cref="long" />) as easily as possible. Fast? No idea yet..
-	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+    /// <summary>
+    ///     Struct for combining two <see cref="Int32" /> (or <see cref="UInt32" />) to and from a <see cref="UInt64" /> (or
+    ///     <see cref="Int64" />) as easily as possible. Fast? No idea yet..
+    /// </summary>
+    [StructLayout( layoutKind: LayoutKind.Explicit )]
 #pragma warning restore IDE0015 // Use framework type
 #pragma warning restore IDE0015 // Use framework type
 #pragma warning restore IDE0015 // Use framework type

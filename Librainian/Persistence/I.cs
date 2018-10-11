@@ -37,69 +37,69 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "I.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "I.cs" was last formatted by Protiguous on 2018/09/24 at 4:30 AM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Diagnostics;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Microsoft.VisualBasic;
-	using Newtonsoft.Json;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using Microsoft.VisualBasic;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
 
-	/// <summary>
-	///     [K]ey and a [U]nique location. (an [I]ndexer of storage locations)
-	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Serializable]
-	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore, ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
-	public class I {
+    /// <summary>
+    ///     [K]ey and a [U]nique location. (an [I]ndexer of storage locations)
+    /// </summary>
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore, ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore)]
+    public class I {
 
-		[JsonProperty]
-		[NotNull]
-		public String K { get; }
+        [JsonProperty]
+        [NotNull]
+        public String K { get; }
 
-		[JsonProperty]
-		[NotNull]
-		public Unique U { get; }
+        [JsonProperty]
+        [NotNull]
+        public Unique U { get; }
 
-		public I( [NotNull] String key, [NotNull] Uri pointer ) {
-			this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+        public I([NotNull] String key, [NotNull] Uri pointer) {
+            this.K = key ?? throw new ArgumentNullException(nameof(key));
 
-			if ( pointer is null ) { throw new ArgumentNullException( paramName: nameof( pointer ) ); }
+            if (pointer == null) { throw new ArgumentNullException(paramName: nameof(pointer)); }
 
-			if ( !pointer.IsAbsoluteUri ) { throw new ArgumentException( $"Uri pointer must be absolute. K={Strings.Left( this.K, 20 )}" ); }
+            if (!pointer.IsAbsoluteUri) { throw new ArgumentException($"Uri pointer must be absolute. K={Strings.Left(this.K, 20)}"); }
 
-			this.U = pointer.ToUnique();
-		}
+            this.U = pointer.ToUnique();
+        }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="pointer"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public I( [NotNull] String key, String pointer ) {
-			this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+        /// <summary>
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="pointer"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public I([NotNull] String key, String pointer) {
+            this.K = key ?? throw new ArgumentNullException(nameof(key));
 
-			if ( !Uri.TryCreate( pointer, UriKind.Absolute, out var uri ) ) { throw new ArgumentException(); }
+            if (!Uri.TryCreate(pointer, UriKind.Absolute, out var uri)) { throw new ArgumentException(); }
 
-			if ( !uri.IsAbsoluteUri ) { throw new ArgumentException( $"Uri pointer must be absolute for key {Strings.Left( this.K, 20 )}" ); }
+            if (!uri.IsAbsoluteUri) { throw new ArgumentException($"Uri pointer must be absolute for key {Strings.Left(this.K, 20)}"); }
 
-			if ( Unique.TryCreate( uri, out var u ) ) { this.U = u; }
-		}
+            if (Unique.TryCreate(uri, out var u)) { this.U = u; }
+        }
 
-		public override String ToString() {
-			var keypart = String.Empty;
+        public override String ToString() {
+            var keypart = String.Empty;
 
-			if ( this.K.Length > 42 ) {
-				var left = Strings.Left( this.K, 20 );
-				var right = Strings.Right( this.K, 20 );
+            if (this.K.Length > 42) {
+                var left = Strings.Left(this.K, 20);
+                var right = Strings.Right(this.K, 20);
 
-				keypart = $"{left}..{right}";
-			}
+                keypart = $"{left}..{right}";
+            }
 
-			return $"{keypart}={this.U}";
-		}
-	}
+            return $"{keypart}={this.U}";
+        }
+    }
 }

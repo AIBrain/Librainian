@@ -39,64 +39,68 @@
 //
 // Project: "Librainian", "FileHistoryFileExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
 
-namespace Librainian.OperatingSystem.FileHistory {
+namespace Librainian.OperatingSystem.FileHistory
+{
 
-	using System;
-	using System.IO;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using System;
+    using System.IO;
 
-	public static class FileHistoryFileExtensions {
+    public static class FileHistoryFileExtensions
+    {
 
-		/// <summary>
-		///     Attempt to parse a filename into <see cref="FileHistoryFile" /> parts().
-		/// </summary>
-		/// <param name="original"></param>
-		/// <param name="folder"></param>
-		/// <param name="filename">(includes the extension)</param>
-		/// <param name="when">
-		///     <para>Returns the <see cref="DateTime" /> part of this <see cref="Document" /> or null.</para>
-		/// </param>
-		/// <returns></returns>
-		public static Boolean TryParseFileHistoryFile( [NotNull] Document original, [CanBeNull] out Folder folder, [CanBeNull] out String filename, out DateTime? when ) {
-			if ( original is null ) { throw new ArgumentNullException( nameof( original ) ); }
+        /// <summary>
+        ///     Attempt to parse a filename into <see cref="FileHistoryFile" /> parts().
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="folder"></param>
+        /// <param name="filename">(includes the extension)</param>
+        /// <param name="when">
+        ///     <para>Returns the <see cref="DateTime" /> part of this <see cref="Document" /> or null.</para>
+        /// </param>
+        /// <returns></returns>
+        public static Boolean TryParseFileHistoryFile([NotNull] Document original, [CanBeNull] out Folder folder, [CanBeNull] out String filename, out DateTime? when)
+        {
+            if (original == null) { throw new ArgumentNullException(nameof(original)); }
 
-			filename = null;
-			folder = original.Folder;
-			when = null;
+            filename = null;
+            folder = original.Folder;
+            when = null;
 
-			var extension = Path.GetExtension( original.FullPathWithFileName ).Trim();
+            var extension = Path.GetExtension(original.FullPathWithFileName).Trim();
 
-			var value = Path.GetFileNameWithoutExtension( original.FileName() ).Trim();
+            var value = Path.GetFileNameWithoutExtension(original.FileName()).Trim();
 
-			var posA = value.LastIndexOf( '(' );
-			var posB = value.LastIndexOf( "UTC)", comparisonType: StringComparison.Ordinal );
+            var posA = value.LastIndexOf('(');
+            var posB = value.LastIndexOf("UTC)", comparisonType: StringComparison.Ordinal);
 
-			if ( posA == -1 || posB == -1 || posB < posA ) { return false; }
+            if (posA == -1 || posB == -1 || posB < posA) { return false; }
 
-			var datepart = value.Substring( startIndex: posA + 1, posB - ( posA + 1 ) );
+            var datepart = value.Substring(startIndex: posA + 1, posB - (posA + 1));
 
-			var parts = datepart.Split( separator: new[] {
-				' '
-			}, options: StringSplitOptions.RemoveEmptyEntries );
+            var parts = datepart.Split(separator: new[] {
+                ' '
+            }, options: StringSplitOptions.RemoveEmptyEntries);
 
-			parts[ 0 ] = parts[ 0 ].Replace( oldChar: '_', newChar: '/' );
-			parts[ 1 ] = parts[ 1 ].Replace( oldChar: '_', newChar: ':' );
-			datepart = parts[ 0 ] + " " + parts[ 1 ];
+            parts[0] = parts[0].Replace(oldChar: '_', newChar: '/');
+            parts[1] = parts[1].Replace(oldChar: '_', newChar: ':');
+            datepart = parts[0] + " " + parts[1];
 
-			if ( DateTime.TryParse( s: datepart, result: out var result ) ) {
-				when = result;
+            if (DateTime.TryParse(s: datepart, result: out var result))
+            {
+                when = result;
 
-				if ( posA < 1 ) { posA = 1; }
+                if (posA < 1) { posA = 1; }
 
-				filename = value.Substring( startIndex: 0, posA - "(".Length ) + value.Substring( startIndex: posB + "UTC)".Length ) + extension;
+                filename = value.Substring(startIndex: 0, posA - "(".Length) + value.Substring(startIndex: posB + "UTC)".Length) + extension;
 
-				return true;
-			}
+                return true;
+            }
 
-			filename = value + extension;
+            filename = value + extension;
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

@@ -37,166 +37,176 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "GameTimer.cs" was last formatted by Protiguous on 2018/07/13 at 1:25 AM.
+// Project: "Librainian", "GameTimer.cs" was last formatted by Protiguous on 2018/08/27 at 3:31 PM.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks
+{
 
-	using System;
-	using System.Threading;
-	using System.Timers;
-	using Frequency;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Timer = System.Timers.Timer;
+    using Frequency;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using System.Timers;
+    using Timer = System.Timers.Timer;
 
-	/// <summary>
-	///     A timer that fires at 60fps and Reports() back.
-	/// </summary>
-	[JsonObject]
-	public class GameTimer {
+    /// <summary>
+    ///     A timer that fires at 60fps and Reports() back.
+    /// </summary>
+    [JsonObject]
+    public class GameTimer
+    {
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		private UInt64 _counter;
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        private UInt64 _counter;
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		private volatile Boolean _isPaused;
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        private volatile Boolean _isPaused;
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		private TimeSpan _lastElapsed = TimeSpan.Zero;
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        private TimeSpan _lastElapsed = TimeSpan.Zero;
 
-		[JsonProperty]
-		private DateTime _lastUpdate = DateTime.UtcNow;
+        [JsonProperty]
+        private DateTime _lastUpdate = DateTime.UtcNow;
 
-		private DateTime LastProgressReport {
-			get {
-				try { return this._lastUpdate; }
-				finally { Thread.MemoryBarrier(); }
-			}
+        private DateTime LastProgressReport {
+            get {
+                try { return this._lastUpdate; }
+                finally { Thread.MemoryBarrier(); }
+            }
 
-			set {
-				try { Thread.MemoryBarrier(); }
-				finally { this._lastUpdate = value; }
-			}
-		}
+            set {
+                try { Thread.MemoryBarrier(); }
+                finally { this._lastUpdate = value; }
+            }
+        }
 
-		[NotNull]
-		private IProgress<ReportBack> Progress { get; }
+        [NotNull]
+        private IProgress<ReportBack> Progress { get; }
 
-		/// <summary>
-		/// </summary>
-		[NotNull]
-		private Timer Timer { get; }
+        /// <summary>
+        /// </summary>
+        [NotNull]
+        private Timer Timer { get; }
 
-		private Double UpdateRate { get; } = ( Double )Fps.Sixty.Value;
+        private TimeSpan UpdateRate { get; } = Fps.Sixty;
 
-		public UInt64 Counter {
-			get => Thread.VolatileRead( ref this._counter );
+        public UInt64 Counter {
+            get => Thread.VolatileRead(ref this._counter);
 
-			private set => Thread.VolatileWrite( ref this._counter, value );
-		}
+            private set => Thread.VolatileWrite(ref this._counter, value);
+        }
 
-		/// <summary>
-		///     Time since last tick().
-		/// </summary>
-		/// <value></value>
-		public TimeSpan Elapsed {
-			get {
-				this.LastElapsed = DateTime.UtcNow - this.LastProgressReport;
+        /// <summary>
+        ///     Time since last tick().
+        /// </summary>
+        /// <value></value>
+        public TimeSpan Elapsed {
+            get {
+                this.LastElapsed = DateTime.UtcNow - this.LastProgressReport;
 
-				return this.LastElapsed;
-			}
-		}
+                return this.LastElapsed;
+            }
+        }
 
-		public Boolean IsPaused {
-			get => this._isPaused;
+        public Boolean IsPaused {
+            get => this._isPaused;
 
-			private set => this._isPaused = value;
-		}
+            private set => this._isPaused = value;
+        }
 
-		/// <summary>
-		///     A copy of the most recent <see cref="Elapsed" />.
-		/// </summary>
-		public TimeSpan LastElapsed {
-			get {
-				try { return this._lastElapsed; }
-				finally { Thread.MemoryBarrier(); }
-			}
+        /// <summary>
+        ///     A copy of the most recent <see cref="Elapsed" />.
+        /// </summary>
+        public TimeSpan LastElapsed {
+            get {
+                try { return this._lastElapsed; }
+                finally { Thread.MemoryBarrier(); }
+            }
 
-			private set {
-				try { Thread.MemoryBarrier(); }
-				finally { this._lastElapsed = value; }
-			}
-		}
+            private set {
+                try { Thread.MemoryBarrier(); }
+                finally { this._lastElapsed = value; }
+            }
+        }
 
-		public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+        public GameTimer([NotNull] IProgress<ReportBack> progress)
+        {
+            this.Progress = progress ?? throw new ArgumentNullException(nameof(progress), "Progress must not be null.");
 
-			// ReSharper disable once UseObjectOrCollectionInitializer
-			this.Timer = new Timer( interval: this.UpdateRate ) {
-				AutoReset = false
-			};
+            this.Timer = new Timer(this.UpdateRate.TotalMilliseconds)
+            {
+                AutoReset = false
+            };
 
-			this.Timer.Elapsed += this.OnTimerElapsed;
-			this.Resume();
-		}
+            void OnTimerOnElapsed(Object sender, ElapsedEventArgs elapsedEventArgs)
+            {
+                try
+                {
+                    this.Pause();
+                    this.Counter++;
 
-		private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
-			try {
-				this.Pause();
-				this.Counter++;
+                    this.Progress.Report(new ReportBack
+                    {
+                        Counter = this.Counter,
+                        Elapsed = this.Elapsed,
+                        RunningSlow = this.IsRunningSlow()
+                    });
+                }
+                catch (Exception exception) { exception.Log(); }
+                finally
+                {
+                    this.LastProgressReport = DateTime.UtcNow;
+                    this.Resume();
+                }
+            }
 
-				this.Progress.Report( new ReportBack {
-					Counter = this.Counter,
-					Elapsed = this.Elapsed,
-					RunningSlow = this.IsRunningSlow()
-				} );
-			}
-			catch ( Exception exception ) { exception.Log(); }
-			finally {
-				this.LastProgressReport = DateTime.UtcNow;
-				this.Resume();
-			}
-		}
+            this.Timer.Elapsed += OnTimerOnElapsed;
+            this.Resume();
+        }
 
-		public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
+        public Boolean IsRunningSlow() => this.LastElapsed.TotalMilliseconds > 70;
 
-		public Boolean Pause() {
-			this.Timer.Stop();
-			this.IsPaused = true;
+        public Boolean Pause()
+        {
+            this.Timer.Stop();
+            this.IsPaused = true;
 
-			return this.IsPaused;
-		}
+            return this.IsPaused;
+        }
 
-		public Boolean Resume() {
-			this.IsPaused = false;
-			this.Timer.Start();
+        public Boolean Resume()
+        {
+            this.IsPaused = false;
+            this.Timer.Start();
 
-			return !this.IsPaused;
-		}
+            return !this.IsPaused;
+        }
 
-		/// <summary>
-		///     Total time passed since timer was started.
-		/// </summary>
-		/// <returns></returns>
-		public SpanOfTime TotalElapsed() => new SpanOfTime( milliseconds: this.Counter / this.UpdateRate );
+        /// <summary>
+        ///     Total time passed since timer was started.
+        /// </summary>
+        /// <returns></returns>
+        public SpanOfTime TotalElapsed() => new SpanOfTime(milliseconds: new Milliseconds(this.Counter / this.UpdateRate.TotalMilliseconds));
 
-		[JsonObject]
-		public struct ReportBack {
+        [JsonObject]
+        public struct ReportBack
+        {
 
-			[JsonProperty]
-			public UInt64 Counter { get; set; }
+            [JsonProperty]
+            public UInt64 Counter { get; set; }
 
-			[JsonProperty]
-			public TimeSpan Elapsed { get; set; }
+            [JsonProperty]
+            public TimeSpan Elapsed { get; set; }
 
-			[JsonProperty]
-			public Boolean RunningSlow { get; set; }
-		}
-	}
+            [JsonProperty]
+            public Boolean RunningSlow { get; set; }
+        }
+    }
 }

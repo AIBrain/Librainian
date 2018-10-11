@@ -39,145 +39,148 @@
 //
 // Project: "Librainian", "Duration.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time
+{
 
-	using System;
-	using System.Linq;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Numerics;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Numerics;
+    using System;
+    using System.Linq;
 
-	/// <summary>
-	///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
-	///     <para>Internally based upon the total number of microseconds (<see cref="totalMicroseconds" />).</para>
-	/// </summary>
-	/// <see cref="SpanOfTime" />
-	[JsonObject]
-	[Immutable]
-	public struct Duration : IComparable<Duration>, IComparable<TimeSpan> {
+    /// <summary>
+    ///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
+    ///     <para>Internally based upon the total number of microseconds (<see cref="totalMicroseconds" />).</para>
+    /// </summary>
+    /// <see cref="SpanOfTime" />
+    [JsonObject]
+    [Immutable]
+    public struct Duration : IComparable<Duration>, IComparable<TimeSpan>
+    {
 
-		public const Double MicsPerDay = MicsPerHour * Measurement.Time.Hours.InOneDay;
+        public const Double MicsPerDay = MicsPerHour * Measurement.Time.Hours.InOneDay;
 
-		public const Double MicsPerHour = MicsPerMinute * Measurement.Time.Minutes.InOneHour;
+        public const Double MicsPerHour = MicsPerMinute * Measurement.Time.Minutes.InOneHour;
 
-		public const Double MicsPerMicrosecond = 1;
+        public const Double MicsPerMicrosecond = 1;
 
-		public const Double MicsPerMillisecond = MicsPerMicrosecond * Measurement.Time.Microseconds.InOneMillisecond;
+        public const Double MicsPerMillisecond = MicsPerMicrosecond * Measurement.Time.Microseconds.InOneMillisecond;
 
-		public const Double MicsPerMinute = MicsPerSecond * Measurement.Time.Seconds.InOneMinute;
+        public const Double MicsPerMinute = MicsPerSecond * Measurement.Time.Seconds.InOneMinute;
 
-		public const Double MicsPerSecond = MicsPerMillisecond * Measurement.Time.Milliseconds.InOneSecond;
+        public const Double MicsPerSecond = MicsPerMillisecond * Measurement.Time.Milliseconds.InOneSecond;
 
-		public const Double MicsPerWeek = MicsPerDay * Measurement.Time.Days.InOneWeek;
+        public const Double MicsPerWeek = MicsPerDay * Measurement.Time.Days.InOneWeek;
 
-		public const Double MicsPerYear = MicsPerDay * Measurement.Time.Days.InOneCommonYear;
+        public const Double MicsPerYear = MicsPerDay * Measurement.Time.Days.InOneCommonYear;
 
-		[JsonProperty]
+        [JsonProperty]
 
-		// ReSharper disable once InconsistentNaming
-		internal Double totalMicroseconds { get; }
+        // ReSharper disable once InconsistentNaming
+        internal Double totalMicroseconds { get; }
 
-		public Double Hours => ( Byte )( this.Minutes / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
+        public Double Days => this.Hours / Measurement.Time.Hours.InOneDay % Measurement.Time.Hours.InOneDay;
 
-		public Double Microseconds => this.totalMicroseconds;
+        public Double Milliseconds => (UInt16)(this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond);
 
-		public Double Seconds => ( Byte )( this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
+        public Double Minutes => (Byte)(this.Seconds / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute);
 
-		public Double TotalHours => this.TotalMinutes / Measurement.Time.Minutes.InOneHour;
+        public Double TotalDays => this.TotalHours / Measurement.Time.Hours.InOneDay;
 
-		public Double TotalMicroseconds => this.totalMicroseconds;
+        public Double TotalMilliseconds => this.TotalMicroseconds / Measurement.Time.Microseconds.InOneMillisecond;
 
-		public Double TotalSeconds => this.TotalMilliseconds / Measurement.Time.Milliseconds.InOneSecond;
+        public Double TotalMinutes => this.TotalSeconds / Measurement.Time.Seconds.InOneMinute;
 
-		public Double TotalWeeks => this.TotalDays / Measurement.Time.Days.InOneWeek;
+        public Double TotalWeeks => this.TotalDays / Measurement.Time.Days.InOneWeek;
 
-		public Double TotalYears => this.TotalDays / Measurement.Time.Days.InOneCommonYear;
+        public Double TotalYears => this.TotalDays / Measurement.Time.Days.InOneCommonYear;
 
-		public Double Weeks => this.Days / Measurement.Time.Days.InOneWeek % Measurement.Time.Days.InOneWeek;
+        public Double Weeks => this.Days / Measurement.Time.Days.InOneWeek % Measurement.Time.Days.InOneWeek;
 
-		public Double Years => this.Days / Measurement.Time.Days.InOneCommonYear % Measurement.Time.Days.InOneCommonYear;
+        public Double Years => this.Days / Measurement.Time.Days.InOneCommonYear % Measurement.Time.Days.InOneCommonYear;
 
-		public Double Days => this.Hours / Measurement.Time.Hours.InOneDay % Measurement.Time.Hours.InOneDay;
+        public Double Hours => (Byte)(this.Minutes / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour);
 
-		public Double Milliseconds => ( UInt16 )( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
+        public Double Microseconds => this.totalMicroseconds;
 
-		public Double Minutes => ( Byte )( this.Seconds / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
+        public Double Seconds => (Byte)(this.Milliseconds / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond);
 
-		public Double TotalDays => this.TotalHours / Measurement.Time.Hours.InOneDay;
+        public Double TotalHours => this.TotalMinutes / Measurement.Time.Minutes.InOneHour;
 
-		public Double TotalMilliseconds => this.TotalMicroseconds / Measurement.Time.Microseconds.InOneMillisecond;
+        public Double TotalMicroseconds => this.totalMicroseconds;
 
-		public Double TotalMinutes => this.TotalSeconds / Measurement.Time.Seconds.InOneMinute;
+        public Double TotalSeconds => this.TotalMilliseconds / Measurement.Time.Milliseconds.InOneSecond;
 
-		public Duration( Microseconds microseconds ) => this.totalMicroseconds = ( Double )microseconds.Value * MicsPerMicrosecond;
+        public Duration(Microseconds microseconds) => this.totalMicroseconds = (Double)microseconds.Value * MicsPerMicrosecond;
 
-		public Duration( Milliseconds milliseconds ) => this.totalMicroseconds = ( Double )milliseconds.Value * MicsPerMillisecond;
+        public Duration(Milliseconds milliseconds) => this.totalMicroseconds = (Double)milliseconds.Value * MicsPerMillisecond;
 
-		public Duration( Seconds seconds ) => this.totalMicroseconds = ( Double )seconds.Value * MicsPerSecond;
+        public Duration(Seconds seconds) => this.totalMicroseconds = (Double)seconds.Value * MicsPerSecond;
 
-		public Duration( Minutes minutes ) => this.totalMicroseconds = ( Double )minutes.Value * MicsPerMinute;
+        public Duration(Minutes minutes) => this.totalMicroseconds = (Double)minutes.Value * MicsPerMinute;
 
-		public Duration( Hours hours ) => this.totalMicroseconds = ( Double )hours.Value * MicsPerHour;
+        public Duration(Hours hours) => this.totalMicroseconds = (Double)hours.Value * MicsPerHour;
 
-		public Duration( Days days ) => this.totalMicroseconds = ( Double )days.Value * MicsPerDay;
+        public Duration(Days days) => this.totalMicroseconds = (Double)days.Value * MicsPerDay;
 
-		public Duration( Weeks weeks ) => this.totalMicroseconds = ( Double )weeks.Value * MicsPerWeek;
+        public Duration(Weeks weeks) => this.totalMicroseconds = (Double)weeks.Value * MicsPerWeek;
 
-		public Duration( Years years ) => this.totalMicroseconds = ( Double )years.Value * MicsPerYear;
+        public Duration(Years years) => this.totalMicroseconds = (Double)years.Value * MicsPerYear;
 
-		public Duration( Int64 ticks ) => this.totalMicroseconds = ticks / 10.0;
+        public Duration(Int64 ticks) => this.totalMicroseconds = ticks / 10.0;
 
-		public Duration( TimeSpan time ) : this( ticks: time.Ticks ) { }
+        public Duration(TimeSpan time) : this(ticks: time.Ticks) { }
 
-		public Duration( [NotNull] params TimeSpan[] times ) {
-			if ( times is null ) { throw new ArgumentNullException( nameof( times ) ); }
+        public Duration([NotNull] params TimeSpan[] times)
+        {
+            if (times == null) { throw new ArgumentNullException(nameof(times)); }
 
-			var total = times.Select( timeSpan => new Duration( timeSpan ) ).Aggregate( BigRational.Zero, ( current, dur ) => current + dur.totalMicroseconds );
+            var total = times.Select(timeSpan => new Duration(timeSpan)).Aggregate(BigRational.Zero, (current, dur) => current + dur.totalMicroseconds);
 
-			this.totalMicroseconds = ( Double )total;
-		}
+            this.totalMicroseconds = (Double)total;
+        }
 
-		public static Duration FromDays( Double value ) => new Duration( new Days( value ) );
+        public static Duration FromDays(Double value) => new Duration(new Days(value));
 
-		public static Duration FromHours( Double value ) => new Duration( new Hours( value ) );
+        public static Duration FromHours(Double value) => new Duration(new Hours(value));
 
-		public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( value ) );
+        public static Duration FromMicroseconds(Double value) => new Duration(new Microseconds(value));
 
-		public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
+        public static Duration FromMilliseconds(Double value) => new Duration(new Milliseconds(value));
 
-		public static Duration FromMinutes( Double value ) => new Duration( new Minutes( value ) );
+        public static Duration FromMinutes(Double value) => new Duration(new Minutes(value));
 
-		public static Duration FromSeconds( Double value ) => new Duration( new Seconds( value ) );
+        public static Duration FromSeconds(Double value) => new Duration(new Seconds(value));
 
-		public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
+        public static Duration FromTicks(Int64 value) => new Duration(ticks: value);
 
-		public static Duration FromWeeks( Double value ) => new Duration( new Weeks( value ) );
+        public static Duration FromWeeks(Double value) => new Duration(new Weeks(value));
 
-		public static Duration FromYears( Double value ) => new Duration( new Years( value ) );
+        public static Duration FromYears(Double value) => new Duration(new Years(value));
 
-		/// <summary>
-		///     <para>Compares <see cref="totalMicroseconds" /></para>
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public Int32 CompareTo( Duration other ) => this.totalMicroseconds.CompareTo( other.totalMicroseconds );
+        /// <summary>
+        ///     <para>Compares <see cref="totalMicroseconds" /></para>
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public Int32 CompareTo(Duration other) => this.totalMicroseconds.CompareTo(other.totalMicroseconds);
 
-		/// <summary>
-		///     <para>Compares <see cref="TotalMilliseconds" /></para>
-		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public Int32 CompareTo( TimeSpan other ) => this.TotalMilliseconds.CompareTo( other.TotalMilliseconds );
+        /// <summary>
+        ///     <para>Compares <see cref="TotalMilliseconds" /></para>
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public Int32 CompareTo(TimeSpan other) => this.TotalMilliseconds.CompareTo(other.TotalMilliseconds);
 
-		/// <summary>
-		///     Returns the hash code for this instance.
-		/// </summary>
-		/// <returns>
-		///     A 32-bit signed integer that is the hash code for this instance.
-		/// </returns>
-		public override Int32 GetHashCode() => this.totalMicroseconds.GetHashCode();
+        /// <summary>
+        ///     Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>
+        ///     A 32-bit signed integer that is the hash code for this instance.
+        /// </returns>
+        public override Int32 GetHashCode() => this.totalMicroseconds.GetHashCode();
 
-		public override String ToString() => this.Simpler();
-	}
+        public override String ToString() => this.Simpler();
+    }
 }

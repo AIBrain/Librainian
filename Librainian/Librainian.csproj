@@ -27,12 +27,12 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;_DEEPDEBUG_</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
@@ -121,14 +121,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity.Design" />
-    <Reference Include="System.Data.Linq" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Memory">
-      <HintPath>C:\Users\Rick\.nuget\packages\system.memory\4.5.0\ref\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
@@ -136,29 +131,15 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Speech" />
-    <Reference Include="System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Windows">
       <HintPath>C:\Program Files (x86)\Windows Kits\10\App Certification Kit\winmds\winphone81\Windows.winmd</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmazedSaint\DynamicExtensions.cs" />
-    <Compile Include="AmazedSaint\ElasticObject.cs" />
-    <Compile Include="AmazedSaint\FormatType.cs" />
-    <Compile Include="AmazedSaint\IElasticHierarchyWrapper.cs" />
-    <Compile Include="AmazedSaint\IHierarchyWrapperProvider.cs" />
-    <Compile Include="AmazedSaint\NodeType.cs" />
-    <Compile Include="AmazedSaint\SimpleHierarchyWrapper.cs" />
     <Compile Include="Collections\ConcurrentHashset.cs" />
-    <Compile Include="Collections\ConcurrentListTests.cs" />
     <Compile Include="Collections\ExperimentalAttribute.cs" />
     <Compile Include="Collections\Positionial.cs" />
     <Compile Include="Collections\PriorityQueue.cs" />
@@ -171,9 +152,6 @@
     <Compile Include="ComputerSystem\Memory.cs" />
     <Compile Include="Controls\CheckboxWithToolTip.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\KittProgressBar.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\LabelWithToolTip.cs">
       <SubType>Component</SubType>
@@ -205,6 +183,7 @@
     <Compile Include="Database\Excel.cs" />
     <Compile Include="Database\IDatabase.cs" />
     <Compile Include="Database\MMF\CreateUnsafeSerializer.cs" />
+    <Compile Include="Database\SqlServerInstance.cs" />
     <Compile Include="Database\StressTest.cs" />
     <Compile Include="Database\OleText.cs" />
     <Compile Include="Database\ReflectionPopulator.cs" />
@@ -234,7 +213,6 @@
     <Compile Include="ComputerSystem\FileSystem\FolderBag.Node.cs" />
     <Compile Include="ComputerSystem\FileSystem\Location.cs" />
     <Compile Include="ComputerSystem\Devices\LogicalDisk.cs" />
-    <Compile Include="ComputerSystem\FileSystem\DriveTests.cs" />
     <Compile Include="ComputerSystem\Devices\Device.cs" />
     <Compile Include="ComputerSystem\Devices\DeviceCapabilities.cs" />
     <Compile Include="ComputerSystem\Devices\DeviceClass.cs" />
@@ -300,6 +278,7 @@
     <Compile Include="Measurement\Time\PlanckExtensions.cs" />
     <Compile Include="Misc\PlaySound.cs" />
     <Compile Include="OperatingSystem\Audio.cs" />
+    <Compile Include="OperatingSystem\ExternDll.cs" />
     <Compile Include="OperatingSystem\OSExtensions.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
     <Compile Include="OperatingSystem\Storage\DetectSSD.cs" />
@@ -323,7 +302,7 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
-    <Compile Include="Threading\SimpleMutex.cs" />
+    <Compile Include="Threading\UnitofWork.cs" />
     <Compile Include="Threading\VolatileBoolean.cs" />
     <Compile Include="Measurement\Time\Clocks\DateAndTime.cs" />
     <Compile Include="Measurement\Time\Clocks\GameTimer.cs" />
@@ -334,9 +313,7 @@
     <Compile Include="ComputerSystem\FileSystem\DocumentCopyStatistics.cs" />
     <Compile Include="OperatingSystem\Windows.cs" />
     <Compile Include="Extensions\DerivedSerializableExceptionWithAdditionalCustomProperty.cs" />
-    <Compile Include="Extensions\CopyProgressRoutine.cs" />
     <Compile Include="Extensions\GuidUtility.cs" />
-    <Compile Include="Extensions\SafeSearchHandle.cs" />
     <Compile Include="Extensions\SerializableExceptionWithCustomProperties.cs" />
     <Compile Include="Extensions\SerializableExceptionWithoutCustomProperties.cs" />
     <Compile Include="Financial\Containers\Banking\Bank.cs" />
@@ -398,7 +375,6 @@
     <Compile Include="Measurement\Frequency\FPS.cs" />
     <Compile Include="Measurement\Time\StopWatch.cs" />
     <Compile Include="Measurement\Time\DurationParser.cs" />
-    <Compile Include="Measurement\Time\TimeTests.cs" />
     <Compile Include="Parsing\ParagraphExtensions.cs" />
     <Compile Include="Persistence\IniFile.cs" />
     <Compile Include="Persistence\Ini.cs" />
@@ -413,11 +389,7 @@
     <Compile Include="Collections\ConcurrentCollection.cs" />
     <Compile Include="Collections\ConcurrentStackNoBlock.cs" />
     <Compile Include="Collections\EnumerableToArrayBuffer.cs" />
-    <Compile Include="Collections\FIFOWaitQueue.cs" />
-    <Compile Include="Collections\IBlockingQueue.cs" />
-    <Compile Include="Collections\IQueue.cs" />
     <Compile Include="Collections\ITreeNodeAware.cs" />
-    <Compile Include="Collections\IWaitQueue.cs" />
     <Compile Include="Collections\LockfreeQueue.cs" />
     <Compile Include="Collections\MultiKeyDictionary.cs" />
     <Compile Include="Collections\PairOfDoubles.cs" />
@@ -638,7 +610,6 @@
     <Compile Include="Measurement\Spatial\GeoLocation.cs" />
     <Compile Include="Measurement\Spatial\Radians.cs" />
     <Compile Include="Measurement\Spatial\SpatialExtensions.cs" />
-    <Compile Include="Measurement\Time\Clocks\MillisecondStopWatch.cs" />
     <Compile Include="Measurement\Time\Clocks\MicroStopwatch.cs" />
     <Compile Include="Measurement\Time\Clocks\Second.cs" />
     <Compile Include="Measurement\Time\FluentTime\AdjustableCurrentTime.cs" />
@@ -756,8 +727,6 @@
     <Compile Include="Security\Windows.cs" />
     <Compile Include="Speech\SpeechOutput.cs" />
     <Compile Include="Speech\SpeechInput.cs" />
-    <Compile Include="Threading\Actor.cs" />
-    <Compile Include="Threading\ActorException.cs" />
     <Compile Include="Threading\ArrayExtensions.cs" />
     <Compile Include="Threading\AsyncLazy.cs" />
     <Compile Include="Threading\AsyncLock.cs" />
@@ -767,7 +736,6 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
-    <Compile Include="Threading\ActorExtensions.cs" />
     <Compile Include="Threading\ArrayTraverse.cs" />
     <Compile Include="Threading\ConsoleListenerWithTimePrefix.cs" />
     <Compile Include="Threading\ObjectExtensions.cs" />
@@ -784,10 +752,8 @@
     <Compile Include="Extensions\Enums.cs" />
     <Compile Include="OperatingSystem\NativeMethods.cs" />
     <Compile Include="Threading\FileSingleton.cs" />
-    <Compile Include="Threading\Gate.cs" />
     <Compile Include="Graphics\DDD\CoordinateF.cs" />
     <Compile Include="Graphics\DDD\Coordinate64.cs" />
-    <Compile Include="Threading\IQueuedSync.cs" />
     <Compile Include="Maths\Numbers\AtomicDouble.cs" />
     <Compile Include="Maths\Numbers\AtomicInt.cs" />
     <Compile Include="Maths\MathExtensions.cs" />
@@ -807,42 +773,24 @@
     <Compile Include="Maths\Numbers\UBigInteger.cs" />
     <Compile Include="Maths\Ranges\UInt64Range.cs" />
     <Compile Include="Maths\WeightObsolete.cs" />
-    <Compile Include="Threading\OneJob.cs" />
-    <Compile Include="Threading\OpenOrClosed.cs" />
-    <Compile Include="Threading\Pipeline.cs" />
-    <Compile Include="Threading\PolicyOnLockRecursion.cs" />
-    <Compile Include="Threading\PriorityBlock.cs" />
     <Compile Include="Threading\PriorityScheduler.cs" />
-    <Compile Include="Threading\ReaderWriterCount.cs" />
-    <Compile Include="Threading\RecursiveCounts.cs" />
     <Compile Include="Threading\Releaser.cs" />
     <Compile Include="Logging.cs" />
-    <Compile Include="Threading\Signal.cs" />
     <Compile Include="Threading\Singleton.cs" />
-    <Compile Include="Threading\SlimLock.cs" />
     <Compile Include="Extensions\DirectoryInfos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Threading\TaskExtensions.cs" />
+    <Compile Include="Threading\TaskExtensions2.cs" />
     <Compile Include="Threading\ThreadingExtensions.cs" />
     <Compile Include="Threading\FluentTimer.cs" />
-    <Compile Include="Threading\WaitNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Controls\KittProgressBar.resx">
-      <DependentUpon>KittProgressBar.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Security\md5sum.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Properties\App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Measurement\Time\TimeMap.dgml">
+    <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -864,35 +812,20 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="BigRationalLibrary">
       <Version>1.0.0</Version>
     </PackageReference>
-    <PackageReference Include="CodeFluentRuntimeClient">
-      <Version>1.0.0.844</Version>
-    </PackageReference>
-    <PackageReference Include="Costura.Fody">
-      <Version>3.1.0</Version>
-    </PackageReference>
     <PackageReference Include="FluentAssertions">
-      <Version>5.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Fody">
-      <Version>3.1.4</Version>
+      <Version>5.4.2</Version>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
       <Version>2018.2.1</Version>
     </PackageReference>
     <PackageReference Include="LanguageExt.Core">
-      <Version>3.0.22</Version>
-    </PackageReference>
-    <PackageReference Include="LinqFaster">
-      <Version>1.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="LinqFaster.Parallel">
-      <Version>1.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="LinqFaster.SIMD">
-      <Version>1.0.0</Version>
+      <Version>3.0.28</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD.Parallel">
       <Version>1.0.0</Version>
@@ -900,20 +833,8 @@
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection">
-      <Version>2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-      <Version>2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Win32.Registry">
-      <Version>4.5.0</Version>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>11.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="NFX">
-      <Version>3.5.0.5</Version>
     </PackageReference>
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
@@ -924,83 +845,26 @@
     <PackageReference Include="RandomNameGeneratorLibrary">
       <Version>1.2.2</Version>
     </PackageReference>
-    <PackageReference Include="System.Buffers">
-      <Version>4.5.0</Version>
+    <PackageReference Include="Rx-Core">
+      <Version>2.2.5</Version>
     </PackageReference>
-    <PackageReference Include="System.Collections.Concurrent">
+    <PackageReference Include="Rx-Linq">
+      <Version>2.2.5</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Dataflow">
+      <Version>4.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XDocument">
       <Version>4.3.0</Version>
     </PackageReference>
-    <PackageReference Include="System.Diagnostics.Debug">
-      <Version>4.3.0</Version>
+    <PackageReference Include="Vanara.PInvoke.Kernel32">
+      <Version>1.1.0</Version>
     </PackageReference>
-    <PackageReference Include="System.IO">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Compression">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Compression.ZipFile">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.FileSystem">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.FileSystem.Primitives">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.MemoryMappedFiles">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq.Expressions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Net.Http">
-      <Version>4.3.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reactive.Linq">
-      <Version>4.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.TypeExtensions">
-      <Version>4.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Algorithms">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.RegularExpressions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Timer">
-      <Version>4.3.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

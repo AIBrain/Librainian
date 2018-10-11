@@ -39,53 +39,57 @@
 //
 // Project: "Librainian", "Page.cs" was last formatted by Protiguous on 2018/07/10 at 9:13 PM.
 
-namespace Librainian.Linguistics {
+namespace Librainian.Linguistics
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
-	/// <summary>
-	///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
-	/// </summary>
-	/// <see cref="Book"></see>
-	[JsonObject]
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	[Serializable]
-	public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
+    /// <summary>
+    ///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
+    /// </summary>
+    /// <see cref="Book"></see>
+    [JsonObject]
+    [Immutable]
+    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [Serializable]
+    public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph>
+    {
 
-		public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
+        [NotNull]
+        [JsonProperty]
+        private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static Page Empty { get; } = new Page();
 
-		public Boolean Equals( [CanBeNull] Page other ) {
-			if ( other is null ) { return false; }
+        private Page() { }
 
-			return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
-		}
+        public Page([NotNull] IEnumerable<Paragraph> paragraphs)
+        {
+            if (paragraphs == null) { throw new ArgumentNullException(nameof(paragraphs)); }
 
-		[NotNull]
-		[JsonProperty]
-		private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
+            this.Paragraphs.AddRange(paragraphs.Where(paragraph => paragraph != null));
+        }
 
-		public static Page Empty { get; } = new Page();
+        public Boolean Equals([CanBeNull] Page other)
+        {
+            if (other == null) { return false; }
 
-		private Page() { }
+            return ReferenceEquals(this, other) || this.Paragraphs.SequenceEqual(other.Paragraphs);
+        }
 
-		public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
-			if ( paragraphs is null ) { throw new ArgumentNullException( nameof( paragraphs ) ); }
+        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
 
-			this.Paragraphs.AddRange( paragraphs.Where( paragraph => paragraph != null ) );
-		}
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
 
-		/// <summary>Serves as the default hash function. </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
-	}
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
 }

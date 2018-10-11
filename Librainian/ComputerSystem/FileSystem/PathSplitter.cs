@@ -39,72 +39,79 @@
 //
 // Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
 
-namespace Librainian.ComputerSystem.FileSystem {
+namespace Librainian.ComputerSystem.FileSystem
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using Collections;
-	using JetBrains.Annotations;
+    using Collections;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
 
-	public class PathSplitter {
+    public class PathSplitter
+    {
 
-		[NotNull]
-		private List<String> Parts { get; } = new List<String>( 3 );
+        [NotNull]
+        private List<String> Parts { get; } = new List<String>(3);
 
-		public String FileName { get; }
+        public String FileName { get; }
 
-		[CanBeNull]
-		public String OriginalPath { get; }
+        [CanBeNull]
+        public String OriginalPath { get; }
 
-		public PathSplitter( String fullpathandfilename ) {
-			this.FileName = Path.GetFileName( fullpathandfilename );
-			this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
+        public PathSplitter(String fullpathandfilename)
+        {
+            this.FileName = Path.GetFileName(fullpathandfilename);
+            this.OriginalPath = Path.GetDirectoryName(fullpathandfilename);
 
-			if ( default == this.OriginalPath ) { return; }
+            if (default == this.OriginalPath) { return; }
 
-			var strings = this.OriginalPath.Split( new[] {
-				Path.DirectorySeparatorChar
-			}, StringSplitOptions.RemoveEmptyEntries );
+            var strings = this.OriginalPath.Split(new[] {
+                Path.DirectorySeparatorChar
+            }, StringSplitOptions.RemoveEmptyEntries);
 
-			this.Parts.AddRange( strings );
-		}
+            this.Parts.AddRange(strings);
+        }
 
-		public PathSplitter( [NotNull] Document document ) : this( document.FullPathWithFileName ) {
-			if ( document is null ) { throw new ArgumentNullException( nameof( document ) ); }
-		}
+        public PathSplitter([NotNull] Document document) : this(document.FullPathWithFileName)
+        {
+            if (document == null) { throw new ArgumentNullException(nameof(document)); }
+        }
 
-		public PathSplitter( [NotNull] Folder folder ) : this( folder.FullName ) { }
+        public PathSplitter([NotNull] Folder folder) : this(folder.FullName) { }
 
-		public Boolean InsertRoot( [NotNull] String path ) {
-			if ( path is null ) { throw new ArgumentNullException( nameof( path ) ); }
+        public Boolean InsertRoot([NotNull] String path)
+        {
+            if (path == null) { throw new ArgumentNullException(nameof(path)); }
 
-			this.Parts.Insert( 1, path );
+            this.Parts.Insert(1, path);
 
-			if ( path[ 1 ] == ':' ) { this.Parts.RemoveAt( 0 ); }
+            if (path[1] == ':') { this.Parts.RemoveAt(0); }
 
-			return true;
-		}
+            return true;
+        }
 
-		/// <summary>
-		///     Returns the reconstructed path and filename.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public Document Recombined() {
-			var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
+        /// <summary>
+        ///     Returns the reconstructed path and filename.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public Document Recombined()
+        {
+            var folder = new Folder(this.Parts.ToStrings(Path.DirectorySeparatorChar));
 
-			return new Document( folder, this.FileName );
-		}
+            return new Document(folder, this.FileName);
+        }
 
-		public Boolean SubstituteDrive( Char c ) {
-			if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) { return false; }
+        public Boolean SubstituteDrive(Char c)
+        {
+            if (this.Parts[0].Length != 2 && this.Parts[0].EndsWith(":", StringComparison.Ordinal)) { return false; }
 
-			this.Parts[ 0 ] = new String( new[] {
-				c
-			} ) + ":";
+            this.Parts[0] = new String(new[] {
+                c
+            }) + ":";
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }

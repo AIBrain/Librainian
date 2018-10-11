@@ -51,17 +51,19 @@
   <ItemGroup>
     <Compile Include="BenchmarkTests.cs" />
     <Compile Include="BPMTests.cs" />
-    <Compile Include="ConcurrentListTests.cs" />
+    <Compile Include="Collections\ConcurrentListTests.cs" />
     <Compile Include="CoundownWatchTests.cs" />
     <Compile Include="CountableIntegersTests.cs" />
     <Compile Include="DefragTests.cs" />
     <Compile Include="DiagnosticTests.cs" />
+    <Compile Include="DriveTests.cs" />
     <Compile Include="FileHistoryFileTests.cs" />
     <Compile Include="FolderBagTests.cs" />
     <Compile Include="FolderTests.cs" />
     <Compile Include="Linguistics\SentenceTests.cs" />
     <Compile Include="Maths\ArithmeticMethods.cs" />
     <Compile Include="Maths\MathsTests.cs" />
+    <Compile Include="Maths\TimeTests.cs" />
     <Compile Include="MyClass.cs" />
     <Compile Include="PasswordTests.cs" />
     <Compile Include="PathSplitterTests.cs" />
@@ -74,16 +76,17 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions">
-      <Version>5.3.2</Version>
+      <Version>5.4.2</Version>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
-      <Version>11.1.0</Version>
+      <Version>2018.2.1</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.10.1</Version>

@@ -39,28 +39,30 @@
 //
 // Project: "Librainian", "Data.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence
+{
 
-	using System;
-	using ComputerSystem.FileSystem;
+    using ComputerSystem.FileSystem;
+    using System;
 
-	public static class Data {
+    public static class Data
+    {
 
-		/// <summary>
-		///     <see cref="Document" />s that have been scanned.
-		/// </summary>
-		public static PersistTable<String, DocumentInfo> ScannedDocuments { get; } = new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( ScannedDocuments ) );
+        /// <summary>
+        ///     <see cref="Document" />s that have been scanned.
+        /// </summary>
+        public static PersistTable<String, DocumentInfo> ScannedDocuments { get; } = new PersistTable<String, DocumentInfo>(Environment.SpecialFolder.CommonApplicationData, nameof(ScannedDocuments));
 
-		public static PersistTable<String, Folder> StorageLocations { get; } = new PersistTable<String, Folder>( Environment.SpecialFolder.CommonApplicationData, nameof( StorageLocations ) );
+        public static PersistTable<String, Folder> StorageLocations { get; } = new PersistTable<String, Folder>(Environment.SpecialFolder.CommonApplicationData, nameof(StorageLocations));
 
-		/*
+        /*
 		public static async Task Record( [NotNull] this DocumentInfo documentInfo, CancellationToken token ) {
-			if ( documentInfo is null ) { throw new ArgumentNullException( paramName: nameof( documentInfo ) ); }
+			if ( documentInfo == null ) { throw new ArgumentNullException( paramName: nameof( documentInfo ) ); }
 
 			await documentInfo.Scan( token ).NoUI();
 
 			ScannedDocuments[documentInfo.AbsolutePath ] = documentInfo;
 		}
 		*/
-	}
+    }
 }

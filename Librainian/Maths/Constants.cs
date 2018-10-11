@@ -48,12 +48,7 @@ namespace Librainian.Maths {
 	public static class Constants {
 
 		/// <summary>
-		///     Precalculated -3/2.
-		/// </summary>
-		public static BigRational NegativeThreeOverTwo { get; } = new BigRational( -3, 2 );
-
-		/// <summary>
-		///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
+		///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
 		/// </summary>
 		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
@@ -109,6 +104,11 @@ namespace Librainian.Maths {
 		public static readonly BigRational OneOverTwo = new BigRational( 1, 2 );
 
 		public static readonly BigRational ThreeOverTwo = new BigRational( 3, 2 );
+
+		/// <summary>
+		///     Precalculated -3/2.
+		/// </summary>
+		public static BigRational NegativeThreeOverTwo { get; } = new BigRational( -3, 2 );
 
 		public static class Sizes {
 

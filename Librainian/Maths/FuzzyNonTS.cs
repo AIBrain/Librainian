@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "FuzzyNonTS.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "FuzzyNonTS.cs" was last formatted by Protiguous on 2018/08/23 at 7:49 PM.
 
 namespace Librainian.Maths {
 
@@ -57,6 +57,16 @@ namespace Librainian.Maths {
 		[JsonProperty]
 		private Double _value;
 
+		public const Double MaxValue = 1D;
+
+		public const Double MinValue = 0D;
+
+		public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
+
+		public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
+
+		public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
+
 		public Double Value {
 			get => this._value;
 
@@ -69,17 +79,6 @@ namespace Librainian.Maths {
 				this._value = correctedvalue;
 			}
 		}
-
-		public const Double MaxValue = 1D;
-
-		public const Double MinValue = 0D;
-
-		public static readonly FuzzyNonTs Falser = new FuzzyNonTs( Undecided - Undecided / 2 );
-
-		//private static readonly Random rnd = new Random( ( int ) DateTime.UtcNow.Ticks );
-		public static readonly FuzzyNonTs Truer = new FuzzyNonTs( Undecided + Undecided / 2 );
-
-		public static readonly FuzzyNonTs Undecided = new FuzzyNonTs( 0.5D );
 
 		public FuzzyNonTs( Double value ) => this.Value = value;
 

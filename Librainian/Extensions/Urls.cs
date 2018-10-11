@@ -37,74 +37,79 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Urls.cs" was last formatted by Protiguous on 2018/07/10 at 9:03 PM.
+// Project: "Librainian", "Urls.cs" was last formatted by Protiguous on 2018/08/27 at 2:59 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions
+{
 
-	using System;
-	using System.IO;
-	using System.Text;
-	using System.Text.RegularExpressions;
-	using System.Web;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using System.Web;
 
-	public static class Urls {
+    public static class Urls
+    {
 
-		public static String GetSuggestedNameFromUrl( String url, String defaultValue ) {
-			var res = Path.GetFileNameWithoutExtension( url );
+        public static String GetSuggestedNameFromUrl(String url, String defaultValue)
+        {
+            var res = Path.GetFileNameWithoutExtension(url);
 
-			//check if there is no file name, i.e. just folder name + query String
-			if ( !String.IsNullOrEmpty( res ) && !res.IsNameOnlyQueryString() ) { return defaultValue; }
+            //check if there is no file name, i.e. just folder name + query String
+            if (!String.IsNullOrEmpty(res) && !res.IsNameOnlyQueryString()) { return defaultValue; }
 
-			res = Path.GetFileName( Path.GetDirectoryName( url ) );
+            res = Path.GetFileName(Path.GetDirectoryName(url));
 
-			return String.IsNullOrEmpty( res ) ? defaultValue : Regex.Replace( res, @"[^\w]", "_", RegexOptions.Singleline ).Substring( 0, 50 );
-		}
+            return String.IsNullOrEmpty(res) ? defaultValue : Regex.Replace(res, @"[^\w]", "_", RegexOptions.Singleline).Substring(0, 50);
+        }
 
-		/// <summary>
-		///     Check that a String is not null or empty
-		/// </summary>
-		/// <param name="input">String to check</param>
-		/// <returns>Boolean</returns>
-		public static Boolean HasValue( [CanBeNull] this String input ) => !String.IsNullOrEmpty( input );
+        /// <summary>
+        ///     Check that a String is not null or empty
+        /// </summary>
+        /// <param name="input">String to check</param>
+        /// <returns>Boolean</returns>
+        public static Boolean HasValue([CanBeNull] this String input) => !String.IsNullOrEmpty(input);
 
-		[CanBeNull]
-		public static String HtmlAttributeEncode( [NotNull] this String input ) => HttpUtility.HtmlAttributeEncode( input );
+        [CanBeNull]
+        public static String HtmlAttributeEncode([NotNull] this String input) => HttpUtility.HtmlAttributeEncode(input);
 
-		[CanBeNull]
-		public static String HtmlDecode( this String input ) => HttpUtility.HtmlDecode( input );
+        [CanBeNull]
+        public static String HtmlDecode(this String input) => HttpUtility.HtmlDecode(input);
 
-		[CanBeNull]
-		public static String HtmlEncode( [NotNull] this String input ) => HttpUtility.HtmlEncode( input );
+        [CanBeNull]
+        public static String HtmlEncode([NotNull] this String input) => HttpUtility.HtmlEncode(input);
 
-		public static Boolean IsNameOnlyQueryString( [CanBeNull] this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
+        public static Boolean IsNameOnlyQueryString([CanBeNull] this String res) => !String.IsNullOrEmpty(res) && res[0] == '?';
 
-		[CanBeNull]
-		public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
+        [CanBeNull]
+        public static String UrlDecode(this String input) => HttpUtility.UrlDecode(input);
 
-		/// <summary>
-		///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
-		///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
-		/// </summary>
-		[NotNull]
-		public static String UrlEncode( [NotNull] this String input ) {
-			if ( input is null ) { throw new ArgumentNullException( nameof( input ) ); }
+        /// <summary>
+        ///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
+        ///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+        /// </summary>
+        [NotNull]
+        public static String UrlEncode([NotNull] this String input)
+        {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
 
-			const Int32 maxLength = 32766;
+            const Int32 maxLength = 32766;
 
-			if ( input.Length <= maxLength ) { return Uri.EscapeDataString( input ); }
+            if (input.Length <= maxLength) { return Uri.EscapeDataString(input); }
 
-			var sb = new StringBuilder( input.Length * 2 );
-			var index = 0;
+            var sb = new StringBuilder(input.Length * 2);
+            var index = 0;
 
-			while ( index < input.Length ) {
-				var length = Math.Min( input.Length - index, maxLength );
-				var subString = input.Substring( index, length );
-				sb.Append( Uri.EscapeDataString( subString ) );
-				index += subString.Length;
-			}
+            while (index < input.Length)
+            {
+                var length = Math.Min(input.Length - index, maxLength);
+                var subString = input.Substring(index, length);
+                sb.Append(Uri.EscapeDataString(subString));
+                index += subString.Length;
+            }
 
-			return sb.ToString();
-		}
-	}
+            return sb.ToString();
+        }
+    }
 }

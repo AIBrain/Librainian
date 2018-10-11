@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Year.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
+// Project: "Librainian", "Year.cs" was last formatted by Protiguous on 2018/08/23 at 7:10 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	[Immutable]
 	public struct Year : IComparable<Year>, IClockPart {
 
-		public static readonly Year Zero = new Year( 0 );
+		public static Year Zero { get; } = new Year( 0 );
 
 		[JsonProperty]
 		public BigInteger Value { get; }

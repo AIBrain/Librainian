@@ -39,73 +39,79 @@
 //
 // Project: "Librainian", "Credits.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers
+{
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
 
-	/// <summary>
-	///     <para>Keep count of credits, current and lifetime.</para>
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class Credits {
+    /// <summary>
+    ///     <para>Keep count of credits, current and lifetime.</para>
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    public class Credits
+    {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private UInt64 _currentCredits;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private UInt64 _currentCredits;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private UInt64 _lifetimeCredits;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private UInt64 _lifetimeCredits;
 
-		public UInt64 CurrentCredits {
-			get => Thread.VolatileRead( ref this._currentCredits );
+        /// <summary>No credits.</summary>
+        public static readonly Credits Zero = new Credits(currentCredits: 0, lifetimeCredits: 0);
 
-			private set => Thread.VolatileWrite( ref this._currentCredits, value );
-		}
+        public UInt64 CurrentCredits {
+            get => Thread.VolatileRead(ref this._currentCredits);
 
-		public UInt64 LifetimeCredits {
-			get => Thread.VolatileRead( ref this._lifetimeCredits );
+            private set => Thread.VolatileWrite(ref this._currentCredits, value);
+        }
 
-			private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
-		}
+        public UInt64 LifetimeCredits {
+            get => Thread.VolatileRead(ref this._lifetimeCredits);
 
-		/// <summary>No credits.</summary>
-		public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
+            private set => Thread.VolatileWrite(ref this._lifetimeCredits, value);
+        }
 
-		public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
-			this.CurrentCredits = currentCredits;
-			this.LifetimeCredits = lifetimeCredits;
-		}
+        public Credits(UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0)
+        {
+            this.CurrentCredits = currentCredits;
+            this.LifetimeCredits = lifetimeCredits;
+        }
 
-		[NotNull]
-		public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
-			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
+        [NotNull]
+        public static Credits Combine([NotNull] Credits left, [NotNull] Credits right)
+        {
+            if (left == null) { throw new ArgumentNullException(nameof(left)); }
 
-			if ( right is null ) { throw new ArgumentNullException( nameof( right ) ); }
+            if (right == null) { throw new ArgumentNullException(nameof(right)); }
 
-			return new Credits( left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits );
-		}
+            return new Credits(left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits);
+        }
 
-		public void AddCredits( UInt64 credits = 1 ) {
-			this.CurrentCredits += credits;
-			this.LifetimeCredits += credits;
-		}
+        public void AddCredits(UInt64 credits = 1)
+        {
+            this.CurrentCredits += credits;
+            this.LifetimeCredits += credits;
+        }
 
-		[NotNull]
-		public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
+        [NotNull]
+        public Credits Clone() => new Credits(this.CurrentCredits, this.LifetimeCredits);
 
-		public void SubtractCredits( UInt64 credits = 1 ) {
-			var currentcredits = ( Int64 ) this.CurrentCredits;
+        public void SubtractCredits(UInt64 credits = 1)
+        {
+            var currentcredits = (Int64)this.CurrentCredits;
 
-			if ( currentcredits - ( Int64 ) credits < 0 ) { this.CurrentCredits = 0; }
-			else { this.CurrentCredits -= credits; }
-		}
+            if (currentcredits - (Int64)credits < 0) { this.CurrentCredits = 0; }
+            else { this.CurrentCredits -= credits; }
+        }
 
-		public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
-	}
+        public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
+    }
 }

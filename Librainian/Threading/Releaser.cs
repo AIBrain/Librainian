@@ -39,26 +39,30 @@
 //
 // Project: "Librainian", "Releaser.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading
+{
 
-	using System;
+    using System;
 
-	public struct Releaser : IDisposable {
+    public struct Releaser : IDisposable
+    {
 
-		private readonly AsyncReaderWriterLock _toRelease;
+        private readonly AsyncReaderWriterLock _toRelease;
 
-		private readonly Boolean _writer;
+        private readonly Boolean _writer;
 
-		internal Releaser( AsyncReaderWriterLock toRelease, Boolean writer ) {
-			this._toRelease = toRelease;
-			this._writer = writer;
-		}
+        internal Releaser(AsyncReaderWriterLock toRelease, Boolean writer)
+        {
+            this._toRelease = toRelease;
+            this._writer = writer;
+        }
 
-		public void Dispose() {
-			if ( this._toRelease is null ) { return; }
+        public void Dispose()
+        {
+            if (this._toRelease == null) { return; }
 
-			if ( this._writer ) { this._toRelease.WriterRelease(); }
-			else { this._toRelease.ReaderRelease(); }
-		}
-	}
+            if (this._writer) { this._toRelease.WriterRelease(); }
+            else { this._toRelease.ReaderRelease(); }
+        }
+    }
 }

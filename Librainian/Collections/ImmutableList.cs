@@ -39,205 +39,213 @@
 //
 // Project: "Librainian", "ImmutableList.cs" was last formatted by Protiguous on 2018/07/10 at 8:50 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Extensions;
-	using JetBrains.Annotations;
+    using Extensions;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	/// <summary>
-	///     A list that has been written to be observationally immutable. A mutable array is used as the backing store for the
-	///     list, but no mutable operations are offered.
-	/// </summary>
-	/// <typeparam name="T">The type of elements contained in the list.</typeparam>
-	/// <remarks>http://joeduffyblog.com/2007/11/11/immutable-types-for-c/</remarks>
-	[Immutable]
-	public sealed class ImmutableList<T> : IList<T> {
+    /// <summary>
+    ///     A list that has been written to be observationally immutable. A mutable array is used as the backing store for the
+    ///     list, but no mutable operations are offered.
+    /// </summary>
+    /// <typeparam name="T">The type of elements contained in the list.</typeparam>
+    /// <remarks>http://joeduffyblog.com/2007/11/11/immutable-types-for-c/</remarks>
+    [Immutable]
+    public sealed class ImmutableList<T> : IList<T>
+    {
 
-		/// <summary>
-		///     Retrieves the immutable count of the list.
-		/// </summary>
-		public Int32 Count => this.Array.Length;
+        private T[] Array { get; }
 
-		/// <summary>
-		///     Whether the list is read only: because the list is immutable, this is always true.
-		/// </summary>
-		public Boolean IsReadOnly => true;
+        /// <summary>
+        ///     Retrieves the immutable count of the list.
+        /// </summary>
+        public Int32 Count => this.Array.Length;
 
-		/// <summary>
-		///     Accesses the element at the specified index. Because the list is immutable, the setter will always throw an
-		///     exception.
-		/// </summary>
-		/// <param name="index">The index to access.</param>
-		/// <returns>The element at the specified index.</returns>
-		public T this[ Int32 index ] {
-			get => this.Array[ index ];
+        /// <summary>
+        ///     Whether the list is read only: because the list is immutable, this is always true.
+        /// </summary>
+        public Boolean IsReadOnly => true;
 
-			set => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndSet’" );
-		}
+        /// <summary>
+        ///     Accesses the element at the specified index. Because the list is immutable, the setter will always throw an
+        ///     exception.
+        /// </summary>
+        /// <param name="index">The index to access.</param>
+        /// <returns>The element at the specified index.</returns>
+        public T this[Int32 index] {
+            get => this.Array[index];
 
-		/// <summary>
-		///     Checks whether the specified item is contained in the list.
-		/// </summary>
-		/// <param name="item">The item to search for.</param>
-		/// <returns>True if the item is found, false otherwise.</returns>
-		public Boolean Contains( T item ) => System.Array.IndexOf( array: this.Array, item ) != -1;
+            set => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndSet’");
+        }
 
-		/// <summary>
-		///     Copies the contents of this list to a destination array.
-		/// </summary>
-		/// <param name="array">The array to copy elements to.</param>
-		/// <param name="index">The index at which copying begins.</param>
-		public void CopyTo( T[] array, Int32 index ) => this.Array.CopyTo( array: array, index: index );
+        /// <summary>
+        ///     Create a new list.
+        /// </summary>
+        public ImmutableList() => this.Array = new T[0];
 
-		/// <summary>
-		///     Retrieves an enumerator for the list’s collections.
-		/// </summary>
-		/// <returns>An enumerator.</returns>
-		public IEnumerator<T> GetEnumerator() => ( ( IEnumerable<T> ) this.Array ).GetEnumerator();
+        /// <summary>
+        ///     Create a new list, copying elements from the specified array.
+        /// </summary>
+        /// <param name="arrayToCopy">An array whose contents will be copied.</param>
+        public ImmutableList([NotNull] T[] arrayToCopy)
+        {
+            if (arrayToCopy == null) { throw new ArgumentNullException(nameof(arrayToCopy)); }
 
-		/// <summary>
-		///     Finds the index of the specified element.
-		/// </summary>
-		/// <param name="item">An item to search for.</param>
-		/// <returns>The index of the item, or -1 if it was not found.</returns>
-		public Int32 IndexOf( T item ) => System.Array.IndexOf( array: this.Array, item );
+            this.Array = new T[arrayToCopy.Length];
+            Buffer.BlockCopy(arrayToCopy, 0, this.Array, 0, arrayToCopy.Length);
+        }
 
-		/// <summary>
-		///     This method is unsupported on this type, because it is immutable.
-		/// </summary>
-		void ICollection<T>.Add( T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndAdd’" );
+        /// <summary>
+        ///     Create a new list, copying elements from the specified enumerable.
+        /// </summary>
+        /// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
+        public ImmutableList([NotNull] IEnumerable<T> enumerableToCopy) => this.Array = enumerableToCopy.ToArray();
 
-		/// <summary>
-		///     This method is unsupported on this type, because it is immutable.
-		/// </summary>
-		void ICollection<T>.Clear() => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndClear’" );
+        /// <summary>
+        ///     Checks whether the specified item is contained in the list.
+        /// </summary>
+        /// <param name="item">The item to search for.</param>
+        /// <returns>True if the item is found, false otherwise.</returns>
+        public Boolean Contains(T item) => System.Array.IndexOf(array: this.Array, item) != -1;
 
-		/// <summary>
-		///     Retrieves an enumerator for the list’s collections.
-		/// </summary>
-		/// <returns>An enumerator.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        /// <summary>
+        ///     Copies the list and adds a new value at the end.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
+        /// <returns>A modified copy of this list.</returns>
+        [NotNull]
+        public ImmutableList<T> CopyAndAdd(T value)
+        {
+            var newArray = new T[this.Array.Length + 1];
+            this.Array.CopyTo(array: newArray, index: 0);
+            newArray[this.Array.Length] = value;
 
-		/// <summary>
-		///     This method is unsupported on this type, because it is immutable.
-		/// </summary>
-		void IList<T>.Insert( Int32 index, T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndInsert’" );
+            return new ImmutableList<T>(arrayToCopy: newArray);
+        }
 
-		/// <summary>
-		///     This method is unsupported on this type, because it is immutable.
-		/// </summary>
-		Boolean ICollection<T>.Remove( T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndRemove’" );
+        /// <summary>
+        ///     Returns a new, cleared (empty) immutable list.
+        /// </summary>
+        /// <returns>A modified copy of this list.</returns>
+        [NotNull]
+        public ImmutableList<T> CopyAndClear() => new ImmutableList<T>(arrayToCopy: new T[0]);
 
-		/// <summary>
-		///     This method is unsupported on this type, because it is immutable.
-		/// </summary>
-		void IList<T>.RemoveAt( Int32 index ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndRemoveAt’" );
+        /// <summary>
+        ///     Copies the list and inserts a particular element.
+        /// </summary>
+        /// <param name="index">The index at which to insert an element.</param>
+        /// <param name="item"> The element to insert.</param>
+        /// <returns>An immutable copy of this modified list.</returns>
+        [NotNull]
+        public ImmutableList<T> CopyAndInsert(Int32 index, T item)
+        {
+            var newArray = new T[this.Array.Length + 1];
+            Buffer.BlockCopy(this.Array, 0, newArray, 0, index);
+            newArray[index] = item;
+            Buffer.BlockCopy(this.Array, index, newArray, index + 1, this.Array.Length - index);
 
-		private T[] Array { get; }
+            return new ImmutableList<T>(arrayToCopy: newArray);
+        }
 
-		/// <summary>
-		///     Create a new list.
-		/// </summary>
-		public ImmutableList() => this.Array = new T[ 0 ];
+        /// <summary>
+        ///     Copies the list and removes a particular element.
+        /// </summary>
+        /// <param name="item">The element to remove.</param>
+        /// <returns>A modified copy of this list.</returns>
+        public ImmutableList<T> CopyAndRemove(T item)
+        {
+            var index = this.IndexOf(item: item);
 
-		/// <summary>
-		///     Create a new list, copying elements from the specified array.
-		/// </summary>
-		/// <param name="arrayToCopy">An array whose contents will be copied.</param>
-		public ImmutableList( [NotNull] T[] arrayToCopy ) {
-			if ( arrayToCopy is null ) { throw new ArgumentNullException( nameof( arrayToCopy ) ); }
+            if (index == -1) { throw new ArgumentException("Item not found in list."); }
 
-			this.Array = new T[ arrayToCopy.Length ];
-			Buffer.BlockCopy( arrayToCopy, 0, this.Array, 0, arrayToCopy.Length );
-		}
+            return this.CopyAndRemoveAt(index: index);
+        }
 
-		/// <summary>
-		///     Create a new list, copying elements from the specified enumerable.
-		/// </summary>
-		/// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
-		public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
+        /// <summary>
+        ///     Copies the list and removes a particular element.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
+        /// <returns>A modified copy of this list.</returns>
+        [NotNull]
+        public ImmutableList<T> CopyAndRemoveAt(Int32 index)
+        {
+            var newArray = new T[this.Array.Length - 1];
+            Buffer.BlockCopy(this.Array, 0, newArray, 0, index);
+            Buffer.BlockCopy(this.Array, index + 1, newArray, index, this.Array.Length - index - 1);
 
-		/// <summary>
-		///     Copies the list and adds a new value at the end.
-		/// </summary>
-		/// <param name="value">The value to add.</param>
-		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndAdd( T value ) {
-			var newArray = new T[ this.Array.Length + 1 ];
-			this.Array.CopyTo( array: newArray, index: 0 );
-			newArray[ this.Array.Length ] = value;
+            return new ImmutableList<T>(arrayToCopy: newArray);
+        }
 
-			return new ImmutableList<T>( arrayToCopy: newArray );
-		}
+        /// <summary>
+        ///     Copies the list and modifies the specific value at the index provided.
+        /// </summary>
+        /// <param name="index">The index whose value is to be changed.</param>
+        /// <param name="item"> The value to store at the specified index.</param>
+        /// <returns>A modified copy of this list.</returns>
+        [NotNull]
+        public ImmutableList<T> CopyAndSet(Int32 index, T item)
+        {
+            var newArray = new T[this.Array.Length];
+            this.Array.CopyTo(array: newArray, index: 0);
+            newArray[index] = item;
 
-		/// <summary>
-		///     Returns a new, cleared (empty) immutable list.
-		/// </summary>
-		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndClear() => new ImmutableList<T>( arrayToCopy: new T[ 0 ] );
+            return new ImmutableList<T>(arrayToCopy: newArray);
+        }
 
-		/// <summary>
-		///     Copies the list and inserts a particular element.
-		/// </summary>
-		/// <param name="index">The index at which to insert an element.</param>
-		/// <param name="item"> The element to insert.</param>
-		/// <returns>An immutable copy of this modified list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndInsert( Int32 index, T item ) {
-			var newArray = new T[ this.Array.Length + 1 ];
-			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
-			newArray[ index ] = item;
-			Buffer.BlockCopy( this.Array, index, newArray, index + 1, this.Array.Length - index );
+        /// <summary>
+        ///     Copies the contents of this list to a destination array.
+        /// </summary>
+        /// <param name="array">The array to copy elements to.</param>
+        /// <param name="index">The index at which copying begins.</param>
+        public void CopyTo(T[] array, Int32 index) => this.Array.CopyTo(array: array, index: index);
 
-			return new ImmutableList<T>( arrayToCopy: newArray );
-		}
+        /// <summary>
+        ///     Retrieves an enumerator for the list’s collections.
+        /// </summary>
+        /// <returns>An enumerator.</returns>
+        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)this.Array).GetEnumerator();
 
-		/// <summary>
-		///     Copies the list and removes a particular element.
-		/// </summary>
-		/// <param name="item">The element to remove.</param>
-		/// <returns>A modified copy of this list.</returns>
-		public ImmutableList<T> CopyAndRemove( T item ) {
-			var index = this.IndexOf( item: item );
+        /// <summary>
+        ///     Finds the index of the specified element.
+        /// </summary>
+        /// <param name="item">An item to search for.</param>
+        /// <returns>The index of the item, or -1 if it was not found.</returns>
+        public Int32 IndexOf(T item) => System.Array.IndexOf(array: this.Array, item);
 
-			if ( index == -1 ) { throw new ArgumentException( "Item not found in list." ); }
+        /// <summary>
+        ///     This method is unsupported on this type, because it is immutable.
+        /// </summary>
+        void ICollection<T>.Add(T item) => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndAdd’");
 
-			return this.CopyAndRemoveAt( index: index );
-		}
+        /// <summary>
+        ///     This method is unsupported on this type, because it is immutable.
+        /// </summary>
+        void ICollection<T>.Clear() => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndClear’");
 
-		/// <summary>
-		///     Copies the list and removes a particular element.
-		/// </summary>
-		/// <param name="index">The index of the element to remove.</param>
-		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
-			var newArray = new T[ this.Array.Length - 1 ];
-			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
-			Buffer.BlockCopy( this.Array, index + 1, newArray, index, this.Array.Length - index - 1 );
+        /// <summary>
+        ///     Retrieves an enumerator for the list’s collections.
+        /// </summary>
+        /// <returns>An enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-			return new ImmutableList<T>( arrayToCopy: newArray );
-		}
+        /// <summary>
+        ///     This method is unsupported on this type, because it is immutable.
+        /// </summary>
+        void IList<T>.Insert(Int32 index, T item) => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndInsert’");
 
-		/// <summary>
-		///     Copies the list and modifies the specific value at the index provided.
-		/// </summary>
-		/// <param name="index">The index whose value is to be changed.</param>
-		/// <param name="item"> The value to store at the specified index.</param>
-		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndSet( Int32 index, T item ) {
-			var newArray = new T[ this.Array.Length ];
-			this.Array.CopyTo( array: newArray, index: 0 );
-			newArray[ index ] = item;
+        /// <summary>
+        ///     This method is unsupported on this type, because it is immutable.
+        /// </summary>
+        Boolean ICollection<T>.Remove(T item) => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndRemove’");
 
-			return new ImmutableList<T>( arrayToCopy: newArray );
-		}
-	}
+        /// <summary>
+        ///     This method is unsupported on this type, because it is immutable.
+        /// </summary>
+        void IList<T>.RemoveAt(Int32 index) => throw new InvalidOperationException("Cannot mutate an immutable list; see copying method ‘CopyAndRemoveAt’");
+    }
 }

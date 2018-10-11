@@ -59,6 +59,7 @@ namespace LibrainianTests {
 			Assert.AreEqual( expected: decrypted, actual: phraseToTest );
 		}
 
+		/*
 		[Test]
 		public static void TestGenerateGenerates() {
 			var result = SecurityExtensions.GenerateKey( username: "Test" );
@@ -66,5 +67,6 @@ namespace LibrainianTests {
 
 			// 1-KbQP3bo4zph3ynO0flLTxzB8d25AY74E
 		}
+		*/
 	}
 }

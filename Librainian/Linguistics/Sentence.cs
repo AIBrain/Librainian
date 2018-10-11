@@ -39,83 +39,87 @@
 //
 // Project: "Librainian", "Sentence.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
 
-namespace Librainian.Linguistics {
+namespace Librainian.Linguistics
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Collections;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Parsing;
+    using Collections;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Parsing;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
-	/// <summary>
-	///     A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .
-	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></see>
-	/// <see cref="Paragraph"></see>
-	[JsonObject]
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	[Serializable]
-	public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
+    /// <summary>
+    ///     A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .
+    /// </summary>
+    /// <see cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></see>
+    /// <see cref="Paragraph"></see>
+    [JsonObject]
+    [Immutable]
+    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [Serializable]
+    public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence>
+    {
 
-		public Int32 CompareTo( [NotNull] Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
+        /// <summary></summary>
+        public static readonly Sentence EndOfLine = new Sentence("\0");
 
-		public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
+        /// <summary></summary>
+        [NotNull]
+        [JsonProperty]
+        private List<Word> Words { get; } = new List<Word>();
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public static Sentence Empty { get; } = new Sentence();
 
-		public Boolean Equals( Sentence other ) {
-			if ( other is null ) { return false; }
+        private Sentence() { }
 
-			return ReferenceEquals( this, other ) || this.SequenceEqual( other );
-		}
+        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
+        /// <param name="sentence"></param>
+        public Sentence([NotNull] String sentence) : this(sentence.ToWords().Select(word => new Word(word))) { }
 
-		/// <summary></summary>
-		[NotNull]
-		[JsonProperty]
-		private List<Word> Words { get; } = new List<Word>();
+        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
+        /// <param name="words"></param>
+        public Sentence([NotNull] IEnumerable<Word> words)
+        {
+            if (words == null) { throw new ArgumentNullException(nameof(words)); }
 
-		public static Sentence Empty { get; } = new Sentence();
+            this.Words.AddRange(words.Where(word => word != null));
+            this.Words.TrimExcess();
+        }
 
-		/// <summary></summary>
-		public static readonly Sentence EndOfLine = new Sentence( "\0" );
+        public Int32 CompareTo([NotNull] Sentence other) => String.Compare(this.ToString(), other.ToString(), StringComparison.Ordinal);
 
-		private Sentence() { }
+        public Boolean Equals(Sentence other)
+        {
+            if (other == null) { return false; }
 
-		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
-		/// <param name="sentence"></param>
-		public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
+            return ReferenceEquals(this, other) || this.SequenceEqual(other);
+        }
 
-		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
-		/// <param name="words"></param>
-		public Sentence( [NotNull] IEnumerable<Word> words ) {
-			if ( words is null ) { throw new ArgumentNullException( nameof( words ) ); }
+        public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
-			this.Words.AddRange( words.Where( word => word != null ) );
-			this.Words.Fix();
-		}
+        //public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
+        public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-		//public static implicit operator String( Sentence sentence ) {return sentence != null ? sentence.Words.ToStrings( " " ) : String.Empty;}
-		public override Int32 GetHashCode() => this.Words.GetHashCode();
+        [NotNull]
+        public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select(words => new Sentence(words)).Where(sentence => !sentence.ToString().IsNullOrEmpty());
 
-		[NotNull]
-		public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
+        public override String ToString() => this.Words.ToStrings(" ");
 
-		public override String ToString() => this.Words.ToStrings( " " );
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		//[NotNull]
-		//public Word TakeFirst() {
-		//    try {
-		//        return this.Words.TakeFirst() ?? new Word( String.Empty );
-		//    }
-		//    finally {
-		//        this.Words.Fix();
-		//    }
-		//}
-	}
+        //[NotNull]
+        //public Word TakeFirst() {
+        //    try {
+        //        return this.Words.TakeFirst() ?? new Word( String.Empty );
+        //    }
+        //    finally {
+        //        this.Words.Fix();
+        //    }
+        //}
+    }
 }

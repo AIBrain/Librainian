@@ -39,168 +39,188 @@
 //
 // Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
 
-namespace Librainian.Internet.Servers {
+namespace Librainian.Internet.Servers
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Net;
-	using System.Text;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using FluentAssertions;
-	using JetBrains.Annotations;
-	using Magic;
+    using FluentAssertions;
+    using JetBrains.Annotations;
+    using Magic;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	/// </summary>
-	/// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
-	/// <example>
-	///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A
-	///     simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
-	/// </example>
-	/// <example>
-	///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page",
-	///     DateTime.Now); }
-	/// </example>
-	[UsedImplicitly]
-	public class SimpleWebServer : ABetterClassDispose {
+    /// <summary>
+    /// </summary>
+    /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
+    /// <example>
+    ///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A
+    ///     simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
+    /// </example>
+    /// <example>
+    ///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page",
+    ///     DateTime.Now); }
+    /// </example>
+    [UsedImplicitly]
+    public class SimpleWebServer : ABetterClassDispose
+    {
 
-		/// <summary>
-		/// </summary>
-		[NotNull]
-		private readonly HttpListener _httpListener = new HttpListener();
+        /// <summary>
+        /// </summary>
+        [NotNull]
+        private readonly HttpListener _httpListener = new HttpListener();
 
-		/// <summary>
-		/// </summary>
-		[CanBeNull]
-		private readonly Func<HttpListenerRequest, String> _responderMethod;
+        /// <summary>
+        /// </summary>
+        [CanBeNull]
+        private readonly Func<HttpListenerRequest, String> _responderMethod;
 
-		public Boolean IsReadyForRequests { get; private set; }
+        public Boolean IsReadyForRequests { get; private set; }
 
-		public String NotReadyBecause { get; private set; }
+        public String NotReadyBecause { get; private set; }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="prefixes"></param>
-		/// <param name="method">  </param>
-		/// <exception cref="HttpListenerException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
-			this.ImNotReady( String.Empty );
+        /// <summary>
+        /// </summary>
+        /// <param name="prefixes"></param>
+        /// <param name="method">  </param>
+        /// <exception cref="HttpListenerException"></exception>
+        /// <exception cref="ObjectDisposedException"></exception>
+        public SimpleWebServer(ICollection<String> prefixes, Func<HttpListenerRequest, String> method)
+        {
+            this.ImNotReady(String.Empty);
 
-			this._httpListener.Should().NotBeNull( "this._httpListener is null." );
+            this._httpListener.Should().NotBeNull("this._httpListener == null.");
 
-			if ( !HttpListener.IsSupported ) {
-				HttpListener.IsSupported.Should().BeTrue( "Needs Windows XP SP2, Server 2003, or later." );
-				this.ImNotReady( because: "HttpListener is not supported." );
+            if (!HttpListener.IsSupported)
+            {
+                HttpListener.IsSupported.Should().BeTrue("Needs Windows XP SP2, Server 2003, or later.");
+                this.ImNotReady(because: "HttpListener is not supported.");
 
-				return;
-			}
+                return;
+            }
 
-			prefixes.Should().NotBeNullOrEmpty( "URI prefixes are required, for example http://localhost:8080/index/. " );
+            prefixes.Should().NotBeNullOrEmpty("URI prefixes are required, for example http://localhost:8080/index/. ");
 
-			if ( prefixes is null || !prefixes.Any() ) {
-				this.ImNotReady( because: "URI prefixes are required." );
+            if (prefixes?.Any() != true)
+            {
+                this.ImNotReady(because: "URI prefixes are required.");
 
-				return;
-			}
+                return;
+            }
 
-			method.Should().NotBeNull( "A responder method is required" );
+            method.Should().NotBeNull("A responder method is required");
 
-			if ( method is null ) {
-				this.ImNotReady( because: "A responder method is required" );
+            if (method == null)
+            {
+                this.ImNotReady(because: "A responder method is required");
 
-				return;
-			}
+                return;
+            }
 
-			foreach ( var prefix in prefixes ) { this._httpListener.Prefixes.Add( prefix ); }
+            foreach (var prefix in prefixes) { this._httpListener.Prefixes.Add(prefix); }
 
-			this._responderMethod = method;
+            this._responderMethod = method;
 
-			try {
-				this._httpListener.Start();
-				this.IsReadyForRequests = true;
-			}
-			catch { this.ImNotReady( because: "The httpListener did not Start()." ); }
-		}
+            try
+            {
+                this._httpListener.Start();
+                this.IsReadyForRequests = true;
+            }
+            catch { this.ImNotReady(because: "The httpListener did not Start()."); }
+        }
 
-		public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
+        public SimpleWebServer(Func<HttpListenerRequest, String> method, params String[] prefixes) : this(prefixes, method) { }
 
-		private void ImNotReady( String because ) {
-			this.IsReadyForRequests = false;
-			this.NotReadyBecause = because;
-		}
+        private void ImNotReady(String because)
+        {
+            this.IsReadyForRequests = false;
+            this.NotReadyBecause = because;
+        }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() => this.Stop();
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Stop();
 
-		/// <summary>
-		///     Start the http listener.
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		/// <see cref="Stop" />
-		[NotNull]
-		public Task Run( CancellationToken cancellationToken ) =>
-			Task.Run( async () => {
-				"Webserver running...".Info();
+        /// <summary>
+        ///     Start the http listener.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <see cref="Stop" />
+        [NotNull]
+        public Task Run(CancellationToken cancellationToken) =>
+            Task.Run(async () =>
+            {
+                "Webserver running...".Info();
 
-				try {
-					while ( this._httpListener.IsListening ) {
-						Debug.WriteLine( "Webserver listening.." );
+                try
+                {
+                    while (this._httpListener.IsListening)
+                    {
+                        Debug.WriteLine("Webserver listening..");
 
-						await Task.Run( async () => {
-							var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
+                        await Task.Run(async () =>
+                        {
+                            var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
 
-							if ( listenerContext is null ) { return; }
+                            if (listenerContext == null) { return; }
 
-							var responderMethod = this._responderMethod;
+                            var responderMethod = this._responderMethod;
 
-							if ( responderMethod is null ) {
+                            if (responderMethod == null)
+                            {
 
-								//no responderMethod?!?
-								return;
-							}
+                                //no responderMethod?!?
+                                return;
+                            }
 
-							try {
-								var response = responderMethod( listenerContext.Request );
-								var buf = Encoding.UTF8.GetBytes( response );
-								listenerContext.Response.ContentLength64 = buf.Length;
-								listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
-							}
+                            try
+                            {
+                                var response = responderMethod(listenerContext.Request);
+                                var buf = Encoding.UTF8.GetBytes(response);
+                                listenerContext.Response.ContentLength64 = buf.Length;
+                                listenerContext.Response.OutputStream.Write(buf, 0, buf.Length);
+                            }
 
-							// ReSharper disable once EmptyGeneralCatchClause
-							catch {
+                            // ReSharper disable once EmptyGeneralCatchClause
+                            catch
+                            {
 
-								// suppress any exceptions
-							}
-							finally {
-								listenerContext.Response.OutputStream.Close(); // always close the stream
-							}
-						}, cancellationToken );
-					}
-				}
+                                // suppress any exceptions
+                            }
+                            finally
+                            {
+                                listenerContext.Response.OutputStream.Close(); // always close the stream
+                            }
+                        }, cancellationToken);
+                    }
+                }
 
-				// ReSharper disable once EmptyGeneralCatchClause
-				catch {
+                // ReSharper disable once EmptyGeneralCatchClause
+                catch
+                {
 
-					// suppress any exceptions
-				}
-			}, cancellationToken );
+                    // suppress any exceptions
+                }
+            }, cancellationToken);
 
-		public void Stop() {
-			using ( this._httpListener ) {
-				try {
-					if ( this._httpListener.IsListening ) { this._httpListener.Stop(); }
-				}
-				catch ( ObjectDisposedException ) { }
+        public void Stop()
+        {
+            using (this._httpListener)
+            {
+                try
+                {
+                    if (this._httpListener.IsListening) { this._httpListener.Stop(); }
+                }
+                catch (ObjectDisposedException) { }
 
-				this._httpListener.Close();
-			}
-		}
-	}
+                this._httpListener.Close();
+            }
+        }
+    }
 }

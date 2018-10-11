@@ -42,43 +42,67 @@
 
 namespace LibrainianTests {
 
-	using System;
-	using System.IO;
-	using System.Linq;
-	using FluentAssertions;
-	using Librainian.ComputerSystems.FileSystem;
-	using Librainian.Measurement.Time;
-	using Librainian.Persistence;
-	using Newtonsoft.Json;
-	using NUnit.Framework;
+    using FluentAssertions;
+    using Librainian.ComputerSystem.FileSystem;
+    using Librainian.Measurement.Time;
+    using Librainian.Persistence;
+    using Newtonsoft.Json;
+    using NUnit.Framework;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Management;
 
-	[TestFixture]
-	public static class FolderBagTests {
+    [TestFixture]
+    public static class FolderBagTests {
 
-		[Test]
-		public static void TestStorageAndRetrieval() {
-			var counter = 0L;
-			var watch = StopWatch.StartNew();
-			var pathTree = new FolderBag();
+        [Test]
+        public static void TestStorageAndRetrieval() {
+            var counter = 0L;
+            var watch = StopWatch.StartNew();
+            var pathTree = new FolderBag();
 
-			foreach ( var drive in Disk.GetDrives().Where( drive => drive.Info.IsReady && drive.RootDirectory.StartsWith( "C" ) ).Take( 1 ) ) {
-				var root = new Folder( drive.DriveLetter + ":" + Path.DirectorySeparatorChar );
+            foreach (var drive in Disk.GetDrives().Where(drive => drive.Info.IsReady && drive.RootDirectory.StartsWith("C")).Take(1)) {
+                var root = new Folder(drive.DriveLetter + ":" + Path.DirectorySeparatorChar);
 
-				foreach ( var folder in root.BetterGetFolders() ) {
-					pathTree.FoundAnotherFolder( folder );
-					counter++;
-				}
-			}
+                foreach (var folder in root.BetterGetFolders()) {
+                    pathTree.FoundAnotherFolder(folder);
+                    counter++;
+                }
+            }
 
-			var allPaths = pathTree.ToList();
-			watch.Stop();
+            var allPaths = pathTree.ToList();
+            watch.Stop();
 
-			counter.Should().Be( allPaths.LongCount() );
-			Console.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
+            counter.Should().Be(allPaths.LongCount());
+            Console.WriteLine($"Found & stored {counter} folders in {watch.Elapsed.Simpler()}.");
 
-			var temp = Document.GetTempDocument();
-			pathTree.TrySave( temp, formatting: Formatting.None );
-			File.WriteAllLines( temp.Folder + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
-		}
-	}
+            var temp = Document.GetTempDocument();
+            pathTree.TrySave(temp, formatting: Formatting.None);
+            File.WriteAllLines(temp.Folder + @"\allLines.txt", allPaths.Select(folder => folder.FullName));
+        }
+
+        [Test]
+        public static void TestRAMInfo() => OutputRamInformation();
+
+        public static void OutputRamInformation() {
+            var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
+
+            var ram = 1;
+            foreach (var o in searcher.Get()) {
+                var managementObject = ( ManagementObject ) o;
+                Console.WriteLine( $"RAM #{ram}:" );
+
+                foreach (var property in managementObject.Properties) {
+                    //if (property.Value != null) {
+                        Console.WriteLine( $"{property.Name} = {property.Value}" );
+                    //}
+                }
+                Console.WriteLine("---------------------------------");
+                Console.WriteLine(  );
+                
+                ram++;  // Increment our ram chip count
+            }
+        }
+    }
 }

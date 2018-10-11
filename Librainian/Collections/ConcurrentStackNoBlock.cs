@@ -39,154 +39,175 @@
 //
 // Project: "Librainian", "ConcurrentStackNoBlock.cs" was last formatted by Protiguous on 2018/07/10 at 8:50 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Threading;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Threading;
 
-	public class ConcurrentNoBlockStackL<T> {
+    public class ConcurrentNoBlockStackL<T>
+    {
 
-		private volatile Node _head;
+        private volatile Node _head;
 
-		public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
+        public ConcurrentNoBlockStackL() => this._head = new Node(item: default, next: this._head);
 
-		public T Pop() {
-			Node ret;
+        public T Pop()
+        {
+            Node ret;
 
-			do {
-				ret = this._head;
+            do
+            {
+                ret = this._head;
 
-				if ( ret.Next is null ) { throw new IndexOutOfRangeException( "Stack is empty" ); }
-			} while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+                if (ret.Next == null) { throw new IndexOutOfRangeException("Stack is empty"); }
+            } while (Interlocked.CompareExchange(location1: ref this._head, ret.Next, comparand: ret) != ret);
 
-			return ret.Item;
-		}
+            return ret.Item;
+        }
 
-		public void Push( T item ) {
-			var nodeNew = new Node {
-				Item = item
-			};
+        public void Push(T item)
+        {
+            var nodeNew = new Node
+            {
+                Item = item
+            };
 
-			Node tmp;
+            Node tmp;
 
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
-			} while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
-		}
+            do
+            {
+                tmp = this._head;
+                nodeNew.Next = tmp;
+            } while (Interlocked.CompareExchange(location1: ref this._head, nodeNew, comparand: tmp) != tmp);
+        }
 
-		internal sealed class Node {
+        internal sealed class Node
+        {
 
-			internal T Item;
+            internal T Item;
 
-			internal Node Next;
+            internal Node Next;
 
-			public Node() { }
+            public Node() { }
 
-			public Node( T item, Node next ) {
-				this.Item = item;
-				this.Next = next;
-			}
-		}
-	}
+            public Node(T item, Node next)
+            {
+                this.Item = item;
+                this.Next = next;
+            }
+        }
+    }
 
-	/// <summary>
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
-	public class ConcurrentStackNoBlock<T> {
+    /// <summary>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
+    public class ConcurrentStackNoBlock<T>
+    {
 
-		private Node _head;
+        private Node _head;
 
-		public Int32 Count { get; private set; }
+        public Int32 Count { get; private set; }
 
-		public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
+        public ConcurrentStackNoBlock() => this._head = new Node(item: default, next: this._head);
 
-		public void Add( T item ) => this.Push( item: item );
+        public void Add(T item) => this.Push(item: item);
 
-		public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: ThreadingExtensions.CPUIntensive, body: this.Push );
+        public void Add([NotNull] IEnumerable<T> items) => Parallel.ForEach(source: items, parallelOptions: ThreadingExtensions.AllCPUExceptOne, body: this.Push);
 
-		public void Add( [NotNull] ParallelQuery<T> items ) => items.ForAll( this.Push );
+        public void Add([NotNull] ParallelQuery<T> items) => items.ForAll(this.Push);
 
-		public Int64 LongCount() => this.Count;
+        public Int64 LongCount() => this.Count;
 
-		public void Push( T item ) {
-			if ( Equals( default, item ) ) { return; }
+        public void Push(T item)
+        {
+            if (Equals(default, item)) { return; }
 
-			var nodeNew = new Node {
-				Item = item
-			};
+            var nodeNew = new Node
+            {
+                Item = item
+            };
 
-			Node tmp;
+            Node tmp;
 
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
-			} while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+            do
+            {
+                tmp = this._head;
+                nodeNew.Next = tmp;
+            } while (Interlocked.CompareExchange(location1: ref this._head, nodeNew, comparand: tmp) != tmp);
 
-			++this.Count;
-		}
+            ++this.Count;
+        }
 
-		public Boolean TryPop( out T result ) {
-			result = default;
+        public Boolean TryPop(out T result)
+        {
+            result = default;
 
-			Node ret;
+            Node ret;
 
-			do {
-				ret = this._head;
+            do
+            {
+                ret = this._head;
 
-				if ( ret.Next == default( Node ) ) {
+                if (ret.Next == default(Node))
+                {
 
-					//throw new IndexOutOfRangeException( "Stack is empty" );
-					return false;
-				}
-			} while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+                    //throw new IndexOutOfRangeException( "Stack is empty" );
+                    return false;
+                }
+            } while (Interlocked.CompareExchange(location1: ref this._head, ret.Next, comparand: ret) != ret);
 
-			--this.Count;
-			result = ret.Item;
+            --this.Count;
+            result = ret.Item;
 
-			return !Equals( result, default );
-		}
+            return !Equals(result, default);
+        }
 
-		/// <summary>
-		///     Attempt two <see cref="TryPop" />
-		/// </summary>
-		/// <param name="itemOne"></param>
-		/// <param name="itemTwo"></param>
-		/// <returns></returns>
-		public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
-			if ( !this.TryPop( result: out itemOne ) ) {
-				itemTwo = default;
+        /// <summary>
+        ///     Attempt two <see cref="TryPop" />
+        /// </summary>
+        /// <param name="itemOne"></param>
+        /// <param name="itemTwo"></param>
+        /// <returns></returns>
+        public Boolean TryPopPop(out T itemOne, out T itemTwo)
+        {
+            if (!this.TryPop(result: out itemOne))
+            {
+                itemTwo = default;
 
-				return false;
-			}
+                return false;
+            }
 
-			if ( !this.TryPop( result: out itemTwo ) ) {
-				this.Push( item: itemOne );
+            if (!this.TryPop(result: out itemTwo))
+            {
+                this.Push(item: itemOne);
 
-				return false;
-			}
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		internal class Node {
+        internal class Node
+        {
 
-			internal T Item;
+            internal T Item;
 
-			internal Node Next;
+            internal Node Next;
 
-			public Node() { }
+            public Node() { }
 
-			public Node( T item, Node next ) {
-				this.Item = item;
-				this.Next = next;
-			}
-		}
-	}
+            public Node(T item, Node next)
+            {
+                this.Item = item;
+                this.Next = next;
+            }
+        }
+    }
 }

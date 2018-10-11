@@ -39,44 +39,47 @@
 //
 // Project: "Librainian", "DerivedSerializableExceptionWithAdditionalCustomProperty.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Runtime.Serialization;
-	using System.Security.Permissions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.Serialization;
+    using System.Security.Permissions;
 
-	[JsonObject]
-	[Serializable]
-	public sealed class DerivedSerializableExceptionWithAdditionalCustomProperty : SerializableExceptionWithCustomProperties {
+    [JsonObject]
+    [Serializable]
+    public sealed class DerivedSerializableExceptionWithAdditionalCustomProperty : SerializableExceptionWithCustomProperties
+    {
 
-		public String Username { get; }
+        public String Username { get; }
 
-		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 
-		// Serialization constructor is private, as this class is sealed
-		private DerivedSerializableExceptionWithAdditionalCustomProperty( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Username = info.GetString( "Username" );
+        // Serialization constructor is private, as this class is sealed
+        private DerivedSerializableExceptionWithAdditionalCustomProperty([NotNull] SerializationInfo info, StreamingContext context) : base(info, context) => this.Username = info.GetString("Username");
 
-		public DerivedSerializableExceptionWithAdditionalCustomProperty() { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty() { }
 
-		public DerivedSerializableExceptionWithAdditionalCustomProperty( String message ) : base( message ) { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty(String message) : base(message) { }
 
-		public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, Exception innerException ) : base( message, innerException ) { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty(String message, Exception innerException) : base(message, innerException) { }
 
-		public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors ) : base( message, resourceName, validationErrors ) =>
-			this.Username = username;
+        public DerivedSerializableExceptionWithAdditionalCustomProperty(String message, String username, String resourceName, IList<String> validationErrors) : base(message, resourceName, validationErrors) =>
+            this.Username = username;
 
-		public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors, Exception innerException ) : base( message, resourceName,
-			validationErrors, innerException ) =>
-			this.Username = username;
+        public DerivedSerializableExceptionWithAdditionalCustomProperty(String message, String username, String resourceName, IList<String> validationErrors, Exception innerException) : base(message, resourceName,
+            validationErrors, innerException) =>
+            this.Username = username;
 
-		public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
-			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null) { throw new ArgumentNullException(nameof(info)); }
 
-			info.AddValue( "Username", this.Username );
-			base.GetObjectData( info, context );
-		}
-	}
+            info.AddValue("Username", this.Username);
+            base.GetObjectData(info, context);
+        }
+    }
 }

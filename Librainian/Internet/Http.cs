@@ -39,30 +39,36 @@
 //
 // Project: "Librainian", "Http.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet
+{
 
-	using System;
-	using System.Collections;
-	using System.IO;
-	using System.Net;
-	using System.Net.Cache;
-	using System.Threading;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections;
+    using System.IO;
+    using System.Net;
+    using System.Net.Cache;
+    using System.Threading;
+    using System.Windows.Forms;
 
-	public class Http {
+    public class Http
+    {
 
-		private static Hashtable Urls {
-			get {
-				lock ( Synch ) { return _urls; }
-			}
+        private static readonly Object Synch = new Object();
 
-			set {
-				lock ( Synch ) { _urls = value; }
-			}
-		}
+        private static Hashtable _urls;
 
-		/*
+        private static Hashtable Urls {
+            get {
+                lock (Synch) { return _urls; }
+            }
+
+            set {
+                lock (Synch) { _urls = value; }
+            }
+        }
+
+        /*
         public class HtmlDocument : Uri {
             public HtmlDocument( String url )
                 : base( url ) {
@@ -81,192 +87,201 @@ namespace Librainian.Internet {
         }
         */
 
-		private static readonly Object Synch = new Object();
+        static Http() => Urls = new Hashtable(100);
 
-		private static Hashtable _urls;
+        private static void GetAsynchCallback([NotNull] IAsyncResult result)
+        {
+            if (!result.IsCompleted) { return; }
 
-		static Http() => Urls = new Hashtable( 100 );
+            (result.AsyncState is HttpWebRequest).BreakIfFalse(); //heh
+            var request = (HttpWebRequest)result.AsyncState;
 
-		private static void GetAsynchCallback( [NotNull] IAsyncResult result ) {
-			if ( !result.IsCompleted ) { return; }
+            var response = (HttpWebResponse)request.GetResponse();
 
-			( result.AsyncState is HttpWebRequest ).BreakIfFalse(); //heh
-			var request = ( HttpWebRequest ) result.AsyncState;
+            if (response.StatusCode != HttpStatusCode.OK) { return; }
 
-			var response = ( HttpWebResponse ) request.GetResponse();
+            var tempresp = response.GetResponseStream();
 
-			if ( response.StatusCode != HttpStatusCode.OK ) { return; }
+            if (tempresp == null) { return; }
 
-			var tempresp = response.GetResponseStream();
+            var document = new StreamReader(tempresp).ReadToEnd();
 
-			if ( tempresp is null ) { return; }
+            if (String.IsNullOrEmpty(document)) { return; }
 
-			var document = new StreamReader( tempresp ).ReadToEnd();
+            if (!Urls.ContainsKey(request.RequestUri)) { Urls.Add(request.RequestUri, document); }
+            else { Urls[request.RequestUri] = document; }
 
-			if ( String.IsNullOrEmpty( document ) ) { return; }
+            if (response.ResponseUri.AbsoluteUri.Equals(request.RequestUri.AbsoluteUri)) { return; }
 
-			if ( !Urls.ContainsKey( request.RequestUri ) ) { Urls.Add( request.RequestUri, document ); }
-			else { Urls[ request.RequestUri ] = document; }
+            if (!Urls.ContainsKey(response.ResponseUri)) { Urls.Add(response.ResponseUri, document); }
+            else { Urls[response.ResponseUri] = document; }
+        }
 
-			if ( response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) { return; }
+        public static String Get([NotNull] String url) => Get(new Uri(url));
 
-			if ( !Urls.ContainsKey( response.ResponseUri ) ) { Urls.Add( response.ResponseUri, document ); }
-			else { Urls[ response.ResponseUri ] = document; }
-		}
+        [CanBeNull]
+        public static String Get([NotNull] Uri uri)
+        {
+            uri.IsWellFormedOriginalString().BreakIfFalse();
 
-		public static String Get( [NotNull] String url ) => Get( new Uri( url ) );
+            if (!uri.IsWellFormedOriginalString()) { return null; }
 
-		[CanBeNull]
-		public static String Get( [NotNull] Uri uri ) {
-			uri.IsWellFormedOriginalString().BreakIfFalse();
+            var peek = Peek(uri); //Got the result in our cache already?
 
-			if ( !uri.IsWellFormedOriginalString() ) { return null; }
+            if (!String.IsNullOrEmpty(peek))
+            {
 
-			var peek = Peek( uri ); //Got the result in our cache already?
+                //yes?
+                GetAsync(uri); //start a refresh
 
-			if ( !String.IsNullOrEmpty( peek ) ) {
+                return peek; //but return what we have already.
+            }
 
-				//yes?
-				GetAsync( uri ); //start a refresh
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AllowAutoRedirect = true;
+            request.UserAgent = "AIBrain Engine v2010.04";
+            request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+            request.KeepAlive = true;
+            request.SendChunked = true;
 
-				return peek; //but return what we have already.
-			}
+            if (request.GetResponse() is HttpWebResponse response && response.StatusCode == HttpStatusCode.OK)
+            {
+                var respstrm = response.GetResponseStream();
 
-			var request = ( HttpWebRequest ) WebRequest.Create( uri );
-			request.AllowAutoRedirect = true;
-			request.UserAgent = "AIBrain Engine v2010.04";
-			request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-			request.KeepAlive = true;
-			request.SendChunked = true;
+                if (respstrm != null)
+                {
+                    var document = new StreamReader(respstrm).ReadToEnd();
 
-			if ( request.GetResponse() is HttpWebResponse response && response.StatusCode == HttpStatusCode.OK ) {
-				var respstrm = response.GetResponseStream();
+                    if (Urls.ContainsKey(request.RequestUri)) { Urls[request.RequestUri] = document; }
+                    else { Urls.Add(request.RequestUri, document); }
 
-				if ( respstrm != null ) {
-					var document = new StreamReader( respstrm ).ReadToEnd();
+                    if (!response.ResponseUri.AbsoluteUri.Equals(request.RequestUri.AbsoluteUri))
+                    {
+                        if (Urls.ContainsKey(response.ResponseUri)) { Urls[response.ResponseUri] = document; }
+                        else { Urls.Add(response.ResponseUri, document); }
+                    }
 
-					if ( Urls.ContainsKey( request.RequestUri ) ) { Urls[ request.RequestUri ] = document; }
-					else { Urls.Add( request.RequestUri, document ); }
+                    return document;
+                }
 
-					if ( !response.ResponseUri.AbsoluteUri.Equals( request.RequestUri.AbsoluteUri ) ) {
-						if ( Urls.ContainsKey( response.ResponseUri ) ) { Urls[ response.ResponseUri ] = document; }
-						else { Urls.Add( response.ResponseUri, document ); }
-					}
+                return String.Empty;
+            }
 
-					return document;
-				}
+            return String.Empty;
+        }
 
-				return String.Empty;
-			}
+        [CanBeNull]
+        public static IAsyncResult GetAsync([NotNull] String url) => GetAsync(new Uri(url));
 
-			return String.Empty;
-		}
+        [CanBeNull]
+        public static IAsyncResult GetAsync([NotNull] Uri uri)
+        {
+            uri.IsWellFormedOriginalString().BreakIfFalse();
 
-		[CanBeNull]
-		public static IAsyncResult GetAsync( [NotNull] String url ) => GetAsync( new Uri( url ) );
+            if (!uri.IsWellFormedOriginalString()) { return null; }
 
-		[CanBeNull]
-		public static IAsyncResult GetAsync( [NotNull] Uri uri ) {
-			uri.IsWellFormedOriginalString().BreakIfFalse();
+            if (WebRequest.Create(uri) is HttpWebRequest request)
+            {
+                request.AllowAutoRedirect = true;
+                request.UserAgent = "AIBrain Engine";
+                request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                request.KeepAlive = true;
+                request.SendChunked = true;
 
-			if ( !uri.IsWellFormedOriginalString() ) { return null; }
+                return request.BeginGetResponse(GetAsynchCallback, request);
+            }
 
-			if ( WebRequest.Create( uri ) is HttpWebRequest request ) {
-				request.AllowAutoRedirect = true;
-				request.UserAgent = "AIBrain Engine";
-				request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-				request.KeepAlive = true;
-				request.SendChunked = true;
+            return null;
+        }
 
-				return request.BeginGetResponse( GetAsynchCallback, request );
-			}
+        /// <summary>
+        ///     From: http://www.albahari.com/threading/part3.aspx#_Asynch_Delegates Use: DownloadString
+        ///     http1 = new WebClient().DownloadString; IAsyncResult cookie1 =
+        ///     download1.BeginInvoke( uri, null, null); ... String s1 = download1.EndInvoke(
+        ///     cookie1 );
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static IAsyncResult GetStart([NotNull] Uri uri)
+        {
+            uri.IsWellFormedOriginalString().BreakIfFalse();
 
-			return null;
-		}
+            if (!uri.IsWellFormedOriginalString()) { return null; }
 
-		/// <summary>
-		///     From: http://www.albahari.com/threading/part3.aspx#_Asynch_Delegates Use: DownloadString
-		///     http1 = new WebClient().DownloadString; IAsyncResult cookie1 =
-		///     download1.BeginInvoke( uri, null, null); ... String s1 = download1.EndInvoke(
-		///     cookie1 );
-		/// </summary>
-		/// <param name="uri"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public static IAsyncResult GetStart( [NotNull] Uri uri ) {
-			uri.IsWellFormedOriginalString().BreakIfFalse();
+            //TODO
+            //DownloadString http1 = new WebClient().DownloadStringAsync;
 
-			if ( !uri.IsWellFormedOriginalString() ) { return null; }
+            var request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AllowAutoRedirect = true;
+            request.UserAgent = "AIBrain Engine v" + DateTime.Now.Year + "." + DateTime.Now.Month;
+            request.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+            request.KeepAlive = true;
+            request.SendChunked = true;
 
-			//TODO
-			//DownloadString http1 = new WebClient().DownloadStringAsync;
+            return request.BeginGetResponse(GetAsynchCallback, request);
+        }
 
-			var request = ( HttpWebRequest ) WebRequest.Create( uri );
-			request.AllowAutoRedirect = true;
-			request.UserAgent = "AIBrain Engine v" + DateTime.Now.Year + "." + DateTime.Now.Month;
-			request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-			request.KeepAlive = true;
-			request.SendChunked = true;
+        /// <summary>
+        ///     Returns the document for the address specified or String.Empty if nothing has been
+        ///     captured yet.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static String Peek([NotNull] String url) => Peek(new Uri(url));
 
-			return request.BeginGetResponse( GetAsynchCallback, request );
-		}
+        [NotNull]
+        public static String Peek([NotNull] Uri uri)
+        {
+            if (!uri.IsWellFormedOriginalString()) { return String.Empty; }
 
-		/// <summary>
-		///     Returns the document for the address specified or String.Empty if nothing has been
-		///     captured yet.
-		/// </summary>
-		/// <param name="url"></param>
-		/// <returns></returns>
-		public static String Peek( [NotNull] String url ) => Peek( new Uri( url ) );
+            if (!Urls.ContainsKey(uri)) { return String.Empty; }
 
-		[NotNull]
-		public static String Peek( [NotNull] Uri uri ) {
-			if ( !uri.IsWellFormedOriginalString() ) { return String.Empty; }
+            var document = Urls[uri].ToString();
 
-			if ( !Urls.ContainsKey( uri ) ) { return String.Empty; }
+            return document;
+        }
 
-			var document = Urls[ uri ].ToString();
+        /// <summary>
+        ///     Starts an asynchronous http request. It can be checked by Peek( url ) Each Poke starts
+        ///     another request. The order of responses is undeterminitic (can be out-of-order). This is
+        ///     by design.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static IAsyncResult Poke([NotNull] String url)
+        {
+            var uri = new Uri(url);
 
-			return document;
-		}
+            if (!uri.IsWellFormedOriginalString()) { return null; }
 
-		/// <summary>
-		///     Starts an asynchronous http request. It can be checked by Peek( url ) Each Poke starts
-		///     another request. The order of responses is undeterminitic (can be out-of-order). This is
-		///     by design.
-		/// </summary>
-		/// <param name="url"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public static IAsyncResult Poke( [NotNull] String url ) {
-			var uri = new Uri( url );
+            if (Urls.ContainsKey(uri)) { Urls.Remove(uri); }
 
-			if ( !uri.IsWellFormedOriginalString() ) { return null; }
+            return GetAsync(url);
+        }
 
-			if ( Urls.ContainsKey( uri ) ) { Urls.Remove( uri ); }
+        /// <summary>
+        ///     Pump messages while waiting forever for a response to be populated for this url.
+        /// </summary>
+        /// <param name="url"></param>
+        public static void Wait([NotNull] String url) => Wait(new Uri(url));
 
-			return GetAsync( url );
-		}
+        /// <summary>
+        ///     Pump messages while waiting forever for a response to be populated for this uri.
+        /// </summary>
+        /// <param name="uri"></param>
+        public static void Wait([NotNull] Uri uri)
+        {
+            uri.IsWellFormedOriginalString().BreakIfFalse();
 
-		/// <summary>
-		///     Pump messages while waiting forever for a response to be populated for this url.
-		/// </summary>
-		/// <param name="url"></param>
-		public static void Wait( [NotNull] String url ) => Wait( new Uri( url ) );
+            if (!uri.IsWellFormedOriginalString()) { return; }
 
-		/// <summary>
-		///     Pump messages while waiting forever for a response to be populated for this uri.
-		/// </summary>
-		/// <param name="uri"></param>
-		public static void Wait( [NotNull] Uri uri ) {
-			uri.IsWellFormedOriginalString().BreakIfFalse();
-
-			if ( !uri.IsWellFormedOriginalString() ) { return; }
-
-			while ( String.IsNullOrEmpty( Peek( uri ) ) ) {
-				Thread.Yield();
-				Application.DoEvents();
-			}
-		}
-	}
+            while (String.IsNullOrEmpty(Peek(uri)))
+            {
+                Thread.Yield();
+                Application.DoEvents();
+            }
+        }
+    }
 }

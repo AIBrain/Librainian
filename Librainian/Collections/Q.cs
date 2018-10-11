@@ -39,9 +39,10 @@
 //
 // Project: "Librainian", "Q.cs" was last formatted by Protiguous on 2018/07/10 at 8:51 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	/*
+    /*
     using System;
     using System.Collections;
     using System.Collections.Concurrent;
@@ -85,10 +86,10 @@ namespace Librainian.Collections {
 
                 if ( !segment.IsEmpty ) { return false; }
 
-                if ( segment.Next is null ) { return true; }
+                if ( segment.Next == null ) { return true; }
 
                 for ( ; segment.IsEmpty; segment = this._head ) {
-                    if ( segment.Next is null ) { return true; }
+                    if ( segment.Next == null ) { return true; }
 
                     Thread.Yield();
                 }
@@ -112,7 +113,7 @@ namespace Librainian.Collections {
         public Q() => this._head = this._tail = new Segment( index: 0L );
 
         public Q( IEnumerable<T> collection ) {
-            if ( collection is null ) { throw new ArgumentNullException( nameof( collection ) ); }
+            if ( collection == null ) { throw new ArgumentNullException( nameof( collection ) ); }
 
             this.InitializeFromCollection( collection: collection );
         }
@@ -171,7 +172,7 @@ namespace Librainian.Collections {
         }
 
         public void CopyTo( T[] array, Int32 index ) {
-            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
+            if ( array == null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             this.ToList().CopyTo( array: array, arrayIndex: index );
         }
@@ -213,7 +214,7 @@ namespace Librainian.Collections {
         public Boolean TryTake( out T item ) => this.TryDequeue( result: out item );
 
         void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array is null ) { throw new ArgumentNullException( nameof( array ) ); }
+            if ( array == null ) { throw new ArgumentNullException( nameof( array ) ); }
 
             this.ToArray().CopyTo( array: array, index: index );
         }
@@ -303,7 +304,7 @@ namespace Librainian.Collections {
                         result = this.Array[low];
 
                         if ( low + 1 >= 32 ) {
-                            while ( this.Next is null ) { Thread.Yield(); }
+                            while ( this.Next == null ) { Thread.Yield(); }
 
                             head = this.Next;
                         }

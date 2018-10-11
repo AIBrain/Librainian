@@ -44,7 +44,7 @@ namespace LibrainianTests.Persistence {
 
 	using System;
 	using FluentAssertions;
-	using Librainian.ComputerSystems.FileSystem;
+	using Librainian.ComputerSystem.FileSystem;
 	using Librainian.Persistence;
 	using NUnit.Framework;
 
@@ -102,11 +102,11 @@ data33   =   3
 			config.AppendText( ini_test_data );
 
 			Ini2 = new IniFile( config ) {
-				[ "Greetings", "Hello" ] = "world1!",
-				[ "Greetings", "Hello" ] = "world2!"
+				["Greetings", "Hello"] = "world1!",
+				["Greetings", "Hello"] = "world2!"
 			};
 
-			Ini2[ "Greetings", "Hello" ].Should().Be( "world2!" );
+			Ini2["Greetings", "Hello"].Should().Be( "world2!" );
 		}
 
 		[Test]

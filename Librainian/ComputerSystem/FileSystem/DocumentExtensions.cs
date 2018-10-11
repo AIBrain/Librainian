@@ -41,63 +41,63 @@
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Measurement.Time;
-	using Threading;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Measurement.Time;
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Threading;
 
-	public static class DocumentExtensions {
+    public static class DocumentExtensions {
 
-		public static UInt32 BufferSize { get; } = 0x1000000;
+        public static UInt32 BufferSize { get; } = 0x1000000;
 
-		/// <summary>
-		///     The characters not allowed in file names.
-		/// </summary>
-		[NotNull]
-		public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
+        /// <summary>
+        ///     The characters not allowed in file names.
+        /// </summary>
+        [NotNull]
+        public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
 
-		private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer,
-			Single bytesToBeCopied, Stopwatch begin ) {
-			using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
-				using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
-					Int32 numRead;
+        private static async Task InternalCopyWithProgress([NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer,
+            Single bytesToBeCopied, Stopwatch begin) {
+            using (var reader = new StreamReader(source.FullPathWithFileName)) {
+                using (var writer = new StreamWriter(destination.FullPathWithFileName, false)) {
+                    Int32 numRead;
 
-					while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).NoUI() ).Any() ) {
-						await writer.WriteAsync( buffer, 0, numRead ).NoUI();
-						var bytesCopied = ( UInt64 ) numRead;
+                    while ((numRead = await reader.ReadAsync(buffer, 0, buffer.Length).NoUI()).Any()) {
+                        await writer.WriteAsync(buffer, 0, numRead).NoUI();
+                        var bytesCopied = (UInt64)numRead;
 
-						var percent = bytesCopied / bytesToBeCopied;
+                        var percent = bytesCopied / bytesToBeCopied;
 
-						progress?.Report( percent );
-						eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
-					}
-				}
-			}
-		}
+                        progress?.Report(percent);
+                        eta?.Report(begin.Elapsed.EstimateTimeRemaining(percent));
+                    }
+                }
+            }
+        }
 
-		/// <summary>
-		///     Returns the <paramref name="filename" /> with any invalid chars removed.
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String CleanupForFileName( this String filename ) {
-			filename = filename ?? String.Empty;
+        /// <summary>
+        ///     Returns the <paramref name="filename" /> with any invalid chars removed.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String CleanupForFileName(this String filename) {
+            filename = filename ?? String.Empty;
 
-			var sb = new StringBuilder( filename.Length );
+            var sb = new StringBuilder(filename.Length);
 
-			foreach ( var c in filename.Where( c => !InvalidFileNameChars.Contains( c ) ) ) { sb.Append( c ); }
+            foreach (var c in filename.Where(c => !InvalidFileNameChars.Contains(c))) { sb.Append(c); }
 
-			return sb.ToString();
-		}
+            return sb.ToString();
+        }
 
-		/*
+        /*
 
         /// <summary>
         ///     Any result less than 1 is an error of some sort.
@@ -111,9 +111,9 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <returns></returns>
         public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
             IProgress<TimeSpan> eta = null ) {
-            if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
 
-            if ( destination is null ) { throw new ArgumentNullException( nameof( destination ) ); }
+            if ( destination == null ) { throw new ArgumentNullException( nameof( destination ) ); }
 
             try {
                 var begin = Stopwatch.StartNew();
@@ -134,7 +134,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).NoUI(); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureOnCopy;
                 }
@@ -145,28 +145,28 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 try { File.SetAttributes( destination.FullPathWithFileName, sourceInfo.Attributes ); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureUnableToSetFileAttributes;
                 }
 
                 try { File.SetCreationTimeUtc( destination.FullPathWithFileName, sourceInfo.CreationTimeUtc ); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureUnableToSetFileCreationTime;
                 }
 
                 try { File.SetLastWriteTimeUtc( destination.FullPathWithFileName, sourceInfo.LastWriteTimeUtc ); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureUnableToSetLastWriteTime;
                 }
 
                 try { File.SetLastAccessTimeUtc( destination.FullPathWithFileName, sourceInfo.LastAccessTimeUtc ); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureUnableToSetLastAccessTime;
                 }
@@ -175,7 +175,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 try { File.Delete( source.FullPathWithFileName ); }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
 
                     return ResultCode.FailureUnableToDeleteSourceDocument;
                 }
@@ -183,20 +183,20 @@ namespace Librainian.ComputerSystem.FileSystem {
                 return ResultCode.Success;
             }
             catch ( Exception exception ) {
-                exception.More();
+                exception.Log();
 
                 return ResultCode.FailureUnknown;
             }
         }
         */
 
-		/*
+        /*
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
-	}
+    }
 
-	/*
+    /*
     [TestFixture]
     public static class TestAsyncCopyAndMoves {
 

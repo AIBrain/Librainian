@@ -39,29 +39,35 @@
 //
 // Project: "Librainian", "DictionaryExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	public static class DictionaryExtensions {
+    public static class DictionaryExtensions
+    {
 
-		public static void Add<TKey, TValue>( [NotNull] this IDictionary<TKey, TValue> dictionary, [NotNull] IEnumerable<KeyValuePair<TKey, TValue>> otherKvp, Boolean ignoreUpdates = false ) {
-			if ( dictionary is null ) { throw new ArgumentNullException( nameof( dictionary ) ); }
+        public static void Add<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dictionary, [NotNull] IEnumerable<KeyValuePair<TKey, TValue>> otherKvp, Boolean ignoreUpdates = false)
+        {
+            if (dictionary == null) { throw new ArgumentNullException(nameof(dictionary)); }
 
-			if ( otherKvp is null ) { throw new ArgumentNullException( nameof( otherKvp ) ); }
+            if (otherKvp == null) { throw new ArgumentNullException(nameof(otherKvp)); }
 
-			if ( ignoreUpdates ) {
-				foreach ( var pair in otherKvp.Where( pair => !dictionary.ContainsKey( pair.Key ) ) ) { dictionary.Add( pair.Key, pair.Value ); }
-			}
-			else {
-				foreach ( var pair in otherKvp ) {
-					if ( dictionary.ContainsKey( pair.Key ) ) { dictionary[ pair.Key ] = pair.Value; }
-					else { dictionary.Add( pair.Key, pair.Value ); }
-				}
-			}
-		}
-	}
+            if (ignoreUpdates)
+            {
+                foreach (var pair in otherKvp.Where(pair => !dictionary.ContainsKey(pair.Key))) { dictionary.Add(pair.Key, pair.Value); }
+            }
+            else
+            {
+                foreach (var pair in otherKvp)
+                {
+                    if (dictionary.ContainsKey(pair.Key)) { dictionary[pair.Key] = pair.Value; }
+                    else { dictionary.Add(pair.Key, pair.Value); }
+                }
+            }
+        }
+    }
 }

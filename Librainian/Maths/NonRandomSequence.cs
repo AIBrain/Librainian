@@ -37,21 +37,21 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "NonRandomSequence.cs" was last formatted by Protiguous on 2018/08/10 at 4:05 PM.
+// Project: "Librainian", "NonRandomSequence.cs" was last formatted by Protiguous on 2018/09/24 at 4:48 AM.
 
 namespace Librainian.Maths {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     Not really a 'random' sequence, but it does hit every number eventually.
-	/// </summary>
-	public class NonRandomSequence {
+    /// <summary>
+    ///     Not really a 'random' sequence, but it does hit every number eventually.
+    /// </summary>
+    public class NonRandomSequence {
 
-		private Int32 _actual;
+        private Int32 _actual;
 
-		public NonRandomSequence( Int32 seed ) => this._actual = seed;
+        public NonRandomSequence(Int32 seed) => this._actual = seed;
 
-		public Int32 Next() { return this._actual = 16807 * this._actual % Int32.MaxValue; }
-	}
+        public Int32 Next() => this._actual = 16807 * this._actual % Int32.MaxValue;
+    }
 }

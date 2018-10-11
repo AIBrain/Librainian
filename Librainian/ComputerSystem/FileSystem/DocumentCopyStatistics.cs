@@ -37,69 +37,96 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "DocumentCopyStatistics.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "DocumentCopyStatistics.cs" was last formatted by Protiguous on 2018/09/28 at 2:31 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using System.Diagnostics;
-	using JetBrains.Annotations;
-	using Maths;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public class DocumentCopyStatistics {
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [JsonObject]
+    public class DocumentCopyStatistics {
 
-		[JsonProperty]
-		public UInt64 BytesCopied { get; set; }
+        [JsonProperty]
+        public UInt64 BytesCopied {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		[CanBeNull]
-		public Document DestinationDocument { get; set; }
+        [JsonProperty]
+        [CanBeNull]
+        public Document DestinationDocument {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		[CanBeNull]
-		public String DestinationDocumentCRC64 { get; set; }
+        [JsonProperty]
+        [CanBeNull]
+        public String DestinationDocumentCRC64 {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		[CanBeNull]
-		public Document SourceDocument { get; set; }
+        [JsonProperty]
+        [CanBeNull]
+        public Document SourceDocument {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		[CanBeNull]
-		public String SourceDocumentCRC64 { get; set; }
+        [JsonProperty]
+        [CanBeNull]
+        public String SourceDocumentCRC64 {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		public DateTime TimeStarted { get; set; }
+        [JsonProperty]
+        public DateTime TimeStarted {
+            get;
+            set;
+        }
 
-		[JsonProperty]
-		public TimeSpan TimeTaken { get; set; }
+        [JsonProperty]
+        public TimeSpan TimeTaken {
+            get;
+            set;
+        }
 
-		public Double BytesPerMillisecond() {
-			if ( Math.Abs( this.TimeTaken.TotalMilliseconds ) < Double.Epsilon ) { return 0; }
+        public Double BytesPerMillisecond() {
+            if (Math.Abs(this.TimeTaken.TotalMilliseconds) < Double.Epsilon) {
+                return 0;
+            }
 
-			return this.BytesCopied / this.TimeTaken.TotalMilliseconds;
-		}
+            return this.BytesCopied / this.TimeTaken.TotalMilliseconds;
+        }
 
-		public Double MegabytesPerSecond() {
-			if ( Math.Abs( this.TimeTaken.TotalSeconds ) < Double.Epsilon ) { return 0; }
+        public Double MegabytesPerSecond() {
+            if (Math.Abs(this.TimeTaken.TotalSeconds) < Double.Epsilon) {
+                return 0;
+            }
 
-			var mb = this.BytesCopied / ( Double ) Constants.Sizes.OneMegaByte;
+            var mb = this.BytesCopied / (Double)Constants.Sizes.OneMegaByte;
 
-			return mb / this.TimeTaken.TotalSeconds;
-		}
+            return mb / this.TimeTaken.TotalSeconds;
+        }
 
-		public Double MillisecondsPerByte() {
-			if ( this.BytesCopied <= 0 ) { return 0; }
+        public Double MillisecondsPerByte() {
+            if (this.BytesCopied <= 0) {
+                return 0;
+            }
 
-			return this.TimeTaken.TotalMilliseconds / this.BytesCopied;
-		}
+            return this.TimeTaken.TotalMilliseconds / this.BytesCopied;
+        }
 
-		/// <summary>
-		///     Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.Folder} @ {this.MegabytesPerSecond()}MB/s";
-	}
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.Folder} @ {this.MegabytesPerSecond()}MB/s";
+    }
 }

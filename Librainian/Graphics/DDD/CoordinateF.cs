@@ -39,163 +39,172 @@
 //
 // Project: "Librainian", "CoordinateF.cs" was last formatted by Protiguous on 2018/07/10 at 9:06 PM.
 
-namespace Librainian.Graphics.DDD {
+namespace Librainian.Graphics.DDD
+{
 
-	using System;
-	using System.Diagnostics;
-	using System.Drawing;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Maths;
-	using Maths.Ranges;
-	using Newtonsoft.Json;
-	using static Maths.Hashings.HashingExtensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Maths.Ranges;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
+    using System.Drawing;
+    using static Maths.Hashings.HashingExtensions;
 
 #pragma warning disable IDE0015 // Use framework type
 
-	/// <summary>
-	///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
-	/// </summary>
-	/// <remarks>Code towards speed.</remarks>
-	[Immutable]
+    /// <summary>
+    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
+    /// </summary>
+    /// <remarks>Code towards speed.</remarks>
+    [Immutable]
 #pragma warning restore IDE0015 // Use framework type
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
-	public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [JsonObject(MemberSerialization.Fields)]
+    public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF>
+    {
 
-		/// <summary>
-		///     Compares the current object with another object of the same type.
-		/// </summary>
-		/// <returns>
-		///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
-		///     following meanings: Value Meaning Less than zero This object is less than the
-		///     <paramref
-		///         name="other" />
-		///     parameter. Zero This object is equal to <paramref name="other" /> . Greater than zero This object is greater than
-		///     <paramref name="other" /> .
-		/// </returns>
-		/// <param name="other">An object to compare with this object.</param>
-		public Int32 CompareTo( [NotNull] CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
+        /// <summary>
+        ///     Compares the current object with another object of the same type.
+        /// </summary>
+        /// <returns>
+        ///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
+        ///     following meanings: Value Meaning Less than zero This object is less than the
+        ///     <paramref
+        ///         name="other" />
+        ///     parameter. Zero This object is equal to <paramref name="other" /> . Greater than zero This object is greater than
+        ///     <paramref name="other" /> .
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public Int32 CompareTo([NotNull] CoordinateF other) => this.SquareLength.CompareTo(other.SquareLength);
 
-		public Boolean Equals( CoordinateF other ) => Equals( this, other );
+        public Boolean Equals(CoordinateF other) => Equals(this, other);
 
-		public static CoordinateF Empty { get; }
+        public static CoordinateF Empty { get; }
 
-		public static CoordinateF One { get; } = new CoordinateF( x: 1, y: 1, z: 1 );
+        public static CoordinateF One { get; } = new CoordinateF(x: 1, y: 1, z: 1);
 
-		public static CoordinateF Zero { get; } = new CoordinateF( x: 0, y: 0, z: 0 );
+        public static CoordinateF Zero { get; } = new CoordinateF(x: 0, y: 0, z: 0);
 
-		[JsonProperty]
-		public Single SquareLength { get; }
+        [JsonProperty]
+        public Single SquareLength { get; }
 
-		[JsonProperty]
-		public Single X { get; }
+        [JsonProperty]
+        public Single X { get; }
 
-		[JsonProperty]
-		public Single Y { get; }
+        [JsonProperty]
+        public Single Y { get; }
 
-		[JsonProperty]
-		public Single Z { get; }
+        [JsonProperty]
+        public Single Z { get; }
 
-		/// <summary>
-		///     Initialize with a random point.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( x: Randem.NextFloat( x.Min, x.Max ), y: Randem.NextFloat( y.Min, y.Max ), z: Randem.NextFloat( z.Min, z.Max ) ) { }
+        /// <summary>
+        ///     Initialize with a random point.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public CoordinateF(SingleRange x, SingleRange y, SingleRange z) : this(x: Randem.NextFloat(x.Min, x.Max), y: Randem.NextFloat(y.Min, y.Max), z: Randem.NextFloat(z.Min, z.Max)) { }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		public CoordinateF( Single x, Single y, Single z ) {
-			this.X = Math.Max( Single.Epsilon, Math.Min( 1, x ) );
-			this.Y = Math.Max( Single.Epsilon, Math.Min( 1, y ) );
-			this.Z = Math.Max( Single.Epsilon, Math.Min( 1, z ) );
-			this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
-		}
+        /// <summary>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        public CoordinateF(Single x, Single y, Single z)
+        {
+            this.X = Math.Max(Single.Epsilon, Math.Min(1, x));
+            this.Y = Math.Max(Single.Epsilon, Math.Min(1, y));
+            this.Z = Math.Max(Single.Epsilon, Math.Min(1, z));
+            this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+        }
 
-		/// <summary>
-		///     Calculates the distance between two Coordinates.
-		/// </summary>
-		public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF rhs ) {
-			var num1 = left.X - rhs.X;
-			var num2 = left.Y - rhs.Y;
-			var num3 = left.Z - rhs.Z;
+        /// <summary>
+        ///     Calculates the distance between two Coordinates.
+        /// </summary>
+        public static Single Distance([NotNull] CoordinateF left, [NotNull] CoordinateF rhs)
+        {
+            var num1 = left.X - rhs.X;
+            var num2 = left.Y - rhs.Y;
+            var num3 = left.Z - rhs.Z;
 
-			return ( Single ) Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
-		}
+            return (Single)Math.Sqrt(num1 * num1 + num2 * num2 + num3 * num3);
+        }
 
-		/// <summary>
-		///     static comparison.
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="rhs"> </param>
-		/// <returns></returns>
-		public static Boolean Equals( CoordinateF left, CoordinateF rhs ) {
-			if ( ReferenceEquals( left, rhs ) ) { return true; }
+        /// <summary>
+        ///     static comparison.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
+        /// <returns></returns>
+        public static Boolean Equals(CoordinateF left, CoordinateF rhs)
+        {
+            if (ReferenceEquals(left, rhs)) { return true; }
 
-			if ( left is null ) { return false; }
+            if (left == null) { return false; }
 
-			if ( rhs is null ) { return false; }
+            if (rhs == null) { return false; }
 
-			if ( left.X < rhs.X ) { return false; }
+            if (left.X < rhs.X) { return false; }
 
-			if ( left.X > rhs.X ) { return false; }
+            if (left.X > rhs.X) { return false; }
 
-			if ( left.Y < rhs.Y ) { return false; }
+            if (left.Y < rhs.Y) { return false; }
 
-			if ( left.Y > rhs.Y ) { return false; }
+            if (left.Y > rhs.Y) { return false; }
 
-			if ( left.Z < rhs.Z ) { return false; }
+            if (left.Z < rhs.Z) { return false; }
 
-			return !( left.Z > rhs.Z );
-		}
+            return !(left.Z > rhs.Z);
+        }
 
-		public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new Point( ( Int32 ) coordinate.X, ( Int32 ) coordinate.Y );
+        public static implicit operator Point([NotNull] CoordinateF coordinate) => new Point((Int32)coordinate.X, (Int32)coordinate.Y);
 
-		public static implicit operator PointF( [NotNull] CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
+        public static implicit operator PointF([NotNull] CoordinateF coordinate) => new PointF(coordinate.X, coordinate.Y);
 
-		/// <summary>
-		///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same
-		///     direction as the original Coordinate.
-		/// </summary>
-		[NotNull]
-		public static CoordinateF Normalize( [NotNull] CoordinateF coordinate ) {
-			var num = 1.0f / coordinate.SquareLength;
+        /// <summary>
+        ///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the same
+        ///     direction as the original Coordinate.
+        /// </summary>
+        [NotNull]
+        public static CoordinateF Normalize([NotNull] CoordinateF coordinate)
+        {
+            var num = 1.0f / coordinate.SquareLength;
 
-			return new CoordinateF( coordinate.X * num, coordinate.Y * num, coordinate.Z * num );
-		}
+            return new CoordinateF(coordinate.X * num, coordinate.Y * num, coordinate.Z * num);
+        }
 
-		[NotNull]
-		public static CoordinateF operator -( [NotNull] CoordinateF v1, [NotNull] CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+        [NotNull]
+        public static CoordinateF operator -([NotNull] CoordinateF v1, [NotNull] CoordinateF v2) => new CoordinateF(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
 
-		public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => !Equals( left: left, rhs: rhs );
+        public static Boolean operator !=([CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs) => !Equals(left: left, rhs: rhs);
 
-		public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => Equals( left: left, rhs: rhs );
+        public static Boolean operator ==([CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs) => Equals(left: left, rhs: rhs);
 
-		public Double DistanceTo( [CanBeNull] CoordinateF to ) {
-			if ( to == default ) {
-				return 0; //BUG ?
-			}
+        public Double DistanceTo([CanBeNull] CoordinateF to)
+        {
+            if (to == default)
+            {
+                return 0; //BUG ?
+            }
 
-			var dx = this.X - to.X;
-			var dy = this.Y - to.Y;
-			var dz = this.Z - to.Z;
+            var dx = this.X - to.X;
+            var dy = this.Y - to.Y;
+            var dz = this.Z - to.Z;
 
-			return Math.Sqrt( dx * dx + dy * dy + dz * dz );
-		}
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+        }
 
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) { return false; }
+        public override Boolean Equals(Object obj)
+        {
+            if (obj == null) { return false; }
 
-			return obj is CoordinateF f && Equals( this, f );
-		}
+            return obj is CoordinateF f && Equals(this, f);
+        }
 
-		public override Int32 GetHashCode() => GetHashCodes( this.X, this.Y, this.Z );
+        public override Int32 GetHashCode() => GetHashCodes(this.X, this.Y, this.Z);
 
-		public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
-	}
+        public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
+    }
 }

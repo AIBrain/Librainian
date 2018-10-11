@@ -41,114 +41,114 @@
 
 using System;
 
-[assembly: CLSCompliant( false )]
+[assembly: CLSCompliant(false)]
 
 namespace Librainian.Speech {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Speech.Synthesis;
-	using System.Threading;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Speech.Synthesis;
+    using System.Threading;
+    using System.Windows.Forms;
 
-	public class SpeechOutput {
+    public class SpeechOutput {
 
-		[NotNull]
-		public Lazy<SpeechSynthesizer> Synthesizer { get; } = new Lazy<SpeechSynthesizer>( () => {
-			var synthesizer = new SpeechSynthesizer();
+        [NotNull]
+        public Lazy<SpeechSynthesizer> Synthesizer { get; } = new Lazy<SpeechSynthesizer>(() => {
+            var synthesizer = new SpeechSynthesizer();
 
-			return synthesizer;
-		}, isThreadSafe: true );
+            return synthesizer;
+        }, isThreadSafe: true);
 
-		public SpeechOutput( VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen ) => this.Synthesizer.Value.SelectVoiceByHints( gender, age );
+        public SpeechOutput(VoiceGender gender = VoiceGender.Female, VoiceAge age = VoiceAge.Teen) => this.Synthesizer.Value.SelectVoiceByHints(gender, age);
 
-		public void AttachEvents( [CanBeNull] Action<EventArgs> speechFeedbackEvent = null ) {
-			try {
-				if ( null == speechFeedbackEvent ) { return; }
+        public void AttachEvents([CanBeNull] Action<EventArgs> speechFeedbackEvent = null) {
+            try {
+                if (null == speechFeedbackEvent) { return; }
 
-				if ( this.Synthesizer.Value is null ) { return; }
+                if (this.Synthesizer.Value == null) { return; }
 
-				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-				this.Synthesizer.Value.SpeakStarted += ( sender, e ) => speechFeedbackEvent( e );
-				this.Synthesizer.Value.SpeakProgress += ( sender, e ) => speechFeedbackEvent( e );
-				this.Synthesizer.Value.PhonemeReached += ( sender, e ) => speechFeedbackEvent( e );
-				this.Synthesizer.Value.SpeakCompleted += ( sender, e ) => speechFeedbackEvent( e );
-				this.Synthesizer.Value.StateChanged += ( sender, e ) => speechFeedbackEvent( e );
-			}
-			catch ( Exception exception ) { exception.Log(); }
-		}
+                this.Synthesizer.Value.SpeakStarted += (sender, e) => speechFeedbackEvent(e);
+                this.Synthesizer.Value.SpeakStarted += (sender, e) => speechFeedbackEvent(e);
+                this.Synthesizer.Value.SpeakProgress += (sender, e) => speechFeedbackEvent(e);
+                this.Synthesizer.Value.PhonemeReached += (sender, e) => speechFeedbackEvent(e);
+                this.Synthesizer.Value.SpeakCompleted += (sender, e) => speechFeedbackEvent(e);
+                this.Synthesizer.Value.StateChanged += (sender, e) => speechFeedbackEvent(e);
+            }
+            catch (Exception exception) { exception.Log(); }
+        }
 
-		[NotNull]
-		public IEnumerable<InstalledVoice> GetVoices() => this.Synthesizer.Value.GetInstalledVoices();
+        [NotNull]
+        public IEnumerable<InstalledVoice> GetVoices() => this.Synthesizer.Value.GetInstalledVoices();
 
-		public Boolean IsTalking() => this.Synthesizer.Value.State == SynthesizerState.Speaking;
+        public Boolean IsTalking() => this.Synthesizer.Value.State == SynthesizerState.Speaking;
 
-		/// <summary>
-		///     Start speaking ASAP Start speaking (optionally interrupting anything already being said).
-		/// </summary>
-		/// <param name="interruptTalking"></param>
-		/// <param name="message">         </param>
-		/// <param name="sayAs">           </param>
-		/// <param name="emphasis">        </param>
-		/// <param name="promptRate">      </param>
-		/// <param name="volume">          </param>
-		public void Speak( [CanBeNull] String message, Boolean interruptTalking = false, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium,
-			PromptVolume volume = PromptVolume.NotSet ) {
-			try {
-				if ( String.IsNullOrEmpty( message ) ) { return; }
+        /// <summary>
+        ///     Start speaking ASAP Start speaking (optionally interrupting anything already being said).
+        /// </summary>
+        /// <param name="interruptTalking"></param>
+        /// <param name="message">         </param>
+        /// <param name="sayAs">           </param>
+        /// <param name="emphasis">        </param>
+        /// <param name="promptRate">      </param>
+        /// <param name="volume">          </param>
+        public void Speak([CanBeNull] String message, Boolean interruptTalking = false, SayAs sayAs = SayAs.Text, PromptEmphasis emphasis = PromptEmphasis.None, PromptRate promptRate = PromptRate.Medium,
+            PromptVolume volume = PromptVolume.NotSet) {
+            try {
+                if (String.IsNullOrEmpty(message)) { return; }
 
-				message = message.Trim();
+                message = message.Trim();
 
-				if ( String.IsNullOrEmpty( message ) ) { return; }
+                if (String.IsNullOrEmpty(message)) { return; }
 
-				if ( message.StartsWith( "ECHO:" ) ) { message = message.Substring( "ECHO:".Length ); }
+                if (message.StartsWith("ECHO:")) { message = message.Substring("ECHO:".Length); }
 
-				if ( message.StartsWith( "INFO:" ) ) { message = message.Substring( "INFO:".Length ); }
+                if (message.StartsWith("INFO:")) { message = message.Substring("INFO:".Length); }
 
-				if ( message.Contains( "AIBrain" ) ) {
-					message = message.Replace( "AIBrain", "A-I-Brain" ); //HACK ugh.
-				}
+                if (message.Contains("AIBrain")) {
+                    message = message.Replace("AIBrain", "A-I-Brain"); //HACK ugh.
+                }
 
-				message = message.Trim();
+                message = message.Trim();
 
-				if ( interruptTalking /*&& this.IsTalking()*/ ) { this.StopTalking(); }
+                if (interruptTalking /*&& this.IsTalking()*/ ) { this.StopTalking(); }
 
-				var prompt = new PromptBuilder(); //7.5
+                var prompt = new PromptBuilder(); //7.5
 
-				var promptStyle = new PromptStyle {
-					Volume = volume,
-					Emphasis = emphasis,
-					Rate = promptRate
-				};
+                var promptStyle = new PromptStyle {
+                    Volume = volume,
+                    Emphasis = emphasis,
+                    Rate = promptRate
+                };
 
-				if ( emphasis == PromptEmphasis.None ) {
-					if ( message.EndsWith( "!" ) ) { promptStyle.Emphasis = PromptEmphasis.Strong; }
+                if (emphasis == PromptEmphasis.None) {
+                    if (message.EndsWith("!")) { promptStyle.Emphasis = PromptEmphasis.Strong; }
 
-					if ( message.EndsWith( "!!" ) ) { promptStyle.Volume = PromptVolume.Loud; }
+                    if (message.EndsWith("!!")) { promptStyle.Volume = PromptVolume.Loud; }
 
-					if ( message.EndsWith( "!!!" ) ) { promptStyle.Volume = PromptVolume.ExtraLoud; }
-				}
+                    if (message.EndsWith("!!!")) { promptStyle.Volume = PromptVolume.ExtraLoud; }
+                }
 
-				prompt.StartStyle( promptStyle );
-				prompt.AppendTextWithHint( message, sayAs );
-				prompt.EndStyle();
+                prompt.StartStyle(promptStyle);
+                prompt.AppendTextWithHint(message, sayAs);
+                prompt.EndStyle();
 
-				this.Synthesizer.Value.SpeakAsync( prompt );
-			}
-			catch ( Exception exception ) { exception.Log(); }
-		}
+                this.Synthesizer.Value.SpeakAsync(prompt);
+            }
+            catch (Exception exception) { exception.Log(); }
+        }
 
-		public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();
+        public void StopTalking() => this.Synthesizer.Value.SpeakAsyncCancelAll();
 
-		/// <summary>
-		///     Pumps message loop while Talking
-		/// </summary>
-		public void Wait() {
-			while ( this.IsTalking() ) {
-				Thread.Yield();
-				Application.DoEvents();
-			}
-		}
-	}
+        /// <summary>
+        ///     Pumps message loop while Talking
+        /// </summary>
+        public void Wait() {
+            while (this.IsTalking()) {
+                Thread.Yield();
+                Application.DoEvents();
+            }
+        }
+    }
 }

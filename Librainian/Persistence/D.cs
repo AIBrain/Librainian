@@ -39,104 +39,112 @@
 //
 // Project: "Librainian", "D.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using JetBrains.Annotations;
-	using Microsoft.VisualBasic;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Microsoft.VisualBasic;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
 
-	/// <summary>
-	///     <para>[D]ata([K]ey=[V]alue)</para>
-	///     <para>[K] is not mutable, and can be an empty string, and contain whitespace.</para>
-	///     <para>[V] is mutable, and can be a null string.</para>
-	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Serializable]
-	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore, ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
-	public class D : IEqualityComparer<D> {
+    /// <summary>
+    ///     <para>[D]ata([K]ey=[V]alue)</para>
+    ///     <para>[K] is not mutable, and can be an empty string, and contain whitespace.</para>
+    ///     <para>[V] is mutable, and can be a null string.</para>
+    /// </summary>
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore, ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore)]
+    public class D : IEqualityComparer<D>
+    {
 
-		public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+        /// <summary>
+        ///     The key.
+        /// </summary>
+        [JsonProperty(IsReference = false, ItemIsReference = false)]
+        [NotNull]
+        public String K { get; }
 
-		Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
+        /// <summary>
+        ///     The value.
+        /// </summary>
+        [JsonProperty(IsReference = false, ItemIsReference = false)]
+        [CanBeNull]
+        public String V { get; set; }
 
-		/// <summary>
-		///     The key.
-		/// </summary>
-		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		[NotNull]
-		public String K { get; }
+        public D()
+        {
+            this.K = String.Empty;
+            this.V = null;
+        }
 
-		/// <summary>
-		///     The value.
-		/// </summary>
-		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		[CanBeNull]
-		public String V { get; set; }
+        public D([NotNull] String key) => this.K = key ?? throw new ArgumentNullException(nameof(key));
 
-		public D() {
-			this.K = String.Empty;
-			this.V = null;
-		}
+        public D([NotNull] String key, [CanBeNull] String value)
+        {
+            this.K = key ?? throw new ArgumentNullException(paramName: nameof(key));
+            this.V = value;
+        }
 
-		public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+        public override Int32 GetHashCode() => this.K.GetHashCode();
 
-		public D( [NotNull] String key, [CanBeNull] String value ) {
-			this.K = key ?? throw new ArgumentNullException( paramName: nameof( key ) );
-			this.V = value;
-		}
+        public override String ToString()
+        {
+            var keypart = String.Empty;
 
-		/// <summary>
-		///     <para>Static equality test.</para>
-		///     <para>Return true if: K and K have the same value, and V and V have the same value.</para>
-		///     <para>Two nulls should be equal.</para>
-		///     <para>Comparison is by <see cref="StringComparison.Ordinal" />.</para>
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( D left, D right ) {
-			if ( ReferenceEquals( left, right ) ) { return true; }
+            if (this.K.Length > 42)
+            {
+                var left = Strings.Left(this.K, 20);
+                var right = Strings.Right(this.K, 20);
 
-			if ( left is null || right is null ) { return false; }
+                keypart = $"{left}..{right}";
+            }
 
-			if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) { return false; }
+            if (this.V == null) { return $"{keypart}="; }
 
-			if ( ReferenceEquals( left.V, right.V ) ) { return true; }
+            var valuepart = String.Empty;
 
-			if ( left.V is null || right.V is null ) { return false; }
+            if (this.V.Length > 42)
+            {
+                var left = Strings.Left(this.V, 20);
+                var right = Strings.Right(this.V, 20);
 
-			return left.V.Equals( right.V, StringComparison.Ordinal );
-		}
+                valuepart = $"{left}..{right}";
+            }
 
-		public override Boolean Equals( Object obj ) => Equals( this, obj as D );
+            return $"{keypart}={valuepart}";
+        }
 
-		public override Int32 GetHashCode() => this.K.GetHashCode();
+        /// <summary>
+        ///     <para>Static equality test.</para>
+        ///     <para>Return true if: K and K have the same value, and V and V have the same value.</para>
+        ///     <para>Two nulls should be equal.</para>
+        ///     <para>Comparison is by <see cref="StringComparison.Ordinal" />.</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals(D left, D right)
+        {
+            if (ReferenceEquals(left, right)) { return true; }
 
-		public override String ToString() {
-			var keypart = String.Empty;
+            if (left == null || right == null) { return false; }
 
-			if ( this.K.Length > 42 ) {
-				var left = Strings.Left( this.K, 20 );
-				var right = Strings.Right( this.K, 20 );
+            if (!left.K.Equals(right.K, StringComparison.Ordinal)) { return false; }
 
-				keypart = $"{left}..{right}";
-			}
+            if (ReferenceEquals(left.V, right.V)) { return true; }
 
-			if ( this.V is null ) { return $"{keypart}="; }
+            if (left.V == null || right.V == null) { return false; }
 
-			var valuepart = String.Empty;
+            return left.V.Equals(right.V, StringComparison.Ordinal);
+        }
 
-			if ( this.V.Length > 42 ) {
-				var left = Strings.Left( this.V, 20 );
-				var right = Strings.Right( this.V, 20 );
+        public override Boolean Equals(Object obj) => Equals(this, obj as D);
 
-				valuepart = $"{left}..{right}";
-			}
+        public Int32 GetHashCode(D d) => d.K.GetHashCode();
 
-			return $"{keypart}={valuepart}";
-		}
-	}
+        Boolean IEqualityComparer<D>.Equals(D x, D y) => Equals(x, y);
+    }
 }

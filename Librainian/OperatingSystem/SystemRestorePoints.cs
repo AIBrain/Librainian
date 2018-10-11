@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "SystemRestorePoints.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "SystemRestorePoints.cs" was last formatted by Protiguous on 2018/08/23 at 7:42 PM.
 
 namespace Librainian.OperatingSystem {
 

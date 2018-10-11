@@ -39,40 +39,45 @@
 //
 // Project: "Librainian", "CustomAttribute.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Reflection;
-	using System.Runtime.CompilerServices;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
 
-	public class CustomAttribute : Attribute {
+    public class CustomAttribute : Attribute
+    {
 
-		public static List<MethodInfo> MethodsList { get; }
+        public static List<MethodInfo> MethodsList { get; }
 
-		public String FullMethodPath { get; }
+        public String FullMethodPath { get; }
 
-		static CustomAttribute() {
-			MethodsList = new List<MethodInfo>( Assembly.GetExecutingAssembly().GetTypes().SelectMany( t => t.GetMethods() ).Where( m => m.GetCustomAttributes( typeof( CustomAttribute ), false ).Length > 0 ) );
+        static CustomAttribute()
+        {
+            MethodsList = new List<MethodInfo>(Assembly.GetExecutingAssembly().GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(CustomAttribute), false).Length > 0));
 
-			MethodsList.AddRange( Assembly.GetCallingAssembly().GetTypes().SelectMany( t => t.GetMethods() ).Where( m => m.GetCustomAttributes( typeof( CustomAttribute ), false ).Length > 0 ) );
-		}
+            MethodsList.AddRange(Assembly.GetCallingAssembly().GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(CustomAttribute), false).Length > 0));
+        }
 
-		/*
+        /*
                 public Boolean someThing;
         */
 
-		public CustomAttribute( [CallerMemberName] String membername = "" ) {
-			var method = MethodsList.FirstOrDefault( m => m.Name == membername );
+        public CustomAttribute([CallerMemberName] String membername = "")
+        {
+            var method = MethodsList.FirstOrDefault(m => m.Name == membername);
 
-			if ( method?.DeclaringType is null ) {
-				return; //Not suppose to happen, but safety comes first
-			}
+            if (method?.DeclaringType == null)
+            {
+                return; //Not suppose to happen, but safety comes first
+            }
 
-			this.FullMethodPath = method.DeclaringType.Name + membername; //Work it around any way you want it
+            this.FullMethodPath = method.DeclaringType.Name + membername; //Work it around any way you want it
 
-			// I need here to get the type of membername parent. Here I want to get CustClass, not fooBase
-		}
-	}
+            // I need here to get the type of membername parent. Here I want to get CustClass, not fooBase
+        }
+    }
 }

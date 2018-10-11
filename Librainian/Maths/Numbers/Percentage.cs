@@ -39,161 +39,169 @@
 //
 // Project: "Librainian", "Percentage.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers
+{
 
-	using System;
-	using System.Numerics;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Numerics;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Numerics;
+    using System;
+    using System.Numerics;
 
-	/// <summary>
-	///     <para>Restricts the value to between 0.0 and 1.0.</para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage> {
+    /// <summary>
+    ///     <para>Restricts the value to between 0.0 and 1.0.</para>
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage>
+    {
 
-		[Pure]
-		public Int32 CompareTo( Double other ) => ( ( Double ) this.Quotient ).CompareTo( other );
+        /// <summary>1</summary>
+        public const Double Maximum = 1d;
 
-		[Pure]
-		public Int32 CompareTo( [NotNull] Percentage other ) {
-			if ( other is null ) { throw new ArgumentNullException( nameof( other ) ); }
+        /// <summary>0</summary>
+        public const Double Minimum = 0d;
 
-			return this.Quotient.CompareTo( other.Quotient );
-		}
+        [CanBeNull]
+        [JsonProperty]
+        public readonly BigInteger? Denominator;
 
-		public Boolean Equals( Percentage other ) => Equals( this, other );
+        [CanBeNull]
+        [JsonProperty]
+        public readonly BigInteger? LeastCommonDenominator;
 
-		[CanBeNull]
-		[JsonProperty]
-		public readonly BigInteger? Denominator;
+        [CanBeNull]
+        [JsonProperty]
+        public readonly BigInteger? Numerator;
 
-		[CanBeNull]
-		[JsonProperty]
-		public readonly BigInteger? LeastCommonDenominator;
+        [JsonProperty]
+        public readonly BigRational Quotient;
 
-		[CanBeNull]
-		[JsonProperty]
-		public readonly BigInteger? Numerator;
+        /// <summary>
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        public Percentage(Double value) : this((BigInteger)value, BigInteger.One) { }
 
-		[JsonProperty]
-		public readonly BigRational Quotient;
+        /// <summary>
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        public Percentage(Decimal numerator, Decimal denominator) : this((Double)numerator, (Double)denominator) { }
 
-		/// <summary>1</summary>
-		public const Double Maximum = 1d;
+        /// <summary>
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        public Percentage(Double numerator, Double denominator)
+        {
+            if (Double.IsNaN(numerator)) { throw new ArgumentOutOfRangeException(nameof(numerator), "Numerator is not a number."); }
 
-		/// <summary>0</summary>
-		public const Double Minimum = 0d;
+            if (Double.IsNaN(denominator)) { throw new ArgumentOutOfRangeException(nameof(denominator), "Denominator is not a number."); }
 
-		/// <summary>
-		///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-		/// </summary>
-		/// <param name="value"></param>
-		public Percentage( Double value ) : this( ( BigInteger ) value, BigInteger.One ) { }
+            this.Numerator = new BigInteger(numerator);
+            this.Denominator = new BigInteger(denominator);
 
-		/// <summary>
-		///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-		/// </summary>
-		/// <param name="numerator"></param>
-		/// <param name="denominator"></param>
-		public Percentage( Decimal numerator, Decimal denominator ) : this( ( Double ) numerator, ( Double ) denominator ) { }
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
 
-		/// <summary>
-		///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-		/// </summary>
-		/// <param name="numerator"></param>
-		/// <param name="denominator"></param>
-		public Percentage( Double numerator, Double denominator ) {
-			if ( Double.IsNaN( numerator ) ) { throw new ArgumentOutOfRangeException( nameof( numerator ), "Numerator is not a number." ); }
+            this.Quotient = denominator <= 0 ? new BigRational(0.0) : new BigRational(numerator / denominator);
 
-			if ( Double.IsNaN( denominator ) ) { throw new ArgumentOutOfRangeException( nameof( denominator ), "Denominator is not a number." ); }
+            if (this.Quotient < Minimum) { this.Quotient = Minimum; }
+            else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
+        }
 
-			this.Numerator = new BigInteger( numerator );
-			this.Denominator = new BigInteger( denominator );
+        /// <summary>
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="numerator"></param>
+        /// <param name="denominator"></param>
+        public Percentage(BigInteger numerator, BigInteger denominator)
+        {
+            this.Numerator = numerator;
+            this.Denominator = denominator;
+            this.LeastCommonDenominator = BigRational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
 
-			this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator.Value, this.Denominator.Value );
+            this.Quotient = denominator == BigInteger.Zero ? new BigRational(0.0) : new BigRational(numerator / denominator);
 
-			this.Quotient = denominator <= 0 ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
+            if (this.Quotient < Minimum) { this.Quotient = Minimum; }
+            else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
+        }
 
-			if ( this.Quotient < Minimum ) { this.Quotient = Minimum; }
-			else if ( this.Quotient > Maximum ) { this.Quotient = Maximum; }
-		}
+        /// <summary>
+        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        public Percentage(BigRational value) : this(value.Numerator, value.Denominator) { }
 
-		/// <summary>
-		///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-		/// </summary>
-		/// <param name="numerator"></param>
-		/// <param name="denominator"></param>
-		public Percentage( BigInteger numerator, BigInteger denominator ) {
-			this.Numerator = numerator;
-			this.Denominator = denominator;
-			this.LeastCommonDenominator = BigRational.LeastCommonDenominator( this.Numerator.Value, this.Denominator.Value );
+        /// <summary>Lerp?</summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Percentage Combine([NotNull] Percentage left, [NotNull] Percentage right) => new Percentage((left.Quotient + right.Quotient) / 2.0);
 
-			this.Quotient = denominator == BigInteger.Zero ? new BigRational( 0.0 ) : new BigRational( numerator / denominator );
+        //TODO BigDecimal any better here?
+        /// <summary>static comparison</summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals(Percentage left, Percentage right)
+        {
+            if (ReferenceEquals(left, right)) { return true; }
 
-			if ( this.Quotient < Minimum ) { this.Quotient = Minimum; }
-			else if ( this.Quotient > Maximum ) { this.Quotient = Maximum; }
-		}
+            if (left == null) { return false; }
 
-		/// <summary>
-		///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-		/// </summary>
-		/// <param name="value"></param>
-		public Percentage( BigRational value ) : this( value.Numerator, value.Denominator ) { }
+            if (right == null) { return false; }
 
-		/// <summary>Lerp?</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) => new Percentage( ( left.Quotient + right.Quotient ) / 2.0 );
+            return left.Quotient == right.Quotient;
+        }
 
-		//TODO BigDecimal any better here?
-		/// <summary>static comparison</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( Percentage left, Percentage right ) {
-			if ( ReferenceEquals( left, right ) ) { return true; }
+        public static implicit operator Double([NotNull] Percentage special) => (Double)special.Quotient;
 
-			if ( left is null ) { return false; }
+        [NotNull]
+        public static implicit operator Percentage(Single value) => new Percentage(value);
 
-			if ( right is null ) { return false; }
+        [NotNull]
+        public static implicit operator Percentage(Double value) => new Percentage(value);
 
-			return left.Quotient == right.Quotient;
-		}
+        [NotNull]
+        public static Percentage operator +([NotNull] Percentage left, [NotNull] Percentage right) => Combine(left, right);
 
-		public static implicit operator Double( [NotNull] Percentage special ) => ( Double ) special.Quotient;
+        [NotNull]
+        public static Percentage Parse([NotNull] String value)
+        {
+            if (value == null) { throw new ArgumentNullException(nameof(value)); }
 
-		[NotNull]
-		public static implicit operator Percentage( Single value ) => new Percentage( value );
+            return new Percentage(Double.Parse(value));
+        }
 
-		[NotNull]
-		public static implicit operator Percentage( Double value ) => new Percentage( value );
+        public static Boolean TryParse([NotNull] String numberString, [NotNull] out Percentage result)
+        {
+            if (numberString == null) { throw new ArgumentNullException(nameof(numberString)); }
 
-		[NotNull]
-		public static Percentage operator +( [NotNull] Percentage left, [NotNull] Percentage right ) => Combine( left, right );
+            if (!Double.TryParse(numberString, out var value)) { value = Double.NaN; }
 
-		[NotNull]
-		public static Percentage Parse( [NotNull] String value ) {
-			if ( value is null ) { throw new ArgumentNullException( nameof( value ) ); }
+            result = new Percentage(value);
 
-			return new Percentage( Double.Parse( value ) );
-		}
+            return !Double.IsNaN(value);
+        }
 
-		public static Boolean TryParse( [NotNull] String numberString, [NotNull] out Percentage result ) {
-			if ( numberString is null ) { throw new ArgumentNullException( nameof( numberString ) ); }
+        [Pure]
+        public Int32 CompareTo(Double other) => ((Double)this.Quotient).CompareTo(other);
 
-			if ( !Double.TryParse( numberString, out var value ) ) { value = Double.NaN; }
+        [Pure]
+        public Int32 CompareTo([NotNull] Percentage other)
+        {
+            if (other == null) { throw new ArgumentNullException(nameof(other)); }
 
-			result = new Percentage( value );
+            return this.Quotient.CompareTo(other.Quotient);
+        }
 
-			return !Double.IsNaN( value );
-		}
+        public Boolean Equals(Percentage other) => Equals(this, other);
 
-		public override String ToString() => $"{this.Quotient}";
-	}
+        public override String ToString() => $"{this.Quotient}";
+    }
 }

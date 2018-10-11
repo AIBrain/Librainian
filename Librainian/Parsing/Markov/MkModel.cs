@@ -39,82 +39,89 @@
 //
 // Project: "Librainian", "MkModel.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
 
-namespace Librainian.Parsing.Markov {
+namespace Librainian.Parsing.Markov
+{
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Maths;
-	using Persistence;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Persistence;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
 
-	public class MkModel {
+    public class MkModel
+    {
 
-		private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
+        private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
 
-		public readonly String Name;
+        public readonly String Name;
 
-		public MkModel() => throw new NotImplementedException();
+        public MkModel() => throw new NotImplementedException();
 
-		public MkModel( String name ) => this.Name = name;
+        public MkModel(String name) => this.Name = name;
 
-		[NotNull]
-		public String GenerateRandomCorpus( Int32 numberOfWords ) {
-			if ( !this._markovChains.Any() ) { return String.Empty; }
+        [NotNull]
+        public String GenerateRandomCorpus(Int32 numberOfWords)
+        {
+            if (!this._markovChains.Any()) { return String.Empty; }
 
-			var startWord = this._markovChains.OrderBy( o => Randem.Next() ).FirstOrDefault().Key;
-			var newCorpus = new StringBuilder( startWord );
+            var startWord = this._markovChains.OrderBy(o => Randem.Next()).FirstOrDefault().Key;
+            var newCorpus = new StringBuilder(startWord);
 
-			while ( numberOfWords > 0 ) {
-				var word = startWord;
-				var randomChain = this.Nexts( word: word ).OrderBy( o => Randem.Next() );
+            while (numberOfWords > 0)
+            {
+                var word = startWord;
+                var randomChain = this.Nexts(word: word).OrderBy(o => Randem.Next());
 
-				foreach ( var w in randomChain ) {
-					newCorpus.Append( $"{w} " );
+                foreach (var w in randomChain)
+                {
+                    newCorpus.Append($"{w} ");
 
-					if ( String.IsNullOrEmpty( w ) ) { continue; }
+                    if (String.IsNullOrEmpty(w)) { continue; }
 
-					startWord = w;
-					numberOfWords -= 1;
-				}
-			}
+                    startWord = w;
+                    numberOfWords -= 1;
+                }
+            }
 
-			return newCorpus.ToString();
-		}
+            return newCorpus.ToString();
+        }
 
-		/// <summary>
-		///     Need to use JSON loader here..
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Load() => this.Name.Loader<MkModel>( source => source.DeepClone( destination: this ) );
+        /// <summary>
+        ///     Need to use JSON loader here..
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Load() => this.Name.Loader<MkModel>(source => source.DeepClone(destination: this));
 
-		/// <summary>
-		///     Return the list of strings found after this <paramref name="word" />.
-		/// </summary>
-		/// <param name="word"></param>
-		/// <returns></returns>
-		public IEnumerable<String> Nexts( [CanBeNull] String word ) {
-			if ( word is null ) { return Enumerable.Empty<String>(); }
+        /// <summary>
+        ///     Return the list of strings found after this <paramref name="word" />.
+        /// </summary>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public IEnumerable<String> Nexts([CanBeNull] String word)
+        {
+            if (word == null) { return Enumerable.Empty<String>(); }
 
-			if ( this._markovChains.ContainsKey( word ) ) { return this._markovChains[ word ]; }
+            if (this._markovChains.ContainsKey(word)) { return this._markovChains[word]; }
 
-			return Enumerable.Empty<String>();
-		}
+            return Enumerable.Empty<String>();
+        }
 
-		/// <summary>
-		///     Need to use JSON saver here..
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Save() => this.Saver( this.Name );
+        /// <summary>
+        ///     Need to use JSON saver here..
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Save() => this.Saver(this.Name);
 
-		public void Train( String corpus, Int32 level = 3 ) {
-			var words = corpus.ToWords().AsParallel().ToArray();
+        public void Train(String corpus, Int32 level = 3)
+        {
+            var words = corpus.ToWords().AsParallel().ToArray();
 
-			Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );
-		}
-	}
+            Parallel.For(0, words.Length, (i, state) => this._markovChains.TryAdd(words[i], words.Skip(i + 1).Take(level).ToList()));
+        }
+    }
 }

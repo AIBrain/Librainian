@@ -41,156 +41,154 @@
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using JetBrains.Annotations;
-	using Maths;
-	using Newtonsoft.Json;
-	using Numerics;
-	using Parsing;
+    using System;
+    using System.Diagnostics;
+    using System.Numerics;
+    using Maths;
+    using Newtonsoft.Json;
+    using Numerics;
+    using Parsing;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public struct Days : IComparable<Days>, IQuantityOfTime {
+    [JsonObject]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    public struct Days : IComparable<Days>, IQuantityOfTime {
 
-		/// <summary>
-		///     365
-		/// </summary>
-		public const UInt16 InOneCommonYear = 365;
+        /// <summary>
+        ///     365
+        /// </summary>
+        public const UInt16 InOneCommonYear = 365;
 
-		/// <summary>
-		///     7
-		/// </summary>
-		public const UInt16 InOneWeek = 7;
+        /// <summary>
+        ///     7
+        /// </summary>
+        public const UInt16 InOneWeek = 7;
 
-		/// <summary>
-		///     One <see cref="Days" /> .
-		/// </summary>
-		public static readonly Days One = new Days( 1 );
+        /// <summary>
+        ///     One <see cref="Days" /> .
+        /// </summary>
+        public static readonly Days One = new Days( 1 );
 
-		/// <summary>
-		///     Seven <see cref="Days" /> .
-		/// </summary>
-		public static readonly Days Seven = new Days( 7 );
+        /// <summary>
+        ///     Seven <see cref="Days" /> .
+        /// </summary>
+        public static readonly Days Seven = new Days( 7 );
 
-		/// <summary>
-		///     Ten <see cref="Days" /> .
-		/// </summary>
-		public static readonly Days Ten = new Days( 10 );
+        /// <summary>
+        ///     Ten <see cref="Days" /> .
+        /// </summary>
+        public static readonly Days Ten = new Days( 10 );
 
-		/// <summary>
-		/// </summary>
-		public static readonly Days Thousand = new Days( 1000 );
+        /// <summary>
+        /// </summary>
+        public static readonly Days Thousand = new Days( 1000 );
 
-		/// <summary>
-		///     Zero <see cref="Days" />
-		/// </summary>
-		public static readonly Days Zero = new Days( 0 );
+        /// <summary>
+        ///     Zero <see cref="Days" />
+        /// </summary>
+        public static readonly Days Zero = new Days( 0 );
 
-		[JsonProperty]
-		public BigRational Value { get; }
+        [JsonProperty]
+        public BigRational Value { get; }
 
-		public Days( Decimal value ) => this.Value = value;
+        public Days( Decimal value ) => this.Value = value;
 
-		public Days( BigRational value ) => this.Value = value;
+        public Days( BigRational value ) => this.Value = value;
 
-		public Days( Int64 value ) => this.Value = value;
+        public Days( Int64 value ) => this.Value = value;
 
-		public Days( BigInteger value ) => this.Value = value;
+        public Days( BigInteger value ) => this.Value = value;
 
-		public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
+        public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
-		//public const Byte InOneMonth = 31;
-		public static Days Combine( Days left, BigRational days ) => new Days( left.Value + days );
+        //public const Byte InOneMonth = 31;
+        public static Days Combine( Days left, BigRational days ) => new Days( left.Value + days );
 
-		public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger )left.Value + days );
+        public static Days Combine( Days left, BigInteger days ) => new Days( ( BigInteger ) left.Value + days );
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
+        /// <summary>
+        ///     <para>static equality test</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
-		/// </summary>
-		/// <param name="days"></param>
-		/// <returns></returns>
-		public static implicit operator Hours( Days days ) => days.ToHours();
+        /// <summary>
+        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public static implicit operator Hours( Days days ) => days.ToHours();
 
-		public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days.Value );
+        public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days );
 
-		public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double ) days.Value );
 
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
-		/// </summary>
-		/// <param name="days"></param>
-		/// <returns></returns>
-		public static implicit operator Weeks( Days days ) => days.ToWeeks();
+        /// <summary>
+        ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
-		public static Days operator -( Days days ) => new Days( days.Value * -1 );
+        public static Days operator -( Days days ) => new Days( days.Value * -1 );
 
-		public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
+        public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
 
-		public static Days operator -( Days left, Decimal days ) => Combine( left, -days );
+        public static Days operator -( Days left, Decimal days ) => Combine( left, -days );
 
-		public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
+        public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
-		public static Days operator +( Days left, Days right ) => Combine( left, right );
+        public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-		public static Days operator +( Days left, Decimal days ) => Combine( left, days );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, days );
 
-		public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
+        public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
-		public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
+        public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days ) right;
 
-		public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
+        public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-		public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days ) right;
 
-		public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
+        public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( Days other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Days other ) => this.Value.CompareTo( other.Value );
 
-		public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
+        public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
 
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) { return false; }
 
-			return obj is Days days && this.Equals( days );
-		}
+            return obj is Days days && this.Equals( days );
+        }
 
-		[Pure]
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		[Pure]
-		public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
+        public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
-		[Pure]
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.Constants.InOneDay * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( PlanckTimes.InOneDay * this.Value );
 
-		public Seconds ToSeconds() => throw new NotImplementedException();
+        public Seconds ToSeconds() => throw new NotImplementedException();
 
-		[Pure]
-		public override String ToString() {
-			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.GetWholePart();
+        public override String ToString() {
+            if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.GetWholePart();
 
-				return $"{whole} {whole.PluralOf( "day" )}";
-			}
+                return $"{whole} {whole.PluralOf( "day" )}";
+            }
 
-			var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
-			return $"{dec} {dec.PluralOf( "day" )}";
-		}
+            return $"{dec} {dec.PluralOf( "day" )}";
+        }
 
-		[Pure]
-		public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
-	}
+        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+
+        public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
+
+    }
+
 }

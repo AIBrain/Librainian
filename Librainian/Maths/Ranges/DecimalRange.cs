@@ -39,68 +39,71 @@
 //
 // Project: "Librainian", "DecimalRange.cs" was last formatted by Protiguous on 2018/07/13 at 1:20 AM.
 
-namespace Librainian.Maths.Ranges {
+namespace Librainian.Maths.Ranges
+{
 
-	using System;
-	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Runtime.Serialization;
 
-	/// <summary>Represents a Decimal range with minimum and maximum values</summary>
-	/// <remarks>
-	///     Modified from the AForge Library Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com
-	/// </remarks>
-	[JsonObject]
-	public class DecimalRange {
+    /// <summary>Represents a Decimal range with minimum and maximum values</summary>
+    /// <remarks>
+    ///     Modified from the AForge Library Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com
+    /// </remarks>
+    [JsonObject]
+    public class DecimalRange
+    {
 
-		/// <summary>Maximum value</summary>
-		[JsonProperty]
-		[OptionalField]
-		public readonly Decimal Max;
+        public static readonly DecimalRange ZeroToOne = new DecimalRange(0.0M, 1.0M);
 
-		/// <summary>Minimum value</summary>
-		[JsonProperty]
-		[OptionalField]
-		public readonly Decimal Min;
+        /// <summary>Maximum value</summary>
+        [JsonProperty]
+        [OptionalField]
+        public readonly Decimal Max;
 
-		/// <summary>The difference between maximum and minimum values.</summary>
-		[JsonProperty]
-		[OptionalField]
-		public readonly Decimal Range;
+        /// <summary>Minimum value</summary>
+        [JsonProperty]
+        [OptionalField]
+        public readonly Decimal Min;
 
-		public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
+        /// <summary>The difference between maximum and minimum values.</summary>
+        [JsonProperty]
+        [OptionalField]
+        public readonly Decimal Range;
 
-		/// <summary>Initializes a new instance of the <see cref="DecimalRange" /> class</summary>
-		/// <param name="min">Minimum value of the range</param>
-		/// <param name="max">Maximum value of the range</param>
-		public DecimalRange( Decimal min, Decimal max ) {
-			this.Min = Math.Min( min, max );
-			this.Max = Math.Max( min, max );
-			this.Range = this.Max - this.Min;
-		}
+        /// <summary>Initializes a new instance of the <see cref="DecimalRange" /> class</summary>
+        /// <param name="min">Minimum value of the range</param>
+        /// <param name="max">Maximum value of the range</param>
+        public DecimalRange(Decimal min, Decimal max)
+        {
+            this.Min = Math.Min(min, max);
+            this.Max = Math.Max(min, max);
+            this.Range = this.Max - this.Min;
+        }
 
-		/// <summary>Check if the specified value is inside this range</summary>
-		/// <param name="x">Value to check</param>
-		/// <returns>
-		///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
-		/// </returns>
-		[System.Diagnostics.Contracts.Pure]
-		public Boolean IsInside( Decimal x ) => this.Min <= x && x <= this.Max;
+        /// <summary>Check if the specified value is inside this range</summary>
+        /// <param name="x">Value to check</param>
+        /// <returns>
+        ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
+        /// </returns>
 
-		/// <summary>Check if the specified range is inside this range</summary>
-		/// <param name="range">Range to check</param>
-		/// <returns>
-		///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
-		/// </returns>
-		[System.Diagnostics.Contracts.Pure]
-		public Boolean IsInside( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
+        public Boolean IsInside(Decimal x) => this.Min <= x && x <= this.Max;
 
-		/// <summary>Check if the specified range overlaps with this range</summary>
-		/// <param name="range">Range to check for overlapping</param>
-		/// <returns>
-		///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
-		/// </returns>
-		[System.Diagnostics.Contracts.Pure]
-		public Boolean IsOverlapping( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
-	}
+        /// <summary>Check if the specified range is inside this range</summary>
+        /// <param name="range">Range to check</param>
+        /// <returns>
+        ///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
+        /// </returns>
+
+        public Boolean IsInside([NotNull] DecimalRange range) => this.IsInside(range.Min) && this.IsInside(range.Max);
+
+        /// <summary>Check if the specified range overlaps with this range</summary>
+        /// <param name="range">Range to check for overlapping</param>
+        /// <returns>
+        ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
+        /// </returns>
+
+        public Boolean IsOverlapping([NotNull] DecimalRange range) => this.IsInside(range.Min) || this.IsInside(range.Max);
+    }
 }

@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IQueuedSync.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "SqlServerInstance.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,23 +37,34 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IQueuedSync.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
+// Project: "Librainian", "SqlServerInstance.cs" was last formatted by Protiguous on 2018/09/24 at 4:40 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Database {
 
-	using System;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
 
-	/// <summary>
-	///     Used by <see cref="WaitNode" />.
-	///     NOTE: this class is NOT present in java.util.concurrent.
-	/// </summary>
-	public interface IQueuedSync // was WaitQueue.QueuedSync in BACKPORT_3_1
-	{
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [JsonObject]
+    [Immutable]
+    public class SqlServerInstance {
 
-		// invoked with sync on wait node, (atomically) just before enqueuing
-		Boolean Recheck( WaitNode node );
+        [NotNull]
+        public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
-		// invoked with sync on wait node, (atomically) just before signalling
-		void TakeOver( WaitNode node );
-	}
+        public String Edition { get; set; }
+
+        public String InstanceName { get; set; }
+
+        public String MachineName { get; set; }
+
+        public String ServiceName { get; set; }
+
+        public String Version { get; set; }
+
+        public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
+    }
 }

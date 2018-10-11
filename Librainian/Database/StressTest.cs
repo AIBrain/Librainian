@@ -39,57 +39,63 @@
 //
 // Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
 
-namespace Librainian.Database {
+namespace Librainian.Database
+{
 
-	using System;
-	using System.Data;
-	using System.Diagnostics;
-	using JetBrains.Annotations;
-	using Measurement.Time;
+    using JetBrains.Annotations;
+    using Measurement.Time;
+    using System;
+    using System.Data;
+    using System.Diagnostics;
 
-	public static class StressTest {
+    public static class StressTest
+    {
 
-		/// <summary>
-		///     How high can this computer count in one second?
-		/// </summary>
-		/// <returns></returns>
-		public static UInt64 PerformBaselineCounting() {
-			TimeSpan forHowLong = Seconds.One;
-			var stopwatch = Stopwatch.StartNew();
-			var counter = 0UL;
+        /// <summary>
+        ///     How high can this computer count in one second?
+        /// </summary>
+        /// <returns></returns>
+        public static UInt64 PerformBaselineCounting()
+        {
+            TimeSpan forHowLong = Seconds.One;
+            var stopwatch = Stopwatch.StartNew();
+            var counter = 0UL;
 
-			do {
-				counter++;
+            do
+            {
+                counter++;
 
-				if ( stopwatch.Elapsed >= forHowLong ) { break; }
-			} while ( true );
+                if (stopwatch.Elapsed >= forHowLong) { break; }
+            } while (true);
 
-			return counter;
-		}
+            return counter;
+        }
 
-		/// <summary>
-		///     How high can this database count in one second?
-		/// </summary>
-		/// <param name="database">   </param>
-		/// <param name="forHowLong"> </param>
-		/// <param name="multithread"></param>
-		/// <returns></returns>
-		public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
-			if ( database is null ) { throw new ArgumentNullException( nameof( database ) ); }
+        /// <summary>
+        ///     How high can this database count in one second?
+        /// </summary>
+        /// <param name="database">   </param>
+        /// <param name="forHowLong"> </param>
+        /// <param name="multithread"></param>
+        /// <returns></returns>
+        public static UInt64 PerformDatabaseCounting([NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false)
+        {
+            if (database == null) { throw new ArgumentNullException(nameof(database)); }
 
-			if ( multithread ) { throw new NotImplementedException( "yet" ); }
+            if (multithread) { throw new NotImplementedException("yet"); }
 
-			forHowLong = Seconds.One;
-			var stopwatch = Stopwatch.StartNew();
-			var counter = 0UL;
+            forHowLong = Seconds.One;
+            var stopwatch = Stopwatch.StartNew();
+            var counter = 0UL;
 
-			do {
-				counter = database.ExecuteScalar<UInt64>( $"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text );
+            do
+            {
+                counter = database.ExecuteScalar<UInt64>($"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text);
 
-				if ( stopwatch.Elapsed >= forHowLong ) { break; }
-			} while ( true );
+                if (stopwatch.Elapsed >= forHowLong) { break; }
+            } while (true);
 
-			return counter;
-		}
-	}
+            return counter;
+        }
+    }
 }

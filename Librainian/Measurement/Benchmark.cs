@@ -39,90 +39,101 @@
 //
 // Project: "Librainian", "Benchmark.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
 
-namespace Librainian.Measurement {
+namespace Librainian.Measurement
+{
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using Time;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using Time;
 
-	/// <summary>
-	///     Originally based upon the idea from
-	///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
-	/// </summary>
-	/// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
-	public static class Benchmark {
+    /// <summary>
+    ///     Originally based upon the idea from
+    ///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
+    /// </summary>
+    /// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
+    public static class Benchmark
+    {
 
-		public enum AorB {
+        public enum AorB
+        {
 
-			Unknown,
+            Unknown,
 
-			MethodA,
+            MethodA,
 
-			MethodB,
+            MethodB,
 
-			Same
-		}
+            Same
+        }
 
-		/// <summary>
-		///     For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.
-		/// </summary>
-		/// <param name="method"></param>
-		/// <param name="runFor"></param>
-		/// <returns>Returns how many rounds are ran in the time given.</returns>
-		public static UInt64 GetBenchmark( this Action method, TimeSpan? runFor ) {
-			GC.Collect();
+        /// <summary>
+        ///     For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="runFor"></param>
+        /// <returns>Returns how many rounds are ran in the time given.</returns>
+        public static UInt64 GetBenchmark(this Action method, TimeSpan? runFor)
+        {
+            GC.Collect();
 
-			var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
-			Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+            var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-			var oldPriority = Thread.CurrentThread.Priority;
-			Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            var oldPriority = Thread.CurrentThread.Priority;
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-			if ( runFor is null ) { runFor = Seconds.One; }
+            if (runFor == null) { runFor = Seconds.One; }
 
-			try {
-				try {
-					method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
-				}
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception.Message );
-					Logging.Break();
-				}
+            try
+            {
+                try
+                {
+                    method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception.Message);
+                    Logging.Break();
+                }
 
-				var rounds = 0UL;
+                var rounds = 0UL;
 
-				var stopwatch = Stopwatch.StartNew();
+                var stopwatch = Stopwatch.StartNew();
 
-				while ( stopwatch.Elapsed < runFor ) {
-					try { method.Invoke(); }
-					catch ( Exception exception ) {
-						Debug.WriteLine( exception.Message );
-						Logging.Break();
-					}
-					finally { rounds++; }
-				}
+                while (stopwatch.Elapsed < runFor)
+                {
+                    try { method.Invoke(); }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(exception.Message);
+                        Logging.Break();
+                    }
+                    finally { rounds++; }
+                }
 
-				return rounds;
-			}
-			finally {
-				Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
-				Thread.CurrentThread.Priority = oldPriority;
-			}
-		}
+                return rounds;
+            }
+            finally
+            {
+                Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
+                Thread.CurrentThread.Priority = oldPriority;
+            }
+        }
 
-		public static AorB WhichIsFaster( this Action methodA, Action methodB, TimeSpan? runfor = null ) {
-			if ( null == runfor ) { runfor = Seconds.One; }
+        public static AorB WhichIsFaster(this Action methodA, Action methodB, TimeSpan? runfor = null)
+        {
+            if (null == runfor) { runfor = Seconds.One; }
 
-			var a = methodA.GetBenchmark( runfor );
+            var a = methodA.GetBenchmark(runfor);
 
-			var b = methodB.GetBenchmark( runfor );
+            var b = methodB.GetBenchmark(runfor);
 
-			if ( a > b ) { return AorB.MethodA; }
+            if (a > b) { return AorB.MethodA; }
 
-			if ( b > a ) { return AorB.MethodB; }
+            if (b > a) { return AorB.MethodB; }
 
-			return AorB.Same;
-		}
-	}
+            return AorB.Same;
+        }
+    }
 }

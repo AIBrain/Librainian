@@ -39,258 +39,278 @@
 //
 // Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls
+{
 
-	using System;
-	using System.Diagnostics;
-	using System.Drawing;
-	using System.Text;
-	using System.Windows.Forms;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Magic;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Magic;
+    using System;
+    using System.Diagnostics;
+    using System.Drawing;
+    using System.Text;
+    using System.Windows.Forms;
 
-	/// <summary>
-	///     Pulled from http://stackoverflow.com/a/6587172/956364
-	/// </summary>
-	public sealed class ListBoxLog : ABetterClassDispose {
+    /// <summary>
+    ///     Pulled from http://stackoverflow.com/a/6587172/956364
+    /// </summary>
+    public sealed class ListBoxLog : ABetterClassDispose
+    {
 
-		private ListBox Box { get; set; }
+        private const Int32 DefaultMaxLinesInListbox = 2000;
 
-		private Boolean CanAdd { get; set; }
+        /// <summary>
+        ///     <see cref="FormatALogEventMessage" />
+        /// </summary>
+        private const String DefaultMessageFormat = "{4}>{8}";
 
-		private Int32 MaxEntriesInListBox { get; }
+        private ListBox Box { get; set; }
 
-		private String MessageFormat { get; }
+        private Boolean CanAdd { get; set; }
 
-		public Boolean Paused { get; }
+        private Int32 MaxEntriesInListBox { get; }
 
-		private const Int32 DefaultMaxLinesInListbox = 2000;
+        private String MessageFormat { get; }
 
-		/// <summary>
-		///     <see cref="FormatALogEventMessage" />
-		/// </summary>
-		private const String DefaultMessageFormat = "{4}>{8}";
+        public Boolean Paused { get; }
 
-		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) { }
+        public ListBoxLog(ListBox listBox, String messageFormat) : this(listBox, messageFormat, DefaultMaxLinesInListbox) { }
 
-		public ListBoxLog( [NotNull] ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+        public ListBoxLog([NotNull] ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox)
+        {
 
-			this.Box = listBox;
-			this.MessageFormat = messageFormat;
-			this.MaxEntriesInListBox = maxLinesInListbox;
+            this.Box = listBox;
+            this.MessageFormat = messageFormat;
+            this.MaxEntriesInListBox = maxLinesInListbox;
 
-			this.Paused = false;
+            this.Paused = false;
 
-			this.CanAdd = listBox.IsHandleCreated;
+            this.CanAdd = listBox.IsHandleCreated;
 
-			this.Box.SelectionMode = SelectionMode.MultiExtended;
+            this.Box.SelectionMode = SelectionMode.MultiExtended;
 
-			this.Box.HandleCreated += this.OnHandleCreated;
-			this.Box.HandleDestroyed += this.OnHandleDestroyed;
-			this.Box.DrawItem += this.DrawItemHandler;
-			this.Box.KeyDown += this.KeyDownHandler;
+            this.Box.HandleCreated += this.OnHandleCreated;
+            this.Box.HandleDestroyed += this.OnHandleDestroyed;
+            this.Box.DrawItem += this.DrawItemHandler;
+            this.Box.KeyDown += this.KeyDownHandler;
 
-			var menuItems = new[] {
-				new MenuItem( "Copy", this.CopyMenuOnClickHandler )
-			};
+            var menuItems = new[] {
+                new MenuItem( "Copy", this.CopyMenuOnClickHandler )
+            };
 
-			this.Box.ContextMenu = new ContextMenu( menuItems );
-			this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
+            this.Box.ContextMenu = new ContextMenu(menuItems);
+            this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
 
-			this.Box.DrawMode = DrawMode.OwnerDrawFixed;
-		}
+            this.Box.DrawMode = DrawMode.OwnerDrawFixed;
+        }
 
-		~ListBoxLog() => this.Dispose();
+        ~ListBoxLog() => this.Dispose();
 
-		private delegate void AddALogEntryDelegate( Object item );
+        private delegate void AddALogEntryDelegate(Object item);
 
-		[NotNull]
-		private static String FormatALogEventMessage( [NotNull] LogEvent logEvent, [NotNull] String messageFormat ) {
-			var message = logEvent.Message ?? "<NULL>";
+        [NotNull]
+        private static String FormatALogEventMessage([NotNull] LogEvent logEvent, [NotNull] String messageFormat)
+        {
+            var message = logEvent.Message ?? "<NULL>";
 
-			return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
-				logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */ logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
-				LevelName( logEvent.LoggingLevel )[ 0 ], /* {6} */ LevelName( logEvent.LoggingLevel ), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
-		}
+            return String.Format(messageFormat, /* {0} */ logEvent.EventTime.ToString("yyyy-MM-dd HH:mm:ss.fff"), /* {1} */ logEvent.EventTime.ToString("yyyy-MM-dd HH:mm:ss"), /* {2} */
+                logEvent.EventTime.ToString("yyyy-MM-dd"), /* {3} */ logEvent.EventTime.ToString("HH:mm:ss.fff"), /* {4} */ logEvent.EventTime.ToString("HH:mm"), /* {5} */
+                LevelName(logEvent.LoggingLevel)[0], /* {6} */ LevelName(logEvent.LoggingLevel), /* {7} */ (Int32)logEvent.LoggingLevel, /* {8} */ message);
+        }
 
-		[NotNull]
-		private static String LevelName( LoggingLevel loggingLevel ) {
-			switch ( loggingLevel ) {
-				case LoggingLevel.Critical: return "Critical";
+        [NotNull]
+        private static String LevelName(LoggingLevel loggingLevel)
+        {
+            switch (loggingLevel)
+            {
+                case LoggingLevel.Critical: return "Critical";
 
-				case LoggingLevel.Error: return "Error";
+                case LoggingLevel.Error: return "Error";
 
-				case LoggingLevel.Warning: return "Warning";
+                case LoggingLevel.Warning: return "Warning";
 
-				case LoggingLevel.Info: return "Info";
+                case LoggingLevel.Info: return "Info";
 
-				case LoggingLevel.Verbose: return "Verbose";
+                case LoggingLevel.Verbose: return "Verbose";
 
-				case LoggingLevel.Debug: return "Debug";
+                case LoggingLevel.Debug: return "Debug";
 
-				default: return $"<value={( Int32 ) loggingLevel}>";
-			}
-		}
+                default: return $"<value={(Int32)loggingLevel}>";
+            }
+        }
 
-		private void AddALogEntry( Object item ) {
-			var items = this.Box.Items;
+        private void AddALogEntry(Object item)
+        {
+            var items = this.Box.Items;
 
-			if ( items.Count == 0 ) {
-				this.AddALogEntryLine( item );
+            if (items.Count == 0)
+            {
+                this.AddALogEntryLine(item);
 
-				return;
-			}
+                return;
+            }
 
-			var currentText = items[ items.Count - 1 ] as String ?? String.Empty;
-			currentText += item as String ?? String.Empty;
-			this.Box.Items[ items.Count - 1 ] = currentText;
-		}
+            var currentText = items[items.Count - 1] as String ?? String.Empty;
+            currentText += item as String ?? String.Empty;
+            this.Box.Items[items.Count - 1] = currentText;
+        }
 
-		private void AddALogEntryLine( [NotNull] Object item ) {
-			this.Box.Items.Add( item );
+        private void AddALogEntryLine([NotNull] Object item)
+        {
+            this.Box.Items.Add(item);
 
-			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) { this.Box.Items.RemoveAt( 0 ); }
+            if (this.Box.Items.Count > this.MaxEntriesInListBox) { this.Box.Items.RemoveAt(0); }
 
-			if ( !this.Paused ) { this.Box.TopIndex = this.Box.Items.Count - 1; }
-		}
+            if (!this.Paused) { this.Box.TopIndex = this.Box.Items.Count - 1; }
+        }
 
-		private void CopyMenuOnClickHandler( Object sender, EventArgs e ) => this.CopyToClipboard();
+        private void CopyMenuOnClickHandler(Object sender, EventArgs e) => this.CopyToClipboard();
 
-		private void CopyMenuPopupHandler( Object sender, EventArgs e ) {
-			if ( sender is ContextMenu menu ) { menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0; }
-		}
+        private void CopyMenuPopupHandler(Object sender, EventArgs e)
+        {
+            if (sender is ContextMenu menu) { menu.MenuItems[0].Enabled = this.Box.SelectedItems.Count > 0; }
+        }
 
-		private void CopyToClipboard() {
-			if ( !this.Box.SelectedItems.Count.Any() ) { return; }
+        private void CopyToClipboard()
+        {
+            if (!this.Box.SelectedItems.Count.Any()) { return; }
 
-			var selectedItemsAsRTFText = new StringBuilder();
-			selectedItemsAsRTFText.AppendLine( @"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}" );
-			selectedItemsAsRTFText.AppendLine( @"{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red218\green165\blue32;\red0\green128\blue0;\red0\green0\blue255;\red0\green0\blue0}" );
+            var selectedItemsAsRTFText = new StringBuilder();
+            selectedItemsAsRTFText.AppendLine(@"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}");
+            selectedItemsAsRTFText.AppendLine(@"{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red218\green165\blue32;\red0\green128\blue0;\red0\green0\blue255;\red0\green0\blue0}");
 
-			foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
+            foreach (LogEvent logEvent in this.Box.SelectedItems)
+            {
 
-				selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
-					logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 ) logEvent.LoggingLevel > 5 ? 6 : ( Int32 ) logEvent.LoggingLevel + 1 );
+                selectedItemsAsRTFText.AppendFormat(@"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
+                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : (Int32)logEvent.LoggingLevel > 5 ? 6 : (Int32)logEvent.LoggingLevel + 1);
 
-				selectedItemsAsRTFText.Append( FormatALogEventMessage( logEvent, this.MessageFormat ) );
-				selectedItemsAsRTFText.AppendLine( @"\par}" );
-			}
+                selectedItemsAsRTFText.Append(FormatALogEventMessage(logEvent, this.MessageFormat));
+                selectedItemsAsRTFText.AppendLine(@"\par}");
+            }
 
-			selectedItemsAsRTFText.AppendLine( @"}" );
-			Debug.WriteLine( selectedItemsAsRTFText.ToString() );
-			Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
-		}
+            selectedItemsAsRTFText.AppendLine(@"}");
+            Debug.WriteLine(selectedItemsAsRTFText.ToString());
+            Clipboard.SetData(DataFormats.Rtf, selectedItemsAsRTFText.ToString());
+        }
 
-		private void DrawItemHandler( Object sender, [NotNull] DrawItemEventArgs e ) {
-			if ( e.Index < 0 ) { return; }
+        private void DrawItemHandler(Object sender, [NotNull] DrawItemEventArgs e)
+        {
+            if (e.Index < 0) { return; }
 
-			e.DrawBackground();
-			e.DrawFocusRectangle();
+            e.DrawBackground();
+            e.DrawFocusRectangle();
 
-			var logEvent = ( ( ListBox ) sender ).Items[ e.Index ] as LogEvent ?? new LogEvent( LoggingLevel.Critical, ( ( ListBox ) sender ).Items[ e.Index ].ToString() );
+            var logEvent = ((ListBox)sender).Items[e.Index] as LogEvent ?? new LogEvent(LoggingLevel.Critical, ((ListBox)sender).Items[e.Index].ToString());
 
-			// SafeGuard against wrong configuration of list box
+            // SafeGuard against wrong configuration of list box
 
-			Color color;
+            Color color;
 
-			switch ( logEvent.LoggingLevel ) {
-				case LoggingLevel.Critical:
-					color = Color.White;
+            switch (logEvent.LoggingLevel)
+            {
+                case LoggingLevel.Critical:
+                    color = Color.White;
 
-					break;
+                    break;
 
-				case LoggingLevel.Error:
-					color = Color.Red;
+                case LoggingLevel.Error:
+                    color = Color.Red;
 
-					break;
+                    break;
 
-				case LoggingLevel.Warning:
-					color = Color.Goldenrod;
+                case LoggingLevel.Warning:
+                    color = Color.Goldenrod;
 
-					break;
+                    break;
 
-				case LoggingLevel.Info:
-					color = Color.Green;
+                case LoggingLevel.Info:
+                    color = Color.Green;
 
-					break;
+                    break;
 
-				case LoggingLevel.Verbose:
-					color = Color.Blue;
+                case LoggingLevel.Verbose:
+                    color = Color.Blue;
 
-					break;
+                    break;
 
-				default:
-					color = Color.Black;
+                default:
+                    color = Color.Black;
 
-					break;
-			}
+                    break;
+            }
 
-			if ( logEvent.LoggingLevel == LoggingLevel.Critical ) { e.Graphics.FillRectangle( new SolidBrush( Color.Red ), e.Bounds ); }
+            if (logEvent.LoggingLevel == LoggingLevel.Critical) { e.Graphics.FillRectangle(new SolidBrush(Color.Red), e.Bounds); }
 
-			e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), new Font( "Hack", 8.25f, FontStyle.Regular ), new SolidBrush( color ), e.Bounds );
-		}
+            e.Graphics.DrawString(FormatALogEventMessage(logEvent, this.MessageFormat), new Font("Hack", 8.25f, FontStyle.Regular), new SolidBrush(color), e.Bounds);
+        }
 
-		private void KeyDownHandler( Object sender, [NotNull] KeyEventArgs e ) {
-			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) { this.CopyToClipboard(); }
-		}
+        private void KeyDownHandler(Object sender, [NotNull] KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) { this.CopyToClipboard(); }
+        }
 
-		private void OnHandleCreated( Object sender, EventArgs e ) => this.CanAdd = true;
+        private void OnHandleCreated(Object sender, EventArgs e) => this.CanAdd = true;
 
-		private void OnHandleDestroyed( Object sender, EventArgs e ) => this.CanAdd = false;
+        private void OnHandleDestroyed(Object sender, EventArgs e) => this.CanAdd = false;
 
-		private void WriteEvent( [CanBeNull] LogEvent logEvent ) {
-			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent ); }
-		}
+        private void WriteEvent([CanBeNull] LogEvent logEvent)
+        {
+            if (logEvent != null && this.CanAdd) { this.Box.BeginInvoke(new AddALogEntryDelegate(this.AddALogEntry), logEvent); }
+        }
 
-		private void WriteEventLine( [CanBeNull] LogEvent logEvent ) {
-			if ( logEvent != null && this.CanAdd ) { this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent ); }
-		}
+        private void WriteEventLine([CanBeNull] LogEvent logEvent)
+        {
+            if (logEvent != null && this.CanAdd) { this.Box.BeginInvoke(new AddALogEntryDelegate(this.AddALogEntryLine), logEvent); }
+        }
 
-		public override void DisposeManaged() {
-			if ( this.Box is null ) { return; }
+        public override void DisposeManaged()
+        {
+            if (this.Box == null) { return; }
 
-			this.CanAdd = false;
+            this.CanAdd = false;
 
-			this.Box.HandleCreated -= this.OnHandleCreated;
-			this.Box.HandleCreated -= this.OnHandleDestroyed;
-			this.Box.DrawItem -= this.DrawItemHandler;
-			this.Box.KeyDown -= this.KeyDownHandler;
+            this.Box.HandleCreated -= this.OnHandleCreated;
+            this.Box.HandleCreated -= this.OnHandleDestroyed;
+            this.Box.DrawItem -= this.DrawItemHandler;
+            this.Box.KeyDown -= this.KeyDownHandler;
 
-			this.Box.ContextMenu.MenuItems.Clear();
-			this.Box.ContextMenu.Popup -= this.CopyMenuPopupHandler;
-			this.Box.ContextMenu = null;
+            this.Box.ContextMenu.MenuItems.Clear();
+            this.Box.ContextMenu.Popup -= this.CopyMenuPopupHandler;
+            this.Box.ContextMenu = null;
 
-			this.Box.Items.Clear();
-			this.Box.DrawMode = DrawMode.Normal;
-			this.Box = null;
+            this.Box.Items.Clear();
+            this.Box.DrawMode = DrawMode.Normal;
+            this.Box = null;
 
-			base.DisposeManaged();
-		}
+            base.DisposeManaged();
+        }
 
-		public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
+        public void Log(String message) => this.WriteEvent(new LogEvent(LoggingLevel.Critical, message));
 
-		public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
+        public void LogLine(String message) => this.LogLine(LoggingLevel.Debug, message);
 
-		public void LogLine( [CanBeNull] String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
+        public void LogLine([CanBeNull] String format, params Object[] args) => this.LogLine(LoggingLevel.Debug, format == null ? null : String.Format(format, args));
 
-		public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args ) => this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
+        public void LogLine(LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args) => this.LogLine(loggingLevel, format == null ? null : String.Format(format, args));
 
-		public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
+        public void LogLine(LoggingLevel loggingLevel, String message) => this.WriteEventLine(new LogEvent(loggingLevel, message));
 
-		private class LogEvent {
+        private class LogEvent
+        {
 
-			public DateTime EventTime { get; }
+            public DateTime EventTime { get; }
 
-			public LoggingLevel LoggingLevel { get; }
+            public LoggingLevel LoggingLevel { get; }
 
-			public String Message { get; }
+            public String Message { get; }
 
-			public LogEvent( LoggingLevel loggingLevel, String message ) {
-				this.EventTime = DateTime.Now;
-				this.LoggingLevel = loggingLevel;
-				this.Message = message;
-			}
-		}
-	}
+            public LogEvent(LoggingLevel loggingLevel, String message)
+            {
+                this.EventTime = DateTime.Now;
+                this.LoggingLevel = loggingLevel;
+                this.Message = message;
+            }
+        }
+    }
 }

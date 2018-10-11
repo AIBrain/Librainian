@@ -39,58 +39,67 @@
 //
 // Project: "Librainian", "BlockingQueue.cs" was last formatted by Protiguous on 2018/07/10 at 8:49 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Threading;
+    using System;
+    using System.Threading;
 
-	public class BlockingQueue<T> {
+    public class BlockingQueue<T>
+    {
 
-		private Object LockObj { get; }
+        private Object LockObj { get; }
 
-		public Node<T> Head { get; set; }
+        public Node<T> Head { get; set; }
 
-		public Node<T> Tail { get; set; }
+        public Node<T> Tail { get; set; }
 
-		public BlockingQueue() {
-			this.LockObj = new Object();
-			this.Head = this.Tail = new Node<T>( item: default, next: null );
-		}
+        public BlockingQueue()
+        {
+            this.LockObj = new Object();
+            this.Head = this.Tail = new Node<T>(item: default, next: null);
+        }
 
-		public T Dequeue() {
-			lock ( this.LockObj ) {
-				while ( this.Head.Next is null ) { Monitor.Wait( this.LockObj ); }
+        public T Dequeue()
+        {
+            lock (this.LockObj)
+            {
+                while (this.Head.Next == null) { Monitor.Wait(this.LockObj); }
 
-				var retItem = this.Head.Next.Item;
-				this.Head = this.Head.Next;
+                var retItem = this.Head.Next.Item;
+                this.Head = this.Head.Next;
 
-				return retItem;
-			}
-		}
+                return retItem;
+            }
+        }
 
-		public void Enqueue( T item ) {
-			var newNode = new Node<T>( item: item, next: null );
+        public void Enqueue(T item)
+        {
+            var newNode = new Node<T>(item: item, next: null);
 
-			lock ( this.LockObj ) {
-				this.Tail.Next = newNode;
-				this.Tail = newNode;
+            lock (this.LockObj)
+            {
+                this.Tail.Next = newNode;
+                this.Tail = newNode;
 
-				Monitor.Pulse( this.LockObj );
-			}
-		}
-	}
+                Monitor.Pulse(this.LockObj);
+            }
+        }
+    }
 
-	public class Node<T> {
+    public class Node<T>
+    {
 
-		internal T Item { get; }
+        internal T Item { get; }
 
-		internal Node<T> Next { get; set; }
+        internal Node<T> Next { get; set; }
 
-		public Node() { }
+        public Node() { }
 
-		public Node( T item, Node<T> next ) {
-			this.Item = item;
-			this.Next = next;
-		}
-	}
+        public Node(T item, Node<T> next)
+        {
+            this.Item = item;
+            this.Next = next;
+        }
+    }
 }

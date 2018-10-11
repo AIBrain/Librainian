@@ -37,131 +37,119 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "CurrentUser.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "CurrentUser.cs" was last formatted by Protiguous on 2018/09/24 at 4:26 AM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using JetBrains.Annotations;
-	using Microsoft.Win32;
+    using JetBrains.Annotations;
+    using Microsoft.Win32;
+    using System;
+    using System.Windows.Forms;
 
-	public static class CurrentUser {
+    public static class CurrentUser {
 
-		/// <summary>
-		///     <para>The current executable's name under the <see cref="Protiguous" /> key.</para>
-		///     <para>Use this one for setting and getting.</para>
-		/// </summary>
-		/// <value></value>
-		[CanBeNull]
-		internal static RegistryKey Application {
-			get {
-				var name = Path.GetFileName( Process.GetCurrentProcess().ProcessName );
+        /// <summary>
+        ///     <para>The current executable's name under the <see cref="Protiguous" /> key.</para>
+        ///     <para>Use this one for setting and getting.</para>
+        /// </summary>
+        /// <value></value>
+        [NotNull]
+        internal static RegistryKey App => Protiguous.CreateSubKey(Application.ProductName, true);
 
-				return Protiguous.GetSubKeyNames().Contains( name ) ? Protiguous.OpenSubKey( name, Writeable ) : Protiguous.CreateSubKey( name, Writeable );
-			}
-		}
+        /// <summary>
+        ///     Current user.
+        /// </summary>
+        [NotNull]
+        public static RegistryKey HKCU => Registry.CurrentUser;
 
-		/// <summary>
-		///     Current user. (Be careful with this one!)
-		/// </summary>
-		internal static RegistryKey HKCU => Registry.CurrentUser;
+        /// <summary>
+        ///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.
+        /// </summary>
+        [NotNull]
+        public static RegistryKey Protiguous => Software.CreateSubKey(nameof(Protiguous), true);
 
-		/// <summary>
-		///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.
-		/// </summary>
-		[CanBeNull]
-		internal static RegistryKey Protiguous =>
-			Software.GetSubKeyNames().Contains( nameof( Protiguous ) ) ? Software.OpenSubKey( nameof( Protiguous ), Writeable ) : Software.CreateSubKey( nameof( Protiguous ), Writeable );
+        /// <summary>
+        ///     The <see cref="Software" /> key under the <see cref="HKCU" /> key.
+        /// </summary>
+        [NotNull]
+        public static RegistryKey Software => HKCU.CreateSubKey(nameof(Software), true);
 
-		/// <summary>
-		///     The <see cref="Software" /> key under the <see cref="HKCU" /> key.
-		/// </summary>
-		[CanBeNull]
-		internal static RegistryKey Software => HKCU.GetSubKeyNames().Contains( nameof( Software ) ) ? HKCU.OpenSubKey( nameof( Software ), Writeable ) : HKCU.CreateSubKey( nameof( Software ), Writeable );
+        /// <summary>
+        ///     By default, this retrieves the registry key under HKCU\Software\Protiguous\ProcessName.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static T Get<T>([NotNull] this String key) {
 
-		public const Boolean Writeable = true;
+            if (App == null) { throw new ArgumentNullException(paramName: nameof(App)); }
 
-		/// <summary>
-		///     By default, this retrieves the registry key under HKCU\Software\Protiguous\ProcessName.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public static T Retrieve<T>( [NotNull] this String key ) {
-			var subkey = Application;
+            if (String.IsNullOrWhiteSpace(value: key)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(key)); }
 
-			if ( subkey == null ) { throw new ArgumentNullException( paramName: nameof( subkey ) ); }
+            var value = App.GetValue(key);
 
-			if ( String.IsNullOrWhiteSpace( value: key ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) ); }
+            if (value is T result) { return result; }
 
-			//var kind = subkey.GetValueKind( key );
-			var value = subkey.GetValue( key );
+            return default;
+        }
 
-			if ( value is T ) { return ( T ) subkey.GetValue( key ); }
+        /// <summary>
+        ///     By default, this stores the key under HKCU\Software\Protiguous\ProcessName.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Boolean Set<T>([NotNull] this String key, T value) {
 
-			return default;
-		}
+            if (App == null) { throw new ArgumentNullException(paramName: nameof(App)); }
 
-		/// <summary>
-		///     By default, this stores the key under HKCU\Software\Protiguous\ProcessName.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static Boolean Store<T>( [NotNull] this String key, T value ) {
-			var subkey = Application;
+            if (String.IsNullOrWhiteSpace(value: key)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(key)); }
 
-			if ( subkey is null ) { throw new ArgumentNullException( paramName: nameof( subkey ) ); }
+            try {
+                switch (value) {
+                    case String[] _: {
+                            App.SetValue(key, value, RegistryValueKind.MultiString);
 
-			if ( String.IsNullOrWhiteSpace( value: key ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) ); }
+                            return true;
+                        }
+                    case String _:
+                        App.SetValue(key, value, RegistryValueKind.String);
 
-			try {
-				switch ( value ) {
-					case String[] _: {
-						subkey.SetValue( key, value, RegistryValueKind.MultiString );
+                        return true;
 
-						return true;
-					}
-					case String _:
-						subkey.SetValue( key, value, RegistryValueKind.String );
+                    case UInt64 _:
+                    case Int64 _:
+                        App.SetValue(key, value, RegistryValueKind.QWord);
 
-						return true;
+                        return true;
 
-					case UInt64 _:
-					case Int64 _:
-						subkey.SetValue( key, value, RegistryValueKind.QWord );
+                    case UInt32 _:
+                    case Int32 _:
+                    case UInt16 _:
+                    case Int16 _:
+                    case SByte _:
+                    case Byte _:
+                        App.SetValue(key, value, RegistryValueKind.DWord);
 
-						return true;
+                        return true;
 
-					case UInt32 _:
-					case Int32 _:
-					case UInt16 _:
-					case Int16 _:
-					case SByte _:
-					case Byte _:
-						subkey.SetValue( key, value, RegistryValueKind.DWord );
+                    case Byte[] _:
+                        App.SetValue(key, value, RegistryValueKind.Binary);
 
-						return true;
+                        return true;
 
-					case Byte[] _:
-						subkey.SetValue( key, value, RegistryValueKind.Binary );
+                    default: {
+                            App.SetValue(key, value, RegistryValueKind.Unknown);
 
-						return true;
+                            return true;
+                        }
+                }
+            }
+            catch (Exception exception) { exception.Log(); }
 
-					default: {
-						subkey.SetValue( key, value, RegistryValueKind.Unknown );
-
-						return true;
-					}
-				}
-			}
-			catch ( Exception exception ) { exception.Log(); }
-
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

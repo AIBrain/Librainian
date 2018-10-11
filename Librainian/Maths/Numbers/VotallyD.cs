@@ -39,134 +39,143 @@
 //
 // Project: "Librainian", "VotallyD.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers
+{
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
 
-	/// <summary>
-	///     <para>Keep track of votes for candidate A and candidate B.</para>
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class VotallyD : ICloneable {
+    /// <summary>
+    ///     <para>Keep track of votes for candidate A and candidate B.</para>
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    public class VotallyD : ICloneable
+    {
 
-		Object ICloneable.Clone() => this.Clone();
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Double _aVotes;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _aVotes;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Double _bVotes;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _bVotes;
+        /// <summary>No vote for either.</summary>
+        public static readonly VotallyD Zero = new VotallyD(votesForA: 0, votesForB: 0);
 
-		public Double A {
-			get => Thread.VolatileRead( ref this._aVotes );
+        public Double A {
+            get => Thread.VolatileRead(ref this._aVotes);
 
-			private set => Thread.VolatileWrite( ref this._aVotes, value );
-		}
+            private set => Thread.VolatileWrite(ref this._aVotes, value);
+        }
 
-		public Double B {
-			get => Thread.VolatileRead( ref this._bVotes );
+        public Double B {
+            get => Thread.VolatileRead(ref this._bVotes);
 
-			private set => Thread.VolatileWrite( ref this._bVotes, value );
-		}
+            private set => Thread.VolatileWrite(ref this._bVotes, value);
+        }
 
-		public Double ChanceB {
-			get {
-				var votes = this.Votes;
+        public Double ChanceB {
+            get {
+                var votes = this.Votes;
 
-				return votes.Near( 0 ) ? 0 : this.B / votes;
-			}
-		}
+                return votes.Near(0) ? 0 : this.B / votes;
+            }
+        }
 
-		public Boolean IsAWinning => this.A > this.B;
+        public Boolean IsBWinning => this.B > this.A;
 
-		public Boolean IsBWinning => this.B > this.A;
+        public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
 
-		public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
+        public Boolean IsProtiguous => this.IsTied() && this.Votes > 1;
 
-		public Boolean IsProtiguous => this.IsTied() && this.Votes > 1;
+        /// <summary>
+        ///     <see cref="A" /> + <see cref="B" />
+        /// </summary>
+        public Double Votes => this.A + this.B;
 
-		/// <summary>
-		///     <see cref="A" /> + <see cref="B" />
-		/// </summary>
-		public Double Votes => this.A + this.B;
+        public Boolean IsAWinning => this.A > this.B;
 
-		/// <summary>No vote for either.</summary>
-		public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
+        public VotallyD(Double votesForA = 0, Double votesForB = 0)
+        {
+            this.A = votesForA;
+            this.B = votesForB;
+        }
 
-		public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
-			this.A = votesForA;
-			this.B = votesForB;
-		}
+        [NotNull]
+        public static VotallyD Combine([NotNull] VotallyD left, [NotNull] VotallyD right)
+        {
+            if (left == null) { throw new ArgumentNullException(nameof(left)); }
 
-		[NotNull]
-		public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
-			if ( left is null ) { throw new ArgumentNullException( nameof( left ) ); }
+            if (right == null) { throw new ArgumentNullException(nameof(right)); }
 
-			if ( right is null ) { throw new ArgumentNullException( nameof( right ) ); }
+            var result = left;
+            result.ForA(right.A);
+            result.ForB(right.B);
 
-			var result = left;
-			result.ForA( right.A );
-			result.ForB( right.B );
+            return result;
+        }
 
-			return result;
-		}
+        public Double ChanceA()
+        {
+            var votes = this.Votes;
 
-		public Double ChanceA() {
-			var votes = this.Votes;
+            return votes.Near(0) ? 0 : this.A / votes;
+        }
 
-			return votes.Near( 0 ) ? 0 : this.A / votes;
-		}
+        /// <summary>
+        ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void ForA(Double votes = 1)
+        {
+            this.A += votes;
 
-		[NotNull]
-		public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
+            if (this.A <= 0) { this.A = 0; }
+        }
 
-		/// <summary>
-		///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
-		/// </summary>
-		public void ForA( Double votes = 1 ) {
-			this.A += votes;
+        /// <summary>
+        ///     <para>Increments the votes for candidate <see cref="B" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void ForB(Double votes = 1)
+        {
+            this.B += votes;
 
-			if ( this.A <= 0 ) { this.A = 0; }
-		}
+            if (this.B <= 0) { this.B = 0; }
+        }
 
-		/// <summary>
-		///     <para>Increments the votes for candidate <see cref="B" /> by <paramref name="votes" />.</para>
-		/// </summary>
-		public void ForB( Double votes = 1 ) {
-			this.B += votes;
+        public Double HalfOfVotes() => this.Votes / 2;
 
-			if ( this.B <= 0 ) { this.B = 0; }
-		}
+        public Boolean IsTied() => this.A.Near(this.B);
 
-		public Double HalfOfVotes() => this.Votes / 2;
+        public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 
-		public Boolean IsTied() => this.A.Near( this.B );
+        /// <summary>
+        ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void WithdrawVoteForA(Double votes = 1)
+        {
+            this.A -= votes;
 
-		public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
+            if (this.A <= 0) { this.A = 0; }
+        }
 
-		/// <summary>
-		///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
-		/// </summary>
-		public void WithdrawVoteForA( Double votes = 1 ) {
-			this.A -= votes;
+        /// <summary>
+        ///     <para>Increments the votes for candidate <see cref="B" /> by <paramref name="votes" />.</para>
+        /// </summary>
+        public void WithdrawVoteForB(Double votes = 1)
+        {
+            this.B -= votes;
 
-			if ( this.A <= 0 ) { this.A = 0; }
-		}
+            if (this.B <= 0) { this.B = 0; }
+        }
 
-		/// <summary>
-		///     <para>Increments the votes for candidate <see cref="B" /> by <paramref name="votes" />.</para>
-		/// </summary>
-		public void WithdrawVoteForB( Double votes = 1 ) {
-			this.B -= votes;
+        [NotNull]
+        public VotallyD Clone() => new VotallyD(votesForA: this.A, votesForB: this.B);
 
-			if ( this.B <= 0 ) { this.B = 0; }
-		}
-	}
+        Object ICloneable.Clone() => this.Clone();
+    }
 }

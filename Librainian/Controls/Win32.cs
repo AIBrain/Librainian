@@ -39,113 +39,126 @@
 //
 // Project: "Librainian", "Win32.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls
+{
 
-	using System;
-	using System.Drawing;
-	using System.Runtime.InteropServices;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
-	using Maths;
-	using Measurement.Frequency;
-	using Threading;
+    using JetBrains.Annotations;
+    using Maths;
+    using Measurement.Frequency;
+    using System;
+    using System.Drawing;
+    using System.Runtime.InteropServices;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Threading;
 
-	public enum Speed {
+    public enum Speed
+    {
 
-		Slow,
+        Slow,
 
-		Regular,
+        Regular,
 
-		Fast
-	}
+        Fast
+    }
 
-	public static class Win32 {
+    public static class Win32
+    {
 
-		// ReSharper disable once InconsistentNaming
-		public const Int32 MF_DISABLED = 0x00000002;
+        // ReSharper disable once InconsistentNaming
+        public const Int32 MF_DISABLED = 0x00000002;
 
-		// ReSharper disable InconsistentNaming
-		public const Int32 MF_ENABLED = 0x00000000;
+        // ReSharper disable InconsistentNaming
+        public const Int32 MF_ENABLED = 0x00000000;
 
-		public const Int32 MF_GRAYED = 0x1;
+        public const Int32 MF_GRAYED = 0x1;
 
-		public const Int32 SC_CLOSE = 0xF060;
+        public const Int32 SC_CLOSE = 0xF060;
 
-		public const Int32 SC_MAXIMIZE = 0xF030;
+        public const Int32 SC_MAXIMIZE = 0xF030;
 
-		//disabled button status
-		public const Int32 SC_MINIMIZE = 0xF020;
+        //disabled button status
+        public const Int32 SC_MINIMIZE = 0xF020;
 
-		public static async Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
-			if ( form is null ) { throw new ArgumentNullException( nameof( form ) ); }
+        public static async Task MoveCursor([NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed)
+        {
+            if (form == null) { throw new ArgumentNullException(nameof(form)); }
 
-			await Task.Run( async () => {
+            await Task.Run(async () =>
+            {
 
-				// Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
-				var cx = Cursor.Position.X;
-				var cy = Cursor.Position.Y;
+                // Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
+                var cx = Cursor.Position.X;
+                var cy = Cursor.Position.Y;
 
-				while ( true ) {
-					if ( Cursor.Position.X == x && Cursor.Position.Y == y ) { break; }
+                while (true)
+                {
+                    if (Cursor.Position.X == x && Cursor.Position.Y == y) { break; }
 
-					if ( Randem.NextBoolean() ) {
-						if ( cx < x ) {
-							var step = ( x - cx ) / 10.0f;
+                    if (Randem.NextBoolean())
+                    {
+                        if (cx < x)
+                        {
+                            var step = (x - cx) / 10.0f;
 
-							if ( step < 1 ) { step = 1; }
+                            if (step < 1) { step = 1; }
 
-							cx -= ( Int32 ) step;
-						}
-						else {
-							var step = ( cx - x ) / 10.0f;
+                            cx -= (Int32)step;
+                        }
+                        else
+                        {
+                            var step = (cx - x) / 10.0f;
 
-							if ( step < 1 ) { step = 1; }
+                            if (step < 1) { step = 1; }
 
-							cx += ( Int32 ) step;
-						}
-					}
-					else {
-						if ( cy < y ) {
-							var step = ( y - cy ) / 10.0f;
+                            cx += (Int32)step;
+                        }
+                    }
+                    else
+                    {
+                        if (cy < y)
+                        {
+                            var step = (y - cy) / 10.0f;
 
-							if ( step < 1 ) { step = 1; }
+                            if (step < 1) { step = 1; }
 
-							cy -= ( Int32 ) step;
-						}
-						else {
-							var step = ( cy - y ) / 10.0f;
+                            cy -= (Int32)step;
+                        }
+                        else
+                        {
+                            var step = (cy - y) / 10.0f;
 
-							if ( step < 1 ) { step = 1; }
+                            if (step < 1) { step = 1; }
 
-							cy += ( Int32 ) step;
-						}
-					}
+                            cy += (Int32)step;
+                        }
+                    }
 
-					Cursor.Position = new Point( cx, cy );
-					await Task.Delay( Hertz.Sixty ).NoUI();
-				}
-			} );
-		}
+                    Cursor.Position = new Point(cx, cy);
+                    await Task.Delay(Hertz.Sixty).NoUI();
+                }
+            });
+        }
 
-		[StructLayout( LayoutKind.Sequential )]
-		public struct POINT {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
 
-			public readonly Int32 x;
+            public readonly Int32 x;
 
-			public readonly Int32 y;
-		}
+            public readonly Int32 y;
+        }
 
-		//close button's code in Windows API
+        //close button's code in Windows API
 
-		//enabled button status
+        //enabled button status
 
-		//disabled button status (enabled = false)
+        //disabled button status (enabled = false)
 
-		//for minimize button on forms
+        //for minimize button on forms
 
-		//for maximize button on forms
+        //for maximize button on forms
 
-		// ReSharper restore InconsistentNaming
-	}
+        // ReSharper restore InconsistentNaming
+    }
 }

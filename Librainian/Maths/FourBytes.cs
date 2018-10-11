@@ -37,25 +37,34 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "FourBytes.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "FourBytes.cs" was last formatted by Protiguous on 2018/08/25 at 2:50 AM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths
+{
 
-	using System;
-	using System.Runtime.InteropServices;
+    using System;
+    using System.Runtime.InteropServices;
 
-	/// <summary>
-	///     4 byte struct.
-	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Sequential )]
-	public struct FourBytes {
+    /// <summary>
+    ///     4 byte struct.
+    /// </summary>
+    [StructLayout(layoutKind: LayoutKind.Explicit)]
+    public struct FourBytes
+    {
 
-		public Byte A;
+        [FieldOffset(0)]
+        public Int32 W;
 
-		public Byte B;
+        [FieldOffset(0)]
+        public Byte A;
 
-		public Byte C;
+        [FieldOffset(sizeof(Byte))]
+        public Byte B;
 
-		public Byte D;
-	}
+        [FieldOffset(sizeof(Byte) + sizeof(Byte))]
+        public Byte C;
+
+        [FieldOffset(sizeof(Byte) + sizeof(Byte) + sizeof(Byte))]
+        public Byte D;
+    }
 }

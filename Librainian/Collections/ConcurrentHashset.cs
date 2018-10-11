@@ -39,108 +39,135 @@
 //
 // Project: "Librainian", "ConcurrentHashset.cs" was last formatted by Protiguous on 2018/07/10 at 8:50 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-	/// <summary>
-	///     Threadsafe set. Does not allow nulls inside the set.
-	///     <para>Add will throw an <see cref="ArgumentNullException" /> on <see cref="Add" /> ing a null</para>
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <remarks>Class designed by Rick Harker</remarks>
-	[Serializable]
-	[JsonObject]
-	public class ConcurrentHashset<T> : IEnumerable<T> //, ISet<T>  //TODO someday add in set theory.. someday..
-	{
+    /// <summary>
+    ///     Threadsafe set. Does not allow nulls inside the set.
+    ///     <para>Add will throw an <see cref="ArgumentNullException" /> on <see cref="Add" /> ing a null</para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <remarks>Class designed by Rick Harker</remarks>
+    [Serializable]
+    [JsonObject]
+    public class ConcurrentHashset<T> : IEnumerable<T> //, ISet<T>  //TODO someday add in set theory.. someday..
+    {
 
-		public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
+        [JsonProperty]
+        [NotNull]
+        private ConcurrentDictionary<T, Object> Set { get; }
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public Int32 Count => this.Set.Count;
 
-		[JsonProperty]
-		[NotNull]
-		private ConcurrentDictionary<T, Object> Set { get; }
+        public ConcurrentHashset([NotNull] IEnumerable<T> list) : this(Environment.ProcessorCount)
+        {
+            if (list == null) { throw new ArgumentNullException(paramName: nameof(list)); }
 
-		public Int32 Count => this.Set.Count;
+            this.AddRange(list);
+        }
 
-		public ConcurrentHashset( [CanBeNull] IEnumerable<T> list = null ) : this( ( UInt16 ) Environment.ProcessorCount ) => this.AddRange( list );
+        public ConcurrentHashset(Int32 concurrency) => this.Set = new ConcurrentDictionary<T, Object>(concurrency, 3);
 
-		public ConcurrentHashset( UInt16 concurrency ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, 3 );
+        public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object>();
 
-		public void Add( [CanBeNull] T item ) {
-			if ( item == null ) { return; }
+        public void Add([NotNull] T item)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
 
-			this.Set[ item ] = null;
-		}
+            this.Set[item] = null;
+        }
 
-		public void AddRange( [CanBeNull] IEnumerable<T> items ) {
-			if ( items is null ) { return; }
+        public void AddRange([NotNull] IEnumerable<T> items)
+        {
+            if (items == null) { throw new ArgumentNullException(paramName: nameof(items)); }
 
-			Parallel.ForEach( items.Where( type => null != type ).AsParallel(), this.Add );
-		}
+            Parallel.ForEach(items.Where(type => type != null).AsParallel(), this.Add);
+        }
 
-		public void Clear() => this.Set.Clear();
+        public void Clear() => this.Set.Clear();
 
-		public Boolean Contains( [CanBeNull] T item ) => item != null && this.Set.ContainsKey( item );
+        public Boolean Contains([NotNull] T item)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
 
-		public T Find( T item ) {
-			foreach ( var pair in this.Set ) {
-				if ( Equals( pair.Key, item ) ) { return pair.Key; }
-			}
+            return this.Set.ContainsKey(item);
+        }
 
-			return default;
-		}
+        public T Find([NotNull] T item)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
 
-		public Boolean Remove( [CanBeNull] T item ) => item != null && this.Set.TryRemove( item, out _ );
+            foreach (var pair in this.Set)
+            {
+                if (Equals(pair.Key, item)) { return pair.Key; }
+            }
 
-		/// <summary>
-		///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />
-		///     <paramref name="right" />)
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public void Replace( [CanBeNull] T left, T right ) {
-			if ( null == left ) { return; }
+            return default;
+        }
 
-			if ( null == right ) { return; }
+        public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
 
-			this.Remove( left );
-			this.Add( right );
-		}
+        public Boolean Remove([NotNull] T item)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
 
-		/// <summary>
-		///     Set the tag on an item.
-		/// </summary>
-		/// <param name="item"></param>
-		/// <param name="tag"></param>
-		/// <returns></returns>
-		public Boolean Tag( [CanBeNull] T item, Object tag ) {
-			if ( item == null ) { return false; }
+            return this.Set.TryRemove(item, out _);
+        }
 
-			this.Set[ item ] = tag;
+        /// <summary>
+        ///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />
+        ///     <paramref name="right" />)
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public void Replace([CanBeNull] T left, [CanBeNull] T right)
+        {
 
-			return true;
-		}
+            if (left != null) { this.Remove(left); }
 
-		/// <summary>
-		///     Get the tag on an item.
-		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public Object Tag( [NotNull] T item ) {
-			this.Set.TryGetValue( item, out var tag );
+            if (right != null) { this.Add(right); }
+        }
 
-			return tag;
-		}
-	}
+        /// <summary>
+        ///     Set the tag on an item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public Boolean Tag([NotNull] T item, [CanBeNull] Object tag)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
+
+            this.Set[item] = tag;
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Get the tag on an item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public Object Tag([NotNull] T item)
+        {
+            if (item == null) { throw new ArgumentNullException(paramName: nameof(item)); }
+
+            this.Set.TryGetValue(item, out var tag);
+
+            return tag;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    }
 }

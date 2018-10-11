@@ -39,81 +39,87 @@
 //
 // Project: "Librainian", "Encryption2.cs" was last formatted by Protiguous on 2018/07/13 at 1:38 AM.
 
-namespace Librainian.Security {
+namespace Librainian.Security
+{
 
-	using System;
-	using System.Collections;
-	using System.Security.Cryptography;
-	using System.Text;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections;
+    using System.Security.Cryptography;
+    using System.Text;
 
-	public static class Encryption2 {
+    public static class Encryption2
+    {
 
-		[NotNull]
-		public static String Decrypt( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
+        [NotNull]
+        public static String Decrypt([NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString)
+        {
 
-			// TODO: Add Proper Exception Handlers
-			if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
+            // TODO: Add Proper Exception Handlers
+            if (inputString == null) { throw new ArgumentNullException(nameof(inputString)); }
 
-			if ( xmlString is null ) { throw new ArgumentNullException( nameof( xmlString ) ); }
+            if (xmlString == null) { throw new ArgumentNullException(nameof(xmlString)); }
 
-			var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
-			rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-			var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
-			var iterations = inputString.Length / base64BlockSize;
-			var arrayList = new ArrayList();
+            var rsaCryptoServiceProvider = new RSACryptoServiceProvider(dwKeySize: keySize);
+            rsaCryptoServiceProvider.FromXmlString(xmlString: xmlString);
+            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
+            var iterations = inputString.Length / base64BlockSize;
+            var arrayList = new ArrayList();
 
-			for ( var i = 0; i < iterations; i++ ) {
-				var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i, base64BlockSize ) );
+            for (var i = 0; i < iterations; i++)
+            {
+                var encryptedBytes = Convert.FromBase64String(s: inputString.Substring(startIndex: base64BlockSize * i, base64BlockSize));
 
-				// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
-				// encryption and before decryption. If you do not require compatibility with
-				// Microsoft Cryptographic API (CAPI) and/or other vendors. Comment out the next
-				// line and the corresponding one in the EncryptString function.
-				Array.Reverse( array: encryptedBytes );
-				arrayList.AddRange( c: rsaCryptoServiceProvider.Decrypt( rgb: encryptedBytes, fOAEP: true ) );
-			}
+                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
+                // encryption and before decryption. If you do not require compatibility with
+                // Microsoft Cryptographic API (CAPI) and/or other vendors. Comment out the next
+                // line and the corresponding one in the EncryptString function.
+                Array.Reverse(array: encryptedBytes);
+                arrayList.AddRange(c: rsaCryptoServiceProvider.Decrypt(rgb: encryptedBytes, fOAEP: true));
+            }
 
-			return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
-		}
+            return !(arrayList.ToArray(type: typeof(Byte)) is Byte[] ba) ? String.Empty : Encoding.Unicode.GetString(bytes: ba);
+        }
 
-		[NotNull]
-		public static String Encrypt( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
+        [NotNull]
+        public static String Encrypt([NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString)
+        {
 
-			// TODO: Add Proper Exception Handlers
-			if ( inputString is null ) { throw new ArgumentNullException( nameof( inputString ) ); }
+            // TODO: Add Proper Exception Handlers
+            if (inputString == null) { throw new ArgumentNullException(nameof(inputString)); }
 
-			if ( xmlString is null ) { throw new ArgumentNullException( nameof( xmlString ) ); }
+            if (xmlString == null) { throw new ArgumentNullException(nameof(xmlString)); }
 
-			var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
-			rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-			var keySize = dwKeySize / 8;
-			var bytes = Encoding.Unicode.GetBytes( s: inputString );
+            var rsaCryptoServiceProvider = new RSACryptoServiceProvider(dwKeySize: dwKeySize);
+            rsaCryptoServiceProvider.FromXmlString(xmlString: xmlString);
+            var keySize = dwKeySize / 8;
+            var bytes = Encoding.Unicode.GetBytes(s: inputString);
 
-			// The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
-			// maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );
-			var maxLength = keySize - 42;
-			var dataLength = bytes.Length;
-			var iterations = dataLength / maxLength;
-			var stringBuilder = new StringBuilder();
+            // The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
+            // maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );
+            var maxLength = keySize - 42;
+            var dataLength = bytes.Length;
+            var iterations = dataLength / maxLength;
+            var stringBuilder = new StringBuilder();
 
-			for ( var i = 0; i <= iterations; i++ ) {
-				var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
-				Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
-				var encryptedBytes = rsaCryptoServiceProvider.Encrypt( rgb: tempBytes, fOAEP: true );
+            for (var i = 0; i <= iterations; i++)
+            {
+                var tempBytes = new Byte[dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i];
+                Buffer.BlockCopy(src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length);
+                var encryptedBytes = rsaCryptoServiceProvider.Encrypt(rgb: tempBytes, fOAEP: true);
 
-				// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It
-				// does this after encryption and before decryption. If you do not require
-				// compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors
-				// Comment out the next line and the corresponding one in the DecryptString function.
-				Array.Reverse( array: encryptedBytes );
+                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It
+                // does this after encryption and before decryption. If you do not require
+                // compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors
+                // Comment out the next line and the corresponding one in the DecryptString function.
+                Array.Reverse(array: encryptedBytes);
 
-				// Why convert to base 64? Because it is the largest power-of-two base printable
-				// using only ASCII characters
-				stringBuilder.Append( Convert.ToBase64String( inArray: encryptedBytes ) );
-			}
+                // Why convert to base 64? Because it is the largest power-of-two base printable
+                // using only ASCII characters
+                stringBuilder.Append(Convert.ToBase64String(inArray: encryptedBytes));
+            }
 
-			return stringBuilder.ToString();
-		}
-	}
+            return stringBuilder.ToString();
+        }
+    }
 }

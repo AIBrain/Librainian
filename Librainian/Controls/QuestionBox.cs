@@ -39,59 +39,67 @@
 //
 // Project: "Librainian", "QuestionBox.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls
+{
 
-	using System;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Windows.Forms;
 
-	/// <summary>
-	///     Better than a messagebox?
-	/// </summary>
-	public partial class QuestionBox : Form {
+    /// <summary>
+    ///     Better than a messagebox?
+    /// </summary>
+    public partial class QuestionBox : Form
+    {
 
-		[CanBeNull]
-		public String Response { get; private set; }
+        [CanBeNull]
+        public String Response { get; private set; }
 
-		/// <summary>
-		///     <para>fix per http://stackoverflow.com/a/18619181/956364</para>
-		///     <para>questionBox.Load += ( sender, e ) =&gt; ( sender as QuestionBox ).Visible = true;</para>
-		/// </summary>
-		/// <param name="question"></param>
-		/// <param name="parent">  </param>
-		public QuestionBox( [NotNull] String question, [CanBeNull] Control parent = null ) {
-			if ( question is null ) { throw new ArgumentNullException( nameof( question ) ); }
+        /// <summary>
+        ///     <para>fix per http://stackoverflow.com/a/18619181/956364</para>
+        ///     <para>questionBox.Load += ( sender, e ) =&gt; ( sender as QuestionBox ).Visible = true;</para>
+        /// </summary>
+        /// <param name="question"></param>
+        /// <param name="parent">  </param>
+        public QuestionBox([NotNull] String question, [CanBeNull] Control parent = null)
+        {
+            if (question == null) { throw new ArgumentNullException(nameof(question)); }
 
-			if ( parent != null ) { this.Parent = parent; }
+            if (parent != null) { this.Parent = parent; }
 
-			this.InitializeComponent();
-			this.Visible( false );
-			this.richTextBoxQuestion.Text( question.Trim() );
-		}
+            this.InitializeComponent();
+            this.Visible(false);
+            this.richTextBoxQuestion.Text(question.Trim());
+        }
 
-		private void buttonCancel_Click( Object sender, EventArgs e ) {
-			this.Response = null;
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
-		}
+        private void buttonCancel_Click(Object sender, EventArgs e)
+        {
+            this.Response = null;
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
 
-		private void buttonOkay_Click( Object sender, EventArgs e ) {
-			this.Response = this.textBoxInput.Text;
-			this.DialogResult = DialogResult.OK;
-			this.Close();
-		}
+        private void buttonOkay_Click(Object sender, EventArgs e)
+        {
+            this.Response = this.textBoxInput.Text;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
 
-		private void Question_FormClosed( Object sender, FormClosedEventArgs e ) => this.Response = this.textBoxInput.Text.Trim();
+        private void Question_FormClosed(Object sender, FormClosedEventArgs e) => this.Response = this.textBoxInput.Text.Trim();
 
-		private void QuestionBox_Load( Object sender, EventArgs e ) {
-			this.Visible( true ); //fix per http://stackoverflow.com/a/18619181/956364
-			this.richTextBoxQuestion.Focus(); //BUG not working under unit test
-		}
+        private void QuestionBox_Load(Object sender, EventArgs e)
+        {
+            this.Visible(true); //fix per http://stackoverflow.com/a/18619181/956364
+            this.richTextBoxQuestion.Focus(); //BUG not working under unit test
+        }
 
-		private void textBoxInput_VisibleChanged( Object sender, EventArgs e ) {
-			if ( this.Visible ) {
-				this.richTextBoxQuestion.Focus(); //BUG not working under unit test
-			}
-		}
-	}
+        private void textBoxInput_VisibleChanged(Object sender, EventArgs e)
+        {
+            if (this.Visible)
+            {
+                this.richTextBoxQuestion.Focus(); //BUG not working under unit test
+            }
+        }
+    }
 }

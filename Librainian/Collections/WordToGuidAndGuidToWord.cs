@@ -39,138 +39,145 @@
 //
 // Project: "Librainian", "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Persistence;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Persistence;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
 
-	/// <summary>
-	///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
-	/// </summary>
-	[JsonObject]
-	public class WordToGuidAndGuidToWord {
+    /// <summary>
+    ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
+    /// </summary>
+    [JsonObject]
+    public class WordToGuidAndGuidToWord
+    {
 
-		[JsonProperty]
-		private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
+        [JsonProperty]
+        private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
 
-		[JsonProperty]
-		private ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
+        [JsonProperty]
+        private ConcurrentDictionary<String, Guid> Words { get; } = new ConcurrentDictionary<String, Guid>();
 
-		[NotNull]
-		public IEnumerable<Guid> EachGuid => this.Guids.Keys;
+        [NotNull]
+        public IEnumerable<Guid> EachGuid => this.Guids.Keys;
 
-		[NotNull]
-		public IEnumerable<String> EachWord => this.Words.Keys;
+        [NotNull]
+        public IEnumerable<String> EachWord => this.Words.Keys;
 
-		[JsonIgnore]
-		public Boolean IsDirty { get; set; }
+        [JsonIgnore]
+        public Boolean IsDirty { get; set; }
 
-		public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
+        public Int32 Count => (this.Words.Count + this.Guids.Count) / 2;
 
-		/// <summary>
-		///     Get or set the guid for this word.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public Guid this[ [CanBeNull] String key ] {
-			get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[ key ];
+        /// <summary>
+        ///     Get or set the guid for this word.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Guid this[[CanBeNull] String key] {
+            get => String.IsNullOrEmpty(key) ? Guid.Empty : this.Words[key];
 
-			set {
-				if ( String.IsNullOrEmpty( key ) ) { return; }
+            set {
+                if (String.IsNullOrEmpty(key)) { return; }
 
-				if ( this.Words.ContainsKey( key ) && value == this.Words[ key ] ) { return; }
+                if (this.Words.ContainsKey(key) && value == this.Words[key]) { return; }
 
-				this.Words[ key ] = value;
-				this[ value ] = key;
+                this.Words[key] = value;
+                this[value] = key;
 
-				this.IsDirty = true;
-			}
-		}
+                this.IsDirty = true;
+            }
+        }
 
-		/// <summary>
-		///     Get or set the word for this guid.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public String this[ Guid key ] {
-			get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[ key ];
+        /// <summary>
+        ///     Get or set the word for this guid.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public String this[Guid key] {
+            get => Guid.Empty.Equals(g: key) ? String.Empty : this.Guids[key];
 
-			set {
-				if ( Guid.Empty.Equals( g: key ) ) { return; }
+            set {
+                if (Guid.Empty.Equals(g: key)) { return; }
 
-				//Are they removing the guid from both lists?
-				if ( String.IsNullOrEmpty( value ) ) {
-					this.Guids.TryRemove( key, out var oldstringfortheguid );
+                //Are they removing the guid from both lists?
+                if (String.IsNullOrEmpty(value))
+                {
+                    this.Guids.TryRemove(key, out var oldstringfortheguid);
 
-					if ( String.IsNullOrEmpty( oldstringfortheguid ) ) { return; }
+                    if (String.IsNullOrEmpty(oldstringfortheguid)) { return; }
 
-					this.Words.TryRemove( oldstringfortheguid, out var oldguid );
-					oldguid.Equals( g: key ).BreakIfFalse();
-					this.IsDirty = true;
-				}
-				else {
-					if ( this.Guids.ContainsKey( key ) && value == this.Guids[ key ] ) { return; }
+                    this.Words.TryRemove(oldstringfortheguid, out var oldguid);
+                    oldguid.Equals(g: key).BreakIfFalse();
+                    this.IsDirty = true;
+                }
+                else
+                {
+                    if (this.Guids.ContainsKey(key) && value == this.Guids[key]) { return; }
 
-					this.Guids[ key ] = value;
-					this.IsDirty = true;
-				}
-			}
-		}
+                    this.Guids[key] = value;
+                    this.IsDirty = true;
+                }
+            }
+        }
 
-		public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
+        public WordToGuidAndGuidToWord([NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt) { }
 
-		public void Clear() {
-			if ( this.Words.IsEmpty && this.Guids.IsEmpty ) { return; }
+        public void Clear()
+        {
+            if (this.Words.IsEmpty && this.Guids.IsEmpty) { return; }
 
-			this.Words.Clear();
-			this.Guids.Clear();
-			this.IsDirty = true;
-		}
+            this.Words.Clear();
+            this.Guids.Clear();
+            this.IsDirty = true;
+        }
 
-		/// <summary>
-		///     Returns true if the word is contained in the collections.
-		/// </summary>
-		/// <param name="theWord"></param>
-		/// <returns></returns>
-		public Boolean Contains( [NotNull] String theWord ) {
-			if ( theWord is null ) { throw new ArgumentNullException( nameof( theWord ) ); }
+        /// <summary>
+        ///     Returns true if the word is contained in the collections.
+        /// </summary>
+        /// <param name="theWord"></param>
+        /// <returns></returns>
+        public Boolean Contains([NotNull] String theWord)
+        {
+            if (theWord == null) { throw new ArgumentNullException(nameof(theWord)); }
 
-			return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
-		}
+            return this.Words.Keys.Contains(item: theWord) && this.Guids.Values.Contains(item: theWord);
+        }
 
-		/// <summary>
-		///     Returns true if the guid is contained in the collection.
-		/// </summary>
-		/// <param name="theGuid"></param>
-		/// <returns></returns>
-		public Boolean Contains( Guid theGuid ) => this.Words.Values.Contains( item: theGuid ) && this.Guids.Keys.Contains( item: theGuid );
+        /// <summary>
+        ///     Returns true if the guid is contained in the collection.
+        /// </summary>
+        /// <param name="theGuid"></param>
+        /// <returns></returns>
+        public Boolean Contains(Guid theGuid) => this.Words.Values.Contains(item: theGuid) && this.Guids.Keys.Contains(item: theGuid);
 
-		public Boolean Load() {
+        public Boolean Load()
+        {
 
-			Logging.Break();
+            Logging.Break();
 
-			//var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
-			//var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
-			//if ( storage is null ) {
-			//    return false;
-			//}
-			//var countBefore = this.Count;
-			//foreach ( var word in storage.Keys ) {
-			//    this[ word ] = storage[ word ];
-			//}
-			//this.IsDirty = this.Count != countBefore + storage.Keys.Count;
-			return false;
-		}
+            //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
+            //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );
+            //if ( storage == null ) {
+            //    return false;
+            //}
+            //var countBefore = this.Count;
+            //foreach ( var word in storage.Keys ) {
+            //    this[ word ] = storage[ word ];
+            //}
+            //this.IsDirty = this.Count != countBefore + storage.Keys.Count;
+            return false;
+        }
 
-		/// <summary>
-		///     Returns true if the collections are persisted to storage (or empty).
-		/// </summary>
-		/// <returns></returns>
-		public Boolean Save() => !this.IsDirty || this.Words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
-	}
+        /// <summary>
+        ///     Returns true if the collections are persisted to storage (or empty).
+        /// </summary>
+        /// <returns></returns>
+        public Boolean Save() => !this.IsDirty || this.Words.TrySave(new Document(nameof(WordToGuidAndGuidToWord)));
+    }
 }

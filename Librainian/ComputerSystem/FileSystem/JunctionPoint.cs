@@ -41,373 +41,374 @@
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using System.IO;
-	using System.Runtime.InteropServices;
-	using System.Text;
-	using JetBrains.Annotations;
-	using Microsoft.Win32.SafeHandles;
-	using OperatingSystem;
+    using JetBrains.Annotations;
+    using Microsoft.Win32.SafeHandles;
+    using OperatingSystem;
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+    using System.Text;
+    using Vanara.PInvoke;
 
-	/// <summary>
-	///     Provides access to NTFS junction points in .Net.
-	/// </summary>
-	public static class JunctionPoint {
+    /// <summary>
+    ///     Provides access to NTFS junction points in .Net.
+    /// </summary>
+    public static class JunctionPoint {
 
-		public enum ECreationDisposition : UInt32 {
+        /// <summary>
+        ///     The data present in the reparse point buffer is invalid.
+        /// </summary>
+        private const Int32 ErrorInvalidReparseData = 4392;
 
-			New = 1,
+        /// <summary>
+        ///     The file or directory is not a reparse point.
+        /// </summary>
+        private const Int32 ErrorNotAReparsePoint = 4390;
 
-			CreateAlways = 2,
+        /// <summary>
+        ///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
+        /// </summary>
+        private const Int32 ErrorReparseAttributeConflict = 4391;
 
-			OpenExisting = 3,
+        /// <summary>
+        ///     The tag present in the reparse point buffer is invalid.
+        /// </summary>
+        private const Int32 ErrorReparseTagInvalid = 4393;
 
-			OpenAlways = 4,
+        /// <summary>
+        ///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
+        /// </summary>
+        private const Int32 ErrorReparseTagMismatch = 4394;
 
-			TruncateExisting = 5
-		}
+        /// <summary>
+        ///     Command to delete the reparse point data base.
+        /// </summary>
+        private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
 
-		[Flags]
-		public enum EFileAccess : UInt32 {
+        /// <summary>
+        ///     Command to get the reparse point data block.
+        /// </summary>
+        private const Int32 FsctlGetReparsePoint = 0x000900A8;
 
-			GenericRead = 0x80000000,
+        /// <summary>
+        ///     Command to set the reparse point data block.
+        /// </summary>
+        private const Int32 FsctlSetReparsePoint = 0x000900A4;
 
-			GenericWrite = 0x40000000,
+        /// <summary>
+        ///     Reparse point tag used to identify mount points and junction points.
+        /// </summary>
+        private const UInt32 IOReparseTagMountPoint = 0xA0000003;
 
-			GenericExecute = 0x20000000,
+        /// <summary>
+        ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
+        /// </summary>
+        private const String NonInterpretedPathPrefix = @"\??\";
 
-			GenericAll = 0x10000000
-		}
+        public enum ECreationDisposition : UInt32 {
 
-		[Flags]
-		public enum EFileAttributes : UInt32 {
+            New = 1,
 
-			Readonly = 0x00000001,
+            CreateAlways = 2,
 
-			Hidden = 0x00000002,
+            OpenExisting = 3,
 
-			System = 0x00000004,
+            OpenAlways = 4,
 
-			Directory = 0x00000010,
+            TruncateExisting = 5
+        }
 
-			Archive = 0x00000020,
+        [Flags]
+        public enum EFileAccess : UInt32 {
 
-			Device = 0x00000040,
+            GenericRead = 0x80000000,
 
-			Normal = 0x00000080,
+            GenericWrite = 0x40000000,
 
-			Temporary = 0x00000100,
+            GenericExecute = 0x20000000,
 
-			SparseFile = 0x00000200,
+            GenericAll = 0x10000000
+        }
 
-			ReparsePoint = 0x00000400,
+        [Flags]
+        public enum EFileAttributes : UInt32 {
 
-			Compressed = 0x00000800,
+            Readonly = 0x00000001,
 
-			Offline = 0x00001000,
+            Hidden = 0x00000002,
 
-			NotContentIndexed = 0x00002000,
+            System = 0x00000004,
 
-			Encrypted = 0x00004000,
+            Directory = 0x00000010,
 
-			WriteThrough = 0x80000000,
+            Archive = 0x00000020,
 
-			Overlapped = 0x40000000,
+            Device = 0x00000040,
 
-			NoBuffering = 0x20000000,
+            Normal = 0x00000080,
 
-			RandomAccess = 0x10000000,
+            Temporary = 0x00000100,
 
-			SequentialScan = 0x08000000,
+            SparseFile = 0x00000200,
 
-			DeleteOnClose = 0x04000000,
+            ReparsePoint = 0x00000400,
 
-			BackupSemantics = 0x02000000,
+            Compressed = 0x00000800,
 
-			PosixSemantics = 0x01000000,
+            Offline = 0x00001000,
 
-			OpenReparsePoint = 0x00200000,
+            NotContentIndexed = 0x00002000,
 
-			OpenNoRecall = 0x00100000,
+            Encrypted = 0x00004000,
 
-			FirstPipeInstance = 0x00080000
-		}
+            WriteThrough = 0x80000000,
 
-		[Flags]
-		public enum EFileShare : UInt32 {
+            Overlapped = 0x40000000,
 
-			None = 0x00000000,
+            NoBuffering = 0x20000000,
 
-			Read = 0x00000001,
+            RandomAccess = 0x10000000,
 
-			Write = 0x00000002,
+            SequentialScan = 0x08000000,
 
-			Delete = 0x00000004
-		}
+            DeleteOnClose = 0x04000000,
 
-		/// <summary>
-		///     The data present in the reparse point buffer is invalid.
-		/// </summary>
-		private const Int32 ErrorInvalidReparseData = 4392;
+            BackupSemantics = 0x02000000,
 
-		/// <summary>
-		///     The file or directory is not a reparse point.
-		/// </summary>
-		private const Int32 ErrorNotAReparsePoint = 4390;
+            PosixSemantics = 0x01000000,
 
-		/// <summary>
-		///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
-		/// </summary>
-		private const Int32 ErrorReparseAttributeConflict = 4391;
+            OpenReparsePoint = 0x00200000,
 
-		/// <summary>
-		///     The tag present in the reparse point buffer is invalid.
-		/// </summary>
-		private const Int32 ErrorReparseTagInvalid = 4393;
+            OpenNoRecall = 0x00100000,
 
-		/// <summary>
-		///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
-		/// </summary>
-		private const Int32 ErrorReparseTagMismatch = 4394;
-
-		/// <summary>
-		///     Command to delete the reparse point data base.
-		/// </summary>
-		private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
-
-		/// <summary>
-		///     Command to get the reparse point data block.
-		/// </summary>
-		private const Int32 FsctlGetReparsePoint = 0x000900A8;
+            FirstPipeInstance = 0x00080000
+        }
 
-		/// <summary>
-		///     Command to set the reparse point data block.
-		/// </summary>
-		private const Int32 FsctlSetReparsePoint = 0x000900A4;
+        [Flags]
+        public enum EFileShare : UInt32 {
 
-		/// <summary>
-		///     Reparse point tag used to identify mount points and junction points.
-		/// </summary>
-		private const UInt32 IOReparseTagMountPoint = 0xA0000003;
+            None = 0x00000000,
 
-		/// <summary>
-		///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
-		/// </summary>
-		private const String NonInterpretedPathPrefix = @"\??\";
-
-		private static String InternalGetTarget( SafeHandle handle ) {
-			var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
-			var outBuffer = Marshal.AllocHGlobal( outBufferSize );
-
-			try {
-				var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned, IntPtr.Zero );
-
-				if ( !result ) {
-					var error = Marshal.GetLastWin32Error();
-
-					if ( error == ErrorNotAReparsePoint ) { return null; }
-
-					ThrowLastWin32Error( "Unable to get information about junction point." );
-				}
-
-				var reparseDataBuffer = ( ReparseDataBuffer ) Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
-
-				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) { return null; }
-
-				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
-
-				if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) { targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length ); }
-
-				return targetDir;
-			}
-			finally { Marshal.FreeHGlobal( outBuffer ); }
-		}
-
-		[NotNull]
-		private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
-			var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint,
-				IntPtr.Zero );
-
-			if ( Marshal.GetLastWin32Error() != 0 ) { ThrowLastWin32Error( "Unable to open reparse point." ); }
-
-			var reparsePointHandle = new SafeFileHandle( bob.DangerousGetHandle(), true );
-
-			return reparsePointHandle;
-		}
-
-		private static void ThrowLastWin32Error( String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
-
-		/// <summary>
-		///     Creates a junction point from the specified directory to the specified target directory.
-		/// </summary>
-		/// <remarks>Only works on NTFS.</remarks>
-		/// <param name="junctionPoint">The junction point path</param>
-		/// <param name="targetDir">    The target directory</param>
-		/// <param name="overwrite">    If true overwrites an existing reparse point or empty directory</param>
-		/// <exception cref="IOException">
-		///     Thrown when the junction point could not be created or when an existing directory was
-		///     found and <paramref name="overwrite" /> if false
-		/// </exception>
-		public static void Create( [NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
-			targetDir = Path.GetFullPath( targetDir );
-
-			if ( !Directory.Exists( targetDir ) ) { throw new IOException( "Target path does not exist or is not a directory." ); }
-
-			if ( Directory.Exists( junctionPoint ) ) {
-				if ( !overwrite ) { throw new IOException( "Directory already exists and overwrite parameter is false." ); }
-			}
-			else { Directory.CreateDirectory( junctionPoint ); }
-
-			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
-				var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
-
-				var reparseDataBuffer = new ReparseDataBuffer {
-					ReparseTag = IOReparseTagMountPoint,
-					ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
-					SubstituteNameOffset = 0,
-					SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
-					PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
-					PrintNameLength = 0,
-					PathBuffer = new Byte[ 0x3ff0 ]
-				};
-
-				Buffer.BlockCopy( targetDirBytes, 0, reparseDataBuffer.PathBuffer, 0, targetDirBytes.Length );
-
-				var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
-				var inBuffer = Marshal.AllocHGlobal( inBufferSize );
-
-				try {
-					Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
-
-					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
-
-					if ( !result ) { ThrowLastWin32Error( "Unable to create junction point." ); }
-				}
-				finally { Marshal.FreeHGlobal( inBuffer ); }
-			}
-		}
-
-		/// <summary>
-		///     Deletes a junction point at the specified source directory along with the directory itself. Does nothing if the
-		///     junction point does not exist.
-		/// </summary>
-		/// <remarks>Only works on NTFS.</remarks>
-		/// <param name="junctionPoint">The junction point path</param>
-		public static void Delete( String junctionPoint ) {
-			if ( !Directory.Exists( junctionPoint ) ) {
-				if ( File.Exists( junctionPoint ) ) { throw new IOException( "Path is not a junction point." ); }
-
-				return;
-			}
-
-			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
-				var reparseDataBuffer = new ReparseDataBuffer {
-					ReparseTag = IOReparseTagMountPoint,
-					ReparseDataLength = 0,
-					PathBuffer = new Byte[ 0x3ff0 ]
-				};
-
-				var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
-				var inBuffer = Marshal.AllocHGlobal( inBufferSize );
-
-				try {
-					Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
-
-					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
-
-					if ( !result ) { ThrowLastWin32Error( "Unable to delete junction point." ); }
-				}
-				finally { Marshal.FreeHGlobal( inBuffer ); }
-
-				try { Directory.Delete( junctionPoint ); }
-				catch ( IOException ex ) { throw new IOException( "Unable to delete junction point.", ex ); }
-			}
-		}
-
-		/// <summary>
-		///     Determines whether the specified path exists and refers to a junction point.
-		/// </summary>
-		/// <param name="path">The junction point path</param>
-		/// <returns>True if the specified path represents a junction point</returns>
-		/// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
-		public static Boolean Exists( String path ) {
-			if ( !Directory.Exists( path ) ) { return false; }
-
-			using ( var handle = OpenReparsePoint( path, FileAccess.Read ) ) {
-				var target = InternalGetTarget( handle );
-
-				return target != null;
-			}
-		}
-
-		/// <summary>
-		///     Gets the target of the specified junction point.
-		/// </summary>
-		/// <remarks>Only works on NTFS.</remarks>
-		/// <param name="junctionPoint">The junction point path</param>
-		/// <returns>The target of the junction point</returns>
-		/// <exception cref="IOException">
-		///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
-		///     some other error occurs
-		/// </exception>
-		[NotNull]
-		public static String GetTarget( String junctionPoint ) {
-			using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
-				var target = InternalGetTarget( handle );
-
-				if ( target is null ) { throw new IOException( "Path is not a junction point." ); }
-
-				return target;
-			}
-		}
-
-		[StructLayout( LayoutKind.Sequential )]
-		private struct ReparseDataBuffer {
-
-			/// <summary>
-			///     Reparse point tag. Must be a Microsoft reparse point tag.
-			/// </summary>
-			public UInt32 ReparseTag;
-
-			/// <summary>
-			///     Size, in bytes, of the data after the Reserved member. This can be calculated by: (4
-			///     * sizeof(UInt16)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated ? 2 * sizeof(char) : 0);
-			/// </summary>
-			public UInt16 ReparseDataLength;
-
-			/// <summary>
-			///     Reserved; do not use.
-			/// </summary>
-			public UInt16 Reserved { get; }
-
-			/// <summary>
-			///     Offset, in bytes, of the substitute name String in the PathBuffer array.
-			/// </summary>
-			public UInt16 SubstituteNameOffset;
-
-			/// <summary>
-			///     Length, in bytes, of the substitute name String. If this String is null-terminated, SubstituteNameLength does not
-			///     include space for the null character.
-			/// </summary>
-			public UInt16 SubstituteNameLength;
-
-			/// <summary>
-			///     Offset, in bytes, of the print name String in the PathBuffer array.
-			/// </summary>
-			public UInt16 PrintNameOffset;
-
-			/// <summary>
-			///     Length, in bytes, of the print name String. If this String is null-terminated, PrintNameLength does not include
-			///     space for the null character.
-			/// </summary>
-			public UInt16 PrintNameLength;
-
-			/// <summary>
-			///     A buffer containing the unicode-encoded path String. The path String contains the substitute name String and print
-			///     name String.
-			/// </summary>
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )]
-			public Byte[] PathBuffer;
-		}
-	}
+            Read = 0x00000001,
+
+            Write = 0x00000002,
+
+            Delete = 0x00000004
+        }
+
+        private static String InternalGetTarget(SafeHandle handle) {
+            var outBufferSize = Marshal.SizeOf(typeof(ReparseDataBuffer));
+            var outBuffer = Marshal.AllocHGlobal(outBufferSize);
+
+            try {
+                var result = NativeMethods.DeviceIoControl(handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned, IntPtr.Zero);
+
+                if (!result) {
+                    var error = Marshal.GetLastWin32Error();
+
+                    if (error == ErrorNotAReparsePoint) { return null; }
+
+                    ThrowLastWin32Error("Unable to get information about junction point.");
+                }
+
+                var reparseDataBuffer = (ReparseDataBuffer)Marshal.PtrToStructure(outBuffer, typeof(ReparseDataBuffer));
+
+                if (reparseDataBuffer.ReparseTag != IOReparseTagMountPoint) { return null; }
+
+                var targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
+
+                if (targetDir.StartsWith(NonInterpretedPathPrefix)) { targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length); }
+
+                return targetDir;
+            }
+            finally { Marshal.FreeHGlobal(outBuffer); }
+        }
+
+        [NotNull]
+        private static SafeFileHandle OpenReparsePoint(String reparsePoint, FileAccess accessMode) {
+            var bob = NativeMethods.CreateFile(reparsePoint, (Kernel32.FileAccess)accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint,
+                IntPtr.Zero);
+
+            if (Marshal.GetLastWin32Error() != 0) { ThrowLastWin32Error("Unable to open reparse point."); }
+
+            var reparsePointHandle = new SafeFileHandle(bob.DangerousGetHandle(), true);
+
+            return reparsePointHandle;
+        }
+
+        private static void ThrowLastWin32Error(String message) => throw new IOException(message, Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
+
+        /// <summary>
+        ///     Creates a junction point from the specified directory to the specified target directory.
+        /// </summary>
+        /// <remarks>Only works on NTFS.</remarks>
+        /// <param name="junctionPoint">The junction point path</param>
+        /// <param name="targetDir">    The target directory</param>
+        /// <param name="overwrite">    If true overwrites an existing reparse point or empty directory</param>
+        /// <exception cref="IOException">
+        ///     Thrown when the junction point could not be created or when an existing directory was
+        ///     found and <paramref name="overwrite" /> if false
+        /// </exception>
+        public static void Create([NotNull] String junctionPoint, String targetDir, Boolean overwrite) {
+            targetDir = Path.GetFullPath(targetDir);
+
+            if (!Directory.Exists(targetDir)) { throw new IOException("Target path does not exist or is not a directory."); }
+
+            if (Directory.Exists(junctionPoint)) {
+                if (!overwrite) { throw new IOException("Directory already exists and overwrite parameter is false."); }
+            }
+            else { Directory.CreateDirectory(junctionPoint); }
+
+            using (var handle = OpenReparsePoint(junctionPoint, FileAccess.Write)) {
+                var targetDirBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(targetDir));
+
+                var reparseDataBuffer = new ReparseDataBuffer {
+                    ReparseTag = IOReparseTagMountPoint,
+                    ReparseDataLength = (UInt16)(targetDirBytes.Length + 12),
+                    SubstituteNameOffset = 0,
+                    SubstituteNameLength = (UInt16)targetDirBytes.Length,
+                    PrintNameOffset = (UInt16)(targetDirBytes.Length + 2),
+                    PrintNameLength = 0,
+                    PathBuffer = new Byte[0x3ff0]
+                };
+
+                Buffer.BlockCopy(targetDirBytes, 0, reparseDataBuffer.PathBuffer, 0, targetDirBytes.Length);
+
+                var inBufferSize = Marshal.SizeOf(reparseDataBuffer);
+                var inBuffer = Marshal.AllocHGlobal(inBufferSize);
+
+                try {
+                    Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
+
+                    var result = NativeMethods.DeviceIoControl(handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero);
+
+                    if (!result) { ThrowLastWin32Error("Unable to create junction point."); }
+                }
+                finally { Marshal.FreeHGlobal(inBuffer); }
+            }
+        }
+
+        /// <summary>
+        ///     Deletes a junction point at the specified source directory along with the directory itself. Does nothing if the
+        ///     junction point does not exist.
+        /// </summary>
+        /// <remarks>Only works on NTFS.</remarks>
+        /// <param name="junctionPoint">The junction point path</param>
+        public static void Delete(String junctionPoint) {
+            if (!Directory.Exists(junctionPoint)) {
+                if (File.Exists(junctionPoint)) { throw new IOException("Path is not a junction point."); }
+
+                return;
+            }
+
+            using (var handle = OpenReparsePoint(junctionPoint, FileAccess.Write)) {
+                var reparseDataBuffer = new ReparseDataBuffer {
+                    ReparseTag = IOReparseTagMountPoint,
+                    ReparseDataLength = 0,
+                    PathBuffer = new Byte[0x3ff0]
+                };
+
+                var inBufferSize = Marshal.SizeOf(reparseDataBuffer);
+                var inBuffer = Marshal.AllocHGlobal(inBufferSize);
+
+                try {
+                    Marshal.StructureToPtr(reparseDataBuffer, inBuffer, false);
+
+                    var result = NativeMethods.DeviceIoControl(handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero);
+
+                    if (!result) { ThrowLastWin32Error("Unable to delete junction point."); }
+                }
+                finally { Marshal.FreeHGlobal(inBuffer); }
+
+                try { Directory.Delete(junctionPoint); }
+                catch (IOException ex) { throw new IOException("Unable to delete junction point.", ex); }
+            }
+        }
+
+        /// <summary>
+        ///     Determines whether the specified path exists and refers to a junction point.
+        /// </summary>
+        /// <param name="path">The junction point path</param>
+        /// <returns>True if the specified path represents a junction point</returns>
+        /// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
+        public static Boolean Exists(String path) {
+            if (!Directory.Exists(path)) { return false; }
+
+            using (var handle = OpenReparsePoint(path, FileAccess.Read)) {
+                var target = InternalGetTarget(handle);
+
+                return target != null;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the target of the specified junction point.
+        /// </summary>
+        /// <remarks>Only works on NTFS.</remarks>
+        /// <param name="junctionPoint">The junction point path</param>
+        /// <returns>The target of the junction point</returns>
+        /// <exception cref="IOException">
+        ///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
+        ///     some other error occurs
+        /// </exception>
+        [NotNull]
+        public static String GetTarget(String junctionPoint) {
+            using (var handle = OpenReparsePoint(junctionPoint, FileAccess.Read)) {
+                var target = InternalGetTarget(handle);
+
+                if (target == null) { throw new IOException("Path is not a junction point."); }
+
+                return target;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct ReparseDataBuffer {
+
+            /// <summary>
+            ///     Reparse point tag. Must be a Microsoft reparse point tag.
+            /// </summary>
+            public UInt32 ReparseTag;
+
+            /// <summary>
+            ///     Size, in bytes, of the data after the Reserved member. This can be calculated by: (4
+            ///     * sizeof(UInt16)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated ? 2 * sizeof(char) : 0);
+            /// </summary>
+            public UInt16 ReparseDataLength;
+
+            /// <summary>
+            ///     Reserved; do not use.
+            /// </summary>
+            public UInt16 Reserved { get; }
+
+            /// <summary>
+            ///     Offset, in bytes, of the substitute name String in the PathBuffer array.
+            /// </summary>
+            public UInt16 SubstituteNameOffset;
+
+            /// <summary>
+            ///     Length, in bytes, of the substitute name String. If this String == null-terminated, SubstituteNameLength does not
+            ///     include space for the null character.
+            /// </summary>
+            public UInt16 SubstituteNameLength;
+
+            /// <summary>
+            ///     Offset, in bytes, of the print name String in the PathBuffer array.
+            /// </summary>
+            public UInt16 PrintNameOffset;
+
+            /// <summary>
+            ///     Length, in bytes, of the print name String. If this String == null-terminated, PrintNameLength does not include
+            ///     space for the null character.
+            /// </summary>
+            public UInt16 PrintNameLength;
+
+            /// <summary>
+            ///     A buffer containing the unicode-encoded path String. The path String contains the substitute name String and print
+            ///     name String.
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
+            public Byte[] PathBuffer;
+        }
+    }
 }

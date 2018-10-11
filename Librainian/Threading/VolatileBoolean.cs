@@ -37,20 +37,20 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "VolatileBoolean.cs" was last formatted by Protiguous on 2018/07/13 at 1:42 AM.
+// Project: "Librainian", "VolatileBoolean.cs" was last formatted by Protiguous on 2018/09/28 at 2:42 PM.
 
 namespace Librainian.Threading {
 
-	using System;
+    using System;
 
-	public class VolatileBoolean {
+    public class VolatileBoolean {
 
-		private volatile Boolean _value;
+        private volatile Boolean _value;
 
-		public Boolean Value {
-			get => this._value;
+        public Boolean Value {
+            get => this._value;
 
-			set => this._value = value;
-		}
-	}
+            set => this._value = value;
+        }
+    }
 }

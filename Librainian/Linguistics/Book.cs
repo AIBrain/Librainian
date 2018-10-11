@@ -39,91 +39,96 @@
 //
 // Project: "Librainian", "Book.cs" was last formatted by Protiguous on 2018/07/10 at 9:13 PM.
 
-namespace Librainian.Linguistics {
+namespace Librainian.Linguistics
+{
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
-	/// <summary>
-	///     <para>A <see cref="Book" /> is a sequence of <see cref="Page" /> .</para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	[Serializable]
-	public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
+    /// <summary>
+    ///     <para>A <see cref="Book" /> is a sequence of <see cref="Page" /> .</para>
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [Serializable]
+    public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>>
+    {
 
-		/// <summary>
-		///     Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
-		public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
+        [NotNull]
+        [JsonProperty]
+        private HashSet<Author> Authors { get; } = new HashSet<Author>();
 
-		/// <summary>
-		///     Returns an enumerator that iterates through a collection.
-		/// </summary>
-		/// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Pages ).GetEnumerator();
+        [NotNull]
+        [JsonProperty]
+        private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
 
-		public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
+        public static Book Empty { get; } = new Book();
 
-		[NotNull]
-		[JsonProperty]
-		private HashSet<Author> Authors { get; } = new HashSet<Author>();
+        private Book() { }
 
-		[NotNull]
-		[JsonProperty]
-		private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
+        public Book([ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null)
+        {
+            if (pages == null) { throw new ArgumentNullException(nameof(pages)); }
 
-		public static Book Empty { get; } = new Book();
+            var pageNumber = 0;
 
-		private Book() { }
+            foreach (var page in pages.Where(page => page != null))
+            {
+                pageNumber++;
+                this.Pages[pageNumber] = page;
+            }
 
-		public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
-			if ( pages is null ) { throw new ArgumentNullException( nameof( pages ) ); }
+            if (null != authors) { this.Authors.AddRange(authors.Where(author => null != author)); }
+        }
 
-			var pageNumber = 0;
+        /// <summary>
+        ///     static equality test, compare sequence of Books
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
+        /// <returns></returns>
+        public static Boolean Equals(Book left, Book rhs)
+        {
+            if (ReferenceEquals(left, rhs)) { return true; }
 
-			foreach ( var page in pages.Where( page => page != null ) ) {
-				pageNumber++;
-				this.Pages[ pageNumber ] = page;
-			}
+            if (left == null) { return false; }
 
-			if ( null != authors ) { this.Authors.AddRange( authors.Where( author => null != author ) ); }
-		}
+            if (rhs == null) { return false; }
 
-		/// <summary>
-		///     static equality test, compare sequence of Books
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="rhs"> </param>
-		/// <returns></returns>
-		public static Boolean Equals( Book left, Book rhs ) {
-			if ( ReferenceEquals( left, rhs ) ) { return true; }
+            return left.SequenceEqual(rhs); //no authors??
+        }
 
-			if ( left is null ) { return false; }
+        public Boolean Equals([CanBeNull] Book other) => Equals(this, other);
 
-			if ( rhs is null ) { return false; }
+        [NotNull]
+        public IEnumerable<Author> GetAuthors() => this.Authors;
 
-			return left.SequenceEqual( rhs ); //no authors??
-		}
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
 
-		[NotNull]
-		public IEnumerable<Author> GetAuthors() => this.Authors;
+        /// <summary>
+        ///     Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
-		/// <summary>
-		///     Serves as the default hash function.
-		/// </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Pages.GetHashCode();
+        [NotNull]
+        public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
 
-		[NotNull]
-		public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
-	}
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this.Pages).GetEnumerator();
+    }
 }

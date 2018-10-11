@@ -37,40 +37,46 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "FolderExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "FolderExtensions.cs" was last formatted by Protiguous on 2018/09/28 at 2:31 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Security.Permissions;
-	using System.Text;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
-	using Parsing;
-	using Threading;
+    using JetBrains.Annotations;
+    using Parsing;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Permissions;
+    using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Threading;
 
-	public static class FolderExtensions {
+    public static class FolderExtensions {
 
-		public static Char[] InvalidPathChars { get; } = Path.GetInvalidPathChars();
+        public static Char[] InvalidPathChars {
+            get;
+        } = Path.GetInvalidPathChars();
 
-		[NotNull]
-		public static String CleanupForFolder( [NotNull] this String foldername ) {
-			if ( String.IsNullOrWhiteSpace( foldername ) ) { throw new ArgumentException( "Value cannot be null or whitespace.", nameof( foldername ) ); }
+        [NotNull]
+        public static String CleanupForFolder([NotNull] this String foldername) {
+            if (String.IsNullOrWhiteSpace(foldername)) {
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(foldername));
+            }
 
-			var sb = new StringBuilder( foldername.Length, UInt16.MaxValue / 2 );
+            var sb = new StringBuilder(foldername.Length, UInt16.MaxValue / 2);
 
-			foreach ( var c in foldername ) {
-				if ( !InvalidPathChars.Contains( c ) ) { sb.Append( c ); }
-			}
+            foreach (var c in foldername) {
+                if (!InvalidPathChars.Contains(c)) {
+                    sb.Append(c);
+                }
+            }
 
-			/*
+            /*
             var idx = foldername.IndexOfAny( InvalidPathChars );
 
 			while ( idx.Any() ) {
@@ -82,172 +88,202 @@ namespace Librainian.ComputerSystem.FileSystem {
             return foldername.Trim();
             */
 
-			return sb.ToString().Trim();
-		}
+            return sb.ToString().Trim();
+        }
 
-		/// <summary>
-		///     Returns a list of all files copied.
-		/// </summary>
-		/// <param name="sourceFolder">                 </param>
-		/// <param name="destinationFolder">            </param>
-		/// <param name="searchPatterns">               </param>
-		/// <param name="overwriteDestinationDocuments"></param>
-		/// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
-		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
-			Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
-			if ( sourceFolder is null ) { throw new ArgumentNullException( nameof( sourceFolder ) ); }
+        /// <summary>
+        ///     Returns a list of all files copied.
+        /// </summary>
+        /// <param name="sourceFolder">                 </param>
+        /// <param name="destinationFolder">            </param>
+        /// <param name="searchPatterns">               </param>
+        /// <param name="overwriteDestinationDocuments"></param>
+        /// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
+        /// <returns></returns>
+        [NotNull]
+        public static IEnumerable<DocumentCopyStatistics> CopyFiles([NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
+            Boolean overwriteDestinationDocuments = true, Boolean crc = true) {
+            if (sourceFolder == null) {
+                throw new ArgumentNullException(nameof(sourceFolder));
+            }
 
-			if ( destinationFolder is null ) { throw new ArgumentNullException( nameof( destinationFolder ) ); }
+            if (destinationFolder == null) {
+                throw new ArgumentNullException(nameof(destinationFolder));
+            }
 
-			var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
+            var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-			if ( !sourceFolder.DemandPermission( FileIOPermissionAccess.Read ) ) { return documentCopyStatistics; }
+            if (!sourceFolder.DemandPermission(FileIOPermissionAccess.Read)) {
+                return documentCopyStatistics;
+            }
 
-			if ( !destinationFolder.DemandPermission( FileIOPermissionAccess.Write ) ) { return documentCopyStatistics; }
+            if (!destinationFolder.DemandPermission(FileIOPermissionAccess.Write)) {
+                return documentCopyStatistics;
+            }
 
-			var sourceFiles = sourceFolder.GetDocuments( searchPatterns );
+            var sourceFiles = sourceFolder.GetDocuments(searchPatterns);
 
-			Parallel.ForEach( sourceFiles.AsParallel(), ThreadingExtensions.DiskIntensive, sourceDocument => {
-				try {
-					var beginTime = DateTime.UtcNow;
+            Parallel.ForEach(sourceFiles.AsParallel(), ThreadingExtensions.AllCPUExceptOne, sourceDocument => {
+                try {
+                    var beginTime = DateTime.UtcNow;
 
-					var statistics = new DocumentCopyStatistics {
-						TimeStarted = beginTime,
-						SourceDocument = sourceDocument
-					};
+                    var statistics = new DocumentCopyStatistics {
+                        TimeStarted = beginTime,
+                        SourceDocument = sourceDocument
+                    };
 
-					if ( crc ) { statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex(); }
+                    if (crc) {
+                        statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
+                    }
 
-					var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
+                    var destinationDocument = new Document(destinationFolder, sourceDocument.FileName());
 
-					if ( overwriteDestinationDocuments && destinationDocument.Exists() ) { destinationDocument.Delete(); }
+                    if (overwriteDestinationDocuments && destinationDocument.Exists()) {
+                        destinationDocument.Delete();
+                    }
 
-					File.Copy( sourceDocument.FullPathWithFileName, destinationDocument.FullPathWithFileName );
+                    File.Copy(sourceDocument.FullPathWithFileName, destinationDocument.FullPathWithFileName);
 
-					if ( crc ) { statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex(); }
+                    if (crc) {
+                        statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
+                    }
 
-					var endTime = DateTime.UtcNow;
+                    var endTime = DateTime.UtcNow;
 
-					if ( !destinationDocument.Exists() ) { return; }
+                    if (!destinationDocument.Exists()) {
+                        return;
+                    }
 
-					statistics.BytesCopied = ( UInt64 ) destinationDocument.Size();
+                    statistics.BytesCopied = (UInt64)destinationDocument.Size();
 
-					if ( crc ) { statistics.BytesCopied *= 2; }
+                    if (crc) {
+                        statistics.BytesCopied *= 2;
+                    }
 
-					statistics.TimeTaken = endTime - beginTime;
-					statistics.DestinationDocument = destinationDocument;
-					documentCopyStatistics.Add( statistics );
-				}
-				catch ( Exception ) {
+                    statistics.TimeTaken = endTime - beginTime;
+                    statistics.DestinationDocument = destinationDocument;
+                    documentCopyStatistics.Add(statistics);
+                }
+                catch (Exception) {
 
-					//swallow any errors
-				}
-			} );
+                    //swallow any errors
+                }
+            });
 
-			return documentCopyStatistics;
-		}
+            return documentCopyStatistics;
+        }
 
-		public static IEnumerable<Folder> FindFolder( [NotNull] this String folderName ) {
-			if ( folderName is null ) { throw new ArgumentNullException( nameof( folderName ) ); }
+        public static IEnumerable<Folder> FindFolder([NotNull] this String folderName) {
+            if (folderName == null) {
+                throw new ArgumentNullException(nameof(folderName));
+            }
 
-			//First check across all known drives.
-			var found = false;
+            //First check across all known drives.
+            var found = false;
 
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var drive in DriveInfo.GetDrives() ) {
-				var path = Path.Combine( drive.RootDirectory.FullName, folderName );
-				var asFolder = new Folder( path );
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach (var drive in DriveInfo.GetDrives()) {
+                var path = Path.Combine(drive.RootDirectory.FullName, folderName);
+                var asFolder = new Folder(path);
 
-				if ( asFolder.Exists() ) {
-					found = true;
+                if (asFolder.Exists()) {
+                    found = true;
 
-					yield return asFolder;
-				}
-			}
+                    yield return asFolder;
+                }
+            }
 
-			if ( found ) { yield break; }
+            if (found) {
+                yield break;
+            }
 
-			//Next, check subfolders, beginning with the first drive.
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var drive in Disk.GetDrives() ) {
-				var folders = drive.GetFolders();
+            //Next, check subfolders, beginning with the first drive.
+            // ReSharper disable once LoopCanBePartlyConvertedToQuery
+            foreach (var drive in Disk.GetDrives()) {
+                var folders = drive.GetFolders();
 
-				// ReSharper disable once LoopCanBePartlyConvertedToQuery
-				foreach ( var folder in folders ) {
-					var parts = SplitPath( folder );
+                // ReSharper disable once LoopCanBePartlyConvertedToQuery
+                foreach (var folder in folders) {
+                    var parts = SplitPath(folder);
 
-					if ( parts.Any( s => s.Like( folderName ) ) ) {
-						found = true;
+                    if (parts.Any(s => s.Like(folderName))) {
+                        found = true;
 
-						yield return folder;
-					}
-				}
-			}
+                        yield return folder;
+                    }
+                }
+            }
 
-			if ( !found ) { }
-		}
+            if (!found) { }
+        }
 
-		/// <summary>
-		///     <see cref="PathSplitter" />.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<String> SplitPath( [NotNull] String path ) {
-			if ( String.IsNullOrWhiteSpace( value: path ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) ); }
+        /// <summary>
+        ///     <see cref="PathSplitter" />.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static IEnumerable<String> SplitPath([NotNull] String path) {
+            if (String.IsNullOrWhiteSpace(value: path)) {
+                throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(path));
+            }
 
-			return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
-		}
+            return path.Split(Folder.FolderSeparatorChar).Where(s => !s.IsNullOrWhiteSpace());
+        }
 
-		/// <summary>
-		///     <see cref="PathSplitter" />.
-		/// </summary>
-		/// <param name="info"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
-			if ( info is null ) { throw new ArgumentNullException( nameof( info ) ); }
+        /// <summary>
+        ///     <see cref="PathSplitter" />.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static IEnumerable<String> SplitPath([NotNull] this DirectoryInfo info) {
+            if (info == null) {
+                throw new ArgumentNullException(nameof(info));
+            }
 
-			return SplitPath( info.FullName );
-		}
+            return SplitPath(info.FullName);
+        }
 
-		/// <summary>
-		///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
-		///     <para>Returns null if existence cannot be determined.</para>
-		/// </summary>
-		/// <param name="folder"></param>
-		/// <param name="tryFor"></param>
-		/// <returns></returns>
-		public static Boolean? TryDeleting( this Folder folder, TimeSpan tryFor ) {
-			var stopwatch = Stopwatch.StartNew();
-			TryAgain:
+        /// <summary>
+        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
+        ///     <para>Returns null if existence cannot be determined.</para>
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="tryFor"></param>
+        /// <returns></returns>
+        public static Boolean? TryDeleting(this Folder folder, TimeSpan tryFor) {
+            var stopwatch = Stopwatch.StartNew();
+            TryAgain:
 
-			try {
-				if ( !folder.Exists() ) { return true; }
+            try {
+                if (!folder.Exists()) {
+                    return true;
+                }
 
-				Directory.Delete( folder.FullName );
+                Directory.Delete(folder.FullName);
 
-				return !Directory.Exists( folder.FullName );
-			}
-			catch ( DirectoryNotFoundException ) { }
-			catch ( PathTooLongException ) { }
-			catch ( IOException ) {
+                return !Directory.Exists(folder.FullName);
+            }
+            catch (DirectoryNotFoundException) { }
+            catch (PathTooLongException) { }
+            catch (IOException) {
 
-				// IOExcception is thrown when the file is in use by any process.
-				if ( stopwatch.Elapsed <= tryFor ) {
-					Thread.Yield();
-					Application.DoEvents();
+                // IOExcception is thrown when the file is in use by any process.
+                if (stopwatch.Elapsed <= tryFor) {
+                    Thread.Yield();
+                    Application.DoEvents();
 
-					goto TryAgain;
-				}
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( ArgumentNullException ) { }
-			finally { stopwatch.Stop(); }
+                    goto TryAgain;
+                }
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (ArgumentNullException) { }
+            finally {
+                stopwatch.Stop();
+            }
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

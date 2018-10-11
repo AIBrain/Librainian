@@ -39,100 +39,107 @@
 //
 // Project: "Librainian", "ImmutableAttribute.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions
+{
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Reflection;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using Exceptions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
-	/// <summary>
-	///     Without further ado, here's the ImmutableAttribute itself. Now.. does it work?
-	/// </summary>
-	/// <see cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
-	[AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
-	[JsonObject]
-	[MeansImplicitUse]
-	public sealed class ImmutableAttribute : Attribute {
+    /// <summary>
+    ///     Without further ado, here's the ImmutableAttribute itself. Now.. does it work?
+    /// </summary>
+    /// <see cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [JsonObject]
+    [MeansImplicitUse]
+    public sealed class ImmutableAttribute : Attribute
+    {
 
-		public Boolean OnFaith;
+        public Boolean OnFaith;
 
-		private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
-			if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+        private static Boolean IsMarkedImmutable([NotNull] Type type)
+        {
+            if (type == null) { throw new ArgumentNullException(paramName: nameof(type)); }
 
-			return type.TypeHasAttribute<ImmutableAttribute>();
-		}
+            return type.TypeHasAttribute<ImmutableAttribute>();
+        }
 
-		private static Boolean IsWhiteListed( [NotNull] Type type ) {
-			if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+        private static Boolean IsWhiteListed([NotNull] Type type)
+        {
+            if (type == null) { throw new ArgumentNullException(paramName: nameof(type)); }
 
-			// Boolean, int, etc.
-			if ( type.IsPrimitive ) { return true; }
+            // Boolean, int, etc.
+            if (type.IsPrimitive) { return true; }
 
-			if ( type == typeof( Object ) ) { return true; }
+            if (type == typeof(Object)) { return true; }
 
-			if ( type == typeof( String ) ) { return true; }
+            if (type == typeof(String)) { return true; }
 
-			if ( type == typeof( Guid ) ) { return true; }
+            if (type == typeof(Guid)) { return true; }
 
-			if ( type.IsEnum ) { return true; }
+            if (type.IsEnum) { return true; }
 
-			// override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
-			var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
+            // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
+            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>(type);
 
-			return immutableAttribute.OnFaith;
-		}
+            return immutableAttribute.OnFaith;
+        }
 
-		// in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
-		// instead of testing explicitly.
-		//
-		// A common example is a type that contains a List<T>, but doesn't modify it after construction.
-		//
-		// TODO: replace this with a per-field attribute, to allow the immutability test to run over the rest of the type.
-		/// <summary>
-		///     Ensures that 'type' follows the rules for immutability
-		/// </summary>
-		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-		public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
-			if ( type is null ) { throw new ArgumentNullException( nameof( type ) ); }
+        // in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
+        // instead of testing explicitly.
+        //
+        // A common example is a type that contains a List<T>, but doesn't modify it after construction.
+        //
+        // TODO: replace this with a per-field attribute, to allow the immutability test to run over the rest of the type.
+        /// <summary>
+        ///     Ensures that 'type' follows the rules for immutability
+        /// </summary>
+        /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
+        public static void VerifyTypeIsImmutable([NotNull] Type type, [NotNull] IEnumerable<Type> whiteList)
+        {
+            if (type == null) { throw new ArgumentNullException(nameof(type)); }
 
-			if ( type.BaseType is null ) { throw new ArgumentNullException( nameof( type ) ); }
+            if (type.BaseType == null) { throw new ArgumentNullException(nameof(type)); }
 
-			if ( whiteList is null ) { throw new ArgumentNullException( nameof( whiteList ) ); }
+            if (whiteList == null) { throw new ArgumentNullException(nameof(whiteList)); }
 
-			var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
+            var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
-			if ( enumerable.Contains( type ) ) { return; }
+            if (enumerable.Contains(type)) { return; }
 
-			if ( IsWhiteListed( type ) ) { return; }
+            if (IsWhiteListed(type)) { return; }
 
-			try { VerifyTypeIsImmutable( type.BaseType, enumerable ); }
-			catch ( ImmutableFailureException ex ) { throw new MutableBaseException( type, ex ); }
+            try { VerifyTypeIsImmutable(type.BaseType, enumerable); }
+            catch (ImmutableFailureException ex) { throw new MutableBaseException(type, ex); }
 
-			foreach ( var fieldInfo in type.GetAllDeclaredInstanceFields() ) {
-				if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) { throw new WritableFieldException( fieldInfo ); }
+            foreach (var fieldInfo in type.GetAllDeclaredInstanceFields())
+            {
+                if ((fieldInfo.Attributes & FieldAttributes.InitOnly) == 0) { throw new WritableFieldException(fieldInfo); }
 
-				// if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
-				if ( IsMarkedImmutable( fieldInfo.FieldType ) ) { continue; }
+                // if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
+                if (IsMarkedImmutable(fieldInfo.FieldType)) { continue; }
 
-				try { VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable ); }
-				catch ( ImmutableFailureException ex ) { throw new MutableFieldException( fieldInfo, ex ); }
-			}
-		}
+                try { VerifyTypeIsImmutable(fieldInfo.FieldType, enumerable); }
+                catch (ImmutableFailureException ex) { throw new MutableFieldException(fieldInfo, ex); }
+            }
+        }
 
-		/// <summary>
-		///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
-		/// </summary>
-		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-		public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
-			if ( assemblies == null ) { throw new ArgumentNullException( paramName: nameof( assemblies ) ); }
+        /// <summary>
+        ///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
+        /// </summary>
+        /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
+        public static void VerifyTypesAreImmutable([NotNull] IEnumerable<Assembly> assemblies, params Type[] whiteList)
+        {
+            if (assemblies == null) { throw new ArgumentNullException(paramName: nameof(assemblies)); }
 
-			var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
+            var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable(type) select type;
 
-			foreach ( var type in typesMarkedImmutable ) { VerifyTypeIsImmutable( type, whiteList ); }
-		}
-	}
+            foreach (var type in typesMarkedImmutable) { VerifyTypeIsImmutable(type, whiteList); }
+        }
+    }
 }

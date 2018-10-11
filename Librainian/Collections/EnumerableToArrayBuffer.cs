@@ -39,81 +39,91 @@
 //
 // Project: "Librainian", "EnumerableToArrayBuffer.cs" was last formatted by Protiguous on 2018/07/10 at 8:50 PM.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections
+{
 
-	using System;
-	using System.Collections.Generic;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
 
-	[Experimental( "untested" )]
-	public struct EnumerableToArrayBuffer<T> {
+    [Experimental("untested")]
+    public struct EnumerableToArrayBuffer<T>
+    {
 
-		private Int32 _count { get; }
+        private Int32 _count { get; }
 
-		private ICollection<T> Collection { get; }
+        private ICollection<T> Collection { get; }
 
-		private T[] Items { get; }
+        private T[] Items { get; }
 
-		internal Int32 Count => this.Collection?.Count ?? this._count;
+        internal Int32 Count => this.Collection?.Count ?? this._count;
 
-		internal EnumerableToArrayBuffer( [NotNull] IEnumerable<T> source ) {
-			T[] array = null;
-			var length = 0;
-			this.Collection = source as ICollection<T>;
+        internal EnumerableToArrayBuffer([NotNull] IEnumerable<T> source)
+        {
+            T[] array = null;
+            var length = 0;
+            this.Collection = source as ICollection<T>;
 
-			if ( this.Collection != null ) {
-				this.Items = null;
-				this._count = 0;
+            if (this.Collection != null)
+            {
+                this.Items = null;
+                this._count = 0;
 
-				return;
-			}
+                return;
+            }
 
-			foreach ( var local in source ) {
-				if ( array is null ) { array = new T[ 4 ]; }
-				else if ( array.Length == length ) {
-					var destinationArray = new T[ length * 2 ];
-					Buffer.BlockCopy( array, 0, destinationArray, 0, length );
-					array = destinationArray;
-				}
+            foreach (var local in source)
+            {
+                if (array == null) { array = new T[4]; }
+                else if (array.Length == length)
+                {
+                    var destinationArray = new T[length * 2];
+                    Buffer.BlockCopy(array, 0, destinationArray, 0, length);
+                    array = destinationArray;
+                }
 
-				array[ length ] = local;
-				length++;
-			}
+                array[length] = local;
+                length++;
+            }
 
-			this.Items = array;
-			this._count = length;
-		}
+            this.Items = array;
+            this._count = length;
+        }
 
-		/// <summary>
-		///     Caller to guarantee items.Length &gt; index &gt;= 0
-		/// </summary>
-		internal void CopyTo( T[] items, Int32 index ) {
-			if ( this.Collection != null && this.Collection.Count > 0 ) { this.Collection.CopyTo( array: items, arrayIndex: index ); }
-			else if ( this._count > 0 ) { Buffer.BlockCopy( this.Items, 0, items, index, this._count ); }
-		}
+        /// <summary>
+        ///     Caller to guarantee items.Length &gt; index &gt;= 0
+        /// </summary>
+        internal void CopyTo(T[] items, Int32 index)
+        {
+            if (this.Collection != null && this.Collection.Count > 0) { this.Collection.CopyTo(array: items, arrayIndex: index); }
+            else if (this._count > 0) { Buffer.BlockCopy(this.Items, 0, items, index, this._count); }
+        }
 
-		[NotNull]
-		internal T[] ToArray() {
-			var count = this.Count;
+        [NotNull]
+        internal T[] ToArray()
+        {
+            var count = this.Count;
 
-			if ( count == 0 ) { return new T[ 0 ]; }
+            if (count == 0) { return new T[0]; }
 
-			T[] destinationArray;
+            T[] destinationArray;
 
-			switch ( this.Collection ) {
-				case null when this.Items.Length == this._count: return this.Items;
-				case null:
-					destinationArray = new T[ this._count ];
-					Buffer.BlockCopy( this.Items, 0, destinationArray, 0, this._count );
+            switch (this.Collection)
+            {
+                case null when this.Items.Length == this._count: return this.Items;
+                case null:
+                    destinationArray = new T[this._count];
+                    Buffer.BlockCopy(this.Items, 0, destinationArray, 0, this._count);
 
-					return destinationArray;
-				case List<T> list: return list.ToArray();
-			}
+                    return destinationArray;
 
-			destinationArray = new T[ count ];
-			this.Collection.CopyTo( array: destinationArray, arrayIndex: 0 );
+                case List<T> list: return list.ToArray();
+            }
 
-			return destinationArray;
-		}
-	}
+            destinationArray = new T[count];
+            this.Collection.CopyTo(array: destinationArray, arrayIndex: 0);
+
+            return destinationArray;
+        }
+    }
 }

@@ -49,11 +49,11 @@ namespace Librainian.Maths.Numbers {
 
 #pragma warning disable IDE0015 // Use framework type
 
-	/// <summary>
-	///     Restricts the value to between 0.0 and 1.0
-	///     <para>Uses the <see cref="float" /> type.</para>
-	/// </summary>
-	[Immutable]
+    /// <summary>
+    ///     Restricts the value to between 0.0 and 1.0
+    ///     <para>Uses the <see cref="Single" /> type.</para>
+    /// </summary>
+    [Immutable]
 #pragma warning restore IDE0015 // Use framework type
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject( memberSerialization: MemberSerialization.Fields )]

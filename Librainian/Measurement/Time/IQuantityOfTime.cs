@@ -37,25 +37,24 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IQuantityOfTime.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "IQuantityOfTime.cs" was last formatted by Protiguous on 2018/08/28 at 10:05 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time
+{
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
 
-	public interface IQuantityOfTime {
+    public interface IQuantityOfTime
+    {
 
-		[Pure]
-		Int32 GetHashCode();
+        Int32 GetHashCode();
 
-		[Pure]
-		PlanckTimes ToPlanckTimes();
+        PlanckTimes ToPlanckTimes();
 
-		[Pure]
-		Seconds ToSeconds();
+        Seconds ToSeconds();
 
-		[Pure]
-		String ToString();
-	}
+        String ToString();
+
+        TimeSpan ToTimeSpan();
+    }
 }

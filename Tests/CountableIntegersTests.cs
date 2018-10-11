@@ -42,60 +42,60 @@
 
 namespace LibrainianTests {
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading.Tasks;
-	using Librainian.Maths;
-	using Librainian.Maths.Numbers;
-	using Librainian.Measurement.Time;
-	using Librainian.Threading;
-	using NUnit.Framework;
+    using Librainian.Maths;
+    using Librainian.Maths.Numbers;
+    using Librainian.Measurement.Time;
+    using Librainian.Threading;
+    using NUnit.Framework;
+    using System;
+    using System.Diagnostics;
+    using System.Threading.Tasks;
 
-	[TestFixture]
-	public static class CountableIntegersTests {
+    [TestFixture]
+    public static class CountableIntegersTests {
 
-		public static Countable<String> Countable { get; } = new Countable<String>( readTimeout: Seconds.One, writeTimeout: Seconds.One );
+        public static Countable<String> Countable { get; } = new Countable<String>(readTimeout: Seconds.One, writeTimeout: Seconds.One);
 
-		[OneTimeSetUp]
-		public static void Setup() { }
+        [OneTimeSetUp]
+        public static void Setup() { }
 
-		[OneTimeTearDown]
-		public static void TearDown() {
-			using ( Countable ) { }
-		}
+        [OneTimeTearDown]
+        public static void TearDown() {
+            using (Countable) { }
+        }
 
-		[Test]
-		public static void TestAdding() {
-			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ) ) );
+        [Test]
+        public static void TestAdding() {
+            var bob = new Action(() => Parallel.Invoke(() => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Add(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            }), () => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Add(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            }), () => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Add(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            })));
 
-			TimeSpan timeTaken = bob.TimeStatement();
-			Debug.WriteLine( timeTaken.Simpler() );
-		}
+            TimeSpan timeTaken = bob.TimeStatement();
+            Debug.WriteLine(timeTaken.Simpler());
+        }
 
-		[Test]
-		public static void TestSubtracting() {
-			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, ThreadingExtensions.CPUIntensive, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ) ) );
+        [Test]
+        public static void TestSubtracting() {
+            var bob = new Action(() => Parallel.Invoke(() => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Subtract(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            }), () => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Subtract(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            }), () => Parallel.For(0, 102400, ThreadingExtensions.AllCPUExceptOne, l => {
+                var key = Randem.NextString(2);
+                Countable.Subtract(key, Randem.NextBigInteger(Randem.NextByte(1, 255)));
+            })));
 
-			TimeSpan timeTaken = bob.TimeStatement();
-			Debug.WriteLine( timeTaken.Simpler() );
-		}
-	}
+            TimeSpan timeTaken = bob.TimeStatement();
+            Debug.WriteLine(timeTaken.Simpler());
+        }
+    }
 }

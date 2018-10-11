@@ -37,22 +37,20 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "MagicExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:15 AM.
+// Project: "Librainian", "MagicExtensions.cs" was last formatted by Protiguous on 2018/08/23 at 7:47 PM.
 
 namespace Librainian.Magic {
 
-	using System;
-	using System.Reactive;
-	using System.Reactive.Disposables;
-	using System.Reactive.Linq;
-	using System.Reactive.Subjects;
-	using JetBrains.Annotations;
+    using JetBrains.Annotations;
+    using System;
 
-	/// <summary>
-	///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
-	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
-	public static class MagicExtensions {
+    /// <summary>
+    ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
+    /// </summary>
+    /// <see cref="http://wikipedia.org/wiki/Clarke's_three_laws" />
+    public static class MagicExtensions {
+
+        /*
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
@@ -65,9 +63,11 @@ namespace Librainian.Magic {
 				observer.OnNext( Unit.Default );
 				observer.OnCompleted();
 			} ) );
+        */
 
-		[NotNull]
-		public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+        //[NotNull]public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
+
+        /*
 
 		/// <summary>
 		///     http://stackoverflow.com/a/7642198
@@ -99,23 +99,26 @@ namespace Librainian.Magic {
 
 				return new CompositeDisposable( subscription, paused );
 			} );
+        */
 
-		/// <summary>
-		///     If <paramref name="b" /> is <see cref="Boolean.True" /> then perform the <paramref name="action" />.
-		/// </summary>
-		/// <param name="b"></param>
-		/// <param name="action"></param>
-		public static void Then( this Boolean b, [CanBeNull] Action action ) {
-			if ( b ) { action?.Invoke(); }
-		}
+        /// <summary>
+        ///     If <paramref name="b" /> is <see cref="Boolean.True" /> then perform the <paramref name="action" />.
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="action"></param>
+        public static void Then(this Boolean b, [NotNull] Action action) {
+            if (action == null) { throw new ArgumentNullException(paramName: nameof(action)); }
 
-		/// <summary></summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <param name="obj"></param>
+            if (b) { action.Invoke(); }
+        }
 
-		// ReSharper disable once UnusedParameter.Local
-		public static void ThrowIfNull<TKey>( [CanBeNull] this TKey obj ) {
-			if ( null == obj ) { throw new ArgumentNullException(); }
-		}
-	}
+        /// <summary></summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="obj"></param>
+
+        // ReSharper disable once UnusedParameter.Local
+        public static void ThrowIfNull<TKey>([CanBeNull] this TKey obj) {
+            if (null == obj) { throw new ArgumentNullException(); }
+        }
+    }
 }
