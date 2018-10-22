@@ -213,5 +213,27 @@ namespace Librainian.Extensions
 
         [NotNull]
         public static String ToHexNumberString(this UInt256 value) => value.ToByteArray().ToHexNumberString();
+
+        /// <summary>
+        ///     Just a no-op for setting a breakpoint on.
+        /// </summary>
+        [DebuggerStepThrough]
+        public static void Nop<T>(this T obj) { }
+
+        /// <summary>
+        ///     <para>Works like the SQL "nullif" function.</para>
+        ///     <para>
+        ///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null (or the default value for
+        ///         value types).
+        ///     </para>
+        ///     <para>Otherwise return <paramref name="left" />.</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        [DebuggerStepThrough]
+        public static T NullIf<T>([NotNull] this T left, T right) => left.Equals(right) ? default : left;
     }
 }

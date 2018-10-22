@@ -71,6 +71,7 @@ namespace Librainian.Maths
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
 
     public static partial class Randem
     {

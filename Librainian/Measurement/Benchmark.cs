@@ -45,6 +45,7 @@ namespace Librainian.Measurement
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using Logging;
     using Time;
 
     /// <summary>
@@ -91,10 +92,8 @@ namespace Librainian.Measurement
                 {
                     method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
                 }
-                catch (Exception exception)
-                {
-                    Debug.WriteLine(exception.Message);
-                    Logging.Break();
+                catch (Exception exception) {
+                    exception.Log();
                 }
 
                 var rounds = 0UL;
@@ -106,8 +105,7 @@ namespace Librainian.Measurement
                     try { method.Invoke(); }
                     catch (Exception exception)
                     {
-                        Debug.WriteLine(exception.Message);
-                        Logging.Break();
+                        exception.Log();
                     }
                     finally { rounds++; }
                 }

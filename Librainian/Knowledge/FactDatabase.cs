@@ -55,6 +55,7 @@ namespace Librainian.Knowledge
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Logging;
     using Threading;
 
     [JsonObject]
@@ -109,32 +110,28 @@ namespace Librainian.Knowledge
 
         public String SearchForFactFiles(SimpleCancel cancellation)
         {
-            Logging.Enter();
 
-            try
+            var searchPatterns = new[] {
+                "*.knb"
+            };
+
+            var folder = new Folder(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath)));
+
+            folder.Info.FindFiles(fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile(dataFile: new Document(file)), onEachDirectory: null,
+                searchStyle: SearchStyle.FilesFirst);
+
+            if (!this.KnbFiles.Any())
             {
-                var searchPatterns = new[] {
-                    "*.knb"
-                };
-
-                var folder = new Folder(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath)));
+                folder = new Folder(Environment.SpecialFolder.CommonDocuments);
 
                 folder.Info.FindFiles(fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile(dataFile: new Document(file)), onEachDirectory: null,
                     searchStyle: SearchStyle.FilesFirst);
-
-                if (!this.KnbFiles.Any())
-                {
-                    folder = new Folder(Environment.SpecialFolder.CommonDocuments);
-
-                    folder.Info.FindFiles(fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile(dataFile: new Document(file)), onEachDirectory: null,
-                        searchStyle: SearchStyle.FilesFirst);
-                }
-
-                if (!this.KnbFiles.Any()) { searchPatterns.SearchAllDrives(onFindFile: file => this.AddFile(dataFile: new Document(file)), cancellation: cancellation); }
-
-                return $"Found {this.KnbFiles.Count} KNB files";
             }
-            finally { Logging.Exit(); }
+
+            if (!this.KnbFiles.Any()) { searchPatterns.SearchAllDrives(onFindFile: file => this.AddFile(dataFile: new Document(file)), cancellation: cancellation); }
+
+            return $"Found {this.KnbFiles.Count} KNB files";
+
         }
     }
 }

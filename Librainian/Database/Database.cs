@@ -50,6 +50,7 @@ namespace Librainian.Database {
 	using System.Threading.Tasks;
 	using Extensions;
 	using JetBrains.Annotations;
+	using Logging;
 	using Magic;
 	using Parsing;
 	using Threading;

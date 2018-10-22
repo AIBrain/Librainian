@@ -45,8 +45,9 @@ namespace Librainian.Database {
 	using System.Data;
 	using System.Data.OleDb;
 	using JetBrains.Annotations;
+	using Logging;
 
-	public class Excel {
+    public class Excel {
 
 		private String ConnectionString { get; }
 

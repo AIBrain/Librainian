@@ -55,6 +55,7 @@ namespace Librainian.Database {
     using System.Reflection;
     using System.ServiceProcess;
     using System.Threading;
+    using Logging;
 
     public static class DatabaseExtensions {
 

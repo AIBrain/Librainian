@@ -49,6 +49,7 @@ namespace Librainian.Collections
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using Logging;
 
     /// <summary>
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
@@ -113,7 +114,7 @@ namespace Librainian.Collections
                     if (String.IsNullOrEmpty(oldstringfortheguid)) { return; }
 
                     this.Words.TryRemove(oldstringfortheguid, out var oldguid);
-                    oldguid.Equals(g: key).BreakIfFalse();
+                    //oldguid.Equals(g: key).BreakIfFalse();
                     this.IsDirty = true;
                 }
                 else
@@ -159,7 +160,7 @@ namespace Librainian.Collections
         public Boolean Load()
         {
 
-            Logging.Break();
+            "".Break();
 
             //var filename = Path.ChangeExtension( this.BaseCollectionName, this.BaseCollectionNameExt );
             //var storage = Storage.Loader<ConcurrentDictionary<String, Guid>>( filename, source => Cloning.DeepClone( Source: source, Destination: this ) );

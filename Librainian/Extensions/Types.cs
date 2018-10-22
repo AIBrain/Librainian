@@ -52,6 +52,7 @@ namespace Librainian.Extensions
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Runtime.Serialization;
+    using Logging;
 
     //using System.Runtime.InteropServices;
 

@@ -153,6 +153,7 @@
     <Compile Include="Controls\CheckboxWithToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\FlexibleMessageBox.cs" />
     <Compile Include="Controls\LabelWithToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -242,6 +243,10 @@
     <Compile Include="Financial\Currency\Coins\Penny.cs" />
     <Compile Include="Financial\Currency\Coins\Quarter.cs" />
     <Compile Include="Financial\Store.cs" />
+    <Compile Include="Logging\InformationLevel.cs" />
+    <Compile Include="Logging\Logging.cs" />
+    <Compile Include="Logging\LoggingLevel.cs" />
+    <Compile Include="Logging\Targets.cs" />
     <Compile Include="Maths\NonRandomSequence.cs" />
     <Compile Include="Maths\Numbers\BigInt.cs" />
     <Compile Include="Misc\Go.cs" />
@@ -287,6 +292,8 @@
     <Compile Include="OperatingSystem\WinSAT.cs" />
     <Compile Include="Parsing\TrimmedString.cs" />
     <Compile Include="Persistence\Cache.cs" />
+    <Compile Include="Persistence\Settings.cs" />
+    <Compile Include="Persistence\Registry.cs" />
     <Compile Include="Persistence\CurrentUser.cs" />
     <Compile Include="Persistence\D.cs" />
     <Compile Include="Persistence\I.cs" />
@@ -488,14 +495,10 @@
     <Compile Include="Internet\CaptchaStatus.cs" />
     <Compile Include="Internet\HTMLExtensions.cs" />
     <Compile Include="Internet\Servers\WebServer.cs" />
-    <Compile Include="Internet\Servers\ILogger.cs" />
     <Compile Include="Internet\Servers\Extensions.cs" />
     <Compile Include="Internet\Servers\SimpleWebServer.cs" />
     <Compile Include="Internet\Servers\Cookie.cs" />
     <Compile Include="Internet\Servers\Cookies.cs" />
-    <Compile Include="Internet\Servers\HttpProcessor.cs" />
-    <Compile Include="Internet\Servers\HttpServer.cs" />
-    <Compile Include="Internet\Servers\SimpleHttpLogger.cs" />
     <Compile Include="Internet\UriLinkItem.cs" />
     <Compile Include="Internet\WebClientExtensions.cs" />
     <Compile Include="Internet\SmtpClientExtensions.cs" />
@@ -737,7 +740,7 @@
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ArrayTraverse.cs" />
-    <Compile Include="Threading\ConsoleListenerWithTimePrefix.cs" />
+    <Compile Include="Logging\ConsoleListenerWithTimePrefix.cs" />
     <Compile Include="Threading\ObjectExtensions.cs" />
     <Compile Include="Threading\ReferenceEqualityComparer.cs" />
     <Compile Include="Threading\Requests.cs" />
@@ -775,7 +778,7 @@
     <Compile Include="Maths\WeightObsolete.cs" />
     <Compile Include="Threading\PriorityScheduler.cs" />
     <Compile Include="Threading\Releaser.cs" />
-    <Compile Include="Logging.cs" />
+    <Compile Include="Logging\LoggingOld.cs" />
     <Compile Include="Threading\Singleton.cs" />
     <Compile Include="Extensions\DirectoryInfos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -825,7 +828,7 @@
       <Version>2018.2.1</Version>
     </PackageReference>
     <PackageReference Include="LanguageExt.Core">
-      <Version>3.0.28</Version>
+      <Version>3.0.31</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD.Parallel">
       <Version>1.0.0</Version>
@@ -839,8 +842,14 @@
     <PackageReference Include="Ninject">
       <Version>3.3.4</Version>
     </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.5.10</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.Windows.Forms">
+      <Version>4.2.3</Version>
+    </PackageReference>
     <PackageReference Include="NUnit">
-      <Version>3.10.1</Version>
+      <Version>3.11.0</Version>
     </PackageReference>
     <PackageReference Include="RandomNameGeneratorLibrary">
       <Version>1.2.2</Version>

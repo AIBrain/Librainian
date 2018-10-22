@@ -46,6 +46,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 	using System.IO;
 	using Collections;
 	using JetBrains.Annotations;
+	using Logging;
 	using Magic;
 
 	/// <summary>

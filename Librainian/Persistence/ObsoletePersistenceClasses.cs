@@ -49,6 +49,7 @@ namespace Librainian.Persistence
     using System.IO.Compression;
     using System.IO.IsolatedStorage;
     using System.Runtime.Serialization;
+    using Logging;
 
     [Obsolete("Container for obsolete Persistence classes.")]
     public class ObsoletePersistenceClasses

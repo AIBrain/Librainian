@@ -58,6 +58,7 @@ namespace Librainian.Converters
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
     using System.Text;
+    using Logging;
 
     public static class ConverterExtensions
     {

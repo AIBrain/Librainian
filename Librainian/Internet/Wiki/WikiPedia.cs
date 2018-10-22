@@ -47,6 +47,7 @@ namespace Librainian.Internet.Wiki {
 	using System.Xml;
 	using System.Xml.Linq;
 	using JetBrains.Annotations;
+	using Logging;
 	using Parsing;
 
 	public class WikiPedia {

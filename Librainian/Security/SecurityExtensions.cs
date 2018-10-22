@@ -54,6 +54,7 @@ namespace Librainian.Security {
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     public static class SecurityExtensions {

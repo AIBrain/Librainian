@@ -66,6 +66,7 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Logging;
     using Threading;
 
     public static class IOExtensions {
@@ -637,7 +638,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 return true;
             }
-            catch (OutOfMemoryException) { Logging.Garbage(); }
+            catch (OutOfMemoryException) { GC.Collect(); }
             catch (Exception exception) { exception.Log(); }
 
             return false;
@@ -971,7 +972,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                 DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism(26).WithExecutionMode(ParallelExecutionMode.ForceParallelism).ForAll(drive => {
                     if (!drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists) { return; }
 
-                    $"Scanning [{drive.VolumeLabel}]".WriteLine();
+                    $"Scanning [{drive.VolumeLabel}]".Info();
                     drive.RootDirectory.FindFiles(fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle);
                 });
             }
@@ -1139,12 +1140,17 @@ namespace Librainian.ComputerSystem.FileSystem {
             return memoryStream;
         }
 
-        public static Boolean TryGetFolderFromPath(this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri) {
+        public static Boolean TryGetFolderFromPath(this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri) => TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
+
+        public static Boolean TryGetFolderFromPath([CanBeNull] this String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri) {
+
             directoryInfo = null;
             uri = null;
 
             try {
-                if (path.IsEmpty) { return false; }
+                if (String.IsNullOrWhiteSpace(value: path)) {
+                    return false;
+                }
 
                 if (Uri.TryCreate(path, UriKind.Absolute, out uri)) {
                     directoryInfo = new DirectoryInfo(uri.LocalPath);

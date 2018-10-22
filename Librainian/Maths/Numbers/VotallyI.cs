@@ -48,6 +48,7 @@ namespace Librainian.Maths.Numbers
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using Logging;
 
     /// <summary>
     ///     <para>threadsafe, keep integer count of Yes or No votes.</para>

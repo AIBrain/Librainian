@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,32 +28,19 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2018/09/28 at 2:48 PM.
+// 
+// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2018/10/22 at 5:36 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-    using Extensions;
-    using Internet;
-    using JetBrains.Annotations;
-    using Magic;
-    using Maths;
-    using Maths.Numbers;
-    using Measurement.Time;
-    using Microsoft.VisualBasic.Devices;
-    using Microsoft.VisualBasic.FileIO;
-    using Newtonsoft.Json;
-    using Parsing;
-    using Persistence;
-    using Security;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -67,29 +54,70 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Extensions;
+    using Internet;
+    using JetBrains.Annotations;
+    using Logging;
+    using Magic;
+    using Maths;
+    using Maths.Numbers;
+    using Measurement.Time;
+    using Microsoft.VisualBasic.Devices;
+    using Microsoft.VisualBasic.FileIO;
+    using Newtonsoft.Json;
+    using Parsing;
+    using Persistence;
+    using Security;
     using Threading;
 
     /// <summary>
     ///     <para>
     ///         An immutable wrapper for a file, the extension, the [parent] folder, and the file's size all from a given
-    ///         full path.
+    ///         full path and filename.
     ///     </para>
-    ///     <para>Also contains static String versions from <see cref="Path" /></para>
     /// </summary>
+    /// <remarks>Based on the <see cref="FileInfo" /> class.</remarks>
+    /// <remarks>Also contains static String versions from <see cref="Path" /></remarks>
     [Immutable]
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class Document : ABetterClassDispose, IEquatable<Document>, IEnumerable<Byte>, IComparable<Document> {
 
-        public Boolean DeleteAfterClose {
-            get;
-        }
+        /// <summary>
+        ///     Compares this. <see cref="FullPathWithFileName" /> against other <see cref="FullPathWithFileName" />.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public Int32 CompareTo( [NotNull] Document other ) => String.Compare( strA: this.FullPathWithFileName, strB: other.FullPathWithFileName, comparisonType: StringComparison.Ordinal );
 
         /// <summary>
-        ///     <para>The <see cref="Folder" /> where this <see cref="Document" /> is stored.</para>
+        ///     Returns an enumerator that iterates through the collection.
         /// </summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
+        ///     collection.
+        /// </returns>
+        public IEnumerator<Byte> GetEnumerator() => this.AsBytes().GetEnumerator();
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
+        ///     <para>To compare the contents of two <see cref="Document" /> use <see cref="SameContent(Document)" />.</para>
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public Boolean Equals( Document other ) => Equals( left: this, right: other );
+
         [NotNull]
-        public Folder Folder => new Folder(fileSystemInfo: this.Info.Directory ?? throw new ArgumentNullException(nameof(this.Info.Directory), $"A null FileInfo was passed to {nameof(this.Folder)}()"));
+        [JsonIgnore]
+        private Lazy<Folder> FolderInstance { get; }
+
+        public Boolean DeleteAfterClose { get; }
 
         /// <summary>
         ///     <para>The <see cref="Folder" /> combined with the <see cref="FileName" />.</para>
@@ -103,9 +131,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         [JsonProperty]
         [NotNull]
-        public FileInfo Info {
-            get;
-        }
+        public FileInfo Info { get; }
 
         /// <summary>
         ///     <para>Gets the current <see cref="Size" /> of the <see cref="Document" />.</para>
@@ -113,14 +139,14 @@ namespace Librainian.ComputerSystem.FileSystem {
         public Int64 Length {
             get {
                 try {
-                    if (this.Exists()) {
+                    if ( this.Exists() ) {
                         return this.Info.Length;
                     }
                 }
-                catch (FileNotFoundException exception) {
+                catch ( FileNotFoundException exception ) {
                     exception.Log();
                 }
-                catch (IOException exception) {
+                catch ( IOException exception ) {
                     exception.Log();
                 }
 
@@ -128,11 +154,18 @@ namespace Librainian.ComputerSystem.FileSystem {
             }
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private Document() => throw new NotImplementedException("Private contructor is not allowed.");
+        /// <summary>
+        ///     <para>The containing <see cref="Folder" /> where this <see cref="Document" /> is stored.</para>
+        ///     <example>For example, "C:\temp\subfolder\info.txt" should return "C:\temp\subfolder"</example>
+        /// </summary>
+        [NotNull]
+        public Folder Folder => this.FolderInstance.Value;
 
-        public Document([NotNull] String fullPath, [NotNull] String filename, Boolean deleteAfterClose = false) : this(fullPathWithFilename: Path.Combine(path1: fullPath, path2: filename),
-                    deleteAfterClose: deleteAfterClose) { }
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private Document() => throw new NotImplementedException( "Private contructor is not allowed." );
+
+        public Document( [NotNull] String fullPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: fullPath, path2: filename ),
+            deleteAfterClose: deleteAfterClose ) { }
 
         /// <summary>
         /// </summary>
@@ -147,22 +180,30 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public Document([NotNull] String fullPathWithFilename, Boolean deleteAfterClose = false) {
-            if (String.IsNullOrWhiteSpace(fullPathWithFilename)) {
-                throw new ArgumentException("Value cannot be null or whitespace.", nameof(fullPathWithFilename));
+        public Document( [NotNull] String fullPathWithFilename, Boolean deleteAfterClose = false ) {
+            if ( String.IsNullOrWhiteSpace( fullPathWithFilename ) ) {
+                throw new ArgumentNullException( nameof( fullPathWithFilename ), "Value cannot be null or whitespace." );
             }
 
+            fullPathWithFilename = fullPathWithFilename.CleanFileAndPath().Trim();
+
+            if ( String.IsNullOrEmpty( fullPathWithFilename ) ) {
+                throw new ArgumentNullException( nameof( fullPathWithFilename ), "Value cannot be null or whitespace." );
+            }
+
+            this.Info = new FileInfo( fileName: fullPathWithFilename );
             this.DeleteAfterClose = deleteAfterClose;
 
-            this.Info = new FileInfo(fileName: fullPathWithFilename);
+            this.FolderInstance = new Lazy<Folder>( () =>
+                new Folder( this.Info.Directory ?? throw new ArgumentNullException( nameof( this.Info.Directory ), $"A null FileInfo was passed to {nameof( this.Folder )}()" ) ) );
         }
 
-        public Document([NotNull] FileSystemInfo info, Boolean deleteAfterClose = false) : this(fullPathWithFilename: info.FullName, deleteAfterClose: deleteAfterClose) { }
+        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: info.FullName, deleteAfterClose: deleteAfterClose ) { }
 
-        public Document([NotNull] Folder folder, [NotNull] String filename, Boolean deleteAfterClose = false) : this(fullPath: folder.FullName, filename: filename, deleteAfterClose: deleteAfterClose) { }
+        public Document( [NotNull] Folder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPath: folder.FullName, filename: filename, deleteAfterClose: deleteAfterClose ) { }
 
-        public Document([NotNull] Folder folder, [NotNull] Document document, Boolean deleteAfterClose = false) : this(fullPathWithFilename: Path.Combine(path1: folder.FullName, path2: document.FileName()),
-                    deleteAfterClose: deleteAfterClose) { }
+        public Document( [NotNull] Folder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this( fullPathWithFilename: Path.Combine( path1: folder.FullName, path2: document.FileName() ),
+            deleteAfterClose: deleteAfterClose ) { }
 
         /// <summary>
         ///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -171,16 +212,16 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals([CanBeNull] Document left, [CanBeNull] Document right) {
-            if (ReferenceEquals(left, right)) {
+        public static Boolean Equals( [CanBeNull] Document left, [CanBeNull] Document right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
-            if (left == null || right == null) {
+            if ( left == null || right == null ) {
                 return false;
             }
 
-            return left.FullPathWithFileName.Is(right: right.FullPathWithFileName) && left.Size() == right.Size();
+            return left.FullPathWithFileName.Is( right: right.FullPathWithFileName ) && left.Size() == right.Size();
         }
 
         /// <summary>
@@ -192,24 +233,24 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <returns></returns>
         /// <exception cref="DirectoryNotFoundException"></exception>
         [NotNull]
-        public static Document GetTempDocument(String extension = null) {
-            if (extension != null) {
+        public static Document GetTempDocument( String extension = null ) {
+            if ( extension != null ) {
                 extension = extension.Trim();
 
-                while (extension.StartsWith(".")) {
-                    extension = extension.Substring(startIndex: 1);
+                while ( extension.StartsWith( "." ) ) {
+                    extension = extension.Substring( startIndex: 1 );
                 }
             }
 
-            if (String.IsNullOrWhiteSpace(extension)) {
+            if ( String.IsNullOrWhiteSpace( extension ) ) {
                 extension = Guid.NewGuid().ToString();
             }
 
-            return new Document(folder: Folder.GetTempFolder(), filename: Guid.NewGuid() + "." + extension.Trim());
+            return new Document( folder: Folder.GetTempFolder(), filename: Guid.NewGuid() + "." + extension.Trim() );
         }
 
         [NotNull]
-        public static implicit operator FileInfo([NotNull] Document document) => document.Info;
+        public static implicit operator FileInfo( [NotNull] Document document ) => document.Info;
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for inequality.</para>
@@ -217,7 +258,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator !=([CanBeNull] Document left, [CanBeNull] Document right) => !Equals(left: left, right: right);
+        public static Boolean operator !=( [CanBeNull] Document left, [CanBeNull] Document right ) => !Equals( left: left, right: right );
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
@@ -225,27 +266,27 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator ==([CanBeNull] Document left, [CanBeNull] Document right) => Equals(left: left, right: right);
+        public static Boolean operator ==( [CanBeNull] Document left, [CanBeNull] Document right ) => Equals( left: left, right: right );
 
         /// <summary>
         ///     <para>If the file does not exist, it is created.</para>
         ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
-        public void AppendText(String text) {
-            if (!this.Folder.Create()) {
-                throw new DirectoryNotFoundException(this.FullPathWithFileName);
+        public void AppendText( String text ) {
+            if ( !this.Folder.Create() ) {
+                throw new DirectoryNotFoundException( this.FullPathWithFileName );
             }
 
-            if (this.Exists()) {
-                using (var writer = File.AppendText(this.FullPathWithFileName)) {
-                    writer.WriteLine(text);
+            if ( this.Exists() ) {
+                using ( var writer = File.AppendText( this.FullPathWithFileName ) ) {
+                    writer.WriteLine( text );
                     writer.Flush();
                 }
             }
             else {
-                using (var writer = File.CreateText(this.FullPathWithFileName)) {
-                    writer.WriteLine(text);
+                using ( var writer = File.CreateText( this.FullPathWithFileName ) ) {
+                    writer.WriteLine( text );
                     writer.Flush();
                 }
             }
@@ -256,24 +297,24 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Byte> AsBytes() {
-            if (!this.Exists()) {
+            if ( !this.Exists() ) {
                 yield break;
             }
 
-            using (var stream = new FileStream(this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read)) {
+            using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
 
-                if (!stream.CanRead) {
-                    throw new NotSupportedException($"Cannot read from file stream on {this.FullPathWithFileName}");
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( $"Cannot read from file stream on {this.FullPathWithFileName}" );
                 }
 
-                using (var buffered = new BufferedStream(stream: stream)) {
+                using ( var buffered = new BufferedStream( stream: stream ) ) {
                     var a = buffered.ReadByte();
 
-                    if (a == -1) {
+                    if ( a == -1 ) {
                         yield break;
                     }
 
-                    yield return (Byte)a;
+                    yield return ( Byte ) a;
                 }
             }
         }
@@ -283,58 +324,56 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Int32> AsInt32() {
-            if (!this.Exists()) {
+            if ( !this.Exists() ) {
                 yield break;
             }
 
-            //TODO will wrapping this in a BufferedStream be any faster? Or is the buffersize okay?
+            using ( var stream = new FileStream( this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, ( Int32 ) Constants.Sizes.OneGigaByte ) ) {
 
-            using (var stream = new FileStream(this.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, (Int32)Constants.Sizes.OneGigaByte)) {
-
-                if (!stream.CanRead) {
-                    throw new NotSupportedException($"Cannot read from file stream on {this.FullPathWithFileName}");
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( $"Cannot read from file stream on {this.FullPathWithFileName}" );
                 }
 
-                using (var buffered = new BufferedStream(stream: stream)) {
+                using ( var buffered = new BufferedStream( stream: stream ) ) {
                     var a = buffered.ReadByte();
 
-                    if (a == -1) {
+                    if ( a == -1 ) {
                         yield break;
                     }
 
                     var b = buffered.ReadByte();
 
-                    if (b == -1) {
-                        yield return BitConverter.ToInt32(new[] {
+                    if ( b == -1 ) {
+                        yield return BitConverter.ToInt32( new[] {
                             ( Byte ) a, Byte.MinValue, Byte.MinValue, Byte.MinValue
-                        }, 0);
+                        }, 0 );
 
                         yield break;
                     }
 
                     var c = buffered.ReadByte();
 
-                    if (c == -1) {
-                        yield return BitConverter.ToInt32(new[] {
+                    if ( c == -1 ) {
+                        yield return BitConverter.ToInt32( new[] {
                             ( Byte ) a, ( Byte ) b, Byte.MinValue, Byte.MinValue
-                        }, 0);
+                        }, 0 );
 
                         yield break;
                     }
 
                     var d = buffered.ReadByte();
 
-                    if (d == -1) {
-                        yield return BitConverter.ToInt32(new[] {
+                    if ( d == -1 ) {
+                        yield return BitConverter.ToInt32( new[] {
                             ( Byte ) a, ( Byte ) b, ( Byte ) c, Byte.MinValue
-                        }, 0);
+                        }, 0 );
 
                         yield break;
                     }
 
-                    yield return BitConverter.ToInt32(new[] {
+                    yield return BitConverter.ToInt32( new[] {
                         ( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
-                    }, 0);
+                    }, 0 );
                 }
             }
         }
@@ -348,22 +387,22 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone([NotNull] Document destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
-            [CanBeNull] IProgress<TimeSpan> eta = null) {
-            if (destination == null) {
-                throw new ArgumentNullException(nameof(destination));
+        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] Document destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
+            [CanBeNull] IProgress<TimeSpan> eta = null ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( nameof( destination ) );
             }
 
             var stopwatch = Stopwatch.StartNew();
 
             try {
-                if (this.Length.Any()) {
-                    if (Uri.TryCreate(this.FullPathWithFileName, UriKind.Absolute, out var sourceAddress)) {
-                        using (var client = new WebClient().Add(token)) {
+                if ( this.Length.Any() ) {
+                    if ( Uri.TryCreate( this.FullPathWithFileName, UriKind.Absolute, out var sourceAddress ) ) {
+                        using ( var client = new WebClient().Add( token ) ) {
 
-                            await client.DownloadFileTaskAsync(sourceAddress, destination.FullPathWithFileName).NoUI();
+                            await client.DownloadFileTaskAsync( sourceAddress, destination.FullPathWithFileName ).NoUI();
 
-                            return (true, stopwatch.Elapsed);
+                            return ( true, stopwatch.Elapsed );
                         }
                     }
                 }
@@ -387,19 +426,12 @@ namespace Librainian.ComputerSystem.FileSystem {
                 //var destinationBuffer = new BufferedStream( destinationStream, this.GetBufferSize() );
                 //var destinationBinary = new BinaryWriter( destinationBuffer, Encoding.Unicode );
             }
-            catch (WebException exception) {
+            catch ( WebException exception ) {
                 exception.Log();
             }
 
-            return (false, stopwatch.Elapsed);
+            return ( false, stopwatch.Elapsed );
         }
-
-        /// <summary>
-        ///     Compares this. <see cref="FullPathWithFileName" /> against other <see cref="FullPathWithFileName" />.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public Int32 CompareTo([NotNull] Document other) => String.Compare(strA: this.FullPathWithFileName, strB: other.FullPathWithFileName, comparisonType: StringComparison.Ordinal);
 
         /// <summary>
         ///     Starts a task to copy a file
@@ -409,13 +441,13 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="eta">        </param>
         /// <returns></returns>
         [NotNull]
-        public Task Copy(Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta) =>
-            Task.Run(() => {
+        public Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
+            Task.Run( () => {
                 var computer = new Computer();
 
                 //TODO file monitor/watcher?
-                computer.FileSystem.CopyFile(sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing);
-            });
+                computer.FileSystem.CopyFile( sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing );
+            } );
 
         /// <summary>
         ///     Returns the <see cref="WebClient" /> if a file copy was started.
@@ -425,51 +457,51 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         [NotNull]
-        public WebClient CopyFileWithProgress([NotNull] Document destination, Action<Percentage> onProgress, Action onCompleted) {
+        public WebClient CopyFileWithProgress( [NotNull] Document destination, Action<Percentage> onProgress, Action onCompleted ) {
 
             var webClient = new WebClient();
 
-            webClient.DownloadProgressChanged += (sender, args) => {
-                var percentage = new Percentage(numerator: (BigInteger)args.BytesReceived, denominator: args.TotalBytesToReceive);
-                onProgress?.Invoke(percentage);
+            webClient.DownloadProgressChanged += ( sender, args ) => {
+                var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
+                onProgress?.Invoke( percentage );
             };
 
-            webClient.DownloadFileCompleted += (sender, args) => onCompleted?.Invoke();
+            webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
-            webClient.DownloadFileAsync(address: new Uri(uriString: this.FullPathWithFileName), fileName: destination.FullPathWithFileName);
+            webClient.DownloadFileAsync( address: new Uri( uriString: this.FullPathWithFileName ), fileName: destination.FullPathWithFileName );
 
             return webClient;
         }
 
         public Int32? CRC32() {
-            if (!this.Exists()) {
+            if ( !this.Exists() ) {
                 return null;
             }
 
             try {
-                using (var fileStream = File.OpenRead(this.FullPathWithFileName)) {
-                    var size = (UInt32)this.Size();
+                using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+                    var size = ( UInt32 ) this.Size();
 
-                    var crc32 = new Crc32(polynomial: size, seed: size);
+                    var crc32 = new Crc32( polynomial: size, seed: size );
 
-                    var result = crc32.ComputeHash(fileStream);
+                    var result = crc32.ComputeHash( fileStream );
 
-                    return BitConverter.ToInt32(result, 0);
+                    return BitConverter.ToInt32( result, 0 );
                 }
             }
-            catch (FileNotFoundException exception) {
+            catch ( FileNotFoundException exception ) {
                 exception.Break();
             }
-            catch (DirectoryNotFoundException exception) {
+            catch ( DirectoryNotFoundException exception ) {
                 exception.Break();
             }
-            catch (PathTooLongException exception) {
+            catch ( PathTooLongException exception ) {
                 exception.Break();
             }
-            catch (IOException exception) {
+            catch ( IOException exception ) {
                 exception.Break();
             }
-            catch (UnauthorizedAccessException exception) {
+            catch ( UnauthorizedAccessException exception ) {
                 exception.Break();
             }
 
@@ -477,35 +509,35 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         [NotNull]
-        public Task<Int32?> CRC32Async(CancellationToken token) => Task.Run(this.CRC32, token);
+        public Task<Int32?> CRC32Async( CancellationToken token ) => Task.Run( this.CRC32, token );
 
         public String CRC32Hex() {
             try {
-                if (!this.Exists()) {
+                if ( !this.Exists() ) {
                     return null;
                 }
 
-                using (var fileStream = File.OpenRead(this.FullPathWithFileName)) {
-                    var size = (UInt32)this.Size();
+                using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+                    var size = ( UInt32 ) this.Size();
 
-                    var crc32 = new Crc32(polynomial: size, seed: size);
+                    var crc32 = new Crc32( polynomial: size, seed: size );
 
-                    return crc32.ComputeHash(fileStream).Aggregate(seed: String.Empty, func: (current, b) => current + b.ToString(format: "x2").ToLower());
+                    return crc32.ComputeHash( fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
                 }
             }
-            catch (FileNotFoundException exception) {
+            catch ( FileNotFoundException exception ) {
                 exception.Break();
             }
-            catch (DirectoryNotFoundException exception) {
+            catch ( DirectoryNotFoundException exception ) {
                 exception.Break();
             }
-            catch (PathTooLongException exception) {
+            catch ( PathTooLongException exception ) {
                 exception.Break();
             }
-            catch (IOException exception) {
+            catch ( IOException exception ) {
                 exception.Break();
             }
-            catch (UnauthorizedAccessException exception) {
+            catch ( UnauthorizedAccessException exception ) {
                 exception.Break();
             }
 
@@ -517,34 +549,34 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [CanBeNull]
-        public Task<String> CRC32HexAsync(CancellationToken token) => Task.Run(this.CRC32Hex, token);
+        public Task<String> CRC32HexAsync( CancellationToken token ) => Task.Run( this.CRC32Hex, token );
 
         public Int64? CRC64() {
             try {
-                if (!this.Exists()) {
+                if ( !this.Exists() ) {
                     return null;
                 }
 
-                using (var fileStream = File.OpenRead(this.FullPathWithFileName)) {
-                    var size = (UInt64)this.Size();
-                    var crc64 = new Crc64(polynomial: size, seed: size);
+                using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+                    var size = ( UInt64 ) this.Size();
+                    var crc64 = new Crc64( polynomial: size, seed: size );
 
-                    return BitConverter.ToInt64(crc64.ComputeHash(fileStream), 0);
+                    return BitConverter.ToInt64( crc64.ComputeHash( fileStream ), 0 );
                 }
             }
-            catch (FileNotFoundException exception) {
+            catch ( FileNotFoundException exception ) {
                 exception.Break();
             }
-            catch (DirectoryNotFoundException exception) {
+            catch ( DirectoryNotFoundException exception ) {
                 exception.Break();
             }
-            catch (PathTooLongException exception) {
+            catch ( PathTooLongException exception ) {
                 exception.Break();
             }
-            catch (IOException exception) {
+            catch ( IOException exception ) {
                 exception.Break();
             }
-            catch (UnauthorizedAccessException exception) {
+            catch ( UnauthorizedAccessException exception ) {
                 exception.Break();
             }
 
@@ -552,7 +584,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         [NotNull]
-        public Task<Int64?> CRC64Async(CancellationToken token) => Task.Run(this.CRC64, token);
+        public Task<Int64?> CRC64Async( CancellationToken token ) => Task.Run( this.CRC64, token );
 
         /// <summary>
         ///     Returns a lowercase hex-string of the hash.
@@ -561,23 +593,23 @@ namespace Librainian.ComputerSystem.FileSystem {
         [CanBeNull]
         public String CRC64Hex() {
             try {
-                if (!this.Exists()) {
+                if ( !this.Exists() ) {
                     return null;
                 }
 
-                var size = (UInt64)this.Size();
+                var size = ( UInt64 ) this.Size();
 
-                var crc64 = new Crc64(polynomial: size, seed: size);
+                var crc64 = new Crc64( polynomial: size, seed: size );
 
-                using (var fileStream = File.OpenRead(this.FullPathWithFileName)) {
-                    return crc64.ComputeHash(fileStream).Aggregate(seed: String.Empty, func: (current, b) => current + b.ToString(format: "x2").ToLower());
+                using ( var fileStream = File.OpenRead( this.FullPathWithFileName ) ) {
+                    return crc64.ComputeHash( fileStream ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
                 }
             }
-            catch (FileNotFoundException) { }
-            catch (DirectoryNotFoundException) { }
-            catch (PathTooLongException) { }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
+            catch ( FileNotFoundException ) { }
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) { }
+            catch ( UnauthorizedAccessException ) { }
 
             return null;
         }
@@ -587,38 +619,38 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public Task<String> CRC64HexAsync(CancellationToken token) => Task.Run(this.CRC64Hex, token);
+        public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( this.CRC64Hex, token );
 
         /// <summary>
         ///     <para>Returns true if the <see cref="Document" /> no longer exists.</para>
         ///     <para>Defaults to 3 retries</para>
         /// </summary>
         /// <returns></returns>
-        public Boolean Delete(Int32 retries = 3) {
+        public Boolean Delete( Int32 retries = 3 ) {
             TryAgain:
 
             try {
-                if (!this.Exists()) {
+                if ( !this.Exists() ) {
                     return true;
                 }
 
-                if (this.Info.IsReadOnly) {
+                if ( this.Info.IsReadOnly ) {
                     this.Info.IsReadOnly = false;
                 }
 
-                if (this.Exists()) {
+                if ( this.Exists() ) {
                     this.Info.Delete();
                 }
 
                 return !this.Exists();
             }
-            catch (IOException) {
+            catch ( IOException ) {
 
                 //file in use?
                 retries--;
                 Application.DoEvents();
 
-                if (retries.Any()) {
+                if ( retries.Any() ) {
                     goto TryAgain;
                 }
             }
@@ -628,7 +660,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
         /// <inheritdoc />
         public override void DisposeManaged() {
-            if (this.DeleteAfterClose) {
+            if ( this.DeleteAfterClose ) {
                 this.Delete();
             }
 
@@ -641,42 +673,34 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile([NotNull] Uri source) {
-            if (source == null) {
-                throw new ArgumentNullException(nameof(source));
+        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
             }
 
             try {
-                if (!source.IsWellFormedOriginalString()) {
-                    return (new DownloadException($"Could not use source Uri '{source}'."), null);
+                if ( !source.IsWellFormedOriginalString() ) {
+                    return ( new DownloadException( $"Could not use source Uri '{source}'." ), null );
                 }
 
-                using (var webClient = new WebClient()) {
-                    var download = webClient.DownloadFileTaskAsync(source, this.FullPathWithFileName);
+                using ( var webClient = new WebClient() ) {
+                    var download = webClient.DownloadFileTaskAsync( source, this.FullPathWithFileName );
                     await download.NoUI();
 
-                    return (null, webClient.ResponseHeaders);
+                    return ( null, webClient.ResponseHeaders );
                 }
             }
-            catch (Exception exception) {
-                return (exception, null);
+            catch ( Exception exception ) {
+                return ( exception, null );
             }
         }
-
-        /// <summary>
-        ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
-        ///     <para>To compare the contents of two <see cref="Document" /> use <see cref="SameContent(Document)" />.</para>
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public Boolean Equals(Document other) => Equals(left: this, right: other);
 
         /// <summary>
         ///     <para>To compare the contents of two <see cref="Document" /> use SameContent( Document,Document).</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override Boolean Equals(Object obj) => obj is Document document && Equals(left: this, right: document);
+        public override Boolean Equals( Object obj ) => obj is Document document && Equals( left: this, right: document );
 
         /// <summary>
         ///     Returns true if the <see cref="Document" /> currently exists.
@@ -688,14 +712,14 @@ namespace Librainian.ComputerSystem.FileSystem {
         ///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
         [NotNull]
-        public String Extension() => Path.GetExtension(this.FullPathWithFileName).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
+        public String Extension() => Path.GetExtension( this.FullPathWithFileName ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
         /// <summary>
         ///     <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <see cref="Path.GetFileName" />
         [NotNull]
-        public String FileName() => Path.GetFileName(this.FullPathWithFileName);
+        public String FileName() => Path.GetFileName( this.FullPathWithFileName );
 
         /// <summary>
         ///     <para>
@@ -707,27 +731,18 @@ namespace Librainian.ComputerSystem.FileSystem {
         public Int32 GetBufferSize() {
             var oursize = this.Size();
 
-            if (!oursize.Any()) {
+            if ( !oursize.Any() ) {
 
                 //empty document? no buffer!
                 return default;
             }
 
-            if (oursize <= Int32.MaxValue) {
-                return (Int32)oursize;
+            if ( oursize <= Int32.MaxValue ) {
+                return ( Int32 ) oursize;
             }
 
             return Int32.MaxValue;
         }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
-        ///     collection.
-        /// </returns>
-        public IEnumerator<Byte> GetEnumerator() => this.AsBytes().GetEnumerator();
 
         /// <summary>
         ///     (file name, not contents)
@@ -735,23 +750,23 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <returns></returns>
         public override Int32 GetHashCode() => this.FullPathWithFileName.GetHashCode();
 
-        public Boolean HavePermission(FileIOPermissionAccess access) {
+        public Boolean HavePermission( FileIOPermissionAccess access ) {
             try {
-                var bob = new FileIOPermission(access: access, this.FullPathWithFileName);
+                var bob = new FileIOPermission( access: access, this.FullPathWithFileName );
                 bob.Demand();
 
                 return true;
             }
-            catch (ArgumentException exception) {
+            catch ( ArgumentException exception ) {
                 exception.Log();
             }
-            catch (SecurityException) { }
+            catch ( SecurityException ) { }
 
             return false;
         }
 
         [NotNull]
-        public String JustName() => Path.GetFileNameWithoutExtension(this.FileName());
+        public String JustName() => Path.GetFileNameWithoutExtension( this.FileName() );
 
         /// <summary>
         ///     Attempt to start the process.
@@ -761,20 +776,18 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="useShell"></param>
         /// <returns></returns>
         [NotNull]
-        public Task<Process> Launch([CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false) {
+        public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
             try {
-                var info = new ProcessStartInfo(fileName: this.FullPathWithFileName) {
-                    Arguments = arguments ?? String.Empty,
-                    UseShellExecute = useShell,
-                    Verb = verb
+                var info = new ProcessStartInfo( fileName: this.FullPathWithFileName ) {
+                    Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
                 };
 
-                return Task.Run(() => Process.Start(startInfo: info));
+                return Task.Run( () => Process.Start( startInfo: info ) );
             }
-            catch (Exception exception) {
+            catch ( Exception exception ) {
                 exception.Log();
 
-                return Task.FromException<Process>(exception);
+                return Task.FromException<Process>( exception );
             }
         }
 
@@ -785,21 +798,20 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <returns></returns>
         [CanBeNull]
         public T LoadJSON<T>() {
-            if (!this.Exists()) {
+            if ( !this.Exists() ) {
                 return default;
             }
 
             try {
-                using (var textReader = File.OpenText(this.FullPathWithFileName)) {
-                    using (var jsonReader = new JsonTextReader(textReader)) {
+                using ( var textReader = File.OpenText( this.FullPathWithFileName ) ) {
+                    using ( var jsonReader = new JsonTextReader( textReader ) ) {
                         return new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                            PreserveReferencesHandling = PreserveReferencesHandling.All
-                        }.Deserialize<T>(jsonReader);
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                        }.Deserialize<T>( jsonReader );
                     }
                 }
             }
-            catch (Exception exception) {
+            catch ( Exception exception ) {
                 exception.Log();
             }
 
@@ -807,7 +819,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         [NotNull]
-        public Task<T> LoadJSONAsync<T>(CancellationToken token) => Task.Run(this.LoadJSON<T>, token);
+        public Task<T> LoadJSONAsync<T>( CancellationToken token ) => Task.Run( this.LoadJSON<T>, token );
 
         /// <summary>
         ///     <para>Starts a task to <see cref="Move" /> a file to the <paramref name="destination" />.</para>
@@ -818,25 +830,25 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="Move" />.</param>
         /// <returns></returns>
         [NotNull]
-        public Task<Int64> Move([NotNull] Document destination, CancellationToken token, Boolean exact = true) {
-            if (destination == null) {
-                throw new ArgumentNullException(paramName: nameof(destination));
+        public Task<Int64> Move( [NotNull] Document destination, CancellationToken token, Boolean exact = true ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
-            var jane = Task.Run(async () => {
+            var jane = Task.Run( async () => {
                 try {
 
-                    if (exact) {
-                        var data = new DocumentInfo(this);
-                        var task = data.Scan(token);
+                    if ( exact ) {
+                        var data = new DocumentInfo( this );
+                        var task = data.Scan( token );
                         var result = await task.NoUI();
 
-                        if (destination.Exists()) {
-                            if (data.CreationTimeUtc.HasValue) {
+                        if ( destination.Exists() ) {
+                            if ( data.CreationTimeUtc.HasValue ) {
                                 destination.Info.CreationTime = data.CreationTimeUtc.Value;
                             }
 
-                            if (data.LastWriteTimeUtc.HasValue) {
+                            if ( data.LastWriteTimeUtc.HasValue ) {
                                 destination.Info.CreationTime = data.LastWriteTimeUtc.Value;
                             }
                         }
@@ -844,26 +856,26 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                     var computer = new Computer();
 
-                    computer.FileSystem.MoveFile(sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing);
+                    computer.FileSystem.MoveFile( sourceFileName: this.FullPathWithFileName, destinationFileName: destination.FullPathWithFileName, showUI: UIOption.AllDialogs, onUserCancel: UICancelOption.DoNothing );
 
                     return destination.Size();
                 }
-                catch (FileNotFoundException exception) {
-                    return Task.FromException<Int64>(exception).Result;
+                catch ( FileNotFoundException exception ) {
+                    return Task.FromException<Int64>( exception ).Result;
                 }
-                catch (DirectoryNotFoundException exception) {
-                    return Task.FromException<Int64>(exception).Result;
+                catch ( DirectoryNotFoundException exception ) {
+                    return Task.FromException<Int64>( exception ).Result;
                 }
-                catch (PathTooLongException exception) {
-                    return Task.FromException<Int64>(exception).Result;
+                catch ( PathTooLongException exception ) {
+                    return Task.FromException<Int64>( exception ).Result;
                 }
-                catch (IOException exception) {
-                    return Task.FromException<Int64>(exception).Result;
+                catch ( IOException exception ) {
+                    return Task.FromException<Int64>( exception ).Result;
                 }
-                catch (UnauthorizedAccessException exception) {
-                    return Task.FromException<Int64>(exception).Result;
+                catch ( UnauthorizedAccessException exception ) {
+                    return Task.FromException<Int64>( exception ).Result;
                 }
-            }, token);
+            }, token );
 
             return jane;
         }
@@ -876,7 +888,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         public String Name() => this.FileName();
 
         public async Task<String> ReadStringAsync() {
-            using (var reader = new StreamReader(this.FullPathWithFileName)) {
+            using ( var reader = new StreamReader( this.FullPathWithFileName ) ) {
                 return await reader.ReadToEndAsync().NoUI();
             }
         }
@@ -897,35 +909,35 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public Boolean SameContent([CanBeNull] Document right) {
+        public Boolean SameContent( [CanBeNull] Document right ) {
 
-            if (right == null || !this.Exists() || !right.Exists()) {
+            if ( right == null || !this.Exists() || !right.Exists() ) {
                 return false;
             }
 
-            return this.Length == right.Length && this.AsBytes().SequenceEqual(second: right.AsBytes());
+            return this.Length == right.Length && this.AsBytes().SequenceEqual( second: right.AsBytes() );
         }
 
-        public void SetCreationTime(DateTime when, CancellationToken cancellationToken) {
-            IOExtensions.ReTry(ioFunction: () => {
-                if (!this.Exists()) {
+        public void SetCreationTime( DateTime when, CancellationToken cancellationToken ) {
+            IOExtensions.ReTry( ioFunction: () => {
+                if ( !this.Exists() ) {
                     return false;
                 }
 
                 this.Info.IsReadOnly = false;
 
                 return !this.Info.IsReadOnly;
-            }, tryFor: Seconds.Five, token: cancellationToken);
+            }, tryFor: Seconds.Five, token: cancellationToken );
 
-            IOExtensions.ReTry(ioFunction: () => {
-                if (!this.Exists()) {
+            IOExtensions.ReTry( ioFunction: () => {
+                if ( !this.Exists() ) {
                     return false;
                 }
 
-                File.SetCreationTime(this.FullPathWithFileName, creationTime: when);
+                File.SetCreationTime( this.FullPathWithFileName, creationTime: when );
 
                 return true;
-            }, tryFor: Seconds.Five, token: cancellationToken);
+            }, tryFor: Seconds.Five, token: cancellationToken );
         }
 
         /// <summary>
@@ -938,21 +950,21 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public StreamReader StreamReader() => new StreamReader(File.OpenRead(this.FullPathWithFileName));
+        public StreamReader StreamReader() => new StreamReader( File.OpenRead( this.FullPathWithFileName ) );
 
         /// <summary>
         ///     Open the file for writing and return a <see cref="StreamWriter" />.
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public StreamWriter StreamWriter() => new StreamWriter(File.OpenWrite(this.FullPathWithFileName));
+        public StreamWriter StreamWriter() => new StreamWriter( File.OpenWrite( this.FullPathWithFileName ) );
 
         /// <summary>
         ///     Return this <see cref="Document" /> as a JSON string.
         /// </summary>
         /// <returns></returns>
         public async Task<String> ToJSON() {
-            using (var reader = new StreamReader(this.FullPathWithFileName)) {
+            using ( var reader = new StreamReader( this.FullPathWithFileName ) ) {
                 return await reader.ReadToEndAsync().NoUI();
             }
         }
@@ -969,12 +981,12 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <param name="tryFor"></param>
         /// <returns></returns>
-        public Boolean? TryDeleting(TimeSpan tryFor) {
+        public Boolean? TryDeleting( TimeSpan tryFor ) {
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
 
             try {
-                if (!this.Exists()) {
+                if ( !this.Exists() ) {
                     return true;
                 }
 
@@ -983,19 +995,19 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 return !this.Exists();
             }
-            catch (DirectoryNotFoundException) { }
-            catch (PathTooLongException) { }
-            catch (IOException) {
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) {
 
                 // IOExcception is thrown when the file is in use by any process.
-                if (stopwatch.Elapsed <= tryFor) {
-                    Thread.CurrentThread.Fraggle(timeSpan: Seconds.One);
+                if ( stopwatch.Elapsed <= tryFor ) {
+                    Thread.CurrentThread.Fraggle( timeSpan: Seconds.One );
 
                     goto TryAgain;
                 }
             }
-            catch (UnauthorizedAccessException) { }
-            catch (ArgumentNullException) { }
+            catch ( UnauthorizedAccessException ) { }
+            catch ( ArgumentNullException ) { }
             finally {
                 stopwatch.Stop();
             }
@@ -1008,31 +1020,27 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile([NotNull] Uri destination) {
-            if (destination == null) {
-                throw new ArgumentNullException(nameof(destination));
+        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( nameof( destination ) );
             }
 
-            if (!destination.IsWellFormedOriginalString()) {
-                return (new ArgumentException($"Destination address '{destination.OriginalString}' is not well formed.", nameof(destination)), null);
+            if ( !destination.IsWellFormedOriginalString() ) {
+                return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null );
             }
 
             try {
-                using (var webClient = new WebClient()) {
-                    await webClient.UploadFileTaskAsync(destination, this.FullPathWithFileName).NoUI();
+                using ( var webClient = new WebClient() ) {
+                    await webClient.UploadFileTaskAsync( destination, this.FullPathWithFileName ).NoUI();
 
-                    return (null, webClient.ResponseHeaders);
+                    return ( null, webClient.ResponseHeaders );
                 }
             }
-            catch (Exception exception) {
-                return (exception, null);
+            catch ( Exception exception ) {
+                return ( exception, null );
             }
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
+
 }

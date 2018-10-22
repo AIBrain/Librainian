@@ -49,6 +49,7 @@ namespace Librainian.Database.MMF {
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Text;
 	using JetBrains.Annotations;
+	using Logging;
 	using Magic;
 
 	public class MemMapCache<T> : ABetterClassDispose {

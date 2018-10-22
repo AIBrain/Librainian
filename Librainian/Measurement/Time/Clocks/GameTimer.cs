@@ -48,6 +48,7 @@ namespace Librainian.Measurement.Time.Clocks
     using System;
     using System.Threading;
     using System.Timers;
+    using Logging;
     using Timer = System.Timers.Timer;
 
     /// <summary>

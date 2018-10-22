@@ -52,6 +52,7 @@ namespace Librainian.ComputerSystem.FileSystem
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Linq;
+    using Logging;
 
     /// <summary>
     ///     For copying a <see cref="Chunk" /> of a <see cref="Document" /> into another <see cref="Document" />.
@@ -161,9 +162,8 @@ namespace Librainian.ComputerSystem.FileSystem
 
                 foreach (var l in GoodBufferSizes.OrderByDescending(pair => pair.Value).Select(pair => pair.Value))
                 {
-                    try
-                    {
-                        Logging.Garbage();
+                    try {
+                        GC.Collect( 2, GCCollectionMode.Forced, true );
                         this.ReadWriteBuffer = new Byte[l];
 
                         return;

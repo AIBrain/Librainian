@@ -50,6 +50,7 @@ namespace Librainian.Internet
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     /// <summary>
@@ -151,7 +152,7 @@ namespace Librainian.Internet
         {
             if (webClient == null) { throw new ArgumentNullException(paramName: nameof(webClient)); }
 
-            if (address.IsEmpty) { throw new ArgumentEmptyException(message: "Value cannot be null or whitespace.", paramName: nameof(address)); }
+            if (address.IsEmpty()) { throw new ArgumentEmptyException(message: "Value cannot be null or whitespace.", paramName: nameof(address)); }
 
             return OpenReadTask(webClient, new Uri(address));
         }
@@ -200,7 +201,7 @@ namespace Librainian.Internet
 
             if (address == null) { throw new ArgumentNullException(paramName: nameof(address)); }
 
-            if (method.IsEmpty) { throw new ArgumentEmptyException(message: "Value cannot be empty.", paramName: nameof(method)); }
+            if (method.IsEmpty()) { throw new ArgumentEmptyException(message: "Value cannot be empty.", paramName: nameof(method)); }
 
             var taskCompletionSource = new TaskCompletionSource<Stream>(address);
 

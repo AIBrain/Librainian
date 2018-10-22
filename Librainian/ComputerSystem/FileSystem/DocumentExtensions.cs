@@ -48,19 +48,24 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Threading;
 
     public static class DocumentExtensions {
 
+        /// <summary>
+        /// 16mb
+        /// </summary>
         public static UInt32 BufferSize { get; } = 0x1000000;
 
+        /*
         /// <summary>
         ///     The characters not allowed in file names.
         /// </summary>
         [NotNull]
         public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
+        */
 
         private static async Task InternalCopyWithProgress([NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer,
             Single bytesToBeCopied, Stopwatch begin) {
@@ -81,6 +86,7 @@ namespace Librainian.ComputerSystem.FileSystem {
             }
         }
 
+        /*
         /// <summary>
         ///     Returns the <paramref name="filename" /> with any invalid chars removed.
         /// </summary>
@@ -96,6 +102,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
             return sb.ToString();
         }
+        */
 
         /*
 
@@ -194,6 +201,36 @@ namespace Librainian.ComputerSystem.FileSystem {
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
+
+        /// <summary>
+        /// String of invalid characters in a path or filename.
+        /// </summary>
+        [NotNull]
+        public static String InvalidCharacters { get; } = new String( Path.GetInvalidPathChars().Union( Path.GetInvalidFileNameChars() ).ToArray() );
+
+        [NotNull]
+        public static Regex RegexForInvalidCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidCharacters )}]" );
+
+        /// <summary>
+        /// Returns the full path and file, any invalid filename characters replaced with <paramref name="replacement"/>. (Defaults to a single space.)
+        /// </summary>
+        /// <param name="fullpath"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String CleanFileAndPath( [NotNull] this String fullpath, [CanBeNull] String replacement = " ") {
+            if ( String.IsNullOrWhiteSpace( value: fullpath ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpath ) );
+            }
+
+            if ( replacement == null ) {
+                replacement = String.Empty;
+            }
+
+            return RegexForInvalidCharacters.Replace(fullpath, replacement);
+
+        }
+
     }
 
     /*

@@ -51,6 +51,7 @@ namespace Librainian.Magic
     using Ninject.Modules;
     using System;
     using System.Diagnostics;
+    using Logging;
 
     public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer
     {
@@ -114,7 +115,7 @@ namespace Librainian.Magic
             this.Kernel.Load(AppDomain.CurrentDomain.GetAssemblies());
 
             //Log.After( $"loaded {this.Kernel.GetModules().Count()} assemblies." );
-            $"{this.Kernel.GetModules().ToStrings()}".WriteLine();
+            $"{this.Kernel.GetModules().ToStrings()}".Info();
         }
 
         /// <summary>

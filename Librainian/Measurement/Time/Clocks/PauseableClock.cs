@@ -44,6 +44,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	using System;
 	using System.Timers;
 	using JetBrains.Annotations;
+	using Logging;
 	using Newtonsoft.Json;
 	using Numerics;
 

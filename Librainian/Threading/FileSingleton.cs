@@ -46,6 +46,7 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using FluentAssertions;
 	using JetBrains.Annotations;
+	using Logging;
 	using Magic;
 	using Measurement.Time;
 	using Security;

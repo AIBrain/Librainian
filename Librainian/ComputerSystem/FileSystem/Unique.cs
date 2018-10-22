@@ -53,6 +53,7 @@ namespace Librainian.ComputerSystem.FileSystem
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     /// <summary>
@@ -98,7 +99,7 @@ namespace Librainian.ComputerSystem.FileSystem
         /// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
         protected Unique(TrimmedString location)
         {
-            if (location.IsEmpty) { throw new ArgumentEmptyException("Location cannot be null or whitespace."); }
+            if (location.IsEmpty()) { throw new ArgumentEmptyException("Location cannot be null or whitespace."); }
 
             if (Uri.TryCreate(location, UriKind.Absolute, out var uri)) { this.U = uri.AbsoluteUri; }
             else { throw new UriFormatException($"Unable to parse the String `{location}` into a Uri"); }
@@ -125,7 +126,7 @@ namespace Librainian.ComputerSystem.FileSystem
 
         public static Boolean TryCreate(TrimmedString location, [NotNull] out Unique unique)
         {
-            if (!location.IsEmpty)
+            if (!location.IsEmpty())
             {
                 try
                 {

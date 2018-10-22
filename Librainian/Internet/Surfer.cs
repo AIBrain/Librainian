@@ -51,6 +51,7 @@ namespace Librainian.Internet {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
+	using Logging;
 	using Magic;
 
 	public class Surfer : ABetterClassDispose {
@@ -149,7 +150,7 @@ namespace Librainian.Internet {
 				return this.Surf( address: uri );
 			}
 			catch ( UriFormatException ) {
-				String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).WriteLine();
+				String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).Info();
 
 				return false;
 			}
@@ -175,7 +176,7 @@ namespace Librainian.Internet {
 
 		internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
 			if ( e.UserState is Uri userState ) {
-				String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).WriteLine();
+				String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).Info();
 				this._pastUrls.Add( userState );
 				this.DownloadInProgress = false;
 			}
@@ -192,7 +193,7 @@ namespace Librainian.Internet {
 				if ( !this._urls.TryDequeue( result: out var address ) ) { return; }
 
 				this.DownloadInProgress = true;
-				$"Surf(): Starting download: {address.AbsoluteUri}".WriteLine();
+				$"Surf(): Starting download: {address.AbsoluteUri}".Info();
 				this._webclient.DownloadStringAsync( address: address, userToken: address );
 			} ).ContinueWith( t => {
 				if ( this._urls.Any() ) { this.StartNextDownload(); }

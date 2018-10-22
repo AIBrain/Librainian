@@ -43,6 +43,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
 	using System;
 	using System.Collections.Concurrent;
+	using Logging;
 	using Newtonsoft.Json;
 
 	[JsonObject]

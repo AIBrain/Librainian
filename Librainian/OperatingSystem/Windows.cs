@@ -58,6 +58,7 @@ namespace Librainian.OperatingSystem
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Logging;
     using TimeoutException = System.ServiceProcess.TimeoutException;
 
     public static class Windows
@@ -114,44 +115,44 @@ namespace Librainian.OperatingSystem
         /// <returns></returns>
         public static void CleanUpPATH(Boolean reportToConsole = false)
         {
-            if (reportToConsole) { "Attempting to verify and fix the PATH environment.".WriteLine(); }
+            if (reportToConsole) { "Attempting to verify and fix the PATH environment.".Info(); }
 
             var currentPath = GetCurrentPATH().Trim();
 
             if (String.IsNullOrWhiteSpace(currentPath))
             {
-                "Unable to obtain the current PATH variable.".Error();
+                "Unable to obtain the current PATH variable.".Log();
 
-                if (reportToConsole) { "Exiting subroutine. No changes have been made to the PATH variable.".WriteLine(); }
+                if (reportToConsole) { "Exiting subroutine. No changes have been made to the PATH variable.".Info(); }
 
                 return;
             }
 
             var justpaths = currentPath.Split(separator: PathSeparator, options: StringSplitOptions.RemoveEmptyEntries).ToHashSet();
 
-            if (reportToConsole) { $"Found PATH list with {justpaths.Count} entries.".WriteLine(); }
+            if (reportToConsole) { $"Found PATH list with {justpaths.Count} entries.".Info(); }
 
             var pathsData = new ConcurrentDictionary<String, Folder>(concurrencyLevel: Environment.ProcessorCount, capacity: justpaths.Count);
 
             foreach (var s in justpaths) { pathsData[s] = new Folder(fullPath: s); }
 
-            if (reportToConsole) { "Examining entries...".WriteLine(); }
+            if (reportToConsole) { "Examining entries...".Info(); }
 
             foreach (var pair in pathsData.Where(pair => !pair.Value.Exists()))
             {
-                if (pathsData.TryRemove(pair.Key, out var dummy) && reportToConsole) { $"Removing nonexistent folder `{dummy.FullName}` from PATH".WriteLine(); }
+                if (pathsData.TryRemove(pair.Key, out var dummy) && reportToConsole) { $"Removing nonexistent folder `{dummy.FullName}` from PATH".Info(); }
             }
 
             foreach (var pair in pathsData.Where(pair => !pair.Value.GetFolders("*").Any() && !pair.Value.GetDocuments().Any()))
             {
-                if (pathsData.TryRemove(pair.Key, out var dummy) && reportToConsole) { $"Removing empty folder {dummy.FullName} from PATH".WriteLine(); }
+                if (pathsData.TryRemove(pair.Key, out var dummy) && reportToConsole) { $"Removing empty folder {dummy.FullName} from PATH".Info(); }
             }
 
-            if (reportToConsole) { "Rebuilding PATH entries...".WriteLine(); }
+            if (reportToConsole) { "Rebuilding PATH entries...".Info(); }
 
             var rebuiltPath = pathsData.Values.OrderByDescending(info => info.FullName.Length).Select(info => info.FullName).ToStrings(";");
 
-            if (reportToConsole) { "Applying new PATH entries...".WriteLine(); }
+            if (reportToConsole) { "Applying new PATH entries...".Info(); }
 
             Environment.SetEnvironmentVariable(variable: PATH, rebuiltPath, EnvironmentVariableTarget.Machine);
         }
@@ -262,13 +263,13 @@ namespace Librainian.OperatingSystem
 
                     if (null == process)
                     {
-                        "failure.".WriteLine();
+                        "failure.".Info();
 
                         return false;
                     }
 
                     process.WaitForExit(milliseconds: (Int32)Minutes.One.ToSeconds().ToMilliseconds().Value);
-                    "success.".WriteLine();
+                    "success.".Info();
 
                     return true;
                 }
@@ -307,13 +308,13 @@ namespace Librainian.OperatingSystem
         [CanBeNull]
         public static Document FindDocument([NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null)
         {
-            if (!String.IsNullOrEmpty(okayMessage)) { $"Finding {fullname}...".Write(); }
+            if (!String.IsNullOrEmpty(okayMessage)) { $"Finding {fullname}...".Info(); }
 
             var mainDocument = new Document(fullPathWithFilename: fullname);
 
             if (mainDocument.Exists())
             {
-                if (!String.IsNullOrEmpty(okayMessage)) { okayMessage.WriteLine(); }
+                if (!String.IsNullOrEmpty(okayMessage)) { okayMessage.Info(); }
 
                 return mainDocument;
             }
@@ -328,7 +329,7 @@ namespace Librainian.OperatingSystem
         {
             if (String.IsNullOrWhiteSpace(fullname)) { throw new ArgumentException("Value cannot be null or whitespace.", nameof(fullname)); }
 
-            if (!String.IsNullOrEmpty(okayMessage)) { $"Finding {fullname}...".Write(); }
+            if (!String.IsNullOrEmpty(okayMessage)) { $"Finding {fullname}...".Info(); }
 
             var mainFolder = new Folder(fullPath: fullname);
 
@@ -339,7 +340,7 @@ namespace Librainian.OperatingSystem
                 return null;
             }
 
-            if (!String.IsNullOrEmpty(okayMessage)) { okayMessage.WriteLine(); }
+            if (!String.IsNullOrEmpty(okayMessage)) { okayMessage.Info(); }
 
             return mainFolder;
         }
@@ -419,7 +420,7 @@ namespace Librainian.OperatingSystem
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running irfanview command '{proc.Arguments}'...".WriteLine();
+                    $"Running irfanview command '{proc.Arguments}'...".Info();
 
                     return Process.Start(startInfo: proc);
                 }

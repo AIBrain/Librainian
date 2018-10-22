@@ -56,6 +56,7 @@ namespace Librainian.Measurement.Time
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Constants = Measurement.Constants;
 
     public static class TimeExtensions
@@ -325,9 +326,9 @@ namespace Librainian.Measurement.Time
         {
             if (AverageDateTimePrecision.HasValue) { return AverageDateTimePrecision.Value; }
 
-            $"Performing {Environment.ProcessorCount} timeslice calibrations.".WriteLine();
+            $"Performing {Environment.ProcessorCount} timeslice calibrations.".Info();
             AverageDateTimePrecision = new Milliseconds(0.To(Environment.ProcessorCount).Select(i => GetDateTimePrecision()).Average(span => span.TotalMilliseconds));
-            $"Average datetime precision is {(AverageDateTimePrecision ?? Measurement.Time.Milliseconds.One).Simpler()}.".WriteLine();
+            $"Average datetime precision is {(AverageDateTimePrecision ?? Measurement.Time.Milliseconds.One).Simpler()}.".Info();
 
             return AverageDateTimePrecision ?? Measurement.Time.Milliseconds.One;
         }

@@ -60,6 +60,7 @@ namespace Librainian.Persistence {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using Logging;
 
     /// <summary>
     ///     <para>
@@ -239,12 +240,12 @@ namespace Librainian.Persistence {
         public IEnumerator<KeyValuePair<String, String>> GetEnumerator() => this.Items().GetEnumerator();
 
         public void Initialize() {
-            Logging.Enter();
+            
             this.Dictionary.Database.Should().NotBeNull();
 
             if (this.Dictionary.Database.ToString().IsNullOrWhiteSpace()) { throw new DirectoryNotFoundException($"Unable to find or create the folder `{this.Folder.FullName}`."); }
 
-            Logging.Exit();
+            
         }
 
         /// <summary>

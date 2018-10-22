@@ -48,6 +48,7 @@ namespace Librainian.Speech {
     using System.Globalization;
     using System.Linq;
     using System.Speech.Recognition;
+    using Logging;
 
     public class SpeechInput {
 
@@ -69,7 +70,7 @@ namespace Librainian.Speech {
                 catch (InvalidOperationException) { }
 
                 try { speechRecognitionEngine.SetInputToDefaultAudioDevice(); }
-                catch (InvalidOperationException) { "Warning: No microphone found.".Warning(); }
+                catch (InvalidOperationException) { "Warning: No microphone found.".Warn(); }
 
                 try { speechRecognitionEngine.RecognizeAsync(RecognizeMode.Multiple); }
                 catch (InvalidOperationException) { }

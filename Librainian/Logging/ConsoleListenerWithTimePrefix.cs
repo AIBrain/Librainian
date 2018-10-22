@@ -39,12 +39,12 @@
 //
 // Project: "Librainian", "ConsoleListenerWithTimePrefix.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Logging {
 
-	using System;
-	using System.Diagnostics;
+    using System;
+    using System.Diagnostics;
 
-	public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
+    public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
 
 		/// <summary>
 		///     Gets a value indicating whether the trace listener is thread safe.

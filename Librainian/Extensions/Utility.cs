@@ -47,8 +47,9 @@ namespace Librainian.Extensions {
 	using System.Security;
 	using System.Threading;
 	using JetBrains.Annotations;
+	using Logging;
 
-	public static class Utility {
+    public static class Utility {
 
 		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
@@ -173,7 +174,7 @@ namespace Librainian.Extensions {
 			lock ( ConsoleOutputSynch ) {
 				if ( parms?.Any() != true ) {
 
-					//text.WriteLine();
+					//text.Info();
 					var oldFore = Console.ForegroundColor;
 					var oldBack = Console.BackgroundColor;
 					Console.ForegroundColor = foreColor; //TODO d.r.y.
@@ -184,7 +185,7 @@ namespace Librainian.Extensions {
 				}
 				else {
 
-					//String.Format( text, parms ).WriteLine();
+					//String.Format( text, parms ).Info();
 					var oldFore = Console.ForegroundColor;
 					var oldBack = Console.BackgroundColor;
 					Console.ForegroundColor = foreColor;
@@ -200,7 +201,7 @@ namespace Librainian.Extensions {
 			lock ( ConsoleOutputSynch ) {
 				if ( parms?.Any() != true ) {
 
-					//text.WriteLine();
+					//text.Info();
 					var oldFore = Console.ForegroundColor;
 					var oldBack = Console.BackgroundColor;
 					Console.ForegroundColor = foreColor;
@@ -211,7 +212,7 @@ namespace Librainian.Extensions {
 				}
 				else {
 
-					//String.Format( text, parms ).WriteLine();
+					//String.Format( text, parms ).Info();
 					var oldFore = Console.ForegroundColor;
 					var oldBack = Console.BackgroundColor;
 					Console.ForegroundColor = foreColor;

@@ -53,6 +53,8 @@ namespace Librainian.Threading
     using System.Threading;
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
+    using Logging;
+    using NLog;
     using Timer = System.Timers.Timer;
 
     /// <summary>
@@ -60,6 +62,8 @@ namespace Librainian.Threading
     /// </summary>
     public static class TaskExtensions2
     {
+
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other

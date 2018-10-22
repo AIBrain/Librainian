@@ -66,6 +66,7 @@ namespace Librainian.Parsing {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Xml;
+    using Logging;
     using Threading;
     using Formatting = Newtonsoft.Json.Formatting;
 

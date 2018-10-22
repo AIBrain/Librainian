@@ -45,6 +45,7 @@ namespace Librainian.Maths {
 	using System.Diagnostics;
 	using System.Threading;
 	using JetBrains.Annotations;
+	using Logging;
 	using Newtonsoft.Json;
 	using Numerics;
 

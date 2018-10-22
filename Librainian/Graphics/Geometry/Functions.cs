@@ -47,6 +47,7 @@ namespace Librainian.Graphics.Geometry {
 	using System.Numerics;
 	using DDD;
 	using JetBrains.Annotations;
+	using Logging;
 
 	public static class Functions {
 
@@ -145,7 +146,7 @@ namespace Librainian.Graphics.Geometry {
 		/// <returns></returns>
 		public static Boolean CalculateLineLineIntersection( this CoordinateF line1Point1, CoordinateF line1Point2, CoordinateF line2Point1, CoordinateF line2Point2, out CoordinateF resultSegmentPoint1,
 			out CoordinateF resultSegmentPoint2 ) {
-			Logging.Break();
+			"".Break();
 
 			// Algorithm is ported from the C algorithm of Paul Bourke at http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
 			resultSegmentPoint1 = CoordinateF.Empty;

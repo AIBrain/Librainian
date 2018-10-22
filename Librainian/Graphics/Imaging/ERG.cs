@@ -55,6 +55,7 @@ namespace Librainian.Graphics.Imaging
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     /// <summary> Experimental Resilient Graphics </summary>

@@ -52,6 +52,7 @@ namespace Librainian.Internet
     using System.Net.Cache;
     using System.Text;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     public static class Internet

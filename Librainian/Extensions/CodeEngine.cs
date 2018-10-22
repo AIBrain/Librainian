@@ -50,6 +50,7 @@ namespace Librainian.Extensions
     using System.CodeDom.Compiler;
     using System.IO;
     using System.Reflection;
+    using Logging;
 
     public class CodeEngine
     {
@@ -124,13 +125,6 @@ namespace Coding
     }
 }";
 
-        ///// <summary>
-        ///// system.windows.forms.dll
-        ///// </summary>
-        ///// <param name="dllname"></param>
-        //public void AddReference( String dllname ) {
-        //    this.codeCompileUnit.ReferencedAssemblies.Add( dllname );
-        //}
         /// <summary>
         ///     Prepare the assembly for Run()
         /// </summary>
@@ -146,14 +140,14 @@ namespace Coding
 
                 if (this._compilerResults.Errors.HasErrors)
                 {
-                    Logging.Break();
+                    "".Break();
 
                     return false;
                 }
 
                 if (!this._compilerResults.Errors.HasWarnings) { return true; }
 
-                Logging.Break();
+                "".Break();
 
                 return true;
             }
@@ -195,19 +189,19 @@ namespace Coding
 
                 if (this._compilerResults.Errors.HasErrors)
                 {
-                    Logging.Break();
+                    "".Break();
 
                     return null;
                 }
 
-                if (this._compilerResults.Errors.HasWarnings) { Logging.Break(); }
+                if (this._compilerResults.Errors.HasWarnings) { "".Break(); }
 
                 var loAssembly = this._compilerResults.CompiledAssembly;
                 var loObject = loAssembly.CreateInstance("Coding.CodeEngine");
 
                 if (loObject == null)
                 {
-                    Logging.Break();
+                    "".Break();
 
                     return null;
                 }

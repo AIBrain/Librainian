@@ -60,6 +60,7 @@ namespace Librainian.Graphics
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
+    using Logging;
 
     //using Microsoft.VisualStudio.TestTools.UITesting;
 
@@ -1029,9 +1030,9 @@ namespace Librainian.Graphics
                 if (bestGuesses.Any())
                 {
 #if DEBUG
-                    if (justName.StartsWith("2015") && bestGuesses.Min().Year != 2015) { Logging.Break(); }
+                    if (justName.StartsWith("2015") && bestGuesses.Min().Year != 2015) { "".Break(); }
 
-                    if (justName.StartsWith("2016") && bestGuesses.Min().Year != 2016) { Logging.Break(); }
+                    if (justName.StartsWith("2016") && bestGuesses.Min().Year != 2016) { "".Break(); }
 #endif
 
                     return bestGuesses.Min();
@@ -1111,9 +1112,9 @@ namespace Librainian.Graphics
                 if (bestGuesses.Any())
                 {
 #if DEBUG
-                    if (justName.StartsWith("2015") && bestGuesses.Min().Year != 2015) { Logging.Break(); }
+                    if (justName.StartsWith("2015") && bestGuesses.Min().Year != 2015) { "".Break(); }
 
-                    if (justName.StartsWith("2016") && bestGuesses.Min().Year != 2016) { Logging.Break(); }
+                    if (justName.StartsWith("2016") && bestGuesses.Min().Year != 2016) { "".Break(); }
 #endif
 
                     return bestGuesses.Min();

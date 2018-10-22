@@ -65,7 +65,9 @@ namespace Librainian.Parsing {
         /// </summary>
         public static readonly TrimmedString Empty = new TrimmedString(String.Empty);
 
-        public Boolean IsEmpty => this.Equals(Empty) || !this.Value.Any();
+        public Boolean IsEmpty() => !this.Value.Length.Any() || !this.Value.Any() || this.Equals(Empty);
+
+        public Boolean IsNotEmpty() => this.Value.Length.Any() || this.Value.Any() || !this.Equals(Empty);
 
         [JsonProperty]
         [NotNull]
@@ -174,7 +176,7 @@ namespace Librainian.Parsing {
 
         [DebuggerStepThrough]
         public void ThrowIfEmpty() {
-            if (this.Value == null || this.IsEmpty) { throw new ArgumentEmptyException("Value was empty."); }
+            if (this.Value == null || this.IsEmpty()) { throw new ArgumentEmptyException("Value was empty."); }
         }
 
         [DebuggerStepThrough]

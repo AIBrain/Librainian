@@ -45,6 +45,7 @@ namespace Librainian.Persistence {
     using Microsoft.Win32;
     using System;
     using System.Windows.Forms;
+    using Logging;
 
     public static class CurrentUser {
 
@@ -60,7 +61,7 @@ namespace Librainian.Persistence {
         ///     Current user.
         /// </summary>
         [NotNull]
-        public static RegistryKey HKCU => Registry.CurrentUser;
+        public static RegistryKey HKCU => Microsoft.Win32.Registry.CurrentUser;
 
         /// <summary>
         ///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.

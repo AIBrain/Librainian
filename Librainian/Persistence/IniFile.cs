@@ -53,6 +53,7 @@ namespace Librainian.Persistence {
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Logging;
 
     /// <summary>
     ///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.

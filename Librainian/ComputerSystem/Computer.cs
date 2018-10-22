@@ -50,6 +50,7 @@ namespace Librainian.ComputerSystem {
 	using System.Text;
 	using FluentAssertions;
 	using JetBrains.Annotations;
+	using Logging;
 	using Measurement.Time;
 	using Microsoft.VisualBasic.Devices;
 

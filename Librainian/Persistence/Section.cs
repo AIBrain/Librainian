@@ -52,6 +52,7 @@ namespace Librainian.Persistence
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     /// <summary>

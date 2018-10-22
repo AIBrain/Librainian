@@ -48,6 +48,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using JetBrains.Annotations;
+	using Logging;
 	using Measurement.Time;
 	using OperatingSystem;
 
@@ -223,7 +224,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 			while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
 				--counter;
-				$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".WriteLine();
+				$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
 				Thread.Sleep( Seconds.One );
 			}
 

@@ -64,6 +64,7 @@ namespace Librainian.Persistence {
     using Converters;
     using FluentAssertions;
     using JetBrains.Annotations;
+    using Logging;
     using Measurement.Time;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
@@ -310,7 +311,7 @@ namespace Librainian.Persistence {
                     if ( dir.Exists ) {
                         var result = dir.SetCompression( true );
 
-                        if ( result ) { $"Enabled compression in IsolatedStorage @ {path}".WriteLine(); }
+                        if ( result ) { $"Enabled compression in IsolatedStorage @ {path}".Info(); }
 
                         return result;
                     }

@@ -50,6 +50,7 @@ namespace Librainian.Internet
     using System.Net.Cache;
     using System.Threading;
     using System.Windows.Forms;
+    using Logging;
 
     public class Http
     {
@@ -93,7 +94,7 @@ namespace Librainian.Internet
         {
             if (!result.IsCompleted) { return; }
 
-            (result.AsyncState is HttpWebRequest).BreakIfFalse(); //heh
+            //(result.AsyncState is HttpWebRequest).BreakIfFalse(); //heh
             var request = (HttpWebRequest)result.AsyncState;
 
             var response = (HttpWebResponse)request.GetResponse();

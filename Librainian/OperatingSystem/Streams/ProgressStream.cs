@@ -47,6 +47,7 @@ namespace Librainian.OperatingSystem.Streams
     using System;
     using System.ComponentModel;
     using System.IO;
+    using Logging;
 
     public sealed class ProgressStream : ContainerStream
     {
@@ -61,7 +62,7 @@ namespace Librainian.OperatingSystem.Streams
         {
             if (stream.CanRead && stream.CanSeek && stream.Length > 0) { return; }
 
-            Logging.Break();
+            stream.Break();
 
             throw new ArgumentException("stream");
         }

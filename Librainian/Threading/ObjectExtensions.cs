@@ -37,10 +37,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "ObjectExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
+// Project: "Librainian", "ObjectExtensions.cs" was last formatted by Protiguous on 2018/10/11 at 5:07 PM.
 
-namespace Librainian.Threading
-{
+namespace Librainian.Threading {
 
     using JetBrains.Annotations;
     using System;
@@ -50,19 +49,20 @@ namespace Librainian.Threading
     /// <summary>
     ///     Code pulled from https://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs
     /// </summary>
-    public static class ObjectExtensions
-    {
+    public static class ObjectExtensions {
 
         private static readonly MethodInfo CloneMethod = typeof(Object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
         private static void CopyFields(Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect,
-            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, [CanBeNull] Func<FieldInfo, Boolean> filter = null)
-        {
-            foreach (var fieldInfo in typeToReflect.GetFields(bindingFlags))
-            {
-                if (filter?.Invoke(fieldInfo) == false) { continue; }
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, [CanBeNull] Func<FieldInfo, Boolean> filter = null) {
+            foreach (var fieldInfo in typeToReflect.GetFields(bindingFlags)) {
+                if (filter?.Invoke(fieldInfo) == false) {
+                    continue;
+                }
 
-                if (IsPrimitive(fieldInfo.FieldType)) { continue; }
+                if (IsPrimitive(fieldInfo.FieldType)) {
+                    continue;
+                }
 
                 var originalFieldValue = fieldInfo.GetValue(originalObject);
                 var clonedFieldValue = InternalCopy(originalFieldValue, visited);
@@ -70,26 +70,31 @@ namespace Librainian.Threading
             }
         }
 
-        private static Object InternalCopy([CanBeNull] Object originalObject, IDictionary<Object, Object> visited)
-        {
-            if (originalObject == null) { return null; }
+        private static Object InternalCopy([CanBeNull] Object originalObject, IDictionary<Object, Object> visited) {
+            if (originalObject == null) {
+                return null;
+            }
 
             var typeToReflect = originalObject.GetType();
 
-            if (IsPrimitive(typeToReflect)) { return originalObject; }
+            if (IsPrimitive(typeToReflect)) {
+                return originalObject;
+            }
 
-            if (visited.ContainsKey(originalObject)) { return visited[originalObject]; }
+            if (visited.ContainsKey(originalObject)) {
+                return visited[originalObject];
+            }
 
-            if (typeof(Delegate).IsAssignableFrom(typeToReflect)) { return null; }
+            if (typeof(Delegate).IsAssignableFrom(typeToReflect)) {
+                return null;
+            }
 
             var cloneObject = CloneMethod.Invoke(originalObject, null);
 
-            if (typeToReflect.IsArray)
-            {
+            if (typeToReflect.IsArray) {
                 var arrayType = typeToReflect.GetElementType();
 
-                if (IsPrimitive(arrayType) == false)
-                {
+                if (IsPrimitive(arrayType) == false) {
                     var clonedArray = (Array)cloneObject;
                     clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited), indices));
                 }
@@ -102,9 +107,10 @@ namespace Librainian.Threading
             return cloneObject;
         }
 
-        private static void RecursiveCopyBaseTypePrivateFields(Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect)
-        {
-            if (null == typeToReflect.BaseType) { return; }
+        private static void RecursiveCopyBaseTypePrivateFields(Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect) {
+            if (null == typeToReflect.BaseType) {
+                return;
+            }
 
             RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect.BaseType);
             CopyFields(originalObject, visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate);
@@ -119,11 +125,34 @@ namespace Librainian.Threading
 
         public static T Copy<T>(this T original) => (T)Copy((Object)original);
 
-        public static Boolean IsPrimitive([NotNull] this Type type)
-        {
-            if (type == typeof(String)) { return true; }
+        [CanBeNull]
+        public static Object GetPrivateFieldValue<T>([NotNull] this T instance, [NotNull] String fieldName) {
+            if (instance == null) {
+                throw new ArgumentNullException(paramName: nameof(instance));
+            }
 
-            return type.IsValueType && type.IsPrimitive;
+            if (String.IsNullOrWhiteSpace(value: fieldName)) {
+                throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(fieldName));
+            }
+
+            var type = instance.GetType();
+            var info = type.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (info == null) {
+                throw new ArgumentException($"{type.FullName} does not contain the private field '{fieldName}'.");
+            }
+
+            return info.GetValue(instance);
+        }
+
+        public static Boolean IsPrimitive<T>([NotNull] this T type) {
+            if (type is String) {
+                return true;
+            }
+
+            var gt = type.GetType();
+
+            return gt.IsValueType && gt.IsPrimitive;
         }
     }
 }

@@ -50,6 +50,7 @@ namespace Librainian.Internet {
 	using System.Net.Security;
 	using System.Threading;
 	using Collections;
+	using Logging;
 	using Newtonsoft.Json;
 	using Parsing;
 

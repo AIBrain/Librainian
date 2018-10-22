@@ -50,18 +50,19 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.IO;
     using System.Linq;
     using System.Security.Permissions;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Threading;
 
     public static class FolderExtensions {
-
+        /*
         public static Char[] InvalidPathChars {
             get;
         } = Path.GetInvalidPathChars();
+        */
 
+        /*
         [NotNull]
         public static String CleanupForFolder([NotNull] this String foldername) {
             if (String.IsNullOrWhiteSpace(foldername)) {
@@ -76,20 +77,21 @@ namespace Librainian.ComputerSystem.FileSystem {
                 }
             }
 
-            /*
-            var idx = foldername.IndexOfAny( InvalidPathChars );
+            
+   //         var idx = foldername.IndexOfAny( InvalidPathChars );
 
-			while ( idx.Any() ) {
-                if ( idx.Any() ) {
-                    foldername = foldername.Remove( idx, 1 );
-                }
-				idx = foldername.IndexOfAny( InvalidPathChars );
-			}
-            return foldername.Trim();
-            */
+			//while ( idx.Any() ) {
+   //             if ( idx.Any() ) {
+   //                 foldername = foldername.Remove( idx, 1 );
+   //             }
+			//	idx = foldername.IndexOfAny( InvalidPathChars );
+			//}
+   //         return foldername.Trim();
+            
 
             return sb.ToString().Trim();
         }
+        */
 
         /// <summary>
         ///     Returns a list of all files copied.

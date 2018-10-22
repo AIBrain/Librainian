@@ -53,6 +53,7 @@ namespace Librainian.Collections {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Logging;
     using Threading;
 
     public static class Shufflings {
@@ -64,7 +65,7 @@ namespace Librainian.Collections {
         /// <param name="array">     </param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        [Obsolete("broken at the moment. seealso Shuffle<List>")]
+        [Obsolete("Bad, Broken, and untested. Just an idea to learn with. See also Shuffle<List>()")]
         public static void Shuffle<T>([NotNull] this T[] array, Int32 iterations = 1) {
             if (array == null) { throw new ArgumentNullException(nameof(array)); }
 
@@ -78,7 +79,7 @@ namespace Librainian.Collections {
                 iterations--;
 
                 // make a copy of all items
-                var bag = new ConcurrentBag<T>(collection: array);
+                var bag = new ConcurrentBag<T>( array );
                 bag.Should().NotBeEmpty();
                 var originalcount = bag.Count;
 
@@ -88,7 +89,7 @@ namespace Librainian.Collections {
 
                 // make some buckets.
                 var buckets = new List<ConcurrentBag<T>>(capacity: sqrt);
-                buckets.AddRange(collection: 1.To(end: sqrt).Select(selector: i => new ConcurrentBag<T>()));
+                buckets.AddRange(collection: 1.To(end: sqrt).Select( i => new ConcurrentBag<T>()));
 
                 // pull the items out of the bag, and put them into a random bucket each
                 T item;
@@ -98,7 +99,7 @@ namespace Librainian.Collections {
                     buckets[index: index].Add(item: item);
                 }
 
-                bag.Should().BeEmpty(because: "All items should have been taken out of the bag");
+                bag.Should().BeEmpty(because: "All items should have been taken out of the bag.");
 
                 while (bag.Count < originalcount) {
                     var index = 0.Next(maxValue: buckets.Count);
@@ -253,7 +254,7 @@ namespace Librainian.Collections {
                 Parallel.For(0, itemCount, parallelOptions, index => {
 
                     //so.. how badly will this fail? race conditions and all..
-                    //if we're locking, then is there any benefit to using Parallel.For?
+                    //and.. if we're locking, then is there *any* benefit to using Parallel.For?
 
                     if (leftTracker[index].TryEnterWriteLock(0) && rightTracker[index].TryEnterWriteLock(0)) {
                         try {

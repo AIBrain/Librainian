@@ -51,6 +51,7 @@ namespace Librainian.Speech {
     using System.Speech.Synthesis;
     using System.Threading;
     using System.Windows.Forms;
+    using Logging;
 
     public class SpeechOutput {
 

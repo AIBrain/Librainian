@@ -46,7 +46,6 @@ namespace Librainian.Collections {
 	using System.Collections.Generic;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using Parsing;
 
 	/// <summary>
 	///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
@@ -120,7 +119,7 @@ namespace Librainian.Collections {
 		public static void InternalTest( [NotNull] StringVersusGuid stringVersusGuid ) {
 			var guid = new Guid( g: @"bddc4fac-20b9-4365-97bf-c98e84697012" );
 			stringVersusGuid[ "AIBrain" ] = guid;
-			stringVersusGuid[ guid ].Is( right: "AIBrain" ).BreakIfFalse();
+			//stringVersusGuid[ guid ].Is( right: "AIBrain" ).BreakIfFalse();
 		}
 
 		public void Clear() {

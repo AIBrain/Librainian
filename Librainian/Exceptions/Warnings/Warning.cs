@@ -43,6 +43,7 @@ namespace Librainian.Exceptions.Warnings {
 
 	using System;
 	using System.Diagnostics;
+	using Logging;
 	using Parsing;
 
 	/// <inheritdoc />
@@ -54,10 +55,10 @@ namespace Librainian.Exceptions.Warnings {
 	[Serializable]
 	public class Warning : Exception {
 
-		private Warning() => Logging.Break();
+		private Warning() => "".Break();
 
-		public Warning( TrimmedString message ) : base( message ) => Logging.Break( message );
+		public Warning( TrimmedString message ) : base( message ) => message.Break(  );
 
-		public Warning( TrimmedString message, Exception inner ) : base( message, inner ) => Logging.Break( message );
+		public Warning( TrimmedString message, Exception inner ) : base( message, inner ) => message.Break(  );
 	}
 }
