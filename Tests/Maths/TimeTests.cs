@@ -42,12 +42,12 @@
 namespace LibrainianTests.Maths {
 
     using FluentAssertions;
-    using Librainian;
     using Librainian.Measurement.Frequency;
     using Librainian.Measurement.Time;
     using Librainian.Measurement.Time.Clocks;
     using NUnit.Framework;
     using System;
+    using Librainian.Logging;
 
     [TestFixture]
     public static class TimeTests {

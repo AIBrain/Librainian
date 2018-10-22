@@ -47,8 +47,8 @@ namespace LibrainianTests {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Librainian;
     using Librainian.Collections;
+    using Librainian.Logging;
     using Librainian.Maths;
     using Librainian.Measurement.Time;
     using Librainian.Measurement.Time.Clocks;
@@ -139,11 +139,11 @@ namespace LibrainianTests {
             const Int16 d = 3999;
             const Int16 e = 4000;
 
-            $"{a} {a.ToRoman().Should()}".WriteLine();
-            $"{b} {b.ToRoman()}".WriteLine();
-            $"{c} {c.ToRoman()}".WriteLine();
-            $"{d} {d.ToRoman()}".WriteLine();
-            $"{e} {e.ToRoman()}".WriteLine();
+            $"{a} {a.ToRoman().Should()}".Log();
+            $"{b} {b.ToRoman()}".Log();
+            $"{c} {c.ToRoman()}".Log();
+            $"{d} {d.ToRoman()}".Log();
+            $"{e} {e.ToRoman()}".Log();
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace LibrainianTests {
         public static void TestSimilarities() {
             var reasons = new ConcurrentQueue<String>();
             var test1 = "hi".Similarity( "hello", reasons );
-            $"test1 was {test1}".WriteLine();
+            $"test1 was {test1}".Log();
         }
 
         [Test]

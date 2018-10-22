@@ -44,7 +44,7 @@ namespace LibrainianTests {
 
 	using System.Threading;
 	using FluentAssertions;
-	using Librainian;
+	using Librainian.Logging;
 	using Librainian.Measurement.Time;
 	using NUnit.Framework;
 
