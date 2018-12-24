@@ -48,10 +48,13 @@ namespace Librainian.Internet.Wiki {
 
 	public class Wiktionary {
 
+		private static DateTime _lastWikiResponse = DateTime.MinValue;
+
 		/// <summary>Use String.Format to enter the search parameter.</summary>
 		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/wiki/Special:Search?search={0}&go=Go";
 
+		[NotNull]
 		private static XmlDocument BaseXMLResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
 		/// <summary>Returns true if Wiki has responded within the past 15 minutes.</summary>
@@ -70,8 +73,6 @@ namespace Librainian.Internet.Wiki {
 				return false;
 			}
 		}
-
-		private static DateTime _lastWikiResponse = DateTime.MinValue;
 
 		static Wiktionary() {
 			if ( DoesWikiRespond ) {

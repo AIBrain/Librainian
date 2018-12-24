@@ -104,7 +104,7 @@ namespace Librainian.ComputerSystem.FileSystem
                         // do nothing here on purpose
                     }
                 }
-                finally { NativeMethods.CloseHandle(hFile.DangerousGetHandle()); }
+                finally { hFile.DangerousGetHandle().CloseHandle(); }
 
                 if (bytesReturned > 0)
                 {

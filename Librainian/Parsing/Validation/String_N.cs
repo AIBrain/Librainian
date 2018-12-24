@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Data.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "String_N.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,32 +37,26 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Data.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "String_N.cs" was last formatted by Protiguous on 2018/12/01 at 4:45 PM.
 
-namespace Librainian.Persistence
-{
+namespace Librainian.Parsing.Validation {
 
-    using ComputerSystem.FileSystem;
-    using System;
+	using System;
+	using System.Diagnostics.CodeAnalysis;
+	using JetBrains.Annotations;
 
-    public static class Data
-    {
+	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+	public abstract class String_N : RegexString {
 
-        /// <summary>
-        ///     <see cref="Document" />s that have been scanned.
-        /// </summary>
-        public static PersistTable<String, DocumentInfo> ScannedDocuments { get; } = new PersistTable<String, DocumentInfo>(Environment.SpecialFolder.CommonApplicationData, nameof(ScannedDocuments));
+		protected override Boolean AllowNull => true;
 
-        public static PersistTable<String, Folder> StorageLocations { get; } = new PersistTable<String, Folder>(Environment.SpecialFolder.CommonApplicationData, nameof(StorageLocations));
+		protected abstract Int32 MaxLength { get; }
 
-        /*
-		public static async Task Record( [NotNull] this DocumentInfo documentInfo, CancellationToken token ) {
-			if ( documentInfo == null ) { throw new ArgumentNullException( paramName: nameof( documentInfo ) ); }
+		[NotNull]
+		protected override String RegexValidation => $"^.{{0,{this.MaxLength}}}$";
 
-			await documentInfo.Scan( token ).NoUI();
+		public override String Requirements => $"be no more than {this.MaxLength} characters";
 
-			ScannedDocuments[documentInfo.AbsolutePath ] = documentInfo;
-		}
-		*/
-    }
+		protected String_N( String str ) : base( str ) { }
+	}
 }

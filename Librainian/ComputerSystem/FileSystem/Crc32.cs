@@ -61,19 +61,18 @@ namespace Librainian.ComputerSystem.FileSystem {
 	/// </copyright>
 	public sealed class Crc32 : HashAlgorithm {
 
+		private static UInt32[] _defaultTable;
 		private UInt32 _hash;
+
+		public const UInt32 DefaultPolynomial = 3988292384;
+
+		public const UInt32 DefaultSeed = 0xffffffffu;
 
 		private UInt32 Seed { get; }
 
 		private UInt32[] Table { get; }
 
 		public override Int32 HashSize => 32;
-
-		public const UInt32 DefaultPolynomial = 3988292384;
-
-		public const UInt32 DefaultSeed = 0xffffffffu;
-
-		private static UInt32[] _defaultTable;
 
 		public Crc32() : this( DefaultPolynomial, DefaultSeed ) { }
 
@@ -89,7 +88,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			var createTable = new UInt32[ 256 ];
 
 			for ( var i = 0; i < 256; i++ ) {
-				var entry = ( UInt32 ) i;
+				var entry = ( UInt32 )i;
 
 				for ( var j = 0; j < 8; j++ ) {
 					if ( ( entry & 1 ) == 1 ) { entry = ( entry >> 1 ) ^ polynomial; }
@@ -130,9 +129,9 @@ namespace Librainian.ComputerSystem.FileSystem {
 			return crc;
 		}
 
-		public static UInt32 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
+		public static UInt32 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-		public static UInt32 Compute( UInt32 seed, Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
+		public static UInt32 Compute( UInt32 seed, [NotNull] Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
 
 		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, [NotNull] Byte[] buffer ) => ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 

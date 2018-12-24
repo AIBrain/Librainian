@@ -62,6 +62,7 @@ namespace Librainian.Maths {
 
 		public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
+		[NotNull]
 		public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
 
 		public static Byte[] Order( this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();

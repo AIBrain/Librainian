@@ -43,7 +43,6 @@
 namespace LibrainianTests {
 
 	using System;
-	using System.Globalization;
 	using Librainian.Maths;
 	using Librainian.Parsing;
 	using Librainian.Security;
@@ -55,7 +54,7 @@ namespace LibrainianTests {
 		[Test]
 		public static void TestAFew() {
 			foreach ( var _ in 1.To( end: 25 ) ) {
-				Console.WriteLine( value: PronounceablePasswordCreator.Generate( requiredLength: 3.Next( maxValue: 15 ) ).ToPascalCase( culture: CultureInfo.CurrentUICulture ) );
+				Console.WriteLine( value: PronounceablePasswordCreator.Generate( requiredLength: 3.Next( maxValue: 15 ) ).ToPascalCase() );
 			}
 		}
 	}

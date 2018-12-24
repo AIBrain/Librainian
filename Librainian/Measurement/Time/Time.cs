@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Time.cs" was last formatted by Protiguous on 2018/07/13 at 1:30 AM.
+// Project: "Librainian", "Time.cs" was last formatted by Protiguous on 2018/11/03 at 7:51 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -87,26 +87,26 @@ namespace Librainian.Measurement.Time {
 		/// <param name="second"></param>
 		/// <param name="millisecond"></param>
 		/// <param name="microsecond"></param>
-		public Time( Byte hour = 0, Byte minute = 0, Byte second = 0, UInt16 millisecond = 0, UInt16 microsecond = 0 ) : this() {
-			this.Hour = hour;
+		public Time( SByte hour = 0, SByte minute = 0, SByte second = 0, Int16 millisecond = 0, Int16 microsecond = 0 ) : this() {
+			this.Hour = new Hour( hour );
 			this.Minute = minute;
 			this.Second = second;
 			this.Millisecond = millisecond;
-			this.Microsecond = microsecond;
+			this.Microsecond = new Microsecond( microsecond );
 		}
 
 		/// <summary>
 		/// </summary>
 		/// <param name="dateTime"></param>
-		public Time( DateTime dateTime ) : this( hour: ( Byte )dateTime.Hour, minute: ( Byte )dateTime.Minute, second: ( Byte )dateTime.Second, millisecond: ( UInt16 )dateTime.Millisecond ) { }
+		public Time( DateTime dateTime ) : this( hour: ( SByte )dateTime.Hour, minute: ( SByte )dateTime.Minute, second: ( SByte )dateTime.Second, millisecond: ( Int16 )dateTime.Millisecond ) { }
 
 		/// <summary>
 		/// </summary>
 		/// <param name="spanOfTime"></param>
-		public Time( SpanOfTime spanOfTime ) : this( hour: ( Byte )spanOfTime.Hours.Value, minute: ( Byte )spanOfTime.Minutes.Value, second: ( Byte )spanOfTime.Seconds.Value,
-			millisecond: ( UInt16 )spanOfTime.Milliseconds.Value, microsecond: ( UInt16 )spanOfTime.Microseconds.Value ) { }
+		public Time( SpanOfTime spanOfTime ) : this( hour: ( SByte )spanOfTime.Hours.Value, minute: ( SByte )spanOfTime.Minutes.Value, second: ( SByte )spanOfTime.Seconds.Value,
+			millisecond: ( Int16 )spanOfTime.Milliseconds.Value, microsecond: ( Int16 )spanOfTime.Microseconds.Value ) { }
 
-		public static explicit operator Time( DateTime dateTime ) => new Time( ( Byte )dateTime.Hour, ( Byte )dateTime.Minute, ( Byte )dateTime.Second, ( UInt16 )dateTime.Millisecond );
+		public static explicit operator Time( DateTime dateTime ) => new Time( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second, ( Int16 )dateTime.Millisecond );
 
 		/// <summary>
 		/// </summary>
@@ -122,13 +122,13 @@ namespace Librainian.Measurement.Time {
 		public static Time Now() {
 			var now = DateTime.Now;
 
-			return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
+			return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
 		}
 
 		public static Time UtcNow() {
 			var now = DateTime.UtcNow;
 
-			return new Time( hour: ( Byte )now.Hour, minute: ( Byte )now.Minute, second: ( Byte )now.Second, millisecond: ( UInt16 )now.Millisecond );
+			return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
 		}
 	}
 }

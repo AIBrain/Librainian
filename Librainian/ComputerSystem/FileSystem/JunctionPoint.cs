@@ -48,7 +48,6 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Vanara.PInvoke;
 
     /// <summary>
     ///     Provides access to NTFS junction points in .Net.
@@ -226,8 +225,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 
         [NotNull]
         private static SafeFileHandle OpenReparsePoint(String reparsePoint, FileAccess accessMode) {
-            var bob = NativeMethods.CreateFile(reparsePoint, (Kernel32.FileAccess)accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint,
-                IntPtr.Zero);
+            var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
+                FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 
             if (Marshal.GetLastWin32Error() != 0) { ThrowLastWin32Error("Unable to open reparse point."); }
 

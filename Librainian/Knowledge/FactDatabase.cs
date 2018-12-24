@@ -39,99 +39,91 @@
 //
 // Project: "Librainian", "FactDatabase.cs" was last formatted by Protiguous on 2018/07/10 at 9:12 PM.
 
-namespace Librainian.Knowledge
-{
+namespace Librainian.Knowledge {
 
-    using ComputerSystem.FileSystem;
-    using JetBrains.Annotations;
-    using Maths;
-    using Newtonsoft.Json;
-    using Parsing;
-    using System;
-    using System.Collections.Concurrent;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
-    using Logging;
-    using Threading;
+	using System;
+	using System.Collections.Concurrent;
+	using System.ComponentModel;
+	using System.IO;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using System.Windows.Forms;
+	using ComputerSystem.FileSystem;
+	using JetBrains.Annotations;
+	using Logging;
+	using Maths;
+	using Newtonsoft.Json;
+	using Parsing;
+	using Threading;
 
-    [JsonObject]
-    public class FactDatabase
-    {
+	[JsonObject]
+	public class FactDatabase {
 
-        [JsonProperty]
-        [NotNull]
-        public readonly ConcurrentBag<Document> KnbFiles = new ConcurrentBag<Document>();
+		[JsonProperty]
+		[NotNull]
+		public readonly ConcurrentBag<Document> KnbFiles = new ConcurrentBag<Document>();
 
-        [JsonProperty]
-        public Int32 FilesFound;
+		[JsonProperty]
+		public Int32 FilesFound;
 
-        public Int32 AddFile([NotNull] Document dataFile, [CanBeNull] ProgressChangedEventHandler feedback = null)
-        {
-            if (dataFile == null) { throw new ArgumentNullException(nameof(dataFile)); }
+		public Int32 AddFile( [NotNull] Document dataFile, [CanBeNull] ProgressChangedEventHandler feedback = null ) {
+			if ( dataFile == null ) { throw new ArgumentNullException( nameof( dataFile ) ); }
 
-            if (!dataFile.Extension().Like(".knb")) { return 0; }
+			if ( !dataFile.Extension().Like( ".knb" ) ) { return 0; }
 
-            Interlocked.Increment(ref this.FilesFound);
-            feedback?.Invoke(this, new ProgressChangedEventArgs(this.FilesFound, $"Found data file {dataFile.FileName()}"));
+			Interlocked.Increment( ref this.FilesFound );
+			feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName()}" ) );
 
-            if (!this.KnbFiles.Contains(dataFile)) { this.KnbFiles.Add(dataFile); }
+			if ( !this.KnbFiles.Contains( dataFile ) ) { this.KnbFiles.Add( dataFile ); }
 
-            //TODO text, xml, csv, html, etc...
+			//TODO text, xml, csv, html, etc...
 
-            return 0;
-        }
+			return 0;
+		}
 
-        public async Task ReadRandomFact([CanBeNull] Action<String> action)
-        {
-            if (null == action) { return; }
+		public async Task ReadRandomFact( [CanBeNull] Action<String> action ) {
+			if ( null == action ) { return; }
 
-            await Task.Run(() =>
-            {
+			await Task.Run( () => {
 
-                //pick random line from random file
-                var file = this.KnbFiles.OrderBy(o => Randem.Next()).FirstOrDefault();
+				//pick random line from random file
+				var file = this.KnbFiles.OrderBy( o => Randem.Next() ).FirstOrDefault();
 
-                if (null == file) { return; }
+				if ( null == file ) { return; }
 
-                try
-                {
+				try {
 
-                    //pick random line
-                    var line = File.ReadLines(file.FullPathWithFileName).Where(s => !String.IsNullOrWhiteSpace(s)).Where(s => Char.IsLetter(s[0])).OrderBy(o => Randem.Next()).FirstOrDefault();
-                    action(line);
-                }
-                catch (Exception exception) { exception.Log(); }
-            });
-        }
+					//pick random line
+					var line = File.ReadLines( file.FullPathWithFileName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+					action( line );
+				}
+				catch ( Exception exception ) { exception.Log(); }
+			} );
+		}
 
-        public String SearchForFactFiles(SimpleCancel cancellation)
-        {
+		[NotNull]
+		public String SearchForFactFiles( SimpleCancel cancellation ) {
 
-            var searchPatterns = new[] {
-                "*.knb"
-            };
+			var searchPatterns = new[] {
+				"*.knb"
+			};
 
-            var folder = new Folder(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath)));
+			var folder = new Folder( Path.Combine( Path.GetDirectoryName( Application.ExecutablePath ) ) );
 
-            folder.Info.FindFiles(fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile(dataFile: new Document(file)), onEachDirectory: null,
-                searchStyle: SearchStyle.FilesFirst);
+			folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
+				searchStyle: SearchStyle.FilesFirst );
 
-            if (!this.KnbFiles.Any())
-            {
-                folder = new Folder(Environment.SpecialFolder.CommonDocuments);
+			if ( !this.KnbFiles.Any() ) {
+				folder = new Folder( Environment.SpecialFolder.CommonDocuments );
 
-                folder.Info.FindFiles(fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile(dataFile: new Document(file)), onEachDirectory: null,
-                    searchStyle: SearchStyle.FilesFirst);
-            }
+				folder.Info.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: file => this.AddFile( dataFile: new Document( file ) ), onEachDirectory: null,
+					searchStyle: SearchStyle.FilesFirst );
+			}
 
-            if (!this.KnbFiles.Any()) { searchPatterns.SearchAllDrives(onFindFile: file => this.AddFile(dataFile: new Document(file)), cancellation: cancellation); }
+			if ( !this.KnbFiles.Any() ) { searchPatterns.SearchAllDrives( onFindFile: file => this.AddFile( dataFile: new Document( file ) ), cancellation: cancellation ); }
 
-            return $"Found {this.KnbFiles.Count} KNB files";
-
-        }
-    }
+			return $"Found {this.KnbFiles.Count} KNB files";
+		}
+	}
 }

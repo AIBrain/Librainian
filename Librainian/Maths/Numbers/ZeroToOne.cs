@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "ZeroToOne.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "ZeroToOne.cs" was last formatted by Protiguous on 2018/11/11 at 5:08 AM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -47,14 +47,11 @@ namespace Librainian.Maths.Numbers {
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
-#pragma warning disable IDE0015 // Use framework type
-
-    /// <summary>
-    ///     Restricts the value to between 0.0 and 1.0
-    ///     <para>Uses the <see cref="Single" /> type.</para>
-    /// </summary>
-    [Immutable]
-#pragma warning restore IDE0015 // Use framework type
+	/// <summary>
+	///     Restricts the value to between 0.0 and 1.0
+	///     <para>Uses the <see cref="Single" /> type.</para>
+	/// </summary>
+	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject( memberSerialization: MemberSerialization.Fields )]
 	public class ZeroToOne {
@@ -65,32 +62,52 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty( "v" )]
 		private volatile Single _value;
 
-		public Single Value {
-			get => this._value;
-
-			set => this._value = value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value );
-		}
-
 		public const Single MaxValue = 1f;
 
 		public const Single MinValue = 0f;
 
 		public const Single NeutralValue = MaxValue / 2.0f;
 
-		private ZeroToOne( Double value ) : this() => this.Value = ( Single ) ( value > MaxValue ? MaxValue : ( value < MinValue ? MinValue : value ) );
+		public Single Value {
+			get => this._value;
 
-		private ZeroToOne( Single value ) : this( ( Single? ) value ) { }
+			set {
+				if ( value >= MaxValue ) {
+					this._value = MaxValue;
+				}
+				else {
+					this._value = value >= MinValue ? value : MinValue;
+				}
+			}
+		}
+
+		private ZeroToOne( Double value ) {
+			if ( value >= MaxValue ) {
+				this.Value = MaxValue;
+			}
+			else {
+				if ( value >= MinValue ) {
+					this.Value = ( Single )value;
+				}
+				else {
+					this.Value = MinValue;
+				}
+			}
+		}
 
 		/// <summary>
 		///     <para>Restricts the value to between 0.0 and 1.0.</para>
-		///     <para>If null is given, a random value (between 0.0 and 1.0) will be assigned.</para>
 		/// </summary>
 		/// <param name="value"></param>
-		public ZeroToOne( Single? value = null ) {
-			if ( !value.HasValue ) { value = Randem.NextSingle( min: MinValue, max: MaxValue ); }
+		public ZeroToOne( Single value ) => this.Value = value;
 
-			this.Value = value.Value;
-		}
+		/// <summary>
+		///     <para>Restricts the value to between 0.0 and 1.0.</para>
+		///     <para>If <paramref name="randomValue" /> is true then a random value (between 0.0 and 1.0) will be assigned.</para>
+		///     <para>Else <see cref="MinValue" /> will be assigned.</para>
+		/// </summary>
+		/// <param name="randomValue"></param>
+		public ZeroToOne( Boolean randomValue ) => this.Value = randomValue ? Randem.NextSingle( min: MinValue, max: MaxValue ) : MinValue;
 
 		/// <summary>
 		///     Return a new <see cref="ZeroToOne" /> with the value of <paramref name="value1" /> moved closer to the value of
@@ -105,9 +122,9 @@ namespace Librainian.Maths.Numbers {
 		[NotNull]
 		public static ZeroToOne Combine( ZeroToOne value1, ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
 
-		public static implicit operator Double( [NotNull] ZeroToOne special ) => special.Value;
+		public static implicit operator Double( [NotNull] ZeroToOne value ) => value.Value;
 
-		public static implicit operator Single( [NotNull] ZeroToOne special ) => special.Value;
+		public static implicit operator Single( [NotNull] ZeroToOne value ) => value.Value;
 
 		[NotNull]
 		public static implicit operator ZeroToOne( Single value ) => new ZeroToOne( value );
@@ -117,6 +134,14 @@ namespace Librainian.Maths.Numbers {
 
 		[NotNull]
 		public static ZeroToOne Parse( [NotNull] String value ) => new ZeroToOne( Single.Parse( s: value ) );
+
+		/// <summary>
+		///     Attempt to parse <paramref name="value" />, otherwise return <see cref="MinValue" />.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static ZeroToOne TryParse( [NotNull] String value ) => Single.TryParse( value, out var result ) ? result : MinValue;
 
 		public override String ToString() => $"{this.Value:P}";
 	}

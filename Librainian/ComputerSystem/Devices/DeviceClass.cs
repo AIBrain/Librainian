@@ -281,7 +281,7 @@ namespace Librainian.ComputerSystem.Devices
                         }
                     }
                     catch (Exception ex) { Console.WriteLine("Exception calling ioctl: " + ex); }
-                    finally { NativeMethods.CloseHandle(hFile.DangerousGetHandle()); }
+                    finally { hFile.DangerousGetHandle().CloseHandle(); }
 
                     if (bytesReturned > 0) { disknum = (NativeMethods.STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(numBuffer, typeof(NativeMethods.STORAGE_DEVICE_NUMBER)); }
                     else

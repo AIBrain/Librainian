@@ -39,12 +39,13 @@
 //
 // Project: "Librainian", "DriveTests.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
 
-namespace Librainian.ComputerSystem.FileSystem {
+namespace LibrainianTests {
 
 	using System;
 	using System.Diagnostics;
+	using Librainian.ComputerSystem.FileSystem;
+	using Librainian.Parsing;
 	using NUnit.Framework;
-	using Parsing;
 
 	[TestFixture]
 	public static class DriveTests {

@@ -45,9 +45,9 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System;
     using System.Collections;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.InteropServices;
-    using Vanara.PInvoke;
 
     /// <summary>
 	///     defrag stuff
@@ -146,7 +146,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                 return retVal;
             }
             finally {
-                NativeMethods.CloseHandle(hFile);
+                hFile.CloseHandle();
 
                 // ReSharper disable once RedundantAssignment
                 hFile = IntPtr.Zero;
@@ -222,7 +222,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                 return retVal;
             }
             finally {
-                NativeMethods.CloseHandle(hDevice);
+                hDevice.CloseHandle();
 
                 // ReSharper disable once RedundantAssignment
                 hDevice = IntPtr.Zero;
@@ -269,13 +269,161 @@ namespace Librainian.ComputerSystem.FileSystem {
                 handle.Free();
             }
             finally {
-                NativeMethods.CloseHandle(hVol);
-                NativeMethods.CloseHandle(hFile);
+                hVol.CloseHandle();
+                hFile.CloseHandle();
             }
         }
 
-        public static IntPtr OpenFile(String path) {
-            var hFile = NativeMethods.CreateFile(path, Kernel32.FileAccess.FILE_READ_DATA | Kernel32.FileAccess.FILE_WRITE_DATA, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+		/// <summary>Access flags.</summary>
+		[Flags]
+		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+		public enum ACCESS_MASK : uint {
+			/// <summary>The right to delete the object.</summary>
+			DELETE = 0x00010000,
+
+			/// <summary>
+			/// The right to read the information in the object's security descriptor, not including the information in the system access control
+			/// list (SACL).
+			/// </summary>
+			READ_CONTROL = 0x00020000,
+
+			/// <summary>The right to modify the discretionary access control list (DACL) in the object's security descriptor.</summary>
+			WRITE_DAC = 0x00040000,
+
+			/// <summary>The right to change the owner in the object's security descriptor.</summary>
+			WRITE_OWNER = 0x00080000,
+
+			/// <summary>
+			/// The right to use the object for synchronization. This enables a thread to wait until the object is in the signaled state. Some
+			/// object types do not support this access right.
+			/// </summary>
+			SYNCHRONIZE = 0x00100000,
+
+			/// <summary>Combines DELETE, READ_CONTROL, WRITE_DAC, and WRITE_OWNER access.</summary>
+			STANDARD_RIGHTS_REQUIRED = 0x000F0000,
+
+			/// <summary>Currently defined to equal READ_CONTROL.</summary>
+			STANDARD_RIGHTS_READ = 0x00020000,
+
+			/// <summary>Currently defined to equal READ_CONTROL.</summary>
+			STANDARD_RIGHTS_WRITE = 0x00020000,
+
+			/// <summary>Currently defined to equal READ_CONTROL.</summary>
+			STANDARD_RIGHTS_EXECUTE = 0x00020000,
+
+			/// <summary>Combines DELETE, READ_CONTROL, WRITE_DAC, WRITE_OWNER, and SYNCHRONIZE access.</summary>
+			STANDARD_RIGHTS_ALL = 0x001F0000,
+
+			/// <summary>The specific rights all</summary>
+			SPECIFIC_RIGHTS_ALL = 0x0000FFFF,
+
+			/// <summary>
+			/// Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right only if the
+			/// SE_SECURITY_NAME privilege is enabled in the access token of the requesting thread.
+			/// </summary>
+			ACCESS_SYSTEM_SECURITY = 0x01000000,
+
+			/// <summary>Request that the object be opened with all the access rights that are valid for the caller.</summary>
+			MAXIMUM_ALLOWED = 0x02000000,
+
+			/// <summary>Read access.</summary>
+			GENERIC_READ = 0x80000000,
+
+			/// <summary>Write access.</summary>
+			GENERIC_WRITE = 0x40000000,
+
+			/// <summary>Execute access.</summary>
+			GENERIC_EXECUTE = 0x20000000,
+
+			/// <summary>All possible access rights.</summary>
+			GENERIC_ALL = 0x10000000
+		}
+
+		/// <summary>Enumerates the that may apply to files.</summary>
+		/// <remarks>These flags may be passed to CreateFile.</remarks>
+		[Flags]
+		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+		public enum FileAccess : uint {
+			/// <summary>Read access.</summary>
+			GENERIC_READ = ACCESS_MASK.GENERIC_READ,
+
+			/// <summary>Write access.</summary>
+			GENERIC_WRITE = ACCESS_MASK.GENERIC_WRITE,
+
+			/// <summary>Execute access.</summary>
+			GENERIC_EXECUTE = ACCESS_MASK.GENERIC_EXECUTE,
+
+			/// <summary>All possible access rights.</summary>
+			GENERIC_ALL = ACCESS_MASK.GENERIC_ALL,
+
+			/// <summary>
+			/// For a file object, the right to read the corresponding file data. For a directory object, the right to read the corresponding directory data.
+			/// </summary>
+			FILE_READ_DATA = 0x0001, // file & pipe
+
+			/// <summary>For a directory, the right to list the contents of the directory.</summary>
+			FILE_LIST_DIRECTORY = 0x0001, // directory
+
+			/// <summary>
+			/// For a file object, the right to write data to the file. For a directory object, the right to create a file in the directory ( <see cref="FILE_ADD_FILE"/>).
+			/// </summary>
+			FILE_WRITE_DATA = 0x0002, // file & pipe
+
+			/// <summary>For a directory, the right to create a file in the directory.</summary>
+			FILE_ADD_FILE = 0x0002, // directory
+
+			/// <summary>
+			/// For a file object, the right to append data to the file. (For local files, write operations will not overwrite existing data if this flag is
+			/// specified without <see cref="FILE_WRITE_DATA"/>.) For a directory object, the right to create a subdirectory ( <see cref="FILE_ADD_SUBDIRECTORY"/>).
+			/// </summary>
+			FILE_APPEND_DATA = 0x0004, // file
+
+			/// <summary>For a directory, the right to create a subdirectory.</summary>
+			FILE_ADD_SUBDIRECTORY = 0x0004, // directory
+
+			/// <summary>For a named pipe, the right to create a pipe.</summary>
+			FILE_CREATE_PIPE_INSTANCE = 0x0004, // named pipe
+
+			/// <summary>The right to read extended file attributes.</summary>
+			FILE_READ_EA = 0x0008, // file & directory
+
+			/// <summary>The right to write extended file attributes.</summary>
+			FILE_WRITE_EA = 0x0010, // file & directory
+
+			/// <summary>
+			/// For a native code file, the right to execute the file. This access right given to scripts may cause the script to be executable, depending on the
+			/// script interpreter.
+			/// </summary>
+			FILE_EXECUTE = 0x0020, // file
+
+			/// <summary>
+			/// For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING privilege, which ignores the
+			/// FILE_TRAVERSE access right.
+			/// </summary>
+			FILE_TRAVERSE = 0x0020, // directory
+
+			/// <summary>For a directory, the right to delete a directory and all the files it contains, including read-only files.</summary>
+			FILE_DELETE_CHILD = 0x0040, // directory
+
+			/// <summary>The right to read file attributes.</summary>
+			FILE_READ_ATTRIBUTES = 0x0080, // all
+
+			/// <summary>The right to write file attributes.</summary>
+			FILE_WRITE_ATTRIBUTES = 0x0100, // all
+
+			SPECIFIC_RIGHTS_ALL = 0x00FFFF,
+
+			FILE_ALL_ACCESS = ACCESS_MASK.STANDARD_RIGHTS_REQUIRED | ACCESS_MASK.SYNCHRONIZE | 0x1FF,
+
+			FILE_GENERIC_READ = ACCESS_MASK.STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | ACCESS_MASK.SYNCHRONIZE,
+
+			FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
+
+			FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE,
+		}
+
+		public static IntPtr OpenFile(String path) {
+            var hFile = NativeMethods.CreateFile(path,  ( System.IO.FileAccess ) (FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA), FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
 
             if (hFile.IsInvalid) { throw new Exception(Marshal.GetLastWin32Error().ToString()); }
 
@@ -283,7 +431,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         public static IntPtr OpenVolume(String deviceName) {
-            var hDevice = NativeMethods.CreateFile(@"\\.\" + deviceName, Kernel32.FileAccess.FILE_READ_DATA | Kernel32.FileAccess.FILE_WRITE_DATA, FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+            var hDevice = NativeMethods.CreateFile(@"\\.\" + deviceName, ( System.IO.FileAccess ) (FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA), FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
 
             if (hDevice.IsInvalid) { throw new Exception(Marshal.GetLastWin32Error().ToString()); }
 
@@ -293,23 +441,11 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <summary>
         ///     input structure for use in MoveFile
         /// </summary>
-        private struct MoveFileData {
-
-#pragma warning disable 414
+        public struct MoveFileData {
             public Int32 ClusterCount;
-#pragma warning restore 414
-
-#pragma warning disable 414
             public IntPtr HFile;
-#pragma warning restore 414
-
-#pragma warning disable 414
             public Int64 StartingLcn;
-#pragma warning restore 414
-
-#pragma warning disable 414
             public Int64 StartingVcn;
-#pragma warning restore 414
         }
     }
 }

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "MomentInTimeClock.cs" was last formatted by Protiguous on 2018/07/13 at 1:26 AM.
+// Project: "Librainian", "MomentInTimeClock.cs" was last formatted by Protiguous on 2018/11/03 at 7:39 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -64,12 +64,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public Second Second { get; }
 
-		public Boolean IsAm() => !this.IsPm();
-
-		public Boolean IsPm() => this.Hour >= 12;
-
-		public Time Time() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
-
 		public MomentInTimeClock() : this( Measurement.Time.Time.Now() ) { }
 
 		public MomentInTimeClock( Time time ) {
@@ -79,10 +73,12 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Millisecond = time.Millisecond;
 		}
 
-		public MomentInTimeClock( DateTime time ) : this( ( Time ) time ) {
-			this.Hour = new Hour( ( Byte ) time.Hour );
-			this.Minute = new Minute( ( Byte ) time.Minute );
-			this.Second = new Second( ( Byte ) time.Second );
-		}
+		public MomentInTimeClock( DateTime time ) : this( ( Time )time ) { }
+
+		public Boolean IsAm() => !this.IsPm();
+
+		public Boolean IsPm() => this.Hour.Value >= 12;
+
+		public Time Time() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
 	}
 }

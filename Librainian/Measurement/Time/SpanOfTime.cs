@@ -73,7 +73,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>1 of each measure of time</para>
         /// </summary>
-        public static readonly SpanOfTime Identity = new SpanOfTime(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+        public static readonly SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
         /// <summary>
         /// </summary>

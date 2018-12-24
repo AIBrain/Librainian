@@ -37,121 +37,94 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "NinjectIocContainer.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "NinjectIocContainer.cs" was last formatted by Protiguous on 2018/11/16 at 1:51 AM.
 
-namespace Librainian.Magic
-{
+namespace Librainian.Magic {
 
-    using Collections;
-    using Extensions;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Ninject;
-    using Ninject.Activation.Caching;
-    using Ninject.Modules;
-    using System;
-    using System.Diagnostics;
-    using Logging;
+	using System;
+	using System.Diagnostics;
+	using System.Linq;
+	using Collections;
+	using FluentAssertions;
+	using JetBrains.Annotations;
+	using Logging;
+	using Ninject;
+	using Ninject.Activation.Caching;
+	using Ninject.Modules;
 
-    public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer
-    {
+	public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer {
 
-        public IKernel Kernel { get; }
+		public IKernel Kernel { get; }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public NinjectIocContainer([NotNull] params INinjectModule[] modules)
-        {
-            if (modules == null) { throw new ArgumentNullException(nameof(modules)); }
+		public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
+			try {
+				"Loading IoC kernel...".Log();
+				this.Kernel = new StandardKernel( modules );
+			}
+			finally {
+				this.Kernel.Should().NotBeNull();
+				"Loading IoC kernel done.".Log();
+			}
+		}
 
-            this.Kernel.Should().BeNull();
-            "Loading IoC kernel...".WriteColor(ConsoleColor.White, ConsoleColor.Blue);
-            this.Kernel = new StandardKernel(modules);
-            this.Kernel.Should().NotBeNull();
+		/// <summary>
+		///     Dispose any disposable members.
+		/// </summary>
+		public override void DisposeManaged() => this.Kernel.Dispose();
 
-            if (null == this.Kernel) { throw new InvalidOperationException("Unable to load kernel!"); }
+		/// <summary>
+		///     Returns a new instance of the given type or throws NullReferenceException.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		/// <exception cref="NullReferenceException"></exception>
+		[DebuggerStepThrough]
+		public T Get<T>() {
+			var tryGet = this.Kernel.TryGet<T>();
 
-            "done.".WriteLineColor(ConsoleColor.White, ConsoleColor.Blue);
-        }
+			if ( Equals( default, tryGet ) ) {
+				tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this.Kernel.Dispose();
+				if ( Equals( default, tryGet ) ) {
+					throw new NullReferenceException( "Unable to TryGet() class " + typeof( T ).FullName );
+				}
+			}
 
-        /// <summary>
-        ///     Returns a new instance of the given type or throws NullReferenceException.
-        /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        [DebuggerStepThrough]
-        public TType Get<TType>()
-        {
-            var tryGet = this.Kernel.TryGet<TType>();
+			return tryGet;
+		}
 
-            if (Equals(default, tryGet))
-            {
-                tryGet = this.Kernel.TryGet<TType>(); //HACK why would it work at the second time?
+		public void Inject<T>( T item ) => this.Kernel.Inject( item );
 
-                if (Equals(default, tryGet)) { throw new NullReferenceException("Unable to TryGet() class " + typeof(TType).FullName); }
-            }
+		/// <summary>
+		///     Warning!
+		/// </summary>
+		public void ResetKernel() {
+			this.Kernel.Should().NotBeNull();
+			this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
+			this.Kernel.Components.Get<ICache>().Clear();
+			this.Kernel.Should().NotBeNull();
 
-            return tryGet;
-        }
+			"Ninject is loading assemblies...".Log();
+			this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+			$"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
+			$"{this.Kernel.GetModules().ToStrings()}".Log();
+		}
 
-        public void Inject(Object item) => this.Kernel.Inject(item);
+		/// <summary>
+		///     Re
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		[CanBeNull]
+		[DebuggerStepThrough]
+		public T TryGet<T>() {
+			var tryGet = this.Kernel.TryGet<T>();
 
-        /// <summary>
-        ///     Warning!
-        /// </summary>
-        public void ResetKernel()
-        {
-            this.Kernel.Should().NotBeNull();
-            this.Kernel.GetModules().ForEach(module => this.Kernel.Unload(module.Name));
-            this.Kernel.Components.Get<ICache>().Clear();
-            this.Kernel.Should().NotBeNull();
+			if ( Equals( default, tryGet ) ) {
+				tryGet = this.Kernel.TryGet<T>(); //HACK wtf??
+			}
 
-            //Log.Before( "Ninject is loading assemblies..." );
-            this.Kernel.Load(AppDomain.CurrentDomain.GetAssemblies());
-
-            //Log.After( $"loaded {this.Kernel.GetModules().Count()} assemblies." );
-            $"{this.Kernel.GetModules().ToStrings()}".Info();
-        }
-
-        /// <summary>
-        ///     Re
-        /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        public TType TryGet<TType>()
-        {
-            var tryGet = this.Kernel.TryGet<TType>();
-
-            if (Equals(default, tryGet))
-            {
-                tryGet = this.Kernel.TryGet<TType>(); //HACK wtf??
-            }
-
-            return tryGet;
-        }
-
-        //public object Get( Type type ) {
-        //    return this.Kernel.Get( type );
-        //}
-
-        //public T Get<T>() {
-        //    var bob = this.Kernel.TryGet<T>();
-        //    return bob;
-        //}
-
-        //public T Get<T>( String name, String value ) {
-        //    var result = this.Kernel.TryGet<T>( metadata => metadata.Has( name ) && metadata.Get<String>( name ).Like( value ) );
-
-        //    if ( Equals( result, default( T ) ) ) {
-        //        throw new InvalidOperationException( null );
-        //    }
-        //    return result;
-        //}
-    }
+			return tryGet;
+		}
+	}
 }

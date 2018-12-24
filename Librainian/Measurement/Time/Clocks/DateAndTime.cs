@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public Time Time { get; }
 
-		public DateAndTime( Date date, Time time ) {
+		public DateAndTime(Date date, Time time) {
 			this.Date = date;
 			this.Time = time;
 		}

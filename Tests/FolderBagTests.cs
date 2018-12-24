@@ -49,6 +49,7 @@ namespace LibrainianTests {
     using Newtonsoft.Json;
     using NUnit.Framework;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Management;
@@ -59,7 +60,7 @@ namespace LibrainianTests {
         [Test]
         public static void TestStorageAndRetrieval() {
             var counter = 0L;
-            var watch = StopWatch.StartNew();
+            var watch = Stopwatch.StartNew();
             var pathTree = new FolderBag();
 
             foreach (var drive in Disk.GetDrives().Where(drive => drive.Info.IsReady && drive.RootDirectory.StartsWith("C")).Take(1)) {

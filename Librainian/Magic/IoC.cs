@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IoC.cs" was last formatted by Protiguous on 2018/07/13 at 1:15 AM.
+// Project: "Librainian", "IoC.cs" was last formatted by Protiguous on 2018/11/16 at 2:03 AM.
 
 namespace Librainian.Magic {
 

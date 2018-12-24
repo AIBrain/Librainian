@@ -37,11 +37,10 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "IIocContainer.cs" was last formatted by Protiguous on 2018/07/13 at 1:15 AM.
+// Project: "Librainian", "IIocContainer.cs" was last formatted by Protiguous on 2018/11/16 at 2:02 AM.
 
 namespace Librainian.Magic {
 
-	using System;
 	using JetBrains.Annotations;
 	using Ninject;
 
@@ -50,22 +49,10 @@ namespace Librainian.Magic {
 		[NotNull]
 		IKernel Kernel { get; }
 
-		//[CanBeNull]
-		//IContainer BuildedContainer { get; set; }
-
-		//[CanBeNull]
-		//Object Get( Type type );
-
-		//[CanBeNull]
-		//T Get<T>();
-
-		//[CanBeNull]
-		//T Get<T>( String name, String value );
-
 		[CanBeNull]
 		T Get<T>();
 
-		void Inject( [CanBeNull] Object item );
+		void Inject<T>( T item );
 
 		/// <summary>
 		///     Warning!

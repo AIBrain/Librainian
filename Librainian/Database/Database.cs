@@ -53,9 +53,18 @@ namespace Librainian.Database {
 	using Logging;
 	using Magic;
 	using Parsing;
-	using Threading;
 
 	public sealed class Database : ABetterClassDispose, IDatabase {
+
+		private readonly String _connectionString;
+
+		/// <summary>
+		/// </summary>
+		/// <param name="connectionString"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		public Database( String connectionString ) => this._connectionString = connectionString;
+
+		public override void DisposeManaged() { }
 
 		/// <summary>
 		///     Opens and then closes a <see cref="SqlConnection" />.
@@ -135,7 +144,7 @@ namespace Librainian.Database {
 					} ) {
 						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-						return await command.ExecuteNonQueryAsync().NoUI();
+						return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
 					}
 				}
 			}
@@ -203,7 +212,7 @@ namespace Librainian.Database {
 					} ) {
 						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-						return await command.ExecuteReaderAsync().NoUI();
+						return await command.ExecuteReaderAsync().ConfigureAwait( false );
 					}
 				}
 			}
@@ -236,7 +245,7 @@ namespace Librainian.Database {
 
 						table.BeginLoadData();
 
-						using ( var reader = await command.ExecuteReaderAsync().NoUI() ) { table.Load( reader ); }
+						using ( var reader = await command.ExecuteReaderAsync().ConfigureAwait( false ) ) { table.Load( reader ); }
 
 						table.EndLoadData();
 					}
@@ -277,7 +286,7 @@ namespace Librainian.Database {
 
 						if ( scalar.TryCast<TResult>( out var result ) ) { return result; }
 
-						return ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) );
+						return ( TResult )Convert.ChangeType( scalar, typeof( TResult ) );
 					}
 				}
 			}
@@ -307,13 +316,13 @@ namespace Librainian.Database {
 					} ) {
 						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
 
-						var task = command.ExecuteScalarAsync().NoUI();
+						var task = command.ExecuteScalarAsync().ConfigureAwait( false );
 
 						var result = await task;
 
 						if ( result == DBNull.Value ) { return default; }
 
-						return ( TResult ) result;
+						return ( TResult )result;
 					}
 				}
 			}
@@ -333,6 +342,7 @@ namespace Librainian.Database {
 		/// <param name="query">     </param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
+		[CanBeNull]
 		[ItemCanBeNull]
 		public IEnumerable<TResult> QueryList<TResult>( String query, [CanBeNull] params SqlParameter[] parameters ) {
 			if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
@@ -360,15 +370,5 @@ namespace Librainian.Database {
 
 			return null;
 		}
-
-		private readonly String _connectionString;
-
-		/// <summary>
-		/// </summary>
-		/// <param name="connectionString"></param>
-		/// <exception cref="InvalidOperationException"></exception>
-		public Database( String connectionString ) => this._connectionString = connectionString;
-
-		public override void DisposeManaged() { }
 	}
 }

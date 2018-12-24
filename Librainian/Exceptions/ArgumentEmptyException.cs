@@ -45,8 +45,6 @@ namespace Librainian.Exceptions {
 	using Newtonsoft.Json;
 	using Parsing;
 
-	/// <summary>
-	/// </summary>
 	[Serializable]
 	[JsonObject]
 	public class ArgumentEmptyException : ArgumentException {

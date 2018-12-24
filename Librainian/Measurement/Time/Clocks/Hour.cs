@@ -37,75 +37,74 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Hour.cs" was last formatted by Protiguous on 2018/07/13 at 1:25 AM.
+// Project: "Librainian", "Hour.cs" was last formatted by Protiguous on 2018/11/03 at 7:39 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
-    using Extensions;
-    using Newtonsoft.Json;
+	using System;
+	using Extensions;
+	using Newtonsoft.Json;
 
-    /// <summary>
-    ///     <para>A simple struct for an <see cref="Hour" />.</para>
-    /// </summary>
-    [JsonObject]
-    [Immutable]
-    public struct Hour : IClockPart {
+	/// <summary>
+	///     <para>A simple struct for an <see cref="Hour" />.</para>
+	/// </summary>
+	[JsonObject]
+	[Immutable]
+	public struct Hour : IClockPart {
 
-        [JsonProperty]
-        public readonly Byte Value;
+		public const SByte MaxValue = Hours.InOneDay;
 
-        public static Hour Maximum { get; } = new Hour( 1 );
+		public const SByte MinValue = 1;
 
-        public static Hour Minimum { get; } = new Hour( Hours.InOneDay );
+		[JsonProperty]
+		public readonly SByte Value;
 
-        public Hour( Byte value ) {
-            if ( value < Minimum || value > Maximum ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
+		public static Hour Maximum { get; } = new Hour( MaxValue );
 
-            this.Value = value;
-        }
+		public static Hour Minimum { get; } = new Hour( MinValue );
 
-        /// <summary>
-        ///     Allow this class to be visibly cast to a <see cref="SByte" />.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static explicit operator SByte( Hour value ) => ( SByte ) value.Value;
+		public Hour( SByte value ) {
+			if ( value < MinValue || value > MaxValue ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+			}
 
-        public static implicit operator Byte( Hour value ) => value.Value;
+			this.Value = value;
+		}
 
-        public static implicit operator Hour( Byte value ) => new Hour( value );
+		public static explicit operator Byte( Hour value ) => ( Byte )value.Value;
 
-        /// <summary>
-        ///     Provide the next <see cref="Hour" />.
-        /// </summary>
-        public Hour Next( out Boolean tocked ) {
-            tocked = false;
-            var next = this.Value + 1;
+		public static implicit operator Hour( Byte value ) => new Hour( ( SByte )value );
 
-            if ( next > Maximum ) {
-                next = Minimum;
-                tocked = true;
-            }
+		public static implicit operator SByte( Hour value ) => value.Value;
 
-            return ( Byte ) next;
-        }
+		/// <summary>
+		///     Provide the next <see cref="Hour" />.
+		/// </summary>
+		public Hour Next( out Boolean tocked ) {
+			tocked = false;
+			var next = this.Value + 1;
 
-        /// <summary>
-        ///     Provide the previous <see cref="Hour" />.
-        /// </summary>
-        public Hour Previous( out Boolean tocked ) {
-            tocked = false;
-            var next = this.Value - 1;
+			if ( next > Maximum ) {
+				next = Minimum;
+				tocked = true;
+			}
 
-            if ( next < Minimum ) {
-                next = Maximum;
-                tocked = true;
-            }
+			return ( Hour )next;
+		}
 
-            return ( Byte ) next;
-        }
+		/// <summary>
+		///     Provide the previous <see cref="Hour" />.
+		/// </summary>
+		public Hour Previous( out Boolean tocked ) {
+			tocked = false;
+			var next = this.Value - 1;
 
-    }
+			if ( next < Minimum ) {
+				next = Maximum;
+				tocked = true;
+			}
 
+			return ( Hour )next;
+		}
+	}
 }

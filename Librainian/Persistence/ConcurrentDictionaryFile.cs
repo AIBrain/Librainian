@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConcurrentDictionaryFile.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2018/07/13 at 1:35 AM.
+// 
+// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2018/11/21 at 10:26 PM.
 
 namespace Librainian.Persistence {
 
@@ -53,7 +53,6 @@ namespace Librainian.Persistence {
 	using Logging;
 	using Measurement.Time;
 	using Newtonsoft.Json;
-	using Threading;
 
 	/// <summary>
 	///     Persist a dictionary to and from a JSON formatted text document.
@@ -95,9 +94,13 @@ namespace Librainian.Persistence {
 		public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.Folder.Exists() ) { this.Document.Folder.Create(); }
+			if ( !this.Document.Folder.Exists() ) {
+				this.Document.Folder.Create();
+			}
 
-			if ( preload ) { this.Load().Wait(); }
+			if ( preload ) {
+				this.Load().Wait();
+			}
 		}
 
 		/// <summary>
@@ -109,7 +112,9 @@ namespace Librainian.Persistence {
 		public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( fullPathWithFilename: filename ), preload: preload ) { }
 
 		protected virtual void Dispose( Boolean releaseManaged ) {
-			if ( releaseManaged ) { this.Write().Wait( timeout: Minutes.One ); }
+			if ( releaseManaged ) {
+				this.Write().Wait( timeout: Minutes.One );
+			}
 
 			GC.SuppressFinalize( this );
 		}
@@ -120,10 +125,12 @@ namespace Librainian.Persistence {
 			try {
 				var document = this.Document;
 
-				if ( !document.Exists() ) { return false; }
+				if ( !document.Exists() ) {
+					return false;
+				}
 
 				try {
-					var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.CancellationTokenSource.Token ).NoUI();
+					var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.CancellationTokenSource.Token ).ConfigureAwait( false );
 
 					if ( data != null ) {
 						var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[ key ] = data[ key ] );
@@ -131,7 +138,9 @@ namespace Librainian.Persistence {
 						return result.IsCompleted;
 					}
 				}
-				catch ( JsonException exception ) { exception.Log(); }
+				catch ( JsonException exception ) {
+					exception.Log();
+				}
 				catch ( IOException exception ) {
 
 					//file in use by another app
@@ -145,7 +154,9 @@ namespace Librainian.Persistence {
 
 				return false;
 			}
-			finally { this.IsReading = false; }
+			finally {
+				this.IsReading = false;
+			}
 		}
 
 		/// <summary>
@@ -162,15 +173,22 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public async Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
-			await Task.Run( () => {
+		[NotNull]
+		public Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
+			Task.Run( () => {
 				var document = this.Document;
 
-				if ( !document.Folder.Exists() ) { document.Folder.Create(); }
+				if ( !document.Folder.Exists() ) {
+					document.Folder.Create();
+				}
 
-				if ( document.Exists() ) { document.Delete(); }
+				if ( document.Exists() ) {
+					document.Delete();
+				}
 
 				return this.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
-			}, cancellationToken: cancellationToken ).NoUI();
+			}, cancellationToken: cancellationToken );
+
 	}
+
 }

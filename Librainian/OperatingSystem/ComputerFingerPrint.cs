@@ -88,6 +88,7 @@ namespace Librainian.OperatingSystem {
 			WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" ) + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" ) +
 			WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" ) + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" ) + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
 
+		[NotNull]
 		private static String CPUID() {
 
 			//Uses first CPU identifier available in order of preference
@@ -120,6 +121,7 @@ namespace Librainian.OperatingSystem {
 			WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
 
 		//First enabled network card ID
+		[NotNull]
 		private static String MacId() => WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
 
 		//Motherboard ID

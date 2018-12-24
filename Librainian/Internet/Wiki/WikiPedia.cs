@@ -52,6 +52,7 @@ namespace Librainian.Internet.Wiki {
 
 	public class WikiPedia {
 
+		[NotNull]
 		private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
 		//public static Boolean doesWikiRespond {
@@ -117,14 +118,14 @@ namespace Librainian.Internet.Wiki {
 		public static IEnumerable<String> GetCategories( String titles ) {
 			try {
 				var uri = new Uri( $"http://wikipedia.org/w/api.php?action=query&prop=categories&format=xml&titles={titles}" );
-				var webRequest = ( HttpWebRequest ) WebRequest.Create( uri );
+				var webRequest = ( HttpWebRequest )WebRequest.Create( uri );
 				webRequest.Credentials = CredentialCache.DefaultCredentials;
 				webRequest.AllowAutoRedirect = true;
 				webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";
 				webRequest.AutomaticDecompression = DecompressionMethods.GZip;
 				webRequest.Accept = "text/xml";
 
-				using ( var webResponse = ( HttpWebResponse ) webRequest.GetResponse() ) {
+				using ( var webResponse = ( HttpWebResponse )webRequest.GetResponse() ) {
 
 					//var responseStream = webResponse.GetResponseStream();
 					var alltext = webResponse.StringFromResponse();
@@ -153,7 +154,7 @@ namespace Librainian.Internet.Wiki {
 		[CanBeNull]
 		public static XElement GetWikiData( String title ) {
 			try {
-				var webRequest = ( HttpWebRequest ) WebRequest.Create( "http://wikipedia.org/wiki/" + "Special:Export/" + title );
+				var webRequest = ( HttpWebRequest )WebRequest.Create( "http://wikipedia.org/wiki/" + "Special:Export/" + title );
 				webRequest.Credentials = CredentialCache.DefaultCredentials;
 				webRequest.AllowAutoRedirect = true;
 				webRequest.UserAgent = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)";

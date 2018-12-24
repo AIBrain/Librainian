@@ -50,7 +50,6 @@ namespace Librainian.Controls
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using Threading;
 
     public enum Speed
     {
@@ -80,11 +79,10 @@ namespace Librainian.Controls
         //disabled button status
         public const Int32 SC_MINIMIZE = 0xF020;
 
-        public static async Task MoveCursor([NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed)
-        {
+        public static Task MoveCursor([NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed) {
             if (form == null) { throw new ArgumentNullException(nameof(form)); }
 
-            await Task.Run(async () =>
+            return Task.Run(async () =>
             {
 
                 // Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
@@ -135,7 +133,7 @@ namespace Librainian.Controls
                     }
 
                     Cursor.Position = new Point(cx, cy);
-                    await Task.Delay(Hertz.Sixty).NoUI();
+                    await Task.Delay(Hertz.Sixty).ConfigureAwait(false);
                 }
             });
         }

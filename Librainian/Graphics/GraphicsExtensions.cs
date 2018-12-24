@@ -42,6 +42,7 @@
 namespace Librainian.Graphics {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Runtime.Serialization.Formatters.Binary;
@@ -54,13 +55,12 @@ namespace Librainian.Graphics {
 	using Moving;
 	using OperatingSystem;
 
+	[SuppressMessage( "ReSharper", "AsyncConverter.AsyncMethodNamingHighlighting" )]
 	public static class GraphicsExtensions {
 
 		private static Boolean _gotGamma;
 
-		public static RAMP DefaultRamp;
-
-		static GraphicsExtensions() => DefaultRamp = GetGamma();
+		public static RAMP DefaultRamp = GetGamma();
 
 		[NotNull]
 		public static Stream EfvToStream() {
@@ -104,15 +104,16 @@ namespace Librainian.Graphics {
 
 					if ( iArrayValue > 65535 ) { iArrayValue = 65535; }
 
-					ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 ) iArrayValue;
+					ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 )iArrayValue;
 				}
 
 				NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp );
 			}
 		}
 
-		public static async Task<Erg> TryConvertToERG( this Document document, CancellationToken token ) =>
-			await Task.Run( () => {
+		[NotNull]
+		public static Task<Erg> TryConvertToERG( this Document document, CancellationToken token ) =>
+			Task.Run( () => {
 				var erg = new Erg();
 
 				//TODO recalc the checksums
@@ -121,8 +122,9 @@ namespace Librainian.Graphics {
 				return erg;
 			}, token );
 
-		public static async Task<Boolean> TrySave( this Erg erg, Document document, CancellationToken token ) =>
-			await Task.Run( () => {
+		[NotNull]
+		public static Task<Boolean> TrySave( this Erg erg, Document document, CancellationToken token ) =>
+			Task.Run( () => {
 
 				//TODO recalc the checksums
 				//write out to file
@@ -130,8 +132,9 @@ namespace Librainian.Graphics {
 				return false;
 			}, token );
 
-		public static async Task<Boolean> TrySave( this Efv efv, Document document, CancellationToken token ) =>
-			await Task.Run( () => {
+		[NotNull]
+		public static Task<Boolean> TrySave( this Efv efv, Document document, CancellationToken token ) =>
+			Task.Run( () => {
 
 				//TODO recalc the checksums
 				//write out to file

@@ -41,12 +41,12 @@
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using System.Timers;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 	using Numerics;
+	using System;
+	using System.Timers;
 
 	/// <summary>
 	///     A 'pause-able' clock.
@@ -56,8 +56,29 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>
 		/// </summary>
+		private volatile Boolean _isPaused;
+
+		/// <summary>
+		/// </summary>
+		[NotNull]
+		private Timer Timer { get; } = new Timer(interval: (Double)Milliseconds.One.Value) {
+			AutoReset = false
+		};
+
+		[JsonProperty]
+		public Day Day { get; private set; }
+
+		/// <summary>
+		/// </summary>
 		[JsonProperty]
 		public Hour Hour { get; private set; }
+
+		[JsonProperty]
+		public Boolean IsPaused {
+			get => this._isPaused;
+
+			private set => this._isPaused = value;
+		}
 
 		/// <summary>
 		/// </summary>
@@ -68,38 +89,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// </summary>
 		[JsonProperty]
 		public Minute Minute { get; private set; }
-
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Second Second { get; private set; }
-
-		public Boolean IsAm() => !this.IsPm();
-
-		public Boolean IsPm() => this.Hour >= 12;
-
-		public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
-
-		/// <summary>
-		/// </summary>
-		private volatile Boolean _isPaused;
-
-		/// <summary>
-		/// </summary>
-		[NotNull]
-		private Timer Timer { get; } = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
-			AutoReset = false
-		};
-
-		[JsonProperty]
-		public Day Day { get; private set; }
-
-		[JsonProperty]
-		public Boolean IsPaused {
-			get => this._isPaused;
-
-			private set => this._isPaused = value;
-		}
 
 		[JsonProperty]
 		public Month Month { get; private set; }
@@ -118,15 +107,20 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public Action<DateAndTime> OnYear { get; set; }
 
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public Second Second { get; private set; }
+
 		[JsonProperty]
 		public Year Year { get; private set; }
 
 		/// <summary>
 		///     Default to year 0.
 		/// </summary>
-		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Zero ) { }
+		public PauseableClock() : this(Measurement.Time.Date.Zero, Measurement.Time.Time.Zero) { }
 
-		public PauseableClock( Date date, Time time ) {
+		public PauseableClock(Date date, Time time) {
 			this.Year = date.Year;
 			this.Month = date.Month;
 			this.Day = date.Day;
@@ -138,115 +132,115 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Resume();
 		}
 
-		private Boolean DaysTocked( Boolean fireEvents ) {
-			this.Day = this.Day.Next( out var tocked );
+		private Boolean DaysTocked(Boolean fireEvents) {
+			this.Day = this.Day.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnDay?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnDay?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private Boolean HoursTocked( Boolean fireEvents ) {
-			this.Hour = this.Hour.Next( out var tocked );
+		private Boolean HoursTocked(Boolean fireEvents) {
+			this.Hour = this.Hour.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnHour?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnHour?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private Boolean MillisecondsTocked( Boolean fireEvents ) {
-			this.Millisecond = this.Millisecond.Next( out var tocked );
+		private Boolean MillisecondsTocked(Boolean fireEvents) {
+			this.Millisecond = this.Millisecond.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnMillisecond?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnMillisecond?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private Boolean MinutesTocked( Boolean fireEvents ) {
-			this.Minute = this.Minute.Next( out var tocked );
+		private Boolean MinutesTocked(Boolean fireEvents) {
+			this.Minute = this.Minute.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnMinute?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnMinute?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private Boolean MonthsTocked( Boolean fireEvents ) {
-			this.Month = this.Month.Next( out var tocked );
+		private Boolean MonthsTocked(Boolean fireEvents) {
+			this.Month = this.Month.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnMonth?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnMonth?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+		private void OnTimerElapsed(Object sender, ElapsedEventArgs elapsedEventArgs) {
 			this.Pause();
 
 			try { this.TickTock(); }
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 			finally { this.Resume(); }
 		}
 
-		private Boolean SecondsTocked( Boolean fireEvents ) {
-			this.Second = this.Second.Next( out var tocked );
+		private Boolean SecondsTocked(Boolean fireEvents) {
+			this.Second = this.Second.Next(out var tocked);
 
-			if ( !tocked ) { return false; }
+			if (!tocked) { return false; }
 
 			try {
-				if ( fireEvents ) { this.OnSecond?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnSecond?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 
 			return true;
 		}
 
-		private void TickTock( Boolean fireEvents = true ) {
-			if ( !this.MillisecondsTocked( fireEvents ) ) { return; }
+		private void TickTock(Boolean fireEvents = true) {
+			if (!this.MillisecondsTocked(fireEvents)) { return; }
 
-			if ( !this.SecondsTocked( fireEvents ) ) { return; }
+			if (!this.SecondsTocked(fireEvents)) { return; }
 
-			if ( !this.MinutesTocked( fireEvents ) ) { return; }
+			if (!this.MinutesTocked(fireEvents)) { return; }
 
-			if ( !this.HoursTocked( fireEvents ) ) { return; }
+			if (!this.HoursTocked(fireEvents)) { return; }
 
-			if ( !this.DaysTocked( fireEvents ) ) { return; }
+			if (!this.DaysTocked(fireEvents)) { return; }
 
-			if ( !this.MonthsTocked( fireEvents ) ) { return; }
+			if (!this.MonthsTocked(fireEvents)) { return; }
 
-			this.YearsTocked( fireEvents );
+			this.YearsTocked(fireEvents);
 		}
 
-		private void YearsTocked( Boolean fireEvents ) {
+		private void YearsTocked(Boolean fireEvents) {
 			this.Year = this.Year.Next();
 
 			try {
-				if ( fireEvents ) { this.OnYear?.Invoke( this.DateAndTime() ); }
+				if (fireEvents) { this.OnYear?.Invoke(this.DateAndTime()); }
 			}
-			catch ( Exception exception ) { exception.Log(); }
+			catch (Exception exception) { exception.Log(); }
 		}
 
 		/// <summary>
@@ -255,13 +249,13 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <param name="amount">    </param>
 		/// <param name="skipEvents"></param>
 		/// <returns></returns>
-		public Boolean Advance( Milliseconds amount, Boolean skipEvents = true ) {
+		public Boolean Advance(Milliseconds amount, Boolean skipEvents = true) {
 			try {
 				this.Pause();
 				var right = amount.Value;
 
-				while ( right > BigRational.Zero ) {
-					this.TickTock( fireEvents: false );
+				while (right > BigRational.Zero) {
+					this.TickTock(fireEvents: false);
 					right--;
 				}
 
@@ -270,9 +264,13 @@ namespace Librainian.Measurement.Time.Clocks {
 			finally { this.Resume(); }
 		}
 
-		public Date Date() => new Date( this.Year, this.Month, this.Day );
+		public Date Date() => new Date(this.Year, this.Month, this.Day);
 
-		public DateAndTime DateAndTime() => new DateAndTime( this.Date(), this.Time() );
+		public DateAndTime DateAndTime() => new DateAndTime(this.Date(), this.Time());
+
+		public Boolean IsAm() => !this.IsPm();
+
+		public Boolean IsPm() => this.Hour >= 12;
 
 		public Boolean Pause() {
 			this.Timer.Stop();
@@ -293,7 +291,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <returns></returns>
-		public Boolean Rewind( Milliseconds amount ) {
+		public Boolean Rewind(Milliseconds amount) {
 			try {
 				this.Pause();
 
@@ -305,5 +303,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 			finally { this.Resume(); }
 		}
+
+		public Time Time() => new Time(this.Hour, this.Minute, this.Second, this.Millisecond);
 	}
 }

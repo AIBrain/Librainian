@@ -51,6 +51,7 @@ namespace Librainian.Internet.Wiki {
 		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
 
+		[NotNull]
 		private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
 		public static Boolean DoesWikiRespond {

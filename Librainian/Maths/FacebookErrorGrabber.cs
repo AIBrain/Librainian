@@ -50,7 +50,6 @@ namespace Librainian.Maths {
 	using Internet;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using Threading;
 
 	public static class FacebookErrorGrabber {
 
@@ -58,10 +57,11 @@ namespace Librainian.Maths {
 		///     See also <see cref="Randem" />.
 		/// </summary>
 		/// <returns></returns>
-		public static async Task<FaceBookRootObject> GetError() {
+		[NotNull]
+		public static Task<FaceBookRootObject> GetError() {
 			var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
 
-			return await uri.DeserializeJson<FaceBookRootObject>().NoUI();
+			return uri.DeserializeJson<FaceBookRootObject>();
 		}
 
 		/// <summary>
@@ -70,8 +70,8 @@ namespace Librainian.Maths {
 		/// <param name="fallbackByteCount">How many random bytes to fallback to when the facebook request fails.</param>
 		/// <returns></returns>
 		[ItemNotNull]
-		public static async Task<Byte[]> NextData( Int32 fallbackByteCount = 16 ) {
-			var rootObject = await GetError().NoUI();
+		public static async Task<Byte[]> NextDataAsync( Int32 fallbackByteCount = 16 ) {
+			var rootObject = await GetError().ConfigureAwait( false );
 
 			var data = rootObject.Error.FbtraceID;
 
@@ -87,19 +87,19 @@ namespace Librainian.Maths {
 			if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
 
 			var fallback = new Byte[ fallbackByteCount ];
-			Randem.Instance.NextBytes( fallback );
+			Randem.Instance().NextBytes( fallback );
 
 			return fallback;
 		}
 
 		public static async Task<Int64> NxtInt32() {
-			var bytes = await NextData( sizeof( Int32 ) ).NoUI();
+			var bytes = await NextDataAsync( sizeof( Int32 ) ).ConfigureAwait( false );
 
 			return BitConverter.ToInt64( bytes, 0 );
 		}
 
 		public static async Task<Int64> NxtInt64() {
-			var bytes = await NextData( sizeof( Int64 ) ).NoUI();
+			var bytes = await NextDataAsync( sizeof( Int64 ) ).ConfigureAwait( false );
 
 			return BitConverter.ToInt64( bytes, 0 );
 		}

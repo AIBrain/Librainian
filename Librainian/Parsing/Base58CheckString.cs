@@ -48,6 +48,7 @@ namespace Librainian.Parsing {
 
 	public static class Base58CheckString {
 
+		[NotNull]
 		public static String FromByteArray( Byte[] b, Byte version ) {
 			using ( SHA256 sha256 = new SHA256Managed() ) {
 				b = new[] {
@@ -61,7 +62,7 @@ namespace Librainian.Parsing {
 		}
 
 		[NotNull]
-		public static Byte[] ToByteArray( String s, out Byte version ) {
+		public static Byte[] ToByteArray( [NotNull] String s, out Byte version ) {
 			var b = s.ToByteArray();
 
 			using ( SHA256 sha256 = new SHA256Managed() ) {
@@ -76,6 +77,6 @@ namespace Librainian.Parsing {
 		}
 
 		[NotNull]
-		public static Byte[] ToByteArray( String s ) => ToByteArray( s, out var b );
+		public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, out var b );
 	}
 }

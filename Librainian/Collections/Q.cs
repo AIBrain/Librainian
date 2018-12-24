@@ -55,7 +55,7 @@ namespace Librainian.Collections
     using Newtonsoft.Json;
 
     [ComVisible( visibility: false )]
-    [DebuggerDisplay( "Count={" + nameof( Count ) + "}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [HostProtection( SecurityAction.LinkDemand, ExternalThreading = true, Synchronization = true )]
     public class Q<T> : IProducerConsumerCollection<T> {

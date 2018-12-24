@@ -53,25 +53,25 @@ namespace LibrainianTests.Maths {
     public static class TimeTests {
 
         [Test]
-        public static void DayTest() => Day.Maximum.Value.Should().BeGreaterThan(Day.Minimum);
+        public static void DayTest() => Day.Maximum.Value.Should().BeGreaterThan(Day.Minimum.Value);
 
         [Test]
-        public static void HourTest() => Hour.Maximum.Value.Should().BeGreaterThan(Hour.Minimum);
+        public static void HourTest() => Hour.Maximum.Value.Should().BeGreaterThan(Hour.Minimum.Value);
 
         [Test]
-        public static void MicrosecondTest() => Microsecond.Maximum.Value.Should().BeGreaterThan(Microsecond.Minimum);
+        public static void MicrosecondTest() => Microsecond.Maximum.Value.Should().BeGreaterThan(Microsecond.Minimum.Value);
 
         [Test]
-        public static void MillisecondTest() => Millisecond.Maximum.Value.Should().BeGreaterThan(Millisecond.Minimum);
+        public static void MillisecondTest() => Millisecond.Maximum.Value.Should().BeGreaterThan(Millisecond.Minimum.Value);
 
         [Test]
-        public static void MinuteTest() => Minute.Maximum.Value.Should().BeGreaterThan(Minute.Minimum);
+        public static void MinuteTest() => Minute.Maximum.Value.Should().BeGreaterThan(Minute.Minimum.Value);
 
         [Test]
-        public static void MonthTest() => Month.Maximum.Value.Should().BeGreaterThan(Month.Minimum);
+        public static void MonthTest() => Month.Maximum.Value.Should().BeGreaterThan(Month.Minimum.Value);
 
         [Test]
-        public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan(Second.Minimum);
+        public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan(Second.Minimum.Value);
 
         //[OneTimeSetUp]
         public static void Setup() { }
@@ -227,23 +227,21 @@ namespace LibrainianTests.Maths {
         [Test]
         public static void TestSpanIdentity() {
             try {
-                SpanOfTime.Identity.Years.Value.Should().Be(1);
-                SpanOfTime.Identity.Months.Value.Should().Be(1);
-                SpanOfTime.Identity.Weeks.Value.Should().Be(1);
-                SpanOfTime.Identity.Days.Value.Should().Be(1);
-                SpanOfTime.Identity.Hours.Value.Should().Be(1);
-                SpanOfTime.Identity.Minutes.Value.Should().Be(1);
-                SpanOfTime.Identity.Seconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Milliseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Microseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Nanoseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Picoseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Attoseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Femtoseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Yoctoseconds.Value.Should().Be(1);
                 SpanOfTime.Identity.Zeptoseconds.Value.Should().Be(1);
-                SpanOfTime.Identity.Yoctoseconds.Value.Should().Be(1); //BUG should be 1, not 0
-
-                //SpanOfTime.Bytey.CalcTotalPlanckTimes().Should().BeGreaterThan(SpanOfTime.Identity.CalcTotalPlanckTimes());
+                SpanOfTime.Identity.Femtoseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Attoseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Picoseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Nanoseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Microseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Milliseconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Seconds.Value.Should().Be(1);
+                SpanOfTime.Identity.Minutes.Value.Should().Be(1);
+                SpanOfTime.Identity.Hours.Value.Should().Be(1);
+                SpanOfTime.Identity.Days.Value.Should().Be(1);
+                SpanOfTime.Identity.Weeks.Value.Should().Be(1);
+                SpanOfTime.Identity.Months.Value.Should().Be(1);
+                SpanOfTime.Identity.Years.Value.Should().Be(1);
             }
             catch (Exception exception) { exception.Log(); }
         }

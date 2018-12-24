@@ -37,249 +37,270 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2018/11/21 at 10:26 PM.
 
-namespace Librainian.Persistence
-{
+namespace Librainian.Persistence {
 
-    using ComputerSystem.FileSystem;
-    using JetBrains.Annotations;
-    using Maths.Hashings;
-    using Newtonsoft.Json;
-    using System;
-    using System.Diagnostics;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Logging;
-    using Threading;
+	using System;
+	using System.Diagnostics;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using ComputerSystem.FileSystem;
+	using JetBrains.Annotations;
+	using Logging;
+	using Newtonsoft.Json;
+	using ReactiveUI;
+	using ReactiveUI.Fody.Helpers;
 
-    /// <summary>
-    /// </summary>
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
-    [Serializable]
-    [JsonObject]
-    public class DocumentInfo : IEquatable<DocumentInfo>
-    {
+	/// <summary>
+	///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
+	/// </summary>
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[Serializable]
+	[JsonObject]
+	public class DocumentInfo : ReactiveObject, IEquatable<DocumentInfo> {
 
-        private Int64? _length;
+		[JsonIgnore]
+		private Int64? _length;
 
-        /// <summary>
-        ///     "drive:/folder/file.ext"
-        /// </summary>
-        [NotNull]
-        [JsonProperty]
-        public String AbsolutePath { get; private set; }
+		/// <summary>
+		///     "drive:\folder\file.ext"
+		/// </summary>
+		[Reactive]
+		[NotNull]
+		[JsonProperty]
+		public String AbsolutePath { get; private set; }
 
-        [JsonProperty]
-        public Int32? AddHash { get; private set; }
+		/// <summary>
+		///     The result of the Add-Hashing function.
+		/// </summary>
+		[Reactive]
+		[JsonProperty]
+		public Int32? AddHash { get; private set; }
 
-        [JsonIgnore]
-        public CancellationToken CancellationToken { get; set; }
+		[JsonIgnore]
+		public CancellationToken CancellationToken { get; set; }
 
-        [JsonProperty]
-        public Int32? CRC32 { get; private set; }
+		[Reactive]
+		[JsonProperty]
+		public Int32? CRC32 { get; private set; }
 
-        [JsonProperty]
-        public Int64? CRC64 { get; private set; }
+		[Reactive]
+		[JsonProperty]
+		public Int64? CRC64 { get; private set; }
 
-        [JsonProperty]
-        public DateTime? CreationTimeUtc { get; private set; }
+		[Reactive]
+		[JsonProperty]
+		public DateTime? CreationTimeUtc { get; private set; }
 
-        /// <summary>
-        ///     The most recent UTC datetime this info was updated.
-        /// </summary>
-        [JsonProperty]
-        public DateTime? LastScanned { get; private set; }
+		/// <summary>
+		///     The most recent UTC datetime this info was updated.
+		/// </summary>
+		[Reactive]
+		[JsonProperty]
+		public DateTime? LastScanned { get; private set; }
 
-        [JsonProperty]
-        public DateTime? LastWriteTimeUtc { get; private set; }
+		[Reactive]
+		[JsonProperty]
+		public DateTime? LastWriteTimeUtc { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Int64? Length {
-            get => this._length;
+		/// <summary>
+		/// </summary>
+		[Reactive]
+		[JsonProperty]
+		public Int64? Length {
+			get => this._length;
 
-            private set {
-                this._length = value;
-                this.Reset();
-            }
-        }
+			private set => this._length = value;
+		}
 
-        public DocumentInfo([NotNull] Document document)
-        {
-            if (document == null) { throw new ArgumentNullException(paramName: nameof(document)); }
+		public DocumentInfo( [NotNull] Document document ) {
+			if ( document == null ) {
+				throw new ArgumentNullException( paramName: nameof( document ) );
+			}
 
-            this.AbsolutePath = document.FullPathWithFileName;
+			this.Reset();
 
-            this.Length = document.Length;
-            this.CreationTimeUtc = document.Info.CreationTimeUtc;
-            this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
+			this.AbsolutePath = document.FullPathWithFileName;
 
-            this.LastScanned = null;
-        }
+			this.Length = document.Length;
+			this.CreationTimeUtc = document.Info.CreationTimeUtc;
+			this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
 
-        public static Boolean? AreEitherDifferent([NotNull] DocumentInfo left, [NotNull] DocumentInfo right)
-        {
-            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
+			this.LastScanned = null;
+		}
 
-            if (right == null) { throw new ArgumentNullException(paramName: nameof(right)); }
+		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
+			if ( left == null ) {
+				throw new ArgumentNullException( paramName: nameof( left ) );
+			}
 
-            if (!left.Length.HasValue || !right.Length.HasValue || !left.CreationTimeUtc.HasValue || !right.CreationTimeUtc.HasValue || !left.LastWriteTimeUtc.HasValue || !right.LastWriteTimeUtc.HasValue)
-            {
-                return null;
-            }
+			if ( right == null ) {
+				throw new ArgumentNullException( paramName: nameof( right ) );
+			}
 
-            if (left.Length.Value != right.Length.Value || left.CreationTimeUtc.Value != right.CreationTimeUtc.Value || left.LastWriteTimeUtc.Value != right.LastWriteTimeUtc.Value) { return true; }
+			if ( !left.Length.HasValue || !right.Length.HasValue ) {
+				return null;
+			}
 
-            if (!left.AddHash.HasValue || !right.AddHash.HasValue || !left.CRC32.HasValue || !right.CRC32.HasValue || !left.CRC64.HasValue || !right.CRC64.HasValue) { return true; }
+			if ( !left.CreationTimeUtc.HasValue || !right.CreationTimeUtc.HasValue || !left.LastWriteTimeUtc.HasValue || !right.LastWriteTimeUtc.HasValue ) {
+				return null;
+			}
 
-            if (left.AddHash.Value != right.AddHash.Value || left.CRC32.Value != right.CRC32.Value || left.CRC64.Value != right.CRC64.Value) { return true; }
+			if ( left.Length.Value != right.Length.Value ) {
+				return true;
+			}
 
-            return false;
-        }
+			if ( left.CreationTimeUtc.Value != right.CreationTimeUtc.Value || left.LastWriteTimeUtc.Value != right.LastWriteTimeUtc.Value ) {
+				return true;
+			}
 
-        /// <summary>
-        ///     Static comparison test. Compares file lengths and hashes.
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals(DocumentInfo left, DocumentInfo right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true; //this is true for null==null, right?
-            }
+			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || !left.CRC32.HasValue || !right.CRC32.HasValue || !left.CRC64.HasValue || !right.CRC64.HasValue ) {
+				return true;
+			}
 
-            if (left == null || right == null) { return false; }
+			if ( left.AddHash.Value != right.AddHash.Value || left.CRC32.Value != right.CRC32.Value || left.CRC64.Value != right.CRC64.Value ) {
+				return true;
+			}
 
-            if (left.LastScanned == null || right.LastScanned == null)
-            {
-                return false; //the files need to be ran through Update() before we can compare them.
-            }
+			return false;
+		}
 
-            if (left.Length.HasValue && right.Length.HasValue && left.Length.Value == right.Length.Value)
-            {
-                if (left.AddHash.HasValue && right.AddHash.HasValue && left.AddHash.Value == right.AddHash.Value)
-                {
-                    if (left.CRC32.HasValue && right.CRC32.HasValue && left.CRC32.Value == right.CRC32.Value)
-                    {
-                        if (left.CRC64.HasValue && right.CRC64.HasValue && left.CRC64.Value == right.CRC64.Value)
-                        {
+		[NotNull]
+		public static Task<Int32> CalcHashInt32Async( [NotNull] Document document, CancellationToken token ) => Task.Run( () => document.CalcHashInt32(), token );
 
-                            //Okay, we've compared by 3 different hashes. File should be unique by now.
-                            //The chances of 3 collisions is so low.. I won't even bother worrying about it happening in my lifetime.
-                            return true;
-                        }
-                    }
-                }
-            }
+		/// <summary>
+		///     <para>Static comparison test. Compares file lengths and hashes.</para>
+		///     <para>
+		///         If the hashes have not been computed yet on either file, the
+		///         <see cref="Equals(Librainian.Persistence.DocumentInfo,Librainian.Persistence.DocumentInfo)" /> is false.
+		///     </para>
+		///     <para>Unless <paramref name="left" /> is the same object as <paramref name="right" />.</para>
+		/// </summary>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static Boolean Equals( DocumentInfo left, DocumentInfo right ) {
+			if ( ReferenceEquals( left, right ) ) {
+				return true; //this is true for null==null, right?
+			}
 
-            return false;
-        }
+			if ( left == null || right == null ) {
+				return false;
+			}
 
-        public static Boolean operator !=([CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right) => !Equals(left, right);
+			if ( left.LastScanned == null || right.LastScanned == null ) {
+				return false; //the files need to be ran through Update() before we can compare them.
+			}
 
-        public static Boolean operator ==([CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right) => Equals(left, right);
+			if ( !left.Length.HasValue || !right.Length.HasValue || left.Length.Value != right.Length.Value ) {
+				return false;
+			}
 
-        public Boolean Equals([CanBeNull] DocumentInfo other) => Equals(this, other);
+			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || left.AddHash.Value != right.AddHash.Value ) {
+				return false;
+			}
 
-        public override Boolean Equals(Object obj) => Equals(this, obj as DocumentInfo);
+			if ( !left.CRC32.HasValue || !right.CRC32.HasValue || left.CRC32.Value != right.CRC32.Value ) {
+				return false;
+			}
 
-        // ReSharper disable once NonReadonlyMemberInGetHashCode
-        public override Int32 GetHashCode() => this.Length.GetHashCode();
+			//Okay, we've compared by 3 different hashes. File should be unique by now.
+			//The chances of 3 collisions is so low.. I won't even bother worrying about it happening in my lifetime.
+			return left.CRC64.HasValue && right.CRC64.HasValue && left.CRC64.Value == right.CRC64.Value;
+		}
 
-        /// <summary>
-        /// Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
-        /// </summary>
-        /// <param name="document"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task GetHashes([NotNull] Document document, CancellationToken token)
-        {
-            if (document == null)
-            {
-                throw new ArgumentNullException(paramName: nameof(document));
-            }
+		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
 
-            Debug.Write($"Starting scans on {this.AbsolutePath}...");
+		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
-            var crc32 = document.CRC32Async(this.CancellationToken);
-            var crc64 = document.CRC64Async(this.CancellationToken);
-            var addHash = document.CalcHashInt32Async(this.CancellationToken);
+		public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
-            this.CRC32 = await crc32.NoUI();
-            this.CRC64 = await crc64.NoUI();
-            this.AddHash = await addHash.NoUI();
+		public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
-            await Task.WhenAll(crc32, crc64, addHash).NoUI();
-        }
+		// ReSharper disable once NonReadonlyMemberInGetHashCode
+		public override Int32 GetHashCode() => this.Length.GetHashCode();
 
-        /// <summary>
-        ///     <para>A change in <see cref="Length" /> basically means it's a new document.</para>
-        ///     <para><see cref="Scan" /> needs to be called to repopulate these values.</para>
-        /// </summary>
-        public void Reset()
-        {
-            this.LastScanned = null;
-            this.CreationTimeUtc = null;
-            this.LastWriteTimeUtc = null;
-            this.LastScanned = null;
-            this.AddHash = null;
-            this.CRC32 = null;
-            this.CRC64 = null;
-        }
+		/// <summary>
+		///     Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
+		/// </summary>
+		/// <param name="document"></param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
+			if ( document == null ) {
+				throw new ArgumentNullException( paramName: nameof( document ) );
+			}
 
-        /// <summary>
-        ///     Looks at the entire document.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<Boolean> Scan(CancellationToken token)
-        {
+			Debug.Write( $"Starting scans on {this.AbsolutePath}..." );
 
-            try
-            {
+			var addHash = CalcHashInt32Async( document, this.CancellationToken );
+			var crc32 = document.CRC32Async( this.CancellationToken );
+			var crc64 = document.CRC64Async( this.CancellationToken );
 
-                var record = Data.ScannedDocuments[this.AbsolutePath];
+			this.CRC32 = await crc32.ConfigureAwait( false );
+			this.CRC64 = await crc64.ConfigureAwait( false );
+			this.AddHash = await addHash.ConfigureAwait( false );
 
-                var document = new Document(this.AbsolutePath);
+			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
+		}
 
-                this.Length = document.Length;
-                this.CreationTimeUtc = document.Info.CreationTimeUtc;
-                this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
+		/// <summary>
+		///     <para>Resets the results of the hashes to null.</para>
+		///     <para>A change in <see cref="Length" /> basically means it's a new document.</para>
+		///     <para><see cref="ScanAsync" /> needs to be called to repopulate these values.</para>
+		/// </summary>
+		public void Reset() {
+			this.LastScanned = null;
+			this.CreationTimeUtc = null;
+			this.LastWriteTimeUtc = null;
+			this.LastScanned = null;
+			this.AddHash = null;
+			this.CRC32 = null;
+			this.CRC64 = null;
+		}
 
-                var needScanned = false;
+		/// <summary>
+		///     Looks at the entire document.
+		/// </summary>
+		/// <returns></returns>
+		public async Task ScanAsync( CancellationToken token ) {
 
-                if (record == null)
-                {
-                    needScanned = true;
+			try {
+				var needScanned = false;
 
-                    goto TheTask;
-                }
+				if ( MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] is DocumentInfo record ) {
+					if ( AreEitherDifferent( this, record ) == true ) {
+						needScanned = true;
+					}
+				}
 
-                if (AreEitherDifferent(this, record) == true) { needScanned = true; }
+				if ( needScanned ) {
+					var document = new Document( this.AbsolutePath );
 
-            TheTask:
+					this.Length = document.Length;
+					this.CreationTimeUtc = document.Info.CreationTimeUtc;
+					this.LastWriteTimeUtc = document.Info.LastWriteTimeUtc;
 
-                if (needScanned)
-                {
-                    if (token.IsCancellationRequested) { return false; }
+					await this.GetHashesAsync( document, token ).ConfigureAwait( false );
 
-                    await this.GetHashes(document, token).NoUI();
-                    this.LastScanned = DateTime.UtcNow;
-                }
+					this.LastScanned = DateTime.UtcNow;
 
-                if (record == null) { Data.ScannedDocuments[this.AbsolutePath] = this; }
+					var copy = new DocumentInfo( document ) {
+						LastScanned = this.LastScanned,
+						CRC32 = this.CRC32,
+						CRC64 = this.CRC64,
+						AddHash = this.AddHash
+					};
 
-                return true;
-            }
-            catch (Exception exception) { exception.Log(); }
-            finally { Debug.WriteLine("done."); }
+					MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] = copy;
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+		}
 
-            return false;
-        }
-
-        public override String ToString() => $"{this.AbsolutePath}={this.Length ?? -1} bytes";
-    }
+		public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
+	}
 }

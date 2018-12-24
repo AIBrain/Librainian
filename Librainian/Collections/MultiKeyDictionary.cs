@@ -59,7 +59,8 @@ namespace Librainian.Collections {
 
 		internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new ConcurrentDictionary<TL, TK>();
 
-		public TV this[ TL subKey ] {
+		[CanBeNull]
+		public TV this[ [NotNull] TL subKey ] {
 			get {
 				if ( this.TryGetValue( subKey: subKey, val: out var item ) ) { return item; }
 
@@ -67,7 +68,7 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public new TV this[ TK primaryKey ] {
+		public new TV this[ [NotNull] TK primaryKey ] {
 			get {
 				if ( this.TryGetValue( primaryKey: primaryKey, val: out var item ) ) { return item; }
 
@@ -77,7 +78,7 @@ namespace Librainian.Collections {
 
 		public void Add( [NotNull] TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
 
-		public void Add( [NotNull] TK primaryKey, TL subKey, TV val ) {
+		public void Add( [NotNull] TK primaryKey, [NotNull] TL subKey, TV val ) {
 			this.TryAdd( primaryKey, val );
 
 			this.Associate( subKey: subKey, primaryKey: primaryKey );
@@ -105,9 +106,9 @@ namespace Librainian.Collections {
 		[NotNull]
 		public TV[] CloneValues() => this.Values.ToArray();
 
-		public Boolean ContainsKey( TL subKey ) => this.TryGetValue( subKey: subKey, val: out _ );
+		public Boolean ContainsKey( [NotNull] TL subKey ) => this.TryGetValue( subKey: subKey, val: out _ );
 
-		public new Boolean ContainsKey( TK primaryKey ) => this.TryGetValue( primaryKey: primaryKey, val: out _ );
+		public new Boolean ContainsKey( [NotNull] TK primaryKey ) => this.TryGetValue( primaryKey: primaryKey, val: out _ );
 
 		public void Remove( [NotNull] TK primaryKey ) {
 			this.SubDictionary.TryRemove( this.PrimaryToSubkeyMapping[ primaryKey ], out _ );

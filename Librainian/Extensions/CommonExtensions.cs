@@ -37,203 +37,224 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "CommonExtensions.cs" was last formatted by Protiguous on 2018/07/26 at 1:52 PM.
+// Project: "Librainian", "CommonExtensions.cs" was last formatted by Protiguous on 2018/11/02 at 11:03 PM.
 
-namespace Librainian.Extensions
-{
+namespace Librainian.Extensions {
 
-    using JetBrains.Annotations;
-    using Maths;
-    using Maths.Numbers;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Runtime.CompilerServices;
+	using JetBrains.Annotations;
+	using Maths;
+	using Maths.Numbers;
 
-    public static class CommonExtensions
-    {
+	public static class CommonExtensions {
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this Int16 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this SByte number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this Int32 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Byte number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this Int64 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Int16 number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this UInt16 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Int32 number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this UInt32 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Int64 number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this UInt64 number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this UInt16 number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this Decimal number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this UInt32 number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns true if <paramref name="number" /> is greater than or equal to 1.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        [Pure]
-        [DebuggerStepThrough]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Any(this Double number) => number >= 1;
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this UInt64 number ) => number >= 1;
 
-        /// <summary>
-        ///     Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="target">        </param>
-        /// <param name="startInclusive"></param>
-        /// <param name="endInclusive">  </param>
-        /// <returns></returns>
-        /// <example>5. Between(1, 10)</example>
-        /// <example>5. Between(10, 1)</example>
-        /// <example>5. Between(10, 6) == false</example>
-        /// <example>5. Between(5, 5))</example>
-        public static Boolean Between<T>([NotNull] this T target, [NotNull] T startInclusive, T endInclusive) where T : IComparable
-        {
-            if (startInclusive.CompareTo(endInclusive) == 1) { return target.CompareTo(startInclusive) <= 0 && target.CompareTo(endInclusive) >= 0; }
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Decimal number ) => number >= 1;
 
-            return target.CompareTo(startInclusive) >= 0 && target.CompareTo(endInclusive) <= 0;
-        }
+		/// <summary>
+		///     Returns true if <paramref name="number" /> is greater than or equal to 1.
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[Pure]
+		[DebuggerStepThrough]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Any( this Double number ) => number >= 1;
 
-        /// <summary>
-        ///     Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between
-        ///     <paramref name="min" /> and <paramref name="max" />.
-        /// </summary>
-        /// <param name="self">The extended T.</param>
-        /// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
-        /// <param name="max"> The maximum value of the <typeparamref name="T" /> that can be returned.</param>
-        /// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
-        public static T Clamp<T>([NotNull] this T self, T min, T max) where T : IComparable<T>
-        {
-            if (self.CompareTo(other: min) < 0) { return min; }
+		/// <summary>
+		///     Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="target">        </param>
+		/// <param name="startInclusive"></param>
+		/// <param name="endInclusive">  </param>
+		/// <returns></returns>
+		/// <example>5. Between(1, 10)</example>
+		/// <example>5. Between(10, 1)</example>
+		/// <example>5. Between(10, 6) == false</example>
+		/// <example>5. Between(5, 5))</example>
+		public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, T endInclusive ) where T : IComparable {
+			if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
+				return target.CompareTo( startInclusive ) <= 0 && target.CompareTo( endInclusive ) >= 0;
+			}
 
-            return self.CompareTo(other: max) > 0 ? max : self;
-        }
+			return target.CompareTo( startInclusive ) >= 0 && target.CompareTo( endInclusive ) <= 0;
+		}
 
-        public static IEnumerable<T> Concat<T>([NotNull] this IEnumerable<T> first, T second)
-        {
-            foreach (var item in first) { yield return item; }
+		/// <summary>
+		///     Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between
+		///     <paramref name="min" /> and <paramref name="max" />.
+		/// </summary>
+		/// <param name="self">The extended T.</param>
+		/// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
+		/// <param name="max"> The maximum value of the <typeparamref name="T" /> that can be returned.</param>
+		/// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
+		public static T Clamp<T>( [NotNull] this T self, T min, T max ) where T : IComparable<T> {
+			if ( self.CompareTo( other: min ) < 0 ) {
+				return min;
+			}
 
-            yield return second;
-        }
+			return self.CompareTo( other: max ) > 0 ? max : self;
+		}
 
-        /// <summary>
-        ///     Swap.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        public static void Swap<T>(ref T left, ref T right)
-        {
-            var temp = left;
-            left = right;
-            right = temp;
-        }
+		public static IEnumerable<T> Concat<T>( [NotNull] this IEnumerable<T> first, T second ) {
+			foreach ( var item in first ) {
+				yield return item;
+			}
 
-        /// <summary>
-        ///     Return (T right, T left).
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static (T right, T left) Swap<T>(this T left, T right) => (right, left);
+			yield return second;
+		}
 
-        public static String ToHex([NotNull] this IEnumerable<Byte> input)
-        {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+		/// <summary>
+		///     Just a no-op for setting a breakpoint on.
+		/// </summary>
+		[DebuggerStepThrough]
+		public static void Nop<T>( this T obj ) { }
 
-            return input.Aggregate("", (current, b) => current + b.ToString("x2"));
-        }
+		/// <summary>
+		///     <para>Works like the SQL "nullif" function.</para>
+		///     <para>
+		///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null (or the default value for
+		///         value types).
+		///     </para>
+		///     <para>Otherwise return <paramref name="left" />.</para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		[DebuggerStepThrough]
+		public static T NullIf<T>( [NotNull] this T left, T right ) => left.Equals( right ) ? default : left;
 
-        public static String ToHex(this UInt32 value) => BitConverter.GetBytes(value).Aggregate("", (current, b) => current + b.ToString("x2"));
+		/// <summary>
+		///     Swap.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		public static void Swap<T>( ref T left, ref T right ) {
+			var temp = left;
+			left = right;
+			right = temp;
+		}
 
-        public static String ToHex(this UInt64 value) => BitConverter.GetBytes(value).Aggregate("", (current, b) => current + b.ToString("x2"));
+		/// <summary>
+		///     Return (T right, T left).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static (T right, T left) Swap<T>( this T left, T right ) => (right, left);
 
-        [NotNull]
-        public static String ToHexNumberString([NotNull] this IEnumerable<Byte> value) => Bits.ToString(value.Reverse().ToArray()).Replace("-", "").ToLower();
+		public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
+			if ( input == null ) {
+				throw new ArgumentNullException( nameof( input ) );
+			}
 
-        [NotNull]
-        public static String ToHexNumberString(this UInt256 value) => value.ToByteArray().ToHexNumberString();
+			return input.Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
+		}
 
-        /// <summary>
-        ///     Just a no-op for setting a breakpoint on.
-        /// </summary>
-        [DebuggerStepThrough]
-        public static void Nop<T>(this T obj) { }
+		public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
 
-        /// <summary>
-        ///     <para>Works like the SQL "nullif" function.</para>
-        ///     <para>
-        ///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null (or the default value for
-        ///         value types).
-        ///     </para>
-        ///     <para>Otherwise return <paramref name="left" />.</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        [DebuggerStepThrough]
-        public static T NullIf<T>([NotNull] this T left, T right) => left.Equals(right) ? default : left;
-    }
+		public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "x2" ) );
+
+		[NotNull]
+		public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+
+		[NotNull]
+		public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
+	}
 }

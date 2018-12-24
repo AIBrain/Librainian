@@ -39,37 +39,35 @@
 //
 // Project: "Librainian", "TreeNodeList.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
 
-namespace Librainian.Collections
-{
+namespace Librainian.Collections {
 
-    using JetBrains.Annotations;
-    using System;
-    using System.Collections.Generic;
+	using System;
+	using System.Collections.Generic;
+	using JetBrains.Annotations;
 
-    /// <summary>
-    ///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class TreeNodeList<T> : List<TreeNode<T>>
-    {
+	/// <summary>
+	///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class TreeNodeList<T> : List<TreeNode<T>> {
 
-        public TreeNode<T> Parent { get; }
+		public TreeNode<T> Parent { get; }
 
-        public TreeNodeList([NotNull] TreeNode<T> parent) => this.Parent = parent ?? throw new ArgumentNullException(nameof(parent));
+		public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
-        public TreeNode<T> Add(T value) => this.Add(node: new TreeNode<T>(value));
+		[NotNull]
+		public TreeNode<T> Add( T value ) => this.Add( node: new TreeNode<T>( value ) );
 
-        [NotNull]
-        public new TreeNode<T> Add([NotNull] TreeNode<T> node)
-        {
-            if (node == null) { throw new ArgumentNullException(nameof(node)); }
+		[NotNull]
+		public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
+			if ( node == null ) { throw new ArgumentNullException( nameof( node ) ); }
 
-            base.Add(item: node);
-            node.Parent = this.Parent;
+			base.Add( item: node );
+			node.Parent = this.Parent;
 
-            return node;
-        }
+			return node;
+		}
 
-        public override String ToString() => $"Count={this.Count}";
-    }
+		public override String ToString() => $"Count={this.Count}";
+	}
 }

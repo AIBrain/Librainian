@@ -41,600 +41,616 @@
 
 namespace Librainian.Security {
 
-    using ComputerSystem.FileSystem;
-    using Extensions;
-    using JetBrains.Annotations;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Security.Cryptography;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Logging;
-    using Threading;
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Runtime.InteropServices;
+	using System.Security;
+	using System.Security.Cryptography;
+	using System.Text;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using ComputerSystem.FileSystem;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Logging;
 
-    public static class SecurityExtensions {
+	public static class SecurityExtensions {
 
-        public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
+		public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
 
-        public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
+		public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
 
-        public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
+		public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
-        /// <summary>
-        /// </summary>
-        public static SHA1CryptoServiceProvider CryptoProvider { get; } = new SHA1CryptoServiceProvider();
+		/// <summary>
+		/// </summary>
+		[NotNull]
+		public static SHA1CryptoServiceProvider CryptoProvider { get; } = new SHA1CryptoServiceProvider();
 
-        public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes(s: $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}");
+		[NotNull]
+		public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( s: $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
-        /// <summary>
-        ///     threadsafe MD5 hashers
-        /// </summary>
+		/// <summary>
+		///     threadsafe MD5 hashers
+		/// </summary>
+		[NotNull]
+
+		// ReSharper disable once InconsistentNaming
+		public static ThreadLocal<MD5> MD5s { get; } = new ThreadLocal<MD5>( valueFactory: System.Security.Cryptography.MD5.Create );
+
+		/// <summary>
+		///     Provide to each thread its own <see cref="SHA256Managed" />.
+		/// </summary>
+		[NotNull]
+		public static ThreadLocal<SHA256Managed> SHA256Local { get; } = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
-        // ReSharper disable once InconsistentNaming
-        public static ThreadLocal<MD5> MD5s { get; } = new ThreadLocal<MD5>(valueFactory: System.Security.Cryptography.MD5.Create);
+		/// <summary>
+		///     Provide to each thread its own <see cref="SHA256Managed" />.
+		/// </summary>
+		[NotNull]
+		public static ThreadLocal<SHA384Managed> SHA384Local { get; } = new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA256Managed" />.
-        /// </summary>
-        public static ThreadLocal<SHA256Managed> SHA256Local { get; } = new ThreadLocal<SHA256Managed>(valueFactory: () => new SHA256Managed(), trackAllValues: false);
+		/// <summary>
+		///     Provide to each thread its own <see cref="SHA256Managed" />.
+		/// </summary>
+		[NotNull]
+		public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA256Managed" />.
-        /// </summary>
-        public static ThreadLocal<SHA384Managed> SHA384Local { get; } = new ThreadLocal<SHA384Managed>(valueFactory: () => new SHA384Managed(), trackAllValues: false);
+		[NotNull]
+		public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Managed { get; } = new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ) );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA256Managed" />.
-        /// </summary>
-        public static ThreadLocal<SHA512Managed> SHA512Local { get; } = new ThreadLocal<SHA512Managed>(valueFactory: () => new SHA512Managed(), trackAllValues: false);
+		[NotNull]
+		private static Byte[] Uid( [NotNull] String s ) {
+			var numArray = new Byte[ s.Length ];
 
-        [NotNull]
-        private static Byte[] Uid([NotNull] String s) {
-            var numArray = new Byte[s.Length];
+			for ( var i = 0; i < s.Length; i++ ) { numArray[ i ] = ( Byte )( s[ index: i ] & '\u007F' ); }
 
-            for (var i = 0; i < s.Length; i++) { numArray[i] = (Byte)(s[index: i] & '\u007F'); }
+			return numArray;
+		}
 
-            return numArray;
-        }
+		[NotNull]
+		public static Task<Byte[]> ComputeMD5HashAsync( String filename ) => Task.Run( function: () => {
 
-        public static async Task<Byte[]> ComputeMD5Hash(String filename) =>
-            await Task.Run(function: () => {
-                var md5Hasher = MD5s.Value;
+			using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) {
+				return MD5s.Value.ComputeHash( fs );
+			}
+		} );
 
-                using (var fs = new FileStream(filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true)) { return md5Hasher.ComputeHash(fs); }
-            }).NoUI();
+		[NotNull]
+		public static SecureString DecryptString( this String encryptedData ) {
+			try {
+				var decryptedData = ProtectedData.Unprotect( encryptedData: Convert.FromBase64String( s: encryptedData ), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser );
 
-        [NotNull]
-        public static SecureString DecryptString(this String encryptedData) {
-            try {
-                var decryptedData = ProtectedData.Unprotect(encryptedData: Convert.FromBase64String(s: encryptedData), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser);
+				return ToSecureString( input: Encoding.Unicode.GetString( bytes: decryptedData ) );
+			}
+			catch { return new SecureString(); }
+		}
 
-                return ToSecureString(input: Encoding.Unicode.GetString(bytes: decryptedData));
-            }
-            catch { return new SecureString(); }
-        }
+		[NotNull]
+		public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
 
-        [NotNull]
-        public static String DecryptStringUsingRegistryKey([NotNull] this String decryptValue, [NotNull] String privateKey) {
+			// This is the variable that will be returned to the user
+			if ( decryptValue == null ) { throw new ArgumentNullException( nameof( decryptValue ) ); }
 
-            // This is the variable that will be returned to the user
-            if (decryptValue == null) { throw new ArgumentNullException(nameof(decryptValue)); }
+			if ( privateKey == null ) { throw new ArgumentNullException( nameof( privateKey ) ); }
 
-            if (privateKey == null) { throw new ArgumentNullException(nameof(privateKey)); }
+			var decryptedValue = String.Empty;
 
-            var decryptedValue = String.Empty;
+			// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
+			// - 13 would indicate DSA provider
+			var csp = new CspParameters( dwTypeIn: 1 ) {
+				KeyContainerName = privateKey,
+				ProviderName = "Microsoft Strong Cryptographic Provider"
+			};
 
-            // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
-            // - 13 would indicate DSA provider
-            var csp = new CspParameters(dwTypeIn: 1) {
-                KeyContainerName = privateKey,
-                ProviderName = "Microsoft Strong Cryptographic Provider"
-            };
+			// Registry key name containing the RSA private/public key
 
-            // Registry key name containing the RSA private/public key
+			// Supply the provider name
 
-            // Supply the provider name
+			try {
 
-            try {
+				//Create new RSA object passing our key info
+				var rsa = new RSACryptoServiceProvider( parameters: csp );
 
-                //Create new RSA object passing our key info
-                var rsa = new RSACryptoServiceProvider(parameters: csp);
+				// Before decryption we must convert this ugly String into a byte array
+				var valueToDecrypt = Convert.FromBase64String( s: decryptValue );
 
-                // Before decryption we must convert this ugly String into a byte array
-                var valueToDecrypt = Convert.FromBase64String(s: decryptValue);
+				// Decrypt the passed in String value - Again the false value has to do with padding
+				var plainTextValue = rsa.Decrypt( rgb: valueToDecrypt, fOAEP: false );
 
-                // Decrypt the passed in String value - Again the false value has to do with padding
-                var plainTextValue = rsa.Decrypt(rgb: valueToDecrypt, fOAEP: false);
+				// Extract our decrypted byte array into a String value to return to our user
+				decryptedValue = Encoding.UTF8.GetString( bytes: plainTextValue );
+			}
+			catch ( CryptographicException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
 
-                // Extract our decrypted byte array into a String value to return to our user
-                decryptedValue = Encoding.UTF8.GetString(bytes: plainTextValue);
-            }
-            catch (CryptographicException exception) { exception.Log(); }
-            catch (Exception exception) { exception.Log(); }
+			return decryptedValue;
+		}
 
-            return decryptedValue;
-        }
-
-        /// <summary>
-        ///     Converts the given string ( <paramref name="input" />) to an encrypted Base64 string.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String EncryptString(this SecureString input) {
-            var encryptedData = ProtectedData.Protect(userData: Encoding.Unicode.GetBytes(s: ToInsecureString(input: input)), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser);
-
-            return Convert.ToBase64String(inArray: encryptedData);
-        }
-
-        [NotNull]
-        public static String EncryptStringUsingRegistryKey([NotNull] this String stringToEncrypt, [NotNull] String publicKey) {
-
-            // This is the variable that will be returned to the user
-            if (stringToEncrypt == null) { throw new ArgumentNullException(nameof(stringToEncrypt)); }
+		/// <summary>
+		///     Converts the given string ( <paramref name="input" />) to an encrypted Base64 string.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static String EncryptString( [NotNull] this SecureString input ) {
+			if ( input == null ) {
+				throw new ArgumentNullException( paramName: nameof( input ) );
+			}
+
+			var encryptedData = ProtectedData.Protect( userData: Encoding.Unicode.GetBytes( s: ToInsecureString( input: input ) ), optionalEntropy: Entropy, scope: DataProtectionScope.CurrentUser );
 
-            if (publicKey == null) { throw new ArgumentNullException(nameof(publicKey)); }
-
-            var encryptedValue = String.Empty;
-
-            // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
-            // - 13 would indicate DSA provider
-            var csp = new CspParameters(dwTypeIn: 1) {
-                KeyContainerName = publicKey,
-                ProviderName = "Microsoft Strong Cryptographic Provider"
-            };
-
-            // Registry key name containing the RSA private/public key
-
-            // Supply the provider name
-
-            try {
-
-                //Create new RSA object passing our key info
-                var rsa = new RSACryptoServiceProvider(parameters: csp);
-
-                // Before encrypting the value we must convert it over to byte array
-                var bytesToEncrypt = Encoding.UTF8.GetBytes(s: stringToEncrypt);
-
-                // Encrypt our byte array. The false parameter has to do with padding (not to clear on this point but you can look it up and decide which is better for your use)
-                var bytesEncrypted = rsa.Encrypt(rgb: bytesToEncrypt, fOAEP: false);
-
-                // Extract our encrypted byte array into a String value to return to our user
-                encryptedValue = Convert.ToBase64String(inArray: bytesEncrypted);
-            }
-            catch (CryptographicException exception) { exception.Log(); }
-            catch (Exception exception) { exception.Log(); }
-
-            return encryptedValue;
-        }
-
-        [NotNull]
-        public static String GetHexString([NotNull] this IReadOnlyList<Byte> bt) {
-            var s = String.Empty;
-
-            for (var i = 0; i < bt.Count; i++) {
-                var b = bt[index: i];
-                Int32 n = b;
-                var n1 = n & 15;
-                var n2 = (n >> 4) & 15;
-
-                if (n2 > 9) { s += ((Char)(n2 - 10 + 'A')).ToString(); }
-                else { s += n2.ToString(); }
-
-                if (n1 > 9) { s += ((Char)(n1 - 10 + 'A')).ToString(); }
-                else { s += n1.ToString(); }
-
-                if (i + 1 != bt.Count && (i + 1) % 2 == 0) { s += "-"; }
-            }
-
-            return s;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static String GetMD5Hash([NotNull] this String s) {
-            using (MD5 md5 = new MD5CryptoServiceProvider()) { return md5.ComputeHash(Encoding.Unicode.GetBytes(s)).ToHexString(); }
-        }
-
-        /// <summary>
-        ///     Uses the md5sum.exe to obtain the md5 string.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static String MD5([NotNull] this FileInfo file) {
-            if (!file.Exists) { return null; }
-
-            var p = new Process {
-                StartInfo = {
-                    FileName = "md5sum.exe",
-                    Arguments = file.FullName,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true
-                }
-            };
-
-            p.Start();
-            p.WaitForExit();
-            var output = p.StandardOutput.ReadToEnd();
-            var result = output.Split(' ')[0].Substring(startIndex: 1).ToUpper();
+			return Convert.ToBase64String( inArray: encryptedData );
+		}
 
-            return String.IsNullOrWhiteSpace(result) ? null : result;
-        }
+		[NotNull]
+		public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
 
-        [NotNull]
-        public static Byte[] Sha256([NotNull] this Byte[] input) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+			// This is the variable that will be returned to the user
+			if ( stringToEncrypt == null ) { throw new ArgumentNullException( nameof( stringToEncrypt ) ); }
 
-            return SHA256Local.Value.ComputeHash(buffer: input, offset: 0, count: input.Length);
-        }
+			if ( publicKey == null ) { throw new ArgumentNullException( nameof( publicKey ) ); }
 
-        /// <summary>
-        ///     <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
-        /// </summary>
-        /// <param name="input">   </param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static Byte[] Sha256([NotNull] this String input, Encoding encoding = null) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+			var encryptedValue = String.Empty;
+
+			// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
+			// - 13 would indicate DSA provider
+			var csp = new CspParameters( dwTypeIn: 1 ) {
+				KeyContainerName = publicKey,
+				ProviderName = "Microsoft Strong Cryptographic Provider"
+			};
+
+			// Registry key name containing the RSA private/public key
+
+			// Supply the provider name
+
+			try {
+
+				//Create new RSA object passing our key info
+				var rsa = new RSACryptoServiceProvider( parameters: csp );
+
+				// Before encrypting the value we must convert it over to byte array
+				var bytesToEncrypt = Encoding.UTF8.GetBytes( s: stringToEncrypt );
+
+				// Encrypt our byte array. The false parameter has to do with padding (not to clear on this point but you can look it up and decide which is better for your use)
+				var bytesEncrypted = rsa.Encrypt( rgb: bytesToEncrypt, fOAEP: false );
+
+				// Extract our encrypted byte array into a String value to return to our user
+				encryptedValue = Convert.ToBase64String( inArray: bytesEncrypted );
+			}
+			catch ( CryptographicException exception ) { exception.Log(); }
+			catch ( Exception exception ) { exception.Log(); }
+
+			return encryptedValue;
+		}
+
+		[NotNull]
+		public static String GetHexString( [NotNull] this IReadOnlyList<Byte> bt ) {
+			var s = String.Empty;
+
+			for ( var i = 0; i < bt.Count; i++ ) {
+				var b = bt[ index: i ];
+				Int32 n = b;
+				var n1 = n & 15;
+				var n2 = ( n >> 4 ) & 15;
+
+				if ( n2 > 9 ) { s += ( ( Char )( n2 - 10 + 'A' ) ).ToString(); }
+				else { s += n2.ToString(); }
+
+				if ( n1 > 9 ) { s += ( ( Char )( n1 - 10 + 'A' ) ).ToString(); }
+				else { s += n1.ToString(); }
+
+				if ( i + 1 != bt.Count && ( i + 1 ) % 2 == 0 ) { s += "-"; }
+			}
+
+			return s;
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <param name="s"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static String GetMD5Hash( [NotNull] this String s ) {
+			using ( MD5 md5 = new MD5CryptoServiceProvider() ) { return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString(); }
+		}
+
+		/// <summary>
+		///     Uses the md5sum.exe to obtain the md5 string.
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public static String MD5( [NotNull] this FileInfo file ) {
+			if ( !file.Exists ) { return null; }
+
+			var p = new Process {
+				StartInfo = {
+					FileName = "md5sum.exe",
+					Arguments = file.FullName,
+					UseShellExecute = false,
+					RedirectStandardOutput = true
+				}
+			};
+
+			p.Start();
+			p.WaitForExit();
+			var output = p.StandardOutput.ReadToEnd();
+			var result = output.Split( ' ' )[ 0 ].Substring( startIndex: 1 ).ToUpper();
 
-            if (null == encoding) { encoding = Encoding.UTF8; }
+			return String.IsNullOrWhiteSpace( result ) ? null : result;
+		}
 
-            return encoding.GetBytes(s: input).Sha256();
-        }
+		[NotNull]
+		public static Byte[] Sha256( [NotNull] this Byte[] input ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-        /// <summary>
-        ///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
-        /// </summary>
-        /// <param name="input">   </param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
-        public static Byte[] Sha384([NotNull] this String input, Encoding encoding = null) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+			return SHA256Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
+		}
 
-            if (null == encoding) { encoding = Encoding.UTF8; }
-
-            return encoding.GetBytes(s: input).Sha384();
-        }
-
-        [NotNull]
-        public static Byte[] Sha384([NotNull] this Byte[] input) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
-
-            return SHA384Local.Value.ComputeHash(buffer: input, offset: 0, count: input.Length);
-        }
-
-        /// <summary>
-        ///     <para>Compute the SHA-512 hash for the <paramref name="input" /></para>
-        ///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
-        /// </summary>
-        /// <param name="input">   </param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
-        public static Byte[] Sha512([NotNull] this String input, Encoding encoding = null) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
-
-            if (null == encoding) { encoding = Encoding.Unicode; }
-
-            return encoding.GetBytes(s: input).Sha512();
-        }
-
-        [NotNull]
-        public static Byte[] Sha512([NotNull] this Byte[] input) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+		/// <summary>
+		///     <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
+		///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+		/// </summary>
+		/// <param name="input">   </param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static Byte[] Sha256( [NotNull] this String input, Encoding encoding = null ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-            return SHA512Local.Value.ComputeHash(buffer: input, offset: 0, count: input.Length);
-        }
+			if ( null == encoding ) { encoding = Encoding.UTF8; }
 
-        [NotNull]
-        public static String ToHexString([NotNull] this Byte[] bytes) {
-            var sb = new StringBuilder(bytes.Length * 2);
+			return encoding.GetBytes( s: input ).Sha256();
+		}
 
-            foreach (var b in bytes) { sb.Append(b.ToString("X2").ToUpper()); }
+		/// <summary>
+		///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
+		///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+		/// </summary>
+		/// <param name="input">   </param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static Byte[] Sha384( [NotNull] this String input, Encoding encoding = null ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-            return sb.ToString();
-        }
+			if ( null == encoding ) { encoding = Encoding.UTF8; }
+
+			return encoding.GetBytes( s: input ).Sha384();
+		}
+
+		[NotNull]
+		public static Byte[] Sha384( [NotNull] this Byte[] input ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
+
+			return SHA384Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
+		}
+
+		/// <summary>
+		///     <para>Compute the SHA-512 hash for the <paramref name="input" /></para>
+		///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+		/// </summary>
+		/// <param name="input">   </param>
+		/// <param name="encoding"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static Byte[] Sha512( [NotNull] this String input, Encoding encoding = null ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
+
+			if ( null == encoding ) { encoding = Encoding.Unicode; }
+
+			return encoding.GetBytes( s: input ).Sha512();
+		}
+
+		[NotNull]
+		public static Byte[] Sha512( [NotNull] this Byte[] input ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-        public static String ToInsecureString([NotNull] this SecureString input) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+			return SHA512Local.Value.ComputeHash( buffer: input, offset: 0, count: input.Length );
+		}
 
-            String returnValue;
-            var ptr = Marshal.SecureStringToBSTR(s: input);
+		[NotNull]
+		public static String ToHexString( [NotNull] this Byte[] bytes ) {
+			var sb = new StringBuilder( bytes.Length * 2 );
 
-            try { returnValue = Marshal.PtrToStringBSTR(ptr: ptr); }
-            finally { Marshal.ZeroFreeBSTR(s: ptr); }
+			foreach ( var b in bytes ) { sb.Append( b.ToString( "X2" ).ToUpper() ); }
 
-            return returnValue;
-        }
+			return sb.ToString();
+		}
 
-        [NotNull]
-        public static SecureString ToSecureString([NotNull] this String input) {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+		public static String ToInsecureString( [NotNull] this SecureString input ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-            var secure = new SecureString();
+			String returnValue;
+			var ptr = Marshal.SecureStringToBSTR( s: input );
 
-            foreach (var c in input) { secure.AppendChar(c: c); }
+			try { returnValue = Marshal.PtrToStringBSTR( ptr: ptr ); }
+			finally { Marshal.ZeroFreeBSTR( s: ptr ); }
 
-            secure.MakeReadOnly();
+			return returnValue;
+		}
 
-            return secure;
-        }
+		[NotNull]
+		public static SecureString ToSecureString( [NotNull] this String input ) {
+			if ( input == null ) { throw new ArgumentNullException( nameof( input ) ); }
 
-        public static Boolean TryComputeMd5ForFile([CanBeNull] this Document document, [CanBeNull] out String md5) {
-            md5 = null;
+			var secure = new SecureString();
 
-            try {
-                if (document == null || !File.Exists("md5sum.exe") || !document.Exists()) { return false; }
+			foreach ( var c in input ) { secure.AppendChar( c: c ); }
 
-                var p = new Process {
-                    StartInfo = {
-                        FileName = "md5sum.exe",
-                        Arguments = $"\"{document.FullPathWithFileName}\"",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true
-                    }
-                };
+			secure.MakeReadOnly();
 
-                p.Start();
-                p.WaitForExit();
-                var output = p.StandardOutput.ReadToEnd();
-                md5 = output.Split(' ')[0].Substring(startIndex: 1).ToUpper();
+			return secure;
+		}
 
-                return !String.IsNullOrWhiteSpace(md5) && md5.Length == 32;
-            }
-            catch (Exception exception) { exception.Log(); }
+		public static Boolean TryComputeMd5ForFile( [CanBeNull] this Document document, [CanBeNull] out String md5 ) {
+			md5 = null;
 
-            return false;
-        }
+			try {
+				if ( document == null || !File.Exists( "md5sum.exe" ) || !document.Exists() ) { return false; }
 
-        /// <summary>
-        ///     Attempt to decrypt an encrypted version of the file with the given key and salt.
-        /// </summary>
-        /// <param name="input">            </param>
-        /// <param name="output">           </param>
-        /// <param name="key">              Must be between 1 and 32767 bytes.</param>
-        /// <param name="reportProgress">   </param>
-        /// <param name="exceptions">       List of exceptions encountered.</param>
-        /// <param name="salt">             </param>
-        /// <param name="reportEveryXBytes"></param>
-        /// <returns>Returns true if all is successful</returns>
-        public static Boolean TryDecryptFile([CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
-            [NotNull] out List<Exception> exceptions) {
-            exceptions = new List<Exception>(capacity: 1);
+				var p = new Process {
+					StartInfo = {
+						FileName = "md5sum.exe",
+						Arguments = $"\"{document.FullPathWithFileName}\"",
+						UseShellExecute = false,
+						RedirectStandardOutput = true
+					}
+				};
 
-            if (input == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(input)));
-
-                return false;
-            }
-
-            if (!input.Exists()) {
-                exceptions.Add(item: new FileNotFoundException($"The input file {input.FullPathWithFileName} is not found."));
-
-                return false;
-            }
-
-            var inputFileSize = (Single)input.Size();
-
-            if (inputFileSize <= 0) {
-                exceptions.Add(item: new FileNotFoundException($"The input file {input.FullPathWithFileName} is empty."));
-
-                return false;
-            }
-
-            if (output == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(output)));
-
-                return false;
-            }
-
-            if (output.Exists()) {
-                exceptions.Add(item: new IOException($"The output file {output.FullPathWithFileName} already exists."));
-
-                return false;
-            }
-
-            if (key == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(key)));
-
-                return false;
-            }
+				p.Start();
+				p.WaitForExit();
+				var output = p.StandardOutput.ReadToEnd();
+				md5 = output.Split( ' ' )[ 0 ].Substring( startIndex: 1 ).ToUpper();
 
-            if (!key.Length.Between(startInclusive: 1, endInclusive: Int16.MaxValue)) {
-                exceptions.Add(item: new ArgumentOutOfRangeException(nameof(key)));
+				return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
+			}
+			catch ( Exception exception ) { exception.Log(); }
 
-                return false;
-            }
+			return false;
+		}
 
-            try {
-                if (!output.Folder.Create()) {
-                    exceptions.Add(item: new IOException($"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist."));
+		/// <summary>
+		///     Attempt to decrypt an encrypted version of the file with the given key and salt.
+		/// </summary>
+		/// <param name="input">            </param>
+		/// <param name="output">           </param>
+		/// <param name="key">              Must be between 1 and 32767 bytes.</param>
+		/// <param name="reportProgress">   </param>
+		/// <param name="exceptions">       List of exceptions encountered.</param>
+		/// <param name="salt">             </param>
+		/// <param name="reportEveryXBytes"></param>
+		/// <returns>Returns true if all is successful</returns>
+		public static Boolean TryDecryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
+			[NotNull] out List<Exception> exceptions ) {
+			exceptions = new List<Exception>( capacity: 1 );
 
-                    return false;
-                }
+			if ( input == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( input ) ) );
+
+				return false;
+			}
+
+			if ( !input.Exists() ) {
+				exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is not found." ) );
+
+				return false;
+			}
+
+			var inputFileSize = ( Single )input.Size();
+
+			if ( inputFileSize <= 0 ) {
+				exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
+
+				return false;
+			}
+
+			if ( output == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
+
+				return false;
+			}
+
+			if ( output.Exists() ) {
+				exceptions.Add( item: new IOException( $"The output file {output.FullPathWithFileName} already exists." ) );
+
+				return false;
+			}
+
+			if ( key == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( key ) ) );
+
+				return false;
+			}
 
-                using (var aes = new AesCryptoServiceProvider()) {
-                    DeriveBytes rgb = new Rfc2898DeriveBytes(password: key, salt: Encoding.Unicode.GetBytes(s: salt.ToString()));
+			if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
+				exceptions.Add( item: new ArgumentOutOfRangeException( nameof( key ) ) );
 
-                    aes.BlockSize = 128;
-                    aes.KeySize = 256;
-                    aes.Key = rgb.GetBytes(cb: aes.KeySize >> 3);
-                    aes.IV = rgb.GetBytes(cb: aes.BlockSize >> 3);
-                    aes.Mode = CipherMode.CBC;
+				return false;
+			}
 
-                    using (var outputStream = new FileStream(output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write)) {
-                        using (var decryptor = aes.CreateDecryptor()) {
-                            var inputStream = new FileStream(input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read);
+			try {
+				if ( !output.Folder.Create() ) {
+					exceptions.Add( item: new IOException( $"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist." ) );
 
-                            using (var cs = new CryptoStream(stream: inputStream, transform: decryptor, mode: CryptoStreamMode.Read)) {
-                                Int32 data;
+					return false;
+				}
 
-                                while ((data = cs.ReadByte()) != -1) {
-                                    if (null != reportEveryXBytes && null != reportProgress) {
-                                        var position = (UInt64)inputStream.Position;
+				using ( var aes = new AesCryptoServiceProvider() ) {
+					DeriveBytes rgb = new Rfc2898DeriveBytes( password: key, salt: Encoding.Unicode.GetBytes( s: salt.ToString() ) );
 
-                                        if (position % reportEveryXBytes.Value == 0) {
-                                            var progress = position / inputFileSize;
-                                            reportProgress(progress);
-                                        }
-                                    }
+					aes.BlockSize = 128;
+					aes.KeySize = 256;
+					aes.Key = rgb.GetBytes( cb: aes.KeySize >> 3 );
+					aes.IV = rgb.GetBytes( cb: aes.BlockSize >> 3 );
+					aes.Mode = CipherMode.CBC;
 
-                                    outputStream.WriteByte((Byte)data);
-                                }
-                            }
-                        }
-                    }
-                }
+					using ( var outputStream = new FileStream( output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write ) ) {
+						using ( var decryptor = aes.CreateDecryptor() ) {
+							var inputStream = new FileStream( input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read );
 
-                return output.Exists();
-            }
-            catch (AggregateException exceptionss) {
-                exceptions.AddRange(collection: exceptionss.InnerExceptions);
+							using ( var cs = new CryptoStream( stream: inputStream, transform: decryptor, mode: CryptoStreamMode.Read ) ) {
+								Int32 data;
 
-                return false;
-            }
-            catch (Exception exception) {
-                exceptions.Add(item: exception);
+								while ( ( data = cs.ReadByte() ) != -1 ) {
+									if ( null != reportEveryXBytes && null != reportProgress ) {
+										var position = ( UInt64 )inputStream.Position;
 
-                return false;
-            }
-        }
+										if ( position % reportEveryXBytes.Value == 0 ) {
+											var progress = position / inputFileSize;
+											reportProgress( progress );
+										}
+									}
 
-        /// <summary>
-        ///     Create an encrypted version of the given file with the given key and salt.
-        /// </summary>
-        /// <param name="input">            </param>
-        /// <param name="output">           </param>
-        /// <param name="key">              Must be between 1 and 32767 bytes.</param>
-        /// <param name="salt">             </param>
-        /// <param name="reportEveryXBytes"></param>
-        /// <param name="reportProgress">   Reports progress every X bytes</param>
-        /// <param name="exceptions">       List of exceptions encountered.</param>
-        /// <returns>Returns true if all is successful</returns>
-        public static Boolean TryEncryptFile([CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
-            [NotNull] out List<Exception> exceptions) {
-            exceptions = new List<Exception>(capacity: 1);
+									outputStream.WriteByte( ( Byte )data );
+								}
+							}
+						}
+					}
+				}
 
-            if (input == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(input)));
+				return output.Exists();
+			}
+			catch ( AggregateException exceptionss ) {
+				exceptions.AddRange( collection: exceptionss.InnerExceptions );
 
-                return false;
-            }
+				return false;
+			}
+			catch ( Exception exception ) {
+				exceptions.Add( item: exception );
 
-            if (!input.Exists()) {
-                exceptions.Add(item: new FileNotFoundException($"The input file {input.FullPathWithFileName} is not found."));
+				return false;
+			}
+		}
 
-                return false;
-            }
+		/// <summary>
+		///     Create an encrypted version of the given file with the given key and salt.
+		/// </summary>
+		/// <param name="input">            </param>
+		/// <param name="output">           </param>
+		/// <param name="key">              Must be between 1 and 32767 bytes.</param>
+		/// <param name="salt">             </param>
+		/// <param name="reportEveryXBytes"></param>
+		/// <param name="reportProgress">   Reports progress every X bytes</param>
+		/// <param name="exceptions">       List of exceptions encountered.</param>
+		/// <returns>Returns true if all is successful</returns>
+		public static Boolean TryEncryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes, Action<Single> reportProgress,
+			[NotNull] out List<Exception> exceptions ) {
+			exceptions = new List<Exception>( capacity: 1 );
 
-            var inputFileSize = (Single)input.Size();
+			if ( input == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( input ) ) );
 
-            if (inputFileSize <= 0) {
-                exceptions.Add(item: new FileNotFoundException($"The input file {input.FullPathWithFileName} is empty."));
+				return false;
+			}
 
-                return false;
-            }
+			if ( !input.Exists() ) {
+				exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is not found." ) );
 
-            if (output == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(output)));
+				return false;
+			}
 
-                return false;
-            }
+			var inputFileSize = ( Single )input.Size();
 
-            if (output.Exists()) {
-                exceptions.Add(item: new IOException($"The output file {output.FullPathWithFileName} already exists."));
+			if ( inputFileSize <= 0 ) {
+				exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPathWithFileName} is empty." ) );
 
-                return false;
-            }
+				return false;
+			}
 
-            if (key == null) {
-                exceptions.Add(item: new ArgumentNullException(nameof(key)));
+			if ( output == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
 
-                return false;
-            }
+				return false;
+			}
 
-            if (!key.Length.Between(startInclusive: 1, endInclusive: Int16.MaxValue)) {
-                exceptions.Add(item: new ArgumentOutOfRangeException(nameof(key)));
+			if ( output.Exists() ) {
+				exceptions.Add( item: new IOException( $"The output file {output.FullPathWithFileName} already exists." ) );
 
-                return false;
-            }
+				return false;
+			}
 
-            try {
-                var rgb = new Rfc2898DeriveBytes(password: key, salt: Encoding.Unicode.GetBytes(s: salt.ToString()));
+			if ( key == null ) {
+				exceptions.Add( item: new ArgumentNullException( nameof( key ) ) );
 
-                if (!output.Folder.Create()) {
-                    exceptions.Add(item: new IOException($"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist."));
+				return false;
+			}
 
-                    return false;
-                }
+			if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
+				exceptions.Add( item: new ArgumentOutOfRangeException( nameof( key ) ) );
 
-                using (var aes = new AesCryptoServiceProvider()) {
-                    aes.BlockSize = 128;
-                    aes.KeySize = 256;
-                    aes.Key = rgb.GetBytes(cb: aes.KeySize >> 3);
-                    aes.IV = rgb.GetBytes(cb: aes.BlockSize >> 3);
-                    aes.Mode = CipherMode.CBC;
+				return false;
+			}
 
-                    var outputStream = new FileStream(output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write);
+			try {
+				var rgb = new Rfc2898DeriveBytes( password: key, salt: Encoding.Unicode.GetBytes( s: salt.ToString() ) );
 
-                    if (!outputStream.CanWrite) {
-                        exceptions.Add(item: new IOException($"Unable to write to {output.FullPathWithFileName}."));
+				if ( !output.Folder.Create() ) {
+					exceptions.Add( item: new IOException( $"Unable to write to {output.FullPathWithFileName} because folder {output.Folder.FullName} does not exist." ) );
 
-                        return false;
-                    }
+					return false;
+				}
 
-                    using (var encryptor = aes.CreateEncryptor()) {
-                        using (var cryptoStream = new CryptoStream(stream: outputStream, transform: encryptor, mode: CryptoStreamMode.Write)) {
-                            using (var inputStream = new FileStream(input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read)) {
-                                if (!inputStream.CanRead || !inputStream.CanSeek) {
-                                    exceptions.Add(item: new IOException($"Unable to read from {input.FullPathWithFileName}."));
+				using ( var aes = new AesCryptoServiceProvider() ) {
+					aes.BlockSize = 128;
+					aes.KeySize = 256;
+					aes.Key = rgb.GetBytes( cb: aes.KeySize >> 3 );
+					aes.IV = rgb.GetBytes( cb: aes.BlockSize >> 3 );
+					aes.Mode = CipherMode.CBC;
 
-                                    return false;
-                                }
+					var outputStream = new FileStream( output.FullPathWithFileName, mode: FileMode.Create, access: FileAccess.Write );
 
-                                inputStream.Seek(offset: 0, origin: SeekOrigin.Begin);
-                                Int32 data;
+					if ( !outputStream.CanWrite ) {
+						exceptions.Add( item: new IOException( $"Unable to write to {output.FullPathWithFileName}." ) );
 
-                                //TODO put a 64k buffer here instead of byte-by-byte
-                                while ((data = inputStream.ReadByte()) != -1) {
-                                    if (null != reportEveryXBytes && null != reportProgress) {
-                                        var position = (UInt64)inputStream.Position;
+						return false;
+					}
 
-                                        if (position % reportEveryXBytes.Value == 0) {
-                                            var progress = position / inputFileSize;
-                                            reportProgress(progress);
-                                        }
-                                    }
+					using ( var encryptor = aes.CreateEncryptor() ) {
+						using ( var cryptoStream = new CryptoStream( stream: outputStream, transform: encryptor, mode: CryptoStreamMode.Write ) ) {
+							using ( var inputStream = new FileStream( input.FullPathWithFileName, mode: FileMode.Open, access: FileAccess.Read ) ) {
+								if ( !inputStream.CanRead || !inputStream.CanSeek ) {
+									exceptions.Add( item: new IOException( $"Unable to read from {input.FullPathWithFileName}." ) );
 
-                                    cryptoStream.WriteByte((Byte)data);
-                                }
-                            }
-                        }
-                    }
-                }
+									return false;
+								}
 
-                return output.Exists();
-            }
-            catch (AggregateException exceptionss) {
-                exceptions.AddRange(collection: exceptionss.InnerExceptions);
+								inputStream.Seek( offset: 0, origin: SeekOrigin.Begin );
+								Int32 data;
 
-                return false;
-            }
-            catch (Exception exception) {
-                exceptions.Add(item: exception);
+								//TODO put a 64k buffer here instead of byte-by-byte
+								while ( ( data = inputStream.ReadByte() ) != -1 ) {
+									if ( null != reportEveryXBytes && null != reportProgress ) {
+										var position = ( UInt64 )inputStream.Position;
 
-                return false;
-            }
-        }
-    }
+										if ( position % reportEveryXBytes.Value == 0 ) {
+											var progress = position / inputFileSize;
+											reportProgress( progress );
+										}
+									}
+
+									cryptoStream.WriteByte( ( Byte )data );
+								}
+							}
+						}
+					}
+				}
+
+				return output.Exists();
+			}
+			catch ( AggregateException exceptionss ) {
+				exceptions.AddRange( collection: exceptionss.InnerExceptions );
+
+				return false;
+			}
+			catch ( Exception exception ) {
+				exceptions.Add( item: exception );
+
+				return false;
+			}
+		}
+	}
 }

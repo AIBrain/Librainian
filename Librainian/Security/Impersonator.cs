@@ -47,7 +47,6 @@ namespace Librainian.Security {
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Security.Principal;
-    using static Vanara.PInvoke.Kernel32;
 
     /// <summary>
     /// </summary>
@@ -78,9 +77,9 @@ namespace Librainian.Security {
                 }
             }
             finally {
-                if (token != IntPtr.Zero) { CloseHandle(token); }
+                if (token != IntPtr.Zero) { token.CloseHandle(); }
 
-                if (tokenDuplicate != IntPtr.Zero) { CloseHandle(tokenDuplicate); }
+                if (tokenDuplicate != IntPtr.Zero) { tokenDuplicate.CloseHandle(); }
             }
         }
 

@@ -37,67 +37,71 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Microsecond.cs" was last formatted by Protiguous on 2018/07/13 at 1:26 AM.
+// Project: "Librainian", "Microsecond.cs" was last formatted by Protiguous on 2018/11/03 at 7:37 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using Extensions;
-    using Newtonsoft.Json;
-    using System;
+	using System;
+	using Extensions;
+	using Newtonsoft.Json;
 
-    /// <summary>A simple struct for a <see cref="Microsecond" />.</summary>
-    [JsonObject]
-    [Immutable]
-    public struct Microsecond : IClockPart {
+	/// <summary>A simple struct for a <see cref="Microsecond" />.</summary>
+	[JsonObject]
+	[Immutable]
+	public struct Microsecond : IClockPart {
 
-        [JsonProperty]
-        public readonly UInt16 Value;
+		public const Int32 MaxValue = 999;
 
-        /// <summary></summary>
-        public static Microsecond Maximum { get; } = new Microsecond(999);
+		public const Int32 MinValue = 0;
 
-        /// <summary></summary>
-        public static Microsecond Minimum { get; } = new Microsecond(0);
+		[JsonProperty]
+		public readonly Int16 Value;
 
-        public Microsecond(UInt16 value) {
-            if (value < Minimum || value > Maximum) { throw new ArgumentOutOfRangeException(nameof(value), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}."); }
+		public static Microsecond Maximum { get; } = new Microsecond( MaxValue );
 
-            this.Value = value;
-        }
+		public static Microsecond Minimum { get; } = new Microsecond( MinValue );
 
-        /// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static explicit operator Int16(Microsecond value) => (Int16)value.Value;
+		public Microsecond( Int16 value ) {
+			if ( value < MinValue || value > MaxValue ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {Maximum}." );
+			}
 
-        public static implicit operator Microsecond(UInt16 value) => new Microsecond(value);
+			this.Value = value;
+		}
 
-        public static implicit operator UInt16(Microsecond value) => value.Value;
+		public static explicit operator UInt16( Microsecond value ) => ( UInt16 )value.Value;
 
-        /// <summary>Provide the next <see cref="Microsecond" />.</summary>
-        public Microsecond Next(out Boolean ticked) {
-            ticked = false;
-            var next = this.Value + 1;
+		/// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static implicit operator Int16( Microsecond value ) => value.Value;
 
-            if (next > Maximum) {
-                next = Minimum;
-                ticked = true;
-            }
+		public static implicit operator Microsecond( UInt16 value ) => new Microsecond( ( Int16 )value );
 
-            return (UInt16)next;
-        }
+		/// <summary>Provide the next <see cref="Microsecond" />.</summary>
+		public Microsecond Next( out Boolean ticked ) {
+			ticked = false;
+			var next = this.Value + 1;
 
-        /// <summary>Provide the previous <see cref="Microsecond" />.</summary>
-        public Microsecond Previous(out Boolean ticked) {
-            ticked = false;
-            var next = this.Value - 1;
+			if ( next > Maximum ) {
+				next = Minimum;
+				ticked = true;
+			}
 
-            if (next < Minimum) {
-                next = Maximum;
-                ticked = true;
-            }
+			return ( UInt16 )next;
+		}
 
-            return (UInt16)next;
-        }
-    }
+		/// <summary>Provide the previous <see cref="Microsecond" />.</summary>
+		public Microsecond Previous( out Boolean ticked ) {
+			ticked = false;
+			var next = this.Value - 1;
+
+			if ( next < Minimum ) {
+				next = Maximum;
+				ticked = true;
+			}
+
+			return ( UInt16 )next;
+		}
+	}
 }

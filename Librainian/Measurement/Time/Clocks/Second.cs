@@ -37,77 +37,81 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Second.cs" was last formatted by Protiguous on 2018/07/13 at 1:26 AM.
+// Project: "Librainian", "Second.cs" was last formatted by Protiguous on 2018/11/03 at 7:41 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
-    using System.Linq;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
+	using System;
+	using System.Linq;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
 
-    /// <summary>A simple struct for a <see cref="Second" />.</summary>
-    [JsonObject]
-    [Immutable]
-    public sealed class Second : IClockPart {
+	/// <summary>A simple struct for a <see cref="Second" />.</summary>
+	[JsonObject]
+	[Immutable]
+	public sealed class Second : IClockPart {
 
-        [JsonProperty]
-        public readonly Byte Value;
+		public const SByte MaxValue = 59;
 
-        public static Second Maximum { get; } = new Second( 59 );
+		public const SByte MinValue = 0;
 
-        public static Second Minimum { get; } = new Second( 0 );
+		public static readonly Byte[] ValidSeconds = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
-        public static readonly Byte[] ValidSeconds = Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte ) i ).OrderBy( b => b ).ToArray();
+		[JsonProperty]
+		public readonly SByte Value;
 
-        public Second( Byte value ) {
-            if ( !ValidSeconds.Contains( value ) ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {Minimum} to {Maximum}." ); }
+		public static Second Maximum { get; } = new Second( MaxValue );
 
-            this.Value = value;
-        }
+		public static Second Minimum { get; } = new Second( MinValue );
 
-        /// <summary>Allow this class to be visibly cast to a <see cref="SByte" />.</summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static explicit operator SByte( [NotNull] Second value ) => ( SByte ) value.Value;
+		public Second( SByte value ) {
+			if ( value < MinValue || value > MaxValue ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+			}
 
-        /// <summary>Allow this class to be read as a <see cref="Byte" />.</summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static implicit operator Byte( [NotNull] Second value ) => value.Value;
+			this.Value = value;
+		}
 
-        [NotNull]
-        public static implicit operator Second( Byte value ) => new Second( value );
+		/// <summary>Allow this class to be read as a <see cref="Byte" />.</summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static explicit operator Byte( [NotNull] Second value ) => ( Byte )value.Value;
 
-        /// <summary>Provide the next second.</summary>
-        [NotNull]
-        public Second Next( out Boolean tocked ) {
-            tocked = false;
-            var next = this.Value + 1;
+		/// <summary>Allow this class to be visibly cast to a <see cref="SByte" />.</summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static implicit operator SByte( [NotNull] Second value ) => value.Value;
 
-            if ( next > Maximum ) {
-                next = Minimum;
-                tocked = true;
-            }
+		[NotNull]
+		public static implicit operator Second( SByte value ) => new Second( value );
 
-            return ( Byte ) next;
-        }
+		/// <summary>Provide the next second.</summary>
+		[NotNull]
+		public Second Next( out Boolean tocked ) {
+			tocked = false;
+			var next = this.Value + 1;
 
-        /// <summary>Provide the previous second.</summary>
-        [NotNull]
-        public Second Previous( out Boolean tocked ) {
-            tocked = false;
-            var next = this.Value - 1;
+			if ( next > Maximum ) {
+				next = Minimum;
+				tocked = true;
+			}
 
-            if ( next < Minimum ) {
-                next = Maximum;
-                tocked = true;
-            }
+			return ( SByte )next;
+		}
 
-            return ( Byte ) next;
-        }
+		/// <summary>Provide the previous second.</summary>
+		[NotNull]
+		public Second Previous( out Boolean tocked ) {
+			tocked = false;
+			var next = this.Value - 1;
 
-    }
+			if ( next < Minimum ) {
+				next = Maximum;
+				tocked = true;
+			}
 
+			return ( SByte )next;
+		}
+	}
 }

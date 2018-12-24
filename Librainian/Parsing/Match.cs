@@ -48,26 +48,30 @@ namespace Librainian.Parsing {
 
 	public static class Match<T, TResult> {
 
+		[NotNull]
 		public static Func<T, TResult> On<TCxt>( [NotNull] Func<OpenMatchContext<T, TResult>, TCxt> cond1, [NotNull] Func<TCxt, ClosedMatchContext> cond2 ) where TCxt : MatchContext<T, TResult> {
 			var ctx = cond2( cond1( new ContextImpl() ) );
 
-			return ( ( ContextImpl ) ctx ).Compile();
+			return ( ( ContextImpl )ctx ).Compile();
 		}
 
+		[NotNull]
 		public static Func<T, TResult> On<TCtx1, TCtx2>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, ClosedMatchContext> cond3 )
 			where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> {
 			var ctx = cond3( cond2( cond1( new ContextImpl() ) ) );
 
-			return ( ( ContextImpl ) ctx ).Compile();
+			return ( ( ContextImpl )ctx ).Compile();
 		}
 
+		[NotNull]
 		public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, TCtx3> cond3,
 			[NotNull] Func<TCtx3, ClosedMatchContext> cond4 ) where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> where TCtx3 : MatchContext<T, TResult> {
 			var ctx = cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) );
 
-			return ( ( ContextImpl ) ctx ).Compile();
+			return ( ( ContextImpl )ctx ).Compile();
 		}
 
+		[NotNull]
 		public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3, TCtx4>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, TCtx3> cond3,
 			[NotNull] Func<TCtx3, TCtx4> cond4, [NotNull] Func<TCtx4, ClosedMatchContext> cond5 ) where TCtx1 : MatchContext<T, TResult>
 			where TCtx2 : MatchContext<T, TResult>
@@ -75,7 +79,7 @@ namespace Librainian.Parsing {
 			where TCtx4 : MatchContext<T, TResult> {
 			var ctx = cond5( cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) ) );
 
-			return ( ( ContextImpl ) ctx ).Compile();
+			return ( ( ContextImpl )ctx ).Compile();
 		}
 
 		private sealed class ContextImpl : OpenMatchContext<T, TResult> {

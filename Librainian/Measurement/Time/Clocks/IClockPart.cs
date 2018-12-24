@@ -41,5 +41,6 @@
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	public interface IClockPart { }
+	public interface IClockPart {
+	}
 }

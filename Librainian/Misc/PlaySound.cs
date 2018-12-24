@@ -45,7 +45,6 @@ namespace Librainian.Misc {
 	using System.Text;
 	using System.Threading.Tasks;
 	using OperatingSystem;
-	using Threading;
 
 	/// <summary>
 	///     Pulled from https://github.com/PaddiM8/SharpEssentials/blob/master/SharpEssentials/SharpEssentials/PlaySound.cs
@@ -73,7 +72,7 @@ namespace Librainian.Misc {
 
 			if ( this._isOpen ) { NativeMethods.mciSendString( "play MediaFile", null, 0, IntPtr.Zero ); }
 
-			await Task.Delay( this.GetSoundLength( fileName ) ).NoUI();
+			await Task.Delay( this.GetSoundLength( fileName ) ).ConfigureAwait( false );
 			this.Stop();
 		}
 

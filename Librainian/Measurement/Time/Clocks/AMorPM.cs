@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "AMorPM.cs" was last formatted by Protiguous on 2018/07/13 at 1:25 AM.
+// Project: "Librainian", "AMorPM.cs" was last formatted by Protiguous on 2018/11/02 at 11:04 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 

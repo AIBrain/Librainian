@@ -106,7 +106,7 @@ data33   =   3
 
 			Json.Document = Document.GetTempDocument( "config" );
 
-			if ( await Json.Write() ) {
+			if ( await Json.WriteAsync() ) {
 				Json.Document?.Delete();
 			}
 		}

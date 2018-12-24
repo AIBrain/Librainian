@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2018/11/12 at 5:45 AM.
 
 namespace Librainian.Database.MMF {
 
@@ -79,8 +79,12 @@ namespace Librainian.Database.MMF {
 		}
 
 		private Boolean CanGetSize() {
-			try { this._size = Marshal.SizeOf<T>(); }
-			catch ( ArgumentException ) { return false; }
+			try {
+				this._size = Marshal.SizeOf<T>();
+			}
+			catch ( ArgumentException ) {
+				return false;
+			}
 
 			return true;
 		}
@@ -200,17 +204,23 @@ namespace Librainian.Database.MMF {
 
 		[CanBeNull]
 		public ISerializeDeserialize<T> GetSerializer() {
-			if ( !this.CanGetSize() ) { return null; }
+			if ( !this.CanGetSize() ) {
+				return null;
+			}
 
 			var checker = new ValueTypeCheck( typeof( T ) );
 
-			if ( !checker.OnlyValueTypes() ) { return null; }
+			if ( !checker.OnlyValueTypes() ) {
+				return null;
+			}
 
 			var res = this.CompileCode();
 
-			if ( res.Errors.Count > 0 ) { throw new SerializerException( res.Errors[ 0 ].ErrorText ); }
+			if ( res.Errors.Count > 0 ) {
+				throw new SerializerException( res.Errors[ 0 ].ErrorText );
+			}
 
-			return ( ISerializeDeserialize<T> ) res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
+			return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
 		}
 	}
 }

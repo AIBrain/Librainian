@@ -39,87 +39,81 @@
 //
 // Project: "Librainian", "DeserializeReportStats.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
 
-namespace Librainian.Persistence
-{
+namespace Librainian.Persistence {
 
-    using Magic;
-    using Measurement.Time;
-    using System;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Threading;
+	using System;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using Magic;
+	using Measurement.Time;
+	using Threading;
 
-    public sealed class DeserializeReportStats : ABetterClassDispose
-    {
+	public sealed class DeserializeReportStats : ABetterClassDispose {
 
-        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>(trackAllValues: true);
+		private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( trackAllValues: true );
 
-        private Action<DeserializeReportStats> Handler { get; }
+		private Action<DeserializeReportStats> Handler { get; }
 
-        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>(trackAllValues: true);
+		private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( trackAllValues: true );
 
-        public Boolean Enabled { get; set; }
+		public Boolean Enabled { get; set; }
 
-        public TimeSpan Timing { get; }
+		public TimeSpan Timing { get; }
 
-        public Int64 Total { get; set; }
+		public Int64 Total { get; set; }
 
-        public DeserializeReportStats(Action<DeserializeReportStats> handler, TimeSpan? timing = null)
-        {
-            this.Gains.Values.Clear();
-            this.Gains.Value = 0;
+		public DeserializeReportStats( Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
+			this.Gains.Values.Clear();
+			this.Gains.Value = 0;
 
-            this.Losses.Values.Clear();
-            this.Losses.Value = 0;
+			this.Losses.Values.Clear();
+			this.Losses.Value = 0;
 
-            this.Total = 0;
-            this.Handler = handler;
-            this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
-        }
+			this.Total = 0;
+			this.Handler = handler;
+			this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
+		}
 
-        /// <summary>
-        ///     Perform a Report.
-        /// </summary>
-        private async Task Report()
-        {
-            if (!this.Enabled) { return; }
+		/// <summary>
+		///     Perform a Report.
+		/// </summary>
+		private async Task ReportAsync() {
+			if ( !this.Enabled ) { return; }
 
-            var handler = this.Handler;
+			var handler = this.Handler;
 
-            if (handler == null) { return; }
+			if ( handler == null ) { return; }
 
-            handler(this);
+			handler( this );
 
-            if (this.Enabled)
-            {
-                await this.Timing.Then(async () => await this.Report()); //TODO is this correct?
-            }
-        }
+			if ( this.Enabled ) {
+				await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
+			}
+		}
 
-        public void AddFailed(Int64 amount = 1) => this.Losses.Value += amount;
+		public void AddFailed( Int64 amount = 1 ) => this.Losses.Value += amount;
 
-        public void AddSuccess(Int64 amount = 1) => this.Gains.Value += amount;
+		public void AddSuccess( Int64 amount = 1 ) => this.Gains.Value += amount;
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged()
-        {
-            this.Gains.Dispose();
-            this.Losses.Dispose();
-        }
+		/// <summary>
+		///     Dispose any disposable members.
+		/// </summary>
+		public override void DisposeManaged() {
+			this.Gains.Dispose();
+			this.Losses.Dispose();
+		}
 
-        public Int64 GetGains() => this.Gains.Values.Sum(arg => arg);
+		public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
 
-        public Int64 GetLoss() => this.Losses.Values.Sum(arg => arg);
+		public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
 
-        public async Task StartReporting()
-        {
-            this.Enabled = true;
-            await this.Timing.Then(async () => await this.Report());
-        }
+		public Task StartReporting() {
+			this.Enabled = true;
 
-        public void StopReporting() => this.Enabled = false;
-    }
+			return this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) );
+		}
+
+		public void StopReporting() => this.Enabled = false;
+	}
 }

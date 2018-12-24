@@ -39,69 +39,61 @@
 //
 // Project: "Librainian", "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
 
-namespace Librainian.Extensions
-{
+namespace Librainian.Extensions {
 
-    using JetBrains.Annotations;
-    using Maths;
-    using System;
+	using System;
+	using JetBrains.Annotations;
+	using Maths;
 
-    public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter
-    {
+	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
-        private const String FileSizeFormat = "fs";
+		private const String FileSizeFormat = "fs";
 
-        [NotNull]
-        private static String DefaultFormat(String format, [NotNull] Object arg, IFormatProvider formatProvider)
-        {
-            var formattableArg = arg as IFormattable;
+		[NotNull]
+		private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
+			var formattableArg = arg as IFormattable;
 
-            return formattableArg?.ToString(format, formatProvider) ?? arg.ToString();
-        }
+			return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
+		}
 
-        public String Format([CanBeNull] String format, Object arg, IFormatProvider formatProvider)
-        {
-            if (format?.StartsWith(FileSizeFormat) != true) { return DefaultFormat(format, arg, formatProvider); }
+		[NotNull]
+		public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
+			if ( format?.StartsWith( FileSizeFormat ) != true ) { return DefaultFormat( format, arg, formatProvider ); }
 
-            if (arg is String) { return DefaultFormat(format, arg, formatProvider); }
+			if ( arg is String ) { return DefaultFormat( format, arg, formatProvider ); }
 
-            Single size;
+			Single size;
 
-            try { size = Convert.ToUInt64(arg); }
-            catch (InvalidCastException) { return DefaultFormat(format, arg, formatProvider); }
+			try { size = Convert.ToUInt64( arg ); }
+			catch ( InvalidCastException ) { return DefaultFormat( format, arg, formatProvider ); }
 
-            var suffix = "n/a";
+			var suffix = "n/a";
 
-            if (size.Between(Constants.Sizes.OneTeraByte, UInt64.MaxValue))
-            {
-                size /= Constants.Sizes.OneTeraByte;
-                suffix = "trillion";
-            }
-            else if (size.Between(Constants.Sizes.OneGigaByte, Constants.Sizes.OneTeraByte))
-            {
-                size /= Constants.Sizes.OneGigaByte;
-                suffix = "billion";
-            }
-            else if (size.Between(Constants.Sizes.OneMegaByte, Constants.Sizes.OneGigaByte))
-            {
-                size /= Constants.Sizes.OneMegaByte;
-                suffix = "million";
-            }
-            else if (size.Between(Constants.Sizes.OneKiloByte, Constants.Sizes.OneMegaByte))
-            {
-                size /= Constants.Sizes.OneKiloByte;
-                suffix = "thousand";
-            }
-            else if (size.Between(UInt64.MinValue, Constants.Sizes.OneKiloByte)) { suffix = ""; }
+			if ( size.Between( Constants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+				size /= Constants.Sizes.OneTeraByte;
+				suffix = "trillion";
+			}
+			else if ( size.Between( Constants.Sizes.OneGigaByte, Constants.Sizes.OneTeraByte ) ) {
+				size /= Constants.Sizes.OneGigaByte;
+				suffix = "billion";
+			}
+			else if ( size.Between( Constants.Sizes.OneMegaByte, Constants.Sizes.OneGigaByte ) ) {
+				size /= Constants.Sizes.OneMegaByte;
+				suffix = "million";
+			}
+			else if ( size.Between( Constants.Sizes.OneKiloByte, Constants.Sizes.OneMegaByte ) ) {
+				size /= Constants.Sizes.OneKiloByte;
+				suffix = "thousand";
+			}
+			else if ( size.Between( UInt64.MinValue, Constants.Sizes.OneKiloByte ) ) { suffix = ""; }
 
-            return $"{size:N3} {suffix}";
-        }
+			return $"{size:N3} {suffix}";
+		}
 
-        public Object GetFormat([NotNull] Type formatType)
-        {
-            if (formatType == null) { throw new ArgumentNullException(nameof(formatType)); }
+		public Object GetFormat( [NotNull] Type formatType ) {
+			if ( formatType == null ) { throw new ArgumentNullException( nameof( formatType ) ); }
 
-            return formatType == typeof(ICustomFormatter) ? this : null;
-        }
-    }
+			return formatType == typeof( ICustomFormatter ) ? this : null;
+		}
+	}
 }

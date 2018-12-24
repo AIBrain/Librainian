@@ -72,18 +72,18 @@ namespace Librainian.OperatingSystem.Storage
                 return null;
             }
 
-            var IOCTL_STORAGE_QUERY_PROPERTY = CTL_CODE(NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_ANY_ACCESS); // From winioctl.h
+            var ioctlStorageQueryProperty = CTL_CODE(NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_ANY_ACCESS); // From winioctl.h
 
-            var query_seek_penalty = new NativeMethods.STORAGE_PROPERTY_QUERY
+            var querySeekPenalty = new NativeMethods.STORAGE_PROPERTY_QUERY
             {
                 PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty,
                 QueryType = NativeMethods.PropertyStandardQuery
             };
 
-            var query_seek_penalty_desc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
+            var querySeekPenaltyDesc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
-            var querySeekPenaltyResult = NativeMethods.DeviceIoControl(hDrive, IOCTL_STORAGE_QUERY_PROPERTY, ref query_seek_penalty, (UInt32)Marshal.SizeOf(query_seek_penalty), ref query_seek_penalty_desc,
-                (UInt32)Marshal.SizeOf(query_seek_penalty_desc), out var returned_query_seek_penalty_size, IntPtr.Zero);
+            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 ) Marshal.SizeOf( querySeekPenalty ),
+                ref querySeekPenaltyDesc, ( UInt32 ) Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
 
             hDrive.Close();
 
@@ -94,7 +94,7 @@ namespace Librainian.OperatingSystem.Storage
                 return null;
             }
 
-            return query_seek_penalty_desc.IncursSeekPenalty;
+            return querySeekPenaltyDesc.IncursSeekPenalty;
         }
 
         public static Boolean? IsDiskSSD(this Byte diskNumber)

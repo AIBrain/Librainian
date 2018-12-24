@@ -86,7 +86,8 @@ namespace Librainian.Persistence {
 
             if (!uri.IsAbsoluteUri) { throw new ArgumentException($"Uri pointer must be absolute for key {Strings.Left(this.K, 20)}"); }
 
-            if (Unique.TryCreate(uri, out var u)) { this.U = u; }
+            Unique.TryCreate(uri, out var u);
+            this.U = u;
         }
 
         public override String ToString() {

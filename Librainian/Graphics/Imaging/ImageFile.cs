@@ -51,7 +51,7 @@ namespace Librainian.Graphics.Imaging {
 	///     Untested.
 	///     Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/
 	/// </summary>
-	internal class ImageFile {
+	public class ImageFile {
 
 		public enum Types {
 
@@ -198,23 +198,36 @@ namespace Librainian.Graphics.Imaging {
 			}
 		}
 
-		private static Boolean _EndsWidth( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
+		private static Boolean _EndsWidth( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyCollection<Byte> search ) {
+			if ( data == null ) {
+				throw new ArgumentNullException( paramName: nameof( data ) );
+			}
+
+			if ( search == null ) {
+				throw new ArgumentNullException( paramName: nameof( search ) );
+			}
+
 			var blRet = false;
 
-			if ( search.Length() <= data.Length() ) {
-				var iStart = data.Length() - search.Length();
+			if ( search.Count <= data.Count ) {
+				var iStart = data.Count - search.Count;
 				blRet = !search.Where( ( t, i ) => data[ iStart + i ] != t ).Any();
 			}
 
 			return blRet; // RETURN
 		}
 
-		private static Boolean _StartsWith( IReadOnlyList<Byte> data, IReadOnlyCollection<Byte> search ) {
-			var blRet = false;
+		public static Boolean _StartsWith( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyList<Byte> search ) {
+			if ( data == null ) {
+				throw new ArgumentNullException( paramName: nameof( data ) );
+			}
 
-			if ( search.Length() <= data.Length() ) { blRet = !search.Where( ( t, i ) => data[ i ] != t ).Any(); }
+			if ( search == null ) {
+				throw new ArgumentNullException( paramName: nameof( search ) );
+			}
 
-			return blRet; // RETURN
+			return search.Count <= data.Count && search.SequenceEqual( data.Take( search.Count ) );
+
 		}
 	}
 }

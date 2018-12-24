@@ -54,7 +54,6 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using static LanguageExt.Prelude;
 
     public static class ThreadingExtensions {
 
@@ -241,34 +240,18 @@ namespace Librainian.Threading {
                 }
 
                 if (field.FieldType.IsArray) {
-                    var bob = field.GetValue(obj);
 
-                    if (null == bob) { continue; }
+                    if ( field.GetValue( obj ) is Array bob ) {
+                        foreach ( var o in bob ) {
+                            sizeInBytes += o.CalcSizeInBytes();
+                        }
 
-                    var list = List(bob);
-
-                    foreach (var o in list) { sizeInBytes += o.CalcSizeInBytes(); }
+                    }
 
                     continue;
                 }
 
                 sizeInBytes += value.CalcSizeInBytes();
-
-                //if ( value.GetType().IsSerializable ) {
-                //    try {
-                //        using ( var ms = new MemoryStream() ) {
-                //            var bf = new BinaryFormatter();
-                //            bf.Serialize( ms, value );
-                //            sizeInBytes += ( UInt64 )ms.Position;
-                //        }
-                //    }
-                //    catch ( Exception exception ) {
-                //        continue;
-                //    }
-                //}
-
-                ////sizeInBytes += ( UInt64 ) new StringInfo( value.Serialize() ).LengthInTextElements;
-                //sizeInBytes += value.GetType().CalcSizeInBytes();
             }
 
             return sizeInBytes;

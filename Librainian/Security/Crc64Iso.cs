@@ -39,34 +39,31 @@
 //
 // Project: "Librainian", "Crc64Iso.cs" was last formatted by Protiguous on 2018/07/13 at 1:37 AM.
 
-namespace Librainian.Security
-{
+namespace Librainian.Security {
 
-    using JetBrains.Annotations;
-    using System;
+	using System;
+	using JetBrains.Annotations;
 
-    /// <summary>
-    ///     <see cref="Crc64" />
-    /// </summary>
-    /// <copyright>Damien Guard. All rights reserved.</copyright>
-    /// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
-    public class Crc64Iso : Crc64
-    {
+	/// <summary>
+	///     <see cref="Crc64" />
+	/// </summary>
+	/// <copyright>Damien Guard. All rights reserved.</copyright>
+	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+	public class Crc64Iso : Crc64 {
 
-        internal static UInt64[] Table;
-        public const UInt64 Iso3309Polynomial = 0xD800000000000000;
+		internal static UInt64[] Table;
+		public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
-        public Crc64Iso() : base(polynomial: Iso3309Polynomial) { }
+		public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }
 
-        public Crc64Iso(UInt64 seed) : base(polynomial: Iso3309Polynomial, seed: seed) { }
+		public Crc64Iso( UInt64 seed ) : base( polynomial: Iso3309Polynomial, seed: seed ) { }
 
-        public static UInt64 Compute(Byte[] buffer) => Compute(seed: DefaultSeed, buffer: buffer);
+		public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
 
-        public static UInt64 Compute(UInt64 seed, [NotNull] Byte[] buffer)
-        {
-            if (Table == null) { Table = CreateTable(polynomial: Iso3309Polynomial); }
+		public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
+			if ( Table == null ) { Table = CreateTable( polynomial: Iso3309Polynomial ); }
 
-            return CalculateHash(seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length);
-        }
-    }
+			return CalculateHash( seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length );
+		}
+	}
 }

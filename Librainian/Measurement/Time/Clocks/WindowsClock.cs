@@ -41,8 +41,8 @@
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
 	using OperatingSystem;
+	using System;
 
 	/// <summary>
 	///     Pulled from BenchmarkDotNet.Horology
@@ -55,14 +55,14 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		static WindowsClock() {
 			try {
-				IsAvailable = NativeMethods.QueryPerformanceFrequency( out var frequency ) && NativeMethods.QueryPerformanceCounter( out _ );
+				IsAvailable = NativeMethods.QueryPerformanceFrequency(out var frequency) && NativeMethods.QueryPerformanceCounter(out _);
 				Frequency = frequency;
 			}
-			catch ( Exception ) { IsAvailable = false; }
+			catch (Exception) { IsAvailable = false; }
 		}
 
 		public static Int64 GetTimestamp() {
-			NativeMethods.QueryPerformanceCounter( out var value );
+			NativeMethods.QueryPerformanceCounter(out var value);
 
 			return value;
 		}
