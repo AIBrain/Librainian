@@ -50,15 +50,15 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Length of the range (difference between maximum and minimum values).</summary>
 		[JsonProperty]
-		public readonly SpanOfTime Length;
+		public SpanOfTime Length { get; }
 
 		/// <summary>Maximum value</summary>
 		[JsonProperty]
-		public readonly SpanOfTime Max;
+		public SpanOfTime Max { get; }
 
 		/// <summary>Minimum value</summary>
 		[JsonProperty]
-		public readonly SpanOfTime Min;
+		public SpanOfTime Min { get; }
 
 		/// <summary>Initializes a new instance of the <see cref="SpanRange" /> class</summary>
 		/// <param name="min">Minimum value of the range</param>
@@ -73,8 +73,7 @@ namespace Librainian.Measurement.Time {
 				this.Max = min;
 			}
 
-			var δ = this.Max - this.Min;
-			this.Length = δ;
+			this.Length = this.Max - this.Min;
 		}
 
 		/// <summary>Check if the specified range is inside this range</summary>

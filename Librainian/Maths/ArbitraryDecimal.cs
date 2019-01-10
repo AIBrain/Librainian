@@ -58,7 +58,7 @@ namespace Librainian.Maths {
 		///     not be negative.
 		/// </summary>
 		public ArbitraryDecimal( Int64 x ) {
-			var tmp = x.ToString( CultureInfo.InvariantCulture );
+			var tmp = x.ToString( CultureInfo.CurrentCulture );
 			this._digits = new Byte[ tmp.Length ];
 
 			for ( var i = 0; i < tmp.Length; i++ ) { this._digits[ i ] = ( Byte ) ( tmp[ i ] - '0' ); }

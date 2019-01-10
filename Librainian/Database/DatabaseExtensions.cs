@@ -51,9 +51,9 @@ namespace Librainian.Database {
 	using System.Reflection;
 	using System.ServiceProcess;
 	using System.Threading;
-	using Extensions;
 	using JetBrains.Annotations;
 	using Logging;
+	using Maths;
 	using NUnit.Framework;
 	using Parsing;
 

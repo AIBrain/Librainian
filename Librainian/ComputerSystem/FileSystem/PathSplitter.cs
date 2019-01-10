@@ -73,7 +73,7 @@ namespace Librainian.ComputerSystem.FileSystem
             this.Parts.AddRange(strings);
         }
 
-        public PathSplitter([NotNull] Document document) : this(document.FullPathWithFileName)
+        public PathSplitter([NotNull] Document document) : this(document.FullPath)
         {
             if (document == null) { throw new ArgumentNullException(nameof(document)); }
         }

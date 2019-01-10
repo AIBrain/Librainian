@@ -51,9 +51,9 @@ namespace Librainian.Collections {
 	using System.Runtime.Serialization;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Extensions;
 	using JetBrains.Annotations;
 	using Logging;
+	using Maths;
 	using Newtonsoft.Json;
 	using ReactiveUI;
 	using ReactiveUI.Fody.Helpers;

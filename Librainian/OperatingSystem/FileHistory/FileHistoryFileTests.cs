@@ -59,7 +59,7 @@ namespace Librainian.OperatingSystem.FileHistory {
 		public static void RunTests() {
 			var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
-			//if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+			//if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.Ordinal, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
 			if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out var result ) ) { throw new InvalidOperationException(); }
 
 			if ( !FileHistoryFileExtensions.TryParseFileHistoryFile( new Document( Example ), out var folder, out var filename, out var when ) ) { throw new InvalidCastException(); }

@@ -121,7 +121,7 @@ namespace Librainian.Persistence {
 
 			this.Reset();
 
-			this.AbsolutePath = document.FullPathWithFileName;
+			this.AbsolutePath = document.FullPath;
 
 			this.Length = document.Length;
 			this.CreationTimeUtc = document.Info.CreationTimeUtc;

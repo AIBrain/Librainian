@@ -147,7 +147,7 @@ namespace Librainian.Financial.Containers.Wallets
         /// <param name="wallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
-        public static async Task StartDeposit([NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts)
+        public static Task StartDeposit([NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts)
         {
             if (wallet == null) { throw new ArgumentNullException(nameof(wallet)); }
 
@@ -155,7 +155,7 @@ namespace Librainian.Financial.Containers.Wallets
             var actionBlock = new ActionBlock<KeyValuePair<IDenomination, UInt64>>(pair => wallet.Deposit(pair.Key, pair.Value), Blocks.ManyProducers.ConsumeSensible);
             Parallel.ForEach(sourceAmounts, pair => actionBlock.Post(pair));
             actionBlock.Complete();
-            await actionBlock.Completion;
+            return actionBlock.Completion;
         }
 
         /// <summary>

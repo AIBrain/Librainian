@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2018/11/02 at 2:53 PM.
+// 
+// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2019/01/05 at 9:46 PM.
 
 namespace Librainian.Maths {
 
@@ -60,39 +60,26 @@ namespace Librainian.Maths {
 
 	public static class MathExtensions {
 
-		/// <summary>
-		///     Table used for reversing bits.
-		/// </summary>
-		private static readonly Byte[] BitReverseTable256 = {
-			0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8, 0x04, 0x84,
-			0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4, 0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC, 0x6C, 0xEC, 0x1C, 0x9C, 0x5C, 0xDC, 0x3C, 0xBC, 0x7C, 0xFC, 0x02, 0x82, 0x42, 0xC2,
-			0x22, 0xA2, 0x62, 0xE2, 0x12, 0x92, 0x52, 0xD2, 0x32, 0xB2, 0x72, 0xF2, 0x0A, 0x8A, 0x4A, 0xCA, 0x2A, 0xAA, 0x6A, 0xEA, 0x1A, 0x9A, 0x5A, 0xDA, 0x3A, 0xBA, 0x7A, 0xFA, 0x06, 0x86, 0x46, 0xC6, 0x26, 0xA6,
-			0x66, 0xE6, 0x16, 0x96, 0x56, 0xD6, 0x36, 0xB6, 0x76, 0xF6, 0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE, 0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE, 0x01, 0x81, 0x41, 0xC1, 0x21, 0xA1, 0x61, 0xE1,
-			0x11, 0x91, 0x51, 0xD1, 0x31, 0xB1, 0x71, 0xF1, 0x09, 0x89, 0x49, 0xC9, 0x29, 0xA9, 0x69, 0xE9, 0x19, 0x99, 0x59, 0xD9, 0x39, 0xB9, 0x79, 0xF9, 0x05, 0x85, 0x45, 0xC5, 0x25, 0xA5, 0x65, 0xE5, 0x15, 0x95,
-			0x55, 0xD5, 0x35, 0xB5, 0x75, 0xF5, 0x0D, 0x8D, 0x4D, 0xCD, 0x2D, 0xAD, 0x6D, 0xED, 0x1D, 0x9D, 0x5D, 0xDD, 0x3D, 0xBD, 0x7D, 0xFD, 0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3, 0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3,
-			0x33, 0xB3, 0x73, 0xF3, 0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB, 0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB, 0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67, 0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7,
-			0x77, 0xF7, 0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
-		};
-
-		// you may want to pass this and use generics to allow more or less bits
-		/// <summary>
-		///     Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.
-		/// </summary>
-		private static readonly UInt32[] FibonacciLookup = {
-			1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040, 1346269, 2178309, 3524578, 5702887, 9227465,
-			14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073
-		};
-
-		private static readonly Byte[] RGBRGB565565 = {
-			5, 6, 5, 5, 6, 5
-		};
+		public delegate Int32 FibonacciCalculator( Int32 n );
 
 		/// <summary>
 		///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
 		/// </summary>
 		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
-		public delegate Int32 FibonacciCalculator( Int32 n );
+		// you may want to pass this and use generics to allow more or less bits
+		/// <summary>
+		///     Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.
+		/// </summary>
+		private static readonly UInt32[] FibonacciLookup = {
+			1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040,
+			1346269, 2178309, 3524578, 5702887, 9227465, 14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903,
+			2971215073
+		};
+
+		private static readonly Byte[] RGBRGB565565 = {
+			5, 6, 5, 5, 6, 5
+		};
 
 		/// <summary>
 		///     Add two <see cref="UInt64" /> without the chance of "throw new ArgumentOutOfRangeException( "amount",
@@ -104,7 +91,7 @@ namespace Librainian.Maths {
 			var result = new UBigInteger( left ) + new UBigInteger( right );
 			var overflowed = result > UInt64.MaxValue;
 
-			return (result, overflowed);
+			return ( result, overflowed );
 		}
 
 		/// <summary>
@@ -117,7 +104,7 @@ namespace Librainian.Maths {
 			var result = new BigInteger( left ) + new BigInteger( right );
 			var overflowed = result > UInt64.MaxValue;
 
-			return (result, overflowed);
+			return ( result, overflowed );
 		}
 
 		/// <summary>
@@ -145,140 +132,12 @@ namespace Librainian.Maths {
 		public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
 
 		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this Int64 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this UInt64 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this Int32 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this UInt32 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= value - 1;
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this Int16 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( Int16 )( value - 1 );
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this UInt16 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( UInt16 )( value - 1 );
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this Byte value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( Byte )( value - 1 );
-			}
-
-			return i;
-		}
-
-		/// <summary>
-		///     Counts the number of set (bit = 1) bits in a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>Number of set (1) bits.</returns>
-		[Pure]
-		public static Int32 BitsOn( this SByte value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; i++ ) {
-				value &= ( SByte )( value - 1 );
-			}
-
-			return i;
-		}
-
-		/// <summary>
 		///     Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.
 		/// </summary>
 		/// <param name="high"></param>
 		/// <param name="low"> </param>
 		/// <returns></returns>
-		public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 )high << 32 ) | low;
+		public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 ) high << 32 ) | low;
 
 		/// <summary>
 		///     Combine two bytes into one <see cref="UInt16" />.
@@ -302,7 +161,7 @@ namespace Librainian.Maths {
 		/// <param name="high"></param>
 		/// <returns></returns>
 		/// <see cref="CombineTwoBytesLittleEndianess" />
-		public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 )( high + ( low << 8 ) );
+		public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 ) ( high + ( low << 8 ) );
 
 		/// <summary>
 		///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
@@ -311,7 +170,7 @@ namespace Librainian.Maths {
 		/// <param name="high"></param>
 		/// <returns></returns>
 		/// <see cref="CombineTwoBytesHighEndianess" />
-		public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 )( low + ( high << 8 ) );
+		public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 ) ( low + ( high << 8 ) );
 
 		/// <summary>
 		///     Combine two byte arrays into one byte array.
@@ -367,7 +226,7 @@ namespace Librainian.Maths {
 
 				if ( i == strNumber.Length - 1 && i % 2 == 0 ) {
 					convertedNumber[ i / 2 ] = 0xf;
-					convertedNumber[ i / 2 ] |= ( Byte )( ( Int32.Parse( s: currentNumber ) % 10 ) << 4 );
+					convertedNumber[ i / 2 ] |= ( Byte ) ( ( Int32.Parse( s: currentNumber ) % 10 ) << 4 );
 				}
 
 				if ( i % 2 == 0 ) {
@@ -375,8 +234,8 @@ namespace Librainian.Maths {
 				}
 
 				var value = Int32.Parse( s: currentNumber );
-				convertedNumber[ ( i - 1 ) / 2 ] = ( Byte )( value % 10 );
-				convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte )( ( value / 10 ) << 4 );
+				convertedNumber[ ( i - 1 ) / 2 ] = ( Byte ) ( value % 10 );
+				convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte ) ( ( value / 10 ) << 4 );
 				currentNumber = String.Empty;
 			}
 
@@ -384,7 +243,7 @@ namespace Librainian.Maths {
 		}
 
 		/// <summary>
-		/// Remove everything after the decimal point.
+		///     Remove everything after the decimal point.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <returns></returns>
@@ -392,15 +251,15 @@ namespace Librainian.Maths {
 		public static Double Crop( this Double x ) => Math.Truncate( d: x * 100.0D ) / 100.0D;
 
 		/// <summary>
-		/// Remove everything after the decimal point.
+		///     Remove everything after the decimal point.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Single Crop( this Single x ) => ( Single )( Math.Truncate( d: x * 100.0f ) / 100.0f );
+		public static Single Crop( this Single x ) => ( Single ) ( Math.Truncate( d: x * 100.0f ) / 100.0f );
 
 		/// <summary>
-		/// Return the cube (^3) of the number.
+		///     Return the cube (^3) of the number.
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
@@ -408,7 +267,7 @@ namespace Librainian.Maths {
 		public static Single Cubed( this Single number ) => number * number * number;
 
 		/// <summary>
-		/// Return the cube (^3) of the number.
+		///     Return the cube (^3) of the number.
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
@@ -416,7 +275,7 @@ namespace Librainian.Maths {
 		public static Double Cubed( this Double number ) => number * number * number;
 
 		/// <summary>
-		/// Return the cube (^3) of the number.
+		///     Return the cube (^3) of the number.
 		/// </summary>
 		/// <param name="number"></param>
 		/// <returns></returns>
@@ -429,7 +288,7 @@ namespace Librainian.Maths {
 			var input = new Boolean[ 12 ];
 
 			for ( var i = 0; i < 3; i++ ) {
-				var a = ( Int32 )( ( Int32 )d / Math.Pow( x: 10, y: i ) ) % 10;
+				var a = ( Int32 ) ( ( Int32 ) d / Math.Pow( x: 10, y: i ) ) % 10;
 
 				for ( var j = 0; j < 4; j++ ) {
 					input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
@@ -523,19 +382,20 @@ namespace Librainian.Maths {
 		public static Int32 FiftyPercentOf( this Int32 x ) {
 			var result = x * 0.5;
 
-			return result < 1.0 ? 1 : ( Int32 )result;
+			return result < 1.0 ? 1 : ( Int32 ) result;
 		}
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) => Math.Max( val1: Math.Min( val1: thisDouble, val2: maxLimit ), val2: minLimit );
+		public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) =>
+			Math.Max( val1: Math.Min( val1: thisDouble, val2: maxLimit ), val2: minLimit );
 
 		[DebuggerStepThrough]
 		[Pure]
 		public static Int32 FractionOf( this Int32 x, Double top, Double bottom ) {
 			var result = top * x / bottom;
 
-			return result < 1.0 ? 1 : ( Int32 )result;
+			return result < 1.0 ? 1 : ( Int32 ) result;
 		}
 
 		[DebuggerStepThrough]
@@ -674,7 +534,7 @@ namespace Librainian.Maths {
 				var lastEnd = curPos; // position where last field ended
 				curPos += bitFields[ f ]; // we get where the current value starts
 				var leftShift = maxBits - curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
-				retArr[ f ] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
+				retArr[ f ] = ( UInt16 ) ( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
 			}
 
 			return retArr;
@@ -690,7 +550,7 @@ namespace Librainian.Maths {
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Byte Half( this Byte number ) => ( Byte )( number / 2 );
+		public static Byte Half( this Byte number ) => ( Byte ) ( number / 2 );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -698,27 +558,27 @@ namespace Librainian.Maths {
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Int32 Half( this Int32 number ) => ( Int32 )( number / 2.0f );
+		public static Int32 Half( this Int32 number ) => ( Int32 ) ( number / 2.0f );
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Int16 Half( this Int16 number ) => ( Int16 )( number / 2.0f );
+		public static Int16 Half( this Int16 number ) => ( Int16 ) ( number / 2.0f );
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static UInt16 Half( this UInt16 number ) => ( UInt16 )( number / 2.0f );
+		public static UInt16 Half( this UInt16 number ) => ( UInt16 ) ( number / 2.0f );
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static UInt32 Half( this UInt32 number ) => ( UInt32 )( number / 2.0f );
+		public static UInt32 Half( this UInt32 number ) => ( UInt32 ) ( number / 2.0f );
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static UInt64 Half( this UInt64 number ) => ( UInt64 )( number / 2.0d );
+		public static UInt64 Half( this UInt64 number ) => ( UInt64 ) ( number / 2.0d );
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Int64 Half( this Int64 number ) => ( Int64 )( number / 2.0d );
+		public static Int64 Half( this Int64 number ) => ( Int64 ) ( number / 2.0d );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -796,13 +656,7 @@ namespace Librainian.Maths {
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Boolean IsNumber( this Single value ) {
-			if ( Single.IsNaN( f: value ) ) {
-				return false;
-			}
-
-			return !Single.IsInfinity( f: value );
-		}
+		public static Boolean IsNumber( this Single value ) => !Single.IsNaN( f: value ) && !Single.IsInfinity( f: value );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -858,7 +712,7 @@ namespace Librainian.Maths {
 		/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 		[DebuggerStepThrough]
 		[Pure]
-		public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( target - source ) * amount );
+		public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 ) ( source + ( target - source ) * amount );
 
 		/// <summary>
 		///     Linearly interpolates between two values.
@@ -868,7 +722,7 @@ namespace Librainian.Maths {
 		/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 		[DebuggerStepThrough]
 		[Pure]
-		public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( target - source ) * amount );
+		public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 ) ( source + ( target - source ) * amount );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -973,12 +827,12 @@ namespace Librainian.Maths {
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( d: x * 100.0 ) / 100.0f );
+		public static Single Nested( this Single x ) => ( Single ) ( Math.Sqrt( d: x * 100.0 ) / 100.0f );
 
 		[Obsolete]
 		[DebuggerStepThrough]
 		[Pure]
-		public static Int32 Nested( this Int32 x ) => ( Int32 )Math.Sqrt( d: x );
+		public static Int32 Nested( this Int32 x ) => ( Int32 ) Math.Sqrt( d: x );
 
 		/// <summary>
 		///     Remove all the trailing zeros from the decimal
@@ -1043,134 +897,6 @@ namespace Librainian.Maths {
 
 			return retVal;
 		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this Int64 value ) {
-			Int64 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this UInt64 value ) {
-			UInt64 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this Int32 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this UInt32 value ) {
-			UInt32 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this Int16 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this UInt16 value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this SByte value ) {
-			Int32 i;
-
-			for ( i = 0; value != 0; value >>= 1 ) {
-				i += value & 1;
-			}
-
-			return i % 2 == 1;
-		}
-
-		/// <summary>
-		///     Finds the parity of a given value.
-		/// </summary>
-		/// <param name="value">Value to check.</param>
-		/// <returns>True for even, False for odd.</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -1256,61 +982,9 @@ namespace Librainian.Maths {
 		[Pure]
 		public static Decimal Quarter( this Decimal number ) => number / 4.0m;
 
-		/// <summary>
-		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
-		/// </summary>
-		/// <param name="source">Source value to reverse</param>
-		/// <returns>Input value with reversed bits</returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
-
-		/// <summary>
-		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
-		/// </summary>
-		/// <param name="source">Source value to reverse</param>
-		/// <returns>Input value with reversed bits</returns>
-		public static Int32 ReverseBits( this Int32 source ) =>
-			( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ];
-
-		/// <summary>
-		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
-		/// </summary>
-		/// <param name="source">Source value to reverse</param>
-		/// <returns>Input value with reversed bits</returns>
-		public static UInt32 ReverseBits( this UInt32 source ) =>
-			( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) |
-						 BitReverseTable256[ ( source >> 24 ) & 0xff ] );
-
-		/// <summary>
-		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
-		/// </summary>
-		/// <param name="source">Source value to reverse</param>
-		/// <returns>Input value with reversed bits</returns>
-		public static UInt16 ReverseBits( this UInt16 source ) {
-			source = ( UInt16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-			source = ( UInt16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-			source = ( UInt16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
-
-			return ( UInt16 )( ( source >> 8 ) | ( source << 8 ) );
-		}
-
-		/// <summary>
-		///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
-		/// </summary>
-		/// <param name="source">Source value to reverse</param>
-		/// <returns>Input value with reversed bits</returns>
-		public static Int16 ReverseBits( this Int16 source ) {
-			source = ( Int16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-			source = ( Int16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-			source = ( Int16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
-
-			return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
-		}
-
 		public static Double Root( this Double x, Double root ) => Math.Pow( x: x, y: 1.0 / root );
 
-		public static Double Root( this Decimal x, Decimal root ) => Math.Pow( x: ( Double )x, y: ( Double )( 1.0m / root ) );
+		public static Double Root( this Decimal x, Decimal root ) => Math.Pow( x: ( Double ) x, y: ( Double ) ( 1.0m / root ) );
 
 		public static UInt64 RotateLeft( this UInt64 original, Int32 bits ) => ( original << bits ) | ( original >> ( 64 - bits ) );
 
@@ -1323,11 +997,11 @@ namespace Librainian.Maths {
 		/// <param name="decimalPlaces"></param>
 		/// <returns>Bitcoin ftw!</returns>
 		public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
-			number *= ( Decimal )Math.Pow( x: 10, y: decimalPlaces );
+			number *= ( Decimal ) Math.Pow( x: 10, y: decimalPlaces );
 
-			number = ( UInt64 )number; //Truncate, don't round. Just chop it off.
+			number = ( UInt64 ) number; //Truncate, don't round. Just chop it off.
 
-			number *= ( Decimal )Math.Pow( x: 10, y: -decimalPlaces );
+			number *= ( Decimal ) Math.Pow( x: 10, y: -decimalPlaces );
 
 			return number;
 		}
@@ -1395,8 +1069,8 @@ namespace Librainian.Maths {
 		/// <param name="high"> </param>
 		/// <param name="low">  </param>
 		public static void Split( this UInt64 value, out UInt32 high, out UInt32 low ) {
-			high = ( UInt32 )( value >> 32 );
-			low = ( UInt32 )( value & UInt32.MaxValue );
+			high = ( UInt32 ) ( value >> 32 );
+			low = ( UInt32 ) ( value & UInt32.MaxValue );
 		}
 
 		[DebuggerStepThrough]
@@ -1439,13 +1113,13 @@ namespace Librainian.Maths {
 			}
 
 			//foreach ( Double d in data ) {aggregate = aggregate * d;}
-			return Math.Sqrt( d: ( Double )aggregate );
+			return Math.Sqrt( d: ( Double ) aggregate );
 		}
 
 		public static Decimal SquareRootOfProducts( [NotNull] this IEnumerable<Decimal> data ) {
 			var aggregate = data.Aggregate( seed: 1.0m, func: ( current, d ) => current * d );
 
-			return ( Decimal )Math.Sqrt( d: ( Double )aggregate );
+			return ( Decimal ) Math.Sqrt( d: ( Double ) aggregate );
 		}
 
 		/// <summary>
@@ -1477,7 +1151,7 @@ namespace Librainian.Maths {
 				return UInt64.MinValue;
 			}
 
-			return ( UInt64 )integer;
+			return ( UInt64 ) integer;
 		}
 
 		/// <summary>
@@ -1485,12 +1159,13 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="bigIntegers"></param>
 		/// <returns></returns>
-		public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) => bigIntegers.Aggregate( seed: BigInteger.Zero, func: ( current, bigInteger ) => current + bigInteger );
+		public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) =>
+			bigIntegers.Aggregate( seed: BigInteger.Zero, func: ( current, bigInteger ) => current + bigInteger );
 
 		public static Int32 ThreeFourths( this Int32 x ) {
 			var result = 3.0 * x / 4.0;
 
-			return result < 1.0 ? 1 : ( Int32 )result;
+			return result < 1.0 ? 1 : ( Int32 ) result;
 		}
 
 		public static UInt64 ThreeQuarters( this UInt64 x ) => 3 * x / 4;
@@ -1504,217 +1179,6 @@ namespace Librainian.Maths {
 
 		public static Int64 Thrice( this Int64 number ) => number * 3L;
 
-		public static IEnumerable<Int32> Through( this Int32 startValue, Int32 end ) {
-			Int32 offset;
-
-			if ( startValue < end ) {
-				offset = 1;
-			}
-			else {
-				offset = -1;
-			}
-
-			for ( var i = startValue; i != end + offset; i += offset ) {
-				yield return i;
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 102.To(204)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="end">  </param>
-		/// <param name="step"> </param>
-		/// <returns></returns>
-		public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
-			if ( step <= 1 ) {
-				step = 1;
-			}
-
-			if ( start <= end ) {
-				for ( var b = start; b <= end; b += step ) {
-					yield return b;
-
-					if ( b == Byte.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-			else {
-				for ( var b = start; b >= end; b -= step ) {
-					yield return b;
-
-					if ( b == Byte.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="end">  </param>
-		/// <param name="step"> </param>
-		/// <returns></returns>
-		public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
-			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
-			}
-
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
-
-			var reFrom = ( UInt64 )start;
-
-			if ( start <= ( Decimal )end ) {
-				for ( var ul = reFrom; ul <= end; ul += step ) {
-					yield return ul;
-
-					if ( ul == UInt64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-			else {
-				for ( var ul = reFrom; ul >= end; ul -= step ) {
-					yield return ul;
-
-					if ( ul == UInt64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="start">inclusive</param>
-		/// <param name="end">  inclusive</param>
-		/// <param name="step"> </param>
-		/// <returns></returns>
-		public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
-			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
-			}
-
-			if ( step == 0 ) {
-				step = 1;
-			}
-
-			var reFrom = start; //bug here is the bug if from is less than zero
-
-			if ( start <= end ) {
-				for ( var ul = reFrom; ul <= end; ul += step ) {
-					yield return ul;
-
-					if ( ul == Int32.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-			else {
-				for ( var ul = reFrom; ul >= end; ul -= step ) {
-					yield return ul;
-
-					if ( ul == Int32.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="end"> </param>
-		/// <param name="step"></param>
-		/// <returns></returns>
-		public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
-
-			if ( @from <= end ) {
-				for ( var ul = @from; ul <= end; ul += step ) {
-					yield return ul;
-
-					if ( ul == UInt64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-			else {
-				for ( var ul = @from; ul >= end; ul -= step ) {
-					yield return ul;
-
-					if ( ul == UInt64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="end"> </param>
-		/// <param name="step"></param>
-		/// <returns></returns>
-		public static IEnumerable<Int64> To( this Int64 from, Int64 end, Int64 step = 1 ) {
-			if ( step == 0L ) {
-				step = 1L;
-			}
-
-			if ( @from <= end ) {
-				for ( var ul = @from; ul <= end; ul += step ) {
-					yield return ul;
-
-					if ( ul == Int64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-			else {
-				for ( var ul = @from; ul >= end; ul -= step ) {
-					yield return ul;
-
-					if ( ul == Int64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to">  </param>
-		/// <param name="step"></param>
-		/// <returns></returns>
-		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
-
-			if ( @from <= to ) {
-				for ( var ul = @from; ul <= to; ul += step ) {
-					yield return ul;
-				}
-			}
-			else {
-				for ( var ul = @from; ul >= to; ul -= step ) {
-					yield return ul;
-				}
-			}
-		}
-
 		///// <summary>
 		/////     Creates an enumerable that iterates the range [fromInclusive, toExclusive).
 		///// </summary>
@@ -1726,142 +1190,6 @@ namespace Librainian.Maths {
 		//        yield return i;
 		//    }
 		//}
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to">  </param>
-		/// <param name="step"></param>
-		/// <returns></returns>
-		public static IEnumerable<BigInteger> To( this Int64 from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
-
-			BigInteger reFrom = @from;
-
-			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
-					yield return ul;
-				}
-			}
-			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
-					yield return ul;
-				}
-			}
-		}
-
-		/// <summary>
-		///     Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="to">   </param>
-		/// <param name="step"> </param>
-		/// <returns></returns>
-		public static IEnumerable<BigRational> To( this Int32 start, BigRational to, BigRational step ) {
-			if ( step < 0 ) {
-				step = 1;
-			}
-
-			BigRational reFrom = start;
-
-			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
-					yield return ul;
-				}
-			}
-			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
-					yield return ul;
-				}
-			}
-		}
-
-		/// <summary>
-		///     Return each <see cref="DateTime" /> between <paramref name="from" /> and <paramref name="to" />, stepped by a
-		///     <see cref="TimeSpan" /> ( <paramref name="step" />).
-		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to">  </param>
-		/// <param name="step"></param>
-		/// <returns></returns>
-		/// <remarks>//TODO Untested code!</remarks>
-		/// <example>
-		///     var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes(
-		///     1 ) ); foreach ( var dateTime in minutes ) { Console.WriteLine( dateTime ); }
-		/// </example>
-		public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
-			if ( !step.HasValue ) {
-				TimeSpan diff;
-
-				if ( @from > to ) {
-					diff = @from - @from;
-				}
-				else {
-					diff = to - @from;
-				}
-
-				if ( diff.TotalDays > 1 ) {
-					step = Days.One;
-				}
-				else if ( diff.TotalHours > 1 ) {
-					step = Hours.One;
-				}
-				else if ( diff.TotalMinutes > 1 ) {
-					step = Minutes.One;
-				}
-				else if ( diff.TotalSeconds > 1 ) {
-					step = Seconds.One;
-				}
-				else {
-					step = Milliseconds.One;
-				}
-			}
-
-			if ( @from > to ) {
-				if ( !step.HasValue ) {
-					yield break;
-				}
-
-				for ( var dateTime = @from; dateTime >= to; dateTime -= step.Value ) {
-					yield return dateTime;
-				}
-			}
-			else {
-				if ( !step.HasValue ) {
-					yield break;
-				}
-
-				for ( var dateTime = @from; dateTime <= to; dateTime += step.Value ) {
-					yield return dateTime;
-				}
-			}
-		}
-
-		public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
-			var count = end - start + 1.0f;
-
-			for ( var idx = 0.0f; idx < count; idx += step ) {
-				yield return start + idx;
-			}
-		}
-
-		public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
-			var count = end - start + 1.0;
-
-			for ( var idx = 0.0; idx < count; idx += step ) {
-				yield return start + idx;
-			}
-		}
-
-		public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
-			var count = end - start + 1;
-
-			for ( var i = 0; i < count; i++ ) {
-				yield return start + i;
-			}
-		}
 
 		/// <summary>
 		///     <see
@@ -1894,11 +1222,11 @@ namespace Librainian.Maths {
 				number = -number;
 			}
 
-			var n = ( UInt32 )number;
-			var b = ( UInt32 )@base;
+			var n = ( UInt32 ) number;
+			var b = ( UInt32 ) @base;
 
 			while ( ( n > 0 ) | ( minDigits-- > 0 ) ) {
-				s = Constants.NumberBaseChars[ index: ( Int32 )( n % b ) ] + s;
+				s = Constants.NumberBaseChars[ index: ( Int32 ) ( n % b ) ] + s;
 				n /= b;
 			}
 
@@ -1909,13 +1237,14 @@ namespace Librainian.Maths {
 			return s;
 		}
 
-		public static UInt64? ToUInt64( this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? )result : null;
+		public static UInt64? ToUInt64( this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? ) result : null;
 
-		public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) => ( UInt64 )( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
+		public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) =>
+			( UInt64 ) ( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
 
-		public static Int64 Truncate( this Single number ) => ( Int64 )number;
+		public static Int64 Truncate( this Single number ) => ( Int64 ) number;
 
-		public static Int64 Truncate( this Double number ) => ( Int64 )number;
+		public static Int64 Truncate( this Double number ) => ( Int64 ) number;
 
 		/// <summary>
 		///     <para>Attempt to parse a fraction from a String.</para>
@@ -1997,5 +1326,7 @@ namespace Librainian.Maths {
 		public static Decimal Twice( this Decimal number ) => number * 2m;
 
 		public static Int64 Twice( this Int64 number ) => number * 2L;
+
 	}
+
 }

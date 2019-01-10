@@ -47,11 +47,13 @@ namespace Librainian.Database {
 	using System.Data.Common;
 	using System.Data.SqlClient;
 	using System.Diagnostics.CodeAnalysis;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Magic;
+	using Maths;
 	using Parsing;
 
 	public sealed class Database : ABetterClassDispose, IDatabase {
@@ -81,7 +83,7 @@ namespace Librainian.Database {
 						CommandType = CommandType.Text,
 						CommandTimeout = 0
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						command.ExecuteNonQuery();
 					}
@@ -109,7 +111,7 @@ namespace Librainian.Database {
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = CommandType.StoredProcedure
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						command.ExecuteNonQuery();
 
@@ -136,13 +138,13 @@ namespace Librainian.Database {
 
 			try {
 				using ( var connection = new SqlConnection( this._connectionString ) ) {
-					connection.Open();
+					await connection.OpenAsync().ConfigureAwait( false );
 
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = commandType,
 						CommandTimeout = 0
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
 					}
@@ -174,7 +176,7 @@ namespace Librainian.Database {
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = commandType
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						table.BeginLoadData();
 
@@ -205,12 +207,12 @@ namespace Librainian.Database {
 
 			try {
 				using ( var connection = new SqlConnection( this._connectionString ) ) {
-					connection.Open();
+					await connection.OpenAsync().ConfigureAwait( false );
 
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = commandType
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						return await command.ExecuteReaderAsync().ConfigureAwait( false );
 					}
@@ -236,12 +238,12 @@ namespace Librainian.Database {
 
 			try {
 				using ( var connection = new SqlConnection( this._connectionString ) ) {
-					connection.Open();
+					await connection.OpenAsync().ConfigureAwait( false );
 
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = commandType
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						table.BeginLoadData();
 
@@ -276,7 +278,7 @@ namespace Librainian.Database {
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = CommandType.StoredProcedure
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						var scalar = command.ExecuteScalar();
 
@@ -309,16 +311,14 @@ namespace Librainian.Database {
 
 			try {
 				using ( var connection = new SqlConnection( this._connectionString ) ) {
-					connection.Open();
+					await connection.OpenAsync().ConfigureAwait( false );
 
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = commandType
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where(parameter => parameter != null).ToArray() ); }
 
-						var task = command.ExecuteScalarAsync().ConfigureAwait( false );
-
-						var result = await task;
+						var result = await command.ExecuteScalarAsync().ConfigureAwait( false );
 
 						if ( result == DBNull.Value ) { return default; }
 
@@ -354,7 +354,7 @@ namespace Librainian.Database {
 					using ( var command = new SqlCommand( query, connection ) {
 						CommandType = CommandType.StoredProcedure
 					} ) {
-						if ( null != parameters ) { command.Parameters.AddRange( parameters ); }
+						if ( null != parameters ) { command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() ); }
 
 						using ( var reader = command.ExecuteReader() ) {
 							var data = GenericPopulator<TResult>.CreateList( reader );

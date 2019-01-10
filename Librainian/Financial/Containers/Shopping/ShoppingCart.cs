@@ -43,7 +43,6 @@ namespace Librainian.Financial.Containers.Shopping
 {
 
     using Collections;
-    using Extensions;
     using JetBrains.Annotations;
     using Magic;
     using Newtonsoft.Json;
@@ -51,6 +50,7 @@ namespace Librainian.Financial.Containers.Shopping
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using Maths;
 
     [JsonObject]
     public class ShoppingCart : ABetterClassDispose

@@ -49,7 +49,7 @@ namespace Librainian.Parsing {
 	public abstract class Formatter : IFormatProvider, ICustomFormatter {
 		/// <summary>Initializes a new instance of the <see cref="Formatter"/> class.</summary>
 		/// <param name="culture">The culture.</param>
-		protected Formatter( [CanBeNull] CultureInfo culture = null ) => this.Culture = culture ?? CultureInfo.InvariantCulture;
+		protected Formatter( [CanBeNull] CultureInfo culture = null ) => this.Culture = culture ?? CultureInfo.CurrentCulture;
 
 		/// <summary>Gets a default instance of a composite formatter.</summary>
 		/// <param name="culture">The culture.</param>

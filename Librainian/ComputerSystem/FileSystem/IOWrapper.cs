@@ -277,7 +277,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <summary>Access flags.</summary>
 		[Flags]
 		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-		public enum ACCESS_MASK : uint {
+		public enum ACCESS_MASK : UInt32 {
 			/// <summary>The right to delete the object.</summary>
 			DELETE = 0x00010000,
 
@@ -343,7 +343,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <remarks>These flags may be passed to CreateFile.</remarks>
 		[Flags]
 		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-		public enum FileAccess : uint {
+		public enum FileAccess : UInt32 {
 			/// <summary>Read access.</summary>
 			GENERIC_READ = ACCESS_MASK.GENERIC_READ,
 

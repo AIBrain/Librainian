@@ -44,7 +44,6 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
-	using System.Globalization;
 	using System.Linq;
 	using JetBrains.Annotations;
 
@@ -70,10 +69,10 @@ namespace Librainian.Extensions {
 		/// </code>
 		/// </example>
 		public static Boolean Contains<T>( this Enum value, T request ) {
-			var valueAsInt = Convert.ToInt32( value, CultureInfo.InvariantCulture );
-			var requestAsInt = Convert.ToInt32( request, CultureInfo.InvariantCulture );
+			var valueAsInt = Convert.ToInt32( value );
+			var requestAsInt = Convert.ToInt32( request );
 
-			return requestAsInt == ( valueAsInt & requestAsInt );
+			return requestAsInt == ( valueAsInt & requestAsInt );	//TODO what??
 		}
 
 		/// <summary>
@@ -137,9 +136,9 @@ namespace Librainian.Extensions {
 		/// </example>
 		[NotNull]
 		public static IEnumerable<T> GetAllSelectedItems<T>( this Enum value ) {
-			var valueAsInt = Convert.ToInt32( value, CultureInfo.InvariantCulture );
+			var valueAsInt = Convert.ToInt32( value );
 
-			return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item, CultureInfo.InvariantCulture ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T ) item;
+			return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T ) item;
 		}
 
 		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
@@ -152,6 +151,6 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static IEnumerable<T> GetEnums<T>( this T hmm ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+		public static IEnumerable<T> GetEnums<T>( this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
 	}
 }

@@ -49,6 +49,7 @@ namespace Librainian.Parsing {
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using Maths;
 
     /// <summary>
     ///     This <see cref="T:System.String" /> will always be <see cref="F:System.String.Empty" /> or trimmed, but *never*

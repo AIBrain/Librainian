@@ -42,7 +42,6 @@
 namespace Librainian.Persistence {
 
     using ComputerSystem.FileSystem;
-    using Extensions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Parsing;
@@ -54,6 +53,7 @@ namespace Librainian.Persistence {
     using System.Linq;
     using System.Threading.Tasks;
     using Logging;
+    using Maths;
 
     /// <summary>
     ///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
@@ -157,7 +157,7 @@ namespace Librainian.Persistence {
             }
 
             try {
-                using (var writer = File.AppendText(document.FullPathWithFileName)) {
+                using (var writer = File.AppendText(document.FullPath)) {
                     writer.Write(EncodeSection(section));
 
                     foreach (var pair in dict.OrderBy(pair => pair.Key)) { writer.WriteLine(EncodePair(pair)); }
@@ -183,7 +183,7 @@ namespace Librainian.Persistence {
                     return false; //section not found
                 }
 
-                using (var writer = File.AppendText(document.FullPathWithFileName)) {
+                using (var writer = File.AppendText(document.FullPath)) {
                     writer.Write(EncodeSection(section));
 
                     foreach (var pair in dict.OrderBy(pair => pair.Key)) { await writer.WriteAsync(EncodePair(pair)); }
@@ -262,7 +262,7 @@ namespace Librainian.Persistence {
             if (!document.Exists()) { return false; }
 
             try {
-                var lines = File.ReadLines(document.FullPathWithFileName).Where(line => !String.IsNullOrWhiteSpace(line));
+                var lines = File.ReadLines(document.FullPath).Where(line => !String.IsNullOrWhiteSpace(line));
 
                 //.ToList();
 
@@ -327,7 +327,7 @@ namespace Librainian.Persistence {
         public String AsJSON() {
             var tempDocument = Document.GetTempDocument();
 
-            var writer = File.CreateText(tempDocument.FullPathWithFileName);
+            var writer = File.CreateText(tempDocument.FullPath);
 
             using (JsonWriter jw = new JsonTextWriter(writer)) {
                 jw.Formatting = Formatting.Indented;
@@ -335,7 +335,7 @@ namespace Librainian.Persistence {
                 serializer.Serialize(jw, this.Data);
             }
 
-            var text = File.ReadAllText(tempDocument.FullPathWithFileName);
+            var text = File.ReadAllText(tempDocument.FullPath);
 
             return text;
         }

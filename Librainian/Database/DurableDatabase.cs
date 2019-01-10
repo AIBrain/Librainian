@@ -53,6 +53,7 @@ namespace Librainian.Database {
 	using JetBrains.Annotations;
 	using Logging;
 	using Magic;
+	using Maths;
 	using Parsing;
 
 	public class DurableDatabase : ABetterClassDispose, IDatabase {

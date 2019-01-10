@@ -572,7 +572,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="value">The ISO 8601 string representation to parse.</param>
 		/// <returns>The DateTime equivalent.</returns>
-		public static DateTime ParseIso8601( String value ) => DateTime.ParseExact( value, Iso8601Format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
+		public static DateTime ParseIso8601( String value ) => DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
 
 		/// <summary>
 		///     Parses most common JSON date formats
@@ -937,7 +937,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="value">The date to format.</param>
 		/// <returns>The formatted date.</returns>
 		[NotNull]
-		public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( Iso8601Format, CultureInfo.InvariantCulture );
+		public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( Iso8601Format, CultureInfo.CurrentCulture );
 
 		[NotNull]
 		public static String ToPath( this DateTime dateTime ) {

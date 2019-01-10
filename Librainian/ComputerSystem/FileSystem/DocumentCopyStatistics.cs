@@ -127,6 +127,6 @@ namespace Librainian.ComputerSystem.FileSystem {
         ///     Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.Folder} @ {this.MegabytesPerSecond()}MB/s";
+        public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.CurrentFolder} @ {this.MegabytesPerSecond()}MB/s"; //TODO null ref
     }
 }

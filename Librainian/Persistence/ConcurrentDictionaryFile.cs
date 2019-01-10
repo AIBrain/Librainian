@@ -94,8 +94,8 @@ namespace Librainian.Persistence {
 		public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.Folder.Exists() ) {
-				this.Document.Folder.Create();
+			if ( !this.Document.CurrentFolder.Exists() ) {
+				this.Document.CurrentFolder.Create();
 			}
 
 			if ( preload ) {
@@ -178,8 +178,8 @@ namespace Librainian.Persistence {
 			Task.Run( () => {
 				var document = this.Document;
 
-				if ( !document.Folder.Exists() ) {
-					document.Folder.Create();
+				if ( !document.CurrentFolder.Exists() ) {
+					document.CurrentFolder.Create();
 				}
 
 				if ( document.Exists() ) {

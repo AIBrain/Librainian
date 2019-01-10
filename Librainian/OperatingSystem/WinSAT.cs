@@ -58,7 +58,7 @@ namespace Librainian.OperatingSystem {
 			var xml = new XmlDocument();
 
 			if ( newest != null ) {
-				xml.Load( newest.FullPathWithFileName );
+				xml.Load( newest.FullPath );
 				var xnList = xml.SelectNodes( "/WinSAT/WinSPR" );
 				var dugum = xnList?.Item( 0 );
 

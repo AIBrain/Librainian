@@ -115,7 +115,7 @@ namespace Librainian.Graphics.Imaging {
 
 		public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
 			try {
-				return await this.TryAddAsync( new Bitmap( document.FullPathWithFileName ), delay, cancellationToken ).ConfigureAwait( false );
+				return await this.TryAddAsync( new Bitmap( document.FullPath ), delay, cancellationToken ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();

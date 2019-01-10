@@ -109,7 +109,7 @@ namespace Librainian.Maths.Hashings {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			var fileInfo = new FileInfo( document.FullPathWithFileName );
+			var fileInfo = new FileInfo( document.FullPath );
 
 			if ( fileInfo == null ) {
 				throw new NullReferenceException( "fileInfo" );

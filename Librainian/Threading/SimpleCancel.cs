@@ -45,8 +45,8 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Collections;
-	using Extensions;
 	using Magic;
+	using Maths;
 
 	/// <summary>
 	///     <para>A threadsafe way to cancel anything.</para>

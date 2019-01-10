@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "WebClientExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,20 +28,21 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-// 
+//
 // Project: "Librainian", "WebClientExtensions.cs" was last formatted by Protiguous on 2018/11/21 at 10:25 PM.
 
 namespace Librainian.Internet {
 
 	using System;
+	using System.ComponentModel;
 	using System.IO;
 	using System.Net;
 	using System.Threading;
@@ -53,9 +54,24 @@ namespace Librainian.Internet {
 
 	/// <summary>
 	///     <para>Extension methods for working with WebClient asynchronously.</para>
-	///     <para>Some of these extensions might be copyright (c) Microsoft Corporation.</para>
+	///     <remarks>Some of these extensions might be originally copyright by Microsoft Corporation.</remarks>
 	/// </summary>
 	public static class WebClientExtensions {
+
+		/// <summary>
+		///     <para>Provide to each thread its own <see cref="WebClient" />.</para>
+		/// <para>Do NOT use Dispose on these clients. You've been warned.</para>
+		/// </summary>
+		[NotNull]
+		public static ThreadLocal<Lazy<WebClient>> ThreadSafeWebClients { get; } =
+			new ThreadLocal<Lazy<WebClient>>( valueFactory: () => new Lazy<WebClient>( valueFactory: () => new WebClient() ), trackAllValues: true );
+
+		/// <summary>
+		///     A thread-local (threadsafe) <see cref="WebClient" />.
+		/// <para>Do NOT use Dispose on these clients. You've been warned.</para>
+		/// </summary>
+		[NotNull]
+		public static WebClient Instance() => ThreadSafeWebClients.Value.Value;
 
 		/// <summary>
 		///     <para>Register to cancel the <paramref name="client" /> with a <see cref="CancellationToken" />.</para>
@@ -154,6 +170,56 @@ namespace Librainian.Internet {
 			return null;
 		}
 
+		/// <summary>
+		/// This seems to work great!
+		/// </summary>
+		/// <param name="webClient"></param>
+		/// <param name="address"></param>
+		/// <param name="fileName"></param>
+		/// <param name="progress"></param>
+		/// <returns></returns>
+		public static async Task DownloadFileTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String fileName,
+			IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
+			if ( webClient == null ) {
+				throw new ArgumentNullException( paramName: nameof( webClient ) );
+			}
+
+			if ( address == null ) {
+				throw new ArgumentNullException( paramName: nameof( address ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
+				throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+			}
+
+			var tcs = new TaskCompletionSource<Object>( address );
+
+			void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
+				if ( ce.UserState != tcs ) {return;}
+				if ( ce.Error != null ) {tcs.TrySetException( ce.Error );}
+				else if ( ce.Cancelled ) {tcs.TrySetCanceled();}
+				else {tcs.TrySetResult( null );}
+			}
+
+			void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
+
+				if ( pe.UserState == tcs ) {
+					progress.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+				}
+			}
+
+			try {
+				webClient.DownloadFileCompleted += CompletedHandler;
+				webClient.DownloadProgressChanged += ProgressChangedHandler;
+				webClient.DownloadFileAsync( address, fileName, tcs );
+				await tcs.Task.ConfigureAwait( false );
+			}
+			finally {
+				webClient.DownloadFileCompleted -= CompletedHandler;
+				webClient.DownloadProgressChanged -= ProgressChangedHandler;
+			}
+		}
+
 		/// <summary>Opens a readable stream for the data downloaded from a resource, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>
 		/// <param name="address">The URI for which the stream should be opened.</param>
@@ -185,7 +251,8 @@ namespace Librainian.Internet {
 
 			var taskCompletionSource = new TaskCompletionSource<Stream>( address );
 
-			void Handler( Object sender, OpenReadCompletedEventArgs e ) => taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
+			void Handler( Object sender, OpenReadCompletedEventArgs e ) =>
+				taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
 
 			webClient.OpenReadCompleted += Handler;
 
@@ -205,7 +272,8 @@ namespace Librainian.Internet {
 		/// <param name="address">The URI for which the stream should be opened.</param>
 		/// <param name="method">The HTTP method that should be used to open the stream.</param>
 		/// <returns>A Task that contains the opened stream.</returns>
-		public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, TrimmedString address, TrimmedString method ) => OpenWriteTask( webClient, new Uri( address ), method );
+		public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, TrimmedString address, TrimmedString method ) =>
+			OpenWriteTask( webClient, new Uri( address ), method );
 
 		/// <summary>Opens a writeable stream for uploading data to a resource, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>
@@ -227,7 +295,8 @@ namespace Librainian.Internet {
 
 			var taskCompletionSource = new TaskCompletionSource<Stream>( address );
 
-			void Handler( Object sender, OpenWriteCompletedEventArgs e ) => taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
+			void Handler( Object sender, OpenWriteCompletedEventArgs e ) =>
+				taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
 
 			webClient.OpenWriteCompleted += Handler;
 
@@ -253,7 +322,8 @@ namespace Librainian.Internet {
 		/// <param name="method">The HTTP method that should be used to upload the data.</param>
 		/// <param name="data">The data to upload.</param>
 		/// <returns>A Task containing the data in the response from the upload.</returns>
-		public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, Byte[] data ) => UploadDataTask( webClient, new Uri( address ), method, data );
+		public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, Byte[] data ) =>
+			UploadDataTask( webClient, new Uri( address ), method, data );
 
 		/// <summary>Uploads data to the specified resource, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>
@@ -293,7 +363,8 @@ namespace Librainian.Internet {
 		/// <param name="method">The HTTP method that should be used to upload the file.</param>
 		/// <param name="fileName">A path to the file to upload.</param>
 		/// <returns>A Task containing the data in the response from the upload.</returns>
-		public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String fileName ) => UploadFileTask( webClient, new Uri( address ), method, fileName );
+		public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String fileName ) =>
+			UploadFileTask( webClient, new Uri( address ), method, fileName );
 
 		/// <summary>Uploads a file to the specified resource, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>
@@ -333,7 +404,8 @@ namespace Librainian.Internet {
 		/// <param name="method">The HTTP method that should be used to upload the data.</param>
 		/// <param name="data">The data to upload.</param>
 		/// <returns>A Task containing the data in the response from the upload.</returns>
-		public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String data ) => UploadStringTask( webClient, new Uri( address ), method, data );
+		public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String data ) =>
+			UploadStringTask( webClient, new Uri( address ), method, data );
 
 		/// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>

@@ -67,11 +67,18 @@ namespace Librainian.Internet.RandomOrg {
 
 			if ( maxValue < -Math.Pow( x: 10, y: 8 ) || maxValue > Math.Pow( x: 10, y: 8 ) ) { throw new ArgumentException( "Value of max must be between -1e9 and 1e9", nameof( maxValue ) ); }
 
-			var url = $"http://www.random.org/sequences/?min={minValue}&max={maxValue}&col=1&base=10&format=plain&rnd=new";
+			var url = new Uri( "https" + "://random.org/sequences/?min=" + minValue + "&max=" + maxValue + "&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
 
-			var responseFromServer = await url.GetWebPageAsync( Seconds.Two ).ConfigureAwait( false );
+			var task = url.GetWebPageAsync( Seconds.Two );
 
-			return responseFromServer.Split( '\n' ).Where( n => n.Any() ).Select( Int32.Parse );
+			if ( task == null ) {
+				throw new InvalidOperationException( "Unable to pull any data from random.org." );
+			}
+
+			var responseFromServer = await task.ConfigureAwait( false );
+
+			return responseFromServer.Split( '\n' ).Where( s => s.Any() ).Select( Int32.Parse );
+
 		}
 
 		/// <summary>

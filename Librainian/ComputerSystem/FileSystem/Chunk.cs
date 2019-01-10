@@ -43,7 +43,6 @@ namespace Librainian.ComputerSystem.FileSystem
 {
 
     using Exceptions;
-    using Extensions;
     using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
@@ -173,7 +172,7 @@ namespace Librainian.ComputerSystem.FileSystem
                     {
                         this.ReadWriteBuffer.Should().NotBeNull();
 
-                        if (Debugger.IsAttached) { Debug.WriteLine($"Created {l:N0} byte buffer for {this.Document.FullPathWithFileName}."); }
+                        if (Debugger.IsAttached) { Debug.WriteLine($"Created {l:N0} byte buffer for {this.Document.FullPath}."); }
                     }
                 }
             }

@@ -843,9 +843,9 @@ namespace Librainian.Maths.Numbers
                         var chArray2 = new char[ length2 ];
                         Buffer.BlockCopy( buf, sourceIndex3, chArray2, 0, length2 );
                         if ( throwOnError ) {
-                            result = int.Parse( new String( chArray2 ), CultureInfo.InvariantCulture );
+                            result = int.Parse( new String( chArray2 ), CultureInfo.Ordinal );
                         }
-                        else if ( !int.TryParse( new String( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out result ) ) {
+                        else if ( !int.TryParse( new String( chArray2 ), NumberStyles.AllowLeadingSign, CultureInfo.Ordinal, out result ) ) {
                             return false;
                         }
                     }

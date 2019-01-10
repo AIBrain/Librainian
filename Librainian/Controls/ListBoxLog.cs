@@ -46,10 +46,10 @@ namespace Librainian.Controls {
     using System.Drawing;
     using System.Text;
     using System.Windows.Forms;
-    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
+    using Maths;
     using NLog;
 
     /// <summary>

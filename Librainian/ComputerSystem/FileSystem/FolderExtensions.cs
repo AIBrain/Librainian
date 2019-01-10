@@ -144,7 +144,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                         destinationDocument.Delete();
                     }
 
-                    File.Copy(sourceDocument.FullPathWithFileName, destinationDocument.FullPathWithFileName);
+                    File.Copy(sourceDocument.FullPath, destinationDocument.FullPath);
 
                     if (crc) {
                         statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
@@ -175,7 +175,7 @@ namespace Librainian.ComputerSystem.FileSystem {
             return documentCopyStatistics;
         }
 
-        public static IEnumerable<Folder> FindFolder([NotNull] this String folderName) {
+        public static IEnumerable<IFolder> FindFolder([NotNull] this String folderName) {
             if (folderName == null) {
                 throw new ArgumentNullException(nameof(folderName));
             }
@@ -206,7 +206,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
                 foreach (var folder in folders) {
-                    var parts = SplitPath(folder);
+                    var parts = SplitPath((Folder)folder);  //TODO fix this cast
 
                     if (parts.Any(s => s.Like(folderName))) {
                         found = true;

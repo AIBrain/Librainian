@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Shufflings.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2018/11/10 at 4:31 PM.
+// 
+// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2019/01/05 at 9:49 PM.
 
 namespace Librainian.Collections {
 
@@ -49,10 +49,10 @@ namespace Librainian.Collections {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Converters;
-	using Extensions;
 	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Logging;
+	using Magic;
 	using Maths;
 	using Threading;
 
@@ -87,7 +87,7 @@ namespace Librainian.Collections {
 				bag.Should().NotBeEmpty();
 				var originalcount = bag.Count;
 
-				var sqrt = ( Int32 )Math.Sqrt( d: originalcount );
+				var sqrt = ( Int32 ) Math.Sqrt( d: originalcount );
 
 				if ( sqrt <= 1 ) {
 					sqrt = 1;
@@ -155,34 +155,34 @@ namespace Librainian.Collections {
 
 				switch ( shufflingType ) {
 					case ShufflingType.ByGuid: {
-							CollectionExtensions.ShuffleByGuid( list: ref list, iterations: iterations );
+						CollectionExtensions.ShuffleByGuid( list: ref list, iterations: iterations );
 
-							break;
-						}
+						break;
+					}
 
 					case ShufflingType.ByRandom: {
-							ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
+						ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
 
-							break;
-						}
+						break;
+					}
 
 					case ShufflingType.ByHarker: {
-							ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
+						ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
 
-							break;
-						}
+						break;
+					}
 
 					case ShufflingType.ByBags: {
-							ShuffleByBags( list: ref list, iterations: iterations, originalcount: list.LongCount() );
+						ShuffleByBags( list: ref list, iterations: iterations, originalcount: list.LongCount() );
 
-							break;
-						}
+						break;
+					}
 
 					case ShufflingType.AutoChoice: {
-							ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
+						ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
 
-							break;
-						}
+						break;
+					}
 
 					default: throw new ArgumentOutOfRangeException( nameof( shufflingType ) );
 				}
@@ -218,6 +218,21 @@ namespace Librainian.Collections {
 			}
 		}
 
+		/* ignore this. just some latenight mind-think stuff
+		[NotNull]
+		private static readonly Type[] EmptyTypeArray = new Type[0];
+
+		[NotNull]
+		[Pure]
+		public static Func<X> InstanceCreator<X>() {
+			var type = typeof( X );
+			var constructor = type.GetConstructor( EmptyTypeArray );
+			var @new = Expression.New( constructor ?? throw new InvalidOperationException() );
+			var lambda = Expression.Lambda<Func<X>>( @new ) ;
+			return lambda.Compile();
+		}
+		*/
+
 		/// <summary>
 		///     Not cryptographically guaranteed or tested to be the most performant, but it *should* shuffle *well enough* in
 		///     reasonable time.
@@ -228,7 +243,8 @@ namespace Librainian.Collections {
 		/// <param name="forHowLong">Or for how long to run.</param>
 		/// <param name="orUntilCancelled">Or until cancelled.</param>
 		/// <param name="token">Or until cancelled.</param>
-		public static void ShuffleByHarker<T>( [NotNull] List<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null, CancellationToken? token = null ) {
+		public static void ShuffleByHarker<T>( [NotNull] IList<T> list, Int32 iterations = 1, TimeSpan? forHowLong = null, [CanBeNull] SimpleCancel orUntilCancelled = null,
+			CancellationToken? token = null ) {
 			if ( list == null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
@@ -236,7 +252,7 @@ namespace Librainian.Collections {
 			Stopwatch started = null;
 
 			if ( forHowLong.HasValue ) {
-				started = Stopwatch.StartNew(); //don't allocate a stopwatch unless we're waiting for time to pass.
+				started = Stopwatch.StartNew(); //don't allocate/start a stopwatch unless we're waiting for time to pass.
 			}
 
 			var itemCount = list.Count;
@@ -249,16 +265,24 @@ namespace Librainian.Collections {
 				Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
 			};
 
+			Func<ReaderWriterLockSlim> lockers = Instantiator<ReaderWriterLockSlim>.New;
+
 			var leftTracker = new ReaderWriterLockSlim[ itemCount ];
 
 			for ( var i = 0; i < leftTracker.Length; i++ ) {
-				leftTracker[ i ] = new ReaderWriterLockSlim();
+
+				//leftTracker[ i ] = new ReaderWriterLockSlim();	//how costly will this be?
+				//leftTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
+				leftTracker[ i ] = lockers.Invoke(); //how costly will this be?
 			}
 
 			var rightTracker = new ReaderWriterLockSlim[ itemCount ];
 
 			for ( var i = 0; i < rightTracker.Length; i++ ) {
-				rightTracker[ i ] = new ReaderWriterLockSlim();
+
+				//rightTracker[ i ] = new ReaderWriterLockSlim();					//how costly will this be?
+				//rightTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
+				rightTracker[ i ] = lockers.Invoke(); //how costly will this be?
 			}
 
 			if ( !token.HasValue ) {
@@ -266,28 +290,27 @@ namespace Librainian.Collections {
 			}
 
 			var parallelOptions = new ParallelOptions {
-				CancellationToken = token.Value,
-				MaxDegreeOfParallelism = Environment.ProcessorCount
+				CancellationToken = token.Value, MaxDegreeOfParallelism = Environment.ProcessorCount - 1
 			};
 
 			do {
 				Randem.Instance().NextBytes( left.Bytes ); //fill the left buffer with random numbers
 				Randem.Instance().NextBytes( right.Bytes ); //fill the right buffer with random numbers
 
-				//I don't know how well the list will handle this Parallel.For. It needs tested. I can think values are going to overwrite each other and some may end up lost.
+				//I don't know how well the list will handle this Parallel.For. It *really* needs tested. I don't want any values lost..
+				//and.. if we're locking, then is there *any* benefit to using Parallel.For?
 				Parallel.For( 0, itemCount, parallelOptions, index => {
 
-					//so.. how badly will this fail? race conditions and all..
-					//and.. if we're locking, then is there *any* benefit to using Parallel.For?
+					//so.. how badly will this fail?
 
-					if ( leftTracker[ index ].TryEnterWriteLock( 1 ) && rightTracker[ index ].TryEnterWriteLock( 1 ) ) {
+					if ( leftTracker[ index ].TryEnterWriteLock( 0 ) && rightTracker[ index ].TryEnterWriteLock( 0 ) ) {
 						try {
 							var indexA = left.Ints[ index ];
 							var indexB = right.Ints[ index ];
 
-							var c = list[ indexA ];
-							list[ indexA ] = list[ indexB ];
-							list[ indexB ] = c;
+							var vt = ( va: list[ indexA ], vb: list[ indexB ] ); //is this any more clever/performant than Swap(A,B)?
+							list[ indexA ] = vt.vb;
+							list[ indexB ] = vt.va;
 						}
 						finally {
 							rightTracker[ index ].ExitWriteLock();
@@ -332,5 +355,7 @@ namespace Librainian.Collections {
 				list = list.OrderBy( keySelector: o => Randem.Next() ).ThenBy( keySelector: o => Randem.Next() ).ToList();
 			}
 		}
+
 	}
+
 }

@@ -523,7 +523,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 			}
 		}
 
-		public static UInt32? GetFileSizeOnDisk( [NotNull] this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPathWithFileName ) );
+		public static UInt32? GetFileSizeOnDisk( [NotNull] this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPath ) );
 
 		/// <summary>
 		/// </summary>
@@ -653,7 +653,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="progressFolders">       </param>
 		/// <param name="progressDocuments">     </param>
 		/// <returns></returns>
-		public static Boolean GrabEntireTree( [NotNull] this Folder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] Action<Document> onEachDocumentFound, IProgress<Int64> progressFolders,
+		public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] Action<Document> onEachDocumentFound, IProgress<Int64> progressFolders,
 			IProgress<Int64> progressDocuments, [NotNull] CancellationTokenSource cancellation ) {
 			if ( startingFolder == null ) { throw new ArgumentNullException( nameof( startingFolder ) ); }
 
@@ -1379,7 +1379,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                         return result;
                     }
 
-                    if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+                    if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.Ordinal, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
                         return result;
                     }
 

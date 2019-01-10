@@ -95,7 +95,7 @@ namespace Librainian.Knowledge {
 				try {
 
 					//pick random line
-					var line = File.ReadLines( file.FullPathWithFileName ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
+					var line = File.ReadLines( file.FullPath ).Where( s => !String.IsNullOrWhiteSpace( s ) ).Where( s => Char.IsLetter( s[ 0 ] ) ).OrderBy( o => Randem.Next() ).FirstOrDefault();
 					action( line );
 				}
 				catch ( Exception exception ) { exception.Log(); }

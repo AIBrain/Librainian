@@ -88,11 +88,11 @@ namespace Librainian.ComputerSystem.Devices
         /// </summary>
         public String Path { get; }
 
-        public Device([NotNull] DeviceClass deviceClass, [NotNull] NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null)
+        public Device([NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null)
         {
             this.DeviceClass = deviceClass ?? throw new ArgumentNullException(nameof(deviceClass));
             this.Path = path; // may be null
-            this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException(nameof(deviceInfoData));
+            this.DeviceInfoData = deviceInfoData;
             this.Index = index;
             this.DiskNumber = diskNumber;
         }

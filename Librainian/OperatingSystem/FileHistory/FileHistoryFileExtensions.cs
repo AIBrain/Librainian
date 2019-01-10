@@ -60,15 +60,15 @@ namespace Librainian.OperatingSystem.FileHistory
         ///     <para>Returns the <see cref="DateTime" /> part of this <see cref="Document" /> or null.</para>
         /// </param>
         /// <returns></returns>
-        public static Boolean TryParseFileHistoryFile([NotNull] Document original, [CanBeNull] out Folder folder, [CanBeNull] out String filename, out DateTime? when)
+        public static Boolean TryParseFileHistoryFile([NotNull] Document original, [CanBeNull] out IFolder folder, [CanBeNull] out String filename, out DateTime? when)
         {
             if (original == null) { throw new ArgumentNullException(nameof(original)); }
 
             filename = null;
-            folder = original.Folder;
+            folder = original.CurrentFolder;
             when = null;
 
-            var extension = Path.GetExtension(original.FullPathWithFileName).Trim();
+            var extension = Path.GetExtension(original.FullPath).Trim();
 
             var value = Path.GetFileNameWithoutExtension(original.FileName()).Trim();
 

@@ -79,10 +79,10 @@ namespace Librainian.ComputerSystem.FileSystem {
 		/// <param name="documents"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Task SearchAsync( Folder folder, [CanBeNull] IProgress<Folder> folders = null, [CanBeNull] IProgress<Document> documents = null ) {
+		public static Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> documents = null ) {
 			var task = Task.Run( async () => {
 				if ( CancellationTokenSource.IsCancellationRequested ) {
-					return;
+					return Task.FromResult( default( IFolder ) );   //TODO
 				}
 
 				//Find all documents in this folder...
@@ -94,24 +94,26 @@ namespace Librainian.ComputerSystem.FileSystem {
 						return;
 					}
 
-					Documents[ document.FullPathWithFileName ] = document;
+					Documents[ document.FullPath ] = document;
 					documents?.Report( document );
 				} );
 
 				if ( CancellationTokenSource.IsCancellationRequested ) {
-					return;
+					return Task.FromResult( default( IFolder ) );   //TODO
 				}
 
 				//And then scan down into any subfolders.
 				foreach ( var subFolder in folder.BetterGetFolders( "*.*" ) ) {
 					if ( CancellationTokenSource.IsCancellationRequested ) {
-						return;
+						return Task.FromResult( default( IFolder ) );
 					}
 
 					await SearchAsync( subFolder, folders, documents ).ConfigureAwait( false );
 
 					folders?.Report( subFolder ); //best before or after await?
 				}
+
+				return Task.FromResult( default( IFolder ) );	//TODO
 			} );
 
 			return task;

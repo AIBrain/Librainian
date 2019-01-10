@@ -46,8 +46,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 	using System.IO;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
-	using Extensions;
 	using JetBrains.Annotations;
+	using Maths;
 	using Measurement.Time;
 
 	public static class DocumentExtensions {
@@ -82,8 +82,8 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer,
 							Single bytesToBeCopied, Stopwatch begin ) {
-			using ( var reader = new StreamReader( source.FullPathWithFileName ) ) {
-				using ( var writer = new StreamWriter( destination.FullPathWithFileName, false ) ) {
+			using ( var reader = new StreamReader( source.FullPath ) ) {
+				using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
 					Int32 numRead;
 
 					while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {

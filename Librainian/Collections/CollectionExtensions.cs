@@ -52,8 +52,8 @@ namespace Librainian.Collections {
 	using System.Reflection;
 	using System.Threading.Tasks;
 	using Exceptions;
-	using Extensions;
 	using JetBrains.Annotations;
+	using Maths;
 	using Threading;
 
 	public static class CollectionExtensions {

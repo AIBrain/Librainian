@@ -51,6 +51,9 @@ namespace Librainian.Internet {
 	using JetBrains.Annotations;
 	using Logging;
 
+	/// <summary>
+	/// TODO this class really needs an update to use WebClient
+	/// </summary>
 	public class Http {
 
 		private static readonly Object Synch = new Object();

@@ -62,8 +62,6 @@ namespace Librainian.Graphics
     using System.Windows.Media.Imaging;
     using Logging;
 
-    //using Microsoft.VisualStudio.TestTools.UITesting;
-
     public static class Images
     {
 
@@ -996,7 +994,7 @@ namespace Librainian.Graphics
 
             if (DateTime.TryParse(value, out var result)) { return result; }
 
-            if (DateTime.TryParseExact(value, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out result)) { return result; }
+            if (DateTime.TryParseExact(value, "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out result)) { return result; }
 
             return null;
         }
@@ -1062,7 +1060,7 @@ namespace Librainian.Graphics
 
                 foreach (var pattern in patternsYmd)
                 {
-                    if (DateTime.TryParseExact(digits.Sub(pattern.Length), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess))
+                    if (DateTime.TryParseExact(digits.Sub(pattern.Length), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess))
                     {
                         switch (pattern)
                         {
@@ -1080,7 +1078,7 @@ namespace Librainian.Graphics
 
                 foreach (var pattern in patternsDmy)
                 {
-                    if (DateTime.TryParseExact(digits.Sub(pattern.Length), pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess)) { bestGuesses.Add(bestGuess); }
+                    if (DateTime.TryParseExact(digits.Sub(pattern.Length), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess)) { bestGuesses.Add(bestGuess); }
                 }
 
                 // per http://stackoverflow.com/q/51224/956364
@@ -1158,7 +1156,7 @@ namespace Librainian.Graphics
         {
             if (document == null) { throw new ArgumentNullException(nameof(document)); }
 
-            var info = new FileInfo(document.FullPathWithFileName);
+            var info = new FileInfo(document.FullPath);
 
             return info.IsaValidImage();
         }
@@ -1240,8 +1238,8 @@ namespace Librainian.Graphics
 
             try
             {
-                var imageA = await Task.Run(() => Image.FromFile(fileA.FullPathWithFileName));
-                var imageB = await Task.Run(() => Image.FromFile(fileB.FullPathWithFileName));
+                var imageA = await Task.Run(() => Image.FromFile(fileA.FullPath));
+                var imageB = await Task.Run(() => Image.FromFile(fileB.FullPath));
 
                 if (imageA.Width < imageB.Width && imageA.Height < imageB.Height)
                 {

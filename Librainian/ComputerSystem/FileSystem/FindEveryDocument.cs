@@ -57,7 +57,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 
 		private ActionBlock<Disk> DrivesFound { get; set; }
 
-		private ActionBlock<Folder> FoldersFound { get; set; }
+		private ActionBlock<IFolder> FoldersFound { get; set; }
 
 		private String Status { get; set; }
 
@@ -107,7 +107,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 					} );
 				} );
 
-				this.FoldersFound = new ActionBlock<Folder>( parent => {
+				this.FoldersFound = new ActionBlock<IFolder>( parent => {
 					Parallel.ForEach( parent.BetterGetFolders().AsParallel(), folder => {
 						if ( this.CancellationTokenSource.IsCancellationRequested ) {
 							return;
@@ -124,7 +124,7 @@ namespace Librainian.ComputerSystem.FileSystem {
 							return;
 						}
 
-						this.Status = $"Found document `{document.FullPathWithFileName}`.";
+						this.Status = $"Found document `{document.FullPath}`.";
 						this.DocumentsFound.Post( document );
 						Interlocked.Increment( ref counter );
 

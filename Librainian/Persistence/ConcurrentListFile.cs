@@ -148,8 +148,8 @@ namespace Librainian.Persistence {
 			var document = this.Document;
 
 			return Task.Run( () => {
-				if ( !document.Folder.Exists() ) {
-					document.Folder.Create();
+				if ( !document.CurrentFolder.Exists() ) {
+					document.CurrentFolder.Create();
 				}
 
 				if ( document.Exists() ) {

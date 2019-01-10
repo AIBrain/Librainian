@@ -212,7 +212,7 @@ namespace Librainian.Persistence {
 		///     Returns a string that represents the current object.
 		/// </summary>
 		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.Sections.Count()} sections, {this.Data.Keys.Count} keys";
+		public override String ToString() => $"{this.Sections.Count} sections, {this.Data.Keys.Count} keys";
 
 		[DebuggerStepThrough]
 		public Boolean TryRemove( [NotNull] String section ) {
@@ -280,8 +280,8 @@ namespace Librainian.Persistence {
 		public Ini( [NotNull] Document document, CancellationTokenSource cancellationSource = null ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.Folder.Exists() ) {
-				this.Document.Folder.Create();
+			if ( !this.Document.CurrentFolder.Exists() ) {
+				this.Document.CurrentFolder.Create();
 			}
 
 			if ( cancellationSource == null ) {

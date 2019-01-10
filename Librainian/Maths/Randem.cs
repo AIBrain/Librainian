@@ -95,9 +95,10 @@ namespace Librainian.Maths {
 		[NotNull]
 		public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () => new Lazy<Random>( valueFactory: () => {
 			var seed = DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode();
-			Debug.WriteLine( $"Init random with seed {seed} on thread {Thread.CurrentThread.ManagedThreadId}." );
+			Debug.WriteLine( $"Init new Random() on thread {Thread.CurrentThread.ManagedThreadId:X} with seed {seed:X} on thread {Thread.CurrentThread.ManagedThreadId:X}." );
 
 			return new Random( Seed: seed );
+
 		} ), trackAllValues: true );
 
 		/// <summary>
@@ -603,7 +604,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <returns></returns>
 		/// <remarks>This needs testing if it is actually any faster than <see cref="NextBoolean" />.</remarks>
-		public static Boolean NextBooleanFast() => Instance().Next( maxValue: 2 ) == 0;
+		public static Boolean NextBooleanFast() => Instance().Next( maxValue: 2 ).Any();
 
 		/// <summary>
 		///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
@@ -616,7 +617,7 @@ namespace Librainian.Maths {
 
 				do {
 					result = ( Byte ) ( Byte.MaxValue * rng.GetSingle() );
-				} while ( result < min || result > max );
+				} while ( result < min || result > max );	//TODO ugh
 
 				return result;
 			}

@@ -205,7 +205,7 @@ namespace Librainian.OperatingSystem {
 						var proc = new ProcessStartInfo {
 							UseShellExecute = false,
 							WorkingDirectory = WindowsSystem32Folder.Value.FullName,
-							FileName = CommandPrompt.Value.FullPathWithFileName,
+							FileName = CommandPrompt.Value.FullPath,
 							Verb = "runas", //demand elevated permissions
 							Arguments = $"/C \"{arguments}\"",
 							CreateNoWindow = false,
@@ -259,7 +259,7 @@ namespace Librainian.OperatingSystem {
 					var startInfo = new ProcessStartInfo {
 						UseShellExecute = false,
 						WorkingDirectory = PowerShellFolder.Value.FullName,
-						FileName = PowerShell.Value.FullPathWithFileName,
+						FileName = PowerShell.Value.FullPath,
 						Verb = elevated ? "runas" : null, //demand elevated permissions
 						Arguments = $"-EncodedCommand {arguments.ToBase64()}",
 						CreateNoWindow = false,
@@ -295,8 +295,8 @@ namespace Librainian.OperatingSystem {
 				try {
 					var proc = new ProcessStartInfo {
 						UseShellExecute = false,
-						WorkingDirectory = filename.Folder.FullName,
-						FileName = filename.FullPathWithFileName,
+						WorkingDirectory = filename.CurrentFolder.FullName,
+						FileName = filename.FullPath,
 						Verb = elevate ? null : "runas", //demand elevated permissions
 						Arguments = arguments,
 						CreateNoWindow = false,
@@ -417,12 +417,12 @@ namespace Librainian.OperatingSystem {
 				}
 
 				try {
-					var arguments = $" {inDocument.FullPathWithFileName.Quoted()} /convert={outDocument.FullPathWithFileName.Quoted()} ";
+					var arguments = $" {inDocument.FullPath.Quoted()} /convert={outDocument.FullPath.Quoted()} ";
 
 					var proc = new ProcessStartInfo {
 						UseShellExecute = false,
-						WorkingDirectory = IrfanView64.Value.Folder.FullName,
-						FileName = IrfanView64.Value.FullPathWithFileName,
+						WorkingDirectory = IrfanView64.Value.CurrentFolder.FullName,
+						FileName = IrfanView64.Value.FullPath,
 
 						//Verb = "runas", //demand elevated permissions
 						Arguments = arguments,

@@ -45,12 +45,8 @@ namespace Librainian.Internet
     using ComputerSystem.FileSystem;
     using JetBrains.Annotations;
     using Maths.Numbers;
-    using Measurement.Time;
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Media;
     using System.Net;
     using System.Threading.Tasks;
     using Logging;
@@ -97,7 +93,7 @@ namespace Librainian.Internet
                 };
 
                 var timeoutTask = Task.Delay(timeOut);
-                var downloadTask = webclient.DownloadFileTaskAsync(address, tempDocument.FullPathWithFileName);
+                var downloadTask = webclient.DownloadFileTaskAsync(address, tempDocument.FullPath);
 
                 var task = await Task.WhenAny(timeoutTask, downloadTask);
 
@@ -134,31 +130,4 @@ namespace Librainian.Internet
         }
     }
 
-    public static class TheInternetTests
-    {
-
-        public static SoundPlayer Player { get; } = new SoundPlayer();
-
-        private static void OnWebException(Uri uri, WebExceptionStatus webExceptionStatus)
-        {
-            Console.WriteLine(uri);
-            Console.WriteLine(webExceptionStatus);
-        }
-
-        [Test]
-        public static void Test1()
-        {
-            var inprogress = new VolatileBoolean();
-            var creds = new NetworkCredential("AIBrain", @"hP&Y@bYsM5qT0tr");
-            var bob = TheInternet.DownloadAsync(new Uri("https://www.freesound.org/people/BDWRekordings.com/sounds/98104/"), Seconds.Ten, null, inprogress, creds, OnWebException).Result;
-
-            if (null != bob)
-            {
-                Player.Stream = File.OpenRead(bob.FullPathWithFileName);
-
-                try { Player.PlaySync(); }
-                catch (Exception exception) { exception.Log(); }
-            }
-        }
-    }
 }

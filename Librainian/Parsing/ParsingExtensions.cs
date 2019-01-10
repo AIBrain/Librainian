@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2018/11/23 at 12:17 AM.
+// 
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/01/06 at 12:49 AM.
 
 namespace Librainian.Parsing {
 
@@ -72,18 +72,8 @@ namespace Librainian.Parsing {
 
 	public static class ParsingExtensions {
 
-		public static Lazy<String> AllLetters { get; } =
-			new Lazy<String>( () => new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).ToArray() ) );
-
-		/*
-		[NotNull]
-		public static Lazy<String> AllLowercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
-
-		[NotNull]
-		public static Lazy<String> AllUppercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
-		*/
+		public static Lazy<String> AllLetters { get; } = new Lazy<String>( () =>
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).ToArray() ) );
 
 		public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
 
@@ -94,7 +84,8 @@ namespace Librainian.Parsing {
 		public static String EnglishAlphabetLowercase { get; } = "abcedfghijklmnopqrstuvwxyz".ToLower();
 
 		[NotNull]
-		public static Lazy<PluralizationService> LazyPluralizationService { get; } = new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
+		public static Lazy<PluralizationService> LazyPluralizationService { get; } =
+			new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
 
 		public static String[] OrdinalSuffixes { get; } = {
 			"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
@@ -105,10 +96,11 @@ namespace Librainian.Parsing {
 		/// <summary>
 		///     this doesn't handle apostrophe well
 		/// </summary>
-		public static Regex RegexBySentenceNotworking { get; } = new Regex( pattern: @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", options: RegexOptions.Compiled | RegexOptions.Multiline );
+		public static Regex RegexBySentenceNotworking { get; } =
+			new Regex( pattern: @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", options: RegexOptions.Compiled | RegexOptions.Multiline );
 
-		public static Regex RegexBySentenceStackoverflow { get; } =
-			new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)", RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
+		public static Regex RegexBySentenceStackoverflow { get; } = new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
+			RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
 
 		public static Regex RegexByWordBreak { get; } = new Regex( pattern: @"(?=\S*(?<=\w))\b", options: RegexOptions.Compiled | RegexOptions.Singleline );
 
@@ -127,7 +119,8 @@ namespace Librainian.Parsing {
 		/// <summary>
 		/// </summary>
 		public static String[] UnitsMap { get; } = {
-			"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+			"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+			"seventeen", "eighteen", "nineteen"
 		};
 
 		/// <summary>
@@ -167,6 +160,29 @@ namespace Librainian.Parsing {
 		public const String TriplePipes = "⦀";
 
 		private static readonly Regex UpperCaseRegeEx = new Regex( @"^[A-Z]+$", RegexOptions.Compiled, Minutes.One );
+
+		/*
+		[NotNull]
+		public static Lazy<String> AllLowercaseLetters { get; } = new Lazy<String>( () =>
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
+
+		[NotNull]
+		public static Lazy<String> AllUppercaseLetters { get; } = new Lazy<String>( () =>
+			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
+		*/
+
+		[CanBeNull]
+		public static String Limit( [CanBeNull] this String self, Int32 maxlength ) {
+			if ( String.IsNullOrEmpty( self ) ) {
+				return self;
+			}
+
+			if ( self.Length < maxlength ) {
+				return self;
+			}
+
+			return self.AsSpan( 0, maxlength ).ToString();
+		}
 
 		/// <summary>
 		///     Add dashes to a pascal-cased String
@@ -219,7 +235,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentNullException( nameof( splitter ) );
 			}
 
-			return s.Substring( s.IndexOf( splitter, StringComparison.InvariantCulture ) + 1 ).TrimStart();
+			return s.Substring( s.IndexOf( splitter, StringComparison.Ordinal ) + 1 ).TrimStart();
 		}
 
 		[NotNull]
@@ -290,7 +306,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentNullException( nameof( splitter ) );
 			}
 
-			return s.Substring( 0, s.IndexOf( splitter, StringComparison.InvariantCulture ) ).TrimEnd();
+			return s.Substring( 0, s.IndexOf( splitter, StringComparison.Ordinal ) ).TrimEnd();
 		}
 
 		public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
@@ -313,7 +329,7 @@ namespace Librainian.Parsing {
 			return dict;
 		}
 
-		public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 )text.Where( c => c == character ).LongCount();
+		public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 ) text.Where( c => c == character ).LongCount();
 
 		/// <summary>
 		///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -426,7 +442,9 @@ namespace Librainian.Parsing {
 			ParallelAlgorithms.Wavefront( ( startI, endI, startJ, endJ ) => {
 				for ( var i = startI + 1; i <= endI; i++ ) {
 					for ( var j = startJ + 1; j <= endJ; j++ ) {
-						dist[ i, j ] = s1[ i - 1 ] == s2[ j - 1 ] ? dist[ i - 1, j - 1 ] : 1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
+						dist[ i, j ] = s1[ i - 1 ] == s2[ j - 1 ] ?
+							dist[ i - 1, j - 1 ] :
+							1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
 					}
 				}
 			}, s1.Length, s2.Length, numBlocks, numBlocks );
@@ -764,7 +782,8 @@ namespace Librainian.Parsing {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Like( [CanBeNull] this String left, [CanBeNull] String right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
+		public static Boolean Like( [CanBeNull] this String left, [CanBeNull] String right ) =>
+			( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
 
 		/// <summary>
 		///     Convert the first letter of a String to lower case
@@ -1091,7 +1110,7 @@ namespace Librainian.Parsing {
 
 			var stringInfo = new StringInfo( s );
 
-			return ( UInt64 )stringInfo.LengthInTextElements;
+			return ( UInt64 ) stringInfo.LengthInTextElements;
 		}
 
 		[NotNull]
@@ -1249,12 +1268,13 @@ namespace Librainian.Parsing {
 		}
 
 		/// <summary>
-		///     Case sensitive ( <see cref="StringComparison.InvariantCulture" />) string comparison.
+		///     Case sensitive ( <see cref="StringComparison.Ordinal" />) string comparison.
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCulture );
+		public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) =>
+			( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.Ordinal );
 
 		/// <summary>
 		///     Compute a Similarity between two strings. <br />
@@ -1266,7 +1286,8 @@ namespace Librainian.Parsing {
 		/// <param name="matchReasons">preferably an empty queue</param>
 		/// <returns></returns>
 		/// <remarks>The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
-		public static Double Similarity( [CanBeNull] this String source, [CanBeNull] String compare, [CanBeNull] ConcurrentQueue<String> matchReasons = null, TimeSpan? timeout = null ) {
+		public static Double Similarity( [CanBeNull] this String source, [CanBeNull] String compare, [CanBeNull] ConcurrentQueue<String> matchReasons = null,
+			TimeSpan? timeout = null ) {
 			var similarity = new PotentialF( 0 );
 
 			if ( source == null && compare == null ) {
@@ -1431,7 +1452,7 @@ namespace Librainian.Parsing {
 			}
 
 			Single threshold = Math.Max( source.Length, compare.Length );
-			var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 )threshold );
+			var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
 			//TODO votes.ForB ???
 			similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1490,8 +1511,7 @@ namespace Librainian.Parsing {
 			}
 
 			var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-				index,
-				ch = s[ index ]
+				index, ch = s[ index ]
 			} ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 			return res;
@@ -1698,7 +1718,8 @@ namespace Librainian.Parsing {
 		/// <param name="culture">                    </param>
 		/// <returns>String</returns>
 		[NotNull]
-		public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
+		public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) =>
+			MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
 
 		/// <summary>
 		///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
@@ -1776,7 +1797,8 @@ namespace Librainian.Parsing {
 				paragraph = paragraph.Replace( oldValue: Doublespace, newValue: Singlespace );
 			}
 
-			var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() ).Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
+			var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() )
+				.Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
 
 			return results.Select( s => new Sentence( s ) );
 		}
@@ -1851,9 +1873,9 @@ namespace Librainian.Parsing {
 				return "minus " + ToVerbalWord( Math.Abs( number ) );
 			}
 
-			var intPortion = ( Int32 )number;
+			var intPortion = ( Int32 ) number;
 			var fraction = ( number - intPortion ) * 100;
-			var decPortion = ( Int32 )fraction;
+			var decPortion = ( Int32 ) fraction;
 
 			var words = ToVerbalWord( intPortion );
 
@@ -2019,5 +2041,7 @@ namespace Librainian.Parsing {
 				return -1;
 			}
 		}
+
 	}
+
 }

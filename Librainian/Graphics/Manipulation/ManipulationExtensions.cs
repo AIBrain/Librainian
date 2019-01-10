@@ -103,7 +103,7 @@ namespace Librainian.Graphics.Manipulation {
 			if ( !multiplier.IsNumber() ) { return null; }
 
 			try {
-				var image = Image.FromFile( document.FullPathWithFileName );
+				var image = Image.FromFile( document.FullPath );
 				var newSize = new Size( ( Int32 ) ( image.Size.Width * multiplier ), ( Int32 ) ( image.Size.Height * multiplier ) );
 
 				return new Bitmap( image, newSize );
