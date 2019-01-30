@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "VolatileBoolean.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "FileWatchingEvents.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,21 +37,30 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "VolatileBoolean.cs" was last formatted by Protiguous on 2019/01/29 at 10:50 PM.
+// Project: "Librainian", "FileWatchingEvents.cs" was last formatted by Protiguous on 2019/01/14 at 2:47 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.ComputerSystem.FileSystem {
 
     using System;
+    using System.IO;
+    using JetBrains.Annotations;
 
-    public class VolatileBoolean {
+    public struct FileWatchingEvents {
 
-        private volatile Boolean _value;
+        [CanBeNull]
+        public Action<FileSystemEventArgs> OnChanged { get; set; }
 
-        public Boolean Value {
-            get => this._value;
+        [CanBeNull]
+        public Action<FileSystemEventArgs> OnCreated { get; set; }
 
-            set => this._value = value;
-        }
+        [CanBeNull]
+        public Action<FileSystemEventArgs> OnDeleted { get; set; }
+
+        [CanBeNull]
+        public Action<ErrorEventArgs> OnError { get; set; }
+
+        [CanBeNull]
+        public Action<FileSystemEventArgs> OnRenamed { get; set; }
 
     }
 

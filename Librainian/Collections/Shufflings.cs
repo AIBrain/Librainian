@@ -265,7 +265,7 @@ namespace Librainian.Collections {
 				Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
 			};
 
-			Func<ReaderWriterLockSlim> lockers = Instantiator<ReaderWriterLockSlim>.New;
+			Func<ReaderWriterLockSlim> rwCreator = Instantiator<ReaderWriterLockSlim>.New;
 
 			var leftTracker = new ReaderWriterLockSlim[ itemCount ];
 
@@ -273,7 +273,7 @@ namespace Librainian.Collections {
 
 				//leftTracker[ i ] = new ReaderWriterLockSlim();	//how costly will this be?
 				//leftTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
-				leftTracker[ i ] = lockers.Invoke(); //how costly will this be?
+				leftTracker[ i ] = rwCreator.Invoke(); //how costly will this be?
 			}
 
 			var rightTracker = new ReaderWriterLockSlim[ itemCount ];
@@ -282,7 +282,7 @@ namespace Librainian.Collections {
 
 				//rightTracker[ i ] = new ReaderWriterLockSlim();					//how costly will this be?
 				//rightTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
-				rightTracker[ i ] = lockers.Invoke(); //how costly will this be?
+				rightTracker[ i ] = rwCreator.Invoke(); //how costly will this be?
 			}
 
 			if ( !token.HasValue ) {

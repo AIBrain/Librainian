@@ -104,8 +104,7 @@ namespace Librainian.Threading {
 				}
 
 				this.Snagged = false;
-				var encoded = name.FullName.Sha512().ToHexString();
-				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
+				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.FullName.GetMD5Hash() );
 				this.Snagged = this.Semaphore.WaitOne( timeout.Value );
 			}
 			catch ( Exception exception ) {
@@ -126,8 +125,7 @@ namespace Librainian.Threading {
 				}
 
 				this.Snagged = false;
-				var encoded = name.Sha512().ToHexString();
-				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: encoded );
+				this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.GetMD5Hash() );
 				this.Snagged = this.Semaphore.WaitOne( timeout.Value );
 			}
 			catch ( Exception exception ) {

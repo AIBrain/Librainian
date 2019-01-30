@@ -61,7 +61,7 @@ namespace Librainian.Threading {
 	///     Remember: Tasks are born "hot" unless created with "var task=new Task();".
 	/// </summary>
 	[SuppressMessage( "ReSharper", "AsyncConverter.AsyncMethodNamingHighlighting" )]
-	public static class TaskExtensions2 {
+	public static class TaskExtensions {
 
 		private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
@@ -812,6 +812,27 @@ namespace Librainian.Threading {
 		[NotNull]
 		public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) => Task.Run( () => selector( input ) );
 
+		public static async Task<Boolean> WaitAsync( [NotNull] this Task task, TimeSpan timeout ) {
+			if ( task == null ) {
+				throw new ArgumentNullException( paramName: nameof( task ) );
+			}
+
+			var canceler = new CancellationTokenSource();
+			var delay = Task.Delay( timeout, canceler.Token );
+
+			var completed = await Task.WhenAny( task, delay ).ConfigureAwait( false );
+
+			if ( completed != task ) {
+				return false;
+			}
+
+			canceler.Cancel();
+
+			await completed.ConfigureAwait( false );
+
+			return true;
+
+		}
 	}
 
 }

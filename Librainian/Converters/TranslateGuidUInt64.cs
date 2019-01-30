@@ -44,7 +44,7 @@ namespace Librainian.Converters {
 	using System;
 	using System.Runtime.InteropServices;
 
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
 	public struct TranslateGuidUInt64 {
 
 		[FieldOffset( 0 )] // bytes 0..15 == 16 bytes

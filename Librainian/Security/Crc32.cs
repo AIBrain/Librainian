@@ -59,7 +59,7 @@ namespace Librainian.Security {
 	///     Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License. Originally published at
 	///     http://damieng.com/blog/2006/08/08/calculating_crc32_in_c_and_net
 	/// </copyright>
-	public sealed class Crc32 : HashAlgorithm {
+	public sealed class CRC32 : HashAlgorithm {
 
 		private UInt32 _hash;
 
@@ -67,17 +67,17 @@ namespace Librainian.Security {
 
 		private UInt32[] Table { get; }
 
-		public override Int32 HashSize => 32;
+		public override Int32 HashSize => 0x20;
 
-		public const UInt32 DefaultPolynomial = 3988292384;
+		public const UInt32 DefaultPolynomial = 0xEDB88320;
 
-		public const UInt32 DefaultSeed = 0xffffffffu;
+		public const UInt32 DefaultSeed = 0xFFFFFFFFu;
 
 		private static UInt32[] _defaultTable;
 
-		public Crc32() : this( DefaultPolynomial, DefaultSeed ) { }
+		public CRC32() : this( DefaultPolynomial, DefaultSeed ) { }
 
-		public Crc32( UInt32 polynomial, UInt32 seed ) {
+		public CRC32( UInt32 polynomial, UInt32 seed ) {
 			this.Table = InitializeTable( polynomial );
 			this.Seed = this._hash = seed;
 		}

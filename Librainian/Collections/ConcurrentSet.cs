@@ -60,6 +60,7 @@ namespace Librainian.Collections
     {
 
         /// <summary>
+        /// Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}"/>.
         /// </summary>
         [JsonProperty]
         private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>(concurrencyLevel: Environment.ProcessorCount, capacity: 7);

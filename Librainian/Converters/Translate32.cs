@@ -50,7 +50,7 @@ namespace Librainian.Converters {
     ///     Struct for combining two <see cref="UInt16" /> (or <see cref="Int16" />) to and from a <see cref="UInt32" /> (or
     ///     <see cref="Int32" />) as easily as possible.
     /// </summary>
-    [StructLayout( LayoutKind.Explicit )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
 #pragma warning restore IDE0015 // Use framework type
 	public struct Translate32 {
 

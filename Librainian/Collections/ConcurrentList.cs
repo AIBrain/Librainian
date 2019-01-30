@@ -340,15 +340,12 @@ namespace Librainian.Collections {
 		/// <param name="right"> </param>
 		/// <returns></returns>
 		public static Boolean Equals( [CanBeNull] IEnumerable<T> left, [CanBeNull] IEnumerable<T> right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left == null || right == null ) {
+			if ( left is null || right is null ) {
 				return false;
 			}
 
-			return left.SequenceEqual( second: right );
+			return ReferenceEquals( left, right ) || left.SequenceEqual( second: right );
+
 		}
 
 		/// <summary>
@@ -856,7 +853,7 @@ namespace Librainian.Collections {
 		[NotNull]
 		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
-		[StructLayout( layoutKind: LayoutKind.Explicit )]
+		[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
 		public struct TranslateBytesToInt32 {
 
 			[FieldOffset( offset: 0 )]

@@ -37,158 +37,158 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2018/11/21 at 10:26 PM.
+// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2019/01/29 at 10:47 PM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Logging;
-	using Measurement.Time;
-	using Newtonsoft.Json;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
+    using Logging;
+    using Measurement.Time;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     Persist a dictionary to and from a JSON formatted text document.
-	/// </summary>
-	[JsonObject]
-	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
+    /// <summary>
+    ///     Persist a dictionary to and from a JSON formatted text document.
+    /// </summary>
+    [JsonObject]
+    public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
 
-		/// <summary>
-		///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose() => this.Dispose( releaseManaged: true );
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose() => this.Dispose( releaseManaged: true );
 
-		private volatile Boolean _isReading;
+        private volatile Boolean _isReading;
 
-		private Boolean IsReading {
-			get => this._isReading;
-			set => this._isReading = value;
-		}
+        private Boolean IsReading {
+            get => this._isReading;
+            set => this._isReading = value;
+        }
 
-		public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
-		/// <summary>
-		///     disallow constructor without a document/filename
-		/// </summary>
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		[NotNull]
-		public Document Document { get; }
+        /// <summary>
+        ///     disallow constructor without a document/filename
+        /// </summary>
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        [NotNull]
+        public Document Document { get; }
 
-		// ReSharper disable once NotNullMemberIsNotInitialized
-		private ConcurrentDictionaryFile() => throw new NotImplementedException();
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
-		/// <summary>
-		///     Persist a dictionary to and from a JSON formatted text document.
-		/// </summary>
-		/// <param name="document"></param>
-		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
-			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+        /// <summary>
+        ///     Persist a dictionary to and from a JSON formatted text document.
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="preload"> </param>
+        public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
+            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.CurrentFolder.Exists() ) {
-				this.Document.CurrentFolder.Create();
-			}
+            if ( !this.Document.ContainingingFolder().Exists() ) {
+                this.Document.ContainingingFolder().Create();
+            }
 
-			if ( preload ) {
-				this.Load().Wait();
-			}
-		}
+            if ( preload ) {
+                this.Load().Wait();
+            }
+        }
 
-		/// <summary>
-		///     Persist a dictionary to and from a JSON formatted text document.
-		///     <para>Defaults to user\appdata\Local\productname\filename</para>
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( fullPathWithFilename: filename ), preload: preload ) { }
+        /// <summary>
+        ///     Persist a dictionary to and from a JSON formatted text document.
+        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="preload"> </param>
+        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( filename ), preload: preload ) { }
 
-		protected virtual void Dispose( Boolean releaseManaged ) {
-			if ( releaseManaged ) {
-				this.Write().Wait( timeout: Minutes.One );
-			}
+        protected virtual void Dispose( Boolean releaseManaged ) {
+            if ( releaseManaged ) {
+                this.Write().Wait( timeout: Minutes.One );
+            }
 
-			GC.SuppressFinalize( this );
-		}
+            GC.SuppressFinalize( this );
+        }
 
-		public async Task<Boolean> Load( CancellationToken cancellationToken = default ) {
-			this.IsReading = true;
+        public async Task<Boolean> Load( CancellationToken cancellationToken = default ) {
+            this.IsReading = true;
 
-			try {
-				var document = this.Document;
+            try {
+                var document = this.Document;
 
-				if ( !document.Exists() ) {
-					return false;
-				}
+                if ( document.Exists() == false ) {
+                    return false;
+                }
 
-				try {
-					var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.CancellationTokenSource.Token ).ConfigureAwait( false );
+                try {
+                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.CancellationTokenSource.Token ).ConfigureAwait( false );
 
-					if ( data != null ) {
-						var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[ key ] = data[ key ] );
+                    if ( data != null ) {
+                        var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[ key ] = data[ key ] );
 
-						return result.IsCompleted;
-					}
-				}
-				catch ( JsonException exception ) {
-					exception.Log();
-				}
-				catch ( IOException exception ) {
+                        return result.IsCompleted;
+                    }
+                }
+                catch ( JsonException exception ) {
+                    exception.Log();
+                }
+                catch ( IOException exception ) {
 
-					//file in use by another app
-					exception.Log();
-				}
-				catch ( OutOfMemoryException exception ) {
+                    //file in use by another app
+                    exception.Log();
+                }
+                catch ( OutOfMemoryException exception ) {
 
-					//file is huge
-					exception.Log();
-				}
+                    //file is huge
+                    exception.Log();
+                }
 
-				return false;
-			}
-			finally {
-				this.IsReading = false;
-			}
-		}
+                return false;
+            }
+            finally {
+                this.IsReading = false;
+            }
+        }
 
-		/// <summary>
-		///     Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
-		[DebuggerStepThrough]
-		public Boolean TryRemove( [CanBeNull] TKey key ) => key != null && this.TryRemove( key, out _ );
+        [DebuggerStepThrough]
+        public Boolean TryRemove( [CanBeNull] TKey key ) => key != null && this.TryRemove( key, out _ );
 
-		/// <summary>
-		///     Saves the data to the <see cref="Document" />.
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		[NotNull]
-		public Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
-			Task.Run( () => {
-				var document = this.Document;
+        /// <summary>
+        ///     Saves the data to the <see cref="Document" />.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [NotNull]
+        public Task<Boolean> Write( CancellationToken cancellationToken = default ) =>
+            Task.Run( () => {
+                var document = this.Document;
 
-				if ( !document.CurrentFolder.Exists() ) {
-					document.CurrentFolder.Create();
-				}
+                if ( !document.ContainingingFolder().Exists() ) {
+                    document.ContainingingFolder().Create();
+                }
 
-				if ( document.Exists() ) {
-					document.Delete();
-				}
+                if ( document.Exists() == true ) {
+                    document.Delete();
+                }
 
-				return this.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
-			}, cancellationToken: cancellationToken );
+                return this.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
+            }, cancellationToken: cancellationToken );
 
-	}
+    }
 
 }

@@ -49,7 +49,7 @@ namespace Librainian.Converters {
 	///     Struct for easily converting <see cref="Guid" /> to <see cref="FourBytes" />, <see cref="EightBytes" />, and
 	///     <see cref="Translate64" />.
 	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
 	public struct Translate128 {
 
 		[FieldOffset( offset: 0 )]

@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
+// this entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DocumentCopyStatistics.cs" belongs to Protiguous@Protiguous.com and
+// this source code contained in "DocumentCopyStatistics.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -41,13 +41,13 @@
 
 namespace Librainian.ComputerSystem.FileSystem {
 
+    using System;
+    using System.Diagnostics;
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
-    using System;
-    using System.Diagnostics;
 
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class DocumentCopyStatistics {
 
@@ -98,7 +98,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         public Double BytesPerMillisecond() {
-            if (Math.Abs(this.TimeTaken.TotalMilliseconds) < Double.Epsilon) {
+            if ( Math.Abs( this.TimeTaken.TotalMilliseconds ) < Double.Epsilon ) {
                 return 0;
             }
 
@@ -106,17 +106,17 @@ namespace Librainian.ComputerSystem.FileSystem {
         }
 
         public Double MegabytesPerSecond() {
-            if (Math.Abs(this.TimeTaken.TotalSeconds) < Double.Epsilon) {
+            if ( Math.Abs( this.TimeTaken.TotalSeconds ) < Double.Epsilon ) {
                 return 0;
             }
 
-            var mb = this.BytesCopied / (Double)Constants.Sizes.OneMegaByte;
+            var mb = this.BytesCopied / ( Double )Constants.Sizes.OneMegaByte;
 
             return mb / this.TimeTaken.TotalSeconds;
         }
 
         public Double MillisecondsPerByte() {
-            if (this.BytesCopied <= 0) {
+            if ( this.BytesCopied <= 0 ) {
                 return 0;
             }
 
@@ -127,6 +127,7 @@ namespace Librainian.ComputerSystem.FileSystem {
         ///     Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument.CurrentFolder} @ {this.MegabytesPerSecond()}MB/s"; //TODO null ref
+        public override String ToString() =>
+            $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument?.ContainingingFolder().FullName} @ {this.MegabytesPerSecond()}MB/s";
     }
 }

@@ -46,7 +46,7 @@ namespace Librainian.Converters {
 
 	/// <summary>
 	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
 	public struct TranslateBytesToInt32 {
 
 		[FieldOffset( offset: 0 )]

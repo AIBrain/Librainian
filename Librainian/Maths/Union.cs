@@ -44,7 +44,7 @@ namespace Librainian.Maths {
 	using System;
 	using System.Runtime.InteropServices;
 
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
 	public struct Union {
 
 		public Union( UInt64 value ) {

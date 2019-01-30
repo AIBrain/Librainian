@@ -97,7 +97,7 @@ namespace Librainian.Maths {
 			var seed = DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode();
 			Debug.WriteLine( $"Init new Random() on thread {Thread.CurrentThread.ManagedThreadId:X} with seed {seed:X} on thread {Thread.CurrentThread.ManagedThreadId:X}." );
 
-			return new Random( Seed: seed );
+			return new Random( seed );
 
 		} ), trackAllValues: true );
 
@@ -1186,7 +1186,7 @@ namespace Librainian.Maths {
 				return false;
 			}
 
-			ThreadSafeRandom.Value = new Lazy<Random>( valueFactory: () => new Random( Seed: seed.Value ) );
+			ThreadSafeRandom.Value = new Lazy<Random>( valueFactory: () => new Random( seed.Value ) );
 
 			return true;
 		}

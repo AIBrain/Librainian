@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
+// this entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com and
+// this source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -39,21 +39,19 @@
 //
 // Project: "Librainian", "TheInternet.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
 
-namespace Librainian.Internet
-{
+namespace Librainian.Internet {
 
-    using ComputerSystem.FileSystem;
-    using JetBrains.Annotations;
-    using Maths.Numbers;
     using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
+    using ComputerSystem.FileSystem;
+    using JetBrains.Annotations;
     using Logging;
+    using Maths.Numbers;
     using Threading;
 
-    public static class TheInternet
-    {
+    public static class TheInternet {
 
         /// <summary>
         ///     <para>Attempt to download the address to a local temp file.</para>
@@ -67,67 +65,58 @@ namespace Librainian.Internet
         /// <param name="onWebException"></param>
         /// <returns></returns>
         [ItemCanBeNull]
-        public static async Task<Document> DownloadAsync([NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
-            [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null)
-        {
-            if (address == null) { throw new ArgumentNullException(nameof(address)); }
+        public static async Task<Document> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
+            [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
+            if ( address == null ) { throw new ArgumentNullException( nameof( address ) ); }
 
-            try
-            {
-                if (inProgress != null) { inProgress.Value = true; }
+            try {
+                if ( inProgress != null ) { inProgress.Value = true; }
 
-                reportProgress?.Report(ZeroToOne.MinValue);
+                reportProgress?.Report( ZeroToOne.MinValue );
 
                 var tempDocument = Document.GetTempDocument();
 
                 // ReSharper disable once UseObjectOrCollectionInitializer
-                var webclient = new WebClient
-                {
+                var webclient = new WebClient {
                     Credentials = credentials
                 };
 
-                webclient.DownloadProgressChanged += (sender, args) =>
-                {
-                    var progress = args.BytesReceived / (Double)args.TotalBytesToReceive;
-                    reportProgress?.Report(progress);
+                webclient.DownloadProgressChanged += ( sender, args ) => {
+                    var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+                    reportProgress?.Report( progress );
                 };
 
-                var timeoutTask = Task.Delay(timeOut);
-                var downloadTask = webclient.DownloadFileTaskAsync(address, tempDocument.FullPath);
+                var timeoutTask = Task.Delay( timeOut );
+                var downloadTask = webclient.DownloadFileTaskAsync( address, tempDocument.FullPath );
 
-                var task = await Task.WhenAny(timeoutTask, downloadTask);
+                var task = await Task.WhenAny( timeoutTask, downloadTask );
 
-                if (task.Id == timeoutTask.Id) { webclient.CancelAsync(); }
+                if ( task.Id == timeoutTask.Id ) { webclient.CancelAsync(); }
 
                 return tempDocument;
             }
-            catch (WebException exception)
-            {
-                try { onWebException?.Invoke(address, exception.Status); }
-                catch (Exception exception2) { exception2.Log(); }
+            catch ( WebException exception ) {
+                try { onWebException?.Invoke( address, exception.Status ); }
+                catch ( Exception exception2 ) { exception2.Log(); }
             }
-            catch (Exception exception) { exception.Log(); }
-            finally
-            {
-                reportProgress?.Report(ZeroToOne.MaxValue);
+            catch ( Exception exception ) { exception.Log(); }
+            finally {
+                reportProgress?.Report( ZeroToOne.MaxValue );
 
-                if (inProgress != null) { inProgress.Value = false; }
+                if ( inProgress != null ) { inProgress.Value = false; }
             }
 
             return null;
         }
 
-        public static IEnumerable<Document> FindFile(String filename, [NotNull] IEnumerable<String> locationClues)
-        {
-            foreach (var locationClue in locationClues)
-            {
-                if (!Uri.TryCreate(locationClue, UriKind.Absolute, out var internetAddress)) { continue; }
+        public static IEnumerable<Document> FindFile( String filename, [NotNull] IEnumerable<String> locationClues ) {
+            foreach ( var locationClue in locationClues ) {
+                if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) { continue; }
 
                 //TODO this /totally/ is not finished yet.
 
-                yield return new Document(internetAddress.ToString()); //should download file to a document in the user's temp folder.
+                yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
             }
         }
     }
-
 }

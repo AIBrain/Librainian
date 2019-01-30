@@ -37,107 +37,133 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "FileAttributeData.cs" was last formatted by Protiguous on 2019/01/07 at 5:52 PM.
+// Project: "Librainian", "FileAttributeData.cs" was last formatted by Protiguous on 2019/01/29 at 10:46 PM.
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-	using System;
-	using System.IO;
-	using JetBrains.Annotations;
-	using OperatingSystem;
+    using System;
+    using System.IO;
+    using JetBrains.Annotations;
+    using OperatingSystem;
 
-	/// <summary>
-	///     Modern version of <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" />.
-	/// </summary>
-	public struct FileAttributeData {
+    /// <summary>
+    ///     Modern version of <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" />.
+    /// </summary>
+    public struct FileAttributeData {
 
-		public DateTime? CreationTime { get; private set; }
+        public DateTime? CreationTime { get; protected internal set; }
 
-		public Boolean? Exists { get; private set; }
+        public Boolean? Exists { get; protected internal set; }
 
-		public FileAttributes? FileAttributes { get; private set; }
+        public FileAttributes? FileAttributes { get; protected internal set; }
 
-		public UInt64? FileSize { get; private set; }
+        public Int64? FileHashCode { get; protected internal set; }
 
-		public DateTime? LastAccessTime { get; private set; }
+        public UInt64? FileSize { get; protected internal set; }
 
-		public DateTime? LastWriteTime { get; private set; }
+        public DateTime? LastAccessTime { get; protected internal set; }
 
-		/// <summary>
-		///     Populate all properties with null values.
-		/// </summary>
-		public FileAttributeData( Boolean _ = true ) : this() => this.Reset();
+        public DateTime? LastWriteTime { get; protected internal set; }
 
-		/// <summary>
-		///     Populates from a <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" /> struct.
-		/// </summary>
-		/// <param name="fileAttributeData"></param>
-		public FileAttributeData( NativeMethods.WIN32_FILE_ATTRIBUTE_DATA fileAttributeData ) {
-			this.FileAttributes = fileAttributeData.dwFileAttributes;
-			this.CreationTime = fileAttributeData.ftCreationTime.ToDateTime();
-			this.LastAccessTime = fileAttributeData.ftLastAccessTime.ToDateTime();
-			this.LastWriteTime = fileAttributeData.ftLastWriteTime.ToDateTime();
-			this.FileSize = ( ( UInt64 ) fileAttributeData.nFileSizeHigh << 32 ) + fileAttributeData.nFileSizeLow;
-			this.Exists = true;
-		}
+        /// <summary>
+        ///     Populate all properties with null values.
+        /// </summary>
+        public FileAttributeData( Boolean _ = true ) : this() => this.Reset();
 
-		/// <summary>
-		///     Populates from a <see cref="NativeMethods.Win32FindData" /> struct.
-		/// </summary>
-		/// <param name="findData"></param>
-		public FileAttributeData( NativeMethods.Win32FindData findData ) {
-			this.FileAttributes = findData.dwFileAttributes;
-			this.CreationTime = findData.ftCreationTime.ToDateTime();
-			this.LastAccessTime = findData.ftLastAccessTime.ToDateTime();
-			this.LastWriteTime = findData.ftLastWriteTime.ToDateTime();
-			this.FileSize = ( ( UInt64 ) findData.nFileSizeHigh << 32 ) + findData.nFileSizeLow;
-			this.Exists = true;
-		}
+        /// <summary>
+        ///     Populates from a <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" /> struct.
+        /// </summary>
+        /// <param name="fileAttributeData"></param>
+        public FileAttributeData( NativeMethods.WIN32_FILE_ATTRIBUTE_DATA fileAttributeData ) {
+            this.FileAttributes = fileAttributeData.dwFileAttributes;
+            this.CreationTime = fileAttributeData.ftCreationTime.ToDateTime();
+            this.LastAccessTime = fileAttributeData.ftLastAccessTime.ToDateTime();
+            this.LastWriteTime = fileAttributeData.ftLastWriteTime.ToDateTime();
+            this.FileSize = ( ( UInt64 ) fileAttributeData.nFileSizeHigh << 32 ) + fileAttributeData.nFileSizeLow;
+            this.Exists = true;
+            this.FileHashCode = default;
+        }
 
-		public FileAttributeData( Boolean exists, FileAttributes attributes, DateTime creationTime, DateTime lastAccessTime, DateTime lastWriteTime, UInt64 fileSize ) {
-			this.Exists = exists;
-			this.FileAttributes = attributes;
-			this.CreationTime = creationTime;
-			this.LastAccessTime = lastAccessTime;
-			this.LastWriteTime = lastWriteTime;
-			this.FileSize = fileSize;
-		}
+        /// <summary>
+        ///     Populates from a <see cref="NativeMethods.Win32FindData" /> struct.
+        /// </summary>
+        /// <param name="findData"></param>
+        public FileAttributeData( NativeMethods.Win32FindData findData ) {
+            this.FileAttributes = findData.dwFileAttributes;
+            this.CreationTime = findData.ftCreationTime.ToDateTime();
+            this.LastAccessTime = findData.ftLastAccessTime.ToDateTime();
+            this.LastWriteTime = findData.ftLastWriteTime.ToDateTime();
+            this.FileSize = ( ( UInt64 ) findData.nFileSizeHigh << 32 ) + findData.nFileSizeLow;
+            this.Exists = true;
+            this.FileHashCode = default;
+        }
 
-		public Boolean Refresh( [NotNull] String fullPath, Boolean throwOnError = true ) {
-			if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-				throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
-			}
+        public FileAttributeData( Boolean exists, FileAttributes attributes, DateTime creationTime, DateTime lastAccessTime, DateTime lastWriteTime, UInt64 fileSize ) {
+            this.Exists = exists;
+            this.FileAttributes = attributes;
+            this.CreationTime = creationTime;
+            this.LastAccessTime = lastAccessTime;
+            this.LastWriteTime = lastWriteTime;
+            this.FileSize = fileSize;
+            this.FileHashCode = default;
+        }
 
-			var handle = NativeMethods.FindFirstFile( fullPath, out var data );
+        public Boolean Refresh( [NotNull] String fullPath, Boolean throwOnError = true ) {
+            this.Reset();
 
-			if ( handle.IsInvalid ) {
-				if ( throwOnError ) {
-					NativeMethods.HandleLastError( fullPath );
-				}
-				else {
-					this = new FileAttributeData();
+            if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
+            }
 
-					return false;
-				}
-			}
+            var handle = NativeMethods.FindFirstFile( fullPath, out var data );
 
-			this = new FileAttributeData( data );
+            if ( handle.IsInvalid ) {
+                if ( throwOnError ) {
+                    NativeMethods.HandleLastError( fullPath );
+                }
+                else {
+                    this.Reset();
 
-			return true;
-		}
+                    return false;
+                }
+            }
 
-		/// <summary>
-		///     Reset known information about file to defaults.
-		/// </summary>
-		public void Reset() {
-			this.Exists = default;
-			this.FileAttributes = default;
-			this.CreationTime = default;
-			this.LastAccessTime = default;
-			this.LastWriteTime = default;
-			this.FileSize = default;
-		}
+            var fileAttributeData = new FileAttributeData( data );
+            this.Exists = fileAttributeData.Exists;
+            this.FileAttributes = fileAttributeData.FileAttributes;
+            this.CreationTime = fileAttributeData.CreationTime;
+            this.LastAccessTime = fileAttributeData.LastAccessTime;
+            this.LastWriteTime = fileAttributeData.LastWriteTime;
+            this.FileSize = fileAttributeData.FileSize;
+            this.FileHashCode = default;
 
-	}
+            return true;
+        }
+
+        /// <summary>
+        ///     Reset known information about file to defaults.
+        /// </summary>
+        public void Reset() {
+            this.Exists = default;
+            this.FileAttributes = default;
+            this.CreationTime = default;
+            this.LastAccessTime = default;
+            this.LastWriteTime = default;
+            this.FileSize = default;
+            this.FileHashCode = default;
+        }
+
+        /*
+        public Task<Boolean> GetHash() {
+
+            //crc32/64?
+            return Task.Run( () => {
+
+                return ( FileAttributes, this.CreationTime ).GetHashCode();
+            } );
+        }
+        */
+
+    }
 
 }

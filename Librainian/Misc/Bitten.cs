@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Bitten.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,37 +28,35 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2018/07/13 at 1:31 AM.
+// 
+// Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2019/01/29 at 10:48 PM.
 
-namespace Librainian.Misc
-{
+namespace Librainian.Misc {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     Wow, this an old old idea that didn't work. Please don't use it in production!
     ///     I just don't have the heart to delete it yet.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout( LayoutKind.Sequential )]
     [JsonObject]
-    [ComVisible(true)]
-    [Obsolete("untested")]
-    public struct Bitten
-    {
+    [ComVisible( true )]
+    [Obsolete( "untested" )]
+    public struct Bitten {
 
         public static readonly Bitten Empty;
 
@@ -79,20 +77,18 @@ namespace Librainian.Misc
         private readonly Byte _k;
 
         /// Creates a new guid from an array of bytes.
-        public Bitten([NotNull] IList<Byte> b)
-        {
-            this._d = b[0];
-            this._e = b[1];
-            this._f = b[2];
-            this._g = b[3];
-            this._h = b[4];
-            this._i = b[5];
-            this._j = b[6];
-            this._k = b[7];
+        public Bitten( [NotNull] IList<Byte> b ) {
+            this._d = b[ 0 ];
+            this._e = b[ 1 ];
+            this._f = b[ 2 ];
+            this._g = b[ 3 ];
+            this._h = b[ 4 ];
+            this._i = b[ 5 ];
+            this._j = b[ 6 ];
+            this._k = b[ 7 ];
         }
 
-        public Bitten(Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k)
-        {
+        public Bitten( Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k ) {
             this._d = d;
             this._e = e;
             this._f = f;
@@ -104,8 +100,7 @@ namespace Librainian.Misc
         }
 
         [Flags]
-        private enum GuidStyles
-        {
+        private enum GuidStyles {
 
             None = 0x00000000,
 
@@ -136,6 +131,7 @@ namespace Librainian.Misc
             ParenthesisFormat = RequireParenthesis | RequireDashes, /* P */
 
             Any = AllowParenthesis | AllowBraces | AllowDashes | AllowHexPrefix
+
         }
 
         // Creates a new guid based on the value in the String. The value is made up of hex digits
@@ -143,162 +139,188 @@ namespace Librainian.Misc
         //
         // The String must be of the form dddddddd-dddd-dddd-dddd-dddddddddddd. where d is a hex
         // digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
-        public Bitten([NotNull] String g)
-        {
-            if (g == null) { throw new ArgumentNullException(nameof(g)); }
+        public Bitten( [NotNull] String g ) {
+            if ( g == null ) {
+                throw new ArgumentNullException( nameof( g ) );
+            }
 
-            this = Parse(g);
+            this = Parse( g );
         }
 
-        public static Bitten Parse(String input) => Guid.TryParse(input, out var result) ? new Bitten(result.ToByteArray().Skip(8).ToList()) : Empty;
+        public static Bitten Parse( String input ) => Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
 
         // Returns an unsigned byte array containing the GUID.
         [NotNull]
-        public Byte[] ToByteArray()
-        {
-            var g = new Byte[8];
+        public Byte[] ToByteArray() {
+            var g = new Byte[ 8 ];
 
-            g[0] = this._d;
-            g[1] = this._e;
-            g[2] = this._f;
-            g[3] = this._g;
-            g[4] = this._h;
-            g[5] = this._i;
-            g[6] = this._j;
-            g[7] = this._k;
+            g[ 0 ] = this._d;
+            g[ 1 ] = this._e;
+            g[ 2 ] = this._f;
+            g[ 3 ] = this._g;
+            g[ 4 ] = this._h;
+            g[ 5 ] = this._i;
+            g[ 6 ] = this._j;
+            g[ 7 ] = this._k;
 
             return g;
         }
 
-        public Boolean Equals(Bitten g)
-        {
+        public Boolean Equals( Bitten g ) {
 
             // Now compare each of the elements
-            if (g._d != this._d) { return false; }
+            if ( g._d != this._d ) {
+                return false;
+            }
 
-            if (g._e != this._e) { return false; }
+            if ( g._e != this._e ) {
+                return false;
+            }
 
-            if (g._f != this._f) { return false; }
+            if ( g._f != this._f ) {
+                return false;
+            }
 
-            if (g._g != this._g) { return false; }
+            if ( g._g != this._g ) {
+                return false;
+            }
 
-            if (g._h != this._h) { return false; }
+            if ( g._h != this._h ) {
+                return false;
+            }
 
-            if (g._i != this._i) { return false; }
+            if ( g._i != this._i ) {
+                return false;
+            }
 
-            if (g._j != this._j) { return false; }
+            if ( g._j != this._j ) {
+                return false;
+            }
 
             return g._k == this._k;
         }
 
-        public static Boolean operator ==(Bitten a, Bitten b)
-        {
+        public static Boolean operator ==( Bitten a, Bitten b ) {
 
             // Now compare each of the elements
 
-            if (a._d != b._d) { return false; }
+            if ( a._d != b._d ) {
+                return false;
+            }
 
-            if (a._e != b._e) { return false; }
+            if ( a._e != b._e ) {
+                return false;
+            }
 
-            if (a._f != b._f) { return false; }
+            if ( a._f != b._f ) {
+                return false;
+            }
 
-            if (a._g != b._g) { return false; }
+            if ( a._g != b._g ) {
+                return false;
+            }
 
-            if (a._h != b._h) { return false; }
+            if ( a._h != b._h ) {
+                return false;
+            }
 
-            if (a._i != b._i) { return false; }
+            if ( a._i != b._i ) {
+                return false;
+            }
 
-            if (a._j != b._j) { return false; }
+            if ( a._j != b._j ) {
+                return false;
+            }
 
             return a._k == b._k;
         }
 
-        public static Boolean operator !=(Bitten a, Bitten b) => !(a == b);
+        public static Boolean operator !=( Bitten a, Bitten b ) => !( a == b );
 
-        private static Char HexToChar(Int32 a)
-        {
+        private static Char HexToChar( Int32 a ) {
             a = a & 0xf;
 
-            return (Char)(a > 9 ? a - 10 + 0x61 : a + 0x30);
+            return ( Char ) ( a > 9 ? a - 10 + 0x61 : a + 0x30 );
         }
 
-        private static Int32 HexsToChars([NotNull] IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false)
-        {
-            if (hex)
-            {
-                guidChars[offset++] = '0';
-                guidChars[offset++] = 'x';
+        private static Int32 HexsToChars( [NotNull] IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
+            if ( hex ) {
+                guidChars[ offset++ ] = '0';
+                guidChars[ offset++ ] = 'x';
             }
 
-            guidChars[offset++] = HexToChar(a >> 4);
-            guidChars[offset++] = HexToChar(a);
+            guidChars[ offset++ ] = HexToChar( a >> 4 );
+            guidChars[ offset++ ] = HexToChar( a );
 
-            if (hex)
-            {
-                guidChars[offset++] = ',';
-                guidChars[offset++] = '0';
-                guidChars[offset++] = 'x';
+            if ( hex ) {
+                guidChars[ offset++ ] = ',';
+                guidChars[ offset++ ] = '0';
+                guidChars[ offset++ ] = 'x';
             }
 
-            guidChars[offset++] = HexToChar(b >> 4);
-            guidChars[offset++] = HexToChar(b);
+            guidChars[ offset++ ] = HexToChar( b >> 4 );
+            guidChars[ offset++ ] = HexToChar( b );
 
             return offset;
         }
 
-        public override String ToString()
-        {
-            var strLength = 8;
-            var guidChars = new Char[strLength];
+        public override String ToString() {
+            const Int32 strLength = 8;
+            var guidChars = new Char[ strLength ];
 
             var offset = 0;
 
             // [{|(]dddddddd[-]dddd[-]dddd[-]dddd[-]dddddddddddd[}|)]
-            offset = HexsToChars(guidChars, offset, this._d, this._e);
+            offset = HexsToChars( guidChars, offset, this._d, this._e );
 
-            if (true) { guidChars[offset++] = '-'; }
+            if ( true ) {
+                guidChars[ offset++ ] = '-';
+            }
 
-            offset = HexsToChars(guidChars, offset, this._f, this._g);
-            offset = HexsToChars(guidChars, offset, this._h, this._i);
+            offset = HexsToChars( guidChars, offset, this._f, this._g );
+            offset = HexsToChars( guidChars, offset, this._h, this._i );
 
             // ReSharper disable once RedundantAssignment
-            offset = HexsToChars(guidChars, offset, this._j, this._k);
+            offset = HexsToChars( guidChars, offset, this._j, this._k );
 
-            return new String(guidChars, startIndex: 0, strLength);
+            return new String( guidChars, startIndex: 0, strLength );
         }
 
         //public Boolean Equals( Bitten other ) {
         //    return other._d == this._d && other._e == this._e && other._f == this._f && other._g == this._g && other._h == this._h && other._i == this._i && other._j == this._j && other._k == this._k;
         //}
 
-        public override Boolean Equals(Object obj)
-        {
-            if (obj == null) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) {
+                return false;
+            }
 
-            if (obj.GetType() != typeof(Bitten)) { return false; }
+            if ( obj.GetType() != typeof( Bitten ) ) {
+                return false;
+            }
 
-            return this.Equals((Bitten)obj);
+            return this.Equals( ( Bitten ) obj );
         }
 
-        public override Int32 GetHashCode()
-        {
-            unchecked
-            {
+        public override Int32 GetHashCode() {
+            unchecked {
 
                 // ReSharper disable NonReadonlyFieldInGetHashCode
                 var result = this._d.GetHashCode();
-                result = (result * 397) ^ this._e.GetHashCode();
-                result = (result * 397) ^ this._f.GetHashCode();
-                result = (result * 397) ^ this._g.GetHashCode();
-                result = (result * 397) ^ this._h.GetHashCode();
-                result = (result * 397) ^ this._i.GetHashCode();
-                result = (result * 397) ^ this._j.GetHashCode();
-                result = (result * 397) ^ this._k.GetHashCode();
+                result = ( result * 397 ) ^ this._e.GetHashCode();
+                result = ( result * 397 ) ^ this._f.GetHashCode();
+                result = ( result * 397 ) ^ this._g.GetHashCode();
+                result = ( result * 397 ) ^ this._h.GetHashCode();
+                result = ( result * 397 ) ^ this._i.GetHashCode();
+                result = ( result * 397 ) ^ this._j.GetHashCode();
+                result = ( result * 397 ) ^ this._k.GetHashCode();
 
                 // ReSharper restore NonReadonlyFieldInGetHashCode
 
                 return result;
             }
         }
+
     }
+
 }

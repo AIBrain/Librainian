@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
+// this entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com and
+// this source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -41,8 +41,6 @@
 
 namespace Librainian.ComputerSystem.FileSystem {
 
-    using JetBrains.Annotations;
-    using Parsing;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -53,6 +51,8 @@ namespace Librainian.ComputerSystem.FileSystem {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
+    using Parsing;
     using Threading;
 
     public static class FolderExtensions {
@@ -77,7 +77,6 @@ namespace Librainian.ComputerSystem.FileSystem {
                 }
             }
 
-            
    //         var idx = foldername.IndexOfAny( InvalidPathChars );
 
 			//while ( idx.Any() ) {
@@ -87,7 +86,6 @@ namespace Librainian.ComputerSystem.FileSystem {
 			//	idx = foldername.IndexOfAny( InvalidPathChars );
 			//}
    //         return foldername.Trim();
-            
 
             return sb.ToString().Trim();
         }
@@ -103,29 +101,29 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
         /// <returns></returns>
         [NotNull]
-        public static IEnumerable<DocumentCopyStatistics> CopyFiles([NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
-            Boolean overwriteDestinationDocuments = true, Boolean crc = true) {
-            if (sourceFolder == null) {
-                throw new ArgumentNullException(nameof(sourceFolder));
+        public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder, IEnumerable<String> searchPatterns,
+            Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
+            if ( sourceFolder == null ) {
+                throw new ArgumentNullException( nameof( sourceFolder ) );
             }
 
-            if (destinationFolder == null) {
-                throw new ArgumentNullException(nameof(destinationFolder));
+            if ( destinationFolder == null ) {
+                throw new ArgumentNullException( nameof( destinationFolder ) );
             }
 
             var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-            if (!sourceFolder.DemandPermission(FileIOPermissionAccess.Read)) {
+            if ( !sourceFolder.DemandPermission( FileIOPermissionAccess.Read ) ) {
                 return documentCopyStatistics;
             }
 
-            if (!destinationFolder.DemandPermission(FileIOPermissionAccess.Write)) {
+            if ( !destinationFolder.DemandPermission( FileIOPermissionAccess.Write ) ) {
                 return documentCopyStatistics;
             }
 
-            var sourceFiles = sourceFolder.GetDocuments(searchPatterns);
+            var sourceFiles = sourceFolder.GetDocuments( searchPatterns );
 
-            Parallel.ForEach(sourceFiles.AsParallel(), ThreadingExtensions.AllCPUExceptOne, sourceDocument => {
+            Parallel.ForEach( sourceFiles.AsParallel(), ThreadingExtensions.AllCPUExceptOne, sourceDocument => {
                 try {
                     var beginTime = DateTime.UtcNow;
 
@@ -134,81 +132,81 @@ namespace Librainian.ComputerSystem.FileSystem {
                         SourceDocument = sourceDocument
                     };
 
-                    if (crc) {
+                    if ( crc ) {
                         statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
                     }
 
-                    var destinationDocument = new Document(destinationFolder, sourceDocument.FileName());
+                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
 
-                    if (overwriteDestinationDocuments && destinationDocument.Exists()) {
+                    if ( overwriteDestinationDocuments && destinationDocument.Exists() == true ) {
                         destinationDocument.Delete();
                     }
 
-                    File.Copy(sourceDocument.FullPath, destinationDocument.FullPath);
+                    File.Copy( sourceDocument.FullPath, destinationDocument.FullPath );
 
-                    if (crc) {
+                    if ( crc ) {
                         statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
                     }
 
                     var endTime = DateTime.UtcNow;
 
-                    if (!destinationDocument.Exists()) {
+                    if ( destinationDocument.Exists() == false ) {
                         return;
                     }
 
-                    statistics.BytesCopied = (UInt64)destinationDocument.Size();
+                    statistics.BytesCopied = destinationDocument.Size().GetValueOrDefault( 0 );
 
-                    if (crc) {
+                    if ( crc ) {
                         statistics.BytesCopied *= 2;
                     }
 
                     statistics.TimeTaken = endTime - beginTime;
                     statistics.DestinationDocument = destinationDocument;
-                    documentCopyStatistics.Add(statistics);
+                    documentCopyStatistics.Add( statistics );
                 }
-                catch (Exception) {
+                catch ( Exception ) {
 
                     //swallow any errors
                 }
-            });
+            } );
 
             return documentCopyStatistics;
         }
 
-        public static IEnumerable<IFolder> FindFolder([NotNull] this String folderName) {
-            if (folderName == null) {
-                throw new ArgumentNullException(nameof(folderName));
+        public static IEnumerable<IFolder> FindFolder( [NotNull] this String folderName ) {
+            if ( folderName == null ) {
+                throw new ArgumentNullException( nameof( folderName ) );
             }
 
             //First check across all known drives.
             var found = false;
 
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (var drive in DriveInfo.GetDrives()) {
-                var path = Path.Combine(drive.RootDirectory.FullName, folderName);
-                var asFolder = new Folder(path);
+            foreach ( var drive in DriveInfo.GetDrives() ) {
+                var path = Path.Combine( drive.RootDirectory.FullName, folderName );
+                var asFolder = new Folder( path );
 
-                if (asFolder.Exists()) {
+                if ( asFolder.Exists() ) {
                     found = true;
 
                     yield return asFolder;
                 }
             }
 
-            if (found) {
+            if ( found ) {
                 yield break;
             }
 
             //Next, check subfolders, beginning with the first drive.
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach (var drive in Disk.GetDrives()) {
+            foreach ( var drive in Disk.GetDrives() ) {
                 var folders = drive.GetFolders();
 
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
-                foreach (var folder in folders) {
-                    var parts = SplitPath((Folder)folder);  //TODO fix this cast
+                foreach ( var folder in folders ) {
+                    var parts = SplitPath( ( Folder )folder );  //TODO fix this cast
 
-                    if (parts.Any(s => s.Like(folderName))) {
+                    if ( parts.Any( s => s.Like( folderName ) ) ) {
                         found = true;
 
                         yield return folder;
@@ -216,7 +214,7 @@ namespace Librainian.ComputerSystem.FileSystem {
                 }
             }
 
-            if (!found) { }
+            if ( !found ) { }
         }
 
         /// <summary>
@@ -225,12 +223,12 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="path"></param>
         /// <returns></returns>
         [NotNull]
-        public static IEnumerable<String> SplitPath([NotNull] String path) {
-            if (String.IsNullOrWhiteSpace(value: path)) {
-                throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(path));
+        public static IEnumerable<String> SplitPath( [NotNull] String path ) {
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
-            return path.Split(Folder.FolderSeparatorChar).Where(s => !s.IsNullOrWhiteSpace());
+            return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
         }
 
         /// <summary>
@@ -239,12 +237,12 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="info"></param>
         /// <returns></returns>
         [NotNull]
-        public static IEnumerable<String> SplitPath([NotNull] this DirectoryInfo info) {
-            if (info == null) {
-                throw new ArgumentNullException(nameof(info));
+        public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
             }
 
-            return SplitPath(info.FullName);
+            return SplitPath( info.FullName );
         }
 
         /// <summary>
@@ -254,33 +252,33 @@ namespace Librainian.ComputerSystem.FileSystem {
         /// <param name="folder"></param>
         /// <param name="tryFor"></param>
         /// <returns></returns>
-        public static Boolean? TryDeleting(this Folder folder, TimeSpan tryFor) {
+        public static Boolean? TryDeleting( this Folder folder, TimeSpan tryFor ) {
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
 
             try {
-                if (!folder.Exists()) {
+                if ( !folder.Exists() ) {
                     return true;
                 }
 
-                Directory.Delete(folder.FullName);
+                Directory.Delete( folder.FullName );
 
-                return !Directory.Exists(folder.FullName);
+                return !Directory.Exists( folder.FullName );
             }
-            catch (DirectoryNotFoundException) { }
-            catch (PathTooLongException) { }
-            catch (IOException) {
+            catch ( DirectoryNotFoundException ) { }
+            catch ( PathTooLongException ) { }
+            catch ( IOException ) {
 
                 // IOExcception is thrown when the file is in use by any process.
-                if (stopwatch.Elapsed <= tryFor) {
+                if ( stopwatch.Elapsed <= tryFor ) {
                     Thread.Yield();
                     Application.DoEvents();
 
                     goto TryAgain;
                 }
             }
-            catch (UnauthorizedAccessException) { }
-            catch (ArgumentNullException) { }
+            catch ( UnauthorizedAccessException ) { }
+            catch ( ArgumentNullException ) { }
             finally {
                 stopwatch.Stop();
             }

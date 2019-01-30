@@ -54,7 +54,7 @@ namespace Librainian.Security {
 	///     Damien Guard. All rights reserved.
 	/// </copyright>
 	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
-	public class Crc64 : HashAlgorithm {
+	public class CRC64 : HashAlgorithm {
 
 		private readonly UInt64 _seed;
 
@@ -66,7 +66,7 @@ namespace Librainian.Security {
 
 		protected const UInt64 DefaultSeed = 0x0;
 
-		public Crc64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
+		public CRC64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
 			this._table = InitializeTable( polynomial: polynomial );
 			this._seed = this._hash = seed;
 		}

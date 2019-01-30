@@ -47,11 +47,14 @@ namespace Librainian.Maths {
 	/// <summary>
 	///     4 byte struct.
 	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit )]
+	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0)]
 	public struct FourBytes {
 
 		[FieldOffset( 0 )]
 		public Int32 W;
+
+		[FieldOffset( 0 )]
+		public UInt32 U;
 
 		[FieldOffset( 0 )]
 		public Byte A;

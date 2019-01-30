@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
+// this entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com and
+// this source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -41,91 +41,91 @@
 
 namespace Librainian.Maths {
 
-	using System;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Collections;
-	using Exceptions;
-	using Internet;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Collections;
+    using Exceptions;
+    using Internet;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	public static class FacebookErrorGrabber {
+    public static class FacebookErrorGrabber {
 
-		/// <summary>
-		///     See also <see cref="Randem" />.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public static Task<FaceBookRootObject> GetError() {
-			var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
+        /// <summary>
+        ///     See also <see cref="Randem" />.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public static Task<FaceBookRootObject> GetError() {
+            var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
 
-			return uri.DeserializeJson<FaceBookRootObject>();
-		}
+            return uri.DeserializeJson<FaceBookRootObject>();
+        }
 
-		/// <summary>
-		///     Pull another "random" number in a byte array via Facebook.
-		/// </summary>
-		/// <param name="fallbackByteCount">How many random bytes to fallback to when the facebook request fails.</param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<Byte[]> NextDataAsync( Int32 fallbackByteCount = 16 ) {
-			var rootObject = await GetError().ConfigureAwait( false );
+        /// <summary>
+        ///     Pull another "random" number in a byte array via Facebook.
+        /// </summary>
+        /// <param name="fallbackByteCount">How many random bytes to fallback to when the facebook request fails.</param>
+        /// <returns></returns>
+        [ItemNotNull]
+        public static async Task<Byte[]> NextDataAsync( Int32 fallbackByteCount = 16 ) {
+            var rootObject = await GetError().ConfigureAwait( false );
 
-			var data = rootObject.Error.FbtraceID;
+            var data = rootObject.Error.FbtraceID;
 
-			if ( data != null ) {
-				var buffer = Encoding.UTF8.GetBytes( data );
+            if ( data != null ) {
+                var buffer = Encoding.UTF8.GetBytes( data );
 
-				//mix up the response a bit with our own rng.
-				foreach ( var _ in buffer ) { buffer.Swap( Randem.NextByte(), Randem.NextByte() ); }
+                //mix up the response a bit with our own rng.
+                foreach ( var _ in buffer ) { buffer.Swap( Randem.NextByte(), Randem.NextByte() ); }
 
-				return buffer;
-			}
+                return buffer;
+            }
 
-			if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
+            if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
 
-			var fallback = new Byte[ fallbackByteCount ];
-			Randem.Instance().NextBytes( fallback );
+            var fallback = new Byte[ fallbackByteCount ];
+            Randem.Instance().NextBytes( fallback );
 
-			return fallback;
-		}
+            return fallback;
+        }
 
-		public static async Task<Int64> NxtInt32() {
-			var bytes = await NextDataAsync( sizeof( Int32 ) ).ConfigureAwait( false );
+        public static async Task<Int64> NxtInt32() {
+            var bytes = await NextDataAsync( sizeof( Int32 ) ).ConfigureAwait( false );
 
-			return BitConverter.ToInt64( bytes, 0 );
-		}
+            return BitConverter.ToInt64( bytes, 0 );
+        }
 
-		public static async Task<Int64> NxtInt64() {
-			var bytes = await NextDataAsync( sizeof( Int64 ) ).ConfigureAwait( false );
+        public static async Task<Int64> NxtInt64() {
+            var bytes = await NextDataAsync( sizeof( Int64 ) ).ConfigureAwait( false );
 
-			return BitConverter.ToInt64( bytes, 0 );
-		}
+            return BitConverter.ToInt64( bytes, 0 );
+        }
 
-		[JsonObject]
-		public struct FaceBookError {
+        [JsonObject]
+        public struct FaceBookError {
 
-			[JsonProperty( propertyName: "code" )]
-			public Int32 Code { get; set; }
+            [JsonProperty( propertyName: "code" )]
+            public Int32 Code { get; set; }
 
-			[JsonProperty( propertyName: "fbtrace_id" )]
-			public String FbtraceID { get; set; }
+            [JsonProperty( propertyName: "fbtrace_id" )]
+            public String FbtraceID { get; set; }
 
-			[JsonProperty( propertyName: "message" )]
-			public String Message { get; set; }
+            [JsonProperty( propertyName: "message" )]
+            public String Message { get; set; }
 
-			[JsonProperty( propertyName: "type" )]
-			public String Type { get; set; }
-		}
+            [JsonProperty( propertyName: "type" )]
+            public String Type { get; set; }
+        }
 
-		[JsonObject]
-		public struct FaceBookRootObject {
+        [JsonObject]
+        public struct FaceBookRootObject {
 
-			[JsonProperty( propertyName: "error" )]
-			internal FaceBookError Error { get; }
-		}
-	}
+            [JsonProperty( propertyName: "error" )]
+            internal FaceBookError Error { get; }
+        }
+    }
 
-	public static partial class Randem { }
+    public static partial class Randem { }
 }

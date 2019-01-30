@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
+// this entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com and
+// this source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -41,111 +41,110 @@
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Net;
-	using System.Net.Cache;
-	using System.Text;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Logging;
-	using Measurement.Time;
-	using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Cache;
+    using System.Text;
+    using System.Threading.Tasks;
+    using JetBrains.Annotations;
+    using Logging;
+    using Measurement.Time;
+    using Newtonsoft.Json;
 
-	public static class TheNet {
+    public static class TheNet {
 
-		[ItemCanBeNull]
-		public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
-			if ( uri == null ) { throw new ArgumentNullException( paramName: nameof( uri ) ); }
+        [ItemCanBeNull]
+        public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
+            if ( uri == null ) { throw new ArgumentNullException( paramName: nameof( uri ) ); }
 
-			if ( timeout == null ) { timeout = TimeSpan.Zero + Seconds.Seven; }
+            if ( timeout == null ) { timeout = TimeSpan.Zero + Seconds.Seven; }
 
-			var response = await uri.GetWebPageAsync( timeout.Value ).ConfigureAwait( false );
+            var response = await uri.GetWebPageAsync( timeout.Value ).ConfigureAwait( false );
 
-			return JsonConvert.DeserializeObject<T>( response );
-		}
+            return JsonConvert.DeserializeObject<T>( response );
+        }
 
-		/// <summary>Convert network bytes to a string</summary>
-		/// <exception cref="ArgumentException"></exception>
-		[NotNull]
-		public static String FromNetworkBytes( [NotNull] this IEnumerable<Byte> data ) {
-			var listData = data as IList<Byte> ?? data.ToList();
+        /// <summary>Convert network bytes to a string</summary>
+        /// <exception cref="ArgumentException"></exception>
+        [NotNull]
+        public static String FromNetworkBytes( [NotNull] this IEnumerable<Byte> data ) {
+            var listData = data as IList<Byte> ?? data.ToList();
 
-			var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
+            var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
 
-			if ( listData.Count < 2 + len ) { throw new ArgumentException( "Too few bytes in packet" ); }
+            if ( listData.Count < 2 + len ) { throw new ArgumentException( "Too few bytes in packet" ); }
 
-			return Encoding.UTF8.GetString( bytes: listData.Skip( count: 2 ).Take( count: len ).ToArray() );
-		}
+            return Encoding.UTF8.GetString( bytes: listData.Skip( count: 2 ).Take( count: len ).ToArray() );
+        }
 
-		/// <summary>Return the machine's hostname</summary>
-		[NotNull]
-		public static String GetHostName() => Dns.GetHostName();
+        /// <summary>Return the machine's hostname</summary>
+        [NotNull]
+        public static String GetHostName() => Dns.GetHostName();
 
-		[CanBeNull]
-		public static String GetWebPage( this String url ) {
-			try {
-				if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
-					using ( var client = new WebClient {
-						Encoding = Encoding.Unicode,
-						CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
-					} ) { return client.DownloadString( uri ); }
-				}
+        [CanBeNull]
+        public static String GetWebPage( this String url ) {
+            try {
+                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
+                    using ( var client = new WebClient {
+                        Encoding = Encoding.Unicode,
+                        CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
+                    } ) { return client.DownloadString( uri ); }
+                }
 
-				throw new Exception( $"Unable to connect to {url}." );
-			}
-			catch ( Exception exception ) { exception.Log(); }
+                throw new Exception( $"Unable to connect to {url}." );
+            }
+            catch ( Exception exception ) { exception.Log(); }
 
-			return null;
-		}
+            return null;
+        }
 
-		[CanBeNull]
-		public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
-			if ( String.IsNullOrWhiteSpace( value: url ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( url ) ); }
+        [CanBeNull]
+        public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: url ) ) { throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( url ) ); }
 
-			try {
-				if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) { return await uri.GetWebPageAsync( timeout ).ConfigureAwait( false ); }
+            try {
+                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) { return await uri.GetWebPageAsync( timeout ).ConfigureAwait( false ); }
 
-				throw new Exception( $"Unable to parse the url:{url}." );
-			}
-			catch ( Exception exception ) { exception.Log(); }
+                throw new Exception( $"Unable to parse the url:{url}." );
+            }
+            catch ( Exception exception ) { exception.Log(); }
 
-			return null;
-		}
+            return null;
+        }
 
-		[CanBeNull]
-		public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
-			if ( uri == null ) { throw new ArgumentNullException( paramName: nameof( uri ) ); }
+        [CanBeNull]
+        public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
+            if ( uri == null ) { throw new ArgumentNullException( paramName: nameof( uri ) ); }
 
-			try {
-				var client = new WebClient {
-					Encoding = Encoding.UTF8, CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
-				};
+            try {
+                var client = new WebClient {
+                    Encoding = Encoding.UTF8,
+                    CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
+                };
 
-					client.Add( timeout );
+                client.Add( timeout );
 
-					return client.DownloadStringTaskAsync( uri );
-				
-			}
-			catch ( Exception exception ) {
-				exception.Log();
+                return client.DownloadStringTaskAsync( uri );
+            }
+            catch ( Exception exception ) {
+                exception.Log();
 
-				return Task.FromResult<String>( null );
-			}
+                return Task.FromResult<String>( null );
+            }
+        }
 
-		}
+        /// <summary>Convert a string to network bytes</summary>
+        [NotNull]
+        public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
+            if ( String.IsNullOrEmpty( value: data ) ) { throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( data ) ); }
 
-		/// <summary>Convert a string to network bytes</summary>
-		[NotNull]
-		public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
-			if ( String.IsNullOrEmpty( value: data ) ) { throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( data ) ); }
+            var bytes = Encoding.UTF8.GetBytes( s: data );
 
-			var bytes = Encoding.UTF8.GetBytes( s: data );
+            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
 
-			var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
-
-			return BitConverter.GetBytes( hostToNetworkOrder ).Concat( second: bytes );
-		}
-	}
+            return BitConverter.GetBytes( hostToNetworkOrder ).Concat( second: bytes );
+        }
+    }
 }
