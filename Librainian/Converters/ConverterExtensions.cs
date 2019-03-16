@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,36 +37,192 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
+// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/02/04 at 8:24 PM.
 
 namespace Librainian.Converters {
 
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.IO;
     using System.Management;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Security.Cryptography;
     using System.Text;
-    using ComputerSystem.FileSystem;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+    using Collections.Extensions;
+    using Controls;
+    using Database;
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
     using Maths.Numbers;
-    using NUnit.Framework;
+    using OperatingSystem.FileSystem;
+    using Parsing;
     using Security;
 
     public static class ConverterExtensions {
+
+        /// <summary>
+        ///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
+        ///     <para>Null or empty strings return <see cref="Decimal.Zero" />.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
+        public static Decimal MoneyToDecimal<T>( [CanBeNull] this T value ) {
+            if ( value == null ) {
+                return Decimal.Zero;
+            }
+
+            var amount = value.ToString();
+
+            if ( String.IsNullOrEmpty( amount ) ) {
+                return Decimal.Zero;
+            }
+
+            amount = amount.Replace( "$", String.Empty );
+            amount = amount.Replace( ")", String.Empty );
+            amount = amount.Replace( "(", "-" );
+
+            try {
+                if ( Decimal.TryParse( amount, out var v ) ) {
+                    return v;
+                }
+            }
+            catch ( FormatException exception ) {
+                exception.Log();
+            }
+            catch ( OverflowException exception ) {
+                exception.Log();
+            }
+
+            return Decimal.Zero;
+        }
+
+        [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
+        public static String StripLetters( [NotNull] this String s ) {
+            if ( s == null ) {
+                throw new ArgumentNullException( paramName: nameof( s ) );
+            }
+
+            return Regex.Replace( s, "[a-zA-Z]", String.Empty );
+        }
 
         /// <summary>
         ///     Untested.
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
         public static BigInteger ToBigInteger( this Guid guid ) => new BigInteger( guid.ToByteArray() );
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
+            if ( value == null ) {
+                return null;
+            }
+
+            if ( value is Boolean b ) {
+                return b;
+            }
+
+            if ( value is Char c ) {
+                return c.In( ParsingConstants.TrueChars );
+            }
+
+            if ( value is Int32 i ) {
+                return i >= 1;
+            }
+
+            if ( value is String s ) {
+                if ( String.IsNullOrWhiteSpace( s ) ) {
+                    return null;
+                }
+
+                s = s.Trim();
+
+                if ( s.In( ParsingConstants.TrueStrings ) ) {
+                    return true;
+                }
+
+                if ( s.In( ParsingConstants.FalseStrings ) ) {
+                    return false;
+                }
+
+                if ( Boolean.TryParse( s, out var result ) ) {
+                    return result;
+                }
+            }
+
+            var t = value.ToString();
+
+            if ( String.IsNullOrWhiteSpace( t ) ) {
+                return null;
+            }
+
+            t = t.Trim();
+
+            if ( t.In( ParsingConstants.TrueStrings ) ) {
+                return true;
+            }
+
+            if ( t.In( ParsingConstants.FalseStrings ) ) {
+                return false;
+            }
+
+            if ( Boolean.TryParse( t, out var rest ) ) {
+                return rest;
+            }
+
+            return null; //don't know.
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Byte? ToByteOrNull<T>( [CanBeNull] this T value ) {
+            try {
+                if ( value == null ) {
+                    return null;
+                }
+
+                var s = value.ToString().Trim();
+
+                if ( String.IsNullOrWhiteSpace( s ) ) {
+                    return null;
+                }
+
+                if ( Byte.TryParse( s, out var result ) ) {
+                    return result;
+                }
+
+                return Convert.ToByte( s );
+            }
+            catch ( FormatException exception ) {
+                exception.Log();
+            }
+            catch ( OverflowException exception ) {
+                exception.Log();
+            }
+
+            return null;
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Byte ToByteOrThrow<T>( this T value ) => value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Byte ToByteOrZero<T>( this T value ) => value.ToByteOrNull() ?? 0;
 
         /// <summary>
         ///     <para>
@@ -77,6 +233,8 @@ namespace Librainian.Converters {
         /// <param name="guid"></param>
         /// <returns></returns>
         /// <see cref="ToGuid(DateTime)" />
+        [DebuggerStepThrough]
+        [Pure]
         public static DateTime ToDateTime( this Guid guid ) {
             try {
                 var bytes = guid.ToByteArray();
@@ -92,16 +250,33 @@ namespace Librainian.Converters {
                 var kind = ( DateTimeKind )bytes[ 15 ];
                 var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
 
-                Assert.AreEqual( expected: result.DayOfYear, actual: dayofYear );
-                Assert.AreEqual( expected: result.DayOfWeek, actual: dayofweek );
-
+                
                 return result;
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
             return DateTime.MinValue;
         }
 
+        [Pure]
+        [DebuggerStepThrough]
+        public static DateTime? ToDateTimeOrNull<T>( [CanBeNull] this T value ) {
+            try {
+                if ( value != null && DateTime.TryParse( value.ToString().Trim(), out var result ) ) {
+                    return result;
+                }
+            }
+            catch ( Exception ) {
+                return DateTime.MinValue;
+            }
+
+            return null;
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
         public static Decimal ToDecimal( this Guid guid ) {
             TranslateDecimalGuid converter;
             converter.Decimal = Decimal.Zero;
@@ -110,9 +285,68 @@ namespace Librainian.Converters {
             return converter.Decimal;
         }
 
+        /// <summary>
+        ///     Tries to convert <paramref name="value" /> to a <see cref="Decimal" />.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
+        public static Decimal? ToDecimalOrNull<T>( [CanBeNull] this T value ) {
+            if ( value == null ) {
+                return null;
+            }
+
+            try {
+                var s = value.ToString();
+                s = s.StripLetters();
+                s = s.Replace( "$", String.Empty );
+                s = s.Replace( ")", String.Empty );
+                s = s.Replace( "(", "-" );
+                s = s.Replace( "..", "." );
+                s = s.Replace( " ", String.Empty );
+                s = s.Trim();
+
+                if ( String.IsNullOrWhiteSpace( s ) ) {
+                    return null;
+                }
+
+                if ( s.Contains( "$" ) || s.Contains( "(" ) ) {
+                    return s.MoneyToDecimal();
+                }
+
+                if ( Decimal.TryParse( s, out var result ) ) {
+                    return result;
+                }
+
+                return Convert.ToDecimal( s );
+            }
+            catch ( FormatException exception ) {
+                exception.Log();
+            }
+            catch ( OverflowException exception ) {
+                exception.Log();
+            }
+
+            return null;
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Decimal ToDecimalOrThrow<T>( this T value ) =>
+            value.ToDecimalOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a decimal." );
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Decimal ToDecimalOrZero<T>( this T value ) => value.ToDecimalOrNull() ?? Decimal.Zero;
+
         [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
         public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ) );
 
+        [DebuggerStepThrough]
+        [Pure]
         public static Guid ToGuid( this Decimal number ) {
             TranslateDecimalGuid converter;
             converter.Guid = Guid.Empty;
@@ -126,6 +360,8 @@ namespace Librainian.Converters {
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
         public static Guid ToGuid( [NotNull] this String word ) {
             var hashedBytes = word.Sha256();
             Array.Resize( array: ref hashedBytes, newSize: 16 );
@@ -139,6 +375,8 @@ namespace Librainian.Converters {
         /// <param name="dateTime"></param>
         /// <returns></returns>
         /// <see cref="ToDateTime" />
+        [DebuggerStepThrough]
+        [Pure]
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
@@ -154,12 +392,13 @@ namespace Librainian.Converters {
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
                         , k: ( Byte )dateTime.Kind ); //15
 
-                    guid.Should().NotBeEmpty();
-
+                    
                     return guid;
                 }
             }
-            catch ( Exception ) { return Guid.Empty; }
+            catch ( Exception ) {
+                return Guid.Empty;
+            }
         }
 
         /// <summary>
@@ -169,27 +408,102 @@ namespace Librainian.Converters {
         ///     </para>
         ///     <para>A GUID has a very low probability of being duplicated.</para>
         /// </summary>
-        /// <param name="mostImportantbits">    </param>
-        /// <param name="somewhatImportantbits"></param>
-        /// <param name="leastImportantbits">   </param>
+        /// <param name="high">    </param>
+        /// <param name="low">   </param>
         /// <returns></returns>
-        public static Guid ToGuid( this UInt64 mostImportantbits, UInt64 somewhatImportantbits, UInt64 leastImportantbits ) {
-            var guidMerger = new TranslateGuidUInt64( high: mostImportantbits, low: leastImportantbits );
+        [DebuggerStepThrough]
+        [Pure]
+        public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high: high, low: low ).guid;
 
-            return guidMerger.guid;
+        [DebuggerStepThrough]
+        [Pure]
+        public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( high: values.high, low: values.low ).guid;
+
+        /// <summary>
+        ///     Returns the value converted to an <see cref="Int32" /> or null.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
+        public static Int32? ToIntOrNull<T>( [CanBeNull] this T value ) {
+            if ( value == null ) {
+                return null;
+            }
+
+            try {
+                String s;
+
+                if ( value is Control control ) {
+                    s = control.Text();
+                }
+                else {
+                    s = value.ToString();
+                }
+
+                s = s.StripLetters();
+                s = s.Replace( "$", String.Empty );
+                s = s.Replace( ")", String.Empty );
+                s = s.Replace( "(", "-" );
+                s = s.Replace( "..", "." );
+                s = s.Replace( " ", "" );
+                s = s.Trim();
+
+                var pos = s.LastIndexOf( '.' );
+
+                if ( pos.Any() ) {
+                    s = s.Substring( 0, pos );
+                }
+
+                if ( String.IsNullOrEmpty( s ) ) {
+                    return null;
+                }
+
+                if ( Int32.TryParse( s, out var result ) ) {
+                    return result;
+                }
+
+                return Convert.ToInt32( s );
+            }
+            catch ( FormatException exception ) {
+                exception.Log();
+            }
+            catch ( OverflowException exception ) {
+                exception.Log();
+            }
+
+            return null;
         }
 
-        public static Guid ToGuid( [NotNull] this Tuple<UInt64, UInt64, UInt64> tuple ) {
-            var guidMerger = new TranslateGuidUInt64( high: tuple.Item1, low: tuple.Item3 );
+        /// <summary>
+        ///     Converts <paramref name="value" /> to an <see cref="Int32" /> or throws <see cref="FormatException" />.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FormatException"></exception>
+        [DebuggerStepThrough]
+        [Pure]
+        public static Int32 ToIntOrThrow<T>( [NotNull] this T value ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( nameof( value ), "Cannot convert null value to Int32." );
+            }
 
-            return guidMerger.guid;
+            return value.ToIntOrNull() ?? throw new FormatException( $"Cannot convert value `{value}` to Int32." );
         }
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Int32 ToIntOrZero<T>( this T value ) => value.ToIntOrNull() ?? 0;
 
         [NotNull]
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
             var fullPath = systemPath.FullName;
 
-            while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) { fullPath = fullPath.Substring( 0, fullPath.Length - 1 ); }
+            while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
+                fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
+            }
 
             fullPath = "Win32_Directory.Name=\"" + fullPath.Replace( "\\", "\\\\" ) + "\"";
             var managed = new ManagementPath( fullPath );
@@ -202,13 +516,44 @@ namespace Librainian.Converters {
         /// </summary>
         /// <param name="value">the string value</param>
         /// <returns>the Guid value</returns>
+        [DebuggerStepThrough]
+        [Pure]
         public static Guid ToMD5HashedGUID( this String value ) {
-            if ( value == null ) { value = String.Empty; }
+            if ( value == null ) {
+                value = String.Empty;
+            }
 
             var bytes = Encoding.Unicode.GetBytes( value );
             var data = MD5.Create().ComputeHash( bytes );
 
             return new Guid( data );
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
+        public static Decimal? ToMoneyOrNull( this SqlDataReader bob, String columnName ) {
+            try {
+                var ordinal = bob.Ordinal( columnName );
+
+                if ( !ordinal.HasValue ) {
+                    $"Warning column {columnName} not found in SqlDataReader.".Break();
+                }
+                else {
+                    if ( !bob.IsDBNull( ordinal.Value ) ) {
+                        $"{bob[ columnName ]}".Log(); //TODO
+
+                        return bob[ columnName ].ToDecimalOrNull();
+                    }
+                }
+            }
+            catch ( FormatException exception ) {
+                exception.Log();
+            }
+            catch ( OverflowException exception ) {
+                exception.Log();
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -219,24 +564,32 @@ namespace Librainian.Converters {
         /// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
         /// <returns></returns>
         /// <see cref="GuidExtensions.FromPath" />
+        [DebuggerStepThrough]
+        [Pure]
         [NotNull]
         public static String ToPath( this Guid guid, Boolean reversed = false ) {
             var a = guid.ToByteArray();
 
             if ( reversed ) {
-                return Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(), a[ 8 ].ToString(), a[ 7 ].ToString(),
-                    a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(), a[ 0 ].ToString() );
+                return Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(),
+                    a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(),
+                    a[ 0 ].ToString() );
             }
 
-            var pathNormal = Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(), a[ 7 ].ToString(), a[ 8 ].ToString(),
-                a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(), a[ 15 ].ToString() );
+            var pathNormal = Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(),
+                a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(),
+                a[ 15 ].ToString() );
 
             return pathNormal;
         }
 
+        [DebuggerStepThrough]
+        [Pure]
         [NotNull]
         public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
-            if ( directoryInfo == null ) { throw new ArgumentNullException( nameof( directoryInfo ) ); }
+            if ( directoryInfo == null ) {
+                throw new ArgumentNullException( nameof( directoryInfo ) );
+            }
 
             return directoryInfo.FullName.Split( new[] {
                 Path.DirectorySeparatorChar
@@ -244,38 +597,62 @@ namespace Librainian.Converters {
         }
 
         /// <summary>
+        ///     Returns the trimmed <paramref name="obj" /> ToString() or null.
+        ///     <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().Trim().</para>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        [Pure]
+        public static String ToStringOrNull<T>( [CanBeNull] this T obj ) {
+            if ( obj == null ) {
+                return null;
+            }
+
+            if ( obj is String s ) {
+                return String.IsNullOrWhiteSpace( s ) ? null : s.Trim();
+            }
+
+            if ( obj is DBNull ) {
+                return null;
+            }
+
+            if ( Equals( obj, DBNull.Value ) ) {
+                return null;
+            }
+
+            var value = obj.ToString().Trim();
+
+            return value.IsEmpty() ? null : value;
+        }
+
+        /// <summary>
+        ///     Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        [DebuggerStepThrough]
+        [Pure]
+        [NotNull]
+        public static String ToStringOrThrow<T>( this T value ) =>
+            value.ToStringOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a string." );
+
+        [DebuggerStepThrough]
+        [Pure]
+        [NotNull]
+        public static String ToStringTrimmed<T>( [CanBeNull] this T obj ) => obj.ToStringOrNull()?.Trim() ?? String.Empty;
+
+        /// <summary>
         ///     Untested.
         /// </summary>
         /// <param name="guid"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
+        [Pure]
         public static UBigInteger ToUBigInteger( this Guid guid ) {
             var bigInteger = new UBigInteger( bytes: guid.ToByteArray() );
 
             return bigInteger;
-        }
-
-        [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
-        public struct DecimalTo {
-
-            [FieldOffset( offset: 0 )]
-
-            // ReSharper disable once FieldCanBeMadeReadOnly.Global
-            public Decimal Decimal;
-
-            [FieldOffset( offset: 0 )]
-            public Guid Guid;
-
-            /// <summary>
-            ///     Access the first four bytes.
-            /// </summary>
-            [FieldOffset( offset: 0 )]
-            public FourBytes Bytes4;
-
-            /// <summary>
-            ///     Access all eight bytes.
-            /// </summary>
-            [FieldOffset( offset: 0 )]
-            public EightBytes Bytes8;
         }
     }
 }

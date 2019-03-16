@@ -47,6 +47,7 @@ namespace Librainian.Measurement.Physics {
 	using System.Linq;
 	using JetBrains.Annotations;
 	using Librainian.Extensions;
+	using Rationals;
 
 	/// <summary>Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -69,17 +70,11 @@ namespace Librainian.Measurement.Physics {
 
 		public const Decimal InOneTeraElectronVolt = 1E15m;
 
-		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly MilliElectronVolts MaxValue = new MilliElectronVolts( Decimal.MaxValue );
-
-		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly MilliElectronVolts MinValue = new MilliElectronVolts( Decimal.MinValue );
-
 		public static readonly MilliElectronVolts Zero = new MilliElectronVolts( 0 );
 
-		public readonly Decimal Value;
+		public readonly Rational Value;
 
-		public MilliElectronVolts( Decimal units ) : this() => this.Value = units;
+		public MilliElectronVolts( Rational units ) : this() => this.Value = units;
 
 		public static implicit operator ElectronVolts( MilliElectronVolts milliElectronVolts ) => milliElectronVolts.ToElectronVolts();
 
@@ -110,18 +105,18 @@ namespace Librainian.Measurement.Physics {
 			return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
 		}
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational ) InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational ) InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational ) InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational ) InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational ) InOneMilliElectronVolt );
 
 		public override String ToString() => $"{this.Value} meV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
 	}
 }

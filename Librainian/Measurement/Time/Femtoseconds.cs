@@ -45,11 +45,11 @@ namespace Librainian.Measurement.Time {
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     /// <summary>
     /// </summary>
@@ -135,11 +135,11 @@ namespace Librainian.Measurement.Time {
         public static readonly Femtoseconds Zero = new Femtoseconds(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
-        public Femtoseconds(Decimal value) => this.Value = value;
+        public Femtoseconds(Decimal value) => this.Value = ( Rational ) value;
 
-        public Femtoseconds(BigRational value) => this.Value = value;
+        public Femtoseconds(Rational value) => this.Value = value;
 
         public Femtoseconds(Int64 value) => this.Value = value;
 
@@ -147,7 +147,7 @@ namespace Librainian.Measurement.Time {
 
         public static Femtoseconds Combine(Femtoseconds left, Femtoseconds right) => Combine(left, right.Value);
 
-        public static Femtoseconds Combine(Femtoseconds left, BigRational femtoseconds) => new Femtoseconds(left.Value + femtoseconds);
+        public static Femtoseconds Combine(Femtoseconds left, Rational femtoseconds) => new Femtoseconds(left.Value + femtoseconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -167,13 +167,13 @@ namespace Librainian.Measurement.Time {
 
         public static Femtoseconds operator -(Femtoseconds left, Femtoseconds right) => Combine(left, -right);
 
-        public static Femtoseconds operator -(Femtoseconds left, Decimal femtoseconds) => Combine(left, -femtoseconds);
+        public static Femtoseconds operator -(Femtoseconds left, Decimal femtoseconds) => Combine(left, ( Rational ) (-femtoseconds));
 
         public static Boolean operator !=(Femtoseconds left, Femtoseconds right) => !Equals(left, right);
 
         public static Femtoseconds operator +(Femtoseconds left, Femtoseconds right) => Combine(left, right);
 
-        public static Femtoseconds operator +(Femtoseconds left, Decimal femtoseconds) => Combine(left, femtoseconds);
+        public static Femtoseconds operator +(Femtoseconds left, Decimal femtoseconds) => Combine(left, ( Rational ) femtoseconds);
 
         public static Boolean operator <(Femtoseconds left, Femtoseconds right) => left.Value < right.Value;
 
@@ -206,13 +206,13 @@ namespace Librainian.Measurement.Time {
 
         public Picoseconds ToPicoseconds() => new Picoseconds(this.Value / InOnePicosecond);
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * PlanckTimes.InOneFemtosecond);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational )PlanckTimes.InOneFemtosecond);
 
         public Seconds ToSeconds() => throw new NotImplementedException();
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("fs")}";
             }

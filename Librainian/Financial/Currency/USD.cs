@@ -43,8 +43,8 @@ namespace Librainian.Financial.Currency {
 
 	using System;
 	using Containers.Wallets;
+	using Logging;
 	using Newtonsoft.Json;
-	using NUnit.Framework;
 
 	/// <summary>
 	///     USA dollars and coins.
@@ -63,8 +63,14 @@ namespace Librainian.Financial.Currency {
 		public Decimal Dollars => this.TotalBankNotes();
 
 		public USD( Decimal amount ) : base( Guid.NewGuid() ) {
-			var leftOverAmount = this.Fund( amount ).Result;
-			Assert.AreEqual( leftOverAmount, Decimal.Zero );
+			this.Deposit( amount, out var leftOver);
+
+			if ( leftOver != Decimal.Zero ) {
+				throw new InvalidOperationException( $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
+			}
 		}
+
+		
+
 	}
 }

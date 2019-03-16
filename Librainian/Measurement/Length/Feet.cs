@@ -42,15 +42,13 @@
 namespace Librainian.Measurement.Length
 {
 
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Numerics;
-    using NUnit.Framework;
-    using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Parsing;
+    using Rationals;
 
     /// <summary>
     ///     <para>A foot (plural: feet) is a unit of length.</para>
@@ -95,17 +93,17 @@ namespace Librainian.Measurement.Length
         public static readonly Feet Zero = new Feet(0);
 
         [JsonProperty]
-        public readonly BigRational Value;
+        public readonly Rational Value;
 
-        public Feet(BigRational value) => this.Value = value;
+        public Feet(Rational value) => this.Value = value;
 
         public Feet(Int64 value) => this.Value = value;
 
         public Feet(BigInteger value) => this.Value = value;
 
-        public static Feet Combine(Feet left, BigRational feet) => new Feet(left.Value + feet);
+        public static Feet Combine(Feet left, Rational feet) => new Feet(left.Value + feet);
 
-        public static Feet Combine(Feet left, BigInteger seconds) => new Feet((BigInteger)left.Value + seconds);
+        public static Feet Combine(Feet left, BigInteger seconds) => new Feet(left.Value + seconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -119,13 +117,13 @@ namespace Librainian.Measurement.Length
 
         public static Feet operator -(Feet left, Feet right) => Combine(left, -right.Value);
 
-        public static Feet operator -(Feet left, Decimal seconds) => Combine(left, -seconds);
+        public static Feet operator -(Feet left, Decimal seconds) => Combine(left, ( Rational ) (-seconds));
 
         public static Boolean operator !=(Feet left, Feet right) => !Equals(left, right);
 
         public static Feet operator +(Feet left, Feet right) => Combine(left, right.Value);
 
-        public static Feet operator +(Feet left, Decimal seconds) => Combine(left, seconds);
+        public static Feet operator +(Feet left, Decimal seconds) => Combine(left, ( Rational ) seconds);
 
         public static Feet operator +(Feet left, BigInteger seconds) => Combine(left, seconds);
 
@@ -149,25 +147,10 @@ namespace Librainian.Measurement.Length
         [Pure]
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public BigRational ToMeters() => throw new NotImplementedException();
+        public Rational ToMeters() => throw new NotImplementedException();
 
         public override String ToString() => $"{this.Value} {this.Value.PluralOf("foot")}";
     }
 
-    [TestFixture]
-    public static class TestFeets
-    {
-
-        [Test]
-        public static void TestFeet()
-        {
-            Feet.Zero.Should().BeLessThan(Feet.One);
-            Feet.One.Should().BeGreaterThan(Feet.Zero);
-            Feet.One.Should().Be(Feet.One);
-
-            //TODO
-            //One.Should().BeLessThan( Yards.One );
-            //One.Should().BeGreaterThan( Inches.One );
-        }
-    }
+    
 }

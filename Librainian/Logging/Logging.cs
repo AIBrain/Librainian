@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/01/14 at 2:22 AM.
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/03/02 at 6:07 AM.
 
 namespace Librainian.Logging {
 
@@ -62,6 +62,7 @@ namespace Librainian.Logging {
         [NotNull]
         public static ConcurrentDictionary<Control, Target> OurTargets { get; } = new ConcurrentDictionary<Control, Target>();
 
+        [DebuggerStepThrough]
         public static Boolean Start() {
 
             InternalLogger.Reset();
@@ -85,6 +86,7 @@ namespace Librainian.Logging {
         /// <param name="maxLogLevel"></param>
         /// <param name="target">     </param>
         /// <param name="rtb">        </param>
+        [DebuggerStepThrough]
         public static Boolean Setup( LogLevel minLogLevel, LogLevel maxLogLevel, Target target = null, [CanBeNull] RichTextBox rtb = null ) {
 
             switch ( target ) {
@@ -118,7 +120,9 @@ namespace Librainian.Logging {
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
         /// <param name="message"></param>
-        public static void Break<T>( this T _, [CanBeNull] String message = null ) {
+        [CanBeNull]
+        [DebuggerStepThrough]
+        public static String Break<T>( this T _, [CanBeNull] String message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
@@ -126,14 +130,18 @@ namespace Librainian.Logging {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
+
+            return message;
         }
 
+        [DebuggerStepThrough]
         public static void BreakIfFalse( this Boolean condition, [CanBeNull] String message = null ) {
             if ( !condition ) {
                 Break( message );
             }
         }
 
+        [DebuggerStepThrough]
         public static (Color fore, Color back) Colors( this LoggingLevel loggingLevel ) {
 
             switch ( loggingLevel ) {
@@ -176,20 +184,26 @@ namespace Librainian.Logging {
             }
         }
 
+        [DebuggerStepThrough]
         public static void Debug<T>( this T obj ) => Logger.Debug( obj );
 
+        [DebuggerStepThrough]
         public static void Info<T>( this T obj ) => Logger.Info( obj );
 
+        [DebuggerStepThrough]
         public static void Error<T>( this T obj ) => Logger.Error( obj );
 
+        [DebuggerStepThrough]
         public static void Fatal<T>( this T obj ) => Logger.Fatal( obj );
 
+        [DebuggerStepThrough]
         public static void Info( [CanBeNull] this String message ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 Logger.Info( message );
             }
         }
 
+        [DebuggerStepThrough]
         [NotNull]
         public static String LevelName( this LoggingLevel loggingLevel ) {
             switch ( loggingLevel ) {
@@ -206,6 +220,7 @@ namespace Librainian.Logging {
             }
         }
 
+        [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
             Logger.Debug( message );
 
@@ -214,6 +229,7 @@ namespace Librainian.Logging {
             }
         }
 
+        [DebuggerStepThrough]
         public static void Log( this Exception exception, Boolean breakinto = false ) {
             Logger.Debug( exception );
 
@@ -222,6 +238,7 @@ namespace Librainian.Logging {
             }
         }
 
+        [DebuggerStepThrough]
         public static T Log<T>( this T message, Boolean breakinto = false ) {
             Logger.Debug( message );
 
@@ -232,18 +249,25 @@ namespace Librainian.Logging {
             return message;
         }
 
+        [DebuggerStepThrough]
         public static void Trace( this String message ) => Logger.Trace( message );
 
+        [DebuggerStepThrough]
         public static void Trace( this Exception exception ) => Logger.Trace( exception );
 
+        [DebuggerStepThrough]
         public static void Trace<T>( this T message ) => Logger.Trace( message );
 
+        [DebuggerStepThrough]
         public static void Warn( this String message ) => Logger.Warn( message );
 
+        [DebuggerStepThrough]
         public static void Warn( this Exception exception ) => Logger.Warn( exception );
 
+        [DebuggerStepThrough]
         public static void Warn<T>( this T message ) => Logger.Warn( message );
 
+        [DebuggerStepThrough]
         [CanBeNull]
         public static Target ToTarget( [CanBeNull] this RichTextBox rtb ) {
             if ( rtb is null ) {

@@ -44,9 +44,9 @@ namespace Librainian.Maths.Hashings {
     using System;
     using System.IO;
     using System.Linq;
-    using ComputerSystem.FileSystem;
     using Converters;
     using JetBrains.Annotations;
+    using OperatingSystem.FileSystem;
 
     public static class HashingExtensions {
 

@@ -48,7 +48,6 @@ namespace Librainian.Extensions {
 	using JetBrains.Annotations;
 	using Logging;
 	using Microsoft.CSharp;
-	using NUnit.Framework;
 	using Persistence;
 
 	public class CodeEngine {
@@ -152,9 +151,8 @@ namespace Coding
 		public static Boolean Test( Action<String> output ) {
 			try {
 				var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
-				var ooo = test.Run();
-				Assert.IsNotNull( ooo );
-
+				test.Run();
+				
 				return true;
 			}
 			catch ( Exception exception ) {

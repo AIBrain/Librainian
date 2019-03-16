@@ -44,8 +44,8 @@ namespace Librainian.ComputerSystem.Devices {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using FileSystem;
 	using OperatingSystem;
+	using OperatingSystem.FileSystem;
 
 	/// <summary>
 	///     The device class for volume devices.

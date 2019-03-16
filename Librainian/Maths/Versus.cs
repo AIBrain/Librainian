@@ -47,7 +47,7 @@ namespace Librainian.Maths {
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using Numerics;
+	using Rationals;
 
 	/// <summary>
 	///     <para>Keep count of Success or Failure counts (threadsafe).</para>
@@ -105,7 +105,7 @@ namespace Librainian.Maths {
 				var total = this.Total;
 
 				if ( !total.Near( 0 ) ) {
-					var result = new BigRational( this.Failures, total );
+					var result = new Rational( this.Failures, total );
 
 					return ( Single ) result;
 				}
@@ -126,7 +126,7 @@ namespace Librainian.Maths {
 
 				if ( total.Near( 0 ) ) { return 0; }
 
-				var chance = new BigRational( this.Successes, total );
+				var chance = new Rational( this.Successes, total );
 
 				return ( Single ) chance;
 			}

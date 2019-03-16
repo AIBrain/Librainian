@@ -45,10 +45,10 @@ namespace Librainian.Internet {
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using ComputerSystem.FileSystem;
     using JetBrains.Annotations;
     using Logging;
     using Maths.Numbers;
+    using OperatingSystem.FileSystem;
     using Threading;
 
     public static class TheInternet {
@@ -65,7 +65,7 @@ namespace Librainian.Internet {
         /// <param name="onWebException"></param>
         /// <returns></returns>
         [ItemCanBeNull]
-        public static async Task<Document> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
+        public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
             [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
             if ( address == null ) { throw new ArgumentNullException( nameof( address ) ); }
 

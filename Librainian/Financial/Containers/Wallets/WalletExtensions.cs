@@ -52,7 +52,6 @@ namespace Librainian.Financial.Containers.Wallets {
     using Currency.Coins;
     using Extensions;
     using JetBrains.Annotations;
-    using NUnit.Framework;
     using Threading;
 
     public static class WalletExtensions {
@@ -125,9 +124,8 @@ namespace Librainian.Financial.Containers.Wallets {
         public static async Task<Decimal> Fund( [NotNull] this Wallet wallet, Decimal amount ) {
             if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
 
-            var leftOverFund = Decimal.Zero;
-            var notesAndCoins = amount.ToOptimal( ref leftOverFund );
-            await StartDeposit( wallet, notesAndCoins );
+            var notesAndCoins = amount.ToOptimal( out var leftOverFund );
+            await StartDeposit( wallet, notesAndCoins ).ConfigureAwait( false );
 
             return leftOverFund;
         }
@@ -173,11 +171,11 @@ namespace Librainian.Financial.Containers.Wallets {
         /// </param>
         /// <returns></returns>
         [NotNull]
-        public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
+        public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, out Decimal leftOverAmount ) {
             var denominations = new List<IDenomination>( PossibleDenominations );
             var optimal = denominations.ToDictionary<IDenomination, IDenomination, UInt64>( denomination => denomination, denomination => 0 );
 
-            leftOverAmount += amount;
+            leftOverAmount = amount;
 
             while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
                 var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
@@ -191,8 +189,6 @@ namespace Librainian.Financial.Containers.Wallets {
 
                 denominations.Remove( highestBill );
             }
-
-            Assert.Less( leftOverAmount, PossibleDenominations.OrderBy( denomination => denomination.FaceValue ).First().FaceValue );
 
             return optimal;
         }

@@ -49,8 +49,10 @@ namespace Librainian.OperatingSystem {
     using System.Security;
     using System.Text;
     using System.Threading;
-    using ComputerSystem.FileSystem;
+    using System.Windows.Forms;
+    using ComputerSystem.Devices;
     using Controls;
+    using FileSystem;
     using Graphics;
     using Graphics.Video;
     using JetBrains.Annotations;
@@ -528,6 +530,19 @@ namespace Librainian.OperatingSystem {
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern Boolean DeleteFileW( String lpFileName );
+
+        /// <summary>
+        ///     <para>Returns the <see cref="NativeWindow" /> for <see cref="GetDesktopWindow" />.</para>
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public static NativeWindow Desktop() {
+            var desktopWindow = GetDesktopWindow();
+            var nativeWindow = new NativeWindow();
+            nativeWindow.AssignHandle( desktopWindow );
+
+            return nativeWindow;
+        }
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize,
@@ -1301,7 +1316,7 @@ namespace Librainian.OperatingSystem {
                     return true;
                 }
 
-                if ( left is default || right is default ) {
+                if ( left == default || right == default ) {
                     return false;
                 }
 

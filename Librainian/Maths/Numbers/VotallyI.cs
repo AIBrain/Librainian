@@ -44,11 +44,11 @@ namespace Librainian.Maths.Numbers
 
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Numerics;
     using System;
     using System.Diagnostics;
     using System.Threading;
     using Logging;
+    using Rationals;
 
     /// <summary>
     ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
@@ -127,7 +127,7 @@ namespace Librainian.Maths.Numbers
 
                 if (!votes.Near(0))
                 {
-                    var result = new BigRational(this.No, votes);
+                    var result = new Rational(this.No, votes);
 
                     return (Double)result;
                 }
@@ -145,7 +145,7 @@ namespace Librainian.Maths.Numbers
 
                 if (votes.Near(0)) { return 0; }
 
-                var chance = new BigRational(this.Yes, votes);
+                var chance = new Rational(this.Yes, votes);
 
                 return (Double)chance;
             }

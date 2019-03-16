@@ -44,9 +44,7 @@ namespace Librainian.Measurement.Length {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using FluentAssertions;
 	using Newtonsoft.Json;
-	using NUnit.Framework;
 
 	/// <summary>
 	/// </summary>
@@ -109,14 +107,5 @@ namespace Librainian.Measurement.Length {
 		//}
 	}
 
-	[TestFixture]
-	public static class TestPlanckLengths {
-
-		[Test]
-		public static void TestSmallValuePlancks() {
-
-			PlanckLengths.One.Should().BeLessThan( PlanckLengths.Two );
-			PlanckLengths.Two.Should().BeGreaterThan( PlanckLengths.One );
-		}
-	}
+	
 }

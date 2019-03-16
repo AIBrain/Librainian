@@ -59,7 +59,7 @@ namespace LibrainianTests {
 			do {
 				$"{watch.Remaining().Simpler()}".Info();
 				Thread.Sleep( 333 );
-			} while ( !watch.HasLaunched() );
+			} while ( !watch.HasLaunched);
 
 			watch.Remaining().Should().BeLessThan( Seconds.One );
 

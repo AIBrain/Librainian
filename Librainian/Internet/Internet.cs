@@ -48,9 +48,9 @@ namespace Librainian.Internet {
     using System.Net.Cache;
     using System.Threading;
     using System.Threading.Tasks;
-    using ComputerSystem.FileSystem;
     using JetBrains.Annotations;
     using Logging;
+    using OperatingSystem.FileSystem;
     using ReactiveUI;
     using ReactiveUI.Fody.Helpers;
 
@@ -200,19 +200,19 @@ namespace Librainian.Internet {
 
             [NotNull]
             [Reactive]
-            public WebClientWithTimeout AttachedToWebClient { get; }
+            public WebClientWithTimeout AttachedToWebClient { get; set; }
 
             [CanBeNull]
             [Reactive]
-            public ICredentials Credentials { get; }
+            public ICredentials Credentials { get; set; }
 
             [CanBeNull]
             [Reactive]
-            public Byte[] DestinationBuffer { get; }
+            public Byte[] DestinationBuffer { get; set; }
 
             [NotNull]
             [Reactive]
-            public Document DestinationDocument { get; }
+            public Document DestinationDocument { get; set; }
 
             public AutoResetEvent Downloaded { get; } = new AutoResetEvent( false );
 
@@ -226,7 +226,7 @@ namespace Librainian.Internet {
             ///     The unique identifier assigned to this download.
             /// </summary>
             [Reactive]
-            public Guid Id { get; }
+            public Guid Id { get; set; }
 
             [CanBeNull]
             [Reactive]
@@ -246,7 +246,7 @@ namespace Librainian.Internet {
 
             [NotNull]
             [Reactive]
-            public Uri Source { get; }
+            public Uri Source { get; set; }
 
             [CanBeNull]
             public Task Task { get; set; }

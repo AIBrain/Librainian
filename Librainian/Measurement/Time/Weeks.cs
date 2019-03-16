@@ -43,11 +43,11 @@ namespace Librainian.Measurement.Time {
 
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     [JsonObject]
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
@@ -82,11 +82,11 @@ namespace Librainian.Measurement.Time {
         public static readonly Weeks Zero = new Weeks(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
-        public Weeks(Decimal weeks) => this.Value = weeks;
+        public Weeks(Decimal weeks) => this.Value = ( Rational ) weeks;
 
-        public Weeks(BigRational weeks) => this.Value = weeks;
+        public Weeks(Rational weeks) => this.Value = weeks;
 
         public Weeks(Int64 value) => this.Value = value;
 
@@ -94,7 +94,7 @@ namespace Librainian.Measurement.Time {
 
         public static Weeks Combine(Weeks left, Weeks right) => new Weeks(left.Value + right.Value);
 
-        public static Weeks Combine(Weeks left, BigRational weeks) => new Weeks(left.Value + weeks);
+        public static Weeks Combine(Weeks left, Rational weeks) => new Weeks(left.Value + weeks);
 
         public static Weeks Combine(Weeks left, BigInteger weeks) => new Weeks(left.Value + weeks);
 
@@ -125,7 +125,7 @@ namespace Librainian.Measurement.Time {
 
         public static Weeks operator +(Weeks left, Weeks right) => Combine(left, right);
 
-        public static Weeks operator +(Weeks left, Decimal weeks) => Combine(left, weeks);
+        public static Weeks operator +(Weeks left, Decimal weeks) => Combine(left, ( Rational ) weeks);
 
         public static Weeks operator +(Weeks left, BigInteger weeks) => Combine(left, weeks);
 
@@ -157,15 +157,15 @@ namespace Librainian.Measurement.Time {
 
         public Days ToDays() => new Days(this.Value * Days.InOneWeek);
 
-        public Months ToMonths() => new Months(this.Value / InOneMonth);
+        public Months ToMonths() => new Months(this.Value / ( Rational ) InOneMonth);
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(PlanckTimes.InOneWeek * this.Value);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational ) PlanckTimes.InOneWeek);
 
         public Seconds ToSeconds() => new Seconds(this.Value * Seconds.InOneWeek);
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("week")}";
             }

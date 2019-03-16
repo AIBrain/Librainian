@@ -45,75 +45,127 @@ namespace Librainian.Magic {
     using System.Diagnostics;
     using Logging;
 
+
     /// <summary>
     ///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
-    ///     <para><see cref="Dispose()" /> can be called multiple times with no side effects.</para>
-    ///     <para>Override <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
+    ///     <para>Implement overrides on <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
+    ///     <para>Have each call base.Dispose(), or base.DisposeManaged() and base.DisposeNative() respectively.</para>
     /// </summary>
-    /// <remarks>ABCD (hehe). Designed by Rick Harker</remarks>
+    /// <remarks>ABCD (hehe). Written by Rick Harker.</remarks>
+    /// <copyright>
+    ///     Created by Rick Harker.
+    /// </copyright>
     public class ABetterClassDispose : IDisposable {
+
+        private volatile Boolean _hasDisposedManaged;
+
+        private volatile Boolean _hasDisposedNative;
+
+        private volatile Boolean _hasSuppressedFinalize;
+
+        public Boolean HasDisposedManaged {
+            get => this._hasDisposedManaged;
+            private set => this._hasDisposedManaged = value;
+        }
+
+        public Boolean HasDisposedNative {
+            get => this._hasDisposedNative;
+            private set => this._hasDisposedNative = value;
+        }
+
+        public Boolean HasSuppressedFinalize {
+            get => this._hasSuppressedFinalize;
+            private set => this._hasSuppressedFinalize = value;
+        }
+
+        /// <summary>
+        ///     Return true if <see cref="HasDisposedManaged" /> and <see cref="HasDisposedNative" /> are both true.
+        /// </summary>
+        public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
         [DebuggerStepThrough]
         public void Dispose() => this.Dispose( true );
 
-        public Boolean HasDisposedManaged { get; private set; }
-
-        public Boolean HasDisposedNative { get; private set; }
-
-        public Boolean HasSupressedFinalize { get; private set; }
-
         [DebuggerStepThrough]
-        ~ABetterClassDispose() {
-            "Undisposed object.".Break();
-            this.Dispose( true );
+        ~ABetterClassDispose() => this.Dispose( true );
+
+        private void PreventFinalizer() {
+            if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
+                GC.SuppressFinalize( this );
+                this.HasSuppressedFinalize = true;
+            }
         }
 
-        [DebuggerStepThrough]
         protected virtual void Dispose( Boolean _ ) {
-            try {
-                if ( !this.HasDisposedManaged ) {
-                    try {
-                        this.DisposeManaged();
-                    }
-                    catch ( Exception exception ) {
-                        exception.Log();
-                    }
-                    finally {
-                        this.HasDisposedManaged = true;
-                    }
+            if ( !this.HasDisposedManaged ) {
+                try {
+                    this.DisposeManaged();
                 }
-
-                if ( !this.HasDisposedNative ) {
-                    try {
-                        this.DisposeNative();
-                    }
-                    catch ( Exception exception ) {
-                        exception.Log();
-                    }
-                    finally {
-                        this.HasDisposedNative = true;
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+                finally {
+                    if ( !this.HasDisposedManaged ) {
+                        $"Error: derived class did not call \"base.{nameof( this.DisposeManaged )}\".".Break();
                     }
                 }
             }
-            finally {
-                if ( this.HasDisposedManaged && this.HasDisposedNative ) {
-                    if ( !this.HasSupressedFinalize ) {
-                        GC.SuppressFinalize( this );
-                        this.HasSupressedFinalize = true;
+
+            if ( !this.HasDisposedNative ) {
+                try {
+                    this.DisposeNative();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+                finally {
+                    if ( !this.HasDisposedNative ) {
+                        $"Error: derived class did not call \"base.{nameof( this.DisposeNative )}\".".Break();
                     }
                 }
+
             }
         }
 
         /// <summary>
         ///     Dispose any disposable managed fields or properties.
+        ///     <para>
+        ///         Providing the object inside a using construct will then call <see cref="Dispose" />, which in turn calls
+        ///         <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.
+        ///     </para>
+        ///     <para>
+        ///         <example>
+        ///             Example usage:
+        ///             <code>
+        /// using ( this.mySink ) { this.mySink=null; }
+        /// </code>
+        ///         </example>
+        ///     </para>
         /// </summary>
-        public virtual void DisposeManaged() { }
+        public virtual void DisposeManaged() {
+            this.HasDisposedManaged = true;
+            this.PreventFinalizer();
+        }
 
         /// <summary>
         ///     Dispose of COM objects, Handles, etc. Then set those objects to null.
+        ///     <para>
+        ///         Providing the object inside a using construct will then call <see cref="Dispose" />, which in turn calls
+        ///         <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.
+        ///     </para>
+        ///     <para>
+        ///         <example>
+        ///             Example usage:
+        ///             <code>
+        /// using ( this.mySink ) { this.mySink=null; }
+        /// </code>
+        ///         </example>
+        ///     </para>
         /// </summary>
-        public virtual void DisposeNative() { }
+        public virtual void DisposeNative() {
+            this.HasDisposedNative = true;
+            this.PreventFinalizer();
+        }
 
     }
 

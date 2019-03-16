@@ -42,60 +42,60 @@
 
 namespace LibrainianTests {
 
-	using System;
-	using System.IO;
-	using Librainian.ComputerSystem.FileSystem;
-	using Librainian.OperatingSystem;
-	using NUnit.Framework;
+    using System;
+    using System.IO;
+    using Librainian.OperatingSystem;
+    using Librainian.OperatingSystem.FileSystem;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class DefragTests {
+    [TestFixture]
+    public static class DefragTests {
 
-		private static Document SourceDocument { get; set; }
+        private static IDocument SourceDocument { get; set; }
 
-		private static Document TargetDocument { get; set; }
+        private static IDocument TargetDocument { get; set; }
 
-		private static Folder TargetFolder { get; set; }
+        private static IFolder TargetFolder { get; set; }
 
-		//[OneTimeSetUp]
-		public static void Setup() {
-			SourceDocument = new Document( Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "mrt.exe" ) );
+        //[OneTimeSetUp]
+        public static void Setup() {
+            SourceDocument = new Document( Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "mrt.exe" ) );
 
-			TargetFolder = Folder.GetTempFolder();
+            TargetFolder = Folder.GetTempFolder();
 
-			TargetDocument = new Document( Path.Combine( TargetFolder.FullName, "mrt.exe" ) );
-			Console.WriteLine( SourceDocument.FullPathWithFileName );
+            TargetDocument = new Document( Path.Combine( TargetFolder.FullName, "mrt.exe" ) );
+            Console.WriteLine( SourceDocument.FullPath );
 
-			while ( TargetDocument.Exists() ) {
-				TargetDocument.Delete();
-			}
+            while ( TargetDocument.Exists() == true ) {
+                TargetDocument.Delete();
+            }
 
-			File.Copy( SourceDocument.FullPathWithFileName, TargetDocument.FullPathWithFileName );
-		}
+            File.Copy( SourceDocument.FullPath, TargetDocument.FullPath );
+        }
 
-		//[OneTimeTearDown]
-		public static void TearDown() => TargetDocument.Delete();
+        //[OneTimeTearDown]
+        public static void TearDown() => TargetDocument.Delete();
 
-		[Test]
-		public static void Test_something() {
+        [Test]
+        public static void Test_something() {
 
-			//var bob = new Document( new Uri("http://www.google.com/") );
+            //var bob = new Document( new Uri("http://www.google.com/") );
 
-			//var uri = new Uri( TargetDocument.FullPathWithFileName );
+            //var uri = new Uri( TargetDocument.FullPathWithFileName );
 
-			//var bob = IOWrapper.GetFileMap( TargetDocument.FullPathWithFileName );
+            //var bob = IOWrapper.GetFileMap( TargetDocument.FullPathWithFileName );
 
-			//var frank = ( Int64[,] ) bob;
+            //var frank = ( Int64[,] ) bob;
 
-			//var lcn = new LinkedList<Int64 >(  );
-			//var vcn = new LinkedList<Int64 >(  );
+            //var lcn = new LinkedList<Int64 >(  );
+            //var vcn = new LinkedList<Int64 >(  );
 
-			//foreach ( Int64[,] a in bob. ) {
-			//    lcn.AddLast( a[ 0, 0 ] );
-			//    vcn.AddLast( a[ 1, 1 ] );
-			//}
+            //foreach ( Int64[,] a in bob. ) {
+            //    lcn.AddLast( a[ 0, 0 ] );
+            //    vcn.AddLast( a[ 1, 1 ] );
+            //}
 
-			//Console.WriteLine( lcn.Count );
-		}
-	}
+            //Console.WriteLine( lcn.Count );
+        }
+    }
 }

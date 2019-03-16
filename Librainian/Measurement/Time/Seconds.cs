@@ -44,11 +44,12 @@ namespace Librainian.Measurement.Time {
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using JetBrains.Annotations;
+    using Rationals;
 
     /// <summary>
     ///     <para>
@@ -60,7 +61,7 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
     [Immutable]
-    public struct Seconds : IComparable<Seconds>, IQuantityOfTime {
+    public struct Seconds : IQuantityOfTime {
 
         /// <summary>
         ///     31536000
@@ -147,21 +148,20 @@ namespace Librainian.Measurement.Time {
         public static Seconds Zero { get; } = new Seconds(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
-        public Seconds(Decimal value) => this.Value = value;
-
-        public Seconds(BigRational value) => this.Value = value;
-
+        public Seconds(Decimal value) => this.Value = ( Rational ) value;
+        public Seconds(Double value) => this.Value = ( Rational ) value;
+        public Seconds(Rational value) => this.Value = value;
         public Seconds(Int64 value) => this.Value = value;
-
         public Seconds(BigInteger value) => this.Value = value;
 
+        [Pure]
         public static Seconds Combine(Seconds left, Seconds right) => Combine(left, right.Value);
 
-        public static Seconds Combine(Seconds left, BigRational seconds) => new Seconds(left.Value + seconds);
+        public static Seconds Combine(Seconds left, Rational seconds) => new Seconds(left.Value + seconds);
 
-        public static Seconds Combine(Seconds left, BigInteger seconds) => new Seconds((BigInteger)left.Value + seconds);
+        public static Seconds Combine(Seconds left, BigInteger seconds) => new Seconds(left.Value + seconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -204,13 +204,13 @@ namespace Librainian.Measurement.Time {
 
         public static Seconds operator -(Seconds left, Seconds right) => Combine(left: left, right: -right);
 
-        public static Seconds operator -(Seconds left, Decimal seconds) => Combine(left, -seconds);
+        public static Seconds operator -(Seconds left, Decimal seconds) => Combine(left, ( Rational ) (-seconds));
 
         public static Boolean operator !=(Seconds left, Seconds right) => !Equals(left, right);
 
         public static Seconds operator +(Seconds left, Seconds right) => Combine(left, right);
 
-        public static Seconds operator +(Seconds left, Decimal seconds) => Combine(left, seconds);
+        public static Seconds operator +(Seconds left, Decimal seconds) => Combine(left, ( Rational ) seconds);
 
         public static Seconds operator +(Seconds left, BigInteger seconds) => Combine(left, seconds);
 
@@ -234,25 +234,19 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >(Seconds left, Milliseconds right) => left > (Seconds)right;
 
-        public Int32 CompareTo(Seconds other) => this.Value.CompareTo(other.Value);
-
-        public Boolean Equals(Seconds other) => Equals(this, other);
-
-        public override Boolean Equals(Object obj) => obj is Seconds seconds && this.Equals(seconds);
-
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         public Milliseconds ToMilliseconds() => new Milliseconds(this.Value * Milliseconds.InOneSecond);
 
         public Minutes ToMinutes() => new Minutes(this.Value / InOneMinute);
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(PlanckTimes.InOneSecond * this.Value);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational )PlanckTimes.InOneSecond);
 
         public Seconds ToSeconds() => new Seconds(this.Value);
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("second")}";
             }
@@ -262,10 +256,23 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf("second")}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.Value );
 
         public Weeks ToWeeks() => new Weeks(this.Value / InOneWeek);
 
         public Years ToYears() => new Years(this.Value / InOneCommonYear);
+
+        /// <summary>Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object. </summary>
+        /// <param name="other">An object to compare with this instance. </param>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows <paramref name="other" /> in the sort order. </returns>
+        public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( paramName: nameof( other ) );
+            }
+
+            return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
+        }
+
+
     }
 }

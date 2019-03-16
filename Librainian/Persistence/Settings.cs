@@ -48,7 +48,7 @@ namespace Librainian.Persistence {
 		/// <param name="key">     </param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static Object GetObject(TrimmedString location, TrimmedString key) => Registry.Get(location, key);
+		public static Object GetObject(TrimmedString location, TrimmedString key) => AppRegistry.Get(location, key);
 
 		[CanBeNull]
 		public static String GetString(TrimmedString location, TrimmedString key) =>
@@ -71,54 +71,54 @@ namespace Librainian.Persistence {
 				}
 
 				if (value is null) {
-					Registry.Set(folder, key, null, RegistryValueKind.DWord);
+					AppRegistry.Set(folder, key, null, RegistryValueKind.DWord);
 
 					return;
 				}
 
 				switch (value) {
 					case String s: {
-							Registry.Set(folder, key, s);
+							AppRegistry.Set(folder, key, s);
 
 							break;
 						}
 
 					case UInt64 u64: {
-							Registry.Set(folder, key, u64, RegistryValueKind.QWord);
+							AppRegistry.Set(folder, key, u64, RegistryValueKind.QWord);
 
 							break;
 						}
 
 					case Int64 i64: {
-							Registry.Set(folder, key, i64, RegistryValueKind.QWord);
+							AppRegistry.Set(folder, key, i64, RegistryValueKind.QWord);
 
 							break;
 						}
 
 					case UInt32 u32: {
-							Registry.Set(folder, key, u32, RegistryValueKind.DWord);
+							AppRegistry.Set(folder, key, u32, RegistryValueKind.DWord);
 
 							break;
 						}
 					case Int32 i32: {
-							Registry.Set(folder, key, i32, RegistryValueKind.DWord);
+							AppRegistry.Set(folder, key, i32, RegistryValueKind.DWord);
 
 							break;
 						}
 
 					case Boolean b: {
-							Registry.Set(folder, key, b ? 1 : 0, RegistryValueKind.DWord);
+							AppRegistry.Set(folder, key, b ? 1 : 0, RegistryValueKind.DWord);
 
 							break;
 						}
 					case Enum e: {
-							Registry.Set(folder, key, e, RegistryValueKind.DWord);
+							AppRegistry.Set(folder, key, e, RegistryValueKind.DWord);
 
 							break;
 						}
 					default: {
 							$"Registry: unknown type {value}. Probably just a Nullable<T>().".Log();
-							Registry.Set(folder, key, value, RegistryValueKind.Unknown);
+							AppRegistry.Set(folder, key, value, RegistryValueKind.Unknown);
 
 							break;
 						}

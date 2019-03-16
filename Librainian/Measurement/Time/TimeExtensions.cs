@@ -51,7 +51,6 @@ namespace Librainian.Measurement.Time {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Extensions;
-	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -882,7 +881,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="value"></param>
 		public static void ThrowIfOutOfDecimalRange( this Double value ) {
-			value.Should().BeInRange( ( Double )Decimal.MinValue, ( Double )Decimal.MaxValue );
+
 
 			if ( value < ( Double )Decimal.MinValue ) { throw new OverflowException( Constants.ValueIsTooLow ); }
 

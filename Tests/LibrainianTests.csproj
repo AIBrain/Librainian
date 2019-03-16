@@ -65,6 +65,7 @@
     <Compile Include="Maths\MathsTests.cs" />
     <Compile Include="Maths\TimeTests.cs" />
     <Compile Include="MyClass.cs" />
+    <Compile Include="OperatingSystem\FileHistoryFileTests.cs" />
     <Compile Include="PasswordTests.cs" />
     <Compile Include="PathSplitterTests.cs" />
     <Compile Include="Persistence\IniFileTests.cs" />
@@ -75,12 +76,6 @@
     <Compile Include="TimeSystemTimersTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ReactiveUI">
-      <HintPath>C:\Users\Rick\.nuget\packages\reactiveui\9.1.4\lib\net461\ReactiveUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Splat">
-      <HintPath>C:\Users\Rick\.nuget\packages\splat\4.0.0\lib\net461\Splat.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />

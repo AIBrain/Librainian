@@ -46,6 +46,7 @@ namespace Librainian.Measurement.Time {
 	using Extensions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
+	using Rationals;
 
 	/// <summary>
 	///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
@@ -105,23 +106,23 @@ namespace Librainian.Measurement.Time {
 			this.Microseconds = totalMilliseconds * MicrosecondsPerMillisecond;
 		}
 
-		public static Duration FromDays( Double value ) => new Duration( new Days( value ) );
+		public static Duration FromDays( Double value ) => new Duration( new Days( ( Rational ) value ) );
 
-		public static Duration FromHours( Double value ) => new Duration( new Hours( value ) );
+		public static Duration FromHours( Double value ) => new Duration( new Hours( ( Rational ) value ) );
 
-		public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( value ) );
+		public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( ( Rational ) value ) );
 
 		public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
 
-		public static Duration FromMinutes( Double value ) => new Duration( new Minutes( value ) );
+		public static Duration FromMinutes( Double value ) => new Duration( new Minutes( ( Rational )value ) );
 
-		public static Duration FromSeconds( Double value ) => new Duration( new Seconds( value ) );
+		public static Duration FromSeconds( Double value ) => new Duration( new Seconds( ( Rational )value ) );
 
 		public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
 
-		public static Duration FromWeeks( Double value ) => new Duration( new Weeks( value ) );
+		public static Duration FromWeeks( Double value ) => new Duration( new Weeks( ( Rational )value ) );
 
-		public static Duration FromYears( Double value ) => new Duration( new Years( value ) );
+		public static Duration FromYears( Double value ) => new Duration( new Years( ( Rational )value ) );
 
 		/// <summary>
 		///     <para>Compares <see cref="Microseconds" /></para>

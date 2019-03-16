@@ -44,11 +44,11 @@ namespace Librainian.Measurement.Time {
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     [JsonObject]
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
@@ -79,13 +79,13 @@ namespace Librainian.Measurement.Time {
         public static readonly Months Zero = new Months(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
         private Months(Int32 value) => this.Value = value;
 
-        public Months(Decimal value) => this.Value = value;
+        public Months(Decimal value) => this.Value = ( Rational ) value;
 
-        public Months(BigRational value) => this.Value = value;
+        public Months(Rational value) => this.Value = value;
 
         public Months(BigInteger value) => this.Value = value;
 
@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
 
         public static Months Combine(Months left, Months right) => Combine(left, right.Value);
 
-        public static Months Combine(Months left, BigRational months) => new Months(left.Value + months);
+        public static Months Combine(Months left, Rational months) => new Months(left.Value + months);
 
         public static Months Combine(Months left, BigInteger months) => new Months(left.Value + months);
 
@@ -113,13 +113,13 @@ namespace Librainian.Measurement.Time {
 
         public static Months operator -(Months left, Months right) => Combine(left: left, right: -right);
 
-        public static Months operator -(Months left, Decimal months) => Combine(left, -months);
+        public static Months operator -(Months left, Decimal months) => Combine(left, ( Rational ) (-months));
 
         public static Boolean operator !=(Months left, Months right) => !Equals(left, right);
 
         public static Months operator +(Months left, Months right) => Combine(left, right);
 
-        public static Months operator +(Months left, BigRational months) => Combine(left, months);
+        public static Months operator +(Months left, Rational months) => Combine(left, months);
 
         public static Boolean operator <(Months left, Months right) => left.Value < right.Value;
 
@@ -144,8 +144,8 @@ namespace Librainian.Measurement.Time {
         public Seconds ToSeconds() => new Seconds(this.Value * Seconds.InOneMonth);
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("month")}";
             }
@@ -159,6 +159,6 @@ namespace Librainian.Measurement.Time {
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
-        public Weeks ToWeeks() => new Weeks(this.Value * Weeks.InOneMonth);
+        public Weeks ToWeeks() => new Weeks(this.Value * ( Rational ) Weeks.InOneMonth);
     }
 }

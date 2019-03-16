@@ -44,6 +44,7 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using Librainian.Extensions;
+	using Rationals;
 
 	/// <summary>Units of mass and energy in <see cref="GigaElectronVolts" />.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -65,12 +66,6 @@ namespace Librainian.Measurement.Physics {
 
 		public const Decimal InOneTeraElectronVolt = 1E3m;
 
-		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly GigaElectronVolts MaxValue = new GigaElectronVolts( Decimal.MaxValue );
-
-		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly GigaElectronVolts MinValue = new GigaElectronVolts( Decimal.MinValue );
-
 		/// <summary></summary>
 		public static readonly GigaElectronVolts One = new GigaElectronVolts( 1 );
 
@@ -78,15 +73,15 @@ namespace Librainian.Measurement.Physics {
 		public static readonly GigaElectronVolts Zero = new GigaElectronVolts( 0 );
 
 		/// <summary></summary>
-		public readonly Decimal Value;
+		public readonly Rational Value;
 
-		public GigaElectronVolts( Decimal units ) : this() => this.Value = units;
+		public GigaElectronVolts( Rational units ) : this() => this.Value = units;
 
 		public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToGigaElectronVolts().Value;
 
-		public static GigaElectronVolts operator *( GigaElectronVolts left, Decimal right ) => new GigaElectronVolts( left.Value * right );
+		public static GigaElectronVolts operator *( GigaElectronVolts left, Rational right ) => new GigaElectronVolts( left.Value * right );
 
-		public static GigaElectronVolts operator *( Decimal left, GigaElectronVolts right ) => new GigaElectronVolts( left * right.Value );
+		public static GigaElectronVolts operator *( Rational left, GigaElectronVolts right ) => new GigaElectronVolts( left * right.Value );
 
 		public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left ) + right;
 
@@ -104,15 +99,15 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational ) InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational ) InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational ) InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational ) InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational ) InOneMilliElectronVolt );
 
 		/// <summary>
 		///     Returns the fully qualified type name of this instance.

@@ -43,45 +43,19 @@ namespace Librainian.Measurement.Time {
 
 	using System;
 	using System.Threading;
-	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using NUnit.Framework;
 	using Threading;
 	using Timer = System.Timers.Timer;
 
-	[TestFixture]
-	public static class TestCoundownWatch {
-
-		[Test]
-		public static void TestCountdown() {
-			var watch = new CountDownWatch( Seconds.Three, () => "Launched!".Info() );
-			watch.Start();
-
-			do {
-				$"{watch.Remaining().Simpler()}".Info();
-				Thread.Sleep( 333 );
-			} while ( !watch.HasLaunched() );
-
-			watch.Remaining().Should().BeLessThan( Seconds.One );
-
-			$"{watch.Remaining().Simpler()}".Info();
-			$"{watch.Remaining().Simpler()}".Info();
-			$"{watch.Remaining().Simpler()}".Info();
-		}
-	}
-
+	
 	/// <summary>
 	///     The 'reverse' of the Stopwatch class.
 	///     //TODO needs unit testing.
 	/// </summary>
 	[JsonObject( MemberSerialization.Fields )]
 	public class CountDownWatch {
-
-		private volatile Boolean _hasLaunched;
-
-		private volatile Boolean _isRunning;
 
 		[NotNull]
 		private Action Liftoff { get; }
@@ -108,28 +82,28 @@ namespace Librainian.Measurement.Time {
 
 			this.Liftoff = () => {
 				try {
-					this._hasLaunched = true;
+					this.HasLaunched = true;
 					liftoff?.Invoke();
 				}
 				catch ( Exception exception ) { exception.Log(); }
 			};
 		}
 
-		public Boolean HasLaunched() => this._hasLaunched;
+		public Boolean HasLaunched { get; private set; }
 
-		public Boolean IsRunning() => this._isRunning;
+		public Boolean IsRunning { get; private set; }
 
 		public TimeSpan Remaining() {
-			if ( this.IsRunning() ) { return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted ); }
+			if ( this.IsRunning) { return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted ); }
 
-			if ( this.HasLaunched() ) { return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted ); }
+			if ( this.HasLaunched) { return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted ); }
 
 			throw new InvalidOperationException( "???" );
 		}
 
 		public void Start() {
 			this.WhenStarted = DateTime.UtcNow;
-			this._isRunning = true;
+			this.IsRunning = true;
 
 			this.Timer = FluentTimer.Start( this.Countdown.Create( () => {
 				this.Stop();
@@ -138,7 +112,7 @@ namespace Librainian.Measurement.Time {
 		}
 
 		public void Stop() {
-			this._isRunning = false;
+			this.IsRunning = false;
 			this.WhenStopped = DateTime.UtcNow;
 			this.Timer.Stop();
 		}

@@ -45,9 +45,9 @@ namespace Librainian.Maths.Numbers
     using Extensions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using Numerics;
     using System;
     using System.Numerics;
+    using Rationals;
 
     /// <summary>
     ///     <para>Restricts the value to between 0.0 and 1.0.</para>
@@ -63,34 +63,33 @@ namespace Librainian.Maths.Numbers
         /// <summary>0</summary>
         public const Double Minimum = 0d;
 
-        [CanBeNull]
         [JsonProperty]
-        public readonly BigInteger? Denominator;
+        public readonly Rational Denominator;
 
         [CanBeNull]
         [JsonProperty]
         public readonly BigInteger? LeastCommonDenominator;
 
-        [CanBeNull]
         [JsonProperty]
-        public readonly BigInteger? Numerator;
+        public readonly Rational Numerator;
 
         [JsonProperty]
-        public readonly BigRational Quotient;
+        public readonly Rational Quotient;
+
+        public Percentage( Rational numerator, Rational denominator ) {
+            this.Numerator = numerator;
+            this.Denominator = denominator;
+        }
 
         /// <summary>
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage(Double value) : this((BigInteger)value, BigInteger.One) { }
+        public Percentage( Rational value ) : this(value,1) {
+        }
 
-        /// <summary>
-        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-        /// </summary>
-        /// <param name="numerator"></param>
-        /// <param name="denominator"></param>
-        public Percentage(Decimal numerator, Decimal denominator) : this((Double)numerator, (Double)denominator) { }
 
+        /*
         /// <summary>
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
@@ -105,14 +104,16 @@ namespace Librainian.Maths.Numbers
             this.Numerator = new BigInteger(numerator);
             this.Denominator = new BigInteger(denominator);
 
-            this.LeastCommonDenominator = BigRational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
+            this.LeastCommonDenominator = Rational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
 
-            this.Quotient = denominator <= 0 ? new BigRational(0.0) : new BigRational(numerator / denominator);
+            this.Quotient = denominator <= 0 ? new Rational(0.0) : new Rational(numerator / denominator);
 
             if (this.Quotient < Minimum) { this.Quotient = Minimum; }
             else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
         }
+        */
 
+        /*
         /// <summary>
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
@@ -122,26 +123,29 @@ namespace Librainian.Maths.Numbers
         {
             this.Numerator = numerator;
             this.Denominator = denominator;
-            this.LeastCommonDenominator = BigRational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
+            this.LeastCommonDenominator = Rational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
 
-            this.Quotient = denominator == BigInteger.Zero ? new BigRational(0.0) : new BigRational(numerator / denominator);
+            this.Quotient = denominator == BigInteger.Zero ? new Rational(0.0) : new Rational(numerator / denominator);
 
             if (this.Quotient < Minimum) { this.Quotient = Minimum; }
             else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
         }
+        */
 
+        /*
         /// <summary>
         ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
         /// <param name="value"></param>
-        public Percentage(BigRational value) : this(value.Numerator, value.Denominator) { }
+        public Percentage(Rational value) : this(value.Numerator, value.Denominator) { }
+        */
 
         /// <summary>Lerp?</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         [NotNull]
-        public static Percentage Combine([NotNull] Percentage left, [NotNull] Percentage right) => new Percentage((left.Quotient + right.Quotient) / 2.0);
+        public static Percentage Combine([NotNull] Percentage left, [NotNull] Percentage right) => new Percentage((left.Quotient + right.Quotient) / 2);
 
         //TODO BigDecimal any better here?
         /// <summary>static comparison</summary>
@@ -162,10 +166,10 @@ namespace Librainian.Maths.Numbers
         public static implicit operator Double([NotNull] Percentage special) => (Double)special.Quotient;
 
         [NotNull]
-        public static implicit operator Percentage(Single value) => new Percentage(value);
+        public static implicit operator Percentage(Single value) => new Percentage(( Rational ) value);
 
         [NotNull]
-        public static implicit operator Percentage(Double value) => new Percentage(value);
+        public static implicit operator Percentage(Double value) => new Percentage(( Rational ) value);
 
         [NotNull]
         public static Percentage operator +([NotNull] Percentage left, [NotNull] Percentage right) => Combine(left, right);
@@ -175,18 +179,22 @@ namespace Librainian.Maths.Numbers
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
 
-            return new Percentage(Double.Parse(value));
+            return new Percentage(( Rational ) Double.Parse(value));
         }
 
-        public static Boolean TryParse([NotNull] String numberString, [NotNull] out Percentage result)
+        public static Boolean TryParse([NotNull] String numberString, [CanBeNull] out Percentage result)
         {
             if (numberString == null) { throw new ArgumentNullException(nameof(numberString)); }
 
-            if (!Double.TryParse(numberString, out var value)) { value = Double.NaN; }
+            if ( Rational.TryParse( numberString, out var value ) ) {
+                result = new Percentage( value );
 
-            result = new Percentage(value);
+                return true;
+            }
 
-            return !Double.IsNaN(value);
+            result = default;
+
+            return false;
         }
 
         [Pure]

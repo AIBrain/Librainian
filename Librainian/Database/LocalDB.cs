@@ -47,10 +47,11 @@ namespace Librainian.Database {
     using System.Data.SqlClient;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using ComputerSystem.FileSystem;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
+    using Measurement.Time;
+    using OperatingSystem.FileSystem;
 
     public class LocalDb : ABetterClassDispose {
 
@@ -76,7 +77,7 @@ namespace Librainian.Database {
 
         public TimeSpan WriteTimeout { get; }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
+        
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
             if ( String.IsNullOrWhiteSpace( databaseName ) ) {
                 throw new ArgumentNullException( nameof( databaseName ) );
@@ -86,8 +87,8 @@ namespace Librainian.Database {
                 databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
             }
 
-            this.ReadTimeout = timeoutForReads.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
-            this.WriteTimeout = timeoutForWrites.GetValueOrDefault( TimeSpan.FromMinutes( 1 ) );
+            this.ReadTimeout = timeoutForReads.GetValueOrDefault( Seconds.Thirty );
+            this.WriteTimeout = timeoutForWrites.GetValueOrDefault( this.ReadTimeout + Seconds.Thirty );
 
             this.DatabaseName = databaseName;
 
@@ -134,12 +135,12 @@ namespace Librainian.Database {
         public async Task DetachDatabaseAsync() {
             try {
                 if ( this.Connection.State == ConnectionState.Closed ) {
-                    await this.Connection.OpenAsync();
+                    await this.Connection.OpenAsync().ConfigureAwait( false );
                 }
 
                 using ( var cmd = this.Connection.CreateCommand() ) {
                     cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );
-                    await cmd.ExecuteNonQueryAsync();
+                    await cmd.ExecuteNonQueryAsync().ConfigureAwait( false );
                 }
             }
             catch ( SqlException exception ) {

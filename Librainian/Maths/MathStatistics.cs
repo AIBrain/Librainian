@@ -44,11 +44,10 @@ namespace Librainian.Maths
 
     using JetBrains.Annotations;
     using Measurement.Time;
-    using Numerics;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
+    using Rationals;
 
     public static class MathStatistics
     {
@@ -107,11 +106,11 @@ namespace Librainian.Maths
         /// <param name="items"></param>
         /// <returns></returns>
         /// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static BigRational GeometricMean([NotNull] this IEnumerable<BigRational> data, Int32 items)
+        public static Rational GeometricMean([NotNull] this IEnumerable<Rational> data, Int32 items)
         {
-            var aggregate = data.Aggregate(BigRational.One, (current, d) => current * d);
+            var aggregate = data.Aggregate(Rational.One, (current, d) => current * d);
 
-            return BigRational.Pow((Double)aggregate, (BigInteger)(1.0 / items)); //BUG possible conversion errors here
+            return Rational.Pow(aggregate, ( Int32 ) (1.0 / items)); //BUG possible conversion errors here
         }
 
         public static Double Intercept([NotNull] this List<TimeProgression> data)

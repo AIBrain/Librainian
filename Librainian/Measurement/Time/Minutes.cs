@@ -48,8 +48,8 @@ namespace Librainian.Measurement.Time {
 	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
-	using Numerics;
 	using Parsing;
+	using Rationals;
 
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -91,11 +91,11 @@ namespace Librainian.Measurement.Time {
 		public static readonly Minutes Zero = new Minutes( 0 );
 
 		[JsonProperty]
-		public BigRational Value { get; }
+		public Rational Value { get; }
 
-		public Minutes( Decimal value ) => this.Value = value;
+		public Minutes( Decimal value ) => this.Value = ( Rational ) value;
 
-		public Minutes( BigRational value ) => this.Value = value;
+		public Minutes( Rational value ) => this.Value = value;
 
 		public Minutes( Int64 value ) => this.Value = value;
 
@@ -103,9 +103,9 @@ namespace Librainian.Measurement.Time {
 
 		public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-		public static Minutes Combine( Minutes left, BigRational minutes ) => new Minutes( left.Value + minutes );
+		public static Minutes Combine( Minutes left, Rational minutes ) => new Minutes( left.Value + minutes );
 
-		public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( ( BigInteger )left.Value + minutes );
+		public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( left.Value + minutes );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -142,13 +142,13 @@ namespace Librainian.Measurement.Time {
 
 		public static Minutes operator -( Minutes left, Minutes right ) => Combine( left: left, right: -right );
 
-		public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, -minutes );
+		public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, ( Rational ) (-minutes) );
 
 		public static Boolean operator !=( Minutes left, Minutes right ) => !Equals( left, right );
 
 		public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
 
-		public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, minutes );
+		public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, ( Rational ) minutes );
 
 		public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
 
@@ -188,8 +188,8 @@ namespace Librainian.Measurement.Time {
 		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
 
 		public override String ToString() {
-			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.GetWholePart();
+			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "minute" )}";
 			}

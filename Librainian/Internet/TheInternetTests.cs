@@ -46,7 +46,6 @@ namespace Librainian.Internet {
     using System.Net;
     using Logging;
     using Measurement.Time;
-    using NUnit.Framework;
     using Threading;
 
     public static class TheInternetTests {
@@ -58,7 +57,7 @@ namespace Librainian.Internet {
             Console.WriteLine( webExceptionStatus );
         }
 
-        [Test]
+        
         public static void Test1() {
             var inprogress = new VolatileBoolean();
             var creds = new NetworkCredential( "AIBrain", @"hP&Y@bYsM5qT0tr" );

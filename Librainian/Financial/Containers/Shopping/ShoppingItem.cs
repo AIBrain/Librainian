@@ -37,112 +37,74 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "ShoppingItem.cs" was last formatted by Protiguous on 2018/07/10 at 9:04 PM.
+// Project: "Librainian", "ShoppingItem.cs" was last formatted by Protiguous on 2019/02/12 at 8:08 PM.
 
 namespace Librainian.Financial.Containers.Shopping {
 
-	using System;
-	using System.Collections.Generic;
-	using Exceptions;
-	using Extensions;
-	using Maths.Hashings;
-	using Newtonsoft.Json;
+    using System;
+    using Exceptions;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     Obviously there are thousands of real categories that should be loaded from a json document. But this is just a
-	///     sample/experimental class.
-	/// </summary>
-	public enum ItemCategory {
+    [JsonObject]
+    [Immutable]
+    public class ShoppingItem {
 
-		Invalid = -1,
+        [JsonProperty]
+        public ItemCategory Category { get; }
 
-		Other,
+        [JsonProperty]
+        public String Description { get; private set; }
 
-		Book,
+        [JsonProperty]
+        public Guid ItemID { get; }
 
-		Food,
+        [JsonProperty]
+        public Decimal Price { get; private set; }
 
-		Medical,
+        [JsonProperty]
+        public Boolean TaxExempt { get; protected set; }
 
-		Import
-	}
+        [JsonProperty]
+        public Boolean Voided { get; private set; }
 
-	[JsonObject]
-	[Immutable]
-	public class ShoppingItem {
+        public ShoppingItem( ItemCategory category, Guid itemID ) {
+            if ( category == ItemCategory.Invalid ) {
+                throw new ArgumentNullException( nameof( category ) );
+            }
 
-		[JsonProperty]
-		public ItemCategory Category { get; private set; }
+            if ( itemID == Guid.Empty ) {
+                throw new InvalidParameterException( "", new ArgumentNullException( nameof( itemID ) ) );
+            }
 
-		[JsonProperty]
-		public String Description { get; private set; }
+            this.Category = category;
+            this.ItemID = itemID;
+        }
 
-		[JsonProperty]
-		public Guid ItemID { get; private set; }
+        /// <summary>
+        ///     Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="rhs"> </param>
+        /// <returns></returns>
+        public static Boolean Equals( ShoppingItem left, ShoppingItem rhs ) {
+            if ( ReferenceEquals( left, rhs ) ) {
+                return true;
+            }
 
-		[JsonProperty]
-		public Decimal Price { get; private set; }
+            if ( null == left || null == rhs ) {
+                return false;
+            }
 
-		[JsonProperty]
-		public Boolean TaxExempt { get; protected set; }
+            return left.Category == rhs.Category && left.ItemID == rhs.ItemID;
+        }
 
-		[JsonProperty]
-		public Boolean Voided { get; private set; }
+        /// <summary>
+        ///     Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => (this.Category, this.ItemID).GetHashCode();
 
-		public ShoppingItem( ItemCategory category, Guid itemID ) {
-			if ( category == ItemCategory.Invalid ) { throw new ArgumentNullException( nameof( category ) ); }
-
-			if ( itemID == Guid.Empty ) { throw new InvalidParameterException( $"", new ArgumentNullException( nameof( itemID ) ) ); }
-
-			this.Category = category;
-			this.ItemID = itemID;
-		}
-
-		/// <summary>
-		///     Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="rhs"> </param>
-		/// <returns></returns>
-		public static Boolean Equals( ShoppingItem left, ShoppingItem rhs ) {
-			if ( ReferenceEquals( left, rhs ) ) { return true; }
-
-			if ( null == left || null == rhs ) { return false; }
-
-			return left.Category == rhs.Category && left.ItemID == rhs.ItemID;
-		}
-
-		/// <summary>
-		///     Serves as the default hash function.
-		/// </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Category.GetHashCodes( this.ItemID ); //non  { get; }  props.. what to do here?
-
-		public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
-	}
-
-	public class TaxableShoppingItem : ShoppingItem {
-
-		public TaxableShoppingItem( ItemCategory category, Guid itemID ) : base( category, itemID ) => this.TaxExempt = false;
-	}
-
-	public class TaxTable {
-
-		//TODO this should look up factors like area/state/zip/country, if this were a real project.
-		public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new Dictionary<ItemCategory, Decimal> {
-			{
-				ItemCategory.Invalid, 0m
-			}, {
-				ItemCategory.Book, 0.06m
-			}, {
-				ItemCategory.Food, 0.06m
-			}, {
-				ItemCategory.Medical, 0.06m
-			}, {
-				ItemCategory.Import, 0.06m
-			}, {
-				ItemCategory.Other, 0.06m
-			}
-		};
-	}
+        public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
+    }
 }

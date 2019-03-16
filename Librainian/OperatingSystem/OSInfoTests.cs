@@ -42,7 +42,6 @@
 namespace Librainian.OperatingSystem {
 
 	using System.Diagnostics;
-	using NUnit.Framework;
 
 	[TestFixture]
 	public static class OSInfoTests {

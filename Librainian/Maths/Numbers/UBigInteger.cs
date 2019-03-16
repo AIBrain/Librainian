@@ -43,12 +43,11 @@ namespace Librainian.Maths.Numbers
 {
 
     using Extensions;
-    using FluentAssertions;
     using JetBrains.Annotations;
-    using Numerics;
     using System;
     using System.Globalization;
     using System.Numerics;
+    using Rationals;
 
     /// <summary>
     ///     <para>Unsigned biginteger class.</para>
@@ -76,7 +75,7 @@ namespace Librainian.Maths.Numbers
 
         private UBigInteger(BigInteger value)
         {
-            value.Should().BeGreaterOrEqualTo(expected: BigInteger.Zero);
+            //value.Should().BeGreaterOrEqualTo(expected: BigInteger.Zero);
 
             if (value < BigInteger.Zero) { throw new ArgumentOutOfRangeException(); }
 
@@ -96,14 +95,14 @@ namespace Librainian.Maths.Numbers
             bytesWith00Attheendnd[bytes.Length] = 0;
             this._internalValue = new BigInteger(bytesWith00Attheendnd);
 
-            this._internalValue.Should().BeGreaterOrEqualTo(expected: 0);
+            //this._internalValue.Should().BeGreaterOrEqualTo(expected: 0);
 
             if (this._internalValue < 0) { throw new ArgumentOutOfRangeException(); }
         }
 
         public UBigInteger(Int64 value)
         {
-            value.Should().BeGreaterOrEqualTo(expected: 0);
+            //value.Should().BeGreaterOrEqualTo(expected: 0);
 
             if (value < 0) { throw new ArgumentOutOfRangeException(); }
 
@@ -140,8 +139,8 @@ namespace Librainian.Maths.Numbers
 
         public static Double operator /(Double left, UBigInteger right)
         {
-            right.Should().BeGreaterThan(expected: Zero);
-            var rational = new BigRational(numerator: new BigInteger(left), denominator: right._internalValue);
+            //right.Should().BeGreaterThan(expected: Zero);
+            var rational = new Rational(numerator: new BigInteger(left), denominator: right._internalValue);
 
             return (Double)rational;
         }

@@ -42,17 +42,17 @@
 
 namespace LibrainianTests.Persistence {
 
-	using System;
-	using System.Threading.Tasks;
-	using Librainian.ComputerSystem.FileSystem;
-	using Librainian.Magic;
-	using Librainian.Persistence;
-	using NUnit.Framework;
+    using System;
+    using System.Threading.Tasks;
+    using Librainian.Magic;
+    using Librainian.OperatingSystem.FileSystem;
+    using Librainian.Persistence;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class JSONFileTests {
+    [TestFixture]
+    public static class JSONFileTests {
 
-		public const String IniTestData = @"
+        public const String IniTestData = @"
 [ Section 1  ]
 ;This is a comment
 data1=value1
@@ -86,29 +86,29 @@ data33   =   3
 
 ";
 
-		public static IniFile Ini;
+        public static IniFile Ini;
 
-		public static Ini Json;
+        public static Ini Json;
 
-		[OneTimeSetUp]
-		public static void Setup() {
-			Json = IoC.Container.Get<Ini>();
-			Ini = IoC.Container.Get<IniFile>();
-		}
+        [OneTimeSetUp]
+        public static void Setup() {
+            Json = IoC.Container.Get<Ini>();
+            Ini = IoC.Container.Get<IniFile>();
+        }
 
-		[Test]
-		public static async Task test_load_from_string() {
-			Ini.Add( IniTestData );
+        [Test]
+        public static async Task test_load_from_string() {
+            Ini.Add( IniTestData );
 
-			Json.Add( Ini );
-			Json.Add( Ini );
-			Json.Add( Ini );
+            Json.Add( Ini );
+            Json.Add( Ini );
+            Json.Add( Ini );
 
-			Json.Document = Document.GetTempDocument( "config" );
+            Json.Document = Document.GetTempDocument( "config" );
 
-			if ( await Json.WriteAsync() ) {
-				Json.Document?.Delete();
-			}
-		}
-	}
+            if ( await Json.WriteAsync() ) {
+                Json.Document?.Delete();
+            }
+        }
+    }
 }

@@ -44,11 +44,11 @@ namespace Librainian.Measurement.Time {
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     /// <summary>
     /// </summary>
@@ -107,14 +107,14 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         public static readonly Zeptoseconds Zero = new Zeptoseconds(0);
 
-        public static BigRational InOneSecond { get; } = new BigInteger(10E21);
+        public static Rational InOneSecond { get; } = new BigInteger(10E21);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
-        public Zeptoseconds(Decimal value) => this.Value = value;
+        public Zeptoseconds(Decimal value) => this.Value = ( Rational ) value;
 
-        public Zeptoseconds(BigRational value) => this.Value = value;
+        public Zeptoseconds(Rational value) => this.Value = value;
 
         public Zeptoseconds(Int64 value) => this.Value = value;
 
@@ -122,7 +122,7 @@ namespace Librainian.Measurement.Time {
 
         public static Zeptoseconds Combine(Zeptoseconds left, Zeptoseconds right) => Combine(left, right.Value);
 
-        public static Zeptoseconds Combine(Zeptoseconds left, BigRational zeptoseconds) => new Zeptoseconds(left.Value + zeptoseconds);
+        public static Zeptoseconds Combine(Zeptoseconds left, Rational zeptoseconds) => new Zeptoseconds(left.Value + zeptoseconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -154,13 +154,13 @@ namespace Librainian.Measurement.Time {
 
         public static Zeptoseconds operator -(Zeptoseconds left, Zeptoseconds right) => Combine(left: left, right: -right);
 
-        public static Zeptoseconds operator -(Zeptoseconds left, Decimal zeptoseconds) => Combine(left, -zeptoseconds);
+        public static Zeptoseconds operator -(Zeptoseconds left, Decimal zeptoseconds) => Combine(left, ( Rational ) (-zeptoseconds));
 
         public static Boolean operator !=(Zeptoseconds left, Zeptoseconds right) => !Equals(left, right);
 
         public static Zeptoseconds operator +(Zeptoseconds left, Zeptoseconds right) => Combine(left, right);
 
-        public static Zeptoseconds operator +(Zeptoseconds left, Decimal zeptoseconds) => Combine(left, zeptoseconds);
+        public static Zeptoseconds operator +(Zeptoseconds left, Decimal zeptoseconds) => Combine(left, ( Rational ) zeptoseconds);
 
         public static Boolean operator <(Zeptoseconds left, Zeptoseconds right) => left.Value < right.Value;
 
@@ -191,13 +191,13 @@ namespace Librainian.Measurement.Time {
 
         public Attoseconds ToAttoseconds() => new Attoseconds(this.Value / InOneAttosecond);
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(PlanckTimes.InOneZeptosecond * this.Value);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational ) PlanckTimes.InOneZeptosecond);
 
         public Seconds ToSeconds() => new Seconds(this.Value * InOneSecond);
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("zs")}";
             }

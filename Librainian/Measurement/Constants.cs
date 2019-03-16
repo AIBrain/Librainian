@@ -44,7 +44,7 @@ namespace Librainian.Measurement {
 	using System;
 	using System.Numerics;
 	using JetBrains.Annotations;
-	using Numerics;
+	using Rationals;
 
 	public static class Constants {
 
@@ -66,6 +66,6 @@ namespace Librainian.Measurement {
 		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
 		public static readonly BigInteger MinimumUsefulDecimal = new BigInteger( Decimal.MinValue );
 
-		public static readonly BigRational OneOverTwo = new BigRational( 1, 2 ); //TODO overkill. But correct. lol.
+		public static readonly Rational OneOverTwo = new Rational( 1, 2 ); //TODO overkill. But correct. lol.
 	}
 }

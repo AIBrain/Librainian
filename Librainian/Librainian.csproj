@@ -43,13 +43,13 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
-    <NoWarn>IDE0015,IDE0044</NoWarn>
+    <NoWarn>IDE0015,IDE0044;IDE1006</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>embedded</DebugType>
@@ -60,7 +60,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>7.3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -147,21 +147,26 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\ConcurrentHashset.cs" />
+    <Compile Include="Collections\Sets\ConcurrentHashset.cs" />
     <Compile Include="Collections\ExperimentalAttribute.cs" />
     <Compile Include="Collections\Positionial.cs" />
-    <Compile Include="Collections\PriorityQueue.cs" />
+    <Compile Include="Collections\Queues\PriorityQueue.cs" />
     <Compile Include="Collections\PriorityTime.cs" />
-    <Compile Include="Collections\Shufflings.cs" />
+    <Compile Include="Collections\Extensions\Shufflings.cs" />
     <Compile Include="Collections\StringTable.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FileAttributeData.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FileWatchingEvents.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FindEveryDocument.cs" />
-    <Compile Include="ComputerSystem\FileSystem\MasterDocumentTable.cs" />
-    <Compile Include="ComputerSystem\FileSystem\PathInternal.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Unique.cs" />
-    <Compile Include="ComputerSystem\FileSystem\UniqueExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Win32DiskPartition.cs" />
+    <Compile Include="Financial\Containers\Shopping\ItemCategory.cs" />
+    <Compile Include="Financial\Containers\Shopping\TaxableShoppingItem.cs" />
+    <Compile Include="Financial\Containers\Shopping\TaxTable.cs" />
+    <Compile Include="Logging\Error.cs" />
+    <Compile Include="Maths\Numbers\PairOfDoubles.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileAttributeData.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileWatchingEvents.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FindEveryDocument.cs" />
+    <Compile Include="OperatingSystem\FileSystem\MasterDocumentTable.cs" />
+    <Compile Include="OperatingSystem\FileSystem\PathInternal.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Unique.cs" />
+    <Compile Include="OperatingSystem\FileSystem\UniqueExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Win32DiskPartition.cs" />
     <Compile Include="ComputerSystem\Memory.cs" />
     <Compile Include="Controls\CheckboxWithToolTip.cs">
       <SubType>Component</SubType>
@@ -184,6 +189,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Converters\ConverterExtensions.cs" />
+    <Compile Include="Converters\DecimalTo.cs" />
     <Compile Include="Converters\DoubleConverter.cs" />
     <Compile Include="Converters\Translate128.cs" />
     <Compile Include="Converters\Translate32.cs" />
@@ -204,6 +210,7 @@
     <Compile Include="Database\GenericPopulator.cs" />
     <Compile Include="Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Exceptions\InvalidParameterException.cs" />
+    <Compile Include="Exceptions\MissingTextException.cs" />
     <Compile Include="Exceptions\StreamException.cs" />
     <Compile Include="Exceptions\StreamReadException.cs" />
     <Compile Include="Exceptions\StreamWriteException.cs" />
@@ -222,27 +229,26 @@
     <Compile Include="Extensions\EvalProvider.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
-    <Compile Include="ComputerSystem\FileSystem\AllSeeingWatcher.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Chunk.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FolderBag.Node.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Location.cs" />
+    <Compile Include="OperatingSystem\FileSystem\AllSeeingWatcher.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Chunk.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderBag.Node.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Location.cs" />
     <Compile Include="ComputerSystem\Devices\LogicalDisk.cs" />
     <Compile Include="ComputerSystem\Devices\Device.cs" />
     <Compile Include="ComputerSystem\Devices\DeviceCapabilities.cs" />
     <Compile Include="ComputerSystem\Devices\DeviceClass.cs" />
     <Compile Include="ComputerSystem\Devices\DiskDeviceClass.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Volume.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Volume.cs" />
     <Compile Include="ComputerSystem\Devices\VolumeDeviceClass.cs" />
-    <Compile Include="ComputerSystem\FileSystem\ResultCode.cs" />
-    <Compile Include="ComputerSystem\FileSystem\NetworkConnection.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Partitions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\ResultCode.cs" />
+    <Compile Include="ComputerSystem\Devices\NetworkConnection.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Partitions.cs" />
     <Compile Include="Exceptions\MutableBaseException.cs" />
     <Compile Include="Exceptions\WritableFieldException.cs" />
     <Compile Include="Extensions\MutableFieldException.cs" />
     <Compile Include="Financial\Containers\Wallets\CashDrawer.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingItem.cs" />
     <Compile Include="Financial\Containers\Shopping\ShoppingCart.cs" />
-    <Compile Include="Financial\Containers\Wallets\WalletTests.cs" />
     <Compile Include="Financial\Currency\BankNotes\Fifty.cs" />
     <Compile Include="Financial\Currency\BankNotes\Five.cs" />
     <Compile Include="Financial\Currency\BankNotes\Hundred.cs" />
@@ -256,6 +262,7 @@
     <Compile Include="Financial\Currency\Coins\Penny.cs" />
     <Compile Include="Financial\Currency\Coins\Quarter.cs" />
     <Compile Include="Financial\Store.cs" />
+    <Compile Include="Internet\Credentials.cs" />
     <Compile Include="Internet\Internet.cs" />
     <Compile Include="Internet\TheInternetTests.cs" />
     <Compile Include="Logging\InformationLevel.cs" />
@@ -281,7 +288,6 @@
     <Compile Include="Maths\Union.cs" />
     <Compile Include="Maths\Murmur3.cs" />
     <Compile Include="Maths\HumanCalculator.cs" />
-    <Compile Include="Maths\MathTests.cs" />
     <Compile Include="Maths\Numbers\Binary.cs" />
     <Compile Include="Maths\Numbers\BinaryMatrix.cs" />
     <Compile Include="Maths\Numbers\Hex32.cs" />
@@ -303,11 +309,13 @@
     <Compile Include="OperatingSystem\ExternDll.cs" />
     <Compile Include="OperatingSystem\OSExtensions.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
+    <Compile Include="OperatingSystem\RegistryContext.cs" />
     <Compile Include="OperatingSystem\Storage\DetectSSD.cs" />
     <Compile Include="OperatingSystem\Info.cs" />
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
     <Compile Include="Parsing\ByteSizeFormatter.cs" />
+    <Compile Include="Parsing\Symbols.cs" />
     <Compile Include="Parsing\CompositeFormatter.cs" />
     <Compile Include="Parsing\Formatter.cs" />
     <Compile Include="Parsing\Validation\StringNum.cs" />
@@ -332,9 +340,11 @@
     <Compile Include="Parsing\Validation\ValidatedString.cs" />
     <Compile Include="Parsing\Validation\ValidatedStringJsonNetConverter.cs" />
     <Compile Include="Persistence\Cache.cs" />
+    <Compile Include="Persistence\CommonResultCode.cs" />
     <Compile Include="Persistence\IIni.cs" />
+    <Compile Include="Persistence\ResourceScanner.cs" />
     <Compile Include="Persistence\Settings.cs" />
-    <Compile Include="Persistence\Registry.cs" />
+    <Compile Include="Persistence\AppRegistry.cs" />
     <Compile Include="Persistence\CurrentUser.cs" />
     <Compile Include="Persistence\D.cs" />
     <Compile Include="Persistence\I.cs" />
@@ -349,7 +359,10 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
-    <Compile Include="Threading\ReaderWriter.cs" />
+    <Compile Include="Threading\CPU.cs" />
+    <Compile Include="Threading\EasierSemaphore.cs" />
+    <Compile Include="Threading\Idler.cs" />
+    <Compile Include="Threading\ReaderWriterFromMicrosoft.cs" />
     <Compile Include="Threading\Job.cs" />
     <Compile Include="Threading\UnitofWork.cs" />
     <Compile Include="Threading\VolatileBoolean.cs" />
@@ -358,8 +371,8 @@
     <Compile Include="Measurement\Time\Clocks\PauseableClock.cs" />
     <Compile Include="OperatingSystem\Compression\ZipStorer.cs" />
     <Compile Include="ComputerSystem\Computer.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FolderBag.cs" />
-    <Compile Include="ComputerSystem\FileSystem\DocumentCopyStatistics.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderBag.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DocumentCopyStatistics.cs" />
     <Compile Include="OperatingSystem\Windows.cs" />
     <Compile Include="Extensions\DerivedSerializableExceptionWithAdditionalCustomProperty.cs" />
     <Compile Include="Extensions\GuidUtility.cs" />
@@ -395,21 +408,19 @@
     <Compile Include="Internet\TraceExtensions.cs" />
     <Compile Include="Internet\TheNet.cs" />
     <Compile Include="OperatingSystem\ComputerFingerPrint.cs" />
-    <Compile Include="ComputerSystem\FileSystem\DefragExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\DocumentExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DefragExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DocumentExtensions.cs" />
     <Compile Include="OperatingSystem\Storage\PhysicalDisk.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Disk.cs" />
-    <Compile Include="ComputerSystem\FileSystem\DriveExtensions.cs" />
-    <Compile Include="OperatingSystem\FileHistory\FileHistoryFile.cs" />
-    <Compile Include="OperatingSystem\FileHistory\FileHistoryFileExtensions.cs" />
-    <Compile Include="OperatingSystem\FileHistory\FileHistoryFileTests.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FolderExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FSConstants.cs" />
-    <Compile Include="ComputerSystem\FileSystem\IOWrapper.cs" />
-    <Compile Include="ComputerSystem\FileSystem\PathSplitter.cs" />
+    <Compile Include="ComputerSystem\Devices\Disk.cs" />
+    <Compile Include="ComputerSystem\Devices\DriveExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileHistory\FileHistoryFile.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FSConstants.cs" />
+    <Compile Include="OperatingSystem\FileSystem\IOWrapper.cs" />
+    <Compile Include="OperatingSystem\FileSystem\PathSplitter.cs" />
     <Compile Include="Magic\ChainElement.cs" />
     <Compile Include="Magic\Instantiator.cs" />
-    <Compile Include="Maths\Constants.cs" />
+    <Compile Include="Maths\MathConstants.cs" />
     <Compile Include="Maths\Numbers\Countable.cs" />
     <Compile Include="Maths\Numbers\Int256.cs" />
     <Compile Include="Maths\Numbers\Credits.cs" />
@@ -427,33 +438,32 @@
     <Compile Include="Parsing\ParagraphExtensions.cs" />
     <Compile Include="Persistence\IniFile.cs" />
     <Compile Include="Persistence\Ini.cs" />
-    <Compile Include="Collections\BlockingQueue.cs" />
-    <Compile Include="Collections\ConcurrentList.cs" />
-    <Compile Include="Collections\ConcurrentSet.cs" />
-    <Compile Include="Collections\ConcurrentBlockingQueue.cs" />
-    <Compile Include="Collections\ImmutableList.cs" />
-    <Compile Include="Collections\ShufflingType.cs" />
-    <Compile Include="Collections\TreeTraversalType.cs" />
-    <Compile Include="Collections\CollectionDebugView.cs" />
-    <Compile Include="Collections\ConcurrentCollection.cs" />
-    <Compile Include="Collections\ConcurrentStackNoBlock.cs" />
+    <Compile Include="Collections\Queues\BlockingQueue.cs" />
+    <Compile Include="Collections\Lists\ConcurrentList.cs" />
+    <Compile Include="Collections\Sets\ConcurrentSet.cs" />
+    <Compile Include="Collections\Queues\ConcurrentBlockingQueue.cs" />
+    <Compile Include="Collections\Lists\ImmutableList.cs" />
+    <Compile Include="Collections\Extensions\ShufflingType.cs" />
+    <Compile Include="Collections\Trees\TreeTraversalType.cs" />
+    <Compile Include="Collections\Extensions\CollectionDebugView.cs" />
+    <Compile Include="Collections\Stacks\ConcurrentCollection.cs" />
+    <Compile Include="Collections\Stacks\ConcurrentStackNoBlock.cs" />
     <Compile Include="Collections\EnumerableToArrayBuffer.cs" />
     <Compile Include="Collections\ITreeNodeAware.cs" />
-    <Compile Include="Collections\LockfreeQueue.cs" />
+    <Compile Include="Collections\Queues\LockfreeQueue.cs" />
     <Compile Include="Collections\MultiKeyDictionary.cs" />
-    <Compile Include="Collections\PairOfDoubles.cs" />
-    <Compile Include="Collections\ParallelList.cs" />
-    <Compile Include="Collections\QueueWaiting.cs" />
-    <Compile Include="Collections\SingleLinkNode.cs" />
+    <Compile Include="Collections\Lists\ParallelList.cs" />
+    <Compile Include="Collections\Queues\QueueWaiting.cs" />
+    <Compile Include="Collections\Trees\SingleLinkNode.cs" />
     <Compile Include="Collections\StringVersusGuid.cs" />
-    <Compile Include="Collections\ThreadSafeList.cs" />
-    <Compile Include="Collections\TimeStampQueue.cs" />
-    <Compile Include="Collections\TrainingQueue.cs" />
-    <Compile Include="Collections\TreeNode.cs" />
-    <Compile Include="Collections\TreeNodeList.cs" />
-    <Compile Include="Collections\TreeTask.cs" />
-    <Compile Include="Collections\VirtualList.cs" />
-    <Compile Include="Collections\WithTime.cs" />
+    <Compile Include="Collections\Lists\ThreadSafeList.cs" />
+    <Compile Include="Collections\Queues\TimeStampQueue.cs" />
+    <Compile Include="Collections\Queues\TrainingQueue.cs" />
+    <Compile Include="Collections\Trees\TreeNode.cs" />
+    <Compile Include="Collections\Trees\TreeNodeList.cs" />
+    <Compile Include="Collections\Trees\TreeTask.cs" />
+    <Compile Include="Collections\Lists\VirtualList.cs" />
+    <Compile Include="Collections\Queues\WithTime.cs" />
     <Compile Include="Collections\WordToGuidAndGuidToWord.cs" />
     <Compile Include="Controls\AutoLayoutWindow.cs">
       <SubType>form</SubType>
@@ -491,11 +501,11 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\DummyXMLResolver.cs" />
     <Compile Include="Extensions\EventArgs.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FileSizeFormatProviderExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
     <Compile Include="Extensions\HashSetLinqAccess.cs" />
     <Compile Include="Extensions\ImmutableAttribute.cs" />
-    <Compile Include="ComputerSystem\FileSystem\JunctionPoint.cs" />
+    <Compile Include="OperatingSystem\FileSystem\JunctionPoint.cs" />
     <Compile Include="Extensions\LargeSizeFormatProvider.cs" />
     <Compile Include="Extensions\LargeSizeFormatProviderExtensions.cs" />
     <Compile Include="Extensions\Locks.cs" />
@@ -547,19 +557,19 @@
     <Compile Include="Internet\PingExtensions.cs" />
     <Compile Include="Internet\NetworkBrowser.cs" />
     <Compile Include="OperatingSystem\Compression\CompressExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\FileSizeFormatProvider.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileSizeFormatProvider.cs" />
     <Compile Include="OperatingSystem\WMI\WMIExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\NetworkAdapter.cs" />
+    <Compile Include="ComputerSystem\Devices\NetworkAdapter.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessFeeding.cs" />
     <Compile Include="OperatingSystem\Compression\RandomnessTest.cs" />
     <Compile Include="OperatingSystem\Streams\StreamString.cs" />
     <Compile Include="OperatingSystem\Streams\ContainerStream.cs" />
-    <Compile Include="ComputerSystem\FileSystem\CopyProgressCallbackReason.cs" />
-    <Compile Include="ComputerSystem\FileSystem\CopyProgressResult.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Folder.cs" />
-    <Compile Include="ComputerSystem\FileSystem\MoveFileFlags.cs" />
+    <Compile Include="OperatingSystem\FileSystem\CopyProgressCallbackReason.cs" />
+    <Compile Include="OperatingSystem\FileSystem\CopyProgressResult.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Folder.cs" />
+    <Compile Include="OperatingSystem\FileSystem\MoveFileFlags.cs" />
     <Compile Include="OperatingSystem\Streams\ProgressStream.cs" />
-    <Compile Include="ComputerSystem\FileSystem\SearchStyle.cs" />
+    <Compile Include="OperatingSystem\FileSystem\SearchStyle.cs" />
     <Compile Include="Linguistics\Author.cs" />
     <Compile Include="Linguistics\UDC.cs" />
     <Compile Include="Magic\ABetterClassDispose.cs" />
@@ -568,8 +578,8 @@
     <Compile Include="Magic\MagicExtensions.cs" />
     <Compile Include="Magic\NinjectIocContainer.cs" />
     <Compile Include="Security\CRC32.cs" />
-    <Compile Include="ComputerSystem\FileSystem\IOExtensions.cs" />
-    <Compile Include="ComputerSystem\FileSystem\Document.cs" />
+    <Compile Include="OperatingSystem\FileSystem\IOExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Document.cs" />
     <Compile Include="Internet\Browser\Chrome.cs" />
     <Compile Include="Internet\Inet.cs" />
     <Compile Include="Internet\FTP\BasicFTPClient.cs" />
@@ -613,11 +623,7 @@
     <Compile Include="Linguistics\PoS\PartsOfSpeech.cs" />
     <Compile Include="Linguistics\PoS\TaggedSentence.cs" />
     <Compile Include="Linguistics\WordCombo.cs" />
-    <Compile Include="Maths\Numbers\BigDecimal.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Maths\Ranges\BigIntegerRange.cs" />
-    <Compile Include="Maths\Numbers\BiggerRational.cs" />
     <Compile Include="Maths\Ranges\Int64Range.cs" />
     <Compile Include="Maths\FourBytes.cs" />
     <Compile Include="Maths\Numbers\UInt256.cs" />
@@ -721,7 +727,6 @@
     <Compile Include="Security\Crc64Iso.cs" />
     <Compile Include="Security\Impersonator.cs" />
     <Compile Include="Security\SecurityExtensions.cs" />
-    <Compile Include="Security\Encryption2.cs" />
     <Compile Include="Security\AESThenHMAC.cs" />
     <Compile Include="Measurement\Currency\BTC\Address.cs" />
     <Compile Include="Measurement\Currency\BTC\Bitcoins.cs" />
@@ -777,7 +782,7 @@
     <Compile Include="Threading\AsyncReaderWriterLock.cs" />
     <Compile Include="Threading\Blocks.cs" />
     <Compile Include="Security\C5Random.cs" />
-    <Compile Include="Collections\CollectionExtensions.cs" />
+    <Compile Include="Collections\Extensions\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
     <Compile Include="Threading\ArrayTraverse.cs" />
@@ -831,12 +836,15 @@
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Security\md5sum.exe">
+    <None Include="Security\md5sum.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </None>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Licenses\MIT License.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Measurement\Currency\USD\" />
@@ -859,20 +867,24 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BigRationalLibrary">
-      <Version>1.0.0</Version>
+    <PackageReference Include="Costura.Fody">
+      <Version>3.3.2</Version>
     </PackageReference>
-    <PackageReference Include="FluentAssertions">
-      <Version>5.5.3</Version>
+    <PackageReference Include="Fody">
+      <Version>4.0.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
-      <Version>2018.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="JetBrains.DotMemoryUnit">
-      <Version>2.3.20160517.113140</Version>
+      <Version>2018.3.0</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD.Parallel">
-      <Version>1.0.0</Version>
+      <Version>1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="MemoryInterop.ILPatcher">
+      <Version>2.0.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>
@@ -889,23 +901,23 @@
     <PackageReference Include="NLog.Windows.Forms">
       <Version>4.2.3</Version>
     </PackageReference>
-    <PackageReference Include="NUnit">
-      <Version>3.11.0</Version>
-    </PackageReference>
     <PackageReference Include="RandomNameGeneratorLibrary">
       <Version>1.2.2</Version>
     </PackageReference>
+    <PackageReference Include="Rationals">
+      <Version>1.3.3</Version>
+    </PackageReference>
     <PackageReference Include="ReactiveUI">
-      <Version>9.7.2</Version>
+      <Version>9.11.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Events.Winforms">
-      <Version>9.7.2</Version>
+      <Version>9.11.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Fody">
-      <Version>9.7.2</Version>
+      <Version>9.11.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.WinForms">
-      <Version>9.7.2</Version>
+      <Version>9.11.1</Version>
     </PackageReference>
     <PackageReference Include="Rx-Core">
       <Version>2.2.5</Version>
@@ -914,7 +926,7 @@
       <Version>2.2.5</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
-      <Version>4.5.1</Version>
+      <Version>4.5.2</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Dataflow">
       <Version>4.9.0</Version>
@@ -929,7 +941,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

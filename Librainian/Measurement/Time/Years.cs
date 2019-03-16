@@ -44,11 +44,11 @@ namespace Librainian.Measurement.Time {
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     [JsonObject]
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
@@ -74,11 +74,11 @@ namespace Librainian.Measurement.Time {
         public static Years Zero { get; } = new Years(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
-        public Years(Decimal value) => this.Value = value;
+        public Years(Decimal value) => this.Value = ( Rational ) value;
 
-        public Years(BigRational value) => this.Value = value;
+        public Years(Rational value) => this.Value = value;
 
         public Years(Int64 value) => this.Value = value;
 
@@ -86,9 +86,9 @@ namespace Librainian.Measurement.Time {
 
         public static Years Combine(Years left, Years right) => Combine(left, right.Value);
 
-        public static Years Combine(Years left, Decimal years) => new Years(left.Value + years);
+        public static Years Combine(Years left, Decimal years) => new Years(left.Value + ( Rational ) years);
 
-        public static Years Combine(Years left, BigRational years) => new Years(left.Value + years);
+        public static Years Combine(Years left, Rational years) => new Years(left.Value + years);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -138,13 +138,13 @@ namespace Librainian.Measurement.Time {
 
         public Months ToMonths() => new Months(this.Value * Months.InOneCommonYear);
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(PlanckTimes.InOneYear * this.Value);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational ) PlanckTimes.InOneYear);
 
         public Seconds ToSeconds() => new Seconds(this.Value * Seconds.InOneCommonYear);
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("year")}";
             }
@@ -156,6 +156,6 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
 
-        public Weeks ToWeeks() => new Weeks(this.Value * Weeks.InOneCommonYear);
+        public Weeks ToWeeks() => new Weeks(this.Value * ( Rational ) Weeks.InOneCommonYear);
     }
 }

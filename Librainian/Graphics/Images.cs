@@ -54,11 +54,11 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
-    using ComputerSystem.FileSystem;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
+    using OperatingSystem.FileSystem;
     using Parsing;
 
     public static class Images {

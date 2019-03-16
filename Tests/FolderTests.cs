@@ -42,23 +42,23 @@
 
 namespace LibrainianTests {
 
-	using Librainian.ComputerSystem.FileSystem;
-	using Librainian.OperatingSystem;
-	using Librainian.Persistence;
-	using NUnit.Framework;
+    using Librainian.OperatingSystem;
+    using Librainian.OperatingSystem.FileSystem;
+    using Librainian.Persistence;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class FolderTests {
+    [TestFixture]
+    public static class FolderTests {
 
-		[Test]
-		public static void TestSerialize() {
-			var expected = Windows.WindowsSystem32Folder.Value;
+        [Test]
+        public static void TestSerialize() {
+            var expected = Windows.WindowsSystem32Folder.Value;
 
-			var json = expected.ToJSON();
+            var json = expected.ToJSON();
 
-			var actual = json.FromJSON<Folder>();
+            var actual = json.FromJSON<Folder>();
 
-			Assert.AreEqual( expected, actual );
-		}
-	}
+            Assert.AreEqual( expected, actual );
+        }
+    }
 }

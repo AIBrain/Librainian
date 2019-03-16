@@ -54,10 +54,94 @@ namespace Librainian.Database {
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
-	using NUnit.Framework;
 	using Parsing;
+	using static Persistence.Cache;
+	using FieldToByte = System.Collections.Generic.Dictionary<System.String, System.Byte>;
 
-	public static class DatabaseExtensions {
+    public static class DatabaseExtensions {
+
+
+		/// <summary>
+		///     Returns the ordinal or null.
+		/// </summary>
+		/// <param name="reader">    </param>
+		/// <param name="columnName"></param>
+		/// <returns></returns>
+		public static Int32? Ordinal( [NotNull] this SqlDataReader reader, [NotNull] String columnName ) {
+			if ( reader == default ) {
+				throw new ArgumentNullException( paramName: nameof( reader ) );
+			}
+
+			if ( String.IsNullOrEmpty( value: columnName ) ) {
+				throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( columnName ) );
+			}
+
+			var dictionary = reader.GetDict();
+
+			if ( dictionary.TryGetValue( columnName, out var result ) ) {
+				return result;
+			}
+
+			return default;
+		}
+
+		/// <summary>
+		///     Get a key for this <paramref name="reader" />.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		[NotNull]
+		private static String Key( [NotNull] this IDataReader reader ) {
+			if ( reader == null ) {
+				throw new ArgumentNullException( paramName: nameof( reader ) );
+			}
+
+			return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth );
+		}
+
+		/// <summary>
+        ///     Cache the fields in this <paramref name="reader" /> for 1 minute.
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        [NotNull]
+		private static FieldToByte GetDict( [NotNull] this IDataReader reader ) {
+			if ( reader == null ) {
+				throw new ArgumentNullException( paramName: nameof( reader ) );
+			}
+
+			var key = reader.Key();
+
+			if ( !( Recall( key ) is FieldToByte fields ) ) {
+				fields = reader.GetFieldNames();
+				Remember( key, fields, Sliding.OneMinute );
+			}
+
+			return fields;
+		}
+
+
+		/// <summary>
+		///     Return a dictionary of fields and their index.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		[NotNull]
+		private static FieldToByte GetFieldNames( [NotNull] this IDataReader reader ) {
+			if ( reader == null ) {
+				throw new ArgumentNullException( paramName: nameof( reader ) );
+			}
+
+			var dictionary = new FieldToByte( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
+
+			if ( !reader.IsClosed ) {
+				for ( Byte i = 0; i < reader.FieldCount; i++ ) {
+					dictionary.Add( reader.GetName( i ), i );
+				}
+			}
+
+			return dictionary;
+		}
 
 		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
@@ -72,7 +156,7 @@ namespace Librainian.Database {
 			}
 
 			//T item = new T();
-			var item = Activator.CreateInstance<T>();
+			var item = Activator.CreateInstance<T>();	//TODO use the faster creation function
 
 			foreach ( var property in properties ) {
 				property.SetValue( item, row[ property.Name ], null );
@@ -209,13 +293,7 @@ namespace Librainian.Database {
 			return String.Empty;
 		}
 
-		[Test]
-		public static void ListInstances() {
-			foreach ( var instance in EnumerateSqlInstances() ) {
-				Console.WriteLine( instance );
-			}
-		}
-
+		
 		public static void StartSqlBrowserService( [NotNull] IEnumerable<String> activeMachines ) {
 			var myService = new ServiceController {
 				ServiceName = "SQLBrowser"

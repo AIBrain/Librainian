@@ -44,9 +44,9 @@ namespace Librainian.Measurement.Time.Clocks {
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using Numerics;
 	using System;
 	using System.Timers;
+	using Rationals;
 
 	/// <summary>
 	///     A 'pause-able' clock.
@@ -254,7 +254,7 @@ namespace Librainian.Measurement.Time.Clocks {
 				this.Pause();
 				var right = amount.Value;
 
-				while (right > BigRational.Zero) {
+				while (right > Rational.Zero) {
 					this.TickTock(fireEvents: false);
 					right--;
 				}

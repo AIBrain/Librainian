@@ -42,24 +42,24 @@
 
 namespace LibrainianTests {
 
-	using System;
-	using Librainian.Security;
-	using NUnit.Framework;
+    using System;
+    using Librainian.Security;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class SecurityTests {
+    [TestFixture]
+    public static class SecurityTests {
 
-		[Test]
-		public static void TestEncryptionAndDecryption() {
-			const String phraseToTest = "Hello world";
+        [Test]
+        public static void TestEncryptionAndDecryption() {
+            const String phraseToTest = "Hello world";
 
-			var encrypted = phraseToTest.ToSecureString().EncryptString();
-			var decrypted = encrypted.DecryptString().ToInsecureString();
+            var encrypted = phraseToTest.ToSecureString().EncryptString();
+            var decrypted = encrypted.DecryptString().ToInsecureString();
 
-			Assert.AreEqual( expected: decrypted, actual: phraseToTest );
-		}
+            Assert.AreEqual( expected: decrypted, actual: phraseToTest );
+        }
 
-		/*
+        /*
 		[Test]
 		public static void TestGenerateGenerates() {
 			var result = SecurityExtensions.GenerateKey( username: "Test" );
@@ -68,5 +68,5 @@ namespace LibrainianTests {
 			// 1-KbQP3bo4zph3ynO0flLTxzB8d25AY74E
 		}
 		*/
-	}
+    }
 }

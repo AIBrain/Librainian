@@ -41,23 +41,23 @@
 
 namespace Librainian.Knowledge {
 
-	using System;
-	using Collections;
-	using Magic;
-	using Newtonsoft.Json;
+    using System;
+    using Collections.Lists;
+    using Magic;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public class Topic : ABetterClassDispose {
+    [JsonObject]
+    public class Topic : ABetterClassDispose {
 
-		[JsonProperty]
-		public readonly ConcurrentList<Factoid> Facts = new ConcurrentList<Factoid>();
+        [JsonProperty]
+        public readonly ConcurrentList<Factoid> Facts = new ConcurrentList<Factoid>();
 
-		[JsonProperty]
-		public String Description { get; private set; }
+        [JsonProperty]
+        public String Description { get; private set; }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() => this.Facts.Dispose();
-	}
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Facts.Dispose();
+    }
 }

@@ -44,11 +44,11 @@ namespace Librainian.Measurement.Time {
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
     [JsonObject]
@@ -131,11 +131,11 @@ namespace Librainian.Measurement.Time {
         public static readonly Picoseconds Zero = new Picoseconds(0);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
         public Picoseconds(Decimal value) => this.Value = value;
 
-        public Picoseconds(BigRational value) => this.Value = value;
+        public Picoseconds(Rational value) => this.Value = value;
 
         public Picoseconds(Int64 value) => this.Value = value;
 
@@ -143,7 +143,7 @@ namespace Librainian.Measurement.Time {
 
         public static Picoseconds Combine(Picoseconds left, Picoseconds right) => Combine(left, right.Value);
 
-        public static Picoseconds Combine(Picoseconds left, BigRational picoseconds) => new Picoseconds(left.Value + picoseconds);
+        public static Picoseconds Combine(Picoseconds left, Rational picoseconds) => new Picoseconds(left.Value + picoseconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -198,8 +198,8 @@ namespace Librainian.Measurement.Time {
         public Seconds ToSeconds() => throw new NotImplementedException();
 
         public override String ToString() {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational) {
-                var whole = this.Value.GetWholePart();
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("ps")}";
             }

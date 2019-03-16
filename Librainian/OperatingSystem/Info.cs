@@ -45,6 +45,7 @@ namespace Librainian.OperatingSystem
     using JetBrains.Annotations;
     using Microsoft.Win32;
     using System;
+    using Parsing;
 
     /// <summary>
     ///     Static class that adds convenient methods for getting information on the running computers
@@ -60,11 +61,9 @@ namespace Librainian.OperatingSystem
         ///     Returns the Windows build. "rs1_release"
         /// </summary>
         [CanBeNull]
-        public static String BuildBranch() =>
-#pragma warning disable CC0021 // Use nameof
-            TryGetRegistryKeyHKLM(CurrentVersion, "BuildBranch", out var value) ? value : null;
+        public static String BuildBranch() => (TryGetRegistryKeyHKLM( CurrentVersion, "BuildBranch", out var value ) ? value : null) as String;
 
-#pragma warning restore CC0021 // Use nameof
+
 
         /// <summary>
         ///     Returns the Windows build. "14393"
@@ -95,7 +94,9 @@ namespace Librainian.OperatingSystem
         /// </summary>
         public static Boolean? IsServer()
         {
-            if (TryGetRegistryKeyHKLM(CurrentVersion, "InstallationType", out var installationType)) { return !installationType.Like("Client"); }
+            if (TryGetRegistryKeyHKLM(CurrentVersion, "InstallationType", out var installationType)) {
+                return !installationType?.ToString().Like( "Client" );
+            }
 
             return null;
         }
@@ -103,9 +104,9 @@ namespace Librainian.OperatingSystem
         /// <summary>
         ///     Returns the Windows release id.
         /// </summary>
-        public static UInt32? ReleaseId() => TryGetRegistryKeyHKLM(CurrentVersion, "ReleaseId", out var value) ? Convert.ToUInt32(value) : null;
+        public static UInt32? ReleaseId() => TryGetRegistryKeyHKLM(CurrentVersion, "ReleaseId", out var value) ? Convert.ToUInt32(value) : ( UInt32? ) null;
 
-        public static Boolean TryGetRegistryKeyHKLM([NotNull] String path, [NotNull] String key, [CanBeNull] out dynamic value)
+        public static Boolean TryGetRegistryKeyHKLM([NotNull] String path, [NotNull] String key, [CanBeNull] out Object value)
         {
             if (path == null) { throw new ArgumentNullException(nameof(path)); }
 
@@ -137,4 +138,5 @@ namespace Librainian.OperatingSystem
         /// </summary>
         public static UInt32? VersionMinor() => TryGetRegistryKeyHKLM(CurrentVersion, "CurrentMinorVersionNumber", out var value) ? (UInt32?)(UInt32)value : null;
     }
+
 }

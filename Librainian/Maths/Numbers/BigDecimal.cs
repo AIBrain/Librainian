@@ -46,13 +46,13 @@ namespace Librainian.Maths.Numbers
     using Extensions;
     using Hashings;
     using JetBrains.Annotations;
-    using Numerics;
     using NUnit.Framework;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Globalization;
     using System.Numerics;
+    using Rationals;
 
     /// <summary>
     ///     <para>Arbitrary precision Decimal.</para>
@@ -70,7 +70,7 @@ namespace Librainian.Maths.Numbers
     /// <see cref="http://gist.github.com/nberardi/2667136" />
     [Immutable]
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
-    [Obsolete("Use BigRational instead.")]
+    [Obsolete("Use Rational instead.")]
     public struct BigDecimal : IComparable, IComparable<BigDecimal>, IConvertible, /*IFormattable,*/ IEquatable<BigDecimal>
     {
 
@@ -254,9 +254,9 @@ namespace Librainian.Maths.Numbers
         public static BigDecimal Divide(BigDecimal dividend, BigDecimal divisor)
         {
             var dendp = BigInteger.Pow(10, dividend.Exponent);
-            var dend = new BigRational(numerator: dividend.Mantissa, denominator: -dendp);
+            var dend = new Rational(numerator: dividend.Mantissa, denominator: -dendp);
 
-            //var bob = BigRational.Divide( dend, divisor );
+            //var bob = Rational.Divide( dend, divisor );
 
             var ratio = dividend.Mantissa.NumberOfDigits() + divisor.Mantissa.NumberOfDigits();
 
@@ -904,4 +904,5 @@ namespace Librainian.Maths.Numbers
 
         // var split = value.Split( '.' ); split.Should().HaveCount( expected: 2, because: "otherwise invalid" ); if ( split.Length != 2 ) { whyParseFailed = ""; return false; } var wholeSide = split[ 0 ];
     }
+}    }
 }

@@ -44,7 +44,7 @@ namespace Librainian.Maths {
     using System;
     using System.Text;
     using System.Threading.Tasks;
-    using Collections;
+    using Collections.Extensions;
     using Exceptions;
     using Internet;
     using JetBrains.Annotations;

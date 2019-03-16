@@ -37,42 +37,50 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Alpha.cs" was last formatted by Protiguous on 2018/07/13 at 1:35 AM.
+// Project: "Librainian", "Alpha.cs" was last formatted by Protiguous on 2019/02/12 at 3:31 PM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.IO;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Collections;
-	using ComputerSystem;
-	using ComputerSystem.FileSystem;
-	using JetBrains.Annotations;
-	using Logging;
+    using System;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Collections.Extensions;
+    using ComputerSystem;
+    using JetBrains.Annotations;
+    using Logging;
+    using OperatingSystem.FileSystem;
+    using Parsing;
 
-	/// <summary>
-	///     The last data storage class your program should ever need.
-	/// </summary>
-	public static class Alpha {
+    /// <summary>
+    ///     The last data storage class your program should ever need. Hah, I wish.
+    /// </summary>
+    public static class Alpha {
 
-		/// <summary>
-		///     Pull the value out of the either.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static Boolean TryGet( String key, [CanBeNull] out String value ) {
-			value = null;
+        public interface IResourceSource {
 
-			return false;
-		}
+            Task<TimeTracker> DiscoveryTask { get; set; }
+        }
 
-		/*
+        /// <summary>
+        ///     Pull the value out of the either.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static Boolean TryGet( String key, [CanBeNull] out String value ) {
+            value = null;
 
-//failure is not an option. No exceptions visible to user. If there is storage( ram, disk, ssd, flash, lan, inet) of any sort, let this class Store & Retrieve the data.
+            return false;
+        }
 
-//screw security.. leave encrypt before storage and decrypt after retrieval up to the program/user
+        /*
+
+//failure is not an option. NO EXCEPTIONS VISIBLE TO USER. If there is storage( ram, disk, ssd, flash, lan, inet) of any sort, let this class Store & Retrieve the data.
+
+            //if the Key cannot be found in any storage locations, simply return default. don't throw any exceptions. I'm sick and tired of things throwing.
+
+//screw security.. put encryption before storage and decryption after retrieval up to the user
 
 //get list of disks on local computer
 
@@ -80,7 +88,7 @@ namespace Librainian.Persistence {
 
 //check AppDataa for any pointers to other storage locations
 
-//use static PersistentDictionary access to store and retrieve. make it is using json serializer.
+//use static PersistentDictionary access to store and retrieve. make it "using json serializer".
 
 //get list of available lan storage
 
@@ -94,119 +102,143 @@ namespace Librainian.Persistence {
 //async Retrieve(NameKey)
 */
 
-		public static class Storage {
+        public static class Storage {
 
-			private static TrackTime InitializeTime { get; } = new TrackTime();
+            [NotNull]
+            private static TimeTracker InitializeTimeTracker { get; } = new TimeTracker();
 
-			private static CancellationTokenSource LocalDiscoveryCancellation { get; } = new CancellationTokenSource();
+            [CanBeNull]
+            private static Task LocalDiscoveryTask { get; set; }
 
-			private static Task LocalDiscoveryTask { get; set; }
+            [NotNull]
+            private static TimeTracker LocalDiscoveryTimeTracker { get; } = new TimeTracker();
 
-			private static TrackTime LocalResourceDiscoveryTime { get; } = new TrackTime();
+            [CanBeNull]
+            private static Task RemoteDiscoveryTask { get; set; }
 
-			private static CancellationTokenSource RemoteDiscoveryCancellation { get; } = new CancellationTokenSource();
+            [NotNull]
+            private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new TimeTracker();
 
-			private static Task RemoteDiscoveryTask { get; set; }
+            [NotNull]
+            public static CancellationTokenSource LocalDiscoveryCancellationSource { get; set; }
 
-			private static TrackTime RemoteResourceDiscoveryTime { get; } = new TrackTime();
+            [NotNull]
+            public static CancellationTokenSource RemoteDiscoveryCancellationSource { get; set; }
 
-			/// <summary>
-			///     The <see cref="Root" /> folder for pointing to storage locations?
-			/// </summary>
-			public static PersistTable<String, I> Root { get; }
+            /// <summary>
+            ///     The <see cref="Root" /> folder for pointing to storage locations?
+            /// </summary>
+            public static PersistTable<String, String> Root { get; }
 
-			/// <summary>
-			///     Where the main indexes will be stored.
-			/// </summary>
-			public static Folder RootPath { get; } = new Folder( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ), Path.Combine( nameof( Storage ), nameof( Root ) ) ) );
+            /// <summary>
+            ///     Where the main indexes will be stored.
+            /// </summary>
+            public static Folder RootPath { get; } = new Folder( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
+                Path.Combine( nameof( Storage ), nameof( Root ) ) ) );
 
-			static Storage() {
+            static Storage() {
 
-				if ( !RootPath.Exists() ) {
-					RootPath.Create();
+                if ( !RootPath.Exists() ) {
+                    RootPath.Create();
 
-					if ( !RootPath.Exists() ) { throw new DirectoryNotFoundException( RootPath.FullName ); }
-				}
+                    if ( !RootPath.Exists() ) {
+                        throw new DirectoryNotFoundException( RootPath.FullName );
+                    }
+                }
 
-				Root = new PersistTable<String, I>( RootPath );
-			}
+                Root = new PersistTable<String, String>( RootPath );
+            }
 
-			private static Boolean DiscoverLocalResources() {
-				try {
+            private static Boolean DiscoverLocalResources() {
+                try {
 
-					//make this a task
-					LocalResourceDiscoveryTime.Started = DateTime.UtcNow;
+                    //make this a task
+                    LocalDiscoveryTimeTracker.Started = DateTime.UtcNow;
 
-					var computer = new Computer();
+                    var computer = new Computer();
 
-					//var drives = new DeviceClass(
+                    //var drives = new DeviceClass(
 
-					//search drives for free space
-					//report back
-				}
-				catch ( Exception exception ) { exception.Log(); }
-				finally { LocalResourceDiscoveryTime.Finished = DateTime.UtcNow; }
+                    //search drives for free space
+                    //report back
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+                finally {
+                    LocalDiscoveryTimeTracker.Finished = DateTime.UtcNow;
+                }
 
-				return false;
-			}
+                return false;
+            }
 
-			private static Boolean DiscoverRemoteResources() {
-				try {
+            private static Boolean DiscoverRemoteResources() {
+                try {
 
-					//make this a task
-					RemoteResourceDiscoveryTime.Started = DateTime.UtcNow;
+                    //make this a task
+                    RemoteResourceDiscoveryTimeTracker.Started = DateTime.UtcNow;
 
-					//search network/internet? for storage locations
-					//report back
-				}
-				catch ( Exception exception ) { exception.Log(); }
-				finally { RemoteResourceDiscoveryTime.Finished = DateTime.UtcNow; }
+                    //search network/internet? for storage locations
+                    //report back
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+                finally {
+                    RemoteResourceDiscoveryTimeTracker.Finished = DateTime.UtcNow;
+                }
 
-				return false;
-			}
+                return false;
+            }
 
-			public static String BuildKey<T>( [NotNull] params T[] keys ) {
-				if ( keys == null ) { throw new ArgumentNullException( paramName: nameof( keys ) ); }
+            public static String BuildKey<T>( [NotNull] params T[] keys ) {
+                if ( keys == null ) {
+                    throw new ArgumentNullException( paramName: nameof( keys ) );
+                }
 
-				return keys.ToStrings( Parsing.ParsingExtensions.TriplePipes );
-			}
+                return keys.ToStrings( ParsingExtensions.TriplePipes );
+            }
 
-			public static TaskStatus GetLocalDiscoveryStatus() => LocalDiscoveryTask.Status;
+            public static TaskStatus? GetLocalDiscoveryStatus() => LocalDiscoveryTask?.Status;
 
-			public static TaskStatus GetRemoteDiscoveryStatus() => RemoteDiscoveryTask.Status;
+            public static TaskStatus? GetRemoteDiscoveryStatus() => RemoteDiscoveryTask?.Status;
 
-			/// <summary>
-			///     <para>Starts the local and remote discovery tasks.</para>
-			/// </summary>
-			/// <returns></returns>
-			/// <remarks>Is this coded in the correct way for starting Tasks?</remarks>
-			public static async Task Initialize() {
-				try {
-					InitializeTime.Started = DateTime.UtcNow;
-					LocalDiscoveryTask = Task.Run( DiscoverLocalResources, LocalDiscoveryCancellation.Token );
-					RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, RemoteDiscoveryCancellation.Token );
-					await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( false );
-				}
-				catch ( Exception exception ) { exception.Log(); }
-				finally { InitializeTime.Finished = DateTime.UtcNow; }
-			}
+            /// <summary>
+            ///     <para>Starts the local and remote discovery tasks.</para>
+            /// </summary>
+            /// <returns></returns>
+            /// <remarks>Is this coded in the correct way for starting Tasks?</remarks>
+            public static async Task Initialize( CancellationToken? localToken = null, CancellationToken? remoteToken = null ) {
+                try {
+                    InitializeTimeTracker.Started = DateTime.UtcNow;
+                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationSource.Token );
+                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationSource.Token );
+                    await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( false );
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+                finally {
+                    InitializeTimeTracker.Finished = DateTime.UtcNow;
+                }
+            }
 
-			public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellation.Cancel( false );
+            public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellationSource.Cancel( false );
 
-			public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellation.Cancel( false );
+            public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellationSource.Cancel( false );
+        }
+    }
 
-			public class TrackTime {
+    public class TimeTracker {
 
-				/// <summary>
-				///     Null? Hasn't finished yet.
-				/// </summary>
-				public DateTime? Finished { get; set; }
+        /// <summary>
+        ///     Null? Hasn't finished yet.
+        /// </summary>
+        public DateTime? Finished { get; set; }
 
-				/// <summary>
-				///     Null? Hasn't been started yet.
-				/// </summary>
-				public DateTime? Started { get; set; }
-			}
-		}
-	}
+        /// <summary>
+        ///     Null? Hasn't been started yet.
+        /// </summary>
+        public DateTime? Started { get; set; }
+    }
 }

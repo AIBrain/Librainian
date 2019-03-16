@@ -50,9 +50,40 @@ namespace Librainian.Maths {
     using JetBrains.Annotations;
     using Measurement.Time;
     using Numbers;
-    using Numerics;
+    using Rationals;
 
     public static class NumberExtensions {
+
+        [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
+        public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
+            if ( value < 0 ) {
+                return "-" + SizeSuffix( -value );
+            }
+
+            if ( value == 0 ) {
+                return "0.0 bytes";
+            }
+
+            // mag is 0 for bytes, 1 for KB, 2, for MB.
+            var mag = ( Int32 )Math.Log( value, 1024 );
+
+            // 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
+            var adjustedSize = ( Decimal )value / ( 1L << ( mag * 10 ) );
+
+            // make adjustment when the value is large enough that it would round up to 1000 or more
+            if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
+                mag += 1;
+                adjustedSize /= 1024;
+            }
+
+            return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[ mag ] );
+        }
+
+        private static readonly String[] SizeSuffixes = {
+            "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+        };
 
         /// <summary>
         ///     Table used for reversing bits.
@@ -743,12 +774,12 @@ namespace Librainian.Maths {
         /// <param name="to">   </param>
         /// <param name="step"> </param>
         /// <returns></returns>
-        public static IEnumerable<BigRational> To( this Int32 start, BigRational to, BigRational step ) {
+        public static IEnumerable<Rational> To( this Int32 start, Rational to, Rational step ) {
             if ( step < 0 ) {
                 step = 1;
             }
 
-            BigRational reFrom = start;
+            Rational reFrom = start;
 
             if ( reFrom <= to ) {
                 for ( var ul = reFrom; ul <= to; ul += step ) {

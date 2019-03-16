@@ -41,29 +41,30 @@
 
 namespace Librainian.Financial {
 
-	using System;
-	using Currency;
-	using Newtonsoft.Json;
+    using System;
+    using Currency;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public struct TransactionMessage {
+    [JsonObject]
+    [Serializable]
+    public struct TransactionMessage {
 
-		[JsonProperty]
-		public DateTime Date { get; set; }
+        [JsonProperty]
+        public DateTime Date { get; set; }
 
-		[JsonProperty]
-		public IDenomination Denomination { get; set; }
+        [JsonProperty]
+        public IDenomination Denomination { get; set; }
 
-		[JsonProperty]
-		public Guid ID { get; set; }
+        [JsonProperty]
+        public Guid ID { get; set; }
 
-		[JsonProperty]
-		public UInt64 Quantity { get; set; }
+        [JsonProperty]
+        public UInt64 Quantity { get; set; }
 
-		[JsonProperty]
-		public Guid ReferenceID { get; set; }
+        [JsonProperty]
+        public Guid ReferenceID { get; set; }
 
-		[JsonProperty]
-		public TransactionType TransactionType { get; set; }
-	}
+        [JsonProperty]
+        public TransactionType TransactionType { get; set; }
+    }
 }

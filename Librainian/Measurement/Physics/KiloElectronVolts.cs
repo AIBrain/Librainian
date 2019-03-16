@@ -45,7 +45,7 @@ namespace Librainian.Measurement.Physics {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Librainian.Extensions;
-	using Numerics;
+	using Rationals;
 
 	/// <summary>
 	///     Units of mass and energy in ElectronVolts.
@@ -96,7 +96,7 @@ namespace Librainian.Measurement.Physics {
 
 		public KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToKiloElectronVolts().Value;
 
-		public KiloElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal ) aBigFraction;
+		public KiloElectronVolts( Rational aBigFraction ) => this.Value = ( Decimal ) aBigFraction;
 
 		public KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToKiloElectronVolts().Value;
 
@@ -114,14 +114,14 @@ namespace Librainian.Measurement.Physics {
 
 		public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( left * right.Value );
 
-		public static KiloElectronVolts operator *( BigRational left, KiloElectronVolts right ) {
+		public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) {
 			var res = left * right.Value;
 
 			return new KiloElectronVolts( ( Decimal ) res );
 		}
 
 		public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) {
-			var res = new BigRational( left ) * new BigRational( right.Value );
+			var res = new Rational( left ) * new Rational( right.Value );
 
 			return new KiloElectronVolts( ( Decimal ) res );
 		}

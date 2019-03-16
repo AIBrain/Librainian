@@ -39,45 +39,28 @@
 //
 // Project: "Librainian", "Word.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
 
-namespace Librainian.Linguistics
-{
+namespace Librainian.Linguistics {
 
-    using Collections;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using NUnit.Framework;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using Collections.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-    [TestFixture]
-    public static class WordTests
-    {
-
-        [Test]
-        public static void TestWordStuff()
-        {
-
-            //Word.Level.Should().BeGreaterThan( Character.Level );
-        }
-    }
-
-#pragma warning disable IDE0015 // Use framework type
 
     /// <summary>
     ///     A <see cref="Word" /> is a sequence of <see cref="Char" /> .
     /// </summary>
     /// <see cref="Sentence"></see>
     [JsonObject]
-#pragma warning restore IDE0015 // Use framework type
     [Immutable]
-    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
-    public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word>
-    {
+    public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word> {
 
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
@@ -90,17 +73,16 @@ namespace Librainian.Linguistics
         ///     <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo([NotNull] Word other) => String.Compare(this.ToString(), other.ToString(), StringComparison.Ordinal);
+        public Int32 CompareTo( [NotNull] Word other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
         public IEnumerator<Char> GetEnumerator() => this.Chars.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public Boolean Equals([CanBeNull] Word other)
-        {
-            if (other == null) { return false; }
+        public Boolean Equals( [CanBeNull] Word other ) {
+            if ( other == null ) { return false; }
 
-            return ReferenceEquals(this, other) || this.SequenceEqual(other);
+            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
         public static Word Empty { get; } = new Word();
@@ -111,21 +93,20 @@ namespace Librainian.Linguistics
 
         private Word() { }
 
-        public Word([CanBeNull] String word)
-        {
-            if (String.IsNullOrEmpty(word)) { word = String.Empty; }
+        public Word( [CanBeNull] String word ) {
+            if ( String.IsNullOrEmpty( word ) ) { word = String.Empty; }
 
-            this.Chars.AddRange(word.Select(character => character));
+            this.Chars.AddRange( word.Select( character => character ) );
             this.Chars.TrimExcess();
         }
 
-        public static implicit operator String([NotNull] Word word) => word.Chars.ToStrings("");
+        public static implicit operator String( [NotNull] Word word ) => word.Chars.ToStrings( "" );
 
         public override Int32 GetHashCode() => this.Chars.GetHashCode();
 
         [NotNull]
         public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
 
-        public override String ToString() => this.Chars.ToStrings("");
+        public override String ToString() => this.Chars.ToStrings( "" );
     }
 }

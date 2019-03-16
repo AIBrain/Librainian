@@ -42,15 +42,14 @@
 namespace Librainian.Extensions
 {
 
-    using ComputerSystem.FileSystem;
     using JetBrains.Annotations;
     using Maths.Numbers;
-    using NUnit.Framework;
     using System;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
     using Logging;
+    using OperatingSystem.FileSystem;
 
     /// <summary>
     ///     A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique
@@ -135,9 +134,7 @@ namespace Librainian.Extensions
             var destByte = new Byte[bytecount];
             var lhsBytes = left.ToByteArray();
             var rhsBytes = right.ToByteArray();
-            Assert.AreEqual(expected: lhsBytes.Length, actual: destByte.Length);
-            Assert.AreEqual(expected: rhsBytes.Length, actual: destByte.Length);
-
+            
             for (var i = 0; i < bytecount; i++)
             {
                 unchecked { destByte[i] = (Byte)(lhsBytes[i] ^ rhsBytes[i]); }

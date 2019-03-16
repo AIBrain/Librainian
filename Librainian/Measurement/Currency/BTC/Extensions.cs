@@ -50,7 +50,6 @@ namespace Librainian.Measurement.Currency.BTC {
 	using Denominations;
 	using JetBrains.Annotations;
 	using Librainian.Extensions;
-	using NUnit.Framework;
 	using Threading;
 
 	public static class Extensions {
@@ -130,8 +129,7 @@ namespace Librainian.Measurement.Currency.BTC {
 				left.Remove( coin );
 			}
 
-			Assert.Less( leftOverAmount, PossibleCoins.OrderBy( denomination => denomination.FaceValue ).First().FaceValue );
-
+			
 			return result;
 		}
 
@@ -305,8 +303,7 @@ namespace Librainian.Measurement.Currency.BTC {
 				left.Remove( coin );
 			}
 
-			Assert.Less( leftOverAmount, PossibleCoins.OrderBy( denomination => denomination.FaceValue ).First().FaceValue );
-
+			
 			return result;
 		}
 	}

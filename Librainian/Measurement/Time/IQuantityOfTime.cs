@@ -44,8 +44,7 @@ namespace Librainian.Measurement.Time
 
     using System;
 
-    public interface IQuantityOfTime
-    {
+    public interface IQuantityOfTime {
 
         Int32 GetHashCode();
 

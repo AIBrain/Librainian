@@ -50,6 +50,7 @@ namespace Librainian.Graphics.Imaging {
 	using JetBrains.Annotations;
 	using Maths.Hashings;
 	using Newtonsoft.Json;
+	
 
 	/// <summary>
 	///     <para>

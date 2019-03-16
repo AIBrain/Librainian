@@ -49,7 +49,7 @@ namespace Librainian.ComputerSystem {
 
         public static Boolean CanAllocateMemory( this Int32 bytesOfRAM ) {
             try {
-                var megabytes = bytesOfRAM / Constants.Sizes.OneMegaByte;
+                var megabytes = bytesOfRAM / MathConstants.Sizes.OneMegaByte;
 
                 if ( !megabytes.Any() ) {
                     return true; /*zero mb? sure!*/

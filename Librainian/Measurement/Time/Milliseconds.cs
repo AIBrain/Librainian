@@ -45,11 +45,11 @@ namespace Librainian.Measurement.Time
     using Extensions;
     using Maths;
     using Newtonsoft.Json;
-    using Numerics;
     using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Rationals;
 
     [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
     [JsonObject]
@@ -149,22 +149,22 @@ namespace Librainian.Measurement.Time
         public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds(333);
 
         [JsonProperty]
-        public BigRational Value { get; }
+        public Rational Value { get; }
 
         //faster WPM than a female (~240wpm)
-        public Milliseconds(Decimal value) => this.Value = value;
+        public Milliseconds(Decimal value) => this.Value = ( Rational ) value;
 
-        public Milliseconds(BigRational value) => this.Value = value;
+        public Milliseconds(Rational value) => this.Value = value;
 
         public Milliseconds(Int64 value) => this.Value = value;
 
         public Milliseconds(BigInteger value) => this.Value = value;
 
-        public Milliseconds(Double value) => this.Value = value;
+        public Milliseconds(Double value) => this.Value = ( Rational ) value;
 
-        public static Milliseconds Combine(Milliseconds left, BigRational milliseconds) => new Milliseconds(left.Value + milliseconds);
+        public static Milliseconds Combine(Milliseconds left, Rational milliseconds) => new Milliseconds(left.Value + milliseconds);
 
-        public static Milliseconds Combine(Milliseconds left, BigInteger milliseconds) => new Milliseconds((BigInteger)left.Value + milliseconds);
+        public static Milliseconds Combine(Milliseconds left, BigInteger milliseconds) => new Milliseconds(left.Value + milliseconds);
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Time
 
         public static explicit operator Double(Milliseconds milliseconds) => (Double)milliseconds.Value;
 
-        public static implicit operator BigRational(Milliseconds milliseconds) => milliseconds.Value;
+        public static implicit operator Rational(Milliseconds milliseconds) => milliseconds.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.
@@ -195,13 +195,13 @@ namespace Librainian.Measurement.Time
 
         public static Milliseconds operator -(Milliseconds left, Milliseconds right) => Combine(left, -right.Value);
 
-        public static Milliseconds operator -(Milliseconds left, Decimal milliseconds) => Combine(left, -milliseconds);
+        public static Milliseconds operator -(Milliseconds left, Decimal milliseconds) => Combine(left, ( Rational ) (-milliseconds));
 
         public static Boolean operator !=(Milliseconds left, Milliseconds right) => !Equals(left, right);
 
         public static Milliseconds operator +(Milliseconds left, Milliseconds right) => Combine(left, right.Value);
 
-        public static Milliseconds operator +(Milliseconds left, Decimal milliseconds) => Combine(left, milliseconds);
+        public static Milliseconds operator +(Milliseconds left, Decimal milliseconds) => Combine(left, ( Rational ) milliseconds);
 
         public static Milliseconds operator +(Milliseconds left, BigInteger milliseconds) => Combine(left, milliseconds);
 
@@ -231,9 +231,9 @@ namespace Librainian.Measurement.Time
 
         public override String ToString()
         {
-            if (this.Value > Constants.DecimalMaxValueAsBigRational)
+            if (this.Value > MathConstants.DecimalMaxValueAsBigRational)
             {
-                var whole = this.Value.GetWholePart();
+                var whole = this.Value.WholePart;
 
                 return $"{whole} {whole.PluralOf("millisecond")}";
             }

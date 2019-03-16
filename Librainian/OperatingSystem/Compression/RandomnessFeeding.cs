@@ -42,17 +42,17 @@
 namespace Librainian.OperatingSystem.Compression
 {
 
-    using ComputerSystem.FileSystem;
     using Extensions;
     using JetBrains.Annotations;
     using Magic;
-    using Numerics;
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Numerics;
+    using FileSystem;
+    using Rationals;
 
     public class RandomnessFeeding : ABetterClassDispose
     {
@@ -103,7 +103,7 @@ namespace Librainian.OperatingSystem.Compression
         /// <returns></returns>
         public Double GetCurrentCompressionRatio()
         {
-            var d = (Double)new BigRational(this.HowManyBytesAsCompressed, this.HowManyBytesFed);
+            var d = (Double)new Rational(this.HowManyBytesAsCompressed, this.HowManyBytesFed);
 
             return 1 - d; // BUG ?
         }

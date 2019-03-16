@@ -42,33 +42,33 @@
 
 namespace LibrainianTests {
 
-	using System;
-	using System.Globalization;
-	using FluentAssertions;
-	using Librainian.ComputerSystem.FileSystem;
-	using Librainian.Magic;
-	using Librainian.OperatingSystem.FileHistory;
-	using NUnit.Framework;
+    using System;
+    using System.Globalization;
+    using FluentAssertions;
+    using Librainian.Magic;
+    using Librainian.OperatingSystem.FileSystem;
+    using Librainian.OperatingSystem.FileSystem.FileHistory;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class FileHistoryFileTests {
+    [TestFixture]
+    public static class FileHistoryFileTests {
 
-		public const String Example = @"S:\do not delete! FileHistory\User\do not delete!\Data\C\Users\Public\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
+        public const String Example = @"S:\do not delete! FileHistory\User\do not delete!\Data\C\Users\Public\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
-		[Test]
-		public static void RunTests() {
-			var example = DateTime.Parse( "2015/09/04 16:15:01" );
+        [Test]
+        public static void RunTests() {
+            var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
-			//if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-			if ( !DateTime.TryParse( example.ToString( CultureInfo.InvariantCulture ), out _ ) ) {
-				throw new InvalidOperationException();
-			}
+            //if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+            if ( !DateTime.TryParse( example.ToString( CultureInfo.InvariantCulture ), out _ ) ) {
+                throw new InvalidOperationException();
+            }
 
-			if ( !FileHistoryFileExtensions.TryParseFileHistoryFile( new Document( Example ), out _, out _, out _ ) ) {
-				throw new InvalidCastException();
-			}
-		}
+            if ( !FileHistoryFile.TryParseFileHistoryFile( new Document( Example ), out _, out _, out _ ) ) {
+                throw new InvalidCastException();
+            }
+        }
 
-		public static void TestForNullNess() => Example.Should().ThrowIfNull();
-	}
+        public static void TestForNullNess() => Example.Should().ThrowIfNull();
+    }
 }

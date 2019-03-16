@@ -42,16 +42,11 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
-	using FluentAssertions;
 	using Newtonsoft.Json;
-	using NUnit.Framework;
+	using Rationals;
 
 	[JsonObject]
 	public struct Centimeters {
-
-		//public static readonly Centimeters MaxValue = new Centimeters( centimeters: Decimal.MaxValue );
-
-		//public static readonly Centimeters MinValue = new Centimeters( centimeters: Decimal.MinValue );
 
 		/// <summary>One <see cref="Centimeters" /> .</summary>
 		public static readonly Centimeters One = new Centimeters( centimeters: 1 );
@@ -60,9 +55,9 @@ namespace Librainian.Measurement.Length {
 		public static readonly Centimeters Two = new Centimeters( centimeters: 2 );
 
 		[JsonProperty]
-		public readonly Decimal Value;
+		public readonly Rational Value;
 
-		public Centimeters( Decimal centimeters ) => this.Value = centimeters;
+		public Centimeters( Decimal centimeters ) => this.Value = ( Rational ) centimeters;
 
 		//public Centimeters( Millimeters millimeters ) {
 		//    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
@@ -75,15 +70,5 @@ namespace Librainian.Measurement.Length {
 		//}
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
-
-	[TestFixture]
-	public static class CentimeterTests {
-
-		[Test]
-		public static void TestCentimeters() {
-			Centimeters.One.Value.Should().BeLessOrEqualTo( Centimeters.Two.Value );
-			Centimeters.Two.Should().Be( Centimeters.One );
-		}
 	}
 }

@@ -41,167 +41,167 @@
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Net;
-	using System.Net.Cache;
-	using System.Net.Security;
-	using System.Threading;
-	using Collections;
-	using Logging;
-	using Newtonsoft.Json;
-	using Parsing;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Cache;
+    using System.Net.Security;
+    using System.Threading;
+    using Collections.Extensions;
+    using Logging;
+    using Newtonsoft.Json;
+    using Parsing;
 
-	[JsonObject]
-	[Obsolete]
-	public static class Scraper {
+    [JsonObject]
+    [Obsolete]
+    public static class Scraper {
 
-		public static List<WebSite> ScrapedSites {
-			get {
-				try {
-					MAccess.EnterReadLock();
+        [JsonProperty]
+        private static readonly CookieContainer Cookies = new CookieContainer();
 
-					return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
-				}
-				finally { MAccess.ExitReadLock(); }
-			}
-		}
+        [JsonProperty]
+        private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-		[JsonProperty]
-		private static readonly CookieContainer Cookies = new CookieContainer();
+        /// <summary>TODO: concurrentbag</summary>
+        [JsonProperty]
+        private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
-		[JsonProperty]
-		private static readonly ReaderWriterLockSlim MAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        public static List<WebSite> ScrapedSites {
+            get {
+                try {
+                    MAccess.EnterReadLock();
 
-		/// <summary>TODO: concurrentbag</summary>
-		[JsonProperty]
-		private static readonly List<WebSite> MWebsites = new List<WebSite>();
+                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
+                }
+                finally { MAccess.ExitReadLock(); }
+            }
+        }
 
-		private static WebSite GetNextToScrape() {
-			try {
-				MAccess.EnterReadLock();
+        private static WebSite GetNextToScrape() {
+            try {
+                MAccess.EnterReadLock();
 
-				return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
-			}
-			finally { MAccess.ExitReadLock(); }
-		}
+                return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
+            }
+            finally { MAccess.ExitReadLock(); }
+        }
 
-		private static void RespCallback( IAsyncResult asynchronousResult ) {
-			try {
-				if ( asynchronousResult.AsyncState is WebSite web ) {
-					var response = web.Request.EndGetResponse( asynchronousResult );
-					var document = response.StringFromResponse();
+        private static void RespCallback( IAsyncResult asynchronousResult ) {
+            try {
+                if ( asynchronousResult.AsyncState is WebSite web ) {
+                    var response = web.Request.EndGetResponse( asynchronousResult );
+                    var document = response.StringFromResponse();
 
-					Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
+                    Debug.WriteLineIf( response.IsFromCache, $"from cache {web.Location}" );
 
-					MAccess.EnterWriteLock();
-					web.ResponseCount++;
-					web.WhenResponseCame = DateTime.UtcNow;
-					web.Document = document;
+                    MAccess.EnterWriteLock();
+                    web.ResponseCount++;
+                    web.WhenResponseCame = DateTime.UtcNow;
+                    web.Document = document;
 
-					if ( !web.Location.Equals( response.ResponseUri ) ) {
-						web.Location = response.ResponseUri;
+                    if ( !web.Location.Equals( response.ResponseUri ) ) {
+                        web.Location = response.ResponseUri;
 
-						//AddSiteToScrape( response.ResponseUri, web.ResponseAction );
-					}
+                        //AddSiteToScrape( response.ResponseUri, web.ResponseAction );
+                    }
 
-					MAccess.ExitWriteLock();
-				}
+                    MAccess.ExitWriteLock();
+                }
 
-				//TODO
-				//if ( web.ResponseAction is Action<WebSite> ) {
-				//    web.ResponseAction.FiredAndForgotten( web );
-				//    //web.ResponseAction( web );
-				//}
-			}
-			catch ( WebException ) { }
-			catch ( Exception exception ) { exception.Log(); }
-		}
+                //TODO
+                //if ( web.ResponseAction is Action<WebSite> ) {
+                //    web.ResponseAction.FiredAndForgotten( web );
+                //    //web.ResponseAction( web );
+                //}
+            }
+            catch ( WebException ) { }
+            catch ( Exception exception ) { exception.Log(); }
+        }
 
-		private static void StartNextScrape() {
-			try {
-				var web = GetNextToScrape();
+        private static void StartNextScrape() {
+            try {
+                var web = GetNextToScrape();
 
-				if ( null == web ) { return; }
+                if ( null == web ) { return; }
 
-				if ( null == web.Request ) {
-					try {
-						MAccess.EnterWriteLock();
-						web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
+                if ( null == web.Request ) {
+                    try {
+                        MAccess.EnterWriteLock();
+                        web.Request = WebRequest.Create( web.Location ) as HttpWebRequest;
 
-						if ( web.Request != null ) {
-							web.Request.AllowAutoRedirect = true;
-							web.Request.AllowWriteStreamBuffering = true;
-							web.Request.AuthenticationLevel = AuthenticationLevel.None;
-							web.Request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-							web.Request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
-							web.Request.CookieContainer = Cookies;
-							web.Request.KeepAlive = true;
-							web.Request.MaximumAutomaticRedirections = 300;
-							web.Request.Method = "GET";
-							web.Request.Pipelined = true;
-							web.Request.SendChunked = true;
-							var now = DateTime.Now;
-							web.Request.UserAgent = $"AIBrain/{now.Year}.{now.Month}.{now.Day}";
-						}
+                        if ( web.Request != null ) {
+                            web.Request.AllowAutoRedirect = true;
+                            web.Request.AllowWriteStreamBuffering = true;
+                            web.Request.AuthenticationLevel = AuthenticationLevel.None;
+                            web.Request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                            web.Request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
+                            web.Request.CookieContainer = Cookies;
+                            web.Request.KeepAlive = true;
+                            web.Request.MaximumAutomaticRedirections = 300;
+                            web.Request.Method = "GET";
+                            web.Request.Pipelined = true;
+                            web.Request.SendChunked = true;
+                            var now = DateTime.Now;
+                            web.Request.UserAgent = $"AIBrain/{now.Year}.{now.Month}.{now.Day}";
+                        }
 
-						web.WhenRequestStarted = DateTime.UtcNow;
-					}
-					finally { MAccess.ExitWriteLock(); }
-				}
+                        web.WhenRequestStarted = DateTime.UtcNow;
+                    }
+                    finally { MAccess.ExitWriteLock(); }
+                }
 
-				web.Request?.BeginGetResponse( RespCallback, web );
-			}
-			catch ( Exception exception ) { exception.Log(); }
-		}
+                web.Request?.BeginGetResponse( RespCallback, web );
+            }
+            catch ( Exception exception ) { exception.Log(); }
+        }
 
-		public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
-			try {
-				if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
-			}
-			catch ( Exception exception ) { exception.Log(); }
-		}
+        public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
+            try {
+                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
+            }
+            catch ( Exception exception ) { exception.Log(); }
+        }
 
-		public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
-			if ( !IsSiteQueued( uri ) ) {
-				var web = new WebSite {
-					Location = uri,
-					Document = String.Empty,
-					RequestCount = 0,
-					ResponseCount = 0,
-					WhenAddedToQueue = DateTime.UtcNow,
-					WhenRequestStarted = DateTime.MinValue,
-					WhenResponseCame = DateTime.MinValue
+        public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
+            if ( !IsSiteQueued( uri ) ) {
+                var web = new WebSite {
+                    Location = uri,
+                    Document = String.Empty,
+                    RequestCount = 0,
+                    ResponseCount = 0,
+                    WhenAddedToQueue = DateTime.UtcNow,
+                    WhenRequestStarted = DateTime.MinValue,
+                    WhenResponseCame = DateTime.MinValue
 
-					//ResponseAction = responseaction
-				};
+                    //ResponseAction = responseaction
+                };
 
-				try {
-					MAccess.EnterWriteLock();
-					MWebsites.Add( web );
-				}
-				finally { MAccess.ExitWriteLock(); }
-			}
-			else {
-				try {
-					MAccess.EnterWriteLock();
-					MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
-				}
-				finally { MAccess.ExitWriteLock(); }
-			}
+                try {
+                    MAccess.EnterWriteLock();
+                    MWebsites.Add( web );
+                }
+                finally { MAccess.ExitWriteLock(); }
+            }
+            else {
+                try {
+                    MAccess.EnterWriteLock();
+                    MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
+                }
+                finally { MAccess.ExitWriteLock(); }
+            }
 
-			StartNextScrape();
-		}
+            StartNextScrape();
+        }
 
-		public static Boolean IsSiteQueued( Uri uri ) {
-			try {
-				MAccess.EnterReadLock();
+        public static Boolean IsSiteQueued( Uri uri ) {
+            try {
+                MAccess.EnterReadLock();
 
-				return MWebsites.Exists( w => w.Location.Equals( uri ) );
-			}
-			finally { MAccess.ExitReadLock(); }
-		}
-	}
+                return MWebsites.Exists( w => w.Location.Equals( uri ) );
+            }
+            finally { MAccess.ExitReadLock(); }
+        }
+    }
 }

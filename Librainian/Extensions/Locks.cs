@@ -44,7 +44,6 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Threading;
 	using JetBrains.Annotations;
-	using NUnit.Framework;
 
 	public static class Locks {
 
@@ -88,10 +87,6 @@ namespace Librainian.Extensions {
 			private ReaderWriterLockSlim _readerWriterLockSlim;
 
 			public ReadLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
-				Assert.NotNull( slimLock );
-				Assert.False( slimLock.IsReadLockHeld );
-				Assert.False( slimLock.IsUpgradeableReadLockHeld );
-				Assert.False( slimLock.IsWriteLockHeld );
 				this._readerWriterLockSlim = slimLock;
 				slimLock.EnterReadLock();
 			}
@@ -150,10 +145,7 @@ namespace Librainian.Extensions {
 
 			private ReaderWriterLockSlim SlimLock { get; }
 
-			public Manager( [NotNull] ReaderWriterLockSlim slimLock ) {
-				Assert.NotNull( slimLock );
-				this.SlimLock = slimLock;
-			}
+			public Manager( [NotNull] ReaderWriterLockSlim slimLock ) => this.SlimLock = slimLock;
 
 			private enum LockTypes {
 

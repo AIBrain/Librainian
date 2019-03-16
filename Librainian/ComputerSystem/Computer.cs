@@ -48,7 +48,6 @@ namespace Librainian.ComputerSystem {
 	using System.Management;
 	using System.Net.NetworkInformation;
 	using System.Text;
-	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
@@ -186,8 +185,6 @@ namespace Librainian.ComputerSystem {
 
 			//The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
 			var cpuUsage = cpuTimes.Where( x => x.Name.ToString() == "_Total" ).Select( x => x.Usage ).Single();
-			cpuUsage.Should().BeGreaterOrEqualTo( 0 );
-			cpuUsage.Should().BeLessOrEqualTo( 1 );
 
 			return cpuUsage;
 		}

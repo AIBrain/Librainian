@@ -41,90 +41,86 @@
 
 namespace Librainian.Magic {
 
-	using System;
-	using System.Diagnostics;
-	using System.Linq;
-	using Collections;
-	using FluentAssertions;
-	using JetBrains.Annotations;
-	using Logging;
-	using Ninject;
-	using Ninject.Activation.Caching;
-	using Ninject.Modules;
+    using System;
+    using System.Diagnostics;
+    using System.Linq;
+    using Collections.Extensions;
+    using JetBrains.Annotations;
+    using Logging;
+    using Ninject;
+    using Ninject.Activation.Caching;
+    using Ninject.Modules;
 
-	public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer {
+    public sealed class NinjectIocContainer : ABetterClassDispose, IIocContainer {
 
-		public IKernel Kernel { get; }
+        public IKernel Kernel { get; }
 
-		public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
-			try {
-				"Loading IoC kernel...".Log();
-				this.Kernel = new StandardKernel( modules );
-			}
-			finally {
-				this.Kernel.Should().NotBeNull();
-				"Loading IoC kernel done.".Log();
-			}
-		}
+        public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
+            try {
+                "Loading IoC kernel...".Log();
+                this.Kernel = new StandardKernel( modules );
+            }
+            finally {
+                "Loading IoC kernel done.".Log();
+            }
+        }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() => this.Kernel.Dispose();
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Kernel.Dispose();
 
-		/// <summary>
-		///     Returns a new instance of the given type or throws NullReferenceException.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		/// <exception cref="NullReferenceException"></exception>
-		[DebuggerStepThrough]
-		public T Get<T>() {
-			var tryGet = this.Kernel.TryGet<T>();
+        /// <summary>
+        ///     Returns a new instance of the given type or throws NullReferenceException.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        [DebuggerStepThrough]
+        public T Get<T>() {
+            var tryGet = this.Kernel.TryGet<T>();
 
-			if ( Equals( default, tryGet ) ) {
-				tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
+            if ( Equals( default, tryGet ) ) {
+                tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
 
-				if ( Equals( default, tryGet ) ) {
-					throw new NullReferenceException( "Unable to TryGet() class " + typeof( T ).FullName );
-				}
-			}
+                if ( Equals( default, tryGet ) ) {
+                    throw new NullReferenceException( "Unable to TryGet() class " + typeof( T ).FullName );
+                }
+            }
 
-			return tryGet;
-		}
+            return tryGet;
+        }
 
-		public void Inject<T>( T item ) => this.Kernel.Inject( item );
+        public void Inject<T>( T item ) => this.Kernel.Inject( item );
 
-		/// <summary>
-		///     Warning!
-		/// </summary>
-		public void ResetKernel() {
-			this.Kernel.Should().NotBeNull();
-			this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
-			this.Kernel.Components.Get<ICache>().Clear();
-			this.Kernel.Should().NotBeNull();
+        /// <summary>
+        ///     Warning!
+        /// </summary>
+        public void ResetKernel() {
+            this.Kernel.GetModules().ForEach( module => this.Kernel.Unload( module.Name ) );
+            this.Kernel.Components.Get<ICache>().Clear();
+            
+            "Ninject is loading assemblies...".Log();
+            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            $"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
+            $"{this.Kernel.GetModules().ToStrings()}".Log();
+        }
 
-			"Ninject is loading assemblies...".Log();
-			this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
-			$"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
-			$"{this.Kernel.GetModules().ToStrings()}".Log();
-		}
+        /// <summary>
+        ///     Re
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [CanBeNull]
+        [DebuggerStepThrough]
+        public T TryGet<T>() {
+            var tryGet = this.Kernel.TryGet<T>();
 
-		/// <summary>
-		///     Re
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		[CanBeNull]
-		[DebuggerStepThrough]
-		public T TryGet<T>() {
-			var tryGet = this.Kernel.TryGet<T>();
+            if ( Equals( default, tryGet ) ) {
+                tryGet = this.Kernel.TryGet<T>(); //HACK wtf??
+            }
 
-			if ( Equals( default, tryGet ) ) {
-				tryGet = this.Kernel.TryGet<T>(); //HACK wtf??
-			}
-
-			return tryGet;
-		}
-	}
+            return tryGet;
+        }
+    }
 }

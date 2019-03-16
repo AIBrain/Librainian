@@ -42,7 +42,6 @@
 namespace Librainian.Measurement.Time {
 
 	using System;
-	using NUnit.Framework;
 
 	/// <summary>
 	///     From <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates.Tests/DateSpanTests.cs" />

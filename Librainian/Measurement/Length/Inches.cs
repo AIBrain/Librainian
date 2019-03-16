@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Length {
 
 	using System;
 	using Newtonsoft.Json;
-	using Numerics;
+	using Rationals;
 
 	[JsonObject]
 	public struct Inches {
@@ -59,9 +59,9 @@ namespace Librainian.Measurement.Length {
 		public static readonly Inches Two = new Inches( inches: 2 );
 
 		[JsonProperty]
-		public readonly BigRational Value;
+		public readonly Rational Value;
 
-		public Inches( Decimal inches ) => this.Value = inches;
+		public Inches( Decimal inches ) => this.Value = ( Rational ) inches;
 
 		//public Inches( Millimeters millimeters ) {
 		//    var val = millimeters.Value / Extensions.MillimetersInSingleInch;

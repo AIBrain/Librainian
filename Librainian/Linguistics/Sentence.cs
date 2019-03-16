@@ -39,19 +39,18 @@
 //
 // Project: "Librainian", "Sentence.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
 
-namespace Librainian.Linguistics
-{
+namespace Librainian.Linguistics {
 
-    using Collections;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Parsing;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using Collections.Extensions;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Parsing;
 
     /// <summary>
     ///     A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .
@@ -60,13 +59,12 @@ namespace Librainian.Linguistics
     /// <see cref="Paragraph"></see>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
-    public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence>
-    {
+    public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
 
         /// <summary></summary>
-        public static readonly Sentence EndOfLine = new Sentence("\0");
+        public static readonly Sentence EndOfLine = new Sentence( "\0" );
 
         /// <summary></summary>
         [NotNull]
@@ -79,25 +77,23 @@ namespace Librainian.Linguistics
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="sentence"></param>
-        public Sentence([NotNull] String sentence) : this(sentence.ToWords().Select(word => new Word(word))) { }
+        public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>
-        public Sentence([NotNull] IEnumerable<Word> words)
-        {
-            if (words == null) { throw new ArgumentNullException(nameof(words)); }
+        public Sentence( [NotNull] IEnumerable<Word> words ) {
+            if ( words == null ) { throw new ArgumentNullException( nameof( words ) ); }
 
-            this.Words.AddRange(words.Where(word => word != null));
+            this.Words.AddRange( words.Where( word => word != null ) );
             this.Words.TrimExcess();
         }
 
-        public Int32 CompareTo([NotNull] Sentence other) => String.Compare(this.ToString(), other.ToString(), StringComparison.Ordinal);
+        public Int32 CompareTo( [NotNull] Sentence other ) => String.Compare( this.ToString(), other.ToString(), StringComparison.Ordinal );
 
-        public Boolean Equals(Sentence other)
-        {
-            if (other == null) { return false; }
+        public Boolean Equals( Sentence other ) {
+            if ( other == null ) { return false; }
 
-            return ReferenceEquals(this, other) || this.SequenceEqual(other);
+            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
         public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
@@ -106,9 +102,9 @@ namespace Librainian.Linguistics
         public override Int32 GetHashCode() => this.Words.GetHashCode();
 
         [NotNull]
-        public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select(words => new Sentence(words)).Where(sentence => !sentence.ToString().IsNullOrEmpty());
+        public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
-        public override String ToString() => this.Words.ToStrings(" ");
+        public override String ToString() => this.Words.ToStrings( " " );
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 

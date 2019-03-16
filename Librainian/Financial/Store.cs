@@ -37,9 +37,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "Store.cs" was last formatted by Protiguous on 2018/07/10 at 9:05 PM.
+// Project: "Librainian", "Store.cs" was last formatted by Protiguous on 2019/02/12 at 8:10 PM.
 
 namespace Librainian.Financial {
 
-	public class Store { }
+    public class Store { }
 }

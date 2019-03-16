@@ -42,7 +42,6 @@
 namespace Librainian.Internet.Servers
 {
 
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Magic;
     using System;
@@ -94,17 +93,12 @@ namespace Librainian.Internet.Servers
         {
             this.ImNotReady(String.Empty);
 
-            this._httpListener.Should().NotBeNull("this._httpListener == null.");
-
             if (!HttpListener.IsSupported)
             {
-                HttpListener.IsSupported.Should().BeTrue("Needs Windows XP SP2, Server 2003, or later.");
                 this.ImNotReady(because: "HttpListener is not supported.");
 
                 return;
             }
-
-            prefixes.Should().NotBeNullOrEmpty("URI prefixes are required, for example http://localhost:8080/index/. ");
 
             if (prefixes?.Any() != true)
             {
@@ -113,7 +107,6 @@ namespace Librainian.Internet.Servers
                 return;
             }
 
-            method.Should().NotBeNull("A responder method is required");
 
             if (method == null)
             {

@@ -174,7 +174,7 @@ namespace Librainian.Maths.Numbers {
 		public Boolean Add( IEnumerable<TKey> keys ) {
 			if ( this.IsReadOnly ) { return false; }
 
-			var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: ThreadingExtensions.AllCPUExceptOne, body: key => this.Add( key ) );
+			var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, body: key => this.Add( key ) );
 
 			return result.IsCompleted;
 		}
@@ -243,7 +243,7 @@ namespace Librainian.Maths.Numbers {
 		public BigInteger Sum() => this.Dictionary.Aggregate( seed: BigInteger.Zero, func: ( current, pair ) => current + pair.Value );
 
 		public void Trim() =>
-			Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), parallelOptions: ThreadingExtensions.AllCPUExceptOne,
+			Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), parallelOptions: CPU.AllCPUExceptOne,
 				body: pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
 
 		/// <summary>

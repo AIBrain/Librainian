@@ -36,9 +36,14 @@
 
 namespace Librainian.Persistence {
 
-    using ComputerSystem.FileSystem;
-    using FluentAssertions;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using JetBrains.Annotations;
+    using Logging;
     using Magic;
     using Maths;
     using Measurement.Time;
@@ -47,15 +52,8 @@ namespace Librainian.Persistence {
     using Microsoft.Isam.Esent.Interop.Windows81;
     using Newtonsoft.Json;
     using OperatingSystem.Compression;
+    using OperatingSystem.FileSystem;
     using Parsing;
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using Logging;
 
     /// <summary>
     ///     <para>
@@ -64,7 +62,7 @@ namespace Librainian.Persistence {
     ///     </para>
     /// </summary>
     /// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public sealed class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue> where TKey : IComparable<TKey> {
 
@@ -88,21 +86,24 @@ namespace Librainian.Persistence {
 
         public ICollection<TKey> Keys => this.Dictionary.Keys;
 
-        public ICollection<TValue> Values => this.Dictionary.Values.Select(selector: value => value.FromCompressedBase64().FromJSON<TValue>()) as ICollection<TValue> ?? new Collection<TValue>();
+        /// <summary>
+        /// This deserializes the list of values.. I have a feeling this cannot be very fast.
+        /// </summary>
+        public ICollection<TValue> Values => ( ICollection<TValue> )this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() );
 
         /// <summary>
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        public TValue this[[NotNull] TKey key] {
+        public TValue this[ [NotNull] TKey key ] {
             [CanBeNull]
             get {
-                if (key == null) {
-                    throw new ArgumentNullException(paramName: nameof(key));
+                if ( key == null ) {
+                    throw new ArgumentNullException( paramName: nameof( key ) );
                 }
 
-                if (!this.Dictionary.TryGetValue(key, out var storedValue)) {
+                if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
                     return default;
                 }
 
@@ -110,17 +111,17 @@ namespace Librainian.Persistence {
             }
 
             set {
-                if (key == null) {
-                    throw new ArgumentNullException(paramName: nameof(key));
+                if ( key == null ) {
+                    throw new ArgumentNullException( paramName: nameof( key ) );
                 }
 
-                if (value == null) {
-                    this.Dictionary.Remove(key);
+                if ( value == null ) {
+                    this.Dictionary.Remove( key );
 
                     return;
                 }
 
-                this.Dictionary[key] = value.ToJSON().ToCompressedBase64();
+                this.Dictionary[ key ] = value.ToJSON().ToCompressedBase64();
             }
         }
 
@@ -128,24 +129,24 @@ namespace Librainian.Persistence {
         private PersistTable() => throw new NotImplementedException();
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable(Environment.SpecialFolder specialFolder, [NotNull] String tableName) : this(folder: new Folder(specialFolder: specialFolder, applicationName: null, subFolder: tableName)) { }
+        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder, applicationName: null, subFolder: tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable(Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName) : this(folder: new Folder(specialFolder, subFolder, tableName)) { }
+        public PersistTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable([NotNull] Folder folder, [NotNull] String tableName) : this(fullpath: Path.Combine(path1: folder.FullName, path2: tableName)) { }
+        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable([NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName) : this(fullpath: Path.Combine(folder.FullName, subFolder, tableName)) { }
+        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable([CanBeNull] Folder folder, Boolean testForReadWriteAccess = false) {
+        public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
             try {
-                this.Folder = folder ?? throw new ArgumentNullException(nameof(folder));
+                this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
 
-                if (!this.Folder.Create()) {
-                    throw new DirectoryNotFoundException($"Unable to find or create the folder `{this.Folder.FullName}`.");
+                if ( !this.Folder.Create() ) {
+                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
                 }
 
                 var customConfig = new DatabaseConfig {
@@ -154,19 +155,19 @@ namespace Librainian.Persistence {
                     DefragmentSequentialBTrees = true
                 };
 
-                this.Dictionary = new PersistentDictionary<TKey, String>(directory: this.Folder.FullName, customConfig: customConfig);
+                this.Dictionary = new PersistentDictionary<TKey, String>( directory: this.Folder.FullName, customConfig: customConfig );
 
-                if (testForReadWriteAccess && !this.TestForReadWriteAccess()) {
-                    throw new IOException($"Read/write permissions denied in folder {this.Folder.FullName}.");
+                if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
+                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." );
                 }
             }
-            catch (Exception exception) {
+            catch ( Exception exception ) {
                 exception.Log();
             }
         }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable([NotNull] String fullpath) : this(folder: new Folder(fullPath: fullpath)) { }
+        public PersistTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
 
         /// <summary>
         ///     Return true if we can read/write in the <see cref="Folder" /> .
@@ -174,10 +175,10 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         private Boolean TestForReadWriteAccess() {
             try {
-                if (this.Folder.TryGetTempDocument(document: out var document)) {
-                    var text = Randem.NextString(64, lowers: true, uppers: true, numbers: true, symbols: true);
-                    document.AppendText(text: text);
-                    document.TryDeleting(tryFor: Seconds.Five);
+                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
+                    var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
+                    document.AppendText( text: text );
+                    document.TryDeleting( tryFor: Seconds.Five );
 
                     return true;
                 }
@@ -187,32 +188,32 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        public void Add(TKey key, TValue value) => this[key] = value;
+        public void Add( TKey key, TValue value ) => this[ key ] = value;
 
-        public void Add(KeyValuePair<TKey, TValue> item) => this[item.Key] = item.Value;
+        public void Add( KeyValuePair<TKey, TValue> item ) => this[ item.Key ] = item.Value;
 
         public void Clear() => this.Dictionary.Clear();
 
-        public Boolean Contains(KeyValuePair<TKey, TValue> item) {
+        public Boolean Contains( KeyValuePair<TKey, TValue> item ) {
             var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String>(item.Key, value);
+            var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
-            return this.Dictionary.Contains(asItem);
+            return this.Dictionary.Contains( asItem );
         }
 
-        public Boolean ContainsKey(TKey key) => this.Dictionary.ContainsKey(key);
+        public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
+        public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
         /// <summary>
         ///     Dispose any disposable managed fields or properties.
         /// </summary>
         public override void DisposeManaged() {
-            Trace.Write($"Disposing of {nameof(this.Dictionary)}...");
+            Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
 
-            using (this.Dictionary) { }
+            using ( this.Dictionary ) { }
 
-            Trace.WriteLine("done.");
+            Trace.WriteLine( "done." );
             base.DisposeManaged();
         }
 
@@ -221,14 +222,12 @@ namespace Librainian.Persistence {
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
 
         public void Initialize() {
-            
+
             this.Dictionary.Database.Should().NotBeNull();
 
-            if (this.Dictionary.Database.ToString().IsNullOrWhiteSpace()) {
-                throw new DirectoryNotFoundException($"Unable to find or create the folder `{this.Folder.FullName}`.");
+            if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
+                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
             }
-
-            
         }
 
         /// <summary>
@@ -236,7 +235,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select(selector: pair => new KeyValuePair<TKey, TValue>(pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>()));
+        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
         /// <summary>
         ///     Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
@@ -251,7 +250,7 @@ namespace Librainian.Persistence {
         ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is
         ///     read-only.
         /// </exception>
-        public Boolean Remove(TKey key) => this.Dictionary.ContainsKey(key) && this.Dictionary.Remove(key);
+        public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the
@@ -268,11 +267,11 @@ namespace Librainian.Persistence {
         ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
-        public Boolean Remove(KeyValuePair<TKey, TValue> item) {
+        public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
             var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String>(item.Key, value);
+            var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
-            return this.Dictionary.Remove(item: asItem);
+            return this.Dictionary.Remove( item: asItem );
         }
 
         /// <summary>
@@ -281,13 +280,13 @@ namespace Librainian.Persistence {
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() => $"{this.Count} items";
 
-        public void TryAdd([NotNull] TKey key, TValue value) {
-            if (key == null) {
-                throw new ArgumentNullException(paramName: nameof(key));
+        public void TryAdd( [NotNull] TKey key, TValue value ) {
+            if ( key == null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
-            if (!this.Dictionary.ContainsKey(key)) {
-                this[key] = value;
+            if ( !this.Dictionary.ContainsKey( key ) ) {
+                this[ key ] = value;
             }
         }
 
@@ -304,14 +303,14 @@ namespace Librainian.Persistence {
         ///     value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.
         /// </param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> == null.</exception>
-        public Boolean TryGetValue([NotNull] TKey key, out TValue value) {
-            if (key == null) {
-                throw new ArgumentNullException(paramName: nameof(key));
+        public Boolean TryGetValue( [NotNull] TKey key, out TValue value ) {
+            if ( key == null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
             value = default;
 
-            if (!this.Dictionary.TryGetValue(key, out var storedValue)) {
+            if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
                 return false;
             }
 
@@ -320,12 +319,12 @@ namespace Librainian.Persistence {
             return true;
         }
 
-        public Boolean TryRemove([NotNull] TKey key) {
-            if (key == null) {
-                throw new ArgumentNullException(paramName: nameof(key));
+        public Boolean TryRemove( [NotNull] TKey key ) {
+            if ( key == null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
-            return this.Dictionary.ContainsKey(key) && this.Dictionary.Remove(key);
+            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
 
         /// <summary>

@@ -44,9 +44,8 @@ namespace Librainian.OperatingSystem.Compression {
 	using System;
 	using System.Diagnostics;
 	using Maths;
-	using NUnit.Framework;
 
-	[TestFixture]
+	//[TestFixture]
 	public static class RandomnessTest {
 
 		public static RandomnessFeeding RandomnessFeeding;
@@ -59,9 +58,9 @@ namespace Librainian.OperatingSystem.Compression {
 		//[OneTimeSetUp]
 		public static void Init() => RandomnessFeeding = new RandomnessFeeding();
 
-		[Test]
+		//[Test]
 		public static Boolean RunSimulation() {
-			var buffer = new Byte[ ( UInt32 ) Constants.Sizes.OneMegaByte ]; //one megabyte
+			var buffer = new Byte[ MathConstants.Sizes.OneMegaByte ]; //one megabyte
 			var bufferLength = buffer.LongLength;
 			var randem = Randem.ThreadSafeRandom;
 

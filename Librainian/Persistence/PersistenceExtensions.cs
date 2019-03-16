@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "PersistenceExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-// 
+//
 // Project: "Librainian", "PersistenceExtensions.cs" was last formatted by Protiguous on 2019/01/29 at 10:46 PM.
 
 namespace Librainian.Persistence {
@@ -60,30 +60,18 @@ namespace Librainian.Persistence {
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
-    using Collections;
-    using ComputerSystem.FileSystem;
+    using Collections.Lists;
     using Converters;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using NUnit.Framework;
+    using OperatingSystem.FileSystem;
     using OperatingSystem.Streams;
     using Threading;
 
     public static class PersistenceExtensions {
-
-        public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
-
-            //ContractResolver = new MyContractResolver(),
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
-        };
 
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
             var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
@@ -113,7 +101,8 @@ namespace Librainian.Persistence {
 
         [NotNull]
         public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.All
         }, true );
 
         ///// <summary>
@@ -146,6 +135,16 @@ namespace Librainian.Persistence {
 
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
+
+        public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
+
+            //ContractResolver = new MyContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+        };
 
         /// <summary>
         ///     Can the file be read from at this moment in time ?
@@ -326,7 +325,7 @@ namespace Librainian.Persistence {
             using ( var memoryStream = new MemoryStream( bytes ) ) {
                 var binaryFormatter = new BinaryFormatter();
 
-                return ( T ) binaryFormatter.Deserialize( memoryStream );
+                return ( T )binaryFormatter.Deserialize( memoryStream );
             }
         }
 
@@ -631,11 +630,11 @@ namespace Librainian.Persistence {
 
                         if ( useCompression ) {
                             using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                obj = ( T ) serializer.ReadObject( stream: decompress );
+                                obj = ( T )serializer.ReadObject( stream: decompress );
                             }
                         }
                         else {
-                            obj = ( T ) serializer.ReadObject( stream: isfs );
+                            obj = ( T )serializer.ReadObject( stream: isfs );
                         }
 
                         return !Equals( obj, default );
@@ -989,7 +988,7 @@ namespace Librainian.Persistence {
                     throw new DirectoryNotFoundException( folder.FullName );
                 }
 
-                var itemCount = ( UInt64 ) dictionary.LongCount();
+                var itemCount = ( UInt64 )dictionary.LongCount();
 
                 String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ).Info();
 
@@ -1256,7 +1255,7 @@ namespace Librainian.Persistence {
         /// <param name="overwrite"> </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean TrySave<TKey>( this TKey @object, [NotNull] Document document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
+        public static Boolean TrySave<TKey>( this TKey @object, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
             if ( document == null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
@@ -1274,7 +1273,8 @@ namespace Librainian.Persistence {
 
                         //see also http://stackoverflow.com/a/8711702/956364
                         var serializer = new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         };
 
                         serializer.Serialize( jw, @object );
@@ -1297,9 +1297,6 @@ namespace Librainian.Persistence {
 
                 return list;
             }
-
         }
-
     }
-
 }

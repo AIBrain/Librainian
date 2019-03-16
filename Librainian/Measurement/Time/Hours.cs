@@ -47,8 +47,8 @@ namespace Librainian.Measurement.Time {
 	using Extensions;
 	using Maths;
 	using Newtonsoft.Json;
-	using Numerics;
 	using Parsing;
+	using Rationals;
 
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -94,11 +94,11 @@ namespace Librainian.Measurement.Time {
 		*/
 
 		[JsonProperty]
-		public BigRational Value { get; }
+		public Rational Value { get; }
 
 		public Hours( Decimal value ) => this.Value = value;
 
-		public Hours( BigRational value ) => this.Value = value;
+		public Hours( Rational value ) => this.Value = value;
 
 		public Hours( Int64 value ) => this.Value = value;
 
@@ -106,7 +106,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 
-		public static Hours Combine( Hours left, BigRational hours ) => new Hours( left.Value + hours );
+		public static Hours Combine( Hours left, Rational hours ) => new Hours( left.Value + hours );
 
 		public static Hours Combine( Hours left, BigInteger hours ) => new Hours( ( BigInteger )left.Value + hours );
 
@@ -183,8 +183,8 @@ namespace Librainian.Measurement.Time {
 		public Seconds ToSeconds() => new Seconds( this.Value / Seconds.InOneHour );
 
 		public override String ToString() {
-			if ( this.Value > Constants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.GetWholePart();
+			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "hour" )}";
 			}

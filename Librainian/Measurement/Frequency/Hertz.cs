@@ -45,7 +45,6 @@ namespace Librainian.Measurement.Frequency
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
-    using NUnit.Framework;
     using System;
     using System.Diagnostics;
     using Time;
@@ -149,19 +148,8 @@ namespace Librainian.Measurement.Frequency
         /// </summary>
         public static readonly Hertz Zero = new Hertz(0);
 
-        [field: JsonProperty]
+        [JsonProperty]
         public Decimal Value { get; }
-
-        //faster WPM than a female (~240wpm)
-        static Hertz()
-        {
-
-            //Assert.AreSame( Zero, MinValue );
-            Assert.That(One < Two);
-            Assert.That(Ten > One);
-
-            //Assert.AreEqual( new Hertz( 4.7 ), new Milliseconds( 213 ) );
-        }
 
         public Hertz(Decimal frequency)
         {

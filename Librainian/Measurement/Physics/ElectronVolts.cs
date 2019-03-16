@@ -46,8 +46,7 @@ namespace Librainian.Measurement.Physics {
 	using System.Numerics;
 	using Librainian.Extensions;
 	using Maths;
-	using Numerics;
-	using NUnit.Framework;
+	using Rationals;
 
 	/// <summary>
 	///     Units of mass and energy in ElectronVolts.
@@ -103,7 +102,7 @@ namespace Librainian.Measurement.Physics {
 
 		public ElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToElectronVolts().Value;
 
-		public ElectronVolts( BigRational aBigFraction ) => this.Value = ( Decimal ) aBigFraction;
+		public ElectronVolts( Rational aBigFraction ) => this.Value = ( Decimal ) aBigFraction;
 
 		public ElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToElectronVolts().Value;
 
@@ -119,14 +118,14 @@ namespace Librainian.Measurement.Physics {
 
 		public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new ElectronVolts( left * right.Value );
 
-		public static ElectronVolts operator *( BigRational left, ElectronVolts right ) {
+		public static ElectronVolts operator *( Rational left, ElectronVolts right ) {
 			var res = left * right.Value;
 
 			return new ElectronVolts( ( Decimal ) res );
 		}
 
 		public static ElectronVolts operator *( BigInteger left, ElectronVolts right ) {
-			var res = new BigRational( left ) * new BigRational( right.Value );
+			var res = new Rational( left ) * new Rational( right.Value );
 
 			return new ElectronVolts( ( Decimal ) res );
 		}

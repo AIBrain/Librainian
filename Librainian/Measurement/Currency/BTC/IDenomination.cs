@@ -41,48 +41,48 @@
 
 namespace Librainian.Measurement.Currency.BTC {
 
-	using System;
+    using System;
+    using System.Diagnostics;
 
-	namespace Denominations {
+    namespace Denominations {
 
-		using System;
-		using System.Diagnostics;
+        using System;
 
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct Btc : ICoin {
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+        public struct Btc : ICoin {
 
-			public Decimal FaceValue => 1.00M;
+            public Decimal FaceValue => 1.00M;
 
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-		}
+            public override String ToString() => $"฿{this.FaceValue:f8}";
+        }
 
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct MBtc : ICoin {
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+        public struct MBtc : ICoin {
 
-			public Decimal FaceValue => 0.001M;
+            public Decimal FaceValue => 0.001M;
 
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-		}
+            public override String ToString() => $"฿{this.FaceValue:f8}";
+        }
 
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct Satoshi : ICoin {
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+        public struct Satoshi : ICoin {
 
-			public Decimal FaceValue => 0.00000001M;
+            public Decimal FaceValue => 0.00000001M;
 
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-		}
+            public override String ToString() => $"฿{this.FaceValue:f8}";
+        }
 
-		[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-		public struct ΜBtc : ICoin {
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+        public struct ΜBtc : ICoin {
 
-			public Decimal FaceValue => 0.000001M;
+            public Decimal FaceValue => 0.000001M;
 
-			public override String ToString() => $"฿{this.FaceValue:f8}";
-		}
-	}
+            public override String ToString() => $"฿{this.FaceValue:f8}";
+        }
+    }
 
-	public interface IDenomination {
+    public interface IDenomination {
 
-		Decimal FaceValue { get; }
-	}
+        Decimal FaceValue { get; }
+    }
 }

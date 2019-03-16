@@ -37,19 +37,16 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "StringKVPTable.cs" was last formatted by Protiguous on 2018/10/23 at 11:33 PM.
+// Project: "Librainian", "StringKVPTable.cs" was last formatted by Protiguous on 2019/02/06 at 4:24 AM.
 
 namespace Librainian.Persistence {
 
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using ComputerSystem.FileSystem;
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
@@ -60,6 +57,7 @@ namespace Librainian.Persistence {
     using Microsoft.Isam.Esent.Interop.Windows81;
     using Newtonsoft.Json;
     using OperatingSystem.Compression;
+    using OperatingSystem.FileSystem;
     using Parsing;
 
     /// <summary>
@@ -79,7 +77,7 @@ namespace Librainian.Persistence {
 
         public ICollection<String> Keys => this.Dictionary.Keys;
 
-        public ICollection<String> Values => this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64() ) as ICollection<String> ?? new Collection<String>();
+        public ICollection<String> Values => ( ICollection<String> ) this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
 
         /// <summary>
         /// </summary>
@@ -242,28 +240,29 @@ namespace Librainian.Persistence {
             }
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
         private StringKVPTable() => throw new NotImplementedException();
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder, applicationName: null, subFolder: tableName ) ) { }
+        public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder,
+            applicationName: null, subFolder: tableName ) ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder, tableName ) ) { }
+        public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
+            tableName ) ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder ) specialFolder, subFolder, tableName ) ) { }
+        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder ) specialFolder,
+            subFolder, tableName ) ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
         public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder, tableName ) ) { }
+        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder,
+            tableName ) ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public StringKVPTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+        public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( paramName: nameof( folder ) );
+            }
+
             try {
-                this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
+                this.Folder = folder;
 
                 if ( !this.Folder.Create() ) {
                     throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
@@ -284,7 +283,6 @@ namespace Librainian.Persistence {
             }
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
         public StringKVPTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
 
         /// <summary>
@@ -305,6 +303,8 @@ namespace Librainian.Persistence {
 
             return false;
         }
+
+        public void Add( (String key, String value) kvp ) => this[ kvp.key ] = kvp.value;
 
         /// <summary>
         ///     Dispose any disposable managed fields or properties.
@@ -337,7 +337,8 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public IEnumerable<KeyValuePair<String, String>> Items() => this.Dictionary.Select( selector: pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
+        public IEnumerable<KeyValuePair<String, String>> Items() =>
+            this.Dictionary.Select( selector: pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
 
         public void Save() => this.Flush();
 

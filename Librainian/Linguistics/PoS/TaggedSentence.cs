@@ -39,33 +39,30 @@
 //
 // Project: "Librainian", "TaggedSentence.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
 
-namespace Librainian.Linguistics.PoS
-{
+namespace Librainian.Linguistics.PoS {
 
-    using Collections;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Collections.Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     [JsonObject]
-    public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord>
-    {
+    public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {
 
         [JsonProperty]
         public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
 
-        public TaggedSentence([NotNull] IEnumerable<ITaggedWord> words)
-        {
-            if (words == null) { throw new ArgumentNullException(nameof(words)); }
+        public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
+            if ( words == null ) { throw new ArgumentNullException( nameof( words ) ); }
 
-            this.Tokens.AddRange(words.Where(word => null != word).Select(word => word));
+            this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
         }
 
         [Pure]
-        public static implicit operator String([NotNull] TaggedSentence sentence) => sentence.Tokens.ToStrings(" ");
+        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
@@ -76,11 +73,10 @@ namespace Librainian.Linguistics.PoS
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
-        public Boolean Equals(TaggedSentence other)
-        {
-            if (other == null) { return false; }
+        public Boolean Equals( TaggedSentence other ) {
+            if ( other == null ) { return false; }
 
-            return ReferenceEquals(this, other) || this.Tokens.SequenceEqual(other.Tokens);
+            return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }
 
         /// <summary>Returns an enumerator that iterates through the collection.</summary>
@@ -92,7 +88,7 @@ namespace Librainian.Linguistics.PoS
         public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
         [Pure]
-        public override String ToString() => this.Tokens.ToStrings(" ");
+        public override String ToString() => this.Tokens.ToStrings( " " );
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>

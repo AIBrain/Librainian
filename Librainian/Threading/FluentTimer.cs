@@ -42,7 +42,6 @@
 namespace Librainian.Threading
 {
 
-    using FluentAssertions;
     using JetBrains.Annotations;
     using Measurement.Frequency;
     using Measurement.Time;

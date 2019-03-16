@@ -61,7 +61,7 @@ namespace Librainian.Threading {
 		/// <param name="toExclusive">  The end of the range, exclusive.</param>
 		/// <param name="body">         The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) => fromInclusive.SpeculativeFor( toExclusive, ThreadingExtensions.AllCPUExceptOne, body );
+		public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) => fromInclusive.SpeculativeFor( toExclusive, CPU.AllCPUExceptOne, body );
 
 		/// <summary>
 		///     Executes a function for each value in a range, returning the first result achieved and ceasing execution.
@@ -100,7 +100,7 @@ namespace Librainian.Threading {
 		/// <param name="source">The input elements to be processed.</param>
 		/// <param name="body">  The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) => source.SpeculativeForEach( ThreadingExtensions.AllCPUExceptOne, body );
+		public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) => source.SpeculativeForEach( CPU.AllCPUExceptOne, body );
 
 		/// <summary>
 		///     Executes a function for each element in a source, returning the first result achieved and ceasing execution.
@@ -137,7 +137,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
 		/// <param name="functions">The functions to be executed.</param>
 		/// <returns>A result from executing one of the functions.</returns>
-		public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => ThreadingExtensions.AllCPUExceptOne.SpeculativeInvoke( functions );
+		public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllCPUExceptOne.SpeculativeInvoke( functions );
 
 		/// <summary>
 		///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "PlanckTimes.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,24 +28,25 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "PlanckTimes.cs" was last formatted by Protiguous on 2018/08/15 at 7:09 PM.
+// 
+// Project: "Librainian", "PlanckTimes.cs" was last formatted by Protiguous on 2019/03/03 at 3:10 PM.
 
 namespace Librainian.Measurement.Time {
 
-    using Newtonsoft.Json;
-    using Numerics;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Rationals;
 
     /// <summary>
     ///     <para>
@@ -64,9 +65,9 @@ namespace Librainian.Measurement.Time {
     ///     </para>
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Planck_time" />
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    public struct PlanckTimes : IComparable<PlanckTimes>, IQuantityOfTime {
+    public struct PlanckTimes : IQuantityOfTime {
 
         public const Double InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
 
@@ -104,43 +105,49 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     One <see cref="PlanckTimes" />.
         /// </summary>
-        public static PlanckTimes One { get; } = new PlanckTimes(1);
+        public static PlanckTimes One { get; } = new PlanckTimes( 1 );
 
         /// <summary>
         ///     Two <see cref="PlanckTimes" />.
         /// </summary>
-        public static PlanckTimes Two { get; } = new PlanckTimes(2);
+        public static PlanckTimes Two { get; } = new PlanckTimes( 2 );
 
         /// <summary>
         ///     Zero <see cref="PlanckTimes" />.
         /// </summary>
-        public static PlanckTimes Zero { get; } = new PlanckTimes(0);
+        public static PlanckTimes Zero { get; } = new PlanckTimes( 0 );
 
         [JsonProperty]
         public BigInteger Value { get; }
 
-        public PlanckTimes(Int64 value) : this((BigInteger)value) { }
+        public PlanckTimes( Int64 value ) : this( ( BigInteger ) value ) { }
 
-        public PlanckTimes(BigRational value) : this(value.GetWholePart()) { }
+        public PlanckTimes( Rational value ) : this( value.WholePart ) { }
 
-        public PlanckTimes(BigInteger value) => this.Value = value <= BigInteger.Zero ? BigInteger.Zero : value;
+        public PlanckTimes( BigInteger value ) => this.Value = value;
 
-        public PlanckTimes(Seconds seconds) : this(seconds.ToPlanckTimes().Value) { }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
-        public PlanckTimes(Years years) : this(years.ToPlanckTimes().Value) { }
+        public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
-        public static PlanckTimes Combine(PlanckTimes left, PlanckTimes right) {
-            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
+        public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-            if (right == null) { throw new ArgumentNullException(paramName: nameof(right)); }
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
 
-            return new PlanckTimes(left.Value + right.Value);
+            return new PlanckTimes( left.Value + right.Value );
         }
 
-        public static PlanckTimes Combine(PlanckTimes left, BigInteger planckTimes) {
-            if (left == null) { throw new ArgumentNullException(paramName: nameof(left)); }
+        public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-            return new PlanckTimes(left.Value + planckTimes);
+            return new PlanckTimes( left.Value + planckTimes );
         }
 
         /// <summary>
@@ -149,60 +156,84 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(PlanckTimes left, PlanckTimes right) => left.Value == right.Value;
+        public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
 
-        public static implicit operator SpanOfTime(PlanckTimes planckTimes) => new SpanOfTime(planckTimes);
+        public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static implicit operator Yoctoseconds(PlanckTimes planckTimes) => ToYoctoseconds(planckTimes);
+        public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) => ToYoctoseconds( planckTimes );
 
-        public static PlanckTimes operator -(PlanckTimes left, BigInteger planckTimes) => Combine(left, -planckTimes);
+        public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
 
-        public static Boolean operator !=(PlanckTimes left, PlanckTimes right) => !Equals(left, right);
+        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) => !Equals( left, right );
 
-        public static PlanckTimes operator +(PlanckTimes left, PlanckTimes right) => Combine(left, right);
+        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) => Combine( left, right );
 
-        public static PlanckTimes operator +(PlanckTimes left, BigInteger planckTimes) => Combine(left, planckTimes);
+        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) => Combine( left, planckTimes );
 
-        public static Boolean operator <(PlanckTimes left, PlanckTimes right) => left.Value < right.Value;
+        public static Boolean operator <( PlanckTimes left, PlanckTimes right ) => left.Value < right.Value;
 
-        public static Boolean operator <=(PlanckTimes left, PlanckTimes right) => left.Value <= right.Value;
+        public static Boolean operator <=( PlanckTimes left, PlanckTimes right ) => left.Value <= right.Value;
 
-        public static Boolean operator ==(PlanckTimes left, PlanckTimes right) => Equals(left, right);
+        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) => Equals( left, right );
 
-        public static Boolean operator >(PlanckTimes left, PlanckTimes right) => left.Value > right.Value;
+        public static Boolean operator >( PlanckTimes left, PlanckTimes right ) => left.Value > right.Value;
 
-        public static Boolean operator >=(PlanckTimes left, PlanckTimes right) => left.Value >= right.Value;
+        public static Boolean operator >=( PlanckTimes left, PlanckTimes right ) => left.Value >= right.Value;
 
         /// <summary>
         ///     <para>Convert to a larger unit.</para>
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static Yoctoseconds ToYoctoseconds(PlanckTimes planckTimes) => new Yoctoseconds(planckTimes.Value / (BigInteger)InOneYoctosecond);
+        public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new Yoctoseconds( planckTimes.Value / (Rational)InOneYoctosecond );
 
-        public Int32 CompareTo(PlanckTimes other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals(PlanckTimes other) => Equals(this, other);
+        /// <summary>
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates
+        ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
+        ///     object.
+        /// </summary>
+        /// <param name="other">An object to compare with this instance. </param>
+        /// <returns>
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings:
+        ///     Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This
+        ///     instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This
+        ///     instance follows <paramref name="other" /> in the sort order.
+        /// </returns>
+        public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( paramName: nameof( other ) );
+            }
 
-        public override Boolean Equals(Object obj) {
-            if (obj == null) { return false; }
+            return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
+        }
 
-            return obj is PlanckTimes times && this.Equals(times);
+        public Boolean Equals( PlanckTimes other ) => Equals( this, other );
+
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) {
+                return false;
+            }
+
+            return obj is PlanckTimes times && this.Equals( times );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         public PlanckTimes ToPlanckTimes() => this;
 
-        public Seconds ToSeconds() => new Seconds(this.Value * (BigInteger)InOneSecond);
+        public Seconds ToSeconds() => new Seconds( this.Value * (Rational)InOneSecond );
 
         public override String ToString() => $"{this.Value} tP";
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+
     }
+
 }

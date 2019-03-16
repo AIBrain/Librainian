@@ -41,12 +41,12 @@
 
 namespace Librainian.Collections {
 
-    using ComputerSystem.FileSystem;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Persistence;
     using System;
     using System.Collections.Generic;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using OperatingSystem.FileSystem;
+    using Persistence;
 
     [JsonObject]
     public class StringTable {
@@ -62,14 +62,14 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public UInt64 this[[NotNull] String key] {
-            get => this.Words.TryGetValue(key, out var result) ? result : default;
+        public UInt64 this[ [NotNull] String key ] {
+            get => this.Words.TryGetValue( key, out var result ) ? result : default;
 
             set {
-                if (String.IsNullOrEmpty(key)) { return; }
+                if ( String.IsNullOrEmpty( key ) ) { return; }
 
-                this.Words[key] = value;
-                this.Ints[value] = key;
+                this.Words[ key ] = value;
+                this.Ints[ value ] = key;
             }
         }
 
@@ -79,22 +79,22 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        public String this[UInt64 key] {
-            get => this.Ints[key];
+        public String this[ UInt64 key ] {
+            get => this.Ints[ key ];
 
             set {
-                if (value != null) {
-                    this.Words[value] = key;
+                if ( value != null ) {
+                    this.Words[ value ] = key;
                 }
-                this.Ints[key] = value;
+                this.Ints[ key ] = value;
             }
         }
 
-        public StringTable([NotNull] Folder commonName) {
-            if (commonName == null) { throw new ArgumentNullException(paramName: nameof(commonName)); }
+        public StringTable( [NotNull] Folder commonName ) {
+            if ( commonName == null ) { throw new ArgumentNullException( paramName: nameof( commonName ) ); }
 
-            this.Ints = new PersistTable<UInt64, String>(folder: new Folder(folder: commonName, subFolder: nameof(this.Ints)), testForReadWriteAccess: true);
-            this.Words = new PersistTable<String, UInt64>(folder: new Folder(folder: commonName, subFolder: nameof(this.Words)), testForReadWriteAccess: true);
+            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
+            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
         }
 
         public void Clear() {
@@ -107,10 +107,10 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public Boolean Contains([CanBeNull] String word) {
-            if (String.IsNullOrEmpty(word)) { return false; }
+        public Boolean Contains( [CanBeNull] String word ) {
+            if ( String.IsNullOrEmpty( word ) ) { return false; }
 
-            return this.Words.TryGetValue(word, out _);
+            return this.Words.TryGetValue( word, out _ );
         }
 
         /// <summary>
@@ -118,12 +118,12 @@ namespace Librainian.Collections {
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Boolean Contains(UInt64 key) => this.Ints.TryGetValue(key, out _);
+        public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out _ );
 
         [NotNull]
-        public IEnumerable<UInt64> EachInt() => this.Ints.Keys;
+        public ICollection<UInt64> EachInt() => this.Ints.Keys;
 
         [NotNull]
-        public IEnumerable<String> EachWord() => this.Words.Keys;
+        public ICollection<String> EachWord() => this.Words.Keys;
     }
 }

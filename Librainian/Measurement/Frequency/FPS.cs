@@ -150,7 +150,7 @@ namespace Librainian.Measurement.Frequency
         public static Fps Zero { get; } = new Fps(0);
 
         //faster WPM than a female (~240wpm)
-        [field: JsonProperty]
+        [JsonProperty]
         public Decimal Value { get; }
 
         public Fps(Decimal fps)

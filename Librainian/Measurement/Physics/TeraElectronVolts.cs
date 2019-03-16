@@ -44,6 +44,7 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using Librainian.Extensions;
+	using Rationals;
 
 	/// <summary>Units of mass and energy in <see cref="TeraElectronVolts" />.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -65,12 +66,6 @@ namespace Librainian.Measurement.Physics {
 
 		public const Decimal InOneTeraElectronVolt = 1E0m;
 
-		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly TeraElectronVolts MaxValue = new TeraElectronVolts( Decimal.MaxValue );
-
-		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly TeraElectronVolts MinValue = new TeraElectronVolts( Decimal.MinValue );
-
 		/// <summary></summary>
 		public static readonly TeraElectronVolts One = new TeraElectronVolts( 1 );
 
@@ -78,17 +73,19 @@ namespace Librainian.Measurement.Physics {
 		public static readonly TeraElectronVolts Zero = new TeraElectronVolts( 0 );
 
 		/// <summary></summary>
-		public readonly Decimal Value;
+		public readonly Rational Value;
 
-		public TeraElectronVolts( Decimal units ) : this() => this.Value = units;
+		public TeraElectronVolts( Rational units ) : this() => this.Value = units;
+		public TeraElectronVolts( Decimal units ) : this() => this.Value = ( Rational ) units;
+		public TeraElectronVolts( Double units ) : this() => this.Value = ( Rational ) units;
 
 		public TeraElectronVolts( GigaElectronVolts gigaElectronVolts ) : this() => this.Value = gigaElectronVolts.ToTeraElectronVolts().Value;
 
 		public TeraElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToTeraElectronVolts().Value;
 
-		public static TeraElectronVolts operator *( TeraElectronVolts left, Decimal right ) => new TeraElectronVolts( left.Value * right );
+		public static TeraElectronVolts operator *( TeraElectronVolts left, Rational right ) => new TeraElectronVolts( left.Value * right );
 
-		public static TeraElectronVolts operator *( Decimal left, TeraElectronVolts right ) => new TeraElectronVolts( left * right.Value );
+		public static TeraElectronVolts operator *( Rational left, TeraElectronVolts right ) => new TeraElectronVolts( left * right.Value );
 
 		public static TeraElectronVolts operator +( GigaElectronVolts left, TeraElectronVolts right ) => new TeraElectronVolts( left.ToTeraElectronVolts().Value + right.Value );
 
@@ -106,18 +103,18 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( TeraElectronVolts other ) => this.Value.CompareTo( other.Value );
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational ) InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational ) InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational ) InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational ) InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational ) InOneMilliElectronVolt );
 
 		public override String ToString() => $"{this.Value} TeV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
 	}
 }

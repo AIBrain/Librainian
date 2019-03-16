@@ -46,7 +46,6 @@ namespace Librainian.Controls {
 	using System.Threading.Tasks;
 	using System.Windows;
 	using System.Windows.Forms;
-	using FluentAssertions;
 	using JetBrains.Annotations;
 	using Maths;
 	using Measurement.Time;
@@ -1098,8 +1097,6 @@ namespace Librainian.Controls {
 				throw new ArgumentNullException( paramName: nameof( control ) );
 			}
 
-			minimum.Should().BeLessOrEqualTo( maximum );
-			value.Should().BeLessOrEqualTo( maximum );
 			var lowEnd = Math.Min( minimum, maximum );
 			var highEnd = Math.Max( minimum, maximum );
 			control.Minimum( lowEnd );

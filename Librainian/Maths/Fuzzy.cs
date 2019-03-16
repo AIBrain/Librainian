@@ -41,145 +41,144 @@
 
 namespace Librainian.Maths {
 
-	using System;
-	using Collections;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Numbers;
+    using System;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Numbers;
 
-	public enum LowMiddleHigh {
+    public enum LowMiddleHigh {
 
-		Low,
+        Low,
 
-		Middle,
+        Middle,
 
-		High
-	}
+        High
+    }
 
-	/// <summary>
-	///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
-	/// </summary>
-	[JsonObject]
-	public struct Fuzzy : ICloneable {
+    /// <summary>
+    ///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
+    /// </summary>
+    [JsonObject]
+    public struct Fuzzy : ICloneable {
 
-		/// <summary>
-		///     ~25 to 75% probability.
-		/// </summary>
-		private static readonly PairOfDoubles Undecided = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
+        /// <summary>
+        ///     ONLY used in the getter and setter.
+        /// </summary>
+        [JsonProperty]
+        private AtomicDouble _value;
 
-		/// <summary>
-		///     ONLY used in the getter and setter.
-		/// </summary>
-		[JsonProperty]
-		private AtomicDouble _value;
+        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
-		public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
+        /// <summary>
+        ///     1
+        /// </summary>
+        public const Double MaxValue = 1D;
 
-		/// <summary>
-		///     1
-		/// </summary>
-		public const Double MaxValue = 1D;
+        /// <summary>
+        ///     0
+        /// </summary>
+        public const Double MinValue = 0D;
 
-		/// <summary>
-		///     0
-		/// </summary>
-		public const Double MinValue = 0D;
+        /// <summary>
+        ///     ~25 to 75% probability.
+        /// </summary>
+        private static PairOfDoubles Undecided { get; } = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
 
-		public static readonly Fuzzy Empty;
+        public static Fuzzy Empty { get; }
 
-		public Double Value {
-			get => this._value;
+        public Double Value {
+            get => this._value;
 
-			set {
-				if ( value > MaxValue ) { value = MaxValue; }
-				else if ( value < MinValue ) { value = MinValue; }
+            set {
+                if ( value > MaxValue ) { value = MaxValue; }
+                else if ( value < MinValue ) { value = MinValue; }
 
-				this._value.Value = value;
-			}
-		}
+                this._value.Value = value;
+            }
+        }
 
-		//private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
-		//private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
-		//private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
-		//private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
-		/// <summary>
-		///     Initializes a random number between 0 and 1
-		/// </summary>
-		public Fuzzy( Double? value = null ) : this() {
-			if ( value.HasValue ) { this.Value = value.Value; }
-			else { this.Randomize(); }
-		}
+        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
+        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
+        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
+        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
+        /// <summary>
+        ///     Initializes a random number between 0 and 1
+        /// </summary>
+        public Fuzzy( Double? value = null ) : this() {
+            if ( value.HasValue ) { this.Value = value.Value; }
+            else { this.Randomize(); }
+        }
 
-		public static Double Combine( Double left, Double rhs ) {
-			if ( !left.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( left ) ); }
+        public static Double Combine( Double left, Double rhs ) {
+            if ( !left.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( left ) ); }
 
-			if ( !rhs.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( rhs ) ); }
+            if ( !rhs.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( rhs ) ); }
 
-			return ( left + rhs ) / 2D;
-		}
+            return ( left + rhs ) / 2D;
+        }
 
-		public static Fuzzy Parse( [CanBeNull] String value ) {
-			if ( String.IsNullOrWhiteSpace( value ) ) { throw new ArgumentNullException( nameof( value ) ); }
+        public static Fuzzy Parse( [CanBeNull] String value ) {
+            if ( String.IsNullOrWhiteSpace( value ) ) { throw new ArgumentNullException( nameof( value ) ); }
 
-			if ( Double.TryParse( value, out var result ) ) { return new Fuzzy( result ); }
+            if ( Double.TryParse( value, out var result ) ) { return new Fuzzy( result ); }
 
-			return Empty;
-		}
+            return Empty;
+        }
 
-		public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
+        public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
-		public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
+        public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
 
-		public Object Clone() => new Fuzzy( this.Value );
+        public Object Clone() => new Fuzzy( this.Value );
 
-		//public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
-		public Boolean IsFalseish() => this.Value < Undecided.Low;
+        //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
+        public Boolean IsFalseish() => this.Value < Undecided.Low;
 
-		public Boolean IsTrueish() => this.Value > Undecided.High;
+        public Boolean IsTrueish() => this.Value > Undecided.High;
 
-		public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
+        public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
 
-		/// <summary>
-		///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
-		/// </summary>
-		public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
-			switch ( lmh ) {
-				case null:
-					this.Value = Randem.NextDouble();
+        /// <summary>
+        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
+        /// </summary>
+        public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
+            switch ( lmh ) {
+                case null:
+                    this.Value = Randem.NextDouble();
 
-					break;
+                    break;
 
-				default:
+                default:
 
-					switch ( lmh.Value ) {
-						case LowMiddleHigh.Low:
+                    switch ( lmh.Value ) {
+                        case LowMiddleHigh.Low:
 
-							do { this.Value = Randem.NextDouble( 0.0D, 0.25D ); } while ( this.Value < MinValue || this.Value > 0.25D );
+                            do { this.Value = Randem.NextDouble( 0.0D, 0.25D ); } while ( this.Value < MinValue || this.Value > 0.25D );
 
-							break;
+                            break;
 
-						case LowMiddleHigh.Middle:
+                        case LowMiddleHigh.Middle:
 
-							do { this.Value = Randem.NextDouble( 0.25D, 0.75D ); } while ( this.Value < 0.25D || this.Value > 0.75D );
+                            do { this.Value = Randem.NextDouble( 0.25D, 0.75D ); } while ( this.Value < 0.25D || this.Value > 0.75D );
 
-							break;
+                            break;
 
-						case LowMiddleHigh.High:
+                        case LowMiddleHigh.High:
 
-							do { this.Value = Randem.NextDouble(); } while ( this.Value < 0.75D || this.Value > MaxValue );
+                            do { this.Value = Randem.NextDouble(); } while ( this.Value < 0.75D || this.Value > MaxValue );
 
-							break;
+                            break;
 
-						default:
-							this.Value = Randem.NextDouble();
+                        default:
+                            this.Value = Randem.NextDouble();
 
-							break;
-					}
+                            break;
+                    }
 
-					break;
-			}
-		}
+                    break;
+            }
+        }
 
-		public override String ToString() => $"{this.Value:R}";
-	}
+        public override String ToString() => $"{this.Value:R}";
+    }
 }

@@ -69,23 +69,23 @@ namespace Librainian.Extensions {
 
 			var suffix = "n/a";
 
-			if ( size.Between( Constants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
-				size /= Constants.Sizes.OneTeraByte;
+			if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+				size /= MathConstants.Sizes.OneTeraByte;
 				suffix = "trillion";
 			}
-			else if ( size.Between( Constants.Sizes.OneGigaByte, Constants.Sizes.OneTeraByte ) ) {
-				size /= Constants.Sizes.OneGigaByte;
+			else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
+				size /= MathConstants.Sizes.OneGigaByte;
 				suffix = "billion";
 			}
-			else if ( size.Between( Constants.Sizes.OneMegaByte, Constants.Sizes.OneGigaByte ) ) {
-				size /= Constants.Sizes.OneMegaByte;
+			else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
+				size /= MathConstants.Sizes.OneMegaByte;
 				suffix = "million";
 			}
-			else if ( size.Between( Constants.Sizes.OneKiloByte, Constants.Sizes.OneMegaByte ) ) {
-				size /= Constants.Sizes.OneKiloByte;
+			else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
+				size /= MathConstants.Sizes.OneKiloByte;
 				suffix = "thousand";
 			}
-			else if ( size.Between( UInt64.MinValue, Constants.Sizes.OneKiloByte ) ) { suffix = ""; }
+			else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) { suffix = ""; }
 
 			return $"{size:N3} {suffix}";
 		}
