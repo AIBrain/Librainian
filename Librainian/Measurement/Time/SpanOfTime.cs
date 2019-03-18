@@ -178,27 +178,35 @@ namespace Librainian.Measurement.Time {
             this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
 
             this.Months = new Months( PlanckTimes.InOneMonth.PullPlancks( ref planckTimes ) );
+
             //this.Months.Value.Should().BeInRange( 0, Months.InOneCommonYear );
 
             this.Weeks = new Weeks( PlanckTimes.InOneWeek.PullPlancks( ref planckTimes ) );
+
             //this.Weeks.Value.Should().BeInRange( 0, Weeks.InOneCommonYear );
 
             this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
+
             //this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 ); //leap year
 
             this.Hours = new Hours( PlanckTimes.InOneHour.PullPlancks( ref planckTimes ) );
+
             //this.Hours.Value.Should().BeInRange( 0, Hours.InOneDay );
 
             this.Minutes = new Minutes( PlanckTimes.InOneMinute.PullPlancks( ref planckTimes ) );
+
             //this.Minutes.Value.Should().BeInRange( 0, Minutes.InOneHour );
 
             this.Seconds = new Seconds( PlanckTimes.InOneSecond.PullPlancks( ref planckTimes ) );
+
             //this.Seconds.Value.Should().BeInRange( 0, Seconds.InOneMinute );
 
             this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
+
             //this.Milliseconds.Value.Should().BeInRange( 0, Milliseconds.InOneSecond );
 
             this.Microseconds = new Microseconds( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
+
             //this.Microseconds.Value.Should().BeInRange( 0, Microseconds.InOneMillisecond );
 
             this.Nanoseconds = new Nanoseconds( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
@@ -249,7 +257,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
         public SpanOfTime( PlanckTimes planckTimes = default, Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default, Femtoseconds femtoseconds = default,
-            Picoseconds picoseconds = default, Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, Seconds seconds = default, Minutes minutes = default,
+            Picoseconds picoseconds = default, Nanoseconds nanoseconds = default, Microseconds microseconds = default, Milliseconds milliseconds = default, [NotNull] Seconds seconds = default, Minutes minutes = default,
             Hours hours = default, Days days = default, Weeks weeks = default, Months months = default, Years years = default ) : this( planckTimes: planckTimes.Value, yoctoseconds: yoctoseconds.Value,
             zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds.Value,
             milliseconds: milliseconds.Value, seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years.Value ) { }
@@ -491,7 +499,7 @@ namespace Librainian.Measurement.Time {
                 }
 
                 if ( text.IsJustNumbers( out var units ) ) {
-                    return new SpanOfTime( seconds: ( Rational ) units ); //assume seconds given
+                    return new SpanOfTime( seconds: ( Rational )units ); //assume seconds given
                 }
 
                 if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
@@ -509,13 +517,13 @@ namespace Librainian.Measurement.Time {
                 if ( text.EndsWith( "seconds", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "seconds" );
 
-                    if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: ( Rational ) units ); }
+                    if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: ( Rational )units ); }
                 }
 
                 if ( text.EndsWith( "second", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "second" );
 
-                    if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: ( Rational ) units ); }
+                    if ( text.IsJustNumbers( out units ) ) { return new SpanOfTime( seconds: ( Rational )units ); }
                 }
 
                 //TODO parse for more, even multiple  2 days, 3 hours, and 4 minutes etc...

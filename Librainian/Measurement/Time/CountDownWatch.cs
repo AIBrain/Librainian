@@ -42,7 +42,6 @@
 namespace Librainian.Measurement.Time {
 
 	using System;
-	using System.Threading;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;

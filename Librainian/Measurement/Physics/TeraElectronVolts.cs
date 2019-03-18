@@ -67,10 +67,10 @@ namespace Librainian.Measurement.Physics {
 		public const Decimal InOneTeraElectronVolt = 1E0m;
 
 		/// <summary></summary>
-		public static readonly TeraElectronVolts One = new TeraElectronVolts( 1 );
+		public static readonly TeraElectronVolts One = new TeraElectronVolts( 1m );
 
 		/// <summary></summary>
-		public static readonly TeraElectronVolts Zero = new TeraElectronVolts( 0 );
+		public static readonly TeraElectronVolts Zero = new TeraElectronVolts( 0m );
 
 		/// <summary></summary>
 		public readonly Rational Value;

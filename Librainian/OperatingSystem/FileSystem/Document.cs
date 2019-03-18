@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-// 
+//
 // Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/02/09 at 1:16 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
@@ -395,7 +395,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="destination"></param>
         /// <returns></returns>
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
-
     }
 
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
@@ -416,7 +415,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             UNC = 0b1000,
 
             DeleteAfterClose = 0b10000
-
         }
 
         /// <summary>
@@ -467,7 +465,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             set {
                 if ( value.HasValue ) {
-                    if ( !NativeMethods.SetFileAttributes( fileName: this.FullPath, dwFileAttributes: ( UInt32 ) value.Value ) ) {
+                    if ( !NativeMethods.SetFileAttributes( fileName: this.FullPath, dwFileAttributes: ( UInt32 )value.Value ) ) {
                         NativeMethods.HandleLastError( fullPath: this.FullPath );
                     }
                 }
@@ -504,6 +502,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [JsonIgnore]
         public FileAttributeData FileAttributeData {
             get {
+
                 if ( !this._fileAttributeData.Exists.HasValue || !this._fileAttributeData.FileAttributes.HasValue || !this._fileAttributeData.FileSize.HasValue ||
                      !this._fileAttributeData.LastAccessTime.HasValue || !this._fileAttributeData.LastWriteTime.HasValue || !this._fileAttributeData.CreationTime.HasValue ) {
                     this.Refresh();
@@ -622,7 +621,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Int32 CalculateHarkerHashInt32() {
             var query = this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.FullyBuffered ).Select( selector: i => i );
 
-            return query.Aggregate( seed: 0, func: ( current, i ) => unchecked( current + i ) );
+            return query.Aggregate( seed: 0, func: ( current, i ) => unchecked(current + i) );
         }
 
         /// <summary>
@@ -706,7 +705,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             return result;
         }
 
-        public void Refresh( Boolean throwOnError = true ) {
+        public void Refresh( Boolean throwOnError = false ) {
             var handle = NativeMethods.FindFirstFile( lpFileName: this.FullPath, lpFindData: out var data );
 
             if ( handle.IsInvalid ) {
@@ -741,7 +740,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>Returns whether the file exists.</summary>
         public Boolean? Exists() {
-            if ( !this.FileAttributeData.Exists.HasValue ) {
+            var exists = this.FileAttributeData.Exists;
+
+            if ( exists.HasValue ) {
                 this.Refresh();
             }
 
@@ -789,7 +790,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                             await client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                            return ( true, stopwatch.Elapsed );
+                            return (true, stopwatch.Elapsed);
                         }
                     }
                 }
@@ -798,7 +799,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
 
-            return ( false, stopwatch.Elapsed );
+            return (false, stopwatch.Elapsed);
         }
 
         /// <summary>
@@ -831,7 +832,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             var webClient = new WebClient();
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
-                var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
+                var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
                 onProgress?.Invoke( obj: percentage );
             };
 
@@ -849,7 +850,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     if ( size.HasValue && size.Value > 0 ) {
                         using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
-                            var crc32 = new CRC32( polynomial: ( UInt32 ) size, seed: ( UInt32 ) size );
+                            var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
 
                             var result = crc32.ComputeHash( inputStream: fileStream );
 
@@ -895,7 +896,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return null;
                     }
 
-                    var crc32 = new CRC32( polynomial: ( UInt32 ) size.Value, seed: ( UInt32 ) size.Value );
+                    var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
 
                     return crc32.ComputeHash( inputStream: fileStream )
                         .Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
@@ -1030,17 +1031,17 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             try {
                 if ( !source.IsWellFormedOriginalString() ) {
-                    return ( new DownloadException( message: $"Could not use source Uri '{source}'." ), null );
+                    return (new DownloadException( message: $"Could not use source Uri '{source}'." ), null);
                 }
 
                 using ( var webClient = new WebClient() ) {
                     await webClient.DownloadFileTaskAsync( address: source, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                    return ( null, webClient.ResponseHeaders );
+                    return (null, webClient.ResponseHeaders);
                 }
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1081,7 +1082,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            if ( this.FileAttributes.HasValue ) {
+            if ( this.Exists() == true && this.FileAttributes.HasValue ) {
                 var fa = this.FileAttributes.Value;
 
                 if ( fa.HasFlag( flag: System.IO.FileAttributes.ReadOnly ) ) {
@@ -1148,7 +1149,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( oursize <= Int32.MaxValue ) {
-                return ( Int32 ) oursize;
+                return ( Int32 )oursize;
             }
 
             return Int32.MaxValue;
@@ -1165,7 +1166,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( fileName: this.FullPath ) {
-                    Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
+                    Arguments = arguments ?? String.Empty,
+                    UseShellExecute = useShell,
+                    Verb = verb
                 };
 
                 return Task.Run( function: () => Process.Start( startInfo: info ) );
@@ -1192,7 +1195,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 using ( var textReader = File.OpenText( path: this.FullPath ) ) {
                     using ( var jsonReader = new JsonTextReader( reader: textReader ) ) {
                         return new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         }.Deserialize<T>( reader: jsonReader );
                     }
                 }
@@ -1387,18 +1391,18 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {
-                return ( new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null );
+                return (new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null);
             }
 
             try {
                 using ( var webClient = new WebClient() ) {
                     await webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                    return ( null, webClient.ResponseHeaders );
+                    return (null, webClient.ResponseHeaders);
                 }
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1477,7 +1481,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( watchFile ) {
                 this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName() ) {
-                    IncludeSubdirectories = false, EnableRaisingEvents = true
+                    IncludeSubdirectories = false,
+                    EnableRaisingEvents = true
                 } );
 
                 this.WatchEvents = new Lazy<FileWatchingEvents>( valueFactory: () => new FileWatchingEvents(), isThreadSafe: false );
@@ -1517,7 +1522,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             internal Int32 nLength;
 
             internal unsafe Byte* pSecurityDescriptor = null;
-
         }
 
         /// <summary>
@@ -1573,7 +1577,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
                 if ( pe.UserState == tcs ) {
-                    progress.Report( value: ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+                    progress.Report( value: (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
                 }
             }
 
@@ -1659,7 +1663,5 @@ namespace Librainian.OperatingSystem.FileSystem {
         internal static Boolean IsExtended( [NotNull] String path ) =>
             path.Length >= 4 && path[ index: 0 ] == PathInternal.Constants.Backslash && ( path[ index: 1 ] == PathInternal.Constants.Backslash || path[ index: 1 ] == '?' ) &&
             path[ index: 2 ] == '?' && path[ index: 3 ] == PathInternal.Constants.Backslash;
-
     }
-
 }

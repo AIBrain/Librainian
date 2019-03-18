@@ -356,12 +356,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [CanBeNull]
         public static DirectoryInfo Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? changeCompressionTo = null, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
-            Assert.NotNull( directoryInfo );
 
             if ( directoryInfo == null ) { throw new ArgumentNullException( nameof( directoryInfo ) ); }
 
             try {
-                Assert.False( String.IsNullOrWhiteSpace( directoryInfo.FullName ) );
                 directoryInfo.Refresh();
 
                 if ( !directoryInfo.Exists ) {
@@ -382,8 +380,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                     File.Delete( temp );
                     directoryInfo.Refresh();
                 }
-
-                Assert.True( directoryInfo.Exists );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -737,27 +733,47 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
 
         /// <summary>
-        ///     Opens a folder with Explorer.exe
+        ///     Open with Explorer.exe
         /// </summary>
         /// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
-        public static void OpenDirectoryWithExplorer( [CanBeNull] this DirectoryInfo folder ) {
-            folder.Should().NotBeNull();
-
-            if ( null == folder ) { return; }
-
-            if ( !folder.Exists ) {
-                folder.Refresh();
-
-                if ( !folder.Exists ) { return; }
+        public static Boolean OpenWithExplorer( [NotNull] this DirectoryInfo folder ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( paramName: nameof( folder ) );
             }
 
-            var windowsFolder = Environment.GetEnvironmentVariable( "SystemRoot" );
-            windowsFolder.Should().NotBeNullOrWhiteSpace();
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
+                arguments: $" /separate /select,\"{folder.FullName}\" " );
 
-            if ( String.IsNullOrWhiteSpace( windowsFolder ) ) { return; }
+            return proc?.Responding == true;
+        }
 
-            var proc = Process.Start( fileName: $"{windowsFolder}\\explorer.exe", arguments: $"/e,\"{folder.FullName}\"" );
-            ( proc?.Responding ).Should().Be( true );
+        /// <summary>
+        ///     Open with Explorer.exe
+        /// </summary>
+        /// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
+        public static Boolean OpenWithExplorer( [NotNull] this Folder folder ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( paramName: nameof( folder ) );
+            }
+
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
+                arguments: $" /separate /select,\"{folder.FullName}\" " );
+
+            return proc?.Responding == true;
+        }
+
+        /// <summary>
+        ///     Open with Explorer.exe
+        /// </summary>
+        public static Boolean OpenWithExplorer( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
+                arguments: $" /separate /select,\"{document.FullPath}\" " );
+
+            return proc?.Responding == true;
         }
 
         /// <summary>

@@ -39,20 +39,18 @@
 //
 // Project: "Librainian", "Win32.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
 
-namespace Librainian.Controls
-{
+namespace Librainian.Controls {
 
-    using JetBrains.Annotations;
-    using Maths;
-    using Measurement.Frequency;
     using System;
     using System.Drawing;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
+    using Maths;
+    using Measurement.Frequency;
 
-    public enum Speed
-    {
+    public enum Speed {
 
         Slow,
 
@@ -61,8 +59,7 @@ namespace Librainian.Controls
         Fast
     }
 
-    public static class Win32
-    {
+    public static class Win32 {
 
         // ReSharper disable once InconsistentNaming
         public const Int32 MF_DISABLED = 0x00000002;
@@ -79,68 +76,60 @@ namespace Librainian.Controls
         //disabled button status
         public const Int32 SC_MINIMIZE = 0xF020;
 
-        public static Task MoveCursor([NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed) {
-            if (form == null) { throw new ArgumentNullException(nameof(form)); }
+        [NotNull]
+        public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
+            if ( form == null ) { throw new ArgumentNullException( nameof( form ) ); }
 
-            return Task.Run(async () =>
-            {
+            return Task.Run( async () => {
 
                 // Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
                 var cx = Cursor.Position.X;
                 var cy = Cursor.Position.Y;
 
-                while (true)
-                {
-                    if (Cursor.Position.X == x && Cursor.Position.Y == y) { break; }
+                while ( true ) {
+                    if ( Cursor.Position.X == x && Cursor.Position.Y == y ) { break; }
 
-                    if (Randem.NextBoolean())
-                    {
-                        if (cx < x)
-                        {
-                            var step = (x - cx) / 10.0f;
+                    if ( Randem.NextBoolean() ) {
+                        if ( cx < x ) {
+                            var step = ( x - cx ) / 10.0f;
 
-                            if (step < 1) { step = 1; }
+                            if ( step < 1 ) { step = 1; }
 
-                            cx -= (Int32)step;
+                            cx -= ( Int32 )step;
                         }
-                        else
-                        {
-                            var step = (cx - x) / 10.0f;
+                        else {
+                            var step = ( cx - x ) / 10.0f;
 
-                            if (step < 1) { step = 1; }
+                            if ( step < 1 ) { step = 1; }
 
-                            cx += (Int32)step;
+                            cx += ( Int32 )step;
                         }
                     }
-                    else
-                    {
-                        if (cy < y)
-                        {
-                            var step = (y - cy) / 10.0f;
+                    else {
+                        if ( cy < y ) {
+                            var step = ( y - cy ) / 10.0f;
 
-                            if (step < 1) { step = 1; }
+                            if ( step < 1 ) { step = 1; }
 
-                            cy -= (Int32)step;
+                            cy -= ( Int32 )step;
                         }
-                        else
-                        {
-                            var step = (cy - y) / 10.0f;
+                        else {
+                            var step = ( cy - y ) / 10.0f;
 
-                            if (step < 1) { step = 1; }
+                            if ( step < 1 ) { step = 1; }
 
-                            cy += (Int32)step;
+                            cy += ( Int32 )step;
                         }
                     }
 
-                    Cursor.Position = new Point(cx, cy);
-                    await Task.Delay(Hertz.Sixty).ConfigureAwait(false);
+                    Cursor.Position = new Point( cx, cy );
+                    await Task.Delay( Hertz.Sixty ).ConfigureAwait( false );
                 }
-            });
+            } );
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
+        [StructLayout( LayoutKind.Sequential )]
+        public struct POINT {
 
             public readonly Int32 x;
 

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "FileHistoryFileTests.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
+// Project: "LibrainianTests", "FileHistoryFileTests.cs" was last formatted by Protiguous on 2019/03/17 at 11:06 AM.
 
 namespace LibrainianTests.OperatingSystem {
 
@@ -54,16 +54,20 @@ namespace LibrainianTests.OperatingSystem {
 
         public const String Example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
+        public static void TestForNullNess() => Example.Should().ThrowIfNull();
+
         [Test]
         public static void RunTests() {
             var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
             //if ( !DateTime.TryParseExact(example , "yyyy/MM/dd hh:mm:ss", CultureInfo.Ordinal, DateTimeStyles.AssumeUniversal | DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-            if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out var result ) ) { throw new InvalidOperationException(); }
+            if ( !DateTime.TryParse( example.ToString( CultureInfo.CurrentCulture ), out var result ) ) {
+                throw new InvalidOperationException();
+            }
 
-            if ( !FileHistoryFile.TryParseFileHistoryFile( new Document( Example ), out var folder, out var filename, out var when ) ) { throw new InvalidCastException(); }
+            if ( !FileHistoryFile.TryParseFileHistoryFile( new Document( Example ), out var folder, out var filename, out var when ) ) {
+                throw new InvalidCastException();
+            }
         }
-
-        public static void TestForNullNess() => Example.Should().ThrowIfNull();
     }
 }

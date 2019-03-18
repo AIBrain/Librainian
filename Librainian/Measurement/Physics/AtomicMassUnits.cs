@@ -190,6 +190,6 @@ namespace Librainian.Measurement.Physics {
 		/// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
 		public override String ToString() => $"{this.Value} u";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
 	}
 }

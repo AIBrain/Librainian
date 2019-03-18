@@ -223,8 +223,6 @@ namespace Librainian.Persistence {
 
         public void Initialize() {
 
-            this.Dictionary.Database.Should().NotBeNull();
-
             if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
                 throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
             }

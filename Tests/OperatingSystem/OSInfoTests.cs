@@ -37,24 +37,26 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "Librainian", "OSInfoTests.cs" was last formatted by Protiguous on 2018/07/13 at 1:33 AM.
+// Project: "LibrainianTests", "OSInfoTests.cs" was last formatted by Protiguous on 2019/03/17 at 12:35 PM.
 
-namespace Librainian.OperatingSystem {
+namespace LibrainianTests.OperatingSystem {
 
-	using System.Diagnostics;
+    using System.Diagnostics;
+    using Librainian.OperatingSystem;
+    using NUnit.Framework;
 
-	[TestFixture]
-	public static class OSInfoTests {
+    [TestFixture]
+    public static class OSInfoTests {
 
-		[Test]
-		public static void TestVersions() {
-			Debug.WriteLine( $"Server: {Info.IsServer()}" );
-			Debug.WriteLine( $"Version Major: {Info.VersionMajor()}" );
-			Debug.WriteLine( $"Version Minor: {Info.VersionMinor()}" );
-			Debug.WriteLine( $"Build Major: {Info.BuildMajor()}" );
-			Debug.WriteLine( $"Build Minor: {Info.BuildMinor()}" );
-			Debug.WriteLine( $"BuildBranch: {Info.BuildBranch()}" );
-			Debug.WriteLine( $"Release ID: {Info.ReleaseId()}" );
-		}
-	}
+        [Test]
+        public static void TestVersions() {
+            Debug.WriteLine( $"Server: {Info.IsServer()}" );
+            Debug.WriteLine( $"Version Major: {Info.VersionMajor()}" );
+            Debug.WriteLine( $"Version Minor: {Info.VersionMinor()}" );
+            Debug.WriteLine( $"Build Major: {Info.BuildMajor()}" );
+            Debug.WriteLine( $"Build Minor: {Info.BuildMinor()}" );
+            Debug.WriteLine( $"BuildBranch: {Info.BuildBranch()}" );
+            Debug.WriteLine( $"Release ID: {Info.ReleaseId()}" );
+        }
+    }
 }

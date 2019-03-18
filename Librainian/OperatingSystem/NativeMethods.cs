@@ -526,9 +526,11 @@ namespace Librainian.OperatingSystem {
             IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
+        [return: MarshalAs( UnmanagedType.Bool )]
         public static extern Boolean DeleteFile( String path );
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [return: MarshalAs( UnmanagedType.Bool )]
         public static extern Boolean DeleteFileW( String lpFileName );
 
         /// <summary>

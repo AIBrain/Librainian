@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "LibrainianTests", "IniFileTests.cs" was last formatted by Protiguous on 2019/02/09 at 1:17 PM.
+// Project: "LibrainianTests", "IniFileTests.cs" was last formatted by Protiguous on 2019/03/17 at 8:36 PM.
 
 namespace LibrainianTests.Persistence {
 
@@ -90,7 +90,7 @@ data33   =   3
 
         public static IniFile Ini3;
 
-        //[OneTimeSetUp]
+        [OneTimeSetUp]
         public static void Setup() { }
 
         [Test]

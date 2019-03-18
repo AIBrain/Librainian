@@ -41,20 +41,21 @@
 
 namespace Librainian.Measurement.Time {
 
-    using Extensions;
-    using Maths;
-    using Newtonsoft.Json;
-    using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Parsing;
     using Rationals;
 
     /// <summary>
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
     [JsonObject]
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
@@ -66,63 +67,63 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <see cref="Five" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Five = new Yoctoseconds(5);
+        public static Yoctoseconds Five = new Yoctoseconds( 5 );
 
         /// <summary>
         ///     <see cref="One" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds One = new Yoctoseconds(1);
+        public static Yoctoseconds One = new Yoctoseconds( 1 );
 
         /// <summary>
         ///     <see cref="Seven" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Seven = new Yoctoseconds(7);
+        public static Yoctoseconds Seven = new Yoctoseconds( 7 );
 
         /// <summary>
         ///     <see cref="Ten" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Ten = new Yoctoseconds(10);
+        public static Yoctoseconds Ten = new Yoctoseconds( 10 );
 
         /// <summary>
         ///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Thirteen = new Yoctoseconds(13);
+        public static Yoctoseconds Thirteen = new Yoctoseconds( 13 );
 
         /// <summary>
         ///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Thirty = new Yoctoseconds(30);
+        public static Yoctoseconds Thirty = new Yoctoseconds( 30 );
 
         /// <summary>
         ///     <see cref="Three" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Three = new Yoctoseconds(3);
+        public static Yoctoseconds Three = new Yoctoseconds( 3 );
 
         /// <summary>
         ///     <see cref="Two" /><see cref="Yoctoseconds" />.
         /// </summary>
-        public static Yoctoseconds Two = new Yoctoseconds(2);
+        public static Yoctoseconds Two = new Yoctoseconds( 2 );
 
         /// <summary>
         /// </summary>
-        public static Yoctoseconds Zero = new Yoctoseconds(0);
+        public static Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        public static Rational InOneSecond { get; } = new BigInteger(10E24);
+        public static Rational InOneSecond { get; } = new BigInteger( 10E24 );
 
         [JsonProperty]
         public Rational Value { get; }
 
-        public Yoctoseconds(Decimal value) => this.Value = ( Rational ) value;
+        public Yoctoseconds( Decimal value ) => this.Value = ( Rational )value;
 
-        public Yoctoseconds(Rational value) => this.Value = value;
+        public Yoctoseconds( Rational value ) => this.Value = value;
 
-        public Yoctoseconds(Int64 value) => this.Value = value;
+        public Yoctoseconds( Int64 value ) => this.Value = value;
 
-        public Yoctoseconds(BigInteger value) => this.Value = value;
+        public Yoctoseconds( BigInteger value ) => this.Value = value;
 
-        public static Yoctoseconds Combine(Yoctoseconds left, Yoctoseconds right) => Combine(left, right.Value);
+        public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
 
-        public static Yoctoseconds Combine(Yoctoseconds left, Rational yoctoseconds) => new Yoctoseconds(left.Value + yoctoseconds);
+        public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -130,74 +131,75 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(Yoctoseconds left, Yoctoseconds right) => left.Value == right.Value;
+        public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value == right.Value;
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.
         /// </summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
-        public static implicit operator PlanckTimes(Yoctoseconds yoctoseconds) => ToPlanckTimes(yoctoseconds);
+        public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
-        public static implicit operator SpanOfTime(Yoctoseconds yoctoseconds) => new SpanOfTime(yoctoseconds: yoctoseconds);
+        public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds: yoctoseconds );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
         /// </summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
-        public static implicit operator Zeptoseconds(Yoctoseconds yoctoseconds) => yoctoseconds.ToZeptoseconds();
+        public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
 
-        public static Yoctoseconds operator -(Yoctoseconds yoctoseconds) => new Yoctoseconds(yoctoseconds.Value * -1);
+        public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new Yoctoseconds( yoctoseconds.Value * -1 );
 
-        public static Yoctoseconds operator -(Yoctoseconds left, Yoctoseconds right) => Combine(left: left, right: -right);
+        public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, right: -right );
 
-        public static Yoctoseconds operator -(Yoctoseconds left, Decimal seconds) => Combine(left, ( Rational ) (-seconds));
+        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
 
-        public static Boolean operator !=(Yoctoseconds left, Yoctoseconds right) => !Equals(left, right);
+        public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left, right );
 
-        public static Yoctoseconds operator +(Yoctoseconds left, Yoctoseconds right) => Combine(left, right);
+        public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
 
-        public static Yoctoseconds operator +(Yoctoseconds left, Decimal yoctoseconds) => Combine(left, ( Rational ) yoctoseconds);
+        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational )yoctoseconds );
 
-        public static Boolean operator <(Yoctoseconds left, Yoctoseconds right) => left.Value < right.Value;
+        public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==(Yoctoseconds left, Yoctoseconds right) => Equals(left, right);
+        public static Boolean operator ==( Yoctoseconds left, Yoctoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >(Yoctoseconds left, Yoctoseconds right) => left.Value > right.Value;
+        public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-        public static PlanckTimes ToPlanckTimes(Yoctoseconds yoctoseconds) => new PlanckTimes(yoctoseconds.Value * ( Rational ) PlanckTimes.InOneYoctosecond);
+        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-        public Int32 CompareTo(Yoctoseconds other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals(Yoctoseconds other) => Equals(this, other);
+        public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
 
-        public override Boolean Equals(Object obj) {
-            if (obj == null) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) { return false; }
 
-            return obj is Yoctoseconds yoctoseconds && this.Equals(yoctoseconds);
+            return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational ) PlanckTimes.InOneYoctosecond);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-        public Seconds ToSeconds() => new Seconds(this.Value * InOneSecond);
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
 
         public override String ToString() {
-            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.WholePart;
 
-                return $"{whole} {whole.PluralOf("ys")}";
+                return $"{whole} {whole.PluralOf( "ys" )}";
             }
 
-            var dec = (Decimal)this.Value;
+            var dec = ( Decimal )this.Value;
 
-            return $"{dec} {dec.PluralOf("ys")}";
+            return $"{dec} {dec.PluralOf( "ys" )}";
         }
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
 
-        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds(this.Value / InOneZeptosecond);
+        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
     }
 }

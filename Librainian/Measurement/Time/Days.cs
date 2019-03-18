@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Days.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-// 
+//
 // Project: "Librainian", "Days.cs" was last formatted by Protiguous on 2019/03/03 at 8:08 AM.
 
 namespace Librainian.Measurement.Time {
@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Days( Decimal value ) => this.Value = ( Rational ) value;
+        public Days( Decimal value ) => this.Value = ( Rational )value;
 
         public Days( Rational value ) => this.Value = value;
 
@@ -125,7 +125,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days );
 
-        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double ) days.Value );
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
@@ -138,64 +138,27 @@ namespace Librainian.Measurement.Time {
 
         public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
 
-        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational ) ( -days ) );
+        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
 
         public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
         public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational ) days );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
 
         public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Days left, Hours right ) => left < ( Days ) right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
         public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( Days left, Hours right ) => left > ( Days ) right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Days other ) => this.Value.CompareTo( other.Value );
-
-        public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
-
-        public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
-                return false;
-            }
-
-            return obj is Days days && this.Equals( days );
-        }
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-
-        public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
-
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneDay * this.Value );
-
-        public Seconds ToSeconds() => new Seconds( ( Rational ) TimeSpan.FromDays( ( Double ) this.Value ).TotalSeconds );
-
-
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "day" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "day" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
-
-        public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
 
         /// <summary>Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object. </summary>
         /// <param name="other">An object to compare with this instance. </param>
@@ -221,8 +184,39 @@ namespace Librainian.Measurement.Time {
             return obj is Days other ? this.CompareTo( other ) : throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
         }
 
+        public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
+
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) {
+                return false;
+            }
+
+            return obj is Days days && this.Equals( days );
+        }
+
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+        public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
+
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
+
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( ( Rational )TimeSpan.FromDays( ( Double )this.Value ).TotalSeconds );
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "day" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "day" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+
+        public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }
-
-
-
 }

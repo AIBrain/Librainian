@@ -41,31 +41,28 @@
 
 namespace Librainian.Measurement.Length {
 
-	using System;
-	using Newtonsoft.Json;
-	using Rationals;
+    using System;
+    using Newtonsoft.Json;
+    using Rationals;
 
-	public struct Meters {
+    public class Meters {
 
+        public static readonly Meters One = new Meters( meters: 1 );
 
-		public static readonly Meters One = new Meters( meters: 1 );
+        public static readonly Meters Two = new Meters( meters: 2 );
 
-		public static readonly Meters Two = new Meters( meters: 2 );
+        [JsonProperty]
+        public readonly Rational Value;
 
-		[JsonProperty]
-		public readonly Rational Value;
+        public Meters( Decimal meters ) => this.Value = ( Rational )meters;
 
-		public Meters( Decimal meters ) => this.Value = ( Rational ) meters;
+        public Meters( Millimeters millimeters ) => this.Value = millimeters.Value / ( Rational )Extensions.MillimetersInSingleCentimeter;
 
-		public Meters( Millimeters millimeters ) {
-			this.Value = millimeters.Value / ( Rational ) Extensions.MillimetersInSingleCentimeter;
-		}
+        public Meters( Centimeters centimeters ) {
+            var val = centimeters.Value / ( Rational )Extensions.CentimetersinSingleMeter;
+            this.Value = val;
+        }
 
-		public Meters( Centimeters centimeters ) {
-			var val = centimeters.Value / (Rational)Extensions.CentimetersinSingleMeter;
-			this.Value = val;
-		}
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+    }
 }

@@ -546,6 +546,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             return this.Info.Exists;
         }
 
+        public Boolean Explore() => this.Info.OpenWithExplorer();
+
         /// <summary>
         ///     Free space available to the current user.
         /// </summary>
@@ -606,7 +608,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
-        public void OpenWithExplorer() => Windows.ExecuteExplorerAsync( arguments: this.FullName );
+        public void OpenWithExplorer() => Windows.OpenWithExplorer( value: this.FullName );
 
         public void Refresh() => this.Info.Refresh();
 

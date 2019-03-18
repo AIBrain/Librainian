@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CoundownWatchTests.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "ParsingTests.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,34 +37,45 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 //
-// Project: "LibrainianTests", "CoundownWatchTests.cs" was last formatted by Protiguous on 2019/03/17 at 11:06 AM.
+// Project: "LibrainianTests", "ParsingTests.cs" was last formatted by Protiguous on 2019/03/17 at 12:35 PM.
 
-namespace LibrainianTests {
+namespace LibrainianTests.Linguistics {
 
-    using System.Threading;
-    using FluentAssertions;
-    using Librainian.Logging;
-    using Librainian.Measurement.Time;
+    using System;
+    using Librainian.Parsing;
+    using Librainian.Persistence;
     using NUnit.Framework;
 
-    [TestFixture]
-    public static class CoundownWatchTests {
+    public class ParsingTests {
 
         [Test]
-        public static void TestCountdown() {
-            var watch = new CountDownWatch( Seconds.Three, () => "Launched!".Info() );
-            watch.Start();
+        public static void Test() {
+            Console.WriteLine( "<p>George</p><b>W</b><i>Bush</i>".StripTags( new[] {
+                "i", "b"
+            } ) );
 
-            do {
-                $"{watch.Remaining().Simpler()}".Info();
-                Thread.Sleep( 333 );
-            } while ( !watch.HasLaunched );
+            Console.WriteLine( "<p>George <img src='someimage.png' onmouseover='someFunction()'>W <i>Bush</i></p>".StripTags( new[] {
+                "p"
+            } ) );
 
-            watch.Remaining().Should().BeLessThan( Seconds.One );
+            Console.WriteLine( "<a href='http://www.djksterhuis.org'>Martijn <b>Dijksterhuis</b></a>".StripTags( new[] {
+                "a"
+            } ) );
 
-            $"{watch.Remaining().Simpler()}".Info();
-            $"{watch.Remaining().Simpler()}".Info();
-            $"{watch.Remaining().Simpler()}".Info();
+            const String test4 = "<a class=\"classof69\" onClick='crosssite.boom()' href='http://www.djksterhuis.org'>Martijn Dijksterhuis</a>";
+
+            Console.WriteLine( test4.StripTagsAndAttributes( new[] {
+                "a"
+            } ) );
+        }
+
+        [Test]
+        public static void TestStaticStorage() {
+            const String phraseToTest = "Hello world";
+
+            PersistenceExtensions.Settings( nameof( phraseToTest ), phraseToTest );
+
+            Assert.AreEqual( phraseToTest, PersistenceExtensions.Settings( nameof( phraseToTest ) ) );
         }
     }
 }

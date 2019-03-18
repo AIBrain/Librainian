@@ -39,9 +39,11 @@
 //
 // Project: "Librainian", "DateSpanTests.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
 
-namespace Librainian.Measurement.Time {
+namespace LibrainianTests.Maths {
 
 	using System;
+	using Librainian.Measurement.Time;
+	using NUnit.Framework;
 
 	/// <summary>
 	///     From <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates.Tests/DateSpanTests.cs" />

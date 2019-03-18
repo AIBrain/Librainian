@@ -230,31 +230,29 @@ namespace Librainian.OperatingSystem {
             } );
 
         [CanBeNull]
-        public static Task<Process> ExecuteExplorerAsync( String arguments ) =>
-            Task.Run( () => {
-                try {
-                    var proc = new ProcessStartInfo {
-                        UseShellExecute = false,
-                        WorkingDirectory = Environment.CurrentDirectory,
-                        FileName = "explorer.exe",
+        public static Process OpenWithExplorer( String value ) {
+            try {
+                //Verb = "runas", //demand elevated permissions
+                var proc = new ProcessStartInfo {
+                    UseShellExecute = false,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullName, "explorer.exe" ),
+                    Arguments = $" /separate /select,\"{value}\" ",
+                    CreateNoWindow = false,
+                    ErrorDialog = true,
+                    WindowStyle = ProcessWindowStyle.Normal
+                };
 
-                        //Verb = "runas", //demand elevated permissions
-                        Arguments = $@"""{arguments}""",
-                        CreateNoWindow = false,
-                        ErrorDialog = true,
-                        WindowStyle = ProcessWindowStyle.Normal
-                    };
+                $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
 
-                    $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
+                return Process.Start( startInfo: proc );
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
-                    return Process.Start( startInfo: proc );
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            } );
+            return null;
+        }
 
         [NotNull]
         public static Task<Boolean> ExecutePowershellCommandAsync( String arguments, Boolean elevated = false ) =>

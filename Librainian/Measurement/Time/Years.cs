@@ -41,54 +41,55 @@
 
 namespace Librainian.Measurement.Time {
 
-    using Extensions;
-    using Maths;
-    using Newtonsoft.Json;
-    using Parsing;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Parsing;
     using Rationals;
 
     [JsonObject]
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Years : IComparable<Years>, IQuantityOfTime {
 
         /// <summary>
         ///     One <see cref="Years" /> .
         /// </summary>
-        public static Years One { get; } = new Years(1);
+        public static Years One { get; } = new Years( 1 );
 
         /// <summary>
         /// </summary>
-        public static Years Ten { get; } = new Years(10);
+        public static Years Ten { get; } = new Years( 10 );
 
         /// <summary>
         /// </summary>
-        public static Years Thousand { get; } = new Years(1000);
+        public static Years Thousand { get; } = new Years( 1000 );
 
         /// <summary>
         ///     Zero <see cref="Years" />
         /// </summary>
-        public static Years Zero { get; } = new Years(0);
+        public static Years Zero { get; } = new Years( 0 );
 
         [JsonProperty]
         public Rational Value { get; }
 
-        public Years(Decimal value) => this.Value = ( Rational ) value;
+        public Years( Decimal value ) => this.Value = ( Rational )value;
 
-        public Years(Rational value) => this.Value = value;
+        public Years( Rational value ) => this.Value = value;
 
-        public Years(Int64 value) => this.Value = value;
+        public Years( Int64 value ) => this.Value = value;
 
-        public Years(BigInteger value) => this.Value = value;
+        public Years( BigInteger value ) => this.Value = value;
 
-        public static Years Combine(Years left, Years right) => Combine(left, right.Value);
+        public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
 
-        public static Years Combine(Years left, Decimal years) => new Years(left.Value + ( Rational ) years);
+        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational )years );
 
-        public static Years Combine(Years left, Rational years) => new Years(left.Value + years);
+        public static Years Combine( Years left, Rational years ) => new Years( left.Value + years );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -96,66 +97,67 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(Years left, Years right) => left.Value == right.Value;
+        public static Boolean Equals( Years left, Years right ) => left.Value == right.Value;
 
-        public static implicit operator Months(Years years) => years.ToMonths();
+        public static implicit operator Months( Years years ) => years.ToMonths();
 
-        public static implicit operator SpanOfTime(Years years) => new SpanOfTime(years: years);
+        public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years );
 
-        public static Years operator -(Years days) => new Years(days.Value * -1);
+        public static Years operator -( Years days ) => new Years( days.Value * -1 );
 
-        public static Years operator -(Years left, Years right) => Combine(left: left, right: -right);
+        public static Years operator -( Years left, Years right ) => Combine( left: left, right: -right );
 
-        public static Years operator -(Years left, Decimal years) => Combine(left, -years);
+        public static Years operator -( Years left, Decimal years ) => Combine( left, -years );
 
-        public static Boolean operator !=(Years left, Years right) => !Equals(left, right);
+        public static Boolean operator !=( Years left, Years right ) => !Equals( left, right );
 
-        public static Years operator +(Years left, Years right) => Combine(left, right);
+        public static Years operator +( Years left, Years right ) => Combine( left, right );
 
-        public static Years operator +(Years left, Decimal years) => Combine(left, years);
+        public static Years operator +( Years left, Decimal years ) => Combine( left, years );
 
-        public static Years operator +(Years left, BigInteger years) => Combine(left, years);
+        public static Years operator +( Years left, BigInteger years ) => Combine( left, years );
 
-        public static Boolean operator <(Years left, Years right) => left.Value < right.Value;
+        public static Boolean operator <( Years left, Years right ) => left.Value < right.Value;
 
-        public static Boolean operator ==(Years left, Years right) => Equals(left, right);
+        public static Boolean operator ==( Years left, Years right ) => Equals( left, right );
 
-        public static Boolean operator >(Years left, Years right) => left.Value > right.Value;
+        public static Boolean operator >( Years left, Years right ) => left.Value > right.Value;
 
-        public Int32 CompareTo(Years other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( Years other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals(Years other) => Equals(this, other);
+        public Boolean Equals( Years other ) => Equals( this, other );
 
-        public override Boolean Equals(Object obj) {
-            if (obj == null) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) { return false; }
 
-            return obj is Years years && this.Equals(years);
+            return obj is Years years && this.Equals( years );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public Days ToDays() => new Days(this.Value * Days.InOneCommonYear);
+        public Days ToDays() => new Days( this.Value * Days.InOneCommonYear );
 
-        public Months ToMonths() => new Months(this.Value * Months.InOneCommonYear);
+        public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes(this.Value * ( Rational ) PlanckTimes.InOneYear);
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYear );
 
-        public Seconds ToSeconds() => new Seconds(this.Value * Seconds.InOneCommonYear);
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
 
         public override String ToString() {
-            if (this.Value > MathConstants.DecimalMaxValueAsBigRational) {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.WholePart;
 
-                return $"{whole} {whole.PluralOf("year")}";
+                return $"{whole} {whole.PluralOf( "year" )}";
             }
 
-            var dec = (Decimal)this.Value;
+            var dec = ( Decimal )this.Value;
 
-            return $"{dec} {dec.PluralOf("year")}";
+            return $"{dec} {dec.PluralOf( "year" )}";
         }
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
 
-        public Weeks ToWeeks() => new Weeks(this.Value * ( Rational ) Weeks.InOneCommonYear);
+        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneCommonYear );
     }
 }

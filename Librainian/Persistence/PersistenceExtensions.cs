@@ -1186,15 +1186,6 @@ namespace Librainian.Persistence {
             return null;
         }
 
-        [Test]
-        public static void TestStaticStorage() {
-            const String phraseToTest = "Hello world";
-
-            Settings( nameof( phraseToTest ), phraseToTest );
-
-            Assert.AreEqual( phraseToTest, Settings( nameof( phraseToTest ) ) );
-        }
-
         /// <summary>
         ///     Return this object as a JSON string.
         /// </summary>
@@ -1265,7 +1256,9 @@ namespace Librainian.Persistence {
             }
 
             using ( var snag = new SingleAccess( document ) ) {
-                snag.Snagged.Should().BeTrue();
+                if ( !snag.Snagged ) {
+                    return false;
+                }
 
                 using ( var writer = File.AppendText( document.FullPath ) ) {
                     using ( JsonWriter jw = new JsonTextWriter( writer ) ) {

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ReaderWriter.cs" belongs to Protiguous@Protiguous.com and
+// 
+// This source code contained in "ReaderWriterFromMicrosoft.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "ReaderWriter.cs" was last formatted by Protiguous on 2019/01/10 at 3:21 AM.
+// 
+// Project: "Librainian", "ReaderWriterFromMicrosoft.cs" was last formatted by Protiguous on 2019/03/17 at 8:31 PM.
 
 namespace Librainian.Threading {
 
@@ -59,34 +59,7 @@ namespace Librainian.Threading {
     [HostProtection( MayLeakOnAbort = true )]
     public class ReaderWriterFromMicrosoft : IDisposable {
 
-        private const Int32 LockSleep0Count = 5;
-
-        private const Int32 LockSpinCount = 10;
-
-        private const Int32 LockSpinCycles = 20;
-
-        //The max readers is actually one less than it's theoretical max.
-        //This is done in order to prevent reader count overflows. If the reader
-        //count reaches max, other readers will wait.
-        private const UInt32 MAX_READER = 0x10000000 - 2;
-
-        private const Int32 MaxSpinCount = 20;
-
-        private const UInt32 READER_MASK = 0x10000000 - 1;
-
-        private const UInt32 WAITING_UPGRADER = 0x20000000;
-
-        private const UInt32 WAITING_WRITERS = 0x40000000;
-
-        private const UInt32 WRITER_HELD = 0x80000000;
-
-        // Every lock instance has a unique ID, which is used by ReaderWriterCount to associate itself with the lock
-        // without holding a reference to it.
-        private static Int64 NextLockID;
-
-        // See comments on ReaderWriterCount.
-        [ThreadStatic]
-        private static ReaderWriterCount t_rwc;
+        public void Dispose() => this.Dispose( true );
 
         private readonly Int64 lockID;
 
@@ -127,7 +100,7 @@ namespace Librainian.Threading {
 
         public Int32 CurrentReadCount {
             get {
-                var numreaders = ( Int32 )this.GetNumReaders();
+                var numreaders = ( Int32 ) this.GetNumReaders();
 
                 if ( this.upgradeLockOwnerId != -1 ) {
                     return numreaders - 1;
@@ -215,11 +188,40 @@ namespace Librainian.Threading {
             }
         }
 
-        public Int32 WaitingReadCount => ( Int32 )this.numReadWaiters;
+        public Int32 WaitingReadCount => ( Int32 ) this.numReadWaiters;
 
-        public Int32 WaitingUpgradeCount => ( Int32 )this.numUpgradeWaiters;
+        public Int32 WaitingUpgradeCount => ( Int32 ) this.numUpgradeWaiters;
 
-        public Int32 WaitingWriteCount => ( Int32 )this.numWriteWaiters;
+        public Int32 WaitingWriteCount => ( Int32 ) this.numWriteWaiters;
+
+        private const Int32 LockSleep0Count = 5;
+
+        private const Int32 LockSpinCount = 10;
+
+        private const Int32 LockSpinCycles = 20;
+
+        //The max readers is actually one less than it's theoretical max.
+        //This is done in order to prevent reader count overflows. If the reader
+        //count reaches max, other readers will wait.
+        private const UInt32 MAX_READER = 0x10000000 - 2;
+
+        private const Int32 MaxSpinCount = 20;
+
+        private const UInt32 READER_MASK = 0x10000000 - 1;
+
+        private const UInt32 WAITING_UPGRADER = 0x20000000;
+
+        private const UInt32 WAITING_WRITERS = 0x40000000;
+
+        private const UInt32 WRITER_HELD = 0x80000000;
+
+        // Every lock instance has a unique ID, which is used by ReaderWriterCount to associate itself with the lock
+        // without holding a reference to it.
+        private static Int64 NextLockID;
+
+        // See comments on ReaderWriterCount.
+        [ThreadStatic]
+        private static ReaderWriterCount t_rwc;
 
         public ReaderWriterFromMicrosoft() {
 
@@ -419,7 +421,7 @@ namespace Librainian.Threading {
         }
 
         // thread waiting to acquire the upgrade lock
-        private Boolean IsRwHashEntryChanged( ReaderWriterCount lrwc ) => lrwc.lockID != this.lockID;
+        private Boolean IsRwHashEntryChanged( [NotNull] ReaderWriterCount lrwc ) => lrwc.lockID != this.lockID;
 
         private Boolean IsWriterAcquired() => ( this.owners & ~WAITING_WRITERS ) == 0;
 
@@ -520,7 +522,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for (; ; ) {
+            for ( ;; ) {
 
                 // We can enter a read lock if there are only read-locks have been given out
                 // and a writer is not trying to get in.
@@ -586,6 +588,7 @@ namespace Librainian.Threading {
 
             try {
                 result = this.TryEnterUpgradeableReadLockCore( timeout );
+
                 return result;
             }
             finally {
@@ -642,7 +645,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for (; ; ) {
+            for ( ;; ) {
 
                 //Once an upgrade lock is taken, it's like having a reader lock held
                 //until upgrade or downgrade operations are performed.
@@ -746,7 +749,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for (; ; ) {
+            for ( ;; ) {
                 if ( this.IsWriterAcquired() ) {
 
                     // Good case, there is no contention, we are basically done
@@ -903,14 +906,11 @@ namespace Librainian.Threading {
                 }
 
                 if ( !waitSuccessful ) // We may also be aboutto throw for some reason.  Exit myLock.
-                {
-                }
+                { }
             }
 
             return waitSuccessful;
         }
-
-        public void Dispose() => this.Dispose( true );
 
         // threads waiting to acquire a read lock go here (will be released in bulk)
         public void EnterReadLock() => this.TryEnterReadLock( -1 );
@@ -1063,13 +1063,13 @@ namespace Librainian.Threading {
             }
 
             public TimeoutTracker( TimeSpan timeout ) {
-                var ltm = ( Int64 )timeout.TotalMilliseconds;
+                var ltm = ( Int64 ) timeout.TotalMilliseconds;
 
                 if ( ltm < -1 || ltm > Int32.MaxValue ) {
                     throw new ArgumentOutOfRangeException( nameof( timeout ) );
                 }
 
-                this._total = ( Int32 )ltm;
+                this._total = ( Int32 ) ltm;
 
                 if ( this._total != -1 && this._total != 0 ) {
                     this._start = Environment.TickCount;
@@ -1093,6 +1093,7 @@ namespace Librainian.Threading {
                     this._start = 0;
                 }
             }
+
         }
 
         /// <summary>
@@ -1124,6 +1125,9 @@ namespace Librainian.Threading {
             // But we have to have the fields on every ReaderWriterCount instance, because
             // we reuse it for different locks.
             public Int32 writercount;
+
         }
+
     }
+
 }

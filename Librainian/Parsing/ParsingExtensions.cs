@@ -1689,27 +1689,6 @@ namespace Librainian.Parsing {
             return @this.Substring( @this.Length - endIndex - length, @this.Length - endIndex );
         }
 
-        [Test]
-        public static void Test() {
-            Console.WriteLine( "<p>George</p><b>W</b><i>Bush</i>".StripTags( new[] {
-                "i", "b"
-            } ) );
-
-            Console.WriteLine( "<p>George <img src='someimage.png' onmouseover='someFunction()'>W <i>Bush</i></p>".StripTags( new[] {
-                "p"
-            } ) );
-
-            Console.WriteLine( "<a href='http://www.djksterhuis.org'>Martijn <b>Dijksterhuis</b></a>".StripTags( new[] {
-                "a"
-            } ) );
-
-            const String test4 = "<a class=\"classof69\" onClick='crosssite.boom()' href='http://www.djksterhuis.org'>Martijn Dijksterhuis</a>";
-
-            Console.WriteLine( test4.StripTagsAndAttributes( new[] {
-                "a"
-            } ) );
-        }
-
         /// <summary>
         /// Returns <paramref name="text"/> converted to a base-64 string.
         /// </summary>

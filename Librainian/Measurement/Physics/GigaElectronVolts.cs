@@ -117,6 +117,6 @@ namespace Librainian.Measurement.Physics {
 		/// </returns>
 		public override String ToString() => $"{this.Value} GeV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
 	}
 }
