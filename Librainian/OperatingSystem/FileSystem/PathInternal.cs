@@ -57,7 +57,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static String EnsureExtendedPrefix( [NotNull] this String path ) {
-            path = path.ThrowIfBlank();
+            path = path.TrimAndThrowIfBlank();
 
             if ( path.IsPartiallyQualified() || path.IsDevice() ) {
                 return path;
@@ -72,7 +72,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static String GetLongPathName( [NotNull] this String path ) {
-            path = path.ThrowIfBlank();
+            path = path.TrimAndThrowIfBlank();
 
             var stringBuffer = new StringBuilder( capacity: Constants.MaxPathLength );
             path.GetLongPathNameW( lpszLongPath: stringBuffer, cchBuffer: ( UInt32 ) stringBuffer.Capacity );
@@ -83,7 +83,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDevice( [NotNull] this String path ) {
-            path = path.ThrowIfBlank();
+            path = path.TrimAndThrowIfBlank();
 
             if ( Document.IsExtended( path: path ) ) {
                 return true;
@@ -104,7 +104,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsPartiallyQualified( [NotNull] this String path ) {
-            path = path.ThrowIfBlank();
+            path = path.TrimAndThrowIfBlank();
 
             if ( path.Length < 2 ) {
                 return true;
@@ -128,7 +128,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>
         ///     Returns true if the path is too long
         /// </summary>
-        public static Boolean IsPathTooLong( [NotNull] this String fullPath ) => fullPath.ThrowIfBlank().Length >= Constants.MaxPathLength;
+        public static Boolean IsPathTooLong( [NotNull] this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
 
         [Pure]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
@@ -142,8 +142,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
         [NotNull]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static String ThrowIfBlank( this String path ) {
-            path = path?.Trim();
+        public static String TrimAndThrowIfBlank( [NotNull] this String path ) {
+
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+            }
+
+            path = path.Trim();
 
             if ( String.IsNullOrEmpty( value: path ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
@@ -155,6 +160,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static class Constants {
 
             public const Char Backslash = '\\';
+            public const Char Forwardslash = '/';
 
             public const String DevicePathPrefix = @"\\.\";
 

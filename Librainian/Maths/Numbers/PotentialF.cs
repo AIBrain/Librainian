@@ -71,7 +71,7 @@ namespace Librainian.Maths.Numbers {
 		public Single Value {
 			get => Thread.VolatileRead( ref this._value );
 
-			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
+			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
 		}
 
 		/// <summary>1</summary>

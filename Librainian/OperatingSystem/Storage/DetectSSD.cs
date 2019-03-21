@@ -47,7 +47,7 @@ namespace Librainian.OperatingSystem.Storage {
     public static class DetectSSD {
 
         private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
-            ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
+            deviceType << 16 | access << 14 | function << 2 | method;
 
         /// <summary>
         ///     Returns true if the disk/drive has seek penalty.

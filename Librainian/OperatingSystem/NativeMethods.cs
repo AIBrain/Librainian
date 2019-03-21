@@ -624,6 +624,8 @@ namespace Librainian.OperatingSystem {
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
         public static extern SafeSearchHandle FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
+
+
         /// <summary>
         ///     Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.
         /// </summary>
@@ -1119,7 +1121,7 @@ namespace Librainian.OperatingSystem {
             ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
-            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
+            public Int64 ToInt64() => ( Int64 )this.High << 32 | ( UInt32 )this.Low;
 
             // just for demonstration
             public static LargeInteger FromInt64( Int64 value ) =>
@@ -1363,7 +1365,14 @@ namespace Librainian.OperatingSystem {
             public SafeSearchHandle( IntPtr handle ) : base( handle ) { }
 
             /// <inheritdoc />
-            protected override Boolean InternalReleaseHandle() => FindClose( this );
+            protected override Boolean InternalReleaseHandle() {
+                if ( this.IsClosed || this.IsInvalid || this.IsNull ) {
+                    return true;
+                }
+
+                return FindClose( this );
+            }
+
         }
 
         /*

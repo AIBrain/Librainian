@@ -51,6 +51,7 @@ namespace Librainian.Controls {
     using Measurement.Time;
     using Parsing;
     using Persistence;
+    using Persistence.InIFiles;
     using Threading;
     using Point = System.Drawing.Point;
     using Size = System.Drawing.Size;
@@ -990,7 +991,7 @@ namespace Librainian.Controls {
             textBox.SelectionColor = textBox.ForeColor;
         }
 
-        public static Int32 ToBGR( this Color thisColor ) => ( thisColor.B << 16 ) | ( thisColor.G << 8 ) | ( thisColor.R << 0 );
+        public static Int32 ToBGR( this Color thisColor ) => thisColor.B << 16 | thisColor.G << 8 | thisColor.R << 0;
 
         /// <summary>
         ///     Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1.

@@ -95,7 +95,7 @@ namespace Librainian.Security {
 
 				for ( var j = 0; j < 8; j++ ) {
 					if ( ( entry & 1 ) == 1 ) {
-						entry = ( entry >> 1 ) ^ polynomial;
+						entry = entry >> 1 ^ polynomial;
 					}
 					else {
 						entry = entry >> 1;
@@ -134,7 +134,7 @@ namespace Librainian.Security {
 			var crc = seed;
 
 			for ( var i = start; i < size - start; i++ ) {
-				crc = ( crc >> 8 ) ^ table[ buffer[ i ] ^ ( crc & 0xff ) ];
+				crc = crc >> 8 ^ table[ buffer[ i ] ^ crc & 0xff ];
 			}
 
 			return crc;

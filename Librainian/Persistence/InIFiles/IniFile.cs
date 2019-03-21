@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2019/01/29 at 10:46 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence.InIFiles {
 
     using System;
     using System.Collections.Concurrent;
@@ -55,80 +55,118 @@ namespace Librainian.Persistence {
     using OperatingSystem.FileSystem;
     using Parsing;
 
-    public interface IIniFile {
-
-        /// <summary>
-        ///     <para>WARNING: Set this value AFTER <see cref="Add(IDocument)" />.</para>
-        ///     <para>If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.</para>
-        /// </summary>
-        IDocument AutoSaveDocument { get; set; }
-
-        IEnumerable<String> Sections { get; }
-
-        IReadOnlyDictionary<String, String> this[ [CanBeNull] String section ] { [DebuggerStepThrough] [CanBeNull] get; }
-
-        /// <summary>
-        ///     If <see cref="AutoSaveDocument" /> is set, the entire dictionary/text is saved on each change.
-        /// </summary>
-        /// <param name="section"></param>
-        /// <param name="key">    </param>
-        /// <returns></returns>
-        String this[ [CanBeNull] String section, [CanBeNull] String key ] { [DebuggerStepThrough] [CanBeNull] get; [DebuggerStepThrough] set; }
-
-        /// <summary>
-        ///     (Trims whitespaces from section, key, and value.)
-        /// </summary>
-        /// <param name="section"></param>
-        /// <param name="kvp">    </param>
-        /// <returns></returns>
-        Boolean Add( String section, KeyValuePair<String, String> kvp );
-
-        Boolean Add( [NotNull] IDocument document );
-
-        Boolean Add( String text );
-
-        Boolean Add( [NotNull] IEnumerable<String> lines );
-
-        /// <summary>
-        ///     Return the entire structure as a JSON formatted String.
-        /// </summary>
-        /// <returns></returns>
-        String AsJSON();
-
-        /// <summary>
-        ///     Removes all data from all sections.
-        /// </summary>
-        /// <returns></returns>
-        Boolean Clear();
-
-        /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
-        /// </summary>
-        /// <param name="document"> </param>
-        /// <param name="overwrite"></param>
-        /// <returns></returns>
-        Boolean Save( [NotNull] IDocument document, Boolean overwrite = true );
-
-        /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
-        /// </summary>
-        /// <param name="document"> </param>
-        /// <param name="overwrite"></param>
-        /// <returns></returns>
-        Task<Boolean> SaveAsync( [NotNull] Document document, Boolean overwrite = true );
-
-        Boolean TryRemove( [NotNull] String section );
-
-        Boolean TryRemove( [NotNull] String section, String key );
-    }
-
     /// <summary>
-    ///     A text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
+    ///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
     /// </summary>
     [JsonObject]
-    public class IniFile : IIniFile {
+    public class IniFile {
 
-        private const String PairSeparator = "=";
+        [JsonObject]
+        public class IniSection {
+
+            public enum LineType {
+                Empty,
+                Text,
+                Comment
+            }
+
+            /// <summary>
+            /// <para><example><code>var comment=new IniLine(";Comment");</code></example></para>
+            /// <para><example><code>var commentwithvalue=new IniLine(";Comment","something");</code></example></para>
+            /// <para><example><code>var kvp=new IniLine("Key","value");</code></example></para>
+            /// <para><example><code>var empty=new IniLine("");</code></example></para>
+            /// <para><example><code>var empty=new IniLine();</code></example></para>
+            /// </summary>
+            [JsonObject]
+            public class IniLine {
+
+                public const String PairSeparator = "=";
+                public const String CommentHeader = ";";
+
+                /// <summary>Returns a string that represents the current object.</summary>
+                /// <returns>A string that represents the current object.</returns>
+                public override String ToString() {
+                    switch ( this.LineType ) {
+                        case LineType.Text: { return $"{this.Key}{PairSeparator}{this.Value}"; }
+                        case LineType.Comment: { return $"{this.Key}"; }
+                        case LineType.Empty: {
+                            return $"{String.Empty}";
+                                
+                        }
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                public IniLine( [CanBeNull] String key=default, [CanBeNull] String value = default ) {
+
+                    this.Key = key;
+                    this.Value = value;
+
+                    if ( key?.StartsWith( CommentHeader ) == true ) {
+                        this.LineType = LineType.Comment;
+                    }
+                    else {
+                        if ( String.IsNullOrEmpty( key ) || String.IsNullOrEmpty( value ) ) {
+                            this.LineType = LineType.Empty;
+                            this.Value = default;
+                        }
+                        else {
+                            this.LineType = LineType.Text;
+                        }
+                    }
+                }
+
+                [JsonProperty]
+                public String Value { get; }
+
+                [JsonProperty]
+                public String Key { get; }
+
+                [JsonProperty]
+                public LineType LineType { get; }
+
+            }
+
+            public IniSection(String name) {
+                this.Name = name;
+                this.lines = new List<KeyValuePair<String, IniLine>>();
+            }
+
+            public String Name { get; }
+
+            private List<KeyValuePair<String, IniLine>> lines { get; }
+
+            public ReadOnlyMemory<KeyValuePair<String, IniLine>> Lines => this.lines.OrderBy(pair => pair.Key).ToArray();
+
+            public Boolean Exists( [NotNull] String section, [CanBeNull] String key ) {
+                if ( String.IsNullOrEmpty( value: section ) ) {
+                    return false;
+                }
+
+                return this.lines.Any( pair => pair.Key.Like( section ) && pair.Value.Key.Like( key ) ) ;
+            }
+
+            public Boolean Add( [NotNull] String section, [NotNull] String key, String value ) {
+                if ( String.IsNullOrEmpty( value: key ) ) {
+                    throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                }
+
+                if ( String.IsNullOrEmpty( value: section ) ) {
+                    throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
+                }
+
+                var line = new IniLine( key, value );
+                this.lines.Add( new KeyValuePair<String, IniLine>( section, line ) );
+
+                return true;
+            }
+
+            public Boolean Remove( [NotNull] String section, [NotNull] String key ) {
+                return this.lines.RemoveAll( pair => pair.Key.Like( section ) && pair.Value.Key.Like( key ) ).Any();
+            }
+
+        }
+
 
         private const String SectionBegin = "[";
 
@@ -225,8 +263,9 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="autoSaveDocument"></param>
         public IniFile( [NotNull] IDocument autoSaveDocument ) : this() {
-            this.AutoSaveDocument = autoSaveDocument;
+            this.AutoSaveDocument = default;
             this.Add( autoSaveDocument );
+            this.AutoSaveDocument = autoSaveDocument;
         }
 
         public IniFile() { }
@@ -316,7 +355,7 @@ namespace Librainian.Persistence {
 
         [NotNull]
         [DebuggerStepThrough]
-        public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{PairSeparator}{pair.Value ?? String.Empty}";
+        public static String EncodePair( KeyValuePair<String, String> pair ) => $"{pair.Key}{IniSection.IniLine.PairSeparator}{pair.Value}";
 
         [NotNull]
         [DebuggerStepThrough]
@@ -325,7 +364,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
-            return $"{SectionBegin}{section.Trim()}{SectionEnd}{Environment.NewLine}";
+            return $"{SectionBegin}{section.TrimStart()}{SectionEnd}{Environment.NewLine}";
         }
 
         /// <summary>
@@ -425,10 +464,10 @@ namespace Librainian.Persistence {
                     continue;
                 }
 
-                if ( line.Contains( PairSeparator ) ) {
-                    var pos = line.IndexOf( PairSeparator, StringComparison.Ordinal );
+                if ( line.Contains( IniSection.IniLine.PairSeparator ) ) {
+                    var pos = line.IndexOf( IniSection.IniLine.PairSeparator, StringComparison.Ordinal );
                     var key = line.Substring( 0, pos ).Trim();
-                    var value = line.Substring( pos + PairSeparator.Length );
+                    var value = line.Substring( pos + IniSection.IniLine.PairSeparator.Length );
 
                     if ( this.Add( section, new KeyValuePair<String, String>( key, value ) ) ) {
                         counter++;

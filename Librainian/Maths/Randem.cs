@@ -1045,7 +1045,7 @@ namespace Librainian.Maths {
             var buffer = ( bound << 16 ).ToByteArray(); // << 16 adds two bytes, which decrease the chance of a retry later on
 
             //Compute where the last partial fragment starts, in order to retry if we end up in it
-            var generatedValueBound = BigInteger.One << ( buffer.Length * 8 - 1 ); //-1 accounts for the sign bit
+            var generatedValueBound = BigInteger.One << buffer.Length * 8 - 1; //-1 accounts for the sign bit
             Contract.Assert( condition: generatedValueBound >= bound );
             var validityBound = generatedValueBound - generatedValueBound % bound;
             Contract.Assert( condition: validityBound >= bound );

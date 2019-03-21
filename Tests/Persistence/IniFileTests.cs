@@ -44,7 +44,7 @@ namespace LibrainianTests.Persistence {
     using System;
     using FluentAssertions;
     using Librainian.OperatingSystem.FileSystem;
-    using Librainian.Persistence;
+    using Librainian.Persistence.InIFiles;
     using NUnit.Framework;
 
     [TestFixture]
@@ -97,8 +97,9 @@ data33   =   3
         public static void test_load_from_file() {
 
             //prepare file
-            var config = Document.GetTempDocument( "config" );
-            config.AppendText( ini_test_data );
+            var config = Document.GetTempDocument( "config" ).AppendText( ini_test_data );
+            config.DeleteAfterClose = true;
+            
 
             Ini2 = new IniFile( config ) {
                 [ "Greetings", "Hello" ] = "world1!",

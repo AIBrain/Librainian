@@ -103,7 +103,7 @@ namespace Librainian.OperatingSystem.Compression {
 				var c = ( UInt32 )i;
 
 				for ( var j = 0; j < 8; j++ ) {
-					if ( ( c & 1 ) != 0 ) { c = 3988292384 ^ ( c >> 1 ); }
+					if ( ( c & 1 ) != 0 ) { c = 3988292384 ^ c >> 1; }
 					else { c >>= 1; }
 				}
 
@@ -127,7 +127,7 @@ namespace Librainian.OperatingSystem.Compression {
 			Deflate = 8
 		}
 
-		private static UInt32 DateTimeToDosTime( DateTime dt ) => ( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
+		private static UInt32 DateTimeToDosTime( DateTime dt ) => ( UInt32 )( dt.Second / 2 | dt.Minute << 5 | dt.Hour << 11 | dt.Day << 16 | dt.Month << 21 | dt.Year - 1980 << 25 );
 
 		private static DateTime DosTimeToDateTime( UInt32 dt ) =>
 			new DateTime( ( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63, ( Int32 )( dt & 31 ) * 2 );
@@ -221,7 +221,7 @@ namespace Librainian.OperatingSystem.Compression {
 				if ( bytesRead > 0 ) {
 					outStream.Write( buffer, 0, bytesRead );
 
-					for ( UInt32 i = 0; i < bytesRead; i++ ) { zfe.Crc32 = CrcTable[ ( zfe.Crc32 ^ buffer[ i ] ) & 0xFF ] ^ ( zfe.Crc32 >> 8 ); }
+					for ( UInt32 i = 0; i < bytesRead; i++ ) { zfe.Crc32 = CrcTable[ ( zfe.Crc32 ^ buffer[ i ] ) & 0xFF ] ^ zfe.Crc32 >> 8; }
 				}
 			} while ( bytesRead == buffer.Length );
 

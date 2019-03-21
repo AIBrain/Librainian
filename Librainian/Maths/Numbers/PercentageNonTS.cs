@@ -58,7 +58,7 @@ namespace Librainian.Maths.Numbers {
 		public Double Value {
 			get => Thread.VolatileRead( ref this._value );
 
-			set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : ( value <= MinValue ? MinValue : value ) );
+			set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
 		}
 
 		public const Double Epsilon = Double.Epsilon;

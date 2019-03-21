@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// this entire copyright notice and license must be retained and must be kept visible
+// 
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// this source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com and
+// 
+// This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2019/01/05 at 9:51 PM.
+// 
+// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2019/03/18 at 12:01 AM.
 
 namespace Librainian.Security {
 
@@ -59,12 +59,6 @@ namespace Librainian.Security {
 
     public static class SecurityExtensions {
 
-        public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
-
-        public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
-
-        public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
-
         /// <summary>
         /// </summary>
         [NotNull]
@@ -83,30 +77,42 @@ namespace Librainian.Security {
         ///     Provide to each thread its own <see cref="SHA256Managed" />.
         /// </summary>
         [NotNull]
-        public static ThreadLocal<SHA256Managed> SHA256ThreadLocals { get; } = new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
+        public static ThreadLocal<SHA256Managed> SHA256ThreadLocals { get; } =
+            new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
         /// <summary>
         ///     Provide to each thread its own <see cref="SHA384Managed" />.
         /// </summary>
         [NotNull]
-        public static ThreadLocal<SHA384Managed> SHA384ThreadLocals { get; } = new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
+        public static ThreadLocal<SHA384Managed> SHA384ThreadLocals { get; } =
+            new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
         /// <summary>
         ///     Provide to each thread its own <see cref="SHA512Managed" />.
         /// </summary>
         [NotNull]
-        public static ThreadLocal<SHA512Managed> SHA512ThreadLocals { get; } = new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
+        public static ThreadLocal<SHA512Managed> SHA512ThreadLocals { get; } =
+            new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
 
         [NotNull]
         public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Lazy { get; } =
             new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ) );
+
+        public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
+
+        public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
+
+        public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
+
+        private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
+            new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
 
         [NotNull]
         private static Byte[] Uid( [NotNull] String s ) {
             var numArray = new Byte[ s.Length ];
 
             for ( var i = 0; i < s.Length; i++ ) {
-                numArray[ i ] = ( Byte )( s[ index: i ] & '\u007F' );
+                numArray[ i ] = ( Byte ) ( s[ index: i ] & '\u007F' );
             }
 
             return numArray;
@@ -120,6 +126,62 @@ namespace Librainian.Security {
                     return MD5ThreadLocals.Value.ComputeHash( fs );
                 }
             } );
+
+        /// <summary>
+        ///     To encrypt use <seealso cref="EncryptDES" />.
+        /// </summary>
+        /// <param name="textToDecrypt"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String DecryptDES( [NotNull] this String textToDecrypt ) {
+            if ( textToDecrypt == null ) {
+                throw new ArgumentNullException( paramName: nameof( textToDecrypt ) );
+            }
+
+            using ( var ms = new MemoryStream() ) {
+                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateDecryptor() ) {
+                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
+                        var buffer = Convert.FromBase64String( textToDecrypt );
+                        cs.Write( buffer, 0, buffer.Length );
+                        cs.FlushFinalBlock();
+
+                        return Encoding.Unicode.GetString( ms.ToArray() );
+                    }
+                }
+            }
+        }
+
+        [NotNull]
+        public static String DecryptRSA( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
+
+            // TODO: Add Proper Exception Handlers
+            if ( inputString == null ) {
+                throw new ArgumentNullException( nameof( inputString ) );
+            }
+
+            if ( xmlString == null ) {
+                throw new ArgumentNullException( nameof( xmlString ) );
+            }
+
+            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
+            rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
+            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
+            var iterations = inputString.Length / base64BlockSize;
+            var arrayList = new ArrayList(); //ugh
+
+            for ( var i = 0; i < iterations; i++ ) {
+                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i, base64BlockSize ) );
+
+                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
+                // encryption and before decryption. If you do not require compatibility with
+                // Microsoft Cryptographic API (CAPI) and/or other vendors. Comment out the next
+                // line and the corresponding one in the EncryptString function.
+                Array.Reverse( array: encryptedBytes );
+                arrayList.AddRange( c: rsaCryptoServiceProvider.Decrypt( rgb: encryptedBytes, fOAEP: true ) );
+            }
+
+            return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
+        }
 
         [NotNull]
         public static SecureString DecryptString( this String encryptedData ) {
@@ -151,8 +213,7 @@ namespace Librainian.Security {
             // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) {
-                KeyContainerName = privateKey,
-                ProviderName = "Microsoft Strong Cryptographic Provider"
+                KeyContainerName = privateKey, ProviderName = "Microsoft Strong Cryptographic Provider"
             };
 
             // Registry key name containing the RSA private/public key
@@ -181,6 +242,73 @@ namespace Librainian.Security {
             }
 
             return decryptedValue;
+        }
+
+        /// <summary>
+        ///     To decrypt use <see cref="DecryptDES" />.
+        /// </summary>
+        /// <param name="textToEncrypt"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String EncryptDES( [NotNull] this String textToEncrypt ) {
+            if ( textToEncrypt == null ) {
+                throw new ArgumentNullException( paramName: nameof( textToEncrypt ) );
+            }
+
+            using ( var ms = new MemoryStream() ) {
+                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor() ) {
+                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
+                        var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
+                        cs.Write( buffer, 0, buffer.Length );
+                        cs.FlushFinalBlock();
+
+                        return Convert.ToBase64String( ms.ToArray() );
+                    }
+                }
+            }
+        }
+
+        [NotNull]
+        public static String EncryptRSA( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
+
+            // TODO: Add Proper Exception Handlers
+            if ( inputString == null ) {
+                throw new ArgumentNullException( nameof( inputString ) );
+            }
+
+            if ( xmlString == null ) {
+                throw new ArgumentNullException( nameof( xmlString ) );
+            }
+
+            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
+            rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
+            var keySize = dwKeySize / 8;
+            var bytes = Encoding.Unicode.GetBytes( s: inputString );
+
+            // The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
+            // maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );
+            var maxLength = keySize - 42;
+            var dataLength = bytes.Length;
+            var iterations = dataLength / maxLength;
+            var stringBuilder = new StringBuilder();
+
+            for ( var i = 0; i <= iterations; i++ ) {
+                var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
+                Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
+                var encryptedBytes = rsaCryptoServiceProvider.Encrypt( rgb: tempBytes, fOAEP: true );
+
+                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It
+                // does this after encryption and before decryption. If you do not require
+                // compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors
+                // Comment out the next line and the corresponding one in the DecryptString function.
+                Array.Reverse( array: encryptedBytes );
+
+                // Why convert to base 64? Because it is the largest power-of-two base printable
+                // using only ASCII characters
+                stringBuilder.Append( Convert.ToBase64String( inArray: encryptedBytes ) );
+            }
+
+            return stringBuilder.ToString();
         }
 
         /// <summary>
@@ -217,8 +345,7 @@ namespace Librainian.Security {
             // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) {
-                KeyContainerName = publicKey,
-                ProviderName = "Microsoft Strong Cryptographic Provider"
+                KeyContainerName = publicKey, ProviderName = "Microsoft Strong Cryptographic Provider"
             };
 
             // Registry key name containing the RSA private/public key
@@ -260,14 +387,14 @@ namespace Librainian.Security {
                 var n2 = ( n >> 4 ) & 15;
 
                 if ( n2 > 9 ) {
-                    s += ( ( Char )( n2 - 10 + 'A' ) ).ToString();
+                    s += ( ( Char ) ( n2 - 10 + 'A' ) ).ToString();
                 }
                 else {
                     s += n2.ToString();
                 }
 
                 if ( n1 > 9 ) {
-                    s += ( ( Char )( n1 - 10 + 'A' ) ).ToString();
+                    s += ( ( Char ) ( n1 - 10 + 'A' ) ).ToString();
                 }
                 else {
                     s += n1.ToString();
@@ -513,7 +640,7 @@ namespace Librainian.Security {
                 return false;
             }
 
-            var inputFileSize = ( Single )size.Value;
+            var inputFileSize = ( Single ) size.Value;
 
             if ( output == null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
@@ -541,6 +668,7 @@ namespace Librainian.Security {
 
             try {
                 var containingingFolder = output.ContainingingFolder();
+
                 if ( !containingingFolder.Create() ) {
                     exceptions.Add( item: new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
@@ -565,7 +693,7 @@ namespace Librainian.Security {
 
                                 while ( ( data = cs.ReadByte() ) != -1 ) {
                                     if ( null != reportEveryXBytes && null != reportProgress ) {
-                                        var position = ( UInt64 )inputStream.Position;
+                                        var position = ( UInt64 ) inputStream.Position;
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
@@ -573,7 +701,7 @@ namespace Librainian.Security {
                                         }
                                     }
 
-                                    outputStream.WriteByte( ( Byte )data );
+                                    outputStream.WriteByte( ( Byte ) data );
                                 }
                             }
                         }
@@ -629,7 +757,7 @@ namespace Librainian.Security {
                 return false;
             }
 
-            var inputFileSize = ( Single )size.Value;
+            var inputFileSize = ( Single ) size.Value;
 
             if ( output == null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
@@ -659,6 +787,7 @@ namespace Librainian.Security {
                 var rgb = new Rfc2898DeriveBytes( password: key, salt: Encoding.Unicode.GetBytes( s: salt.ToString() ) );
 
                 var containingingFolder = output.ContainingingFolder();
+
                 if ( !containingingFolder.Create() ) {
                     exceptions.Add( item: new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
@@ -695,7 +824,7 @@ namespace Librainian.Security {
                                 //TODO put a 64k buffer here instead of byte-by-byte
                                 while ( ( data = inputStream.ReadByte() ) != -1 ) {
                                     if ( null != reportEveryXBytes && null != reportProgress ) {
-                                        var position = ( UInt64 )inputStream.Position;
+                                        var position = ( UInt64 ) inputStream.Position;
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
@@ -703,7 +832,7 @@ namespace Librainian.Security {
                                         }
                                     }
 
-                                    cryptoStream.WriteByte( ( Byte )data );
+                                    cryptoStream.WriteByte( ( Byte ) data );
                                 }
                             }
                         }
@@ -724,130 +853,6 @@ namespace Librainian.Security {
             }
         }
 
-        private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
-            new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
-
-        /// <summary>
-        ///     To encrypt use <seealso cref="EncryptDES" />.
-        /// </summary>
-        /// <param name="textToDecrypt"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String DecryptDES( [NotNull] this String textToDecrypt ) {
-            if ( textToDecrypt == null ) {
-                throw new ArgumentNullException( paramName: nameof( textToDecrypt ) );
-            }
-
-            using ( var ms = new MemoryStream() ) {
-                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateDecryptor() ) {
-                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
-                        var buffer = Convert.FromBase64String( textToDecrypt );
-                        cs.Write( buffer, 0, buffer.Length );
-                        cs.FlushFinalBlock();
-
-                        return Encoding.Unicode.GetString( ms.ToArray() );
-                    }
-                }
-            }
-        }
-
-        [NotNull]
-        public static String DecryptRSA( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
-
-            // TODO: Add Proper Exception Handlers
-            if ( inputString == null ) {
-                throw new ArgumentNullException( nameof( inputString ) );
-            }
-
-            if ( xmlString == null ) {
-                throw new ArgumentNullException( nameof( xmlString ) );
-            }
-
-            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
-            rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
-            var iterations = inputString.Length / base64BlockSize;
-            var arrayList = new ArrayList();    //ugh
-
-            for ( var i = 0; i < iterations; i++ ) {
-                var encryptedBytes = Convert.FromBase64String( s: inputString.Substring( startIndex: base64BlockSize * i, base64BlockSize ) );
-
-                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
-                // encryption and before decryption. If you do not require compatibility with
-                // Microsoft Cryptographic API (CAPI) and/or other vendors. Comment out the next
-                // line and the corresponding one in the EncryptString function.
-                Array.Reverse( array: encryptedBytes );
-                arrayList.AddRange( c: rsaCryptoServiceProvider.Decrypt( rgb: encryptedBytes, fOAEP: true ) );
-            }
-
-            return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
-        }
-
-        /// <summary>
-        ///     To decrypt use <see cref="DecryptDES" />.
-        /// </summary>
-        /// <param name="textToEncrypt"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String EncryptDES( [NotNull] this String textToEncrypt ) {
-            if ( textToEncrypt == null ) {
-                throw new ArgumentNullException( paramName: nameof( textToEncrypt ) );
-            }
-
-            using ( var ms = new MemoryStream() ) {
-                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor() ) {
-                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
-                        var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
-                        cs.Write( buffer, 0, buffer.Length );
-                        cs.FlushFinalBlock();
-
-                        return Convert.ToBase64String( ms.ToArray() );
-                    }
-                }
-            }
-        }
-
-        [NotNull]
-        public static String EncryptRSA( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
-
-            // TODO: Add Proper Exception Handlers
-            if ( inputString == null ) {
-                throw new ArgumentNullException( nameof( inputString ) );
-            }
-
-            if ( xmlString == null ) {
-                throw new ArgumentNullException( nameof( xmlString ) );
-            }
-
-            var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: dwKeySize );
-            rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-            var keySize = dwKeySize / 8;
-            var bytes = Encoding.Unicode.GetBytes( s: inputString );
-
-            // The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
-            // maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );
-            var maxLength = keySize - 42;
-            var dataLength = bytes.Length;
-            var iterations = dataLength / maxLength;
-            var stringBuilder = new StringBuilder();
-
-            for ( var i = 0; i <= iterations; i++ ) {
-                var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
-                Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
-                var encryptedBytes = rsaCryptoServiceProvider.Encrypt( rgb: tempBytes, fOAEP: true );
-
-                // Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It
-                // does this after encryption and before decryption. If you do not require
-                // compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors
-                // Comment out the next line and the corresponding one in the DecryptString function.
-                Array.Reverse( array: encryptedBytes );
-
-                // Why convert to base 64? Because it is the largest power-of-two base printable
-                // using only ASCII characters
-                stringBuilder.Append( Convert.ToBase64String( inArray: encryptedBytes ) );
-            }
-
-            return stringBuilder.ToString();
-        }
     }
+
 }

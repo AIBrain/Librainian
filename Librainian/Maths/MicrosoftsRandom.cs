@@ -50,7 +50,7 @@ namespace Librainian.Maths {
 				var mk = 1;
 
 				for ( var i = 0; i < Special; i++ ) {
-					var ii = ( 21 * i ) % Special;
+					var ii = 21 * i % Special;
 					SeedArray[ ii ] = mk;
 					mk = mj - mk;
 					mj = SeedArray[ ii ];

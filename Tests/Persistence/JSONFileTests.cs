@@ -45,7 +45,7 @@ namespace LibrainianTests.Persistence {
     using System.Threading.Tasks;
     using Librainian.Magic;
     using Librainian.OperatingSystem.FileSystem;
-    using Librainian.Persistence;
+    using Librainian.Persistence.InIFiles;
     using NUnit.Framework;
 
     [TestFixture]

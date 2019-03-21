@@ -127,7 +127,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         Object Tag { get; set; }
 
-        Boolean DeleteAfterClose { get; }
+        Boolean DeleteAfterClose { get; set; }
 
         /// <summary>
         ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
@@ -273,7 +273,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
-        void AppendText( String text );
+        IDocument AppendText( String text );
 
         /// <summary>
         ///     <para>To compare the contents of two <see cref="Document" /> use SameContent( Document,Document).</para>
@@ -402,7 +402,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     public class Document : ABetterClassDispose, IDocument {
 
         [Flags]
-        public enum TypeOfPathType : Byte {
+        public enum TypeOfPathType : Int32 {
 
             Unknown = 0b0,
 
@@ -559,7 +559,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [JsonIgnore]
-        public TypeOfPathType TypeOfPath { get; }
+        public TypeOfPathType TypeOfPath { get; set; } = TypeOfPathType.Unknown;
 
         /// <summary>
         ///     Returns the length of the file (if it exists).
@@ -582,9 +582,19 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         [JsonIgnore]
         [CanBeNull]
-        public Object Tag { get; set; } = new Object();
+        public Object Tag { get; set; } 
 
-        public Boolean DeleteAfterClose => this.TypeOfPath.HasFlag( TypeOfPathType.DeleteAfterClose );
+        public Boolean DeleteAfterClose {
+            get => this.TypeOfPath.HasFlag( TypeOfPathType.DeleteAfterClose );
+            set {
+                if ( value ) {
+                    this.TypeOfPath |= TypeOfPathType.DeleteAfterClose;
+                }
+                else {
+                    this.TypeOfPath &= ~TypeOfPathType.DeleteAfterClose;
+                }
+            }
+        }
 
         /// <summary>
         ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
@@ -618,11 +628,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     "poor mans hash" heh
         /// </summary>
         /// <returns></returns>
-        public Int32 CalculateHarkerHashInt32() {
-            var query = this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.FullyBuffered ).Select( selector: i => i );
-
-            return query.Aggregate( seed: 0, func: ( current, i ) => unchecked(current + i) );
-        }
+        public Int32 CalculateHarkerHashInt32() =>
+            this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.FullyBuffered )
+                .Aggregate( seed: 0, func: ( current, i ) => unchecked( current + i ) );
 
         /// <summary>
         ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.
@@ -697,7 +705,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             else {
                 foreach ( var b in this.AsInt32() ) {
                     unchecked {
-                        result += b; //TODO add in a hasher for b.. sha256? md5?
+                        result += b == 0 ? 1 : b;
                     }
                 }
             }
@@ -706,6 +714,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public void Refresh( Boolean throwOnError = false ) {
+            this._fileAttributeData.Reset();
+
             var handle = NativeMethods.FindFirstFile( lpFileName: this.FullPath, lpFindData: out var data );
 
             if ( handle.IsInvalid ) {
@@ -715,7 +725,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return;
                 }
 
-                this._fileAttributeData.Reset();
 
                 return;
             }
@@ -740,11 +749,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>Returns whether the file exists.</summary>
         public Boolean? Exists() {
-            var exists = this.FileAttributeData.Exists;
-
-            if ( exists.HasValue ) {
-                this.Refresh();
-            }
+            this.Refresh();
 
             return this.FileAttributeData.Exists;
         }
@@ -1073,7 +1078,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
-        public void AppendText( String text ) {
+        [NotNull]
+        public IDocument AppendText( String text ) {
             var folder = this.ContainingingFolder();
 
             if ( !folder.Exists() ) {
@@ -1093,8 +1099,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using ( var writer = File.AppendText( path: this.FullPath ) ) {
                 writer.WriteLine( value: text );
-                writer.Flush();
             }
+
+            return this;
         }
 
         /// <summary>
@@ -1427,7 +1434,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( paramName: nameof( info ) );
             }
 
-            this.FullPath = info.GetString( name: nameof( this.FullPath ) ).ThrowIfBlank();
+            this.FullPath = info.GetString( name: nameof( this.FullPath ) ).TrimAndThrowIfBlank();
             this.Refresh( throwOnError: true );
         }
 
@@ -1441,13 +1448,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException"></exception>
         public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
-            if ( String.IsNullOrEmpty( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( fullPath ) );
-            }
-
-            this.TypeOfPath = TypeOfPathType.Unknown;
-
-            fullPath = fullPath.ThrowIfBlank(); //needed/wanted?
+            this.FullPath = fullPath.TrimAndThrowIfBlank(); 
 
             if ( Uri.TryCreate( uriString: fullPath, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 if ( uri.IsFile ) {
@@ -1608,19 +1609,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         [NotNull]
         public static IDocument GetTempDocument( String extension = null ) {
-            if ( extension != null ) {
-                extension = extension.Trim();
-
-                while ( extension.StartsWith( value: "." ) ) {
-                    extension = extension.Substring( startIndex: 1 );
-                }
-            }
-
-            if ( String.IsNullOrWhiteSpace( value: extension ) ) {
+            if ( String.IsNullOrEmpty(extension) ) {
                 extension = Guid.NewGuid().ToString();
             }
 
-            return new Document( folder: Folder.GetTempFolder(), filename: $"{Guid.NewGuid()}.{extension.Trim()}" );
+            extension = extension.Trim();
+
+            while ( extension.StartsWith( value: "." ) ) {
+                extension = extension.Substring( startIndex: 1 ).Trim();
+            }
+
+            return new Document( folder: Folder.GetTempFolder(), filename: $"{Guid.NewGuid()}.{extension}" );
         }
 
         /// <summary>

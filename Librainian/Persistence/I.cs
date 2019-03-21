@@ -99,18 +99,7 @@ namespace Librainian.Persistence {
             this.U = u;
         }
 
-        public override String ToString() {
-            var keypart = String.Empty;
-
-            if ( this.K.Length > 42 ) {
-                var left = Strings.Left( this.K, 20 );
-                var right = Strings.Right( this.K, 20 );
-
-                keypart = $"{left}..{right}";
-            }
-
-            return $"{keypart}={this.U}";
-        }
+        public override String ToString() => this.K.Length > 42 ? $"{Strings.Left( this.K, 20 )}..{Strings.Right( this.K, 20 )}={this.U}" : $"{this.K}";
 
     }
 

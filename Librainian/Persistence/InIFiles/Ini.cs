@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "Ini.cs" was last formatted by Protiguous on 2019/01/29 at 10:47 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence.InIFiles {
 
     using System;
     using System.Collections.Concurrent;
@@ -63,6 +63,7 @@ namespace Librainian.Persistence {
     public class Ini : IIni, IEquatable<Ini> {
 
         //private static JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, ReferenceLoopHandling = ReferenceLoopHandling.Serialize };
+
         /// <summary>
         /// </summary>
         [JsonProperty]
@@ -338,7 +339,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Returns a value that indicates whether two <see cref="T:Librainian.Persistence.Ini" /> objects have different
+        ///     Returns a value that indicates whether two <see cref="T:Librainian.Persistence.InIFiles.Ini" /> objects have different
         ///     values.
         /// </summary>
         /// <param name="left"> The first value to compare.</param>
@@ -347,7 +348,7 @@ namespace Librainian.Persistence {
         public static Boolean operator !=( [CanBeNull] Ini left, [CanBeNull] Ini right ) => !Equals( left, right );
 
         /// <summary>
-        ///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Persistence.Ini" /> objects are
+        ///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Persistence.InIFiles.Ini" /> objects are
         ///     equal.
         /// </summary>
         /// <param name="left"> The first value to compare.</param>

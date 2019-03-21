@@ -217,7 +217,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         */
 
 		/// <summary>
-		/// Returns the path with any invalid characters replaced with <paramref name="replacement"/>. (Defaults to <see cref="String.Empty"/>.)
+		/// Returns the path with any invalid characters replaced with <paramref name="replacement"/> and then trimmed. (Defaults to <see cref="String.Empty"/>.)
 		/// </summary>
 		/// <param name="fullpath"></param>
 		/// <param name="replacement"></param>
