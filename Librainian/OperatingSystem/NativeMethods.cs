@@ -42,6 +42,7 @@
 namespace Librainian.OperatingSystem {
 
     using System;
+    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.ConstrainedExecution;
@@ -924,21 +925,26 @@ namespace Librainian.OperatingSystem {
         /// <summary>
         ///     Throw a useful <see cref="IOException" />.
         /// </summary>
+        [DebuggerStepThrough]
         public static void ThrowAccessDenied( String fullPath ) => throw new IOException( $"Access denied to file \"{fullPath}\"." );
 
+        [DebuggerStepThrough]
         public static void ThrowExceptionForHR( Int32 errorCode ) => Marshal.ThrowExceptionForHR( errorCode, new IntPtr( -1 ) );
 
         /// <summary>
         ///     Throw a useful <see cref="FileNotFoundException" />.
         /// </summary>
         /// <exception cref="FileNotFoundException"></exception>
+        [DebuggerStepThrough]
         public static void ThrowFileNotFound( String fullPath ) => throw new FileNotFoundException( $"The file \"{fullPath}\" was not found.", fullPath );
 
         /// <summary>
         ///     Throw a useful <see cref="DirectoryNotFoundException" />.
         /// </summary>
+        [DebuggerStepThrough]
         public static void ThrowPathNotFound( String fullPath ) => throw new DirectoryNotFoundException( $"The path for file \"{fullPath}\" was not found." );
 
+        [DebuggerStepThrough]
         public static DateTime ToDateTime( this Filetime time ) {
             try {
                 var high = ( UInt64 )time.dwHighDateTime;
@@ -952,6 +958,7 @@ namespace Librainian.OperatingSystem {
             }
         }
 
+        [DebuggerStepThrough]
         public static DateTime ToDateTime( this FILETIME time ) {
             try {
                 var high = ( UInt64 )time.dwHighDateTime;
@@ -1281,6 +1288,7 @@ namespace Librainian.OperatingSystem {
             /// </param>
             protected HANDLE( IntPtr preexistingHandle, Boolean ownsHandle = true ) : base( ownsHandle ) => this.SetHandle( preexistingHandle );
 
+            [DebuggerStepThrough]
             public HANDLE() : base( true ) { }
 
             /// <summary>
@@ -1358,6 +1366,7 @@ namespace Librainian.OperatingSystem {
         /// </summary>
         public class SafeSearchHandle : HANDLE {
 
+            [DebuggerStepThrough]
             private SafeSearchHandle() { }
 
             /// <summary>Initializes a new instance of the <see cref="SafeSearchHandle" /> class.</summary>

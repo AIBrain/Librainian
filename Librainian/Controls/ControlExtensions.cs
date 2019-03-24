@@ -373,7 +373,7 @@ namespace Librainian.Controls {
 
         public static Boolean IsNormal( [NotNull] this Window window ) => window.WindowState == WindowState.Normal && window.WindowStyle != WindowStyle.None;
 
-        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] Ini settings ) {
+        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
@@ -659,7 +659,7 @@ namespace Librainian.Controls {
             control.InvokeAction( Action );
         }
 
-        public static void SavePosition( [NotNull] this Form form, [NotNull] Ini settings ) {
+        public static void SavePosition( [NotNull] this Form form, [NotNull] IniFile settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
@@ -713,7 +713,7 @@ namespace Librainian.Controls {
             settings[ Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
         }
 
-        public static void SavePosition( [NotNull] this Form form, String name, [NotNull] Ini settings ) {
+        public static void SavePosition( [NotNull] this Form form, String name, [NotNull] IniFile settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }

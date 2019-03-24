@@ -339,7 +339,8 @@
     <Compile Include="Parsing\Validation\ValidatedStringJsonNetConverter.cs" />
     <Compile Include="Persistence\Cache.cs" />
     <Compile Include="Persistence\CommonResultCode.cs" />
-    <Compile Include="Persistence\InIFiles\IIni.cs" />
+    <Compile Include="Persistence\InIFiles\IniLine.cs" />
+    <Compile Include="Persistence\InIFiles\IniSection.cs" />
     <Compile Include="Persistence\ResourceScanner.cs" />
     <Compile Include="Persistence\Settings.cs" />
     <Compile Include="Persistence\AppRegistry.cs" />
@@ -351,7 +352,7 @@
     <Compile Include="Persistence\ConcurrentListFile.cs" />
     <Compile Include="Persistence\DocumentInfo.cs" />
     <Compile Include="Persistence\Alpha.cs" />
-    <Compile Include="Persistence\Section.cs" />
+    <Compile Include="Persistence\InIFiles\Section.cs" />
     <Compile Include="Persistence\StringKVPTable.cs" />
     <Compile Include="Security\AES.cs" />
     <Compile Include="Security\Document.cs" />
@@ -435,7 +436,6 @@
     <Compile Include="Measurement\Time\DurationParser.cs" />
     <Compile Include="Parsing\ParagraphExtensions.cs" />
     <Compile Include="Persistence\InIFiles\IniFile.cs" />
-    <Compile Include="Persistence\InIFiles\Ini.cs" />
     <Compile Include="Collections\Queues\BlockingQueue.cs" />
     <Compile Include="Collections\Lists\ConcurrentList.cs" />
     <Compile Include="Collections\Sets\ConcurrentSet.cs" />
@@ -936,7 +936,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

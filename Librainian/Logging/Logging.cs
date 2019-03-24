@@ -187,8 +187,7 @@ namespace Librainian.Logging {
         [DebuggerStepThrough]
         public static void Debug<T>( this T obj ) => Logger.Debug( obj );
 
-        [DebuggerStepThrough]
-        public static void Info<T>( this T obj ) => Logger.Info( obj );
+        //[DebuggerStepThrough]public static void Info<T>( this T obj ) => Logger.Info( obj );
 
         [DebuggerStepThrough]
         public static void Error<T>( this T obj ) => Logger.Error( obj );

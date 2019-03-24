@@ -52,35 +52,35 @@ namespace LibrainianTests.Persistence {
 
         public const String ini_test_data = @"
 [ Section 1  ]
-;This is a comment
-data1=value1
-data2 =value2
-data3= value3
-data4 = value4
-data5   =   value5
+;This is a comment for section 1
+data.1=value1
+data.2 =value2
+data.3= value3
+data.4 = value4
+data5   =   !value5
 
 [ Section 2  ]
 
-//This is also a comment
+;This is also a comment for section 2
 data11=value11
 data22 = value22
 data33   =   value33
 data44 =value44
-data55= value55
+data55= $55.00
 
 [ Section 2  ]
 
-//This is also a comment
+;This is also another comment for section 2
 data11=value11b
 data22 = value22b
 data33   =   value33b
 
 [ Section 3  ]
 
-//This is also a comment
-data11=1
-data22 = 2
-data33   =   3
+;This is also a comment for section 3
+data3.1 =  1
+data3.2 =    2
+data3.3   =   3
 
 ";
 
@@ -94,25 +94,23 @@ data33   =   3
         public static void Setup() { }
 
         [Test]
-        public static void test_load_from_file() {
+        public static void test1() {
 
             //prepare file
             var config = Document.GetTempDocument( "config" ).AppendText( ini_test_data );
             config.DeleteAfterClose = true;
-            
 
-            Ini2 = new IniFile( config ) {
-                [ "Greetings", "Hello" ] = "world1!",
-                [ "Greetings", "Hello" ] = "world2!"
-            };
+            Console.WriteLine( config.CalculateHarkerHashInt32() );
 
+            Ini2 = new IniFile( config );
+            Ini2 .Add("Greetings", "Hello" , "world1!");
+            Ini2 .Add("Greetings", "Hello" , "world2!");
             Ini2[ "Greetings", "Hello" ].Should().Be( "world2!" );
+
+            if ( Ini2.Save( config ) ) {
+                Console.WriteLine( $"Saved to {config.FullPath}" );
+            }
         }
 
-        [Test]
-        public static void test_load_from_string() {
-            Ini1 = new IniFile( ini_test_data );
-            Ini1.Save( Document.GetTempDocument( "config" ) );
-        }
     }
 }

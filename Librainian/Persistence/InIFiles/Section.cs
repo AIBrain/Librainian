@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "Section.cs" was last formatted by Protiguous on 2018/11/19 at 8:54 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence.InIFiles {
 
     using System;
     using System.Collections.Concurrent;

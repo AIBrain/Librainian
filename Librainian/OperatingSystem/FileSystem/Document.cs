@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/02/09 at 1:16 PM.
+// 
+// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/03/24 at 9:13 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -77,6 +77,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         String FullPath { get; }
 
+        /*
+
         /// <summary>
         ///     Gets or sets the <see cref="System.IO.FileAttributes" /> for <see cref="FullPath" />.
         /// </summary>
@@ -84,6 +86,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException"></exception>
         FileAttributes? FileAttributes { get; set; }
+        */
 
         /// <summary>
         ///     Local file creation <see cref="DateTime" />.
@@ -95,7 +98,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         DateTime? CreationTimeUtc { get; set; }
 
-        FileAttributeData FileAttributeData { get; }
+        //FileAttributeData FileAttributeData { get; }
 
         /// <summary>Gets or sets the time the current file was last accessed.</summary>
         DateTime? LastAccessTime { get; set; }
@@ -117,8 +120,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     Returns the length of the file (if it exists).
-        ///     <para>Calls <see cref="Refresh" /> if the file data has not been found yet.</para>
-        ///     <para>Remember to call <see cref="Refresh" /> if the file has changed.</para>
         /// </summary>
         UInt64? Length { get; }
 
@@ -167,8 +168,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </remarks>
         /// <returns></returns>
         Int32 CalcHashInt32( Boolean inParallel = true );
-
-        void Refresh( Boolean throwOnError = true );
 
         /// <summary>Deletes the file.</summary>
         void Delete();
@@ -236,7 +235,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         Task<String> CRC64HexAsync( CancellationToken token );
 
-        /// <inheritdoc />
         void DisposeManaged();
 
         /// <summary>
@@ -263,7 +261,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
-        ///     <para>Remember to call <see cref="Document.Refresh" /> if the file has changed.</para>
         /// </summary>
         /// <returns></returns>
         UInt64? Size();
@@ -395,6 +392,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="destination"></param>
         /// <returns></returns>
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
+
     }
 
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
@@ -402,7 +400,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     public class Document : ABetterClassDispose, IDocument {
 
         [Flags]
-        public enum TypeOfPathType : Int32 {
+        public enum TypeOfPathType : UInt32 {
 
             Unknown = 0b0,
 
@@ -415,6 +413,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             UNC = 0b1000,
 
             DeleteAfterClose = 0b10000
+
         }
 
         /// <summary>
@@ -453,6 +452,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public String FullPath { get; }
 
+        /*
+
         /// <summary>
         ///     Gets or sets the <see cref="System.IO.FileAttributes" /> for <see cref="FullPath" />.
         /// </summary>
@@ -473,6 +474,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 this._fileAttributeData.FileAttributes = value;
             }
         }
+        */
 
         /// <summary>
         ///     Local file creation <see cref="DateTime" />.
@@ -488,27 +490,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         [JsonIgnore]
         public DateTime? CreationTimeUtc {
-            get => this.FileAttributeData.CreationTime;
+            get => File.Exists( this.FullPath ) ? File.GetCreationTimeUtc( this.FullPath ) : default( DateTime? );
 
             set {
-                if ( value.HasValue ) {
-                    File.SetCreationTimeUtc( path: this.FullPath, creationTimeUtc: value.Value );
+                if ( value.HasValue && File.Exists( this.FullPath ) ) {
+                    File.SetCreationTimeUtc( this.FullPath, value.Value );
                 }
-
-                this._fileAttributeData.CreationTime = value;
-            }
-        }
-
-        [JsonIgnore]
-        public FileAttributeData FileAttributeData {
-            get {
-
-                if ( !this._fileAttributeData.Exists.HasValue || !this._fileAttributeData.FileAttributes.HasValue || !this._fileAttributeData.FileSize.HasValue ||
-                     !this._fileAttributeData.LastAccessTime.HasValue || !this._fileAttributeData.LastWriteTime.HasValue || !this._fileAttributeData.CreationTime.HasValue ) {
-                    this.Refresh();
-                }
-
-                return this._fileAttributeData;
             }
         }
 
@@ -524,14 +511,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         [JsonIgnore]
         public DateTime? LastAccessTimeUtc {
-            get => this.FileAttributeData.LastAccessTime;
+            get => File.Exists( this.FullPath ) ? File.GetLastAccessTimeUtc( this.FullPath ) : default( DateTime? );
 
             set {
-                if ( value.HasValue ) {
-                    File.SetLastAccessTimeUtc( path: this.FullPath, lastAccessTimeUtc: value.Value );
+                if ( value.HasValue && File.Exists( this.FullPath ) ) {
+                    File.SetLastAccessTimeUtc( this.FullPath, value.Value );
                 }
-
-                this._fileAttributeData.LastAccessTime = value;
             }
         }
 
@@ -547,14 +532,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         [JsonIgnore]
         public DateTime? LastWriteTimeUtc {
-            get => this.FileAttributeData.LastWriteTime;
+            get => File.Exists( this.FullPath ) ? File.GetLastWriteTimeUtc( this.FullPath ) : default( DateTime? );
 
             set {
-                if ( value.HasValue ) {
-                    File.SetLastWriteTimeUtc( path: this.FullPath, lastWriteTimeUtc: value.Value );
+                if ( value.HasValue && File.Exists( this.FullPath ) ) {
+                    File.SetLastWriteTimeUtc( this.FullPath, value.Value );
                 }
-
-                this._fileAttributeData.LastWriteTime = value;
             }
         }
 
@@ -563,17 +546,13 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     Returns the length of the file (if it exists).
-        ///     <para>Calls <see cref="Refresh" /> if the file data has not been found yet.</para>
-        ///     <para>Remember to call <see cref="Refresh" /> if the file has changed.</para>
         /// </summary>
         [JsonIgnore]
         public UInt64? Length {
             get {
-                if ( !this.FileAttributeData.FileSize.HasValue ) {
-                    this.Refresh( throwOnError: true );
-                }
+                var info = this.GetInfo();
 
-                return this.FileAttributeData.FileSize;
+                return info.Exists ? ( UInt64? ) info.Length : default;
             }
         }
 
@@ -582,10 +561,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         [JsonIgnore]
         [CanBeNull]
-        public Object Tag { get; set; } 
+        public Object Tag { get; set; }
 
         public Boolean DeleteAfterClose {
             get => this.TypeOfPath.HasFlag( TypeOfPathType.DeleteAfterClose );
+
             set {
                 if ( value ) {
                     this.TypeOfPath |= TypeOfPathType.DeleteAfterClose;
@@ -713,46 +693,24 @@ namespace Librainian.OperatingSystem.FileSystem {
             return result;
         }
 
-        public void Refresh( Boolean throwOnError = false ) {
-            this._fileAttributeData.Reset();
+        /// <summary>Deletes the file.</summary>
+        public void Delete() {
+            var fileInfo = this.GetInfo();
 
-            var handle = NativeMethods.FindFirstFile( lpFileName: this.FullPath, lpFindData: out var data );
-
-            if ( handle.IsInvalid ) {
-                if ( throwOnError ) {
-                    NativeMethods.HandleLastError( fullPath: this.FullPath );
-
-                    return;
-                }
-
-
+            if ( !fileInfo.Exists ) {
                 return;
             }
 
-            var fileAttributeData = new FileAttributeData( findData: data );
-            this._fileAttributeData.FileAttributes = fileAttributeData.FileAttributes;
-            this._fileAttributeData.CreationTime = fileAttributeData.CreationTime;
-            this._fileAttributeData.Exists = fileAttributeData.Exists;
-            this._fileAttributeData.FileSize = fileAttributeData.FileSize;
-            this._fileAttributeData.LastAccessTime = fileAttributeData.LastAccessTime;
-            this._fileAttributeData.LastWriteTime = fileAttributeData.LastWriteTime;
-        }
-
-        /// <summary>Deletes the file.</summary>
-        public void Delete() {
-            if ( this.Exists() == true ) {
-                if ( !NativeMethods.DeleteFile( path: this.FullPath ) ) {
-                    NativeMethods.HandleLastError( fullPath: this.FullPath );
-                }
+            if ( fileInfo.IsReadOnly ) {
+                fileInfo.IsReadOnly = false;
             }
+
+            fileInfo.Delete();
         }
 
         /// <summary>Returns whether the file exists.</summary>
-        public Boolean? Exists() {
-            this.Refresh();
-
-            return this.FileAttributeData.Exists;
-        }
+        [DebuggerStepThrough]
+        public Boolean? Exists() => this.GetInfo().Exists;
 
         [NotNull]
         public Folder ContainingingFolder() {
@@ -795,7 +753,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                             await client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                            return (true, stopwatch.Elapsed);
+                            return ( true, stopwatch.Elapsed );
                         }
                     }
                 }
@@ -804,7 +762,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
 
-            return (false, stopwatch.Elapsed);
+            return ( false, stopwatch.Elapsed );
         }
 
         /// <summary>
@@ -837,7 +795,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             var webClient = new WebClient();
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
-                var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
+                var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
                 onProgress?.Invoke( obj: percentage );
             };
 
@@ -855,7 +813,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     if ( size.HasValue && size.Value > 0 ) {
                         using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
-                            var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
+                            var crc32 = new CRC32( polynomial: ( UInt32 ) size, seed: ( UInt32 ) size );
 
                             var result = crc32.ComputeHash( inputStream: fileStream );
 
@@ -901,7 +859,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return null;
                     }
 
-                    var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
+                    var crc32 = new CRC32( polynomial: ( UInt32 ) size.Value, seed: ( UInt32 ) size.Value );
 
                     return crc32.ComputeHash( inputStream: fileStream )
                         .Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
@@ -1014,7 +972,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( function: this.CRC64Hex, cancellationToken: token );
 
-        /// <inheritdoc />
         public override void DisposeManaged() {
             if ( this.DeleteAfterClose ) {
                 this.Delete();
@@ -1036,17 +993,17 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             try {
                 if ( !source.IsWellFormedOriginalString() ) {
-                    return (new DownloadException( message: $"Could not use source Uri '{source}'." ), null);
+                    return ( new DownloadException( message: $"Could not use source Uri '{source}'." ), null );
                 }
 
                 using ( var webClient = new WebClient() ) {
                     await webClient.DownloadFileTaskAsync( address: source, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                    return (null, webClient.ResponseHeaders);
+                    return ( null, webClient.ResponseHeaders );
                 }
             }
             catch ( Exception exception ) {
-                return (exception, null);
+                return ( exception, null );
             }
         }
 
@@ -1068,10 +1025,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
-        ///     <para>Remember to call <see cref="Refresh" /> if the file has changed.</para>
         /// </summary>
         /// <returns></returns>
-        public UInt64? Size() => this.FileAttributeData.FileSize;
+        public UInt64? Size() => this.Length;
 
         /// <summary>
         ///     <para>If the file does not exist, it is created.</para>
@@ -1088,14 +1044,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            if ( this.Exists() == true && this.FileAttributes.HasValue ) {
-                var fa = this.FileAttributes.Value;
-
-                if ( fa.HasFlag( flag: System.IO.FileAttributes.ReadOnly ) ) {
-                    fa &= ~System.IO.FileAttributes.ReadOnly; //is this correct? attempt to disable readonly atttribute.
-                    this.FileAttributes = fa;
-                }
-            }
+            this.SetReadOnly( false );
 
             using ( var writer = File.AppendText( path: this.FullPath ) ) {
                 writer.WriteLine( value: text );
@@ -1156,7 +1105,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( oursize <= Int32.MaxValue ) {
-                return ( Int32 )oursize;
+                return ( Int32 ) oursize;
             }
 
             return Int32.MaxValue;
@@ -1173,9 +1122,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( fileName: this.FullPath ) {
-                    Arguments = arguments ?? String.Empty,
-                    UseShellExecute = useShell,
-                    Verb = verb
+                    Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
                 };
 
                 return Task.Run( function: () => Process.Start( startInfo: info ) );
@@ -1202,8 +1149,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 using ( var textReader = File.OpenText( path: this.FullPath ) ) {
                     using ( var jsonReader = new JsonTextReader( reader: textReader ) ) {
                         return new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                            PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
                         }.Deserialize<T>( reader: jsonReader );
                     }
                 }
@@ -1363,7 +1309,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 this.Delete();
-                this.Refresh();
 
                 return !this.Exists();
             }
@@ -1398,25 +1343,24 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {
-                return (new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null);
+                return ( new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null );
             }
 
             try {
                 using ( var webClient = new WebClient() ) {
                     await webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
 
-                    return (null, webClient.ResponseHeaders);
+                    return ( null, webClient.ResponseHeaders );
                 }
             }
             catch ( Exception exception ) {
-                return (exception, null);
+                return ( exception, null );
             }
         }
 
         private Folder _containingFolder;
 
-        [JsonProperty]
-        private FileAttributeData _fileAttributeData;
+        //[JsonProperty]private FileAttributeData _fileAttributeData;
 
         [CanBeNull]
         private Lazy<FileSystemWatcher> Watcher { get; }
@@ -1424,10 +1368,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         private Lazy<FileWatchingEvents> WatchEvents { get; }
 
+        public static Computer thisComputer { get; } = new Computer();
+
         private static ThreadLocal<Lazy<WebClient>> WebClients =
             new ThreadLocal<Lazy<WebClient>>( valueFactory: () => new Lazy<WebClient>( valueFactory: () => new WebClient(), isThreadSafe: false ), trackAllValues: true );
-
-        private static Computer thisComputer = new Computer();
 
         protected Document( [NotNull] SerializationInfo info, StreamingContext context ) {
             if ( info == null ) {
@@ -1435,7 +1379,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             this.FullPath = info.GetString( name: nameof( this.FullPath ) ).TrimAndThrowIfBlank();
-            this.Refresh( throwOnError: true );
         }
 
         /// <summary>
@@ -1448,7 +1391,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException"></exception>
         public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
-            this.FullPath = fullPath.TrimAndThrowIfBlank(); 
+            this.FullPath = fullPath.TrimAndThrowIfBlank();
 
             if ( Uri.TryCreate( uriString: fullPath, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 if ( uri.IsFile ) {
@@ -1482,8 +1425,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( watchFile ) {
                 this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName() ) {
-                    IncludeSubdirectories = false,
-                    EnableRaisingEvents = true
+                    IncludeSubdirectories = false, EnableRaisingEvents = true
                 } );
 
                 this.WatchEvents = new Lazy<FileWatchingEvents>( valueFactory: () => new FileWatchingEvents(), isThreadSafe: false );
@@ -1509,6 +1451,48 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Document( [NotNull] IFolder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this(
             fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName() ), deleteAfterClose: deleteAfterClose ) { }
 
+        /*
+        [DebuggerStepThrough]
+        public void Refresh( Boolean throwOnError = false ) {
+            this._fileAttributeData.Reset();
+
+            var handle = NativeMethods.FindFirstFile( lpFileName: this.FullPath, lpFindData: out var data );
+
+            if ( handle.IsInvalid ) {
+                if ( throwOnError ) {
+                    NativeMethods.HandleLastError( fullPath: this.FullPath );
+
+                    return;
+                }
+
+                return;
+            }
+
+            var fileAttributeData = new FileAttributeData( findData: data );
+            this._fileAttributeData.FileAttributes = fileAttributeData.FileAttributes;
+            this._fileAttributeData.CreationTime = fileAttributeData.CreationTime;
+            this._fileAttributeData.Exists = fileAttributeData.Exists;
+            this._fileAttributeData.FileSize = fileAttributeData.FileSize;
+            this._fileAttributeData.LastAccessTime = fileAttributeData.LastAccessTime;
+            this._fileAttributeData.LastWriteTime = fileAttributeData.LastWriteTime;
+        }
+        */
+
+        /// <summary>
+        ///     Create and returns a new <see cref="FileInfo" /> object for <see cref="FullPath" />.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public FileInfo GetInfo() => new FileInfo( this.FullPath );
+
+        public void SetReadOnly( Boolean value ) {
+            var info = this.GetInfo();
+
+            if ( info.Exists && info.IsReadOnly != value ) {
+                info.IsReadOnly = value;
+            }
+        }
+
         [NotNull]
         public static implicit operator FileInfo( [NotNull] Document document ) => new FileInfo( fileName: document.FullPath );
 
@@ -1523,6 +1507,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             internal Int32 nLength;
 
             internal unsafe Byte* pSecurityDescriptor = null;
+
         }
 
         /// <summary>
@@ -1578,7 +1563,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
                 if ( pe.UserState == tcs ) {
-                    progress.Report( value: (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
+                    progress.Report( value: ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
                 }
             }
 
@@ -1609,7 +1594,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         [NotNull]
         public static IDocument GetTempDocument( String extension = null ) {
-            if ( String.IsNullOrEmpty(extension) ) {
+            if ( String.IsNullOrEmpty( extension ) ) {
                 extension = Guid.NewGuid().ToString();
             }
 
@@ -1662,5 +1647,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         internal static Boolean IsExtended( [NotNull] String path ) =>
             path.Length >= 4 && path[ index: 0 ] == PathInternal.Constants.Backslash && ( path[ index: 1 ] == PathInternal.Constants.Backslash || path[ index: 1 ] == '?' ) &&
             path[ index: 2 ] == '?' && path[ index: 3 ] == PathInternal.Constants.Backslash;
+
     }
+
 }

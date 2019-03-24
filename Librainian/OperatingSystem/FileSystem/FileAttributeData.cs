@@ -42,6 +42,7 @@
 namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
+    using System.Diagnostics;
     using System.IO;
     using JetBrains.Annotations;
     using OperatingSystem;
@@ -74,6 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Populates from a <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" /> struct.
         /// </summary>
         /// <param name="fileAttributeData"></param>
+        [DebuggerStepThrough]
         public FileAttributeData( NativeMethods.WIN32_FILE_ATTRIBUTE_DATA fileAttributeData ) {
             this.FileAttributes = fileAttributeData.dwFileAttributes;
             this.CreationTime = fileAttributeData.ftCreationTime.ToDateTime();
@@ -88,6 +90,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Populates from a <see cref="NativeMethods.Win32FindData" /> struct.
         /// </summary>
         /// <param name="findData"></param>
+        [DebuggerStepThrough]
         public FileAttributeData( NativeMethods.Win32FindData findData ) {
             this.FileAttributes = findData.dwFileAttributes;
             this.CreationTime = findData.ftCreationTime.ToDateTime();
@@ -98,6 +101,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.FileHashCode = default;
         }
 
+        [DebuggerStepThrough]
         public FileAttributeData( Boolean exists, FileAttributes attributes, DateTime creationTime, DateTime lastAccessTime, DateTime lastWriteTime, UInt64 fileSize ) {
             this.Exists = exists;
             this.FileAttributes = attributes;
@@ -143,6 +147,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>
         ///     Reset known information about file to defaults.
         /// </summary>
+        [DebuggerStepThrough]
         public void Reset() {
             this.Exists = default;
             this.FileAttributes = default;
