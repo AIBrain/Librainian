@@ -98,13 +98,13 @@ data3.3   =   3
 
             //prepare file
             var config = Document.GetTempDocument( "config" ).AppendText( ini_test_data );
-            config.DeleteAfterClose = true;
+            config.DeleteAfterClose = false;
 
             Console.WriteLine( config.CalculateHarkerHashInt32() );
 
             Ini2 = new IniFile( config );
-            Ini2 .Add("Greetings", "Hello" , "world1!");
-            Ini2 .Add("Greetings", "Hello" , "world2!");
+            Ini2.Add( "Greetings", "Hello", "world1!" );
+            Ini2.Add( "Greetings", "Hello", "world2!" );
             Ini2[ "Greetings", "Hello" ].Should().Be( "world2!" );
 
             if ( Ini2.Save( config ) ) {

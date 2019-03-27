@@ -21,23 +21,23 @@ namespace Librainian.Measurement.Currency.USD {
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using System.Windows.Forms;
     using Annotations;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     A simple, thread-safe,  System.Decimal-based wallet.
     /// </summary>
-    [DebuggerDisplay( "{Formatted,nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class SimpleWallet : ISimpleWallet {
         [NotNull] private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         private  Decimal _balance;
 
-        public SimpleWallet() {
-            this.Timeout = TimeSpan.FromMinutes( 1 );
-        }
+        public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
 
         [UsedImplicitly]
-        public String Formatted { get { return this.ToString(); } }
+        public String Formatted => this.ToString();
 
         /// <summary>
         ///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
@@ -69,11 +69,11 @@ namespace Librainian.Measurement.Currency.USD {
                 this._balance = value;
                 this._access.ExitWriteLock();
                 var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( value );
-                }
+                onAnyUpdate?.Invoke( value );
             }
         }
+
+        public Label LabelToFlashOnChanges { get; set; }
 
         public Action<Decimal > OnBeforeDeposit { get; set; }
         public Action<Decimal > OnAfterDeposit { get; set; }
@@ -83,15 +83,21 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Action<Decimal > OnAnyUpdate { get; set; }
 
+        /// <summary>Add any (+-)amount directly to the balance.</summary>
+        /// <param name="amount"></param>
+        /// <param name="sanitize"></param>
+        /// <returns></returns>
+        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) => throw new NotImplementedException();
+
+        public Boolean TryAdd( Currency.SimpleWallet wallet, Boolean sanitize = true ) => throw new NotImplementedException();
+
         public Boolean TryDeposit(Decimal amount, Boolean sanitizeAmount = false ) {
             if ( amount <Decimal.Zero ) {
                 return false;
             }
             try {
                 var onBeforeDeposit = this.OnBeforeDeposit;
-                if ( onBeforeDeposit != null ) {
-                    onBeforeDeposit( amount );
-                }
+                onBeforeDeposit?.Invoke( amount );
                 this.Balance += amount;
                 return true;
             }
@@ -100,15 +106,19 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
+        public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet, Boolean sanitize = true ) => throw new NotImplementedException();
+
+        public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) {
+            throw new NotImplementedException();
+        }
+
         public Boolean TryWithdraw(Decimal amount, Boolean sanitizeAmount = false ) {
             if ( amount <Decimal.Zero ) {
                 return false;
             }
             try {
                 var onBeforeWithdraw = this.OnBeforeWithdraw;
-                if ( onBeforeWithdraw != null ) {
-                    onBeforeWithdraw( amount );
-                }
+                onBeforeWithdraw?.Invoke( amount );
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
                     return false;
                 }
@@ -120,11 +130,11 @@ namespace Librainian.Measurement.Currency.USD {
                     this._access.ExitWriteLock();
                 }
                 var onAfterWithdraw = this.OnAfterWithdraw;
-                if ( onAfterWithdraw != null ) {
-                    onAfterWithdraw( amount );
-                }
+                onAfterWithdraw?.Invoke( amount );
             }
         }
+
+        public Boolean TryWithdraw( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
 
         public Boolean TryUpdateBalance(Decimal amount, Boolean sanitizeAmount = true ) {
             try {
@@ -139,14 +149,11 @@ namespace Librainian.Measurement.Currency.USD {
                     this._access.ExitWriteLock();
                 }
                 var onAnyUpdate = this.OnAnyUpdate;
-                if ( null != onAnyUpdate ) {
-                    onAnyUpdate( amount );
-                }
+                onAnyUpdate?.Invoke( amount );
             }
         }
 
-        public override String ToString() {
-            return this.Balance.ToString( "C" );
-        }
+        public override String ToString() => this.Balance.ToString( "C" );
+
     }
 }

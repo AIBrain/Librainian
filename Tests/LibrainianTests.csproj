@@ -72,6 +72,7 @@
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
     <Compile Include="PasswordTests.cs" />
     <Compile Include="PathSplitterTests.cs" />
+    <Compile Include="Persistence\DerivedSerializableExceptionWithAdditionalCustomPropertyTests.cs" />
     <Compile Include="Persistence\IniFileTests.cs" />
     <Compile Include="Persistence\JSONFileTests.cs" />
     <Compile Include="Persistence\MaxMemTests.cs" />

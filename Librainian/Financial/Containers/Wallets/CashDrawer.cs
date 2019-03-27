@@ -49,6 +49,8 @@ namespace Librainian.Financial.Containers.Wallets {
 
 	public class CashDrawer : Wallet {
 
+		//TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
+
 		public CashDrawer( Guid id ) : base( id ) { }
 
 		public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {

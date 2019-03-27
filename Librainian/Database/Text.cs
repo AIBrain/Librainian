@@ -23,6 +23,7 @@ namespace Librainian.Database {
     using System;
     using System.Data;
     using System.Data.OleDb;
+    using Logging;
 
     public class Text {
 
@@ -62,7 +63,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( Exception exception ) {
-                exception.More();
+                exception.Log();
             }
 
             return columns;
@@ -109,7 +110,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( OleDbException exception ) {
-                exception.More();
+                exception.Log();
             }
 
             return worksheets;

@@ -28,6 +28,7 @@ namespace Librainian.Internet {
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -89,11 +90,11 @@ namespace Librainian.Internet {
 
         public static JObject GetNonAsync( Uri uri ) {
             var httpClient = new HttpClient();
-            var content = httpClient.GetStringAsync( uri ).Result;
+            var content = httpClient.GetStringAsync( uri ).Result;  //TODO bad
             return JObject.Parse( content );
         }
 
-        public static String GetWebPage( this String url ) {
+        public static String GetWebPage2( this String url ) {
             try {
                 var request = WebRequest.Create( url );
                 request.Proxy = null;

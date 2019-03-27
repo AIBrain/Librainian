@@ -346,19 +346,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Throws <see cref="DirectoryNotFoundException" /> if unable to use the system's Temp path.
+        ///     Throws Exception if unable to obtain the Temp path.
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public static IFolder GetTempFolder() {
-            var tempFolder = new Folder( Path.GetTempPath() );
-
-            if ( tempFolder.Exists() || tempFolder.Create() ) {
-                return tempFolder;
-            }
-
-            throw new DirectoryNotFoundException( $"Unable to create the user's temp folder `{tempFolder.FullName}`." );
-        }
+        public static IFolder GetTempFolder() => new Folder( Path.GetTempPath() );
 
         [NotNull]
         public static implicit operator DirectoryInfo( [NotNull] Folder folder ) => folder.Info;

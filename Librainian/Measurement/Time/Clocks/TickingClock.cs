@@ -198,10 +198,8 @@ namespace Librainian.Measurement.Time.Clocks {
 		public Boolean IsPm() => this.Hour.Value >= 12;
 
 		public void ResetTimer( Granularity granularity ) {
-			if ( null != this._timer ) {
-				using ( this._timer ) {
-					this._timer.Stop();
-				}
+			using ( this._timer ) {
+				this._timer?.Stop();
 			}
 
 			switch ( granularity ) {

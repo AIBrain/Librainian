@@ -71,7 +71,7 @@ namespace Librainian.Collections.Lists {
     /// </copyright>
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class ConcurrentList<T> : ReactiveObject, IDisposable, IList<T>, IEquatable<IEnumerable<T>> {
+    public class ConcurrentList<T> : ReactiveObject, IDisposable, IList<T>/*, IEquatable<IEnumerable<T>>*/ {
 
         private Int64 _isReadOnlyCount;
 
@@ -568,12 +568,14 @@ namespace Librainian.Collections.Lists {
             }
         }
 
+        /*
         /// <summary>
         ///     Returns true if <paramref name="other" /> is equal to this List.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( IEnumerable<T> other ) => Equals( left: this, right: other );
+        public Boolean Equals( IEnumerable<T> other ) => Equals( this, other );
+        */
 
         /// <summary>
         ///     <para>

@@ -26,12 +26,13 @@
 //
 // "Librainian/Librainian/DerivedSerializableExceptionWithAdditionalCustomPropertyTests.cs" was last formatted by Protiguous on 2018/05/22 at 5:53 PM.
 
-namespace Librainian.Extensions {
+namespace LibrainianTests.Persistence {
 
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Librainian.Extensions;
     using NUnit.Framework;
 
     public class DerivedSerializableExceptionWithAdditionalCustomPropertyTests {

@@ -23,6 +23,9 @@ namespace Librainian.Extensions {
     using System;
     using System.Diagnostics;
 
+    /// <summary>
+    /// *very* old class
+    /// </summary>
     public abstract class DisposableBase : IDisposable {
 
         /// <summary></summary>
@@ -50,9 +53,7 @@ namespace Librainian.Extensions {
             this.IsDisposed = true;
             GC.SuppressFinalize( this );
 
-            if ( this.Disposed != null ) {
-                this.Disposed( this, EventArgs.Empty );
-            }
+            this.Disposed?.Invoke( this, EventArgs.Empty );
         }
 
         protected abstract void Dispose( Boolean disposing );
