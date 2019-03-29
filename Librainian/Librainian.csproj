@@ -124,6 +124,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Esent.Collections">
+      <HintPath>C:\Users\Rick\.nuget\packages\microsoft.database.collections.generic\1.9.4\lib\net40\Esent.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="Esent.Interop">
+      <HintPath>C:\Users\Rick\.nuget\packages\managedesent\1.9.4\lib\net40\Esent.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Esent.Isam">
+      <HintPath>C:\Users\Rick\.nuget\packages\microsoft.database.isam\1.9.4\lib\net40\Esent.Isam.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations">
       <HintPath>C:\Users\Rick\.nuget\packages\jetbrains.annotations\2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -201,7 +210,6 @@
     <Compile Include="Financial\Containers\Shopping\TaxTable.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="Logging\Error.cs" />
-    <Compile Include="Maths\Numbers\BigDecimal.cs" />
     <Compile Include="Maths\Numbers\BiggerRational.cs" />
     <Compile Include="Maths\Numbers\PairOfDoubles.cs" />
     <Compile Include="Measurement\Currency\USD\SimpleWallet.cs" />
@@ -912,12 +920,12 @@
       <Version>3.3.3</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>4.0.2</Version>
+      <Version>4.2.1</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
-      <Version>2018.3.0</Version>
+      <Version>2019.1.1</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD.Parallel">
       <Version>1.0.1</Version>
@@ -937,7 +945,7 @@
       <Version>3.3.4</Version>
     </PackageReference>
     <PackageReference Include="NLog">
-      <Version>4.5.11</Version>
+      <Version>4.6.0</Version>
     </PackageReference>
     <PackageReference Include="NLog.Windows.Forms">
       <Version>4.2.3</Version>
@@ -949,16 +957,16 @@
       <Version>1.3.3</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI">
-      <Version>9.11.3</Version>
+      <Version>9.12.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Events.Winforms">
-      <Version>9.11.3</Version>
+      <Version>9.12.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.Fody">
-      <Version>9.11.3</Version>
+      <Version>9.12.1</Version>
     </PackageReference>
     <PackageReference Include="ReactiveUI.WinForms">
-      <Version>9.11.3</Version>
+      <Version>9.12.1</Version>
     </PackageReference>
     <PackageReference Include="Rx-Core">
       <Version>2.2.5</Version>
@@ -984,7 +992,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

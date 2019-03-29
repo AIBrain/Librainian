@@ -29,9 +29,7 @@ namespace Librainian.Extensions {
     public abstract class DisposableBase : IDisposable {
 
         /// <summary></summary>
-        protected DisposableBase() {
-            this.IsDisposed = false;
-        }
+        protected DisposableBase() => this.IsDisposed = false;
 
         /// <summary><see cref="DisposableBase" /> was not properly disposed!</summary>
         ~DisposableBase() {

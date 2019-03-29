@@ -22,7 +22,6 @@ namespace Librainian.Measurement.Currency.USD {
     using System.Diagnostics;
     using System.Threading;
     using System.Windows.Forms;
-    using Annotations;
     using JetBrains.Annotations;
 
     /// <summary>

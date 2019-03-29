@@ -119,11 +119,9 @@ namespace Librainian.Persistence {
             [NotNull]
             private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new TimeTracker();
 
-            [NotNull]
-            public static CancellationTokenSource LocalDiscoveryCancellationSource { get; set; }
+            public static CancellationToken LocalDiscoveryCancellationToken { get; set; }
 
-            [NotNull]
-            public static CancellationTokenSource RemoteDiscoveryCancellationSource { get; set; }
+            public static CancellationToken RemoteDiscoveryCancellationToken { get; set; }
 
             /// <summary>
             ///     The <see cref="Root" /> folder for pointing to storage locations?
@@ -211,8 +209,8 @@ namespace Librainian.Persistence {
             public static async Task Initialize( CancellationToken? localToken = null, CancellationToken? remoteToken = null ) {
                 try {
                     InitializeTimeTracker.Started = DateTime.UtcNow;
-                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationSource.Token );
-                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationSource.Token );
+                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationToken.Token );
+                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationToken.Token );
                     await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( false );
                 }
                 catch ( Exception exception ) {
@@ -223,9 +221,9 @@ namespace Librainian.Persistence {
                 }
             }
 
-            public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellationSource.Cancel( false );
+            public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellationToken.Cancel( false );
 
-            public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellationSource.Cancel( false );
+            public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellationToken.Cancel( false );
         }
     }
 

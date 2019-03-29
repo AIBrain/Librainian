@@ -99,11 +99,13 @@ namespace Librainian.Persistence.InIFiles {
             return this.lines.Any( pair => pair.Key.Like( key ) );
         }
 
+        /*
         /// <summary>
         ///     ToArray copies the entire list! ugh
         /// </summary>
         /// <returns></returns>
         public ReadOnlyMemory<IniLine> Lines() => this.lines.ToArray();
+        */
 
         public Boolean Remove( [NotNull] String key ) => this.lines.RemoveAll( pair => pair.Key.Like( key ) ).Any();
 

@@ -180,7 +180,7 @@ namespace Librainian.Parsing {
                 return self;
             }
 
-            return self.AsSpan( 0, maxlength ).ToString();
+            return self.Substring( 0, maxlength );
         }
 
         /// <summary>

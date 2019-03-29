@@ -41,17 +41,13 @@ namespace Librainian.Threading {
                 }
                 _sGcDone += value;
             }
-            remove {
-                _sGcDone -= value;
-            }
+            remove => _sGcDone -= value;
         }
 
         private sealed class GenObject {
             private readonly Int32 _mGeneration;
 
-            public GenObject( Int32 generation ) {
-                this._mGeneration = generation;
-            }
+            public GenObject( Int32 generation ) => this._mGeneration = generation;
 
             ~GenObject() {
 
