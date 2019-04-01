@@ -209,8 +209,8 @@ namespace Librainian.Persistence {
             public static async Task Initialize( CancellationToken? localToken = null, CancellationToken? remoteToken = null ) {
                 try {
                     InitializeTimeTracker.Started = DateTime.UtcNow;
-                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationToken.Token );
-                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationToken.Token );
+                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationToken );
+                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationToken );
                     await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( false );
                 }
                 catch ( Exception exception ) {
@@ -221,9 +221,6 @@ namespace Librainian.Persistence {
                 }
             }
 
-            public static void RequestCancelLocalDiscovery() => LocalDiscoveryCancellationToken.Cancel( false );
-
-            public static void RequestCancelRemoteDiscovery() => RemoteDiscoveryCancellationToken.Cancel( false );
         }
     }
 
