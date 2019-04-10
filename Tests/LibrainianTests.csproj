@@ -70,6 +70,7 @@
     <Compile Include="OperatingSystem\TestPartitions.cs" />
     <Compile Include="OperatingSystem\FileHistoryFileTests.cs" />
     <Compile Include="OperatingSystem\OSInfoTests.cs" />
+    <Compile Include="Parsing\ParsingTests.cs" />
     <Compile Include="PasswordTests.cs" />
     <Compile Include="PathSplitterTests.cs" />
     <Compile Include="Persistence\DerivedSerializableExceptionWithAdditionalCustomPropertyTests.cs" />
