@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "AssemblyInfo.cs" belongs to Protiguous@Protiguous.com and
+// 
+// This source code contained in "Class1.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,49 +28,69 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "AssemblyInfo.cs" was last formatted by Protiguous on 2018/11/23 at 12:20 AM.
+// 
+// Project: "Librainian", "Class1.cs" was last formatted by Protiguous on 2019/04/03 at 7:41 AM.
 
-using System.Reflection;
-using System.Resources;
-using System.Runtime.InteropServices;
+namespace Librainian.Threading {
 
-// General Information about an assembly is controlled through the following set of attributes.
-// Change these attribute values to modify the information associated with an assembly.
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Threading;
 
-[assembly: AssemblyTitle( "Librainian" )]
-[assembly: AssemblyDescription( "AIBrain's Librainian library that I will use in my projects." )]
-[assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Protiguous.com" )]
-[assembly: AssemblyProduct( "Librainian" )]
-[assembly: AssemblyCopyright( "Copyright © AIBrain, Protiguous" )]
-[assembly: AssemblyTrademark( "Librainian" )]
-[assembly: AssemblyCulture( "" )]
+    public class ThreadSafeEnumerable<T> : IEnumerable<T> {
 
-// Setting ComVisible to false makes the types in this assembly not visible to COM components. If
-// you need to access a type in this assembly from COM, set the ComVisible attribute to true on that type.
+        public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this.original.GetEnumerator() );
 
-[assembly: ComVisible( false )]
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
+        private readonly IEnumerable<T> original;
 
-[assembly: Guid( "1b20b7d7-0f3a-4ef8-b751-ad4a683f7f7e" )]
+        public ThreadSafeEnumerable( IEnumerable<T> original ) => this.original = original;
 
-// Version information for an assembly consists of the following four values:
-//
-// Major Version Minor Version Build Number Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers by using the '*'
-// as shown below: [assembly: AssemblyVersion("1.0.*")]
+        private sealed class ThreadSafeEnumerator : IEnumerator<T> {
 
-[assembly: AssemblyVersion( "2019.4.10.593" )]
-[assembly: AssemblyFileVersion( "2019.4.10.593" )]
-[assembly: NeutralResourcesLanguage( "en-US" )]
+            public T Current => this.current.Value;
+
+            Object IEnumerator.Current => this.Current;
+
+            public void Dispose() {
+                this.original.Dispose();
+                this.current.Dispose();
+            }
+
+            public Boolean MoveNext() {
+                lock ( this.padlock ) {
+                    var ret = this.original.MoveNext();
+
+                    if ( ret ) {
+                        this.current.Value = this.original.Current;
+                    }
+
+                    return ret;
+                }
+            }
+
+            public void Reset() => throw new NotSupportedException();
+
+            private readonly ThreadLocal<T> current = new ThreadLocal<T>();
+
+            private readonly IEnumerator<T> original;
+
+            private readonly Object padlock = new Object();
+
+            internal ThreadSafeEnumerator( IEnumerator<T> original ) => this.original = original;
+
+        }
+
+    }
+
+}

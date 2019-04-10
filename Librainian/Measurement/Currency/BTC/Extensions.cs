@@ -170,9 +170,9 @@ namespace Librainian.Measurement.Currency.BTC {
 
 			var list = new List<String> {
 				new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ),
-				$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' ) + " m" + coinSuffix,
-				$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' ) + " μ" + coinSuffix,
-				$"{btc.ToSatoshi():N0}" + " sat"
+				$"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
+				$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}",
+				$"{btc.ToSatoshi():N0} satoshi"
 			};
 
 			//as btc

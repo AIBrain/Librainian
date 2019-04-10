@@ -61,7 +61,7 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Seconds : IQuantityOfTime {
+    public class Seconds : IQuantityOfTime, IEquatable<Seconds> {
 
         /// <summary>
         ///     31536000
@@ -176,7 +176,16 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [NotNull] Seconds left, [NotNull] Seconds right ) => left.Value == right.Value;
+        public static Boolean Equals( Seconds left, Seconds right ) {
+            if ( ReferenceEquals(left,right) ) {
+                return true;
+            }
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Value == right.Value;
+        }
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="seconds" /> to <see cref="Milliseconds" />.
@@ -303,5 +312,9 @@ namespace Librainian.Measurement.Time {
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
 
         public Years ToYears() => new Years( this.Value / InOneCommonYear );
+
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Seconds );
+
+        public Boolean Equals( Seconds other ) => other != null && this.Value.Equals( other.Value );
     }
 }

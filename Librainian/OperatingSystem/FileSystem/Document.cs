@@ -257,7 +257,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
         /// </example>
         /// <see cref="Path.GetFileName" />
-        String FileName();
+        String FileName { get; }
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
@@ -334,7 +334,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Just the file's name, including the extension.</para>
         /// </summary>
         /// <see cref="Path.GetFileNameWithoutExtension" />
-        String Name();
+        String Name { get; }
 
         Task<String> ReadStringAsync();
 
@@ -1014,14 +1014,20 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String Extension() => Path.GetExtension( path: this.FullPath ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
         /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
+        ///     <para>Just the file's name, including the extension (no path).</para>
         /// </summary>
         /// <example>
         ///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
         /// </example>
         /// <see cref="Path.GetFileName" />
         [NotNull]
-        public String FileName() => Path.GetFileName( path: this.FullPath );
+        public String FileName => Path.GetFileName( path: this.FullPath );
+
+        /// <summary>
+        /// I *really* dislike filenames starting with a period. Here's looking at you java..
+        /// </summary>
+        /// <returns></returns>
+        public Boolean BadlyNamedFile() => Path.GetFileName( this.FullPath).Like( Path.GetExtension(this.FullPath) );
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
@@ -1086,7 +1092,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public String JustName() => Path.GetFileNameWithoutExtension( path: this.FileName() );
+        public String JustName() => Path.GetFileNameWithoutExtension( path: this.FileName );
 
         /// <summary>
         ///     <para>
@@ -1232,7 +1238,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <see cref="Path.GetFileNameWithoutExtension" />
         [NotNull]
-        public String Name() => this.FileName();
+        public String Name => this.FileName;
 
         public async Task<String> ReadStringAsync() {
             using ( var reader = new StreamReader( path: this.FullPath ) ) {
@@ -1424,7 +1430,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( watchFile ) {
-                this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName() ) {
+                this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName ) {
                     IncludeSubdirectories = false, EnableRaisingEvents = true
                 } );
 
@@ -1449,7 +1455,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName() ), deleteAfterClose: deleteAfterClose ) { }
+            fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName ), deleteAfterClose: deleteAfterClose ) { }
 
         /*
         [DebuggerStepThrough]

@@ -96,7 +96,7 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
 
             var extension = Path.GetExtension( original.FullPath ).Trim();
 
-            var value = Path.GetFileNameWithoutExtension( original.FileName() ).Trim();
+            var value = Path.GetFileNameWithoutExtension( original.FileName ).Trim();
 
             var posA = value.LastIndexOf( '(' );
             var posB = value.LastIndexOf( "UTC)", comparisonType: StringComparison.Ordinal );

@@ -73,8 +73,6 @@ namespace Librainian.Maths {
 
         internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
 
-        /// <summary>
-        /// </summary>
         [NotNull]
         public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new ConcurrentDictionary<Type, String[]>();
 

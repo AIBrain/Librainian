@@ -703,7 +703,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [Pure]
         public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
-            data.cFileName.EndsLike( "$RECYCLE.BIN" ) || data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" ) || data.cFileName.Like( "System Volume Information" );
+            data.cFileName.EndsLike( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
 
         [Pure]
         public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName == "." || data.cFileName == "..";
@@ -1103,7 +1103,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static String SimplifyFileName( [NotNull] this Document document /*, Folder hintFolder*/ ) {
             if ( document == null ) { throw new ArgumentNullException( nameof( document ) ); }
 
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName() );
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
 
             TryAgain:
 

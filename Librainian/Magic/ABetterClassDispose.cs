@@ -37,14 +37,15 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/01/14 at 2:22 AM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/04/03 at 9:44 PM.
 
 namespace Librainian.Magic {
 
     using System;
     using System.Diagnostics;
+    using System.Runtime.CompilerServices;
+    using System.Threading;
     using Logging;
-
 
     /// <summary>
     ///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
@@ -57,73 +58,53 @@ namespace Librainian.Magic {
     /// </copyright>
     public class ABetterClassDispose : IDisposable {
 
-        private volatile Boolean _hasDisposedManaged;
-
-        private volatile Boolean _hasDisposedNative;
-
-        private volatile Boolean _hasSuppressedFinalize;
-
-        public Boolean HasDisposedManaged {
-            get => this._hasDisposedManaged;
-            private set => this._hasDisposedManaged = value;
-        }
-
-        public Boolean HasDisposedNative {
-            get => this._hasDisposedNative;
-            private set => this._hasDisposedNative = value;
-        }
-
-        public Boolean HasSuppressedFinalize {
-            get => this._hasSuppressedFinalize;
-            private set => this._hasSuppressedFinalize = value;
-        }
-
-        /// <summary>
-        ///     Return true if <see cref="HasDisposedManaged" /> and <see cref="HasDisposedNative" /> are both true.
-        /// </summary>
-        public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
-
         [DebuggerStepThrough]
         public void Dispose() => this.Dispose( true );
+
+        private Int32 _hasDisposedManaged;
+
+        private Int32 _hasDisposedNative;
+
+        private Int32 _hasSuppressedFinalize;
+
+        [DebuggerStepThrough]
+        public ABetterClassDispose() {
+            this._hasDisposedManaged = default;
+            this._hasDisposedNative = default;
+            this._hasSuppressedFinalize = default;
+        }
 
         [DebuggerStepThrough]
         ~ABetterClassDispose() => this.Dispose( true );
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
         private void PreventFinalizer() {
-            if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
-                GC.SuppressFinalize( this );
-                this.HasSuppressedFinalize = true;
+            if ( !this.IsDisposed() || this.HasSuppressedFinalize() ) {
+                return;
             }
+
+            GC.SuppressFinalize( this );
+            Interlocked.Increment( ref this._hasSuppressedFinalize );
         }
 
-        protected virtual void Dispose( Boolean _ ) {
-            if ( !this.HasDisposedManaged ) {
+        protected void Dispose( Boolean _ ) {
+            if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == default ) {
                 try {
                     this.DisposeManaged();
                 }
                 catch ( Exception exception ) {
                     exception.Log();
                 }
-                finally {
-                    if ( !this.HasDisposedManaged ) {
-                        $"Error: derived class did not call \"base.{nameof( this.DisposeManaged )}\".".Break();
-                    }
-                }
             }
 
-            if ( !this.HasDisposedNative ) {
+            if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == default ) {
                 try {
                     this.DisposeNative();
                 }
                 catch ( Exception exception ) {
                     exception.Log();
                 }
-                finally {
-                    if ( !this.HasDisposedNative ) {
-                        $"Error: derived class did not call \"base.{nameof( this.DisposeNative )}\".".Break();
-                    }
-                }
-
             }
         }
 
@@ -133,17 +114,11 @@ namespace Librainian.Magic {
         ///         Providing the object inside a using construct will then call <see cref="Dispose" />, which in turn calls
         ///         <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.
         ///     </para>
-        ///     <para>
-        ///         <example>
-        ///             Example usage:
-        ///             <code>
-        /// using ( this.mySink ) { this.mySink=null; }
-        /// </code>
-        ///         </example>
-        ///     </para>
         /// </summary>
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
         public virtual void DisposeManaged() {
-            this.HasDisposedManaged = true;
+            Interlocked.Increment( ref this._hasDisposedManaged );
             this.PreventFinalizer();
         }
 
@@ -153,19 +128,32 @@ namespace Librainian.Magic {
         ///         Providing the object inside a using construct will then call <see cref="Dispose" />, which in turn calls
         ///         <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.
         ///     </para>
-        ///     <para>
-        ///         <example>
-        ///             Example usage:
-        ///             <code>
-        /// using ( this.mySink ) { this.mySink=null; }
-        /// </code>
-        ///         </example>
-        ///     </para>
         /// </summary>
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
         public virtual void DisposeNative() {
-            this.HasDisposedNative = true;
+            Interlocked.Increment( ref this._hasDisposedNative );
             this.PreventFinalizer();
         }
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
+        public Boolean HasDisposedManaged() => Volatile.Read( ref this._hasDisposedManaged ) != default;
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
+        public Boolean HasDisposedNative() => Volatile.Read( ref this._hasDisposedNative ) != default;
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
+        public Boolean HasSuppressedFinalize() => Volatile.Read( ref this._hasSuppressedFinalize ) != default;
+
+        /// <summary>
+        ///     Return true if <see cref="HasDisposedManaged" /> and <see cref="HasDisposedNative" /> are both true.
+        /// </summary>
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
+        public Boolean IsDisposed() => this.HasDisposedManaged() && this.HasDisposedNative();
 
     }
 

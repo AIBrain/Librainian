@@ -54,4 +54,5 @@ namespace Librainian.Controls {
 		[NotNull]
 		public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
 	}
+
 }

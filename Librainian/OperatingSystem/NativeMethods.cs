@@ -44,6 +44,7 @@ namespace Librainian.OperatingSystem {
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Drawing;
     using System.IO;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
@@ -1401,5 +1402,50 @@ namespace Librainian.OperatingSystem {
 			public String cAlternate;
 		}
 		*/
+
+        /// <summary>
+        /// <code>
+        /// Process process = Process.Start("notepad");
+        /// process.WaitForInputIdle();
+        /// SetWindowText(process.MainWindowHandle, "Hello!");
+        /// </code>
+        /// </summary>
+        [DllImport( "user32.dll", SetLastError = true, CharSet = CharSet.Auto, ExactSpelling = false )]
+        public static extern Boolean SetWindowText( this IntPtr hwnd, String lpString );
+
+        /// <summary>
+        /// <code>
+        /// Process process = Process.Start("notepad");
+        /// Icon icon = new Icon( @"C:\Icons\FilePath.ico" );
+        /// process.WaitForInputIdle();
+        /// SendMessage( process.MainWindowHandle, WM_SETICON, ICON_BIG, icon.Handle);
+        /// </code>
+        /// </summary>
+        /// <param name="hwnd"></param>
+        /// <param name="message"></param>
+        /// <param name="iconSize"></param>
+        /// <param name="iconHandle"></param>
+        /// <returns></returns>
+        [DllImport( "user32.dll", ExactSpelling = false )]
+        public static extern IntPtr SendMessage( this IntPtr hwnd, Int32 message, IconSize iconSize, IntPtr iconHandle );
+
+        public static Boolean SetWindowIcon( this IntPtr window, [NotNull] Icon icon ) {
+            if ( icon == null ) {
+                throw new ArgumentNullException( paramName: nameof( icon ) );
+            }
+
+            return window.SendMessage( WM_SETICON, IconSize.Big, icon.Handle ) != default;
+        }
+
+        public enum IconSize : Byte {
+
+            Small = ICON_SMALL,
+
+            Big = ICON_BIG
+        }
+
+        public const Int32 WM_SETICON = 0x80;
+        public const Int32 ICON_SMALL = 0;
+        public const Int32 ICON_BIG = 1;
     }
 }

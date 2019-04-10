@@ -128,6 +128,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() =>
-            $"{this.SourceDocument?.FileName()} copied to {this.DestinationDocument?.ContainingingFolder().FullName} @ {this.MegabytesPerSecond()}MB/s";
+            $"{this.SourceDocument.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullName} @ {this.MegabytesPerSecond()}MB/s";
     }
 }

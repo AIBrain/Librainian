@@ -181,7 +181,7 @@ namespace Librainian.Threading {
         public Boolean Any() => this.Active && this.Jobs.Any();
 
         public override void DisposeManaged() {
-            if ( !this.IsDisposed ) {
+            if ( !this.IsDisposed() ) {
                 this.RemoveHandler();
                 this.CancellationTokenSource.CancelAfter( TimeSpan.FromMinutes( 1 ) );
             }

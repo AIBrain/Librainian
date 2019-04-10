@@ -73,7 +73,7 @@ namespace Librainian.Knowledge {
 			if ( !dataFile.Extension().Like( ".knb" ) ) { return 0; }
 
 			Interlocked.Increment( ref this.FilesFound );
-			feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName()}" ) );
+			feedback?.Invoke( this, new ProgressChangedEventArgs( this.FilesFound, $"Found data file {dataFile.FileName}" ) );
 
 			if ( !this.KnbFiles.Contains( dataFile ) ) { this.KnbFiles.Add( dataFile ); }
 

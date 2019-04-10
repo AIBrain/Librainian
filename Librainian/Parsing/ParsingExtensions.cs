@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/01/06 at 12:49 AM.
+// 
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/04/10 at 11:23 AM.
 
 namespace Librainian.Parsing {
 
@@ -72,7 +72,7 @@ namespace Librainian.Parsing {
     public static class ParsingExtensions {
 
         public static Lazy<String> AllLetters { get; } = new Lazy<String>( () =>
-            new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).ToArray() ) );
+            new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).ToArray() ) );
 
         public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
 
@@ -80,7 +80,7 @@ namespace Librainian.Parsing {
         public static String EnglishAlphabetUppercase { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToUpper();
 
         [NotNull]
-        public static String EnglishAlphabetLowercase { get; } = "abcedfghijklmnopqrstuvwxyz".ToLower();
+        public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz".ToLower();
 
         [NotNull]
         public static Lazy<PluralizationService> LazyPluralizationService { get; } =
@@ -170,6 +170,12 @@ namespace Librainian.Parsing {
 			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
 		*/
 
+        /// <summary>
+        ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="maxlength"></param>
+        /// <returns></returns>
         [CanBeNull]
         public static String Limit( [CanBeNull] this String self, Int32 maxlength ) {
             if ( String.IsNullOrEmpty( self ) ) {
@@ -328,7 +334,7 @@ namespace Librainian.Parsing {
             return dict;
         }
 
-        public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 )text.Where( c => c == character ).LongCount();
+        public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 ) text.Where( c => c == character ).LongCount();
 
         /// <summary>
         ///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -574,11 +580,11 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        /// Returns the decoded string, or <paramref name="text"/> if unable to convert.
+        ///     Returns the decoded string, or <paramref name="text" /> if unable to convert.
         /// </summary>
         /// <param name="text"></param>
         /// <param name="encoding"></param>
-        /// <seealso cref="ToBase64"/>
+        /// <seealso cref="ToBase64" />
         /// <returns></returns>
         [NotNull]
         public static String FromBase64( [NotNull] this String text, Encoding encoding = null ) {
@@ -590,7 +596,7 @@ namespace Librainian.Parsing {
                 return encoding.GetString( Convert.FromBase64String( text ) );
             }
             catch ( FormatException ) {
-                return text;    //couldn't convert
+                return text; //couldn't convert
             }
         }
 
@@ -779,24 +785,57 @@ namespace Librainian.Parsing {
         /// <see cref="Word" />
         /// <see cref="Sentence" />
         [NotNull]
-        public static IEnumerable<String> JustWords( this String sentence ) {
-            var result = sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
-
-            return result;
-        }
+        [Pure]
+        public static IEnumerable<String> JustWords( this String sentence ) => sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
 
         /// <summary>
         ///     <para>Case insensitive String comparison.</para>
         ///     <para>( for example: cAt == CaT is true )</para>
+        ///     <para>( for example: CaT == CaT is true )</para>
+        ///     <para>( Like(null, null ) is true )</para>
         ///     <para>
-        ///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
+        ///         <see cref="StringComparison.OrdinalIgnoreCase" />
         ///     </para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Like( [CanBeNull] this String left, [CanBeNull] String right ) =>
-            ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.InvariantCultureIgnoreCase );
+        [Pure]
+        public static Boolean Like( [CanBeNull] this String left, [CanBeNull] String right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Equals( right, StringComparison.OrdinalIgnoreCase );
+        }
+
+        /// <summary>
+        ///     <para>Case (ordinal) sensitive comparison.</para>
+        ///     <para>( for example: cAt == cAt is true )</para>
+        ///     <para>( for example: cAt == CaT is false )</para>
+        ///     <para>( Same(null, null ) is true )</para>
+        ///     <para>
+        ///         <see cref="StringComparison.Ordinal" />
+        ///     </para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Same( [CanBeNull] this String left, [CanBeNull] String right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Equals( right, StringComparison.Ordinal );
+        }
 
         /// <summary>
         ///     Convert the first letter of a String to lower case
@@ -1123,7 +1162,7 @@ namespace Librainian.Parsing {
 
             var stringInfo = new StringInfo( s );
 
-            return ( UInt64 )stringInfo.LengthInTextElements;
+            return ( UInt64 ) stringInfo.LengthInTextElements;
         }
 
         [NotNull]
@@ -1306,15 +1345,15 @@ namespace Librainian.Parsing {
             if ( source == null && compare == null ) {
                 similarity.Add( 1 );
 
-                goto noMoreTests;
+                return similarity;
             }
 
             if ( source == null ) {
-                goto noMoreTests;
+                return similarity;
             }
 
             if ( compare == null ) {
-                goto noMoreTests;
+                return similarity;
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -1323,23 +1362,23 @@ namespace Librainian.Parsing {
                 timeout = Minutes.One;
             }
 
-            if ( source.Length <= 0 || compare.Length <= 0 ) {
-                goto noMoreTests;
+            if ( !source.Any() || !compare.Any() ) {
+                return similarity;
             }
 
             if ( source.ExactMatch( compare ) ) {
                 matchReasons?.Add( "ExactMatch( source, compare )" );
                 similarity.Add( 1 );
 
-                goto noMoreTests;
+                return similarity;
             }
 
             if ( source.SequenceEqual( compare ) ) {
-                goto noMoreTests; //exact match. no more comparisons needed.
+                return similarity; //exact match. no more comparisons needed.
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             var votes = new VotallyD();
@@ -1359,11 +1398,11 @@ namespace Librainian.Parsing {
                 votes.ForB( compareIntoUtf32Encoding.Length );
                 matchReasons?.Add( "exact match as UTF32 encoded" );
 
-                goto noMoreTests;
+                return similarity;
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             var compareReversed = compare.Reverse();
@@ -1375,7 +1414,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             var sourceDistinct = new String( source.Distinct().ToArray() );
@@ -1389,7 +1428,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             if ( sourceDistinct.SequenceEqual( compareDistinctReverse ) ) {
@@ -1399,7 +1438,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             var tempcounter = 0;
@@ -1420,7 +1459,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             tempcounter = 0;
@@ -1441,7 +1480,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             if ( source.Contains( compare ) ) {
@@ -1451,7 +1490,7 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             if ( compare.Contains( source ) ) {
@@ -1461,11 +1500,11 @@ namespace Librainian.Parsing {
             }
 
             if ( stopwatch.Elapsed > timeout ) {
-                goto noMoreTests; //no more time for comparison
+                return similarity; //no more time for comparison
             }
 
             Single threshold = Math.Max( source.Length, compare.Length );
-            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 )threshold );
+            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
             similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1476,8 +1515,6 @@ namespace Librainian.Parsing {
             }
 
             //TODO
-
-            noMoreTests:
 
             return similarity;
         }
@@ -1524,8 +1561,7 @@ namespace Librainian.Parsing {
             }
 
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                index,
-                ch = s[ index ]
+                index, ch = s[ index ]
             } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
             return res;
@@ -1690,15 +1726,17 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        /// Returns <paramref name="text"/> converted to a base-64 string.
+        ///     Returns <paramref name="text" /> converted to a base-64 string.
         /// </summary>
         /// <param name="text"></param>
         /// <param name="encoding"></param>
-        /// <seealso cref="FromBase64"/>
+        /// <seealso cref="FromBase64" />
         /// <returns></returns>
         [NotNull]
         public static String ToBase64( [CanBeNull] this String text, [CanBeNull] Encoding encoding = null ) {
-            if ( encoding == null ) { encoding = Encoding.Unicode; }
+            if ( encoding == null ) {
+                encoding = Encoding.Unicode;
+            }
 
             return Convert.ToBase64String( encoding.GetBytes( text ?? String.Empty ) );
         }
@@ -1873,9 +1911,9 @@ namespace Librainian.Parsing {
                 return "minus " + ToVerbalWord( Math.Abs( number ) );
             }
 
-            var intPortion = ( Int32 )number;
+            var intPortion = ( Int32 ) number;
             var fraction = ( number - intPortion ) * 100;
-            var decPortion = ( Int32 )fraction;
+            var decPortion = ( Int32 ) fraction;
 
             var words = ToVerbalWord( intPortion );
 
@@ -2041,5 +2079,7 @@ namespace Librainian.Parsing {
                 return -1;
             }
         }
+
     }
+
 }

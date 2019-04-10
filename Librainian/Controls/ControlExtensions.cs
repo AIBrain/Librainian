@@ -63,7 +63,8 @@ namespace Librainian.Controls {
             get;
         } = new ConcurrentDictionary<Control, Int32>();
 
-        public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) => box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
+        public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
+            box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
 
         public static void AppendText( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
             box.InvokeAction( () => {

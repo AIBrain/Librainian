@@ -114,11 +114,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-            if ( !sourceFolder.DemandPermission( FileIOPermissionAccess.Read ) ) {
+            if ( !sourceFolder.HavePermission( FileIOPermissionAccess.Read ) ) {
                 return documentCopyStatistics;
             }
 
-            if ( !destinationFolder.DemandPermission( FileIOPermissionAccess.Write ) ) {
+            if ( !destinationFolder.HavePermission( FileIOPermissionAccess.Write ) ) {
                 return documentCopyStatistics;
             }
 
@@ -137,7 +137,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
                     }
 
-                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName() );
+                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
 
                     if ( overwriteDestinationDocuments && destinationDocument.Exists() == true ) {
                         destinationDocument.Delete();
