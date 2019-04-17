@@ -56,8 +56,6 @@ namespace Librainian.ComputerSystem {
                 }
 
                 using ( var _ = new MemoryFailPoint( megabytes ) ) {
-                    GC.Collect();
-
                     return true;
                 }
             }

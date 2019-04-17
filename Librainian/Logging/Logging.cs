@@ -221,6 +221,7 @@ namespace Librainian.Logging {
 
         [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
+            System.Diagnostics.Debug.WriteLine( message );
             Logger.Debug( message );
 
             if ( breakinto && Debugger.IsAttached ) {
@@ -230,6 +231,7 @@ namespace Librainian.Logging {
 
         [DebuggerStepThrough]
         public static void Log( this Exception exception, Boolean breakinto = false ) {
+            System.Diagnostics.Debug.WriteLine( exception );
             Logger.Debug( exception );
 
             if ( breakinto && Debugger.IsAttached ) {

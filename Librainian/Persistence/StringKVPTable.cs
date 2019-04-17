@@ -243,7 +243,7 @@ namespace Librainian.Persistence {
 			using ( this.Dictionary ) { }
 
 			Trace.WriteLine( "done." );
-			base.DisposeManaged();
+			
 		}
 
 		/// <summary>

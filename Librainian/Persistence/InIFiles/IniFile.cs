@@ -455,7 +455,7 @@ namespace Librainian.Persistence.InIFiles {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            if ( document.Exists() == true ) {
+            if ( document.Exists() ) {
                 if ( overwrite ) {
                     document.Delete();
                 }
@@ -482,7 +482,7 @@ namespace Librainian.Persistence.InIFiles {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            if ( document.Exists() == true ) {
+            if ( document.Exists() ) {
                 if ( overwrite ) {
                     document.Delete();
                 }

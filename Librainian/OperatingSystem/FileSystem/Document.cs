@@ -173,7 +173,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         void Delete();
 
         /// <summary>Returns whether the file exists.</summary>
-        Boolean? Exists();
+        Boolean Exists();
 
         Folder ContainingingFolder();
 
@@ -710,7 +710,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>Returns whether the file exists.</summary>
         [DebuggerStepThrough]
-        public Boolean? Exists() => this.GetInfo().Exists;
+        public Boolean Exists() => this.GetInfo().Exists;
 
         [NotNull]
         public Folder ContainingingFolder() {
@@ -806,21 +806,61 @@ namespace Librainian.OperatingSystem.FileSystem {
             return webClient;
         }
 
+        /// <summary>
+        ///     Returns true if this document was copied to the <paramref name="destination" />.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="progress"></param>
+        /// <param name="onComplete"></param>
+        /// <returns></returns>
+        public async Task<Boolean> Copy( [NotNull] Document destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
+            [CanBeNull] Action<AsyncCompletedEventArgs, (Document source, Document destination)> onComplete = null ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( paramName: nameof( destination ) );
+            }
+
+            if ( !this.Exists() ) {
+                return false;
+            }
+
+            if ( destination.Exists() ) {
+                destination.Delete();
+
+                if ( destination.Exists() ) {
+                    return false;
+                }
+            }
+
+            if ( !this.Length.HasValue || !this.Length.Any() ) {
+                using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
+                    return true; //just create an empty file
+                }
+            }
+
+            var webClient = new WebClient();
+            webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
+            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, ( this, destination ) );
+            await webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath ).ConfigureAwait( false );
+
+            return destination.Exists() && destination.Size() == this.Size();
+        }
+
+
         public Int32? CRC32() {
             try {
-                if ( this.Exists() != null ) {
-                    var size = this.Size();
 
-                    if ( size.HasValue && size.Value > 0 ) {
-                        using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
-                            var crc32 = new CRC32( polynomial: ( UInt32 ) size, seed: ( UInt32 ) size );
+                var size = this.Size();
 
-                            var result = crc32.ComputeHash( inputStream: fileStream );
+                if ( size?.Any() == true ) {
+                    using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
+                        var crc32 = new CRC32( polynomial: ( UInt32 ) size, seed: ( UInt32 ) size );
 
-                            return BitConverter.ToInt32( value: result, startIndex: 0 );
-                        }
+                        var result = crc32.ComputeHash( inputStream: fileStream );
+
+                        return BitConverter.ToInt32( value: result, startIndex: 0 );
                     }
                 }
+
 
                 return null;
             }
@@ -977,7 +1017,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 this.Delete();
             }
 
-            base.DisposeManaged();
+            
         }
 
         /// <summary>
@@ -1190,7 +1230,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         onUserCancel: UICancelOption.DoNothing );
 
                     if ( exact ) {
-                        if ( destination.Exists() == true ) {
+                        if ( destination.Exists() ) {
                             var documentInfo = new DocumentInfo( document: this );
 
                             if ( documentInfo.CreationTimeUtc.HasValue ) {

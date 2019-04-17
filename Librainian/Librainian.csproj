@@ -241,7 +241,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Controls\ListBoxLog.cs" />
     <Compile Include="OperatingSystem\FileSystem\AllSeeingWatcher.cs" />
-    <Compile Include="OperatingSystem\FileSystem\Chunk.cs" />
+    <Compile Include="OperatingSystem\FileSystem\BufferExtensions.cs" />
     <Compile Include="OperatingSystem\FileSystem\FolderBag.Node.cs" />
     <Compile Include="OperatingSystem\FileSystem\Location.cs" />
     <Compile Include="ComputerSystem\Devices\LogicalDisk.cs" />
@@ -848,9 +848,7 @@
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Security\md5sum.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="Security\md5sum.exe" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -945,7 +943,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -214,7 +214,7 @@ namespace Librainian.Persistence {
             using ( this.Dictionary ) { }
 
             Trace.WriteLine( "done." );
-            base.DisposeManaged();
+            
         }
 
         public void Flush() => this.Dictionary.Flush();

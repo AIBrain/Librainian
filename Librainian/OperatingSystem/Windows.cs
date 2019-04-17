@@ -325,7 +325,7 @@ namespace Librainian.OperatingSystem {
 
             var mainDocument = new Document( fullname );
 
-            if ( mainDocument.Exists() == true ) {
+            if ( mainDocument.Exists() ) {
                 okayMessage.Info();
 
                 return mainDocument;

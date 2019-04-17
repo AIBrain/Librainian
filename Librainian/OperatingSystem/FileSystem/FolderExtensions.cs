@@ -139,7 +139,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
 
-                    if ( overwriteDestinationDocuments && destinationDocument.Exists() == true ) {
+                    if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
                         destinationDocument.Delete();
                     }
 

@@ -75,7 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public override void DisposeManaged() {
             this.Stop();
-            base.DisposeManaged();
+            
         }
 
         public void Start() {

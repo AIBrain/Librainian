@@ -116,7 +116,7 @@ namespace Librainian.Persistence {
                 this.Wait();
             }
 
-            base.DisposeManaged();
+            
         }
 
         public Boolean IsWaiting() => this.Waiting;

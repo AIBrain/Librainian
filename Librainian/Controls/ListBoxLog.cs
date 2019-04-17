@@ -265,7 +265,7 @@ namespace Librainian.Controls {
             this.Box.DrawMode = DrawMode.Normal;
             this.Box = null;
 
-            base.DisposeManaged();
+            
         }
 
         public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );

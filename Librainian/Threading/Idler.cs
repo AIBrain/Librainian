@@ -186,7 +186,7 @@ namespace Librainian.Threading {
                 this.CancellationTokenSource.CancelAfter( TimeSpan.FromMinutes( 1 ) );
             }
 
-            base.DisposeManaged();
+            
         }
 
         /// <summary>

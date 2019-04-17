@@ -53,7 +53,6 @@ namespace Librainian.Threading {
 	///     Usage: private readonly AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
 	///     /*...*/ }
 	/// </summary>
-	/// <remarks>(I have no idea how to use this class.)</remarks>
 	public sealed class AsyncLock : ABetterClassDispose {
 
 		private readonly Task<IDisposable> _releaser;
@@ -85,7 +84,7 @@ namespace Librainian.Threading {
 				if ( !this._mToRelease.Semaphore.CurrentCount.Any() ) { this._mToRelease.Semaphore.Release(); }
 				else { Debugger.Break(); }
 
-				base.DisposeManaged();
+				
 			}
 		}
 	}

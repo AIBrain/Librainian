@@ -42,14 +42,22 @@
 namespace Librainian.Database {
 
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Diagnostics;
     using System.Linq;
+    using System.Net;
+    using System.ServiceProcess;
+    using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
+    using Collections.Extensions;
+    using Collections.Sets;
     using Extensions;
+    using Internet;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
@@ -98,12 +106,11 @@ namespace Librainian.Database {
             return false;
         }
 
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "StoredProcedure" )]
         public Boolean ExecuteNonQuery( String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) { throw new ArgumentNullException( nameof( query ) ); }
 
             TryAgain:
-
+            --retries;
             try {
                 using ( var connection = new SqlConnection( this._connectionString ) ) {
                     connection.Open();
@@ -119,15 +126,12 @@ namespace Librainian.Database {
                     }
                 }
             }
-            catch ( InvalidOperationException ) {
-
-                //timeout probably
-                retries--;
-
+            catch ( InvalidOperationException exception) {
+                exception.Log();
                 if ( retries.Any() ) { goto TryAgain; }
             }
-            catch ( SqlException exception ) { exception.Log(); }
-            catch ( DbException exception ) { exception.Log(); }
+            catch ( SqlException exception ) { exception.Log(); if ( retries.Any() ) { goto TryAgain; } }
+            catch ( DbException exception ) { exception.Log(); if ( retries.Any() ) { goto TryAgain; } }
 
             return false;
         }
@@ -170,6 +174,7 @@ namespace Librainian.Database {
             table = new DataTable();
 
             try {
+
                 using ( var connection = new SqlConnection( this._connectionString ) ) {
                     connection.Open();
 
@@ -190,7 +195,6 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) { exception.Log(); }
             catch ( DbException exception ) { exception.Log(); }
-            catch ( Exception exception ) { exception.Log(); }
 
             return false;
         }
@@ -219,6 +223,7 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) { exception.Log(); }
+            catch ( DbException exception ) { exception.Log(); }
 
             return null;
         }
@@ -255,7 +260,6 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) { exception.Log(); }
             catch ( DbException exception ) { exception.Log(); }
-            catch ( Exception exception ) { exception.Log(); }
 
             return table;
         }
@@ -332,6 +336,7 @@ namespace Librainian.Database {
                 exception.Log();
             }
             catch ( SqlException exception ) { exception.Log(); }
+            catch ( DbException exception ) { exception.Log(); }
 
             return default;
         }
@@ -366,9 +371,136 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) { exception.Log(); }
             catch ( DbException exception ) { exception.Log(); }
-            catch ( Exception exception ) { exception.Log(); }
 
             return null;
         }
+
+        [ItemNotNull]
+        public static async Task<ConcurrentDictionary<String, ServiceControllerStatus>> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines, TimeSpan timeout ) {
+            var service = new ServiceController {
+                ServiceName = "SQLBrowser"
+            };
+
+            var machines = activeMachines.ToList();
+
+            var thisMachine = Dns.GetHostName();
+
+            if ( !machines.Contains( thisMachine ) ) {
+                machines.Add( thisMachine );
+            }
+
+            var status = new ConcurrentDictionary<String, ServiceControllerStatus>();
+
+            await Task.Run( () => {
+                Parallel.ForEach( machines, machine => {
+
+                    try {
+                        var stopwatch = Stopwatch.StartNew();
+
+                        service.MachineName = machine;
+
+                        try {
+                            if ( service.Status.In( ServiceControllerStatus.Running ) ) {
+                                /*do nothing*/
+                            }
+
+                            if ( service.Status.In( ServiceControllerStatus.ContinuePending ) ) {
+                                do {
+                                    Thread.Yield();
+                                } while ( service.Status.In( ServiceControllerStatus.ContinuePending ) && stopwatch.Elapsed < timeout );
+                            }
+
+                            if ( service.Status.In( ServiceControllerStatus.Paused ) ) {
+                                service.Continue();
+
+                                do {
+                                    Thread.Yield();
+                                } while ( service.Status.In( ServiceControllerStatus.Paused ) && stopwatch.Elapsed < timeout );
+                            }
+
+                            if ( service.Status.In( ServiceControllerStatus.PausePending, ServiceControllerStatus.Stopped, ServiceControllerStatus.StopPending ) ) {
+                                service.Start();
+
+                                do {
+                                    Thread.Yield();
+                                } while ( service.Status.In( ServiceControllerStatus.PausePending, ServiceControllerStatus.Stopped, ServiceControllerStatus.StopPending ) &&
+                                          stopwatch.Elapsed < timeout );
+                            }
+
+                            if ( service.Status.In( ServiceControllerStatus.StartPending ) ) {
+                                do {
+                                    Thread.Yield();
+                                } while ( service.Status.In( ServiceControllerStatus.StartPending ) && stopwatch.Elapsed < timeout );
+                            }
+
+                            status[ machine ] = service.Status;
+                        }
+                        catch ( InvalidOperationException exception ) {
+                            exception.Log();
+                        }
+                    }
+                    catch ( Exception e ) {
+                        Debug.WriteLine( e.Message );
+                    }
+                } );
+            } ).ConfigureAwait( false );
+
+            return status;
+        }
+
+        public static async Task StartAnySQLBrowers( TimeSpan searchTimeout ) {
+            $"Searching for any database servers...".Log();
+
+            await Database.FindAndStartSqlBrowserServices( new[] {
+                Dns.GetHostName()
+            }, searchTimeout ).ConfigureAwait( false );
+        }
+
+        [NotNull]
+        public static SqlConnectionStringBuilder OurConnectionStringBuilder( [NotNull] String serverName, [NotNull] String instanceName, TimeSpan connectTimeout, Boolean tryIntegratedSecurity, [CanBeNull] Credentials credentials = default ) {
+            if ( String.IsNullOrWhiteSpace( value: serverName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serverName ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: instanceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( instanceName ) );
+            }
+
+            //basics
+            var builder = new SqlConnectionStringBuilder {
+                DataSource = $@"{serverName}\{instanceName}",
+                AsynchronousProcessing = true,
+                ApplicationIntent = ApplicationIntent.ReadWrite,
+                ApplicationName = Application.ProductName,
+                ConnectRetryCount = 3,
+                ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
+                ConnectRetryInterval = 1,
+                PacketSize = 8000,
+                Pooling = true,
+            };
+
+            //security
+            if ( credentials != default ) {
+                builder.Remove( "Integrated Security" );
+                builder.Remove( "Authentication" );
+                builder.Encrypt = false;
+                builder.UserID = credentials.UserID;
+                builder.Password = credentials.Password;
+            }
+            else {
+                builder.Remove( nameof(builder.UserID) );
+                builder.Remove( nameof(builder.Password) );
+                builder.Encrypt = false;
+                builder.IntegratedSecurity = true;
+                //builder.Authentication = SqlAuthenticationMethod.NotSpecified;
+            }
+
+            ConnectiontringBuilders.Add( builder );
+
+            return builder;
+        }
+
+        public static ConcurrentHashset<SqlConnectionStringBuilder> ConnectiontringBuilders { get;  } = new ConcurrentHashset<SqlConnectionStringBuilder>();
+
     }
 }

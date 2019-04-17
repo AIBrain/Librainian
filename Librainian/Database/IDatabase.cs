@@ -106,7 +106,7 @@ namespace Librainian.Database {
 		Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
 		/// <summary>
-		///     Returns a <see cref="DataTable" />
+		///     Returns a <see cref="IEnumerable{T}" />
 		/// </summary>
 		/// <param name="query">     </param>
 		/// <param name="parameters"></param>

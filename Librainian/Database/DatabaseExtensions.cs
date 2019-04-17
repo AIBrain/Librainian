@@ -45,14 +45,14 @@ namespace Librainian.Database {
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Data.SqlClient;
+	using System.Diagnostics;
 	using System.Linq;
 	using System.Management;
 	using System.Media;
 	using System.Reflection;
-	using System.ServiceProcess;
-	using System.Threading;
 	using JetBrains.Annotations;
-	using Logging;
+    using Librainian.Collections.Extensions;
+    using Logging;
 	using Maths;
 	using Parsing;
 	using static Persistence.Cache;
@@ -293,82 +293,6 @@ namespace Librainian.Database {
 			return String.Empty;
 		}
 
-		
-		public static void StartSqlBrowserService( [NotNull] IEnumerable<String> activeMachines ) {
-			var myService = new ServiceController {
-				ServiceName = "SQLBrowser"
-			};
-
-			foreach ( var machine in activeMachines ) {
-				try {
-					myService.MachineName = machine;
-					var svcStatus = myService.Status.ToString();
-
-					switch ( svcStatus ) {
-						case "ContinuePending":
-							Console.WriteLine( "Service is attempting to continue." );
-
-							break;
-
-						case "Paused":
-							Console.WriteLine( "Service is paused." );
-							Console.WriteLine( "Attempting to continue the service." );
-							myService.Continue();
-
-							break;
-
-						case "PausePending":
-							Console.WriteLine( "Service is pausing." );
-							Thread.Sleep( 1000 );
-
-							try {
-								Console.WriteLine( "Attempting to continue the service." );
-								myService.Start();
-							}
-							catch ( Exception e ) {
-								Console.WriteLine( e.Message );
-							}
-
-							break;
-
-						case "Running":
-							Console.WriteLine( "Service is already running." );
-
-							break;
-
-						case "StartPending":
-							Console.WriteLine( "Service is starting." );
-
-							break;
-
-						case "Stopped":
-							Console.WriteLine( "Service is stopped." );
-							Console.WriteLine( "Attempting to start service." );
-							myService.Start();
-
-							break;
-
-						case "StopPending":
-							Console.WriteLine( "Service is stopping." );
-							Thread.Sleep( 1000 );
-
-							try {
-								Console.WriteLine( "Attempting to restart service." );
-								myService.Start();
-							}
-							catch ( Exception e ) {
-								Console.WriteLine( e.Message );
-							}
-
-							break;
-					}
-				}
-				catch ( Exception e ) {
-					Console.WriteLine( e.Message );
-				}
-			}
-		}
-
 		/// <summary>
 		///     Convert our IList to a DataSet
 		/// </summary>
@@ -384,6 +308,20 @@ namespace Librainian.Database {
 			ds.Tables.Add( list.ToDataTable() );
 
 			return ds;
+		}
+
+		public static void DisplayTable( [NotNull] this DataTable table ) {
+			if ( table == null ) {
+				throw new ArgumentNullException( paramName: nameof( table ) );
+			}
+
+			foreach ( DataRow row in table.Rows ) {
+				foreach ( DataColumn dataColumn in table.Columns ) {
+					Debug.WriteLine( "{0} = {1}", dataColumn.ColumnName, row[ dataColumn ] );
+				}
+
+				Debug.WriteLine( String.Empty );
+			}
 		}
 
 		/// <summary>

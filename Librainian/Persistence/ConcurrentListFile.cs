@@ -152,7 +152,7 @@ namespace Librainian.Persistence {
                     document.ContainingingFolder().Create();
                 }
 
-                if ( document.Exists() == true ) {
+                if ( document.Exists() ) {
                     document.Delete();
                 }
 

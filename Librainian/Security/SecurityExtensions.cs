@@ -648,7 +648,7 @@ namespace Librainian.Security {
                 return false;
             }
 
-            if ( output.Exists() == true ) {
+            if ( output.Exists() ) {
                 exceptions.Add( item: new IOException( $"The output file {output.FullPath} already exists." ) );
 
                 return false;
@@ -708,7 +708,7 @@ namespace Librainian.Security {
                     }
                 }
 
-                return output.Exists() == true;
+                return output.Exists();
             }
             catch ( AggregateException exceptionss ) {
                 exceptions.AddRange( collection: exceptionss.InnerExceptions );
@@ -765,7 +765,7 @@ namespace Librainian.Security {
                 return false;
             }
 
-            if ( output.Exists() == true ) {
+            if ( output.Exists() ) {
                 exceptions.Add( item: new IOException( $"The output file {output.FullPath} already exists." ) );
 
                 return false;
@@ -839,7 +839,7 @@ namespace Librainian.Security {
                     }
                 }
 
-                return output.Exists() == true;
+                return output.Exists();
             }
             catch ( AggregateException exceptionss ) {
                 exceptions.AddRange( collection: exceptionss.InnerExceptions );

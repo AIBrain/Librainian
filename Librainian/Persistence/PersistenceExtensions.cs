@@ -76,7 +76,7 @@ namespace Librainian.Persistence {
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
             var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
 
-            if ( !document.Exists() == true ) {
+            if ( !document.Exists() ) {
                 document.AppendText( String.Empty );
             }
 
@@ -1251,7 +1251,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
-            if ( overwrite && document.Exists() == true ) {
+            if ( overwrite && document.Exists() ) {
                 document.Delete();
             }
 
