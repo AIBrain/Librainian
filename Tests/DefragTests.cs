@@ -65,7 +65,7 @@ namespace LibrainianTests {
             TargetDocument = new Document( Path.Combine( TargetFolder.FullName, "mrt.exe" ) );
             Console.WriteLine( SourceDocument.FullPath );
 
-            while ( TargetDocument.Exists() == true ) {
+            while ( TargetDocument.Exists() ) {
                 TargetDocument.Delete();
             }
 
