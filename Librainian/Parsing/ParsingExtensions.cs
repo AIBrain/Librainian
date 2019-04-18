@@ -172,22 +172,37 @@ namespace Librainian.Parsing {
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
+        /// <para>Does not do any string trimming. Just truncate.</para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="maxlength"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Limit( [CanBeNull] this String self, Int32 maxlength ) {
-            if ( String.IsNullOrEmpty( self ) ) {
-                return self;
-            }
+        public static String Limit( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) );
 
-            if ( self.Length < maxlength ) {
-                return self;
-            }
+        /// <summary>
+        ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="maxlength"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static String LimitAndTrim( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) ).TrimEnd();
 
-            return self.Substring( 0, maxlength );
-        }
+        /// <summary>
+        ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
+        /// <para>TODO faster? slower? Needs benchmarking.</para>
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="maxlength"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static String LimitAndTrimAlternate( [CanBeNull] this String self, Int32 maxlength ) =>
+            self == null ?
+                null :
+                new StringBuilder( self ) {
+                    Length = Math.Min( maxlength, self.Length )
+                }.ToString().TrimEnd();
 
         /// <summary>
         ///     Add dashes to a pascal-cased String
