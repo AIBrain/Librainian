@@ -105,8 +105,8 @@ namespace Librainian.Controls {
 		}
 
 		private void ComputeXyUnitValues() {
-			this._myYUnit = ( Single ) ( this.Height - 2 * this._myOffset ) / this._myMaxValue;
-			this._myXUnit = ( Single ) ( this.Width - 2 * this._myOffset ) / ( this._myValues.Length - 1 );
+			this._myYUnit = ( Single ) ( this.Height - (2 * this._myOffset) ) / this._myMaxValue;
+			this._myXUnit = ( Single ) ( this.Width - (2 * this._myOffset) ) / ( this._myValues.Length - 1 );
 		}
 
 		///// <summary>
@@ -143,15 +143,15 @@ namespace Librainian.Controls {
 			for ( var i = 0; i < this._myValues.Length; i++ ) {
 
 				//We draw each line
-				g.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset ),
-					new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
+				g.DrawLine( myPen, new PointF( this._myOffset + (i * this._myXUnit), this.Height - this._myOffset ),
+					new PointF( this._myOffset + (i * this._myXUnit), this.Height - this._myOffset - (this._myValues[ i ] * this._myYUnit) ) );
 
 				//We plot the coresponding index for the maximum value.
 				if ( this._myValues[ i ] != this._myMaxValue ) { continue; }
 
 				var mySize = g.MeasureString( i.ToString(), this.MyFont );
 
-				g.DrawString( i.ToString(), this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, this.Height - this.MyFont.Height ),
+				g.DrawString( i.ToString(), this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset + (i * this._myXUnit) - (mySize.Width / 2), this.Height - this.MyFont.Height ),
 					StringFormat.GenericDefault );
 			}
 
@@ -159,7 +159,7 @@ namespace Librainian.Controls {
 			g.DrawString( "0", this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
 
 			g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: new SolidBrush( this.DisplayColor ),
-				point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - g.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width, this.Height - this.MyFont.Height ),
+				point: new PointF( this._myOffset + (this._myValues.Length * this._myXUnit) - g.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width, this.Height - this.MyFont.Height ),
 				format: StringFormat.GenericDefault );
 
 			//We draw a rectangle surrounding the control.

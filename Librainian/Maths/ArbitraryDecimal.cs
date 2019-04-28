@@ -73,7 +73,7 @@ namespace Librainian.Maths {
 			var result = new Byte[ this._digits.Length + 1 ];
 
 			for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
-				var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
+				var resultDigit = (this._digits[ i ] * amount) + result[ i + 1 ];
 				result[ i ] = ( Byte ) ( resultDigit / 10 );
 				result[ i + 1 ] = ( Byte ) ( resultDigit % 10 );
 			}

@@ -195,7 +195,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             Delete = 0x00000004
         }
 
-        private static String InternalGetTarget(SafeHandle handle) {
+        private static String InternalGetTarget([NotNull] SafeHandle handle) {
             var outBufferSize = Marshal.SizeOf(typeof(ReparseDataBuffer));
             var outBuffer = Marshal.AllocHGlobal(outBufferSize);
 

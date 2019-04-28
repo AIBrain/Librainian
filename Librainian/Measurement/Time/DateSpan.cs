@@ -129,7 +129,7 @@ namespace Librainian.Measurement.Time {
 			{
 				this.Months = end.Month - start.Month;
 
-				if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) { this.Months = 12 - start.Month + end.Month; }
+				if ( end.Month < start.Month || (end.Month <= start.Month && this.Years > 1) ) { this.Months = 12 - start.Month + end.Month; }
 
 				if ( this.Months <= 0 ) { }
 				else if ( end.Day < start.Day ) { this.Months--; }

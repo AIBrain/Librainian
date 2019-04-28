@@ -161,6 +161,7 @@ namespace Librainian.Internet.Wiki {
 				webRequest.AutomaticDecompression = DecompressionMethods.GZip;
 				webRequest.Accept = "text/xml";
 
+#pragma warning disable IDE0019 // Use pattern matching
 				using ( var webResponse = webRequest.GetResponse() as HttpWebResponse ) {
 					if ( null == webResponse ) { return null; }
 
@@ -176,6 +177,7 @@ namespace Librainian.Internet.Wiki {
 					//    return ds;
 					//}
 				}
+#pragma warning restore IDE0019 // Use pattern matching
 			}
 			catch ( Exception exception ) {
 				exception.Log();

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/02/04 at 8:24 PM.
+// 
+// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/04/21 at 5:56 PM.
 
 namespace Librainian.Converters {
 
@@ -65,6 +65,18 @@ namespace Librainian.Converters {
     using Security;
 
     public static class ConverterExtensions {
+
+        private static readonly String[] FalseStrings = {
+            "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
+        };
+
+        private static readonly Char[] TrueChars = {
+            'Y', '1'
+        };
+
+        private static readonly String[] TrueStrings = {
+            "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
+        };
 
         /// <summary>
         ///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
@@ -123,6 +135,71 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static BigInteger ToBigInteger( this Guid guid ) => new BigInteger( guid.ToByteArray() );
+
+        /// <summary>
+        ///     <para>Returns true if <paramref name="value" /> is a true, 'Y', "yes", "true", "1", or '1'.</para>
+        ///     <para>Returns false if <paramref name="value" /> is a false, 'N', "no", "false", or '0'.</para>
+        ///     <para>A null will return false.</para>
+        /// </summary>
+        /// <param name="value"></param>
+        [Pure]
+        public static Boolean ToBoolean<T>( [CanBeNull] this T value ) {
+            if ( value == null ) {
+                return false;
+            }
+
+            if ( value is Boolean b ) {
+                return b;
+            }
+
+            if ( value is Char c ) {
+                return c.In( TrueChars );
+            }
+
+            if ( value is Int32 i ) {
+                return i >= 1;
+            }
+
+            if ( value is String s ) {
+                if ( String.IsNullOrWhiteSpace( s ) ) {
+                    return false;
+                }
+
+                s = s.Trim();
+
+                if ( s.In( TrueStrings ) ) {
+                    return true;
+                }
+
+                if ( Boolean.TryParse( s, out var result ) ) {
+                    return result;
+                }
+            }
+
+            if ( value is Control control ) {
+                return control.Text().ToBoolean();
+            }
+
+            var t = value.ToString();
+
+            if ( !String.IsNullOrWhiteSpace( t ) ) {
+                t = t.Trim();
+
+                if ( t.In( TrueStrings ) ) {
+                    return true;
+                }
+
+                if ( t.In( FalseStrings ) ) {
+                    return false;
+                }
+
+                if ( Boolean.TryParse( t, out var rest ) ) {
+                    return rest;
+                }
+            }
+
+            return false;
+        }
 
         [DebuggerStepThrough]
         [Pure]
@@ -186,6 +263,9 @@ namespace Librainian.Converters {
             return null; //don't know.
         }
 
+        public static Boolean ToBooleanOrThrow<T>( this T value ) =>
+            value.ToBooleanOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a boolean value." );
+
         [DebuggerStepThrough]
         [Pure]
         public static Byte? ToByteOrNull<T>( [CanBeNull] this T value ) {
@@ -241,16 +321,15 @@ namespace Librainian.Converters {
                 var year = BitConverter.ToInt32( bytes, startIndex: 0 );
                 var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
                 var millisecond = BitConverter.ToUInt16( bytes, startIndex: 6 );
-                var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
+                var dayofweek = ( DayOfWeek ) bytes[ 8 ]; //not used in constructing the datetime
                 var day = bytes[ 9 ];
                 var hour = bytes[ 10 ];
                 var minute = bytes[ 11 ];
                 var second = bytes[ 12 ];
                 var month = bytes[ 13 ];
-                var kind = ( DateTimeKind )bytes[ 15 ];
+                var kind = ( DateTimeKind ) bytes[ 15 ];
                 var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
 
-                
                 return result;
             }
             catch ( Exception exception ) {
@@ -264,7 +343,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         public static DateTime? ToDateTimeOrNull<T>( [CanBeNull] this T value ) {
             try {
-                if ( value != null && DateTime.TryParse( value.ToString().Trim(), out var result ) ) {
+                if ( DateTime.TryParse( value?.ToString().Trim(), out var result ) ) {
                     return result;
                 }
             }
@@ -298,7 +377,8 @@ namespace Librainian.Converters {
             }
 
             try {
-                var s = value.ToString();
+                var s = value is Control control ? control.Text() : value.ToString();
+
                 s = s.StripLetters();
                 s = s.Replace( "$", String.Empty );
                 s = s.Replace( ")", String.Empty );
@@ -380,19 +460,18 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
-                        , b: ( UInt16 )dateTime.DayOfYear //4,5
-                        , c: ( UInt16 )dateTime.Millisecond //6,7
-                        , d: ( Byte )dateTime.DayOfWeek //8
-                        , e: ( Byte )dateTime.Day //9
-                        , f: ( Byte )dateTime.Hour //10
-                        , g: ( Byte )dateTime.Minute //11
-                        , h: ( Byte )dateTime.Second //12
-                        , i: ( Byte )dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
+                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
+                        , c: ( UInt16 ) dateTime.Millisecond //6,7
+                        , d: ( Byte ) dateTime.DayOfWeek //8
+                        , e: ( Byte ) dateTime.Day //9
+                        , f: ( Byte ) dateTime.Hour //10
+                        , g: ( Byte ) dateTime.Minute //11
+                        , h: ( Byte ) dateTime.Second //12
+                        , i: ( Byte ) dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte )dateTime.Kind ); //15
+                        , k: ( Byte ) dateTime.Kind ); //15
 
-                    
                     return guid;
                 }
             }
@@ -598,7 +677,7 @@ namespace Librainian.Converters {
 
         /// <summary>
         ///     Returns the trimmed <paramref name="obj" /> ToString() or null.
-        ///     <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().Trim().</para>
+        ///     <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -609,19 +688,19 @@ namespace Librainian.Converters {
                 return null;
             }
 
+            if ( obj is Control control ) {
+                return control.Text();
+            }
+
             if ( obj is String s ) {
-                return String.IsNullOrWhiteSpace( s ) ? null : s.Trim();
+                return String.IsNullOrWhiteSpace( s ) ? null : s;
             }
 
-            if ( obj is DBNull ) {
+            if ( obj is DBNull || Equals( obj, DBNull.Value ) ) {
                 return null;
             }
 
-            if ( Equals( obj, DBNull.Value ) ) {
-                return null;
-            }
-
-            var value = obj.ToString().Trim();
+            var value = obj.ToString();
 
             return value.IsEmpty() ? null : value;
         }
@@ -654,5 +733,15 @@ namespace Librainian.Converters {
 
             return bigInteger;
         }
+
+        /// <summary>
+        ///     Returns a 'Y' for true, or an 'N' for false.
+        /// </summary>
+        /// <param name="value"></param>
+        [Pure]
+        [DebuggerStepThrough]
+        public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
+
     }
+
 }

@@ -25,7 +25,7 @@ namespace Librainian.Measurement.Currency.USD {
     using JetBrains.Annotations;
 
     /// <summary>
-    ///     A simple, thread-safe,  System.Decimal-based wallet.
+    ///     A simple, thread-safe,  Decimal-based wallet.
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class SimpleWallet : ISimpleWallet {
@@ -36,6 +36,7 @@ namespace Librainian.Measurement.Currency.USD {
         public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
 
         [UsedImplicitly]
+        [NotNull]
         public String Formatted => this.ToString();
 
         /// <summary>
@@ -107,9 +108,7 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet, Boolean sanitize = true ) => throw new NotImplementedException();
 
-        public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) {
-            throw new NotImplementedException();
-        }
+        public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) => throw new NotImplementedException();
 
         public Boolean TryWithdraw(Decimal amount, Boolean sanitizeAmount = false ) {
             if ( amount <Decimal.Zero ) {

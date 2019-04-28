@@ -408,7 +408,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
-            var payload = new Byte[ SaltBitSize / 8 * 2 + nonSecretPayload.Length ];
+            var payload = new Byte[ (SaltBitSize / 8 * 2) + nonSecretPayload.Length ];
 
             Array.Copy( sourceArray: nonSecretPayload, destinationArray: payload, nonSecretPayload.Length );
             var payloadIndex = nonSecretPayload.Length;

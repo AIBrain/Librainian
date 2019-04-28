@@ -121,7 +121,7 @@ namespace Librainian.Maths.Hashings {
             return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
         }
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => ( h1 << 5 ) + h1 ^ h2;
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => (( h1 << 5 ) + h1) ^ h2;
 
         public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
 
@@ -199,7 +199,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = ( Byte )objectA.GetHashCode();
 
-                return ( Byte )( ( ( hashA << 5 ) + hashA ^ hashA ) % maximum );
+                return ( Byte )( ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum );
             }
         }
 
@@ -222,7 +222,7 @@ namespace Librainian.Maths.Hashings {
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
 
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( current << 5 ) + current ^ hashB );
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => (( current << 5 ) + current) ^ hashB );
             }
         }
 
@@ -245,7 +245,7 @@ namespace Librainian.Maths.Hashings {
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
 
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( current << 5 ) + current ^ hashB );
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => (( current << 5 ) + current) ^ hashB );
             }
         }
 
@@ -280,7 +280,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = ( UInt16 )objectA.GetHashCode();
 
-                return ( UInt16 )( ( ( hashA << 5 ) + hashA ^ hashA ) % maximum );
+                return ( UInt16 )( ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum );
             }
         }
 
@@ -292,7 +292,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = ( UInt32 )objectA.GetHashCode();
 
-                return ( ( hashA << 5 ) + hashA ^ hashA ) % maximum;
+                return ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum;
             }
         }
 
@@ -304,7 +304,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = ( UInt64 )objectA.GetHashCode();
 
-                return ( ( hashA << 5 ) + hashA ^ hashA ) % maximum;
+                return ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum;
             }
         }
 
@@ -326,7 +326,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = objectA.GetHashCode();
                 var hashB = objectB.GetHashCode();
-                var combined = ( hashA << 5 ) + hashA ^ hashB;
+                var combined = (( hashA << 5 ) + hashA) ^ hashB;
 
                 return combined;
             }

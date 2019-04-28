@@ -132,7 +132,7 @@ namespace Librainian.Internet {
 						//Must ensure to use correct size of
 						//STRUCTURE to ensure correct
 						//location in memory is pointed to
-						var tmpBuffer = new IntPtr( ( Int32 )buffer + i * sizeofInfo );
+						var tmpBuffer = new IntPtr( ( Int32 )buffer + (i * sizeofInfo) );
 
 						//Have now got a pointer to the list
 						//of SV_TYPE_WORKSTATION and

@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 		public VariableTimeSpan( Int32 years, Int32 months ) : this( years, months, TimeSpan.Zero ) { }
 
 		public VariableTimeSpan( Int32 years, Int32 months, TimeSpan timeSpan ) {
-			this._years = years + months / MonthsInYear;
+			this._years = years + (months / MonthsInYear);
 			this._months = months % MonthsInYear;
 			this._timeSpan = timeSpan;
 		}

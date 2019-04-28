@@ -103,7 +103,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
                     for ( var i = 0; i < numberOfDiskExtents; i++ ) {
-                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) );
+                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + (i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) )) );
                         var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
                         numbers.Add( extent.DiskNumber );
                     }

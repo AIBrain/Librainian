@@ -232,7 +232,7 @@ namespace Librainian.Measurement.Time {
 			else if ( progress >= 1.0 ) { progress = 1.0; }
 
 			var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
-			var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
+			var remainingTime = (milliseconds / progress) - milliseconds; // should be 15 seconds ( 20 - 5)
 
 			return TimeSpan.FromMilliseconds( remainingTime );
 		}
@@ -305,8 +305,8 @@ namespace Librainian.Measurement.Time {
 		public static Years GetAge( this DateTime dateOfBirth ) {
 			var today = DateTime.Today;
 
-			var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
-			var b = ( dateOfBirth.Year * 100 + dateOfBirth.Month ) * 100 + dateOfBirth.Day;
+			var a = (( (today.Year * 100) + today.Month ) * 100) + today.Day;
+			var b = (( (dateOfBirth.Year * 100) + dateOfBirth.Month ) * 100) + dateOfBirth.Day;
 
 			return new Years( ( a - b ) / 10000 );
 		}

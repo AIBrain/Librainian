@@ -48,7 +48,7 @@ namespace Librainian.Logging {
     [SuppressMessage( "ReSharper", "AnnotateCanBeNullParameter" )]
     public static class Error {
 
-        public static void Trap( Action action ) {
+        public static void Trap( [CanBeNull] Action action ) {
             try {
                 if ( action == null ) {
                     throw new ArgumentNullException( paramName: nameof( action ) );
@@ -61,7 +61,7 @@ namespace Librainian.Logging {
             }
         }
 
-        public static void Trap<E>( Action action ) where E : Exception {
+        public static void Trap<E>( [CanBeNull] Action action ) where E : Exception {
             try {
                 if ( action == null ) {
                     throw new ArgumentNullException( paramName: nameof( action ) );
@@ -74,7 +74,7 @@ namespace Librainian.Logging {
             }
         }
 
-        public static void Trap( params Action[] actions ) {
+        public static void Trap( [CanBeNull] params Action[] actions ) {
             try {
                 if ( actions == null ) {
                     throw new ArgumentNullException( paramName: nameof( actions ) );
@@ -90,7 +90,7 @@ namespace Librainian.Logging {
         }
 
         [CanBeNull]
-        public static Object Trap<T>( Func<T> func ) {
+        public static Object Trap<T>( [CanBeNull] Func<T> func ) {
             try {
                 if ( func == null ) {
                     throw new ArgumentNullException( paramName: nameof( func ) );

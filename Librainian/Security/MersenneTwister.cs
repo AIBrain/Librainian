@@ -72,7 +72,7 @@ namespace Librainian.Security
             /*    Vol. 2 (2nd Ed.), pp102]                  */
             this._mt[0] = seed & 0xffffffffU;
 
-            for (this._mti = 1; this._mti < N; ++this._mti) { this._mt[this._mti] = 69069 * this._mt[this._mti - 1] & 0xffffffffU; }
+            for (this._mti = 1; this._mti < N; ++this._mti) { this._mt[this._mti] = (69069 * this._mt[this._mti - 1]) & 0xffffffffU; }
         }
 
         /// <summary>a default initial seed is used</summary>
@@ -97,18 +97,18 @@ namespace Librainian.Security
 
                 for (; kk < N - M; ++kk)
                 {
-                    y = this._mt[kk] & UpperMask | this._mt[kk + 1] & LowerMask;
-                    this._mt[kk] = this._mt[kk + M] ^ y >> 1 ^ Mag01[y & 0x1];
+                    y = (this._mt[kk] & UpperMask) | (this._mt[kk + 1] & LowerMask);
+                    this._mt[kk] = this._mt[kk + M] ^ (y >> 1) ^ Mag01[y & 0x1];
                 }
 
                 for (; kk < N - 1; ++kk)
                 {
-                    y = this._mt[kk] & UpperMask | this._mt[kk + 1] & LowerMask;
-                    this._mt[kk] = this._mt[kk + (M - N)] ^ y >> 1 ^ Mag01[y & 0x1];
+                    y = (this._mt[kk] & UpperMask) | (this._mt[kk + 1] & LowerMask);
+                    this._mt[kk] = this._mt[kk + (M - N)] ^ (y >> 1) ^ Mag01[y & 0x1];
                 }
 
-                y = this._mt[N - 1] & UpperMask | this._mt[0] & LowerMask;
-                this._mt[N - 1] = this._mt[M - 1] ^ y >> 1 ^ Mag01[y & 0x1];
+                y = (this._mt[N - 1] & UpperMask) | (this._mt[0] & LowerMask);
+                this._mt[N - 1] = this._mt[M - 1] ^ (y >> 1) ^ Mag01[y & 0x1];
 
                 this._mti = 0;
             }
@@ -164,7 +164,7 @@ namespace Librainian.Security
         {
             if (minValue >= maxValue) { throw new ArgumentOutOfRangeException(); }
 
-            return (UInt32)(this.GenerateUInt() / ((Double)UInt32.MaxValue / (maxValue - minValue)) + minValue);
+            return (UInt32)((this.GenerateUInt() / ((Double)UInt32.MaxValue / (maxValue - minValue))) + minValue);
         }
 
         /* Period parameters */

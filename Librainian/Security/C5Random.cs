@@ -102,7 +102,7 @@ namespace Librainian.Security
                 this._q[i] = j;
             }
 
-            this._q[15] = (UInt32)(seed ^ seed >> 32);
+            this._q[15] = (UInt32)(seed ^ (seed >> 32));
         }
 
         /// <summary>Create a random number generator with a specified internal start state.</summary>
@@ -124,8 +124,8 @@ namespace Librainian.Security
             const UInt64 a = 487198574UL;
             const UInt32 r = 0xfffffffe;
 
-            this._i = this._i + 1 & 15;
-            var t = a * this._q[this._i] + this._c;
+            this._i = (this._i + 1) & 15;
+            var t = (a * this._q[this._i]) + this._c;
             this._c = (UInt32)(t >> 32);
             var x = (UInt32)(t + this._c);
 

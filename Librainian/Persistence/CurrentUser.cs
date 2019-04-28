@@ -61,7 +61,7 @@ namespace Librainian.Persistence {
         ///     Current user.
         /// </summary>
         [NotNull]
-        public static RegistryKey HKCU => Microsoft.Win32.Registry.CurrentUser;
+        public static RegistryKey HKCU => Registry.CurrentUser;
 
         /// <summary>
         ///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.

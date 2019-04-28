@@ -109,9 +109,9 @@ namespace Librainian.Measurement.Spatial {
 			var startLatCos = Math.Cos( startLatRad );
 			var startLatSin = Math.Sin( startLatRad );
 
-			var endLatRads = Math.Asin( startLatSin * distRatioCosine + startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) );
+			var endLatRads = Math.Asin( (startLatSin * distRatioCosine) + (startLatCos * distRatioSine * Math.Cos( initialBearingRadians )) );
 
-			var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
+			var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - (startLatSin * Math.Sin( endLatRads )) );
 
 			return new GeoLocation {
 				Latitude = RadiansToDegrees( endLatRads ),

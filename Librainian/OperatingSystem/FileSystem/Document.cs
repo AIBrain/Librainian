@@ -751,7 +751,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     if ( Uri.TryCreate( uriString: this.FullPath, uriKind: UriKind.Absolute, result: out var sourceAddress ) ) {
                         using ( var client = new WebClient().Add( token: token ) ) {
 
-                            await client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
+                            await client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath ).ConfigureAwait( false );
 
                             return ( true, stopwatch.Elapsed );
                         }
@@ -1037,7 +1037,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 using ( var webClient = new WebClient() ) {
-                    await webClient.DownloadFileTaskAsync( address: source, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
+                    await webClient.DownloadFileTaskAsync( address: source, fileName: this.FullPath ).ConfigureAwait( false );
 
                     return ( null, webClient.ResponseHeaders );
                 }
@@ -1282,7 +1282,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public async Task<String> ReadStringAsync() {
             using ( var reader = new StreamReader( path: this.FullPath ) ) {
-                return await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+                return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
 
@@ -1329,7 +1329,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<String> ToJSON() {
             using ( var reader = new StreamReader( path: this.FullPath ) ) {
-                return await reader.ReadToEndAsync().ConfigureAwait( continueOnCapturedContext: false );
+                return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
 
@@ -1394,7 +1394,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             try {
                 using ( var webClient = new WebClient() ) {
-                    await webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath ).ConfigureAwait( continueOnCapturedContext: false );
+                    await webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath ).ConfigureAwait( false );
 
                     return ( null, webClient.ResponseHeaders );
                 }
@@ -1620,7 +1620,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 webClient.DownloadFileCompleted += CompletedHandler;
                 webClient.DownloadProgressChanged += ProgressChangedHandler;
                 webClient.DownloadFileAsync( address: address, fileName: fileName, userToken: tcs );
-                await tcs.Task.ConfigureAwait( continueOnCapturedContext: false );
+                await tcs.Task.ConfigureAwait( false );
             }
             finally {
                 webClient.DownloadFileCompleted -= CompletedHandler;

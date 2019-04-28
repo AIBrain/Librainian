@@ -587,8 +587,8 @@ namespace Librainian.Controls {
 				if ( owner == null ) {
 					var screen = Screen.FromPoint( Cursor.Position );
 					flexibleMessageBoxForm.StartPosition = FormStartPosition.Manual;
-					flexibleMessageBoxForm.Left = screen.Bounds.Left + screen.Bounds.Width / 2 - flexibleMessageBoxForm.Width / 2;
-					flexibleMessageBoxForm.Top = screen.Bounds.Top + screen.Bounds.Height / 2 - flexibleMessageBoxForm.Height / 2;
+					flexibleMessageBoxForm.Left = screen.Bounds.Left + (screen.Bounds.Width / 2) - (flexibleMessageBoxForm.Width / 2);
+					flexibleMessageBoxForm.Top = screen.Bounds.Top + (screen.Bounds.Height / 2) - (flexibleMessageBoxForm.Height / 2);
 				}
 			}
 

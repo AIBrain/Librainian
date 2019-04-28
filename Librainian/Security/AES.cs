@@ -154,7 +154,7 @@ namespace Librainian.Security {
 			this._keyHandle = IntPtr.Zero;
 
 			//Initialize Key Object Size with ObjectLength
-			var keyObjectSize = pbObjectLength[ 3 ] << 24 | pbObjectLength[ 2 ] << 16 | pbObjectLength[ 1 ] << 8 | pbObjectLength[ 0 ];
+			var keyObjectSize = (pbObjectLength[ 3 ] << 24) | (pbObjectLength[ 2 ] << 16) | (pbObjectLength[ 1 ] << 8) | pbObjectLength[ 0 ];
 
 			//Initialize AES Key
 			Byte[] pbKey = {

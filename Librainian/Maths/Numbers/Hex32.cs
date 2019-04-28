@@ -160,7 +160,7 @@ namespace Librainian.Maths.Numbers {
 		///     Returns a hash code for this instance.
 		/// </summary>
 		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
-		public override Int32 GetHashCode() => this.Value * 0x00010000 + this.Value;
+		public override Int32 GetHashCode() => (this.Value * 0x00010000) + this.Value;
 
 		/// <summary>
 		///     Returns a <see cref="System.String" /> that represents this instance.

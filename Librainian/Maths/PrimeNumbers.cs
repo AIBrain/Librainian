@@ -97,8 +97,8 @@ namespace Librainian.Maths {
 			var k = 1;
 			loop:
 
-			yield return k * 6 - 1;
-			yield return k * 6 + 1;
+			yield return (k * 6) - 1;
+			yield return (k * 6) + 1;
 			k++;
 
 			goto loop;
@@ -119,8 +119,8 @@ namespace Librainian.Maths {
 			yield return k;
 			loop:
 
-			yield return k * 6 - 1;
-			yield return k * 6 + 1;
+			yield return (k * 6) - 1;
+			yield return (k * 6) + 1;
 			k++;
 
 			if ( k >= highEnd ) { yield break; }

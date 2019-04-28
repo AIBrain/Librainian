@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "Credentials.cs" was last formatted by Protiguous on 2019/02/02 at 3:25 PM.
+// Project: "Librainian", "Credentials.cs" was last formatted by Protiguous on 2019/04/21 at 6:01 PM.
 
 namespace Librainian.Internet {
 
@@ -47,57 +47,111 @@ namespace Librainian.Internet {
     using Parsing;
 
     /// <summary>
-    ///     Simple container for a <see cref="UserName" /> and <see cref="Password" />.
+    ///     Simple container for a <see cref="Username" /> and <see cref="Password" />.
     /// </summary>
     public class Credentials {
 
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
         [CanBeNull]
         public String Name {
-            get => this.UserName;
-            set => this.UserName = value;
+            get => this.Username;
+            set => this.Username = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Password" />.
+        /// </summary>
         [CanBeNull]
         public String Pass {
             get => this.Password;
             set => this.Password = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Password" />.
+        /// </summary>
+        [CanBeNull]
+        public String Passcode {
+            get => this.Password;
+            set => this.Password = value;
+        }
+
+        /// <summary>
+        ///     Alias for <see cref="Password" />.
+        /// </summary>
+        [CanBeNull]
+        public String PassCode {
+            get => this.Password;
+            set => this.Password = value;
+        }
+
+        /// <summary>
+        ///     The *real* password instance.
+        /// </summary>
         [CanBeNull]
         public String Password { get; set; }
 
+        /// <summary>
+        ///     Alias for <see cref="Password" />.
+        /// </summary>
         [CanBeNull]
         public String PassWord {
             get => this.Password;
             set => this.Password = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
         [CanBeNull]
         public String User {
-            get => this.UserName;
-            set => this.UserName = value;
+            get => this.Username;
+            set => this.Username = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
         [CanBeNull]
         public String Userid {
-            get => this.UserName;
-            set => this.UserName = value;
+            get => this.Username;
+            set => this.Username = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
         [CanBeNull]
         public String UserId {
-            get => this.UserName;
-            set => this.UserName = value;
+            get => this.Username;
+            set => this.Username = value;
         }
 
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
         [CanBeNull]
         public String UserID {
-            get => this.UserName;
-            set => this.UserName = value;
+            get => this.Username;
+            set => this.Username = value;
         }
 
+        /// <summary>
+        ///     The *real* Username instance.
+        /// </summary>
         [CanBeNull]
-        public String UserName { get; set; }
+        public String Username { get; set; }
+
+        /// <summary>
+        ///     Alias for <see cref="Username" />.
+        /// </summary>
+        [CanBeNull]
+        public String UserName {
+            get => this.Username;
+            set => this.Username = value;
+        }
 
         public Credentials() { }
 
@@ -110,11 +164,11 @@ namespace Librainian.Internet {
                 throw new MissingTextException( nameof( password ) );
             }
 
-            this.UserName = username.EndsWith( "=" ) ? username.FromBase64() : username;
+            this.Username = username.EndsWith( "=" ) ? username.FromBase64() : username;
             this.Password = password.EndsWith( "=" ) ? password.FromBase64() : password;
         }
 
-        public override String ToString() => $"{this.UserName ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
+        public override String ToString() => $"{this.Username ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
 
     }
 

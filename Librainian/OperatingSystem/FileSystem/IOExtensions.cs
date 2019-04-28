@@ -533,7 +533,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var hosize );
-            var size = hosize << 32 | losize;
+            var size = (hosize << 32) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
@@ -555,7 +555,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out var sizeHigh );
-            var size = sizeHigh << 32 | losize;
+            var size = (sizeHigh << 32) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }

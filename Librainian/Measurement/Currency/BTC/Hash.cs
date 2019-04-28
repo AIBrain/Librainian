@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Currency.BTC {
 		public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 
 		public override Int32 GetHashCode() {
-			if ( this.HashBytes.Length >= 4 ) { return this.HashBytes[ 0 ] << 24 | this.HashBytes[ 1 ] << 16 | this.HashBytes[ 2 ] << 8 | this.HashBytes[ 3 ] << 0; }
+			if ( this.HashBytes.Length >= 4 ) { return (this.HashBytes[ 0 ] << 24) | (this.HashBytes[ 1 ] << 16) | (this.HashBytes[ 2 ] << 8) | (this.HashBytes[ 3 ] << 0); }
 
 			return this.HashBytes.GetHashCode();
 		}

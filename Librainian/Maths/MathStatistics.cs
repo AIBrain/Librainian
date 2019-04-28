@@ -54,7 +54,7 @@ namespace Librainian.Maths
 
         public static Decimal CalcAvg([NotNull] this IEnumerable<Decimal> values) => values.DefaultIfEmpty().Average(arg => arg);
 
-        public static Decimal CalcEma([NotNull] this IEnumerable<Decimal> values, Decimal alpha) => values.DefaultIfEmpty().Aggregate((ema, nextQuote) => alpha * nextQuote + (1 - alpha) * ema);
+        public static Decimal CalcEma([NotNull] this IEnumerable<Decimal> values, Decimal alpha) => values.DefaultIfEmpty().Aggregate((ema, nextQuote) => (alpha * nextQuote) + ((1 - alpha) * ema));
 
         /// <summary>
         ///     <para>
@@ -119,7 +119,7 @@ namespace Librainian.Maths
 
             var slope = data.Slope();
 
-            return data.Average(d => d.Progress) - slope * data.Average(d => d.MillisecondsPassed);
+            return data.Average(d => d.Progress) - (slope * data.Average(d => d.MillisecondsPassed));
         }
 
         public static Double MeanGeometric([NotNull] this IEnumerable<Double> numbers)

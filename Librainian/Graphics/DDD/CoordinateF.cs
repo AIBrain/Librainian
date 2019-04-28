@@ -117,7 +117,7 @@ namespace Librainian.Graphics.DDD
             this.X = Math.Max(Single.Epsilon, Math.Min(1, x));
             this.Y = Math.Max(Single.Epsilon, Math.Min(1, y));
             this.Z = Math.Max(Single.Epsilon, Math.Min(1, z));
-            this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+            this.SquareLength = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Librainian.Graphics.DDD
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
 
-            return (Single)Math.Sqrt(num1 * num1 + num2 * num2 + num3 * num3);
+            return (Single)Math.Sqrt((num1 * num1) + (num2 * num2) + (num3 * num3));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Librainian.Graphics.DDD
             var dy = this.Y - to.Y;
             var dz = this.Z - to.Z;
 
-            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
+            return Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz));
         }
 
         public override Boolean Equals(Object obj)

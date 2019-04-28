@@ -66,8 +66,8 @@ namespace Librainian.Graphics.Line {
 
 			var offesetX = Math.Abs( end.X - start.X ) / 2;
 
-			var c = new Point( start.X + offesetX / 2, start.Y - height / 2 );
-			var d = new Point( end.X - offesetX / 2, start.Y + height / 2 );
+			var c = new Point( start.X + (offesetX / 2), start.Y - (height / 2) );
+			var d = new Point( end.X - (offesetX / 2), start.Y + (height / 2) );
 
 			var at = 0.0f;
 
@@ -90,8 +90,8 @@ namespace Librainian.Graphics.Line {
 		/// <returns></returns>
 		public static Point Lerp( this Point a, Point b, ZeroToOne t ) {
 			var dest = new Point {
-				X = ( Int32 ) ( a.X + ( b.X - a.X ) * t ),
-				Y = ( Int32 ) ( a.Y + ( b.Y - a.Y ) * t )
+				X = ( Int32 ) ( a.X + (( b.X - a.X ) * t) ),
+				Y = ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) )
 			};
 
 			return dest;
@@ -106,9 +106,9 @@ namespace Librainian.Graphics.Line {
 		/// <returns></returns>
 		public static Point3D Lerp( this Point3D a, Point3D b, ZeroToOne t ) {
 			var dest = new Point3D {
-				X = a.X + ( b.X - a.X ) * t,
-				Y = a.Y + ( b.Y - a.Y ) * t,
-				Z = a.Z + ( b.Z - a.Z ) * t
+				X = a.X + (( b.X - a.X ) * t),
+				Y = a.Y + (( b.Y - a.Y ) * t),
+				Z = a.Z + (( b.Z - a.Z ) * t)
 			};
 
 			return dest;
@@ -123,16 +123,16 @@ namespace Librainian.Graphics.Line {
 		/// <returns></returns>
 		public static Vector3 Lerp( this Vector3 a, Vector3 b, Single t ) {
 			var dest = new Vector3 {
-				X = a.X + ( b.X - a.X ) * t,
-				Y = a.Y + ( b.Y - a.Y ) * t,
-				Z = a.Z + ( b.Z - a.Z ) * t
+				X = a.X + (( b.X - a.X ) * t),
+				Y = a.Y + (( b.Y - a.Y ) * t),
+				Z = a.Z + (( b.Z - a.Z ) * t)
 			};
 
 			return dest;
 		}
 
 		public static Point3Di Lerp( Point3Di a, Point3Di b, Single t ) {
-			var dest = new Point3Di( ( Int32 ) ( a.X + ( b.X - a.X ) * t ), ( Int32 ) ( a.Y + ( b.Y - a.Y ) * t ), ( Int32 ) ( a.Z + ( b.Z - a.Z ) * t ) );
+			var dest = new Point3Di( ( Int32 ) ( a.X + (( b.X - a.X ) * t) ), ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) ), ( Int32 ) ( a.Z + (( b.Z - a.Z ) * t) ) );
 
 			return dest;
 		}

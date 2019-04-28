@@ -1,21 +1,26 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ControlExtensions.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// 
+// This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
-//
+// 
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+// 
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     paypal@AIBrain.Org
+//     (We're still looking into other solutions! Any ideas?)
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -23,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+// 
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
-//
-// ***  Solution "ArtificialllyIntelligentBrain"   Project "Librainian"  ***
-// File "ControlExtensions.cs" was last formatted by Protiguous on 2018/09/24 at 6:57 AM.
+// Feel free to browse any source code we *might* make available.
+// 
+// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/04/28 at 9:49 AM.
 
 namespace Librainian.Controls {
 
@@ -44,24 +49,21 @@ namespace Librainian.Controls {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows;
+    using System.Timers;
     using System.Windows.Forms;
     using JetBrains.Annotations;
+    using Logging;
     using Maths;
     using Measurement.Time;
+    using Microsoft.Win32;
     using Parsing;
     using Persistence;
     using Persistence.InIFiles;
     using Threading;
-    using Point = System.Drawing.Point;
-    using Size = System.Drawing.Size;
-    using Timer = System.Timers.Timer;
 
     public static class ControlExtensions {
 
-        public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests {
-            get;
-        } = new ConcurrentDictionary<Control, Int32>();
+        public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
         public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
             box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
@@ -87,14 +89,15 @@ namespace Librainian.Controls {
                 box.ScrollToCaret();
             } );
 
-        public static void AppendTextInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) => box.Invoke( ( MethodInvoker )( () => box.AppendText( text, color, args ) ) );
+        public static void AppendTextInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) =>
+            box.Invoke( ( MethodInvoker ) ( () => box.AppendText( text, color, args ) ) );
 
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
             blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-            var r = ( Byte )( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
-            var g = ( Byte )( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
-            var b = ( Byte )( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
+            var r = ( Byte ) ( (thisColor.R * blendToPercent) + (blendToColor.R * ( 1 - blendToPercent )) );
+            var g = ( Byte ) ( (thisColor.G * blendToPercent) + (blendToColor.G * ( 1 - blendToPercent )) );
+            var b = ( Byte ) ( (thisColor.B * blendToPercent) + (blendToColor.B * ( 1 - blendToPercent )) );
 
             return Color.FromArgb( r, g, b );
         }
@@ -122,7 +125,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
+            return control.InvokeRequired ? ( Boolean ) control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
         }
 
         /// <summary>
@@ -148,13 +151,28 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
+        ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="delay">  </param>
+        /// <returns></returns>
+        /// <see cref="Push" />
+        public static void Click( [NotNull] this Button control, TimeSpan? delay = null ) {
+            if ( control == null ) {
+                throw new ArgumentNullException( paramName: nameof( control ) );
+            }
+
+            control.Push( delay );
+        }
+
+        /// <summary>
         ///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
         ///     lightForeColor is returned. If the BackColor is light, then the darkForeColor is returned.
         /// </summary>
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
             // Counting the perceptive luminance - human eye favors green color...
-            var a = 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) / 255;
+            var a = 1 - (( (0.299 * thisColor.R) + (0.587 * thisColor.G) + (0.114 * thisColor.B) ) / 255);
 
             return a < 0.5 ? darkForeColor : lightForeColor;
         }
@@ -284,7 +302,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
+            return control.InvokeRequired ? ( Color ) control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
         }
 
         /// <summary>
@@ -309,10 +327,12 @@ namespace Librainian.Controls {
             }
         }
 
+        /*
         public static void FullScreen( [NotNull] this Window window ) {
             window.WindowState = WindowState.Maximized;
             window.WindowStyle = WindowStyle.None;
         }
+        */
 
         /// <summary>
         ///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
@@ -366,13 +386,50 @@ namespace Librainian.Controls {
         }
 
         [NotNull]
-        public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [NotNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke => invokable.Invoke( function, arguments ) as T;
+        public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [NotNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke =>
+            invokable.Invoke( function, arguments ) as T;
 
+        /*
         public static Boolean IsFullScreen( [NotNull] this Window window ) => window.WindowState == WindowState.Maximized && window.WindowStyle == WindowStyle.None;
 
         public static Boolean IsMinimized( [NotNull] this Window window ) => window.WindowState == WindowState.Minimized;
 
         public static Boolean IsNormal( [NotNull] this Window window ) => window.WindowState == WindowState.Normal && window.WindowStyle != WindowStyle.None;
+        */
+
+        /// <summary>
+        ///     <seealso cref="SavePosition(Form)" />
+        /// </summary>
+        /// <param name="form"></param>
+        public static void LoadPosition( [NotNull] this Form form ) {
+            if ( form == null ) {
+                throw new ArgumentNullException( nameof( form ) );
+            }
+
+            if ( AppRegistry.TheApplication == null ) {
+                throw new InvalidOperationException( "Application registry not set up." );
+            }
+
+            $"Loading form {form.Name} position from registry.".Log();
+
+            var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
+            var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
+
+            if ( x.HasValue && y.HasValue ) {
+                form.SuspendLayout();
+                form.Location( new Point( x.Value, y.Value ) );
+                form.ResumeLayout();
+            }
+
+            var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
+            var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
+
+            if ( width.HasValue && height.HasValue ) {
+                form.SuspendLayout();
+                form.Size( new Size( width.Value, height.Value ) );
+                form.ResumeLayout();
+            }
+        }
 
         public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
             if ( form == null ) {
@@ -393,7 +450,8 @@ namespace Librainian.Controls {
                 form.ResumeLayout();
             }
 
-            if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) && Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
+            if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) &&
+                 Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
                 form.SuspendLayout();
                 form.Size( new Size( width, height ) );
                 form.ResumeLayout();
@@ -485,9 +543,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
+            transparentPercent = 255 - (transparentPercent.ForceBounds( 0, 1 ) * 255);
 
-            return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
+            return Color.FromArgb( thisColor.ToArgb() + (( Int32 ) transparentPercent * 0x1000000) );
         }
 
         [NotNull]
@@ -516,7 +574,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
+            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
         }
 
         /// <summary>
@@ -551,7 +609,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
+            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
         }
 
         /// <summary>
@@ -590,6 +648,12 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
+        ///     Threadsafe <see cref="Button.PerformClick" />.
+        /// </summary>
+        /// <param name="control"></param>
+        public static void Press( [NotNull] this Button control ) => control.InvokeAction( control.PerformClick );
+
+        /// <summary>
         ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
         /// </summary>
         /// <param name="control">   </param>
@@ -597,7 +661,7 @@ namespace Librainian.Controls {
         /// <param name="afterDelay"></param>
         /// <returns></returns>
         [NotNull]
-        public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, [NotNull] Action afterDelay = null ) {
+        public static System.Timers.Timer Push( [NotNull] this Button control, TimeSpan? delay = null, [NotNull] Action afterDelay = null ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
@@ -660,6 +724,34 @@ namespace Librainian.Controls {
             control.InvokeAction( Action );
         }
 
+        /// <summary>
+        ///     <seealso cref="LoadPosition(Form)" />
+        /// </summary>
+        /// <param name="form"></param>
+        public static void SavePosition( [NotNull] this Form form ) {
+            if ( form == null ) {
+                throw new ArgumentNullException( nameof( form ) );
+            }
+
+            if ( AppRegistry.TheApplication == null ) {
+                throw new InvalidOperationException( "Application registry not set up." );
+            }
+
+            $"Saving form {form.Name} position to registry.".Log();
+
+            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.X ),
+                form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.Location.X, RegistryValueKind.DWord );
+
+            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
+                form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Location.Y, RegistryValueKind.DWord );
+
+            AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
+                form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
+
+            AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
+                form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
+        }
+
         public static void SavePosition( [NotNull] this Form form, [NotNull] IniFile settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
@@ -672,7 +764,9 @@ namespace Librainian.Controls {
             var name = form.Name ?? "UnknownForm";
 
             settings[ name, nameof( form.Size.Width ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
-            settings[ name, nameof( form.Size.Height ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
+
+            settings[ name, nameof( form.Size.Height ) ] =
+                form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
 
             settings[ name, nameof( form.Location.X ) ] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
             settings[ name, nameof( form.Location.Y ) ] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
@@ -752,7 +846,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
-            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+            return form.InvokeRequired ? ( Size ) form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
         }
 
         /// <summary>
@@ -885,18 +979,16 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="toolStripItem"></param>
         /// <param name="value">        </param>
-        public static void Text( [NotNull] this ToolStripItem toolStripItem, [NotNull] String value ) {
+        public static void Text( [NotNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
             if ( toolStripItem == null ) {
                 throw new ArgumentNullException( paramName: nameof( toolStripItem ) );
             }
 
             void Action() {
-                if ( toolStripItem.IsDisposed ) {
-                    return;
+                if ( !toolStripItem.IsDisposed ) {
+                    toolStripItem.Text = value;
+                    toolStripItem.Invalidate();
                 }
-
-                toolStripItem.Text = value;
-                toolStripItem.Invalidate();
             }
 
             toolStripItem.GetCurrentParent().InvokeAction( Action );
@@ -992,7 +1084,7 @@ namespace Librainian.Controls {
             textBox.SelectionColor = textBox.ForeColor;
         }
 
-        public static Int32 ToBGR( this Color thisColor ) => thisColor.B << 16 | thisColor.G << 8 | thisColor.R << 0;
+        public static Int32 ToBGR( this Color thisColor ) => ( thisColor.B << 16 ) | ( thisColor.G << 8 ) | ( thisColor.R << 0 );
 
         /// <summary>
         ///     Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1.
@@ -1043,7 +1135,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Decimal ) control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -1056,7 +1148,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>
@@ -1132,5 +1224,7 @@ namespace Librainian.Controls {
                 control.Refresh();
             }
         }
+
     }
+
 }

@@ -323,7 +323,7 @@ namespace Librainian.Financial.Containers.Wallets {
         ///     Return the total amount of banknotes contained in this <see cref="Wallet" />.
         /// </summary>
         public Decimal TotalBankNotes() {
-            var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
+            var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
 
             return total;
         }
@@ -332,7 +332,7 @@ namespace Librainian.Financial.Containers.Wallets {
         ///     Return the total amount of coins contained in this <see cref="Wallet" />.
         /// </summary>
         public Decimal TotalCoins() {
-            var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
+            var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
 
             return total;
         }

@@ -97,13 +97,13 @@ namespace Librainian.Maths {
 
 			this._h1 = this._h1.RotateLeft( bits: 27 );
 			this._h1 += this._h2;
-			this._h1 = this._h1 * 5 + 0x52dce729;
+			this._h1 = (this._h1 * 5) + 0x52dce729;
 
 			this._h2 ^= MixKey2( k2: k2 );
 
 			this._h2 = this._h2.RotateLeft( bits: 31 );
 			this._h2 += this._h1;
-			this._h2 = this._h2 * 5 + 0x38495ab5;
+			this._h2 = (this._h2 * 5) + 0x38495ab5;
 		}
 
 		private void ProcessBytes( [NotNull] Byte[] bb ) {

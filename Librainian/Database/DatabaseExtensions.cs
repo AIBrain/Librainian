@@ -56,7 +56,7 @@ namespace Librainian.Database {
 	using Maths;
 	using Parsing;
 	using static Persistence.Cache;
-	using FieldToByte = System.Collections.Generic.Dictionary<System.String, System.Byte>;
+	using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
     public static class DatabaseExtensions {
 
@@ -96,7 +96,7 @@ namespace Librainian.Database {
 				throw new ArgumentNullException( paramName: nameof( reader ) );
 			}
 
-			return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth );
+			return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth, reader.RecordsAffected, reader.FieldCount, reader.IsClosed );
 		}
 
 		/// <summary>
@@ -105,14 +105,14 @@ namespace Librainian.Database {
         /// <param name="reader"></param>
         /// <returns></returns>
         [NotNull]
-		private static FieldToByte GetDict( [NotNull] this IDataReader reader ) {
+		private static Fields GetDict( [NotNull] this IDataReader reader ) {
 			if ( reader == null ) {
 				throw new ArgumentNullException( paramName: nameof( reader ) );
 			}
 
 			var key = reader.Key();
 
-			if ( !( Recall( key ) is FieldToByte fields ) ) {
+			if ( !( Recall( key ) is Fields fields ) ) {
 				fields = reader.GetFieldNames();
 				Remember( key, fields, Sliding.OneMinute );
 			}
@@ -127,15 +127,15 @@ namespace Librainian.Database {
 		/// <param name="reader"></param>
 		/// <returns></returns>
 		[NotNull]
-		private static FieldToByte GetFieldNames( [NotNull] this IDataReader reader ) {
+		private static Fields GetFieldNames( [NotNull] this IDataReader reader ) {
 			if ( reader == null ) {
 				throw new ArgumentNullException( paramName: nameof( reader ) );
 			}
 
-			var dictionary = new FieldToByte( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
+			var dictionary = new Fields( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
 
 			if ( !reader.IsClosed ) {
-				for ( Byte i = 0; i < reader.FieldCount; i++ ) {
+				for ( var i = 0; i < reader.FieldCount; i++ ) {
 					dictionary.Add( reader.GetName( i ), i );
 				}
 			}
@@ -228,7 +228,7 @@ namespace Librainian.Database {
 			}
 
 			foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) {
-				yield return root + "\\" + ns;
+				yield return $@"{root}\{ns}";
 			}
 		}
 

@@ -252,7 +252,7 @@ namespace Librainian.Graphics
         /// <summary>Computes the center of 'box'</summary>
         /// <param name="box">The Rect3D we want the center of</param>
         /// <returns>The center point</returns>
-        public static Point3D GetCenter(Rect3D box) => new Point3D(box.X + box.SizeX / 2, box.Y + box.SizeY / 2, box.Z + box.SizeZ / 2);
+        public static Point3D GetCenter(Rect3D box) => new Point3D(box.X + (box.SizeX / 2), box.Y + (box.SizeY / 2), box.Z + (box.SizeZ / 2));
 
         public static Point3D GetCirclePoint(Double angle, Double radius, Point3D orientation = new Point3D())
         {
@@ -356,8 +356,8 @@ namespace Librainian.Graphics
         public static Point3D RotatePoint3D(Double angle, Point3D point, Point3D center = new Point3D())
         {
             var radians = TranslateAngleToRadian(angle);
-            var x = center.X + (point.X - center.X) * Math.Cos(radians) + (center.Y - point.Y) * Math.Sin(radians);
-            var y = center.Y + (point.X - center.X) * Math.Sin(radians) + (point.Y - center.Y) * Math.Cos(radians);
+            var x = center.X + ((point.X - center.X) * Math.Cos(radians)) + ((center.Y - point.Y) * Math.Sin(radians));
+            var y = center.Y + ((point.X - center.X) * Math.Sin(radians)) + ((point.Y - center.Y) * Math.Cos(radians));
 
             return new Point3D(x, y, point.Z);
         }
@@ -526,11 +526,11 @@ namespace Librainian.Graphics
             return result;
         }
 
-        public static Double VectorLength(Vector3D a) => Math.Sqrt(a.X * a.X + a.Y * a.Y + a.Z * a.Z);
+        public static Double VectorLength(Vector3D a) => Math.Sqrt((a.X * a.X) + (a.Y * a.Y) + (a.Z * a.Z));
 
-        public static Double VectorLength(Vector a) => Math.Sqrt(a.X * a.X + a.Y * a.Y);
+        public static Double VectorLength(Vector a) => Math.Sqrt((a.X * a.X) + (a.Y * a.Y));
 
-        public static Double VectorMultiplication(Vector3D a, Vector3D b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        public static Double VectorMultiplication(Vector3D a, Vector3D b) => (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
 
         public static Vector VectorOnPlaneXoYrojection(Vector3D a) => new Vector(a.X, a.Y);
 
@@ -549,6 +549,6 @@ namespace Librainian.Graphics
             //return new Vector();
         }
 
-        public static Double VectorProjectionOnVector(Vector3D a, Vector3D b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        public static Double VectorProjectionOnVector(Vector3D a, Vector3D b) => (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
     }
 }

@@ -44,6 +44,7 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.Linq;
 	using JetBrains.Annotations;
 
 	public static class CommonExtensions {
@@ -96,6 +97,7 @@ namespace Librainian.Extensions {
 		///     Just a no-op for setting a breakpoint on.
 		/// </summary>
 		[DebuggerStepThrough]
+		[Conditional("DEBUG")]
 		public static void Nop<T>( this T obj ) { }
 
 		/// <summary>
@@ -135,6 +137,19 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		public static (T right, T left) Swap<T>( this T left, T right ) => ( right, left );
 
-	}
+		[CanBeNull]
+		public static String OnlyDigits( [CanBeNull] this String input ) =>
+			String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsDigit ).ToArray() );
+
+		[CanBeNull]
+		public static String OnlyLetters( [CanBeNull] String input ) =>
+			String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsLetter ).ToArray() );
+
+		[CanBeNull]
+		public static String OnlyLettersAndNumbers( [CanBeNull] String input ) =>
+			String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ).ToArray() );
+
+
+    }
 
 }

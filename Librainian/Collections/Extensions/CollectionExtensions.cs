@@ -623,9 +623,11 @@ namespace Librainian.Collections.Extensions {
         /// <typeparam name="T">The type of objects to enumerate.</typeparam>
         /// <param name="source">The IEnumerable to check if empty.</param>
         /// <returns>True if the <paramref name="source" /> == null or empty; otherwise false.</returns>
+        [Pure]
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
-        public static UInt64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
+        [Pure]
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
 
         /// <summary>
         /// </summary>

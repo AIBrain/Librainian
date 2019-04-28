@@ -91,7 +91,7 @@ namespace Librainian.Graphics {
 				var eg = e * g;
 
 				// Compute the determinant
-				return a * ( ei - fh ) - b * ( di - fg ) + c * ( dh - eg );
+				return (a * ( ei - fh )) - (b * ( di - fg )) + (c * ( dh - eg ));
 			}
 		}
 
@@ -387,15 +387,15 @@ namespace Librainian.Graphics {
 			// Perform multiplication. Formula taken from
 			// http: //www.maths.surrey.ac.uk/explore/emmaspages/option1.html
 
-			this._coeffs[ _M11 ] = a * j + b * m + c * p;
-			this._coeffs[ _M12 ] = a * k + b * n + c * q;
-			this._coeffs[ _M13 ] = a * l + b * o + c * r;
-			this._coeffs[ _M21 ] = d * j + e * m + f * p;
-			this._coeffs[ _M22 ] = d * k + e * n + f * q;
-			this._coeffs[ _M23 ] = d * l + e * o + f * r;
-			this._coeffs[ _M31 ] = g * j + h * m + i * p;
-			this._coeffs[ _M32 ] = g * k + h * n + i * q;
-			this._coeffs[ _M33 ] = g * l + h * o + i * r;
+			this._coeffs[ _M11 ] = (a * j) + (b * m) + (c * p);
+			this._coeffs[ _M12 ] = (a * k) + (b * n) + (c * q);
+			this._coeffs[ _M13 ] = (a * l) + (b * o) + (c * r);
+			this._coeffs[ _M21 ] = (d * j) + (e * m) + (f * p);
+			this._coeffs[ _M22 ] = (d * k) + (e * n) + (f * q);
+			this._coeffs[ _M23 ] = (d * l) + (e * o) + (f * r);
+			this._coeffs[ _M31 ] = (g * j) + (h * m) + (i * p);
+			this._coeffs[ _M32 ] = (g * k) + (h * n) + (i * q);
+			this._coeffs[ _M33 ] = (g * l) + (h * o) + (i * r);
 		}
 
 		/// <summary>

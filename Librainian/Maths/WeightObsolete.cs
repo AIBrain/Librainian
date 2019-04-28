@@ -81,7 +81,7 @@ namespace Librainian.Maths
         }
 
         /// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
-        public WeightObsolete() => this.Value = Randem.NextDouble() * 0.25 + Randem.NextDouble() * 0.25;
+        public WeightObsolete() => this.Value = (Randem.NextDouble() * 0.25) + (Randem.NextDouble() * 0.25);
 
         /// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
         /// <param name="value"></param>

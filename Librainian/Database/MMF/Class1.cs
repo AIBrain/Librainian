@@ -23,12 +23,14 @@ namespace Librainian.Database.MMF {
     using System;
     using System.IO.MemoryMappedFiles;
     using System.Text;
+    using JetBrains.Annotations;
 
     internal class Class1 {
 
         //private var localFilePath = "complete_path_to_large_file";
 
-        public String GetContent( MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
+        [NotNull]
+        public String GetContent( [NotNull] MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
             String content;
 
             using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {

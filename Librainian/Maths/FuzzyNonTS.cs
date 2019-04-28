@@ -61,9 +61,9 @@ namespace Librainian.Maths {
 
 		public const Double MinValue = 0D;
 
-		public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
+		public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - (new FuzzyNonTs( 0.5D ) / 2) );
 
-		public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
+		public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + (new FuzzyNonTs( 0.5D ) / 2) );
 
 		public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
 
@@ -123,12 +123,12 @@ namespace Librainian.Maths {
 					break;
 
 				case LowMiddleHigh.Middle:
-					this.Value = ( 1 - Randem.NextDouble() / 10 ) / 2;
+					this.Value = ( 1 - (Randem.NextDouble() / 10) ) / 2;
 
 					break;
 
 				case LowMiddleHigh.High:
-					this.Value = 1 - Randem.NextDouble() / 10;
+					this.Value = 1 - (Randem.NextDouble() / 10);
 
 					break;
 

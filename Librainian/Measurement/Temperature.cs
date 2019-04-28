@@ -56,7 +56,7 @@ namespace Librainian.Measurement {
 		[JsonProperty]
 		public Single Celsius { get; }
 
-		public Single Fahrenheit => this.Celsius * 9 / 5 + 32;
+		public Single Fahrenheit => (this.Celsius * 9 / 5) + 32;
 
 		public Single Kelvin => this.Celsius + 273.15f;
 

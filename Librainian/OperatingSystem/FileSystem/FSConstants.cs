@@ -64,6 +64,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 		public static UInt32 FsctlMoveFile = CTL_CODE( FileDeviceFileSystem, 29, MethodBuffered, FileSpecialAccess );
 
-		private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => deviceType << 16 | access << 14 | function << 2 | method;
+		private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => (deviceType << 16) | (access << 14) | (function << 2) | method;
 	}
 }

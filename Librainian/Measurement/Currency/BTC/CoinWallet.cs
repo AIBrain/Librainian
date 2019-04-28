@@ -94,7 +94,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="CoinWallet" />.
         /// </summary>
-        public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
+        public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
 
         private CoinWallet( Guid id ) {
             this.ID = id;

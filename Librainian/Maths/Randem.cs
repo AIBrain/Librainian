@@ -334,7 +334,7 @@ namespace Librainian.Maths {
             if ( max <= min || count < 0 ||
 
                  // max - min > 0 required to avoid overflow
-                 count > max - min && max - min > 0 ) {
+                 (count > max - min && max - min > 0) ) {
 
                 // need to use 64-bit to support big ranges (negative min, positive max)
                 throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({( Int64 ) max - min} values), or count {count} is illegal." );
@@ -705,7 +705,7 @@ namespace Librainian.Maths {
             var max = Math.Max( val1: minValue, val2: maxValue );
             var range = max - min;
 
-            return min + NextDecimal() * range;
+            return min + (NextDecimal() * range);
         }
 
         public static Decimal NextDecimal( [NotNull] this DecimalRange decimalRange ) => decimalRange.Min.NextDecimal( maxValue: decimalRange.Max );
@@ -765,7 +765,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Double NextDouble( this DoubleRange range ) => range.Min + Instance().NextDouble() * range.Length;
+        public static Double NextDouble( this DoubleRange range ) => range.Min + (Instance().NextDouble() * range.Length);
 
         public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
 
@@ -787,7 +787,7 @@ namespace Librainian.Maths {
             Double result;
 
             if ( !Double.IsInfinity( d: range ) ) {
-                result = min + Instance().NextDouble() * range;
+                result = min + (Instance().NextDouble() * range);
                 //result.Should().BeInRange( minimumValue: min, maximumValue: max );
 
                 return result;
@@ -830,7 +830,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + Instance().NextDouble() * range.Length );
+        public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + (Instance().NextDouble() * range.Length) );
 
         /// <summary>
         ///     Returns a random float between <paramref name="min" /> and <paramref name="max" />.
@@ -838,7 +838,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single ) ( min + Instance().NextDouble() * ( max - min ) );
+        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single ) ( min + (Instance().NextDouble() * ( max - min )) );
 
         public static Guid NextGuid() => Guid.NewGuid();
 
@@ -861,7 +861,7 @@ namespace Librainian.Maths {
         ///     Return a random number somewhere in the full range of 0 to <see cref="Int16" />.
         /// </summary>
         /// <returns></returns>
-        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 ) ( min + Instance().NextDouble() * ( max - min ) );
+        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 ) ( min + (Instance().NextDouble() * ( max - min )) );
 
         /// <summary>
         ///     Return a random number somewhere in the full range of <see cref="Int32" />.
@@ -887,7 +887,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single ) ( min + Instance().NextDouble() * ( max - min ) );
+        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single ) ( min + (Instance().NextDouble() * ( max - min )) );
 
         public static Single NextSingle( this SingleRange singleRange ) => NextSingle( min: singleRange.Min, max: singleRange.Max );
 
@@ -1043,9 +1043,9 @@ namespace Librainian.Maths {
             var buffer = ( bound << 16 ).ToByteArray(); // << 16 adds two bytes, which decrease the chance of a retry later on
 
             //Compute where the last partial fragment starts, in order to retry if we end up in it
-            var generatedValueBound = BigInteger.One << buffer.Length * 8 - 1; //-1 accounts for the sign bit
+            var generatedValueBound = BigInteger.One << ((buffer.Length * 8) - 1); //-1 accounts for the sign bit
             Contract.Assert( condition: generatedValueBound >= bound );
-            var validityBound = generatedValueBound - generatedValueBound % bound;
+            var validityBound = generatedValueBound - (generatedValueBound % bound);
             Contract.Assert( condition: validityBound >= bound );
 
             while ( true ) {

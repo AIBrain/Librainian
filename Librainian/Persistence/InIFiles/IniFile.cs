@@ -245,24 +245,6 @@ namespace Librainian.Persistence.InIFiles {
             return false;
         }
 
-        private Boolean WriteSectionJSON( Document document, [NotNull] String section ) {
-
-            throw new NotImplementedException();
-
-            if ( !this.Data.TryGetValue( section, out var dict ) ) {
-                return false; //section not found
-            }
-
-            try {
-                return true;
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return false;
-        }
-
         [NotNull]
         [DebuggerStepThrough]
         public static String Encode( [NotNull] IniLine line ) {

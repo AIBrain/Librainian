@@ -74,8 +74,6 @@ namespace Librainian.Database {
         /// <exception cref="InvalidOperationException"></exception>
         public Database( String connectionString ) => this._connectionString = connectionString;
 
-        public override void DisposeManaged() { }
-
         /// <summary>
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
@@ -457,7 +455,7 @@ namespace Librainian.Database {
         }
 
         [NotNull]
-        public static SqlConnectionStringBuilder OurConnectionStringBuilder( [NotNull] String serverName, [NotNull] String instanceName, TimeSpan connectTimeout, Boolean tryIntegratedSecurity, [CanBeNull] Credentials credentials = default ) {
+        public static SqlConnectionStringBuilder OurConnectionStringBuilder( [NotNull] String serverName, [NotNull] String instanceName, TimeSpan connectTimeout, [CanBeNull] Credentials credentials = default ) {
             if ( String.IsNullOrWhiteSpace( value: serverName ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serverName ) );
             }
@@ -467,6 +465,8 @@ namespace Librainian.Database {
             }
 
             //basics
+            serverName.Nop();
+
             var builder = new SqlConnectionStringBuilder {
                 DataSource = $@"{serverName}\{instanceName}",
                 AsynchronousProcessing = true,

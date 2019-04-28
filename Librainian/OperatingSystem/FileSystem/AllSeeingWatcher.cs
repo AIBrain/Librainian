@@ -45,6 +45,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Collections.Concurrent;
     using System.IO;
     using Collections.Lists;
+    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
@@ -74,8 +75,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         private void OnRenamed( Object sender, RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
 
         public override void DisposeManaged() {
+            this.Nop();
             this.Stop();
-            
         }
 
         public void Start() {

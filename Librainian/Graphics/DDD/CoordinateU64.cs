@@ -115,7 +115,7 @@ namespace Librainian.Graphics.DDD
             this.X = Math.Max(Minimum, Math.Min(Maximum, x));
             this.Y = Math.Max(Minimum, Math.Min(Maximum, y));
             this.Z = Math.Max(Minimum, Math.Min(Maximum, z));
-            this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+            this.SquareLength = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Librainian.Graphics.DDD
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
 
-            return (UInt64)Math.Sqrt(num1 * num1 + num2 * num2 + num3 * num3);
+            return (UInt64)Math.Sqrt((num1 * num1) + (num2 * num2) + (num3 * num3));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Librainian.Graphics.DDD
             var num2 = this.Y - rhs.Y;
             var num3 = this.Z - rhs.Z;
 
-            return (UInt64)Math.Sqrt(num1 * num1 + num2 * num2 + num3 * num3);
+            return (UInt64)Math.Sqrt((num1 * num1) + (num2 * num2) + (num3 * num3));
         }
 
         /// <summary>

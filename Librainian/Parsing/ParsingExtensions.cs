@@ -158,6 +158,8 @@ namespace Librainian.Parsing {
 
         public const String TriplePipes = "⦀";
 
+        public const String NotApplicable = "ⁿ̸ₐ";
+
         private static readonly Regex UpperCaseRegeEx = new Regex( @"^[A-Z]+$", RegexOptions.Compiled, Minutes.One );
 
         /*
@@ -1227,7 +1229,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
+            var builder = new StringBuilder( (@this.Length * repetitions) + (separator.Length * ( repetitions - 1 )) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1522,7 +1524,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
+            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -2093,6 +2095,25 @@ namespace Librainian.Parsing {
             catch ( Exception ) {
                 return -1;
             }
+        }
+
+        [DebuggerStepThrough]
+        [Pure]
+        [NotNull]
+        public static String Between( [NotNull] this String source, [NotNull] String left, [NotNull] String right ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( paramName: nameof( source ) );
+            }
+
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return Regex.Match( source, $"{left}(.*){right}" ).Groups[ 1 ].Value;
         }
 
     }

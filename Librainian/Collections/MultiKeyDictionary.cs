@@ -64,7 +64,7 @@ namespace Librainian.Collections {
 			get {
 				if ( this.TryGetValue( subKey: subKey, val: out var item ) ) { return item; }
 
-				throw new KeyNotFoundException( $"sub key not found: {subKey}" );
+				throw new KeyNotFoundException( $"sub key not found: {subKey}" );	//TODO I hate throwing exceptions in indexers..
 			}
 		}
 

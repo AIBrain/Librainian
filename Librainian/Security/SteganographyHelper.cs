@@ -84,9 +84,9 @@ namespace Librainian.Security {
 					var pixel = bmp.GetPixel( x: j, y: i );
 
 					// now, clear the least significant bit (LSB) from each pixel element
-					var r = pixel.R - pixel.R % 2;
-					var g = pixel.G - pixel.G % 2;
-					var b = pixel.B - pixel.B % 2;
+					var r = pixel.R - (pixel.R % 2);
+					var g = pixel.G - (pixel.G % 2);
+					var b = pixel.B - (pixel.B % 2);
 
 					// for each pixel, pass through its elements (RGB)
 					for ( var n = 0; n < 3; n++ ) {
@@ -201,19 +201,19 @@ namespace Librainian.Security {
 								// this can be done by (charValue = charValue * 2)
 								// replace the added bit (which value is by default 0) with
 								// the LSB of the pixel element, simply by addition
-								charValue = charValue * 2 + pixel.R % 2;
+								charValue = (charValue * 2) + (pixel.R % 2);
 							}
 
 								break;
 
 							case 1: {
-								charValue = charValue * 2 + pixel.G % 2;
+								charValue = (charValue * 2) + (pixel.G % 2);
 							}
 
 								break;
 
 							case 2: {
-								charValue = charValue * 2 + pixel.B % 2;
+								charValue = (charValue * 2) + (pixel.B % 2);
 							}
 
 								break;
@@ -247,7 +247,7 @@ namespace Librainian.Security {
 			var result = 0;
 
 			for ( var i = 0; i < 8; i++ ) {
-				result = result * 2 + n % 2;
+				result = (result * 2) + (n % 2);
 
 				n /= 2;
 			}

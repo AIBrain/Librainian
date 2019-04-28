@@ -58,7 +58,7 @@ namespace Librainian.Maths {
 
 				for ( var k = 1; k < 5; k++ ) {
 					for ( var i = 1; i < SpecialLength; i++ ) {
-						SeedArray[ i ] -= SeedArray[ 1 + ( i + 30 ) % Special ];
+						SeedArray[ i ] -= SeedArray[ 1 + (( i + 30 ) % Special) ];
 					}
 				}
 

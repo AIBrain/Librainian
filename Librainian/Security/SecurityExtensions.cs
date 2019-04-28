@@ -165,7 +165,7 @@ namespace Librainian.Security {
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
+            var base64BlockSize = keySize / 8 % 3 != 0 ? (keySize / 8 / 3 * 4) + 4 : keySize / 8 / 3 * 4;
             var iterations = inputString.Length / base64BlockSize;
             var arrayList = new ArrayList(); //ugh
 
@@ -293,7 +293,7 @@ namespace Librainian.Security {
             var stringBuilder = new StringBuilder();
 
             for ( var i = 0; i <= iterations; i++ ) {
-                var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
+                var tempBytes = new Byte[ dataLength - (maxLength * i) > maxLength ? maxLength : dataLength - (maxLength * i) ];
                 Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
                 var encryptedBytes = rsaCryptoServiceProvider.Encrypt( rgb: tempBytes, fOAEP: true );
 
@@ -853,6 +853,73 @@ namespace Librainian.Security {
             }
         }
 
+        /// <summary>
+        ///     Decrypts the string <paramref name="value" />.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="iv">Optional input vector.</param>
+        /// <param name="key">Optional key.</param>
+        [CanBeNull]
+        public static String Decrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
+            if ( String.IsNullOrEmpty( value: value ) ) {
+                return default;
+            }
+
+            try {
+                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
+                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+                var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
+
+                using ( var des = new DESCryptoServiceProvider() ) {
+                    using ( var ms = new MemoryStream() ) {
+                        using ( var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
+                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                            cs.FlushFinalBlock();
+                        }
+
+                        return Encoding.UTF8.GetString( ms.ToArray() );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return default;
+        }
+
+        private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
+
+        private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
+
+        [CanBeNull]
+        public static String Encrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
+            if ( String.IsNullOrEmpty( value: value ) ) {
+                return default;
+            }
+
+            try {
+                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
+                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+                var inputbyteArray = Encoding.UTF8.GetBytes( value );
+
+                using ( var des = new DESCryptoServiceProvider() ) {
+                    using ( var ms = new MemoryStream() ) {
+                        using ( var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
+                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                            cs.FlushFinalBlock();
+                        }
+
+                        return Convert.ToBase64String( ms.ToArray() );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return default;
+        }
     }
 
 }

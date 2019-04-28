@@ -28,13 +28,14 @@ namespace Librainian.Internet {
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     public static class InternetExtensions {
 
-        public static async Task<TextReader> DoRequestAsync( this WebRequest request ) {
+        public static async Task<TextReader> DoRequestAsync( [NotNull] this WebRequest request ) {
             if ( request == null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
@@ -44,7 +45,7 @@ namespace Librainian.Internet {
             return stream != null ? new StreamReader( stream ) : TextReader.Null;
         }
 
-        public static async Task<TextReader> DoRequestAsync( this Uri uri ) {
+        public static async Task<TextReader> DoRequestAsync( [NotNull] this Uri uri ) {
             if ( uri == null ) {
                 throw new ArgumentNullException( nameof( uri ) );
             }
@@ -56,7 +57,7 @@ namespace Librainian.Internet {
             return textReader;
         }
 
-        public static async Task<T> DoRequestJsonAsync<T>( this WebRequest request ) {
+        public static async Task<T> DoRequestJsonAsync<T>( [NotNull] this WebRequest request ) {
             if ( request == null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
@@ -66,7 +67,7 @@ namespace Librainian.Internet {
             return JsonConvert.DeserializeObject<T>( response );
         }
 
-        public static async Task<T> DoRequestJsonAsync<T>( Uri uri ) {
+        public static async Task<T> DoRequestJsonAsync<T>( [NotNull] Uri uri ) {
             var reader = await DoRequestAsync( uri ).ConfigureAwait(false);
             var response = await reader.ReadToEndAsync().ConfigureAwait( false );
             return JsonConvert.DeserializeObject<T>( response );
@@ -74,7 +75,8 @@ namespace Librainian.Internet {
 
         /// <summary>Convert network bytes to a string</summary>
         /// <exception cref="ArgumentException"></exception>
-        public static String FromNetworkBytes( this IEnumerable<Byte> data ) {
+        [NotNull]
+        public static String FromNetworkBytes( [NotNull] this IEnumerable<Byte> data ) {
             var listData = data as IList<Byte> ?? data.ToList();
 
             var len = IPAddress.NetworkToHostOrder( BitConverter.ToInt16( listData.Take( 2 ).ToArray(), 0 ) );
@@ -86,6 +88,7 @@ namespace Librainian.Internet {
         }
 
         /// <summary>Return the machine's hostname</summary>
+        [NotNull]
         public static String GetHostName() => Dns.GetHostName();
 
         public static JObject GetNonAsync( Uri uri ) {
@@ -94,7 +97,7 @@ namespace Librainian.Internet {
             return JObject.Parse( content );
         }
 
-        public static String GetWebPage2( this String url ) {
+        public static String GetWebPage2( [NotNull] this String url ) {
             try {
                 var request = WebRequest.Create( url );
                 request.Proxy = null;
@@ -122,6 +125,7 @@ namespace Librainian.Internet {
             return null;
         }
 
+        [ItemCanBeNull]
         public static async Task<String> GetWebPageAsync( this Uri url ) {
             try {
                 var request = WebRequest.Create( url );
@@ -146,7 +150,8 @@ namespace Librainian.Internet {
         }
 
         /// <summary>Convert a string to network bytes</summary>
-        public static IEnumerable<Byte> ToNetworkBytes( this String data ) {
+        [NotNull]
+        public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
             var bytes = Encoding.UTF8.GetBytes( data );
 
             var len = IPAddress.HostToNetworkOrder( ( Int16 )bytes.Length );

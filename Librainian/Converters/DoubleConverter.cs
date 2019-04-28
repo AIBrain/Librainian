@@ -70,7 +70,7 @@ namespace Librainian.Converters {
 
 			// Note that the shift is sign-extended, hence the test against -1 not 1
 			var negative = bits < 0;
-			var exponent = ( Int32 ) ( bits >> 52 & 0x7ffL );
+			var exponent = ( Int32 ) ( (bits >> 52) & 0x7ffL );
 			var mantissa = bits & 0xfffffffffffffL;
 
 			// Subnormal numbers; exponent is effectively one higher, but there's no extra
@@ -78,7 +78,7 @@ namespace Librainian.Converters {
 			if ( exponent == 0 ) { exponent++; }
 
 			// Normal numbers; leave exponent as it is but add extra bit to the front of the mantissa
-			else { mantissa = mantissa | 1L << 52; }
+			else { mantissa = mantissa | (1L << 52); }
 
 			// Bias the exponent. It's actually biased by 1023, but we're treating the mantissa as
 			// m.0 rather than 0.m, so we need to subtract another 52 from it.

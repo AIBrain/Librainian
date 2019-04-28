@@ -104,13 +104,13 @@ namespace Librainian.Graphics.Geometry {
 				return false;
 			}
 
-			var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
-			var d4321 = p43.X * p21.X + p43.Y * p21.Y + p43.Z * p21.Z;
-			var d1321 = p13.X * p21.X + p13.Y * p21.Y + p13.Z * p21.Z;
-			var d4343 = p43.X * p43.X + p43.Y * p43.Y + p43.Z * p43.Z;
-			var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
+			var d1343 = (p13.X * p43.X) + (p13.Y * p43.Y) + (p13.Z * p43.Z);
+			var d4321 = (p43.X * p21.X) + (p43.Y * p21.Y) + (p43.Z * p21.Z);
+			var d1321 = (p13.X * p21.X) + (p13.Y * p21.Y) + (p13.Z * p21.Z);
+			var d4343 = (p43.X * p43.X) + (p43.Y * p43.Y) + (p43.Z * p43.Z);
+			var d2121 = (p21.X * p21.X) + (p21.Y * p21.Y) + (p21.Z * p21.Z);
 
-			var denom = d2121 * d4343 - d4321 * d4321;
+			var denom = (d2121 * d4343) - (d4321 * d4321);
 
 			if ( Math.Abs( denom ) < Single.Epsilon ) {
 				resultSegmentPoint1 = new Vector3();
@@ -119,22 +119,22 @@ namespace Librainian.Graphics.Geometry {
 				return false;
 			}
 
-			var numer = d1343 * d4321 - d1321 * d4343;
+			var numer = (d1343 * d4321) - (d1321 * d4343);
 
 			var mua = numer / denom;
 
 			resultSegmentPoint1 = new Vector3 {
-				X = line1Point1.X + mua * p21.X,
-				Y = line1Point1.Y + mua * p21.Y,
-				Z = line1Point1.Z + mua * p21.Z
+				X = line1Point1.X + (mua * p21.X),
+				Y = line1Point1.Y + (mua * p21.Y),
+				Z = line1Point1.Z + (mua * p21.Z)
 			};
 
-			var mub = ( d1343 + d4321 * mua ) / d4343;
+			var mub = ( d1343 + (d4321 * mua) ) / d4343;
 
 			resultSegmentPoint2 = new Vector3 {
-				X = line2Point1.X + mub * p43.X,
-				Y = line2Point1.Y + mub * p43.Y,
-				Z = line2Point1.Z + mub * p43.Z
+				X = line2Point1.X + (mub * p43.X),
+				Y = line2Point1.Y + (mub * p43.Y),
+				Z = line2Point1.Z + (mub * p43.Z)
 			};
 
 			return true;
@@ -165,23 +165,23 @@ namespace Librainian.Graphics.Geometry {
 
 			if ( p21.SquareLength < Single.Epsilon ) { return false; }
 
-			var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
-			var d4321 = p43.X * p21.X + p43.Y * p21.Y + p43.Z * p21.Z;
-			var d1321 = p13.X * p21.X + p13.Y * p21.Y + p13.Z * p21.Z;
-			var d4343 = p43.X * p43.X + p43.Y * p43.Y + p43.Z * p43.Z;
-			var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
+			var d1343 = (p13.X * p43.X) + (p13.Y * p43.Y) + (p13.Z * p43.Z);
+			var d4321 = (p43.X * p21.X) + (p43.Y * p21.Y) + (p43.Z * p21.Z);
+			var d1321 = (p13.X * p21.X) + (p13.Y * p21.Y) + (p13.Z * p21.Z);
+			var d4343 = (p43.X * p43.X) + (p43.Y * p43.Y) + (p43.Z * p43.Z);
+			var d2121 = (p21.X * p21.X) + (p21.Y * p21.Y) + (p21.Z * p21.Z);
 
-			var denom = d2121 * d4343 - d4321 * d4321;
+			var denom = (d2121 * d4343) - (d4321 * d4321);
 
 			if ( Math.Abs( denom ) < Single.Epsilon ) { return false; }
 
-			var numer = d1343 * d4321 - d1321 * d4343;
+			var numer = (d1343 * d4321) - (d1321 * d4343);
 
 			var mua = numer / denom;
-			resultSegmentPoint1 = new CoordinateF( x: p1.X + mua * p21.X, y: p1.Y + mua * p21.Y, z: p1.Z + mua * p21.Z );
+			resultSegmentPoint1 = new CoordinateF( x: p1.X + (mua * p21.X), y: p1.Y + (mua * p21.Y), z: p1.Z + (mua * p21.Z) );
 
-			var mub = ( d1343 + d4321 * mua ) / d4343;
-			resultSegmentPoint2 = new CoordinateF( x: p3.X + mub * p43.X, y: p3.Y + mub * p43.Y, z: p3.Z + mub * p43.Z );
+			var mub = ( d1343 + (d4321 * mua) ) / d4343;
+			resultSegmentPoint2 = new CoordinateF( x: p3.X + (mub * p43.X), y: p3.Y + (mub * p43.Y), z: p3.Z + (mub * p43.Z) );
 
 			return true;
 		}
@@ -237,21 +237,21 @@ namespace Librainian.Graphics.Geometry {
              */
 			Boolean tl = ( rectAngles & RectAngles.TopLeft ) != 0, tr = ( rectAngles & RectAngles.TopRight ) != 0, br = ( rectAngles & RectAngles.BottomRight ) != 0, bl = ( rectAngles & RectAngles.BottomLeft ) != 0;
 
-			var pointP = tl ? new Point( x + horizontalDiameter / 2, y ) : new Point( x, y );
+			var pointP = tl ? new Point( x + (horizontalDiameter / 2), y ) : new Point( x, y );
 
-			var pointQ = tr ? new Point( x + width - horizontalDiameter / 2 - 1, y ) : new Point( x + width - 1, y );
+			var pointQ = tr ? new Point( x + width - (horizontalDiameter / 2) - 1, y ) : new Point( x + width - 1, y );
 
-			var pointR = tr ? new Point( x + width - 1, y + verticalDiameter / 2 ) : pointQ;
+			var pointR = tr ? new Point( x + width - 1, y + (verticalDiameter / 2) ) : pointQ;
 
-			var pointS = br ? new Point( x + width - 1, y + height - verticalDiameter / 2 - 1 ) : new Point( x + width - 1, y + height - 1 );
+			var pointS = br ? new Point( x + width - 1, y + height - (verticalDiameter / 2) - 1 ) : new Point( x + width - 1, y + height - 1 );
 
-			var pointT = br ? new Point( x + width - horizontalDiameter / 2 - 1 ) : pointS;
+			var pointT = br ? new Point( x + width - (horizontalDiameter / 2) - 1 ) : pointS;
 
-			var pointU = bl ? new Point( x + horizontalDiameter / 2, y + height - 1 ) : new Point( x, y + height - 1 );
+			var pointU = bl ? new Point( x + (horizontalDiameter / 2), y + height - 1 ) : new Point( x, y + height - 1 );
 
-			var pointV = bl ? new Point( x, y + height - verticalDiameter / 2 - 1 ) : pointU;
+			var pointV = bl ? new Point( x, y + height - (verticalDiameter / 2) - 1 ) : pointU;
 
-			var pointW = tl ? new Point( x, y + verticalDiameter / 2 ) : pointP;
+			var pointW = tl ? new Point( x, y + (verticalDiameter / 2) ) : pointP;
 
 			using ( var gp = new GraphicsPath() ) {
 

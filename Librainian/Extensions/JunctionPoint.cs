@@ -24,6 +24,7 @@ namespace Librainian.Extensions {
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
+    using JetBrains.Annotations;
     using Microsoft.Win32.SafeHandles;
     using OperatingSystem;
 
@@ -132,7 +133,7 @@ namespace Librainian.Extensions {
         ///     Thrown when the junction point could not be created or when an existing directory was
         ///     found and <paramref name="overwrite" /> if false
         /// </exception>
-        public static void Create( String junctionPoint, String targetDir, Boolean overwrite ) {
+        public static void Create( [NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
             targetDir = Path.GetFullPath( targetDir );
 
             if ( !Directory.Exists( targetDir ) ) {
@@ -242,6 +243,7 @@ namespace Librainian.Extensions {
         ///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
         ///     some other error occurs
         /// </exception>
+        [NotNull]
         public static String GetTarget( String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
@@ -253,7 +255,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static String InternalGetTarget( SafeHandle handle ) {
+        private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -288,6 +290,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [NotNull]
         private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
             var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 

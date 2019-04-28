@@ -1129,7 +1129,7 @@ namespace Librainian.OperatingSystem {
             ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
-            public Int64 ToInt64() => ( Int64 )this.High << 32 | ( UInt32 )this.Low;
+            public Int64 ToInt64() => (( Int64 )this.High << 32) | ( UInt32 )this.Low;
 
             // just for demonstration
             public static LargeInteger FromInt64( Int64 value ) =>

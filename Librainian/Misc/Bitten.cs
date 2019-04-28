@@ -307,13 +307,13 @@ namespace Librainian.Misc {
 
                 // ReSharper disable NonReadonlyFieldInGetHashCode
                 var result = this._d.GetHashCode();
-                result = result * 397 ^ this._e.GetHashCode();
-                result = result * 397 ^ this._f.GetHashCode();
-                result = result * 397 ^ this._g.GetHashCode();
-                result = result * 397 ^ this._h.GetHashCode();
-                result = result * 397 ^ this._i.GetHashCode();
-                result = result * 397 ^ this._j.GetHashCode();
-                result = result * 397 ^ this._k.GetHashCode();
+                result = (result * 397) ^ this._e.GetHashCode();
+                result = (result * 397) ^ this._f.GetHashCode();
+                result = (result * 397) ^ this._g.GetHashCode();
+                result = (result * 397) ^ this._h.GetHashCode();
+                result = (result * 397) ^ this._i.GetHashCode();
+                result = (result * 397) ^ this._j.GetHashCode();
+                result = (result * 397) ^ this._k.GetHashCode();
 
                 // ReSharper restore NonReadonlyFieldInGetHashCode
 

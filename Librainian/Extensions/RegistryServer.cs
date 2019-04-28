@@ -26,6 +26,7 @@ namespace Librainian.Extensions {
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
+    using JetBrains.Annotations;
     using Microsoft.Win32;
 
     /// <summary>
@@ -80,6 +81,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [NotNull]
         public static RegistryServer Hklm {
             get {
                 if ( !Instance._isInitialized ) {
@@ -119,7 +121,7 @@ namespace Librainian.Extensions {
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        private static IEnumerable<RegistryKey> GetAllSubkeys( RegistryKey startkeyIn, String nodeKey ) {
+        private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, String nodeKey ) {
             Instance.InvokePopulateProgress();
 
             if ( startkeyIn == null ) {
@@ -150,7 +152,7 @@ namespace Librainian.Extensions {
 
 		private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
 
-		private static Boolean TryOpenSubKey( RegistryKey startFrom, String name, out RegistryKey itemOut ) {
+		private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, String name, [CanBeNull] out RegistryKey itemOut ) {
             var bIsOk = false;
             itemOut = null;
 

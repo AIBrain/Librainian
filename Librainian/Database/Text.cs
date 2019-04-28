@@ -23,6 +23,7 @@ namespace Librainian.Database {
     using System;
     using System.Data;
     using System.Data.OleDb;
+    using JetBrains.Annotations;
     using Logging;
 
     public class Text {
@@ -47,6 +48,7 @@ namespace Librainian.Database {
             get;
         }
 
+        [NotNull]
         public String[] GetColumnsList( String worksheet ) {
             String[] columns = { };
 
@@ -69,6 +71,7 @@ namespace Librainian.Database {
             return columns;
         }
 
+        [NotNull]
         public DataSet GetWorkplace() {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                 using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
@@ -81,6 +84,7 @@ namespace Librainian.Database {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+        [NotNull]
         public DataTable GetWorksheet( String worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                 using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
@@ -92,6 +96,7 @@ namespace Librainian.Database {
             }
         }
 
+        [NotNull]
         public String[] GetWorksheetList() {
             String[] worksheets = { };
 

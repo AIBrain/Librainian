@@ -50,6 +50,7 @@ namespace Librainian.Internet {
     using System.Net.Security;
     using System.Threading;
     using Collections.Extensions;
+    using JetBrains.Annotations;
     using Logging;
     using Newtonsoft.Json;
     using Parsing;
@@ -68,6 +69,7 @@ namespace Librainian.Internet {
         [JsonProperty]
         private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
+        [CanBeNull]
         public static List<WebSite> ScrapedSites {
             get {
                 try {
@@ -79,6 +81,7 @@ namespace Librainian.Internet {
             }
         }
 
+        [CanBeNull]
         private static WebSite GetNextToScrape() {
             try {
                 MAccess.EnterReadLock();

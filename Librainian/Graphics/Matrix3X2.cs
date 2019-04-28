@@ -236,12 +236,12 @@ namespace Librainian.Graphics {
 			var n = this._coeffs[ _M31 ];
 			var o = this._coeffs[ _M32 ];
 
-			this._coeffs[ _M11 ] = a * j + b * l + c * n;
-			this._coeffs[ _M12 ] = a * k + b * m + c * o;
-			this._coeffs[ _M21 ] = d * j + e * l + f * n;
-			this._coeffs[ _M22 ] = d * k + e * m + f * o;
-			this._coeffs[ _M31 ] = g * j + h * l + i * n;
-			this._coeffs[ _M32 ] = g * k + h * m + i * o;
+			this._coeffs[ _M11 ] = (a * j) + (b * l) + (c * n);
+			this._coeffs[ _M12 ] = (a * k) + (b * m) + (c * o);
+			this._coeffs[ _M21 ] = (d * j) + (e * l) + (f * n);
+			this._coeffs[ _M22 ] = (d * k) + (e * m) + (f * o);
+			this._coeffs[ _M31 ] = (g * j) + (h * l) + (i * n);
+			this._coeffs[ _M32 ] = (g * k) + (h * m) + (i * o);
 		}
 	}
 }

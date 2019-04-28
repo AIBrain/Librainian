@@ -90,7 +90,9 @@ namespace Librainian.Parsing {
 		/// The string representation of the value of <paramref name="arg"/>, formatted as specified by <paramref name="format"/>.
 		/// </returns>
 		[NotNull]
-		protected String HandleOtherFormats( String format, [CanBeNull] Object arg ) => ( arg as IFormattable )?.ToString( format, this.Culture ) ?? ( arg?.ToString() ?? String.Empty );
+		protected String HandleOtherFormats( String format, [CanBeNull] Object arg ) =>
+			( arg as IFormattable )?.ToString( format, this.Culture ) ??  arg?.ToString() ?? String.Empty ;
+
 	}
 
 }

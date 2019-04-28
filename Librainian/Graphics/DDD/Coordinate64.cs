@@ -126,7 +126,7 @@ namespace Librainian.Graphics.DDD
             this.X = Math.Max(Int64.MinValue, Math.Min(Int64.MaxValue, x));
             this.Y = Math.Max(Int64.MinValue, Math.Min(Int64.MaxValue, y));
             this.Z = Math.Max(Int64.MinValue, Math.Min(Int64.MaxValue, z));
-            this.Length = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
+            this.Length = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z);
             this._hashCode = HashingExtensions.GetHashCodes(this.X, this.Y, this.Z);
         }
 
@@ -139,7 +139,7 @@ namespace Librainian.Graphics.DDD
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
 
-            return (Int64)Math.Sqrt(num1 * num1 + num2 * num2 + num3 * num3);
+            return (Int64)Math.Sqrt((num1 * num1) + (num2 * num2) + (num3 * num3));
         }
 
         /// <summary>

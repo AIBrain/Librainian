@@ -135,7 +135,7 @@ namespace Librainian.Graphics.Moving {
 				throw new ArgumentException( "y" );
 			}
 
-			var index = ( UInt64 ) ( this.Height * y + x );
+			var index = ( UInt64 ) ( (this.Height * y) + x );
 
 			return this.Get( index );
 		}
