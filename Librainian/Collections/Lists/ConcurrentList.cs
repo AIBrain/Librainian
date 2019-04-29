@@ -55,8 +55,6 @@ namespace Librainian.Collections.Lists {
     using Logging;
     using Maths;
     using Newtonsoft.Json;
-    using ReactiveUI;
-    using ReactiveUI.Fody.Helpers;
 
     /// <summary>
     ///     <para>A thread safe generic list.</para>
@@ -71,7 +69,7 @@ namespace Librainian.Collections.Lists {
     /// </copyright>
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class ConcurrentList<T> : ReactiveObject, IDisposable, IList<T>/*, IEquatable<IEnumerable<T>>*/ {
+    public class ConcurrentList<T> : IDisposable, IList<T>/*, IEquatable<IEnumerable<T>>*/ {
 
         private Int64 _isReadOnlyCount;
 
@@ -115,7 +113,6 @@ namespace Librainian.Collections.Lists {
         public Int32 Count => this.ItemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
 
         [JsonIgnore]
-        [Reactive]
         public Boolean IsDisposed { get; private set; }
 
         /// <summary>
@@ -130,22 +127,19 @@ namespace Librainian.Collections.Lists {
 
                 this._isReadOnlyCount = value ? Interlocked.Increment( ref this._isReadOnlyReference ) : Interlocked.Decrement( ref this._isReadOnlyReference );
 
-                this.RaiseAndSetIfChanged( ref this._isReadOnlyCount, before );
+                //this.RaiseAndSetIfChanged( ref this._isReadOnlyCount, before );
             }
         }
 
         /// <summary>
         ///     If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.
         /// </summary>
-        [Reactive]
         public Boolean ThrowExceptions { get; set; }
 
         [JsonProperty]
-        [Reactive]
         public TimeSpan TimeoutForReads { get; set; }
 
         [JsonProperty]
-        [Reactive]
         public TimeSpan TimeoutForWrites { get; set; }
 
         /// <summary>

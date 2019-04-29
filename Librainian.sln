@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianTests", "Tests\Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librainian", "Librainian\Librainian.csproj", "{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkingStuff", "BenchmarkingStuff\BenchmarkingStuff.csproj", "{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,24 +41,12 @@ Global
 		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|Any CPU.Build.0 = Single Image|Any CPU
 		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|x64.ActiveCfg = Single Image|x64
 		{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}.Single Image|x64.Build.0 = Single Image|x64
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Debug|x64.Build.0 = Debug|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Release|x64.ActiveCfg = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Release|x64.Build.0 = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Single Image|Any CPU.ActiveCfg = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Single Image|Any CPU.Build.0 = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Single Image|x64.ActiveCfg = Release|Any CPU
-		{1ACC2BAC-9D6C-4F63-B2EA-11AD6F60C03B}.Single Image|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
 		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal

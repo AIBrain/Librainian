@@ -47,7 +47,6 @@ namespace Librainian.Knowledge {
     using JetBrains.Annotations;
     using Measurement.Time;
     using Newtonsoft.Json;
-    using ReactiveUI.Fody.Helpers;
 
     /// <summary>
     /// Just a common class used in examples to run test code on.
@@ -85,18 +84,15 @@ namespace Librainian.Knowledge {
     [JsonObject]
     public class Person : IPerson {
 
-        [Reactive]
         [JsonProperty]
         public Date BirthDate { get; set; }
 
-        [Reactive]
         [JsonProperty]
         public Time BirthTime { get; set; }
 
         [JsonProperty]
         public IList<IPerson> Children { get; } = new List<IPerson>();
 
-        [Reactive]
         [JsonProperty]
         public String FirstName { get; set; }
 
@@ -114,15 +110,12 @@ namespace Librainian.Knowledge {
             }
         }
 
-        [Reactive]
         [JsonProperty]
         public UInt64 ID { get; set; }
 
-        [Reactive]
         [JsonProperty]
         public String LastName { get; set; }
 
-        [Reactive]
         [JsonProperty]
         public String MiddleName { get; set; }
 

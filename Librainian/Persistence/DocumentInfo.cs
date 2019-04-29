@@ -49,8 +49,6 @@ namespace Librainian.Persistence {
     using Logging;
     using Newtonsoft.Json;
     using OperatingSystem.FileSystem;
-    using ReactiveUI;
-    using ReactiveUI.Fody.Helpers;
 
     /// <summary>
     ///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
@@ -58,7 +56,7 @@ namespace Librainian.Persistence {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
-    public class DocumentInfo : ReactiveObject, IEquatable<DocumentInfo> {
+    public class DocumentInfo : IEquatable<DocumentInfo> {
 
         public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
@@ -68,7 +66,6 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     "drive:\folder\file.ext"
         /// </summary>
-        [Reactive]
         [NotNull]
         [JsonProperty]
         public String AbsolutePath { get; private set; }
@@ -76,39 +73,32 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     The result of the Add-Hashing function.
         /// </summary>
-        [Reactive]
         [JsonProperty]
         public Int32? AddHash { get; private set; }
 
         [JsonIgnore]
         public CancellationToken CancellationToken { get; set; }
 
-        [Reactive]
         [JsonProperty]
         public Int32? CRC32 { get; private set; }
 
-        [Reactive]
         [JsonProperty]
         public Int64? CRC64 { get; private set; }
 
-        [Reactive]
         [JsonProperty]
         public DateTime? CreationTimeUtc { get; private set; }
 
         /// <summary>
         ///     The most recent UTC datetime this info was updated.
         /// </summary>
-        [Reactive]
         [JsonProperty]
         public DateTime? LastScanned { get; private set; }
 
-        [Reactive]
         [JsonProperty]
         public DateTime? LastWriteTimeUtc { get; private set; }
 
         /// <summary>
         /// </summary>
-        [Reactive]
         [JsonProperty]
         public UInt64? Length {
             get => this._length;

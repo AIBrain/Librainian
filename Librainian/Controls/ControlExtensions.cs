@@ -49,7 +49,6 @@ namespace Librainian.Controls {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Timers;
     using System.Windows.Forms;
     using JetBrains.Annotations;
     using Logging;
@@ -416,18 +415,22 @@ namespace Librainian.Controls {
             var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
 
             if ( x.HasValue && y.HasValue ) {
-                form.SuspendLayout();
-                form.Location( new Point( x.Value, y.Value ) );
-                form.ResumeLayout();
+                form.InvokeAction( () => {
+                    form.SuspendLayout();
+                    form.Location( new Point( x.Value, y.Value ) );
+                    form.ResumeLayout();
+                } );
             }
 
             var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
             var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
 
             if ( width.HasValue && height.HasValue ) {
-                form.SuspendLayout();
-                form.Size( new Size( width.Value, height.Value ) );
-                form.ResumeLayout();
+                form.InvokeAction( () => {
+                    form.SuspendLayout();
+                    form.Size( new Size( width.Value, height.Value ) );
+                    form.ResumeLayout();
+                } );
             }
         }
 
@@ -445,16 +448,20 @@ namespace Librainian.Controls {
             }
 
             if ( Int32.TryParse( settings[ name, nameof( Point.X ) ], out var x ) && Int32.TryParse( settings[ name, nameof( Point.Y ) ], out var y ) ) {
-                form.SuspendLayout();
-                form.Location( new Point( x, y ) );
-                form.ResumeLayout();
+                form.InvokeAction( () => {
+                    form.SuspendLayout();
+                    form.Location( new Point( x, y ) );
+                    form.ResumeLayout();
+                } );
             }
 
             if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) &&
                  Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
-                form.SuspendLayout();
-                form.Size( new Size( width, height ) );
-                form.ResumeLayout();
+                form.InvokeAction( () => {
+                    form.SuspendLayout();
+                    form.Size( new Size( width, height ) );
+                    form.ResumeLayout();
+                } );
             }
         }
 

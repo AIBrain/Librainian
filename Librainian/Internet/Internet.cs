@@ -51,8 +51,6 @@ namespace Librainian.Internet {
     using JetBrains.Annotations;
     using Logging;
     using OperatingSystem.FileSystem;
-    using ReactiveUI;
-    using ReactiveUI.Fody.Helpers;
 
     public static class Internet {
 
@@ -189,7 +187,7 @@ namespace Librainian.Internet {
             }
         }
 
-        public abstract class UnderlyingDownloader : ReactiveObject, IDownloader {
+        public abstract class UnderlyingDownloader : IDownloader {
 
             public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
 
@@ -199,19 +197,15 @@ namespace Librainian.Internet {
             public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
 
             [NotNull]
-            [Reactive]
             public WebClientWithTimeout AttachedToWebClient { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public ICredentials Credentials { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public Byte[] DestinationBuffer { get; set; }
 
             [NotNull]
-            [Reactive]
             public Document DestinationDocument { get; set; }
 
             public AutoResetEvent Downloaded { get; } = new AutoResetEvent( false );
@@ -219,33 +213,26 @@ namespace Librainian.Internet {
             /// <summary>
             ///     The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.
             /// </summary>
-            [Reactive]
             public Stopwatch Elasped { get; set; }
 
             /// <summary>
             ///     The unique identifier assigned to this download.
             /// </summary>
-            [Reactive]
             public Guid Id { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public Action OnCancelled { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public Action OnCompleted { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public Action OnFailure { get; set; }
 
             [CanBeNull]
-            [Reactive]
             public Action OnTimeout { get; set; }
 
             [NotNull]
-            [Reactive]
             public Uri Source { get; set; }
 
             [CanBeNull]
@@ -254,13 +241,11 @@ namespace Librainian.Internet {
             /// <summary>
             ///     The length of time to wait before the download is cancelled. See also: <seealso cref="Forever" />.
             /// </summary>
-            [Reactive]
             public TimeSpan Timeout { get; set; }
 
             /// <summary>
             ///     The UTC date & time when the download was started.
             /// </summary>
-            [Reactive]
             public DateTime WhenStarted { get; set; }
 
             /// <summary>
