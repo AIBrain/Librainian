@@ -21,7 +21,6 @@
 namespace Librainian.Extensions {
 
     using System;
-    using System.Diagnostics;
 
     /// <summary>
     /// *very* old class
@@ -34,9 +33,7 @@ namespace Librainian.Extensions {
         /// <summary><see cref="DisposableBase" /> was not properly disposed!</summary>
         ~DisposableBase() {
             this.Dispose( false );
-            if ( Debugger.IsAttached ) {
-                Debugger.Break(); //
-            }
+            this.BreakIfDebug();
         }
 
         public event EventHandler<EventArgs> Disposed;

@@ -73,7 +73,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Security;
     using Threading;
 
-    public interface IDocument : IComparable<Document>, IEquatable<Document>, IEnumerable<Byte> {
+    public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
         String FullPath { get; }
 
@@ -131,7 +131,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Boolean DeleteAfterClose { get; set; }
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <returns></returns>
@@ -145,7 +145,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Int32 CalculateHarkerHashInt32();
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
         /// </summary>
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
@@ -153,7 +153,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         IEnumerable<Int32> AsInt32( FileOptions options = FileOptions.SequentialScan );
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="UInt64" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.
+        /// </summary>
+        /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+        /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+        /// <returns></returns>
+        IEnumerable<Int64> AsInt64( FileOptions options = FileOptions.SequentialScan );
+
+        /// <summary>
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Guid" />.
+        /// </summary>
+        /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+        /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+        /// <returns></returns>
+        IEnumerable<Guid> AsGuid( FileOptions options = FileOptions.SequentialScan );
+
+        /// <summary>
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="UInt64" />.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
@@ -186,7 +202,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] Document destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
+        Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
             [CanBeNull] IProgress<TimeSpan> eta = null );
 
         /// <summary>
@@ -196,7 +212,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta );
+        Task Copy( IDocument destination, IProgress<Single> progress, IProgress<TimeSpan> eta );
 
         /// <summary>
         ///     Returns the <see cref="WebClient" /> if a file copy was started.
@@ -205,7 +221,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onProgress"> </param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        WebClient CopyFileWithProgress( [NotNull] Document destination, Action<Percentage> onProgress, Action onCompleted );
+        WebClient CopyFileWithProgress( [NotNull] IDocument destination, Action<Percentage> onProgress, Action onCompleted );
 
         Int32? CRC32();
 
@@ -239,14 +255,14 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     <para>Downloads (replaces) the local document with the specified <paramref name="source" />.</para>
-        ///     <para>Note: will replace the content of the this <see cref="Document" />.</para>
+        ///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source );
 
         /// <summary>
-        ///     <para>Computes the extension of the <see cref="Document.FileName" />, including the prefix ".".</para>
+        ///     <para>Computes the extension of the <see cref="IDocument.FileName" />, including the prefix ".".</para>
         /// </summary>
         String Extension();
 
@@ -273,7 +289,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         IDocument AppendText( String text );
 
         /// <summary>
-        ///     <para>To compare the contents of two <see cref="Document" /> use SameContent( Document,Document).</para>
+        ///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -295,7 +311,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     <para>
-        ///         Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="Document" /> copy
+        ///         Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="IDocument" /> copy
         ///         routines...
         ///     </para>
         ///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
@@ -321,14 +337,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<T> LoadJSONAsync<T>( CancellationToken token );
 
         /// <summary>
-        ///     <para>Starts a task to <see cref="Document.MoveAsync" /> a file to the <paramref name="destination" />.</para>
+        ///     <para>Starts a task to <see cref="IDocument.MoveAsync" /> a file to the <paramref name="destination" />.</para>
         ///     <para>Returns -1 if an exception happened.</para>
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="token"></param>
-        /// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="Document.MoveAsync" />.</param>
+        /// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="IDocument.MoveAsync" />.</param>
         /// <returns></returns>
-        Task<UInt64?> MoveAsync( [NotNull] Document destination, CancellationToken token, Boolean exact = true );
+        Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean exact = true );
 
         /// <summary>
         ///     <para>Just the file's name, including the extension.</para>
@@ -339,7 +355,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<String> ReadStringAsync();
 
         /// <summary>
-        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="Document" /> file names.</para>
+        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
         /// </summary>
         /// <param name="right"></param>
         /// <returns></returns>
@@ -352,22 +368,22 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        Boolean SameContent( [CanBeNull] Document right );
+        Boolean SameContent( [CanBeNull] IDocument right );
 
         /// <summary>
-        ///     Open the file for reading and return a <see cref="Document.StreamReader" />.
+        ///     Open the file for reading and return a <see cref="IDocument.StreamReader" />.
         /// </summary>
         /// <returns></returns>
         StreamReader StreamReader();
 
         /// <summary>
-        ///     Open the file for writing and return a <see cref="Document.StreamWriter" />.
+        ///     Open the file for writing and return a <see cref="IDocument.StreamWriter" />.
         /// </summary>
         /// <returns></returns>
         StreamWriter StreamWriter();
 
         /// <summary>
-        ///     Return this <see cref="Document" /> as a JSON string.
+        ///     Return this <see cref="IDocument" /> as a JSON string.
         /// </summary>
         /// <returns></returns>
         Task<String> ToJSON();
@@ -379,7 +395,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         String ToString();
 
         /// <summary>
-        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
+        ///     <para>Returns true if the <see cref="IDocument" /> no longer seems to exist.</para>
         ///     <para>Returns null if existence cannot be determined.</para>
         /// </summary>
         /// <param name="tryFor"></param>
@@ -387,11 +403,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         Boolean? TryDeleting( TimeSpan tryFor );
 
         /// <summary>
-        ///     Uploads this <see cref="Document" /> to the given <paramref name="destination" />.
+        ///     Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
+
+        Task<Boolean> IsAll( Byte number );
 
     }
 
@@ -422,7 +440,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="other"></param>
         /// <returns></returns>
         [Pure]
-        public Int32 CompareTo( [NotNull] Document other ) => String.Compare( strA: this.FullPath, strB: other.FullPath, comparisonType: StringComparison.Ordinal );
+        public Int32 CompareTo( [NotNull] IDocument other ) => String.Compare( strA: this.FullPath, strB: other.FullPath, comparisonType: StringComparison.Ordinal );
 
         /// <summary>
         ///     Returns an enumerator that iterates through the collection.
@@ -441,11 +459,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
-        ///     <para>To compare the contents of two <see cref="Document" /> use <see cref="Document.SameContent" />.</para>
+        ///     <para>To compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.SameContent" />.</para>
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public Boolean Equals( Document other ) => Equals( left: this, right: other );
+        public Boolean Equals( IDocument other ) => Equals( left: this, right: other );
 
         /// <summary>Represents the fully qualified path of the file.</summary>
         [JsonProperty]
@@ -577,7 +595,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.
         /// </summary>
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <returns></returns>
@@ -609,11 +627,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         public Int32 CalculateHarkerHashInt32() =>
-            this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.FullyBuffered )
+            this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
                 .Aggregate( seed: 0, func: ( current, i ) => unchecked( current + i ) );
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
         /// </summary>
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
@@ -624,15 +642,15 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneMegaByte, options: options ) ) {
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
 
                 if ( !stream.CanRead ) {
-                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
                 }
 
                 var buffer = new Byte[ sizeof( Int32 ) ];
 
-                using ( var buffered = new BufferedStream( stream: stream ) ) {
+                using ( var buffered = new BufferedStream( stream: stream, sizeof(Int32) ) ) {
                     while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
                         yield return BitConverter.ToInt32( value: buffer, startIndex: 0 );
                     }
@@ -641,7 +659,63 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Enumerates the <see cref="Document" /> as a sequence of <see cref="UInt64" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
+        /// </summary>
+        /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+        /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+        /// <returns></returns>
+        public IEnumerable<Int64> AsInt64( FileOptions options = FileOptions.SequentialScan ) {
+            if ( this.Exists() == false ) {
+                yield break;
+            }
+
+            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
+                }
+
+                var buffer = new Byte[ sizeof( Int64 ) ];
+
+                using ( var buffered = new BufferedStream( stream: stream, sizeof(Int64) ) ) {
+                    while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
+                        yield return BitConverter.ToInt64( value: buffer, startIndex: 0 );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
+        /// </summary>
+        /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+        /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+        /// <returns></returns>
+        public IEnumerable<Guid> AsGuid( FileOptions options = FileOptions.SequentialScan ) {
+            if ( this.Exists() == false ) {
+                yield break;
+            }
+
+            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
+                }
+
+                var buffer = new Byte[ sizeof( Decimal ) ];
+
+                using ( var buffered = new BufferedStream( stream: stream, sizeof( Decimal ) ) ) {
+                    while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
+                        yield return new Guid( buffer );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="UInt64" />.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
@@ -651,7 +725,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneMegaByte, options: options ) ) {
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
@@ -659,7 +733,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var bytes = new Byte[ sizeof( UInt64 ) ];
 
-                using ( var buffered = new BufferedStream( stream: stream ) ) {
+                using ( var buffered = new BufferedStream( stream: stream, sizeof(UInt64) ) ) {
                     while ( buffered.Read( array: bytes, offset: 0, count: bytes.Length ).Any() ) {
                         yield return BitConverter.ToUInt64( value: bytes, startIndex: 0 );
                     }
@@ -730,7 +804,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Clone the entire document to the <paramref name="destination" /> as quickly as possible.</para>
+        ///     <para>Clone the entire IDocument to the <paramref name="destination" /> as quickly as possible.</para>
         ///     <para>this will OVERWRITE any <see cref="destination" /> file.</para>
         /// </summary>
         /// <param name="destination"></param>
@@ -738,7 +812,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] Document destination, CancellationToken token,
+        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
             [CanBeNull] IProgress<Single> progress = null, [CanBeNull] IProgress<TimeSpan> eta = null ) {
             if ( destination == null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
@@ -773,7 +847,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="eta">        </param>
         /// <returns></returns>
         [NotNull]
-        public Task Copy( Document destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
+        public Task Copy( IDocument destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
             Task.Run( action: () => {
                 var computer = new Computer();
 
@@ -790,7 +864,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         [NotNull]
-        public WebClient CopyFileWithProgress( [NotNull] Document destination, Action<Percentage> onProgress, Action onCompleted ) {
+        public WebClient CopyFileWithProgress( [NotNull] IDocument destination, Action<Percentage> onProgress, Action onCompleted ) {
 
             var webClient = new WebClient();
 
@@ -807,14 +881,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Returns true if this document was copied to the <paramref name="destination" />.
+        ///     Returns true if this IDocument was copied to the <paramref name="destination" />.
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="progress"></param>
         /// <param name="onComplete"></param>
         /// <returns></returns>
-        public async Task<Boolean> Copy( [NotNull] Document destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
-            [CanBeNull] Action<AsyncCompletedEventArgs, (Document source, Document destination)> onComplete = null ) {
+        public async Task<Boolean> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
+            [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
             if ( destination == null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
@@ -1021,8 +1095,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Downloads (replaces) the local document with the specified <paramref name="source" />.</para>
-        ///     <para>Note: will replace the content of the this <see cref="Document" />.</para>
+        ///     <para>Downloads (replaces) the local IDocument with the specified <paramref name="source" />.</para>
+        ///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
@@ -1100,11 +1174,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     <para>To compare the contents of two <see cref="Document" /> use SameContent( Document,Document).</para>
+        ///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override Boolean Equals( Object obj ) => obj is Document document && Equals( left: this, right: document );
+        public override Boolean Equals( Object obj ) => obj is IDocument document && Equals( left: this, right: document );
 
         /// <summary>
         ///     (file name, not contents)
@@ -1136,7 +1210,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     <para>
-        ///         Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="Document" /> copy
+        ///         Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="IDocument" /> copy
         ///         routines...
         ///     </para>
         ///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
@@ -1219,13 +1293,36 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="MoveAsync" />.</param>
         /// <returns></returns>
         [NotNull]
-        public Task<UInt64?> MoveAsync( [NotNull] Document destination, CancellationToken token, Boolean exact = true ) {
+        public Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean exact = true ) {
             if ( destination == null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
             return Task.Run( () => {
                 try {
+                    if ( destination.Exists() ) {
+                        if ( destination.SameContent(this) ) {
+
+                            if ( exact ) {
+                                if ( destination.Exists() ) {
+                                    var documentInfo = new DocumentInfo( document: this );
+
+                                    if ( documentInfo.CreationTimeUtc.HasValue ) {
+                                        destination.CreationTimeUtc = documentInfo.CreationTimeUtc.Value;
+                                    }
+
+                                    if ( documentInfo.LastWriteTimeUtc.HasValue ) {
+                                        destination.LastWriteTimeUtc = documentInfo.LastWriteTimeUtc.Value;
+                                    }
+                                }
+                            }
+
+                            this.Delete();
+
+                            return destination.Size();
+                        }
+                    }
+
                     thisComputer.FileSystem.MoveFile( sourceFileName: this.FullPath, destinationFileName: destination.FullPath, showUI: UIOption.AllDialogs,
                         onUserCancel: UICancelOption.DoNothing );
 
@@ -1287,7 +1384,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="Document" /> file names.</para>
+        ///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
         /// </summary>
         /// <param name="right"></param>
         /// <returns></returns>
@@ -1300,13 +1397,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public Boolean SameContent( [CanBeNull] Document right ) {
+        public Boolean SameContent( [CanBeNull] IDocument right ) {
 
             if ( right == null || this.Exists() == false || right.Exists() == false ) {
                 return false;
             }
 
-            return this.Length == right.Length && this.AsBytes().SequenceEqual( second: right.AsBytes() );
+            return this.Length == right.Length && this.AsGuid().SequenceEqual( second: right.AsGuid() );
         }
 
         /// <summary>
@@ -1324,7 +1421,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public StreamWriter StreamWriter() => new StreamWriter( stream: File.OpenWrite( path: this.FullPath ) );
 
         /// <summary>
-        ///     Return this <see cref="Document" /> as a JSON string.
+        ///     Return this <see cref="IDocument" /> as a JSON string.
         /// </summary>
         /// <returns></returns>
         public async Task<String> ToJSON() {
@@ -1340,7 +1437,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public override String ToString() => this.FullPath;
 
         /// <summary>
-        ///     <para>Returns true if the <see cref="Document" /> no longer seems to exist.</para>
+        ///     <para>Returns true if the <see cref="IDocument" /> no longer seems to exist.</para>
         ///     <para>Returns null if existence cannot be determined.</para>
         /// </summary>
         /// <param name="tryFor"></param>
@@ -1379,7 +1476,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Uploads this <see cref="Document" /> to the given <paramref name="destination" />.
+        ///     Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
@@ -1404,9 +1501,39 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
-        private Folder _containingFolder;
+        [NotNull]
+        public Task<Boolean> IsAll( Byte number ) =>
+            Task.Run( () => {
+                if ( !this.Exists() ) {
+                    return false;
+                }
 
-        //[JsonProperty]private FileAttributeData _fileAttributeData;
+                using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                    bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+
+                    if ( !stream.CanRead ) {
+                        throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
+                    }
+
+                    var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
+
+                    using ( var buffered = new BufferedStream( stream: stream ) ) {
+                        Int32 bytesRead;
+
+                        do {
+                            bytesRead = buffered.Read( array: buffer, offset: 0, count: buffer.Length );
+
+                            if ( bytesRead.Any() && buffer.Any( b => b != number ) ) {
+                                return false;
+                            }
+                        } while ( bytesRead.Any() );
+                    }
+
+                    return true;
+                }
+            } );
+
+        private Folder _containingFolder;
 
         [CanBeNull]
         private Lazy<FileSystemWatcher> Watcher { get; }
@@ -1441,7 +1568,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( Uri.TryCreate( uriString: fullPath, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 if ( uri.IsFile ) {
-                    this.FullPath = Path.GetFullPath( uri.AbsolutePath );
+                    //this.FullPath = Path.GetFullPath( uri.AbsolutePath );
+                    this.FullPath = Path.GetFullPath( fullPath );
                     this.TypeOfPath = TypeOfPathType.Document;
                 }
                 else if ( uri.IsAbsoluteUri ) {
@@ -1494,7 +1622,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPath: folder.FullName, filename: filename,
             deleteAfterClose: deleteAfterClose ) { }
 
-        public Document( [NotNull] IFolder folder, [NotNull] Document document, Boolean deleteAfterClose = false ) : this(
+        public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
             fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName ), deleteAfterClose: deleteAfterClose ) { }
 
         /*
@@ -1557,7 +1685,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Maybe someday rewrite <see cref="Document" /> to use long path names, with faster creation, opening, and saving.
+        ///     Maybe someday rewrite <see cref="IDocument" /> to use long path names, with faster creation, opening, and saving.
         /// </summary>
         /// <param name="lpFileName"></param>
         /// <param name="dwDesiredAccess"></param>
@@ -1659,7 +1787,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator !=( [CanBeNull] Document left, [CanBeNull] Document right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( [CanBeNull] Document left, [CanBeNull] IDocument right ) => !Equals( left: left, right: right );
 
         /// <summary>
         ///     <para>Compares the file names (case sensitive) and file sizes for equality.</para>
@@ -1667,16 +1795,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean operator ==( [CanBeNull] Document left, [CanBeNull] Document right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( [CanBeNull] Document left, [CanBeNull] IDocument right ) => Equals( left: left, right: right );
 
         /// <summary>
         ///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
-        ///     <para>To compare the contents of two <see cref="Document" /> use <see cref="Document.SameContent" />.</para>
+        ///     <para>To compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.SameContent" />.</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Document left, [CanBeNull] Document right ) {
+        public static Boolean Equals( [CanBeNull] IDocument left, [CanBeNull] IDocument right ) {
             if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }

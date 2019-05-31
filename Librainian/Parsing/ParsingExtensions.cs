@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/04/10 at 11:23 AM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/05/03 at 10:22 AM.
 
 namespace Librainian.Parsing {
 
@@ -174,7 +174,7 @@ namespace Librainian.Parsing {
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
-        /// <para>Does not do any string trimming. Just truncate.</para>
+        ///     <para>Does not do any string trimming. Just truncate.</para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="maxlength"></param>
@@ -193,7 +193,7 @@ namespace Librainian.Parsing {
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
-        /// <para>TODO faster? slower? Needs benchmarking.</para>
+        ///     <para>TODO faster? slower? Needs benchmarking.</para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="maxlength"></param>
@@ -297,7 +297,6 @@ namespace Librainian.Parsing {
                 case 13:
                 case 12:
                 case 11:
-
                     return $"{number}th";
             }
 

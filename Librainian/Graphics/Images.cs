@@ -1212,14 +1212,12 @@ namespace Librainian.Graphics {
         /// </summary>
         /// <param name="document"></param>
         /// <returns></returns>
-        public static Boolean IsaValidImage( [NotNull] this Document document ) {
+        public static Boolean IsaValidImage( [NotNull] this IDocument document ) {
             if ( document == null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var info = new FileInfo( document.FullPath );
-
-            return info.IsaValidImage();
+            return new FileInfo( document.FullPath ).IsaValidImage();
         }
 
         [CanBeNull]
@@ -1252,7 +1250,6 @@ namespace Librainian.Graphics {
             }
 
             try {
-
                 //if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
 
                 using ( Image.FromFile( file.FullName ) ) {

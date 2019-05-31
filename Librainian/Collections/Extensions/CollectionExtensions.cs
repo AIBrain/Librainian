@@ -47,6 +47,7 @@ namespace Librainian.Collections.Extensions {
     using System.Collections.ObjectModel;
     using System.Data;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
@@ -433,7 +434,9 @@ namespace Librainian.Collections.Extensions {
         /// <param name="list"></param>
         public static void Fix<T>( [NotNull] this List<T> list ) => list.TrimExcess();
 
-        public static void ForEach<T>( [NotNull] this IEnumerable<T> items, [NotNull] Action<T> action ) {
+        [SuppressMessage( "ReSharper", "PossibleMultipleEnumeration" )]
+        [NotNull]
+        public static IEnumerable<T> ForEach<T>( [NotNull] this IEnumerable<T> items, [NotNull] Action<T> action ) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
@@ -445,6 +448,8 @@ namespace Librainian.Collections.Extensions {
             foreach ( var item in items ) {
                 action( item );
             }
+
+            return items;
         }
 
         /// <summary>

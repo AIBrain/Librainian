@@ -27,6 +27,7 @@ namespace Librainian.Internet {
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
@@ -34,6 +35,23 @@ namespace Librainian.Internet {
     using Newtonsoft.Json.Linq;
 
     public static class InternetExtensions {
+
+        public static Boolean IsValidIp( this String ip ) {
+            if ( !Regex.IsMatch( ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" ) ) {
+                return false;   //TODO precompile this regex
+            }
+
+            var ips = ip.Split( '.' );
+            if ( ips.Length == 4 || ips.Length == 6 ) {
+                return Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
+            }
+
+            return false;
+        }
+
+        private static Regex ValidateURLRegex { get; } = new Regex( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
+
+        public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );
 
         public static async Task<TextReader> DoRequestAsync( [NotNull] this WebRequest request ) {
             if ( request == null ) {

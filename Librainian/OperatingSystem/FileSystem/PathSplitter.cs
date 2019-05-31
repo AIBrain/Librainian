@@ -58,6 +58,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String OriginalPath { get; }
 
         public PathSplitter( String fullpathandfilename ) {
+            if ( String.IsNullOrWhiteSpace( value: fullpathandfilename ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpathandfilename ) );
+            }
+
             this.FileName = Path.GetFileName( fullpathandfilename );
             this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
 
@@ -70,8 +74,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.Parts.AddRange( strings );
         }
 
-        public PathSplitter( [NotNull] Document document ) : this( document.FullPath ) {
-            if ( document == null ) { throw new ArgumentNullException( nameof( document ) ); }
+        public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) {
         }
 
         public PathSplitter( [NotNull] Folder folder ) : this( folder.FullName ) { }
@@ -100,9 +103,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Boolean SubstituteDrive( Char c ) {
             if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) { return false; }
 
-            this.Parts[ 0 ] = new String( new[] {
-                c
-            } ) + ":";
+            this.Parts[ 0 ] = $"{new String( new[] { c } )}:";
 
             return true;
         }

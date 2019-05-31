@@ -99,7 +99,7 @@ namespace Librainian.Persistence {
             }
 
             if ( preload ) {
-                this.Load().Wait();
+                this.Load().RunSynchronously();
             }
         }
 

@@ -327,6 +327,7 @@
     <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
     <Compile Include="OperatingSystem\WinSAT.cs" />
     <Compile Include="Parsing\ByteSizeFormatter.cs" />
+    <Compile Include="Parsing\ParsingConstants.cs" />
     <Compile Include="Parsing\Symbols.cs" />
     <Compile Include="Parsing\CompositeFormatter.cs" />
     <Compile Include="Parsing\Formatter.cs" />
@@ -876,13 +877,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser">
-      <Version>2.4.3</Version>
+      <Version>2.5.0</Version>
     </PackageReference>
     <PackageReference Include="Costura.Fody">
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>5.0.1</Version>
+      <Version>5.0.6</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -902,7 +903,7 @@
       <Version>3.3.4</Version>
     </PackageReference>
     <PackageReference Include="NLog">
-      <Version>4.6.2</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="NLog.Windows.Forms">
       <Version>4.2.3</Version>
@@ -917,7 +918,7 @@
       <Version>4.3.0</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
-      <Version>4.5.2</Version>
+      <Version>4.5.3</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Dataflow">
       <Version>4.9.0</Version>
@@ -925,11 +926,11 @@
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.2</Version>
     </PackageReference>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
     <PackageReference Include="System.Xml.XDocument">
       <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Unicode.net">
+      <Version>0.1.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

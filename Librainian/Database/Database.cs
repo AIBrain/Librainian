@@ -449,7 +449,7 @@ namespace Librainian.Database {
         public static async Task StartAnySQLBrowers( TimeSpan searchTimeout ) {
             $"Searching for any database servers...".Log();
 
-            await Database.FindAndStartSqlBrowserServices( new[] {
+            await FindAndStartSqlBrowserServices( new[] {
                 Dns.GetHostName()
             }, searchTimeout ).ConfigureAwait( false );
         }
@@ -464,7 +464,6 @@ namespace Librainian.Database {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( instanceName ) );
             }
 
-            //basics
             serverName.Nop();
 
             var builder = new SqlConnectionStringBuilder {

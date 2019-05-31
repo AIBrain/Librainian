@@ -101,6 +101,8 @@ namespace Librainian.Measurement.Time {
 			return DateTime.TryParse( input, culture, DateTimeStyles.None, out date ) ? date : default;
 		}
 
+		public static Int32 GetQuarter( this DateTime date ) => ( ( date.Month - 1 ) / 3 ) + 1;
+
 		/// <summary>
 		///     Adds the given number of business days to the <see cref="DateTime" />.
 		/// </summary>

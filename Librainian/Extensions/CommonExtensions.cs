@@ -100,6 +100,14 @@ namespace Librainian.Extensions {
 		[Conditional("DEBUG")]
 		public static void Nop<T>( this T obj ) { }
 
+		[DebuggerStepThrough]
+		[Conditional("DEBUG")]
+		public static void BreakIfDebug<T>( this T obj ) {
+			if ( Debugger.IsAttached ) {
+				Debugger.Break();
+			}
+		}
+
 		/// <summary>
 		///     <para>Works like the SQL "nullif" function.</para>
 		///     <para>

@@ -46,6 +46,7 @@ namespace Librainian.Logging {
     using System.Diagnostics;
     using System.Drawing;
     using System.Windows.Forms;
+    using Extensions;
     using JetBrains.Annotations;
     using NLog;
     using NLog.Common;
@@ -60,7 +61,7 @@ namespace Librainian.Logging {
         public static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         [NotNull]
-        public static ConcurrentDictionary<Control, Target> OurTargets { get; } = new ConcurrentDictionary<Control, Target>();
+        public static ConcurrentDictionary<Control, Target> Targets { get; } = new ConcurrentDictionary<Control, Target>();
 
         [DebuggerStepThrough]
         public static Boolean Start() {
@@ -76,7 +77,7 @@ namespace Librainian.Logging {
                 InternalLogger.Trace( $"{nameof( Start )} created a new {nameof( LoggingConfiguration )}." );
             }
 
-            return Setup( LogLevel.Trace, LogLevel.Fatal, Targets.TraceTarget.Value );
+            return Setup( LogLevel.Trace, LogLevel.Fatal, Librainian.Logging.Targets.TraceTarget.Value );
         }
 
         /// <summary>
@@ -127,9 +128,7 @@ namespace Librainian.Logging {
                 message.Debug();
             }
 
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
+            _.BreakIfDebug();
 
             return message;
         }
@@ -221,7 +220,7 @@ namespace Librainian.Logging {
 
         [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
-            System.Diagnostics.Debug.WriteLine( message );
+            System.Diagnostics.Debug.WriteLine( $"[{DateTime.Now:t}] {message}" );
             Logger.Debug( message );
 
             if ( breakinto && Debugger.IsAttached ) {
@@ -281,14 +280,14 @@ namespace Librainian.Logging {
                 throw new ArgumentNullException( nameof( rtb ), "No name given on this RichTextBox control." );
             }
 
-            if ( OurTargets.TryGetValue( rtb, out var toTarget ) ) {
+            if ( Targets.TryGetValue( rtb, out var toTarget ) ) {
                 return toTarget;
             }
 
             var controlName = rtb.Name.Trim();
 
             if ( LogManager.Configuration.FindTargetByName( controlName ) is RichTextBoxTarget target ) {
-                OurTargets[ rtb ] = target;
+                Targets[ rtb ] = target;
 
                 return target;
             }
@@ -319,7 +318,7 @@ namespace Librainian.Logging {
                 ToolWindow = true
             };
 
-            OurTargets[ rtb ] = target;
+            Targets[ rtb ] = target;
 
             return target;
         }

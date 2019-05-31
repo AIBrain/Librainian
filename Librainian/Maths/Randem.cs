@@ -44,7 +44,6 @@ namespace Librainian.Maths {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.Contracts;
     using System.Drawing;
     using System.Linq;
@@ -92,7 +91,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () => new Lazy<Random>( valueFactory: () => {
             var seed = DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode();
-            Debug.WriteLine( $"Init new Random() on thread {Thread.CurrentThread.ManagedThreadId:X} with seed {seed:X} on thread {Thread.CurrentThread.ManagedThreadId:X}." );
+            //Trace.WriteLine( $"Init new Random() on thread {Thread.CurrentThread.ManagedThreadId:X} with seed {seed:X} on thread {Thread.CurrentThread.ManagedThreadId:X}." );
 
             return new Random( seed );
         } ), trackAllValues: true );
@@ -993,15 +992,12 @@ namespace Librainian.Maths {
                 max = minValue;
             }
 
-            var range = ( max - min ).Ticks;
-            
-            var next = range * Instance().NextDouble();
-
             try {
-                var span = TimeSpan.FromTicks( ( Int64 ) next );
+                var range = ( max - min ).Ticks;
 
-                //TODO check for min and max int values. again. /sigh
-                return span;
+                var next = range * Instance().NextDouble();
+
+                return min + TimeSpan.FromTicks( ( Int64 ) next );
             }
             catch ( ArgumentOutOfRangeException exception ) {
                 exception.Log();

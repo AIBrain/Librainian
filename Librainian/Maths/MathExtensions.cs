@@ -998,7 +998,7 @@ namespace Librainian.Maths {
         public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
             number *= ( Decimal )Math.Pow( x: 10, y: decimalPlaces );
 
-            number = ( UInt64 )number; //Truncate, don't round. Just chop it off.
+            number = Math.Truncate( number ); //Truncate, don't round. Just chop it off.
 
             number *= ( Decimal )Math.Pow( x: 10, y: -decimalPlaces );
 

@@ -42,7 +42,7 @@
 namespace Librainian.Threading {
 
     using System;
-    using System.Collections.ObjectModel;
+    using System.Collections.Concurrent;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -71,8 +71,9 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="action"> </param>
-        void Add( [NotNull] Action action );
+        void Add( [NotNull] String name, [NotNull] Action action );
 
         Boolean Any();
 
@@ -92,13 +93,18 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="action"> </param>
-        public void Add( [NotNull] Action action ) {
+        public void Add( [NotNull] String name, [NotNull] Action action ) {
             if ( action == null ) {
                 throw new ArgumentNullException( paramName: nameof( action ) );
             }
 
-            Error.Trap( () => this.Jobs.Add( action ) );
+            if ( String.IsNullOrWhiteSpace( value: name ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            }
+
+            Error.Trap( () => this.Jobs.TryAdd( name, action ) );
         }
 
         public Boolean Any() => this.Jobs.Any();
@@ -117,14 +123,14 @@ namespace Librainian.Threading {
         private CancellationTokenSource CancellationTokenSource { get; }
 
         [NotNull]
-        private ObservableCollection<Action> Jobs { get; } = new ObservableCollection<Action>();
+        private ConcurrentDictionary<String, Action> Jobs { get; } = new ConcurrentDictionary<String, Action>();
 
         [NotNull]
         private ConcurrentHashset<Task> Runners { get; } = new ConcurrentHashset<Task>();
 
         public Idler( [NotNull] CancellationTokenSource cancelSource ) {
             this.CancellationTokenSource = cancelSource ?? throw new ArgumentNullException( nameof( cancelSource ) );
-            this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
+            //this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
             this.AddHandler();
         }
 
@@ -138,18 +144,21 @@ namespace Librainian.Threading {
                 return;
             }
 
-            var job = this.Jobs[ 0 ];
-            this.Jobs.RemoveAt( 0 );
+            var job = this.Jobs.Keys.FirstOrDefault();
+
+            if ( job == null || !this.Jobs.TryRemove( job, out var jack ) ) {
+                return;
+            }
 
             try {
-                "Idle(): Running next job...".Log();
-                job.Execute();
+                "Idle(): Running next job...".Trace();
+                jack.Execute();
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
             finally {
-                "Idle(): Done with job.".Log();
+                "Idle(): Done with job.".Trace();
             }
         }
 
