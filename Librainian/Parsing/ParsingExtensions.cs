@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/05/03 at 10:22 AM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/06/08 at 12:56 PM.
 
 namespace Librainian.Parsing {
 
@@ -190,6 +190,15 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [CanBeNull]
         public static String LimitAndTrim( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) ).TrimEnd();
+
+        [NotNull]
+        public static String Quote( [CanBeNull] this String self ) => $"'{self}'";
+
+        [NotNull]
+        public static String SingleQuote( [CanBeNull] this String self ) => $"'{self}'";
+
+        [NotNull]
+        public static String DoubleQuote( [CanBeNull] this String self ) => $"\"{self}\"";
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.

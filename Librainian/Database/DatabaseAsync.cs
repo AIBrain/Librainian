@@ -64,7 +64,7 @@ namespace Librainian.Database {
         internal ConcurrentHashset<SqlParameter> ParameterSet { get; } = new ConcurrentHashset<SqlParameter>();
 
         [CanBeNull]
-        public CancellationTokenSource ConnectCancelSource { get; set; }
+        public CancellationTokenSource ConnectCTS { get; set; }
 
         [CanBeNull]
         public SqlConnection Connection { get; set; }
@@ -75,7 +75,7 @@ namespace Librainian.Database {
         public String Sproc { get; set; }
 
         [CanBeNull]
-        public CancellationTokenSource ExecuteCancelSource { get; set; }
+        public CancellationTokenSource ExecuteCTS { get; set; }
 
         [NotNull]
         public String FullQualifiedSproc => $"{this.ConnectionBuilder.DataSource}.{this.Sproc}";
@@ -107,7 +107,7 @@ namespace Librainian.Database {
         public Task ConnectAsync() {
             this.Connection = new SqlConnection( this.ConnectionBuilder.ConnectionString );
 
-            return this.Connection.OpenAsync( this.ConnectCancelSource?.Token ?? CancellationToken.None );
+            return this.Connection.OpenAsync( this.ConnectCTS?.Token ?? CancellationToken.None );
         }
 
         /// <summary>

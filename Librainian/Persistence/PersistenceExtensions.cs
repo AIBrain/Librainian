@@ -136,15 +136,14 @@ namespace Librainian.Persistence {
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
-        public static JsonSerializerSettings Jss { get; } = new JsonSerializerSettings {
-
+        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
             //ContractResolver = new MyContractResolver(),
             TypeNameHandling = TypeNameHandling.Auto,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects
-        };
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
+        }, true );
 
         /// <summary>
         ///     Can the file be read from at this moment in time ?
@@ -382,7 +381,7 @@ namespace Librainian.Persistence {
         /// <param name="data"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TKey FromJSON<TKey>( [CanBeNull] this String data ) => String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss );
+        public static TKey FromJSON<TKey>( [CanBeNull] this String data ) => String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss.Value );
 
         /// <summary>
         ///     Deserialize from an IsolatedStorageFile.
@@ -1189,11 +1188,11 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     Return this object as a JSON string.
         /// </summary>
-        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="obj">       </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static String ToJSON<TKey>( this TKey obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss );
+        public static String ToJSON<T>( this T @obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( @obj, formatting, Jss.Value );
 
         /*
 

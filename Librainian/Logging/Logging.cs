@@ -54,6 +54,7 @@ namespace Librainian.Logging {
     using NLog.Layouts;
     using NLog.Targets;
     using NLog.Windows.Forms;
+    using Persistence;
 
     public static class Logging {
 
@@ -239,7 +240,7 @@ namespace Librainian.Logging {
         }
 
         [DebuggerStepThrough]
-        public static T Log<T>( this T message, Boolean breakinto = false ) {
+        public static T Log<T>( this T message, Boolean breakinto ) {
             Logger.Debug( message );
 
             if ( breakinto && Debugger.IsAttached ) {
@@ -247,6 +248,31 @@ namespace Librainian.Logging {
             }
 
             return message;
+        }
+
+        /// <summary>
+        /// Write <param name="object"></param> as JSON to the <see cref="Logger"/>.
+        /// <para>Append <paramref name="more"/> if it has text.</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="M"></typeparam>
+        /// <param name="object"></param>
+        /// <param name="more"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        public static T Log<T,M>( this T @object, [CanBeNull] M more ) {
+            if ( more == null ) {
+                Logger.Debug( $"{@object.ToJSON()}" );
+            }
+            else {
+                Logger.Debug( $"{@object.ToJSON()}; {more.ToJSON()}" );
+            }
+
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
+
+            return @object;
         }
 
         [DebuggerStepThrough]

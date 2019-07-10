@@ -50,7 +50,7 @@ namespace Librainian.Persistence {
     using Logging;
     using Microsoft.Win32;
 
-    public class AppRegistry {
+    public static class AppRegistry {
 
         /// <summary>
         ///     Registry key for the application.

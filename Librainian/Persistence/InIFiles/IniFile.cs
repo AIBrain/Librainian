@@ -203,6 +203,8 @@ namespace Librainian.Persistence.InIFiles {
                     foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
                         writer.WriteLine( Encode( pair ) );
                     }
+
+                    writer.WriteLine( String.Empty );
                 }
 
                 return true;

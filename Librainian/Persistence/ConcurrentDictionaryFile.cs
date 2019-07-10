@@ -72,7 +72,7 @@ namespace Librainian.Persistence {
             set => this._isReading = value;
         }
 
-        public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        public CancellationTokenSource MainCTS { get; } = new CancellationTokenSource();
 
         /// <summary>
         ///     disallow constructor without a document/filename
@@ -130,7 +130,7 @@ namespace Librainian.Persistence {
                 }
 
                 try {
-                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.CancellationTokenSource.Token ).ConfigureAwait( false );
+                    var data = await document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( this.MainCTS.Token ).ConfigureAwait( false );
 
                     if ( data != null ) {
                         var result = Parallel.ForEach( source: data.Keys.AsParallel(), body: key => this[ key ] = data[ key ] );

@@ -50,15 +50,17 @@ namespace Librainian.Database {
 	using System.Management;
 	using System.Media;
 	using System.Reflection;
+	using System.Threading.Tasks;
 	using JetBrains.Annotations;
-    using Librainian.Collections.Extensions;
-    using Logging;
+	using Librainian.Collections.Extensions;
+	using Logging;
 	using Maths;
+	using Misc;
 	using Parsing;
 	using static Persistence.Cache;
 	using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
-    public static class DatabaseExtensions {
+	public static class DatabaseExtensions {
 
 
 		/// <summary>
@@ -100,11 +102,11 @@ namespace Librainian.Database {
 		}
 
 		/// <summary>
-        ///     Cache the fields in this <paramref name="reader" /> for 1 minute.
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        [NotNull]
+		///     Cache the fields in this <paramref name="reader" /> for 1 minute.
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		[NotNull]
 		private static Fields GetDict( [NotNull] this IDataReader reader ) {
 			if ( reader == null ) {
 				throw new ArgumentNullException( paramName: nameof( reader ) );
@@ -114,7 +116,7 @@ namespace Librainian.Database {
 
 			if ( !( Recall( key ) is Fields fields ) ) {
 				fields = reader.GetFieldNames();
-				Remember( key, fields, Sliding.OneMinute );
+				Remember( key, fields, Sliding.Minutes(1) );
 			}
 
 			return fields;
@@ -156,7 +158,7 @@ namespace Librainian.Database {
 			}
 
 			//T item = new T();
-			var item = Activator.CreateInstance<T>();	//TODO use the faster creation function
+			var item = Activator.CreateInstance<T>();   //TODO use the faster creation function
 
 			foreach ( var property in properties ) {
 				property.SetValue( item, row[ property.Name ], null );
@@ -564,5 +566,81 @@ namespace Librainian.Database {
                     return stopwatch.Elapsed;
                 }
         */
+
+		public static Boolean SQLTimeout( this SqlException exception, TimeSpan? delayFor = null ) {
+			var message = exception.Message;
+
+			if ( message.Contains( "The server was not found or was not accessible" ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+        /// <summary>
+        /// Performs two selects on the database.
+        /// <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
+        /// </summary>
+        /// <param name="builderToTest"></param>
+        /// <returns></returns>
+        public static async Task<(FlowStatus status, SqlConnectionStringBuilder builder, String serverVersion, DateTime? serverUTCDateTime, TimeSpan responseTime)> TryConnectAndRespond(
+			[NotNull] this SqlConnectionStringBuilder builderToTest ) {
+			if ( builderToTest == default ) {
+				throw new ArgumentNullException( paramName: nameof( builderToTest ) );
+			}
+
+			try {
+				var version = await builderToTest.AdhocCommand<String>( "select @@VERSION;" ).ConfigureAwait( false );
+				var getdate = await builderToTest.AdhocCommand<DateTime>( "select SYSUTCDATETIME();" ).ConfigureAwait( false );
+
+				if ( version.status == FlowStatus.Success && getdate.status == FlowStatus.Success ) {
+					if ( !String.IsNullOrWhiteSpace( version.response ) ) {
+						var serverDateTime = getdate.response.ToUniversalTime();
+						var now = DateTime.UtcNow;
+
+						if ( serverDateTime.Date == now.Date && serverDateTime.Minute == now.Minute ) {
+							( $"Opened a connection to {builderToTest.DataSource}!" +
+							  $"{Environment.NewLine}Server Version:{version}" +
+							  $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
+
+							var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
+
+							return ( FlowStatus.Success, builder, version.response, serverDateTime, version.responseTime + getdate.responseTime );
+						}
+					}
+				}
+
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+
+            return (FlowStatus.Failure, default, default, default, TimeSpan.Zero);
+		}
+
+		public static async Task<(FlowStatus status, T response, TimeSpan responseTime)> AdhocCommand<T>(
+			[NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command ) {
+			if ( builderToTest == default ) {
+				throw new ArgumentNullException( paramName: nameof( builderToTest ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( value: command ) ) {
+				throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
+			}
+
+			var stopwatch = Stopwatch.StartNew();
+
+			try {
+				using ( var db = new Database( builderToTest.ConnectionString ) ) {
+					var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
+					return (FlowStatus.Success, result, stopwatch.Elapsed);
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+            return (FlowStatus.Failure, default, stopwatch.Elapsed);
+		}
+
 	}
 }
