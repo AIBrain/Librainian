@@ -241,10 +241,8 @@ namespace Librainian.Controls {
 			private const String STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
 
 			private static readonly String[] BUTTON_TEXTS_ENGLISH_EN = {
-				"OK", "Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
+				"&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
 			};
-
-			private readonly TwoLetterISOLanguageID languageID;
 
 			private Button _button1;
 
@@ -288,7 +286,7 @@ namespace Librainian.Controls {
 				this.InitializeComponent();
 
 				//Try to evaluate the language. If this fails, the fallback language English will be used
-				Enum.TryParse( CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out this.languageID );
+				Enum.TryParse( CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out TwoLetterISOLanguageID _ );
 
 				this.KeyPreview = true;
 				this.KeyUp += this.FlexibleMessageBoxForm_KeyUp;

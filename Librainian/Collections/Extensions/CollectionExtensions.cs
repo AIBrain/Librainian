@@ -634,11 +634,9 @@ namespace Librainian.Collections.Extensions {
         [Pure]
         public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
 
-        /// <summary>
-        /// </summary>
-        /// <typeparam name="TType"></typeparam>
-        /// <param name="current"></param>
-        /// <returns></returns>
+        [Pure]
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
+
         public static LinkedListNode<TType> NextOrFirst<TType>( [NotNull] this LinkedListNode<TType> current ) {
             if ( current == null ) {
                 throw new ArgumentNullException( nameof( current ) );

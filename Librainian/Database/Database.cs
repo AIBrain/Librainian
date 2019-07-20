@@ -621,11 +621,9 @@ namespace Librainian.Database {
             return builder;
         }
 
-        public static void StartAnySQLBrowers( TimeSpan searchTimeout ) {
-            FindAndStartSqlBrowserServices( new[] {
-                "TheServer"
+        public static void StartAnySQLBrowers( TimeSpan searchTimeout ) => FindAndStartSqlBrowserServices( new[] {
+                "TheServer" //TheServer is my development server's name. Feel free to remove or add your own.
             }, searchTimeout );
-        }
 
     }
 

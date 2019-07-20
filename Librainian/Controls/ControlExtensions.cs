@@ -91,9 +91,9 @@ namespace Librainian.Controls {
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
             blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-            var r = ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
-            var g = ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
-            var b = ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
+            var r = ( Byte ) ( (thisColor.R * blendToPercent) + (blendToColor.R * ( 1 - blendToPercent )) );
+            var g = ( Byte ) ( (thisColor.G * blendToPercent) + (blendToColor.G * ( 1 - blendToPercent )) );
+            var b = ( Byte ) ( (thisColor.B * blendToPercent) + (blendToColor.B * ( 1 - blendToPercent )) );
 
             return Color.FromArgb( r, g, b );
         }
@@ -168,7 +168,7 @@ namespace Librainian.Controls {
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
             // Counting the perceptive luminance - human eye favors green color...
-            var a = 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) / 255;
+            var a = 1 - (( (0.299 * thisColor.R) + (0.587 * thisColor.G) + (0.114 * thisColor.B) ) / 255);
 
             return a < 0.5 ? darkForeColor : lightForeColor;
         }
@@ -398,9 +398,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
+            transparentPercent = 255 - (transparentPercent.ForceBounds( 0, 1 ) * 255);
 
-            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
+            return Color.FromArgb( thisColor.ToArgb() + (( Int32 ) transparentPercent * 0x1000000) );
         }
 
         [NotNull]

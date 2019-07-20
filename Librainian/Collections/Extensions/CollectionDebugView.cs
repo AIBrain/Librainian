@@ -47,9 +47,11 @@ namespace Librainian.Collections.Extensions {
     using JetBrains.Annotations;
 
     /// <summary>
+    /// "Make the debugger show the contents of your custom IList class"
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <remarks>http://www.codeproject.com/Articles/28405/Make-the-debugger-show-the-contents-of-your-custom</remarks>
+    /// <remarks>var list = new List&lt;T&gt;(collection);</remarks>
     public class CollectionDebugView<T> {
 
         private ICollection<T> Collection { get; }
