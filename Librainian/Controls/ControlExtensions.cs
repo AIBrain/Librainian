@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/04/28 at 9:49 AM.
+// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/07/20 at 11:01 AM.
 
 namespace Librainian.Controls {
 
@@ -51,14 +51,11 @@ namespace Librainian.Controls {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Logging;
     using Maths;
     using Measurement.Time;
-    using Microsoft.Win32;
     using Parsing;
-    using Persistence;
-    using Persistence.InIFiles;
     using Threading;
+    using Timer = System.Timers.Timer;
 
     public static class ControlExtensions {
 
@@ -94,9 +91,9 @@ namespace Librainian.Controls {
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
             blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-            var r = ( Byte ) ( (thisColor.R * blendToPercent) + (blendToColor.R * ( 1 - blendToPercent )) );
-            var g = ( Byte ) ( (thisColor.G * blendToPercent) + (blendToColor.G * ( 1 - blendToPercent )) );
-            var b = ( Byte ) ( (thisColor.B * blendToPercent) + (blendToColor.B * ( 1 - blendToPercent )) );
+            var r = ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * ( 1 - blendToPercent ) );
+            var g = ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * ( 1 - blendToPercent ) );
+            var b = ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * ( 1 - blendToPercent ) );
 
             return Color.FromArgb( r, g, b );
         }
@@ -171,7 +168,7 @@ namespace Librainian.Controls {
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
             // Counting the perceptive luminance - human eye favors green color...
-            var a = 1 - (( (0.299 * thisColor.R) + (0.587 * thisColor.G) + (0.114 * thisColor.B) ) / 255);
+            var a = 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) / 255;
 
             return a < 0.5 ? darkForeColor : lightForeColor;
         }
@@ -240,7 +237,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
-        public static void Flash( [NotNull] this Control control, [NotNull] TimeSpan? spanOff = null ) {
+        public static void Flash( [NotNull] this Control control, TimeSpan? spanOff = null ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
@@ -385,153 +382,8 @@ namespace Librainian.Controls {
         }
 
         [NotNull]
-        public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [NotNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke =>
-            invokable.Invoke( function, arguments ) as T;
-
-
-        /// <summary>
-        ///     <seealso cref="SaveSize(Form)" />
-        /// </summary>
-        /// <param name="form"></param>
-        public static void LoadSize( [NotNull] this Form form ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( AppRegistry.TheApplication == null ) {
-                throw new InvalidOperationException( "Application registry not set up." );
-            }
-
-            $"Loading form {form.Name} position from registry.".Log();
-
-            var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
-            var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
-
-            if ( width.HasValue && height.HasValue ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Size( new Size( width.Value, height.Value ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
-
-        public static void LoadLocation( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( Int32.TryParse( settings[ name, nameof( Point.X ) ], out var x ) && Int32.TryParse( settings[ name, nameof( Point.Y ) ], out var y ) ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Location( new Point( x, y ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
-
-        public static void LoadSize( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) &&
-                 Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Size( new Size( width, height ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
-
-        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var key = Cache.BuildKey( name, nameof( form.Location ) );
-            var point = settings[ key ].Deserialize<Point>();
-
-            if ( point.X != 0 || point.Y != 0 ) {
-                form.Location( point );
-            }
-
-            key = Cache.BuildKey( name, nameof( form.Size ) );
-            var size = settings[ key ].Deserialize<Size>();
-
-            if ( size.Height != 0 || size.Width != 0 ) {
-                form.Size( size );
-            }
-        }
-
-        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var key = Cache.BuildKey( name, nameof( form.Location ) );
-            var point = settings[ key ].Deserialize<Point>();
-
-            if ( point.X != 0 || point.Y != 0 ) {
-                form.Location( point );
-            }
-
-            key = Cache.BuildKey( name, nameof( form.Size ) );
-            var size = settings[ key ].Deserialize<Size>();
-
-            if ( size.Height != 0 || size.Width != 0 ) {
-                form.Size( size );
-            }
-        }
-
-        /// <summary>
-        ///     Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.
-        /// </summary>
-        /// <remarks></remarks>
-        public static void Location( [NotNull] this Form form, Point location ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
-            }
-
-            form.InvokeAction( () => {
-                form.SuspendLayout();
-                form.Location = location;
-                form.ResumeLayout();
-            } );
-        }
+        public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [CanBeNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke =>
+            ( T ) invokable.Invoke( function, arguments );
 
         public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
             darknessPercent = darknessPercent.ForceBounds( 0, 1 );
@@ -546,9 +398,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - (transparentPercent.ForceBounds( 0, 1 ) * 255);
+            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-            return Color.FromArgb( thisColor.ToArgb() + (( Int32 ) transparentPercent * 0x1000000) );
+            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
         }
 
         [NotNull]
@@ -664,7 +516,7 @@ namespace Librainian.Controls {
         /// <param name="afterDelay"></param>
         /// <returns></returns>
         [NotNull]
-        public static System.Timers.Timer Push( [NotNull] this Button control, TimeSpan? delay = null, [NotNull] Action afterDelay = null ) {
+        public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, [CanBeNull] Action afterDelay = null ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
@@ -728,178 +580,6 @@ namespace Librainian.Controls {
         }
 
         /// <summary>
-        ///     <seealso cref="LoadLocation" />
-        /// </summary>
-        /// <param name="form"></param>
-        public static void SaveLocation( [NotNull] this Form form ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( AppRegistry.TheApplication == null ) {
-                throw new InvalidOperationException( "Application registry not set up." );
-            }
-
-            $"Saving form {form.Name} position to registry.".Log();
-
-            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.X ),
-                form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.Location.X, RegistryValueKind.DWord );
-
-            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
-                form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Location.Y, RegistryValueKind.DWord );
-        }
-
-        /// <summary>
-        ///     <seealso cref="LoadSize(Form)" />
-        /// </summary>
-        /// <param name="form"></param>
-        public static void SaveSize( [NotNull] this Form form ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( AppRegistry.TheApplication == null ) {
-                throw new InvalidOperationException( "Application registry not set up." );
-            }
-
-            $"Saving form {form.Name} position to registry.".Log();
-
-            AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
-                form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
-
-            AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
-                form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            settings[ name, nameof( form.Location.X ) ] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
-            settings[ name, nameof( form.Location.Y ) ] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            settings[ name, nameof( form.Size.Width ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
-
-            settings[ name, nameof( form.Size.Height ) ] =
-                form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ nameof( form.Location ), Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ nameof( form.Size ), Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
-
-        /// <summary>
         ///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
         /// </summary>
         /// <param name="control"></param>
@@ -908,39 +588,6 @@ namespace Librainian.Controls {
         /// <param name="maximum"></param>
         /// <see cref="Values" />
         public static void Set( [NotNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value, maximum: maximum );
-
-        /// <summary>
-        ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
-        /// </summary>
-        /// <param name="form"></param>
-        /// <returns></returns>
-        public static Size Size( [NotNull] this Form form ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
-            }
-
-            return form.InvokeRequired ? ( Size ) form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
-        }
-
-        /// <summary>
-        ///     Safely set the <see cref="Control.Text" /> of a control across threads.
-        /// </summary>
-        /// <remarks></remarks>
-        public static void Size( [NotNull] this Form form, Size size ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
-            }
-
-            form.InvokeAction( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
-
-                form.SuspendLayout();
-                form.Size = size;
-                form.ResumeLayout();
-            } );
-        }
 
         /// <summary>
         ///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
