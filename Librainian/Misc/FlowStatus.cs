@@ -42,21 +42,30 @@ namespace Librainian.Misc {
 
     using System;
 
+    [Flags]
     public enum FlowStatus : SByte {
 
-        DoNotGo = Failure,
+        NoGo = -0b100,
 
-        Failure = -1,
+        Failure = -0b10,
 
-        Unknown = 0,
+        Unknown = -0b1,
 
-        NotSet = Unknown,
+        NotSet = 0b0,
 
-        Success = 1,
+        Success = 0b1,
 
-        Proceed = Success,
+        Proceed = 0b10,
 
-        Go = Success
+        Go = 0b100
+    }
+
+    public static class FlowStatusExtensions {
+
+        public static Boolean IsGood( this FlowStatus status ) => status >= FlowStatus.Success;
+        public static Boolean IsUnknown( this FlowStatus status ) => status == FlowStatus.Unknown;
+        public static Boolean IsBad( this FlowStatus status ) => status <= FlowStatus.Failure;
+
     }
 
 }
