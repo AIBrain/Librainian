@@ -158,6 +158,7 @@
     <Compile Include="Collections\StringTable.cs" />
     <Compile Include="ComputerSystem\ConsoleWindow.cs" />
     <Compile Include="Controls\ConsoleWindow.cs" />
+    <Compile Include="Controls\FormExtensions.cs" />
     <Compile Include="Database\DatabaseAsync.cs" />
     <Compile Include="Database\MMF\Class1.cs" />
     <Compile Include="Database\Text.cs" />
@@ -892,7 +893,7 @@
       <Version>2019.1.3</Version>
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD.Parallel">
-      <Version>1.0.1</Version>
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>
