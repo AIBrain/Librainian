@@ -44,6 +44,7 @@ namespace Librainian.Database {
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
+	using System.Data.Sql;
 	using System.Data.SqlClient;
 	using System.Diagnostics;
 	using System.Linq;
@@ -51,6 +52,7 @@ namespace Librainian.Database {
 	using System.Media;
 	using System.Reflection;
 	using System.Threading.Tasks;
+	using Internet;
 	using JetBrains.Annotations;
 	using Librainian.Collections.Extensions;
 	using Logging;
@@ -640,6 +642,17 @@ namespace Librainian.Database {
 				exception.Log();
 			}
             return (FlowStatus.Failure, default, stopwatch.Elapsed);
+		}
+
+		[NotNull]
+		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( this TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
+
+			foreach ( DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows ) {
+				var serverName = row[ "ServerName" ].ToString();
+				var instanceName = row[ "InstanceName" ].ToString();
+
+				yield return Database.OurConnectionStringBuilder( serverName, instanceName, connectTimeout: connectTimeout, credentials );
+			}
 		}
 
 	}
