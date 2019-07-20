@@ -51,10 +51,8 @@ namespace Librainian.Database {
     using System.Linq;
     using System.Net;
     using System.ServiceProcess;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using Collections.Extensions;
     using Collections.Sets;
     using Extensions;
     using Internet;
@@ -408,6 +406,10 @@ namespace Librainian.Database {
 
                         var result = await command.ExecuteScalarAsync().ConfigureAwait( false );
 
+                        if ( result == null ) {
+                            return default;
+                        }
+
                         if ( result == DBNull.Value ) {
                             return default;
                         }
@@ -527,76 +529,49 @@ namespace Librainian.Database {
             return false;
         }
 
-        [ItemNotNull]
-        public static async Task<ConcurrentDictionary<String, ServiceControllerStatus>> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines,
+        [NotNull]
+        public static ConcurrentDictionary<String, ServiceControllerStatus> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines,
             TimeSpan timeout ) {
-            var service = new ServiceController {
-                ServiceName = "SQLBrowser"
+
+            "Searching for any database servers...".Log();
+
+            var machines = new ConcurrentHashset<String>( activeMachines );
+
+            var common = new[] {
+                "127.0.0.1", Dns.GetHostName()
             };
 
-            var machines = activeMachines.ToList();
-
-            var thisMachine = Dns.GetHostName();
-
-            if ( !machines.Contains( thisMachine ) ) {
-                machines.Add( thisMachine );
+            foreach ( var s in common ) {
+                machines.Add( s );
             }
 
             var status = new ConcurrentDictionary<String, ServiceControllerStatus>();
 
-            await Task.Run( () => {
-                Parallel.ForEach( machines, machine => {
+            Parallel.ForEach( machines.AsParallel(), machine => {
+                try {
+                    $"Searching for database server {machine}...".Log();
+
+                    var stopwatch = Stopwatch.StartNew();
 
                     try {
-                        var stopwatch = Stopwatch.StartNew();
+                        var service = new ServiceController {
+                            ServiceName = "SQLBrowser", MachineName = machine
+                        };
 
-                        service.MachineName = machine;
-
-                        try {
-                            if ( service.Status.In( ServiceControllerStatus.Running ) ) {
-                                /*do nothing*/
-                            }
-
-                            if ( service.Status.In( ServiceControllerStatus.ContinuePending ) ) {
-                                do {
-                                    Thread.Yield();
-                                } while ( service.Status.In( ServiceControllerStatus.ContinuePending ) && stopwatch.Elapsed < timeout );
-                            }
-
-                            if ( service.Status.In( ServiceControllerStatus.Paused ) ) {
-                                service.Continue();
-
-                                do {
-                                    Thread.Yield();
-                                } while ( service.Status.In( ServiceControllerStatus.Paused ) && stopwatch.Elapsed < timeout );
-                            }
-
-                            if ( service.Status.In( ServiceControllerStatus.PausePending, ServiceControllerStatus.Stopped, ServiceControllerStatus.StopPending ) ) {
-                                service.Start();
-
-                                do {
-                                    Thread.Yield();
-                                } while ( service.Status.In( ServiceControllerStatus.PausePending, ServiceControllerStatus.Stopped, ServiceControllerStatus.StopPending ) &&
-                                          stopwatch.Elapsed < timeout );
-                            }
-
-                            if ( service.Status.In( ServiceControllerStatus.StartPending ) ) {
-                                do {
-                                    Thread.Yield();
-                                } while ( service.Status.In( ServiceControllerStatus.StartPending ) && stopwatch.Elapsed < timeout );
-                            }
-
-                            status[ machine ] = service.Status;
+                        if ( service.Status != ServiceControllerStatus.Running ) {
+                            service.Start();
                         }
-                        catch ( InvalidOperationException exception ) {
-                            exception.Log();
-                        }
+                        service.WaitForStatus( ServiceControllerStatus.Running, timeout );
+                        status[ machine ] = service.Status;
                     }
-                    catch ( Exception e ) {
-                        Debug.WriteLine( e.Message );
+                    catch ( InvalidOperationException exception ) {
+                        exception.Log();
                     }
-                } );
-            } ).ConfigureAwait( false );
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            } );
 
             return status;
         }
@@ -646,12 +621,10 @@ namespace Librainian.Database {
             return builder;
         }
 
-        public static async Task StartAnySQLBrowers( TimeSpan searchTimeout ) {
-            "Searching for any database servers...".Log();
-
-            await FindAndStartSqlBrowserServices( new[] {
-                Dns.GetHostName()
-            }, searchTimeout ).ConfigureAwait( false );
+        public static void StartAnySQLBrowers( TimeSpan searchTimeout ) {
+            FindAndStartSqlBrowserServices( new[] {
+                "TheServer"
+            }, searchTimeout );
         }
 
     }
