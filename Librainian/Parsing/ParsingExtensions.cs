@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/06/08 at 12:56 PM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/07/14 at 1:17 PM.
 
 namespace Librainian.Parsing {
 
@@ -57,6 +57,7 @@ namespace Librainian.Parsing {
     using System.Threading;
     using System.Xml;
     using Collections.Extensions;
+    using Exceptions;
     using Extensions;
     using JetBrains.Annotations;
     using Linguistics;
@@ -196,6 +197,28 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static String SingleQuote( [CanBeNull] this String self ) => $"'{self}'";
+
+        [NotNull]
+        public static String Bracket( [CanBeNull] this String identifier ) =>
+            $"[{identifier.Trimmed() ?? throw new ArgumentEmptyException( $"Empty {nameof( identifier )}" )}]";
+
+        /// <summary>
+        ///     Trim the ToString(), possibly returning null if all null, empty, or whitespace.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static String Trimmed<T>( [CanBeNull] this T self ) {
+            if ( self is null ) {
+                return default;
+            }
+
+            if ( self is String s ) {
+                return s.Trim().NullIfEmpty();
+            }
+
+            return self.ToString().Trim();
+        }
 
         [NotNull]
         public static String DoubleQuote( [CanBeNull] this String self ) => $"\"{self}\"";
@@ -899,26 +922,41 @@ namespace Librainian.Parsing {
             return 0;
         }
 
+        /// <summary>
+        ///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
         [Pure]
         [CanBeNull]
-        public static String NullIfBlank( [CanBeNull] this String theString ) {
-            if ( String.IsNullOrWhiteSpace( theString ) ) {
+        public static String NullIfBlank( [CanBeNull] this String self ) {
+            if ( String.IsNullOrWhiteSpace( self ) ) {
                 return null;
             }
 
-            theString = theString.Trim();
+            self = self.Trim();
 
-            return String.IsNullOrWhiteSpace( theString ) ? null : theString;
+            return String.IsNullOrEmpty( self ) ? default : self;
         }
 
+        /// <summary>
+        ///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrEmpty" />.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
         [CanBeNull]
-        public static String NullIfEmpty( [CanBeNull] this String value ) => String.IsNullOrEmpty( value ) ? null : value;
+        public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? default : self;
+
+        /// <summary>
+        ///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static String NullIfEmptyOrWhiteSpace( [CanBeNull] this String self ) => String.IsNullOrWhiteSpace( self ) ? null : self;
 
         [CanBeNull]
-        public static String NullIfEmptyOrWhiteSpace( [CanBeNull] this String value ) => String.IsNullOrWhiteSpace( value ) ? null : value;
-
-        [CanBeNull]
-        public static String NullIfJustNumbers( [CanBeNull] this String value ) => value.IsJustNumbers() ? null : value;
+        public static String NullIfJustNumbers( [CanBeNull] this String self ) => self.IsJustNumbers() ? null : self;
 
         public static Int32 NumberOfDigits( this BigInteger number ) => ( number * number.Sign ).ToString().Length;
 
@@ -1237,7 +1275,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( (@this.Length * repetitions) + (separator.Length * ( repetitions - 1 )) );
+            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1532,7 +1570,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
+            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
             if ( stopwatch.Elapsed > timeout ) {
 
