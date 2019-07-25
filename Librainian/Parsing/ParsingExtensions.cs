@@ -209,7 +209,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [CanBeNull]
         public static String Trimmed<T>( [CanBeNull] this T self ) {
-            if ( self is null ) {
+            if ( self == null ) {
                 return default;
             }
 
