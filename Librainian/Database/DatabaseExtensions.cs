@@ -647,7 +647,7 @@ namespace Librainian.Database {
 		}
 
 		[NotNull]
-		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( this TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
+		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
 
 			foreach ( DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows ) {
 				var serverName = row[ "ServerName" ].Trimmed();
