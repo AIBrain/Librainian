@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/01/29 at 10:48 PM.
+// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/07/30 at 5:15 PM.
 
 namespace Librainian.Graphics {
 
@@ -54,6 +54,7 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
+    using Converters;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
@@ -1080,12 +1081,9 @@ namespace Librainian.Graphics {
 
                 if ( bestGuesses.Any() ) {
 #if DEBUG
-                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
-                        "".Break();
-                    }
-
-                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
-                        "".Break();
+                    var first4 = justName.Left( 4 ).ToIntOrNull();
+                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
+                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
                     }
 #endif
 
@@ -1105,7 +1103,7 @@ namespace Librainian.Graphics {
                         mostlyDigits.Append( c );
                     }
                     else {
-                        mostlyDigits.Append( ParsingExtensions.Singlespace );
+                        mostlyDigits.Append( ParsingConstants.Singlespace );
                     }
                 }
 
@@ -1250,6 +1248,7 @@ namespace Librainian.Graphics {
             }
 
             try {
+
                 //if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
 
                 using ( Image.FromFile( file.FullName ) ) {

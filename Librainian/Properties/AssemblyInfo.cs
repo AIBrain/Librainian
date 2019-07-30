@@ -48,7 +48,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "Librainian" )]
 [assembly: AssemblyDescription( "AIBrain's Librainian library that I will use in my projects." )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Protiguous.com" )]
+[assembly: AssemblyCompany( "Protiguous" )]
 [assembly: AssemblyProduct( "Librainian" )]
 [assembly: AssemblyCopyright( "Copyright © AIBrain, Protiguous" )]
 [assembly: AssemblyTrademark( "Librainian" )]

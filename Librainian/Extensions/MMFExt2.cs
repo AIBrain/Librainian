@@ -46,7 +46,7 @@ namespace Librainian.Extensions {
 	using System.IO.MemoryMappedFiles;
 	using JetBrains.Annotations;
 
-	public class MmfExt2 {
+	public static class MmfExt2 {
 
 		public static Boolean Resize( [NotNull] FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
 			source.Refresh();

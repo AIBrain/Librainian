@@ -123,7 +123,7 @@ namespace Librainian.Speech {
         public void OnRecognizeSentence( Action<String> action ) =>
             this.RecognitionEngine.Value.SpeechRecognized += ( s, args ) => {
                 var words = args.Result.Words.Select( unit => unit.Text );
-                var sentence = words.ToStrings( ParsingExtensions.Singlespace, "." );
+                var sentence = words.ToStrings( ParsingConstants.Singlespace, "." );
                 action( sentence );
             };
 

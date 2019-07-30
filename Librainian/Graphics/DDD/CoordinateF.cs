@@ -39,6 +39,8 @@
 //
 // Project: "Librainian", "CoordinateF.cs" was last formatted by Protiguous on 2018/07/10 at 9:06 PM.
 
+#pragma warning disable RCS1138 // Add summary to documentation comment.
+
 namespace Librainian.Graphics.DDD
 {
 

@@ -47,16 +47,14 @@ namespace Librainian.Collections.Extensions {
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Tasks;
-    using Converters;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
     using Maths;
     using Threading;
 
     public static class Shufflings {
 
+        /*
         /// <summary>
         ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
         /// </summary>
@@ -126,6 +124,58 @@ namespace Librainian.Collections.Extensions {
                 newArray.CopyTo( array: array, index: 0 );
             }
         }
+        */
+
+        public static void ShuffleByGuid<T>( ref List<T> list, Int32 iterations = 1 ) {
+            var l = new List<T>( list.Count );
+            while ( iterations.Any() ) {
+                iterations--;
+                l.Clear();
+                l.AddRange( list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).AsUnordered() );
+                //TODO this is not finished
+            }
+        }
+
+        /// <summary>
+        /// Take a buffer and scramble.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
+        public static void Shuffle<T>( [NotNull] this T[] buffer ) {
+            if ( buffer == null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
+            }
+            var length = buffer.Length;
+
+            for ( var i = length - 1; i >= 0; i-- ) {
+                var a = 0.Next( length );
+                var b = 0.Next( length );
+                var (v1, v2) = (buffer[ a ], buffer[ b ]);
+                buffer[ a ] = v2;
+                buffer[ b ] = v1;
+            }
+        }
+
+        /// <summary>
+        /// Take a list and scramble the order of its items.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
+        public static void Shuffle<T>( [NotNull] this IList<T> list ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+            var length = list.Count;
+
+            for ( var i = length - 1; i >= 0; i-- ) {
+                var a = 0.Next( length );
+                var b = 0.Next( length );
+                var (v1, v2) = (list[ a ], list[ b ]);
+                list[ a ] = v2;
+                list[ b ] = v1;
+            }
+        }
+
 
         /// <summary>
         ///     <para>Shuffle a list in <paramref name="iterations" />.</para>
@@ -154,7 +204,7 @@ namespace Librainian.Collections.Extensions {
 
                 switch ( shufflingType ) {
                     case ShufflingType.ByGuid: {
-                            CollectionExtensions.ShuffleByGuid( list: ref list, iterations: iterations );
+                            ShuffleByGuid( list: ref list, iterations: iterations );
 
                             break;
                         }
@@ -254,70 +304,12 @@ namespace Librainian.Collections.Extensions {
                 started = Stopwatch.StartNew(); //don't allocate/start a stopwatch unless we're waiting for time to pass.
             }
 
-            var itemCount = list.Count;
-
-            var left = new TranslateBytesToInt32 {
-                Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
-            };
-
-            var right = new TranslateBytesToInt32 {
-                Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
-            };
-
-            Func<ReaderWriterLockSlim> rwCreator = Instantiator<ReaderWriterLockSlim>.New;
-
-            var leftTracker = new ReaderWriterLockSlim[ itemCount ];
-
-            for ( var i = 0; i < leftTracker.Length; i++ ) {
-
-                //leftTracker[ i ] = new ReaderWriterLockSlim();	//how costly will this be?
-                //leftTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
-                leftTracker[ i ] = rwCreator.Invoke(); //how costly will this be?
-            }
-
-            var rightTracker = new ReaderWriterLockSlim[ itemCount ];
-
-            for ( var i = 0; i < rightTracker.Length; i++ ) {
-
-                //rightTracker[ i ] = new ReaderWriterLockSlim();					//how costly will this be?
-                //rightTracker[ i ] = Instantiator<ReaderWriterLockSlim>.New();		//how costly will this be?
-                rightTracker[ i ] = rwCreator.Invoke(); //how costly will this be?
-            }
-
             if ( !token.HasValue ) {
                 token = CancellationToken.None;
             }
 
-            var parallelOptions = new ParallelOptions {
-                CancellationToken = token.Value,
-                MaxDegreeOfParallelism = Environment.ProcessorCount - 1
-            };
-
             do {
-                Randem.Instance().NextBytes( left.Bytes ); //fill the left buffer with random numbers
-                Randem.Instance().NextBytes( right.Bytes ); //fill the right buffer with random numbers
-
-                //I don't know how well the list will handle this Parallel.For. It *really* needs tested. I don't want any values lost..
-                //and.. if we're locking, then is there *any* benefit to using Parallel.For?
-                Parallel.For( 0, itemCount, parallelOptions, index => {
-
-                    //so.. how badly will this fail?
-
-                    if ( leftTracker[ index ].TryEnterWriteLock( 0 ) && rightTracker[ index ].TryEnterWriteLock( 0 ) ) {
-                        try {
-                            var indexA = left.Ints[ index ];
-                            var indexB = right.Ints[ index ];
-
-                            var vt = (va: list[ indexA ], vb: list[ indexB ]); //is this any more clever/performant than Swap(A,B)?
-                            list[ indexA ] = vt.vb;
-                            list[ indexB ] = vt.va;
-                        }
-                        finally {
-                            rightTracker[ index ].ExitWriteLock();
-                            leftTracker[ index ].ExitWriteLock();
-                        }
-                    }
-                } );
+                list.Shuffle();
 
                 --iterations;
 
@@ -326,19 +318,17 @@ namespace Librainian.Collections.Extensions {
                 }
 
                 if ( forHowLong.HasValue ) {
-                    iterations++; //we're waiting for time. reincrement the counter.
-
                     if ( started.Elapsed > forHowLong.Value ) {
                         return;
                     }
+
+                    iterations++; //we're waiting for time. reincrement the counter.
+
+                    continue;
                 }
 
                 if ( orUntilCancelled != null ) {
                     iterations++; //we're waiting for a cancellation. reincrement the counter.
-
-                    if ( orUntilCancelled.HaveAnyCancellationsBeenRequested() ) {
-                        return;
-                    }
                 }
             } while ( iterations.Any() );
         }

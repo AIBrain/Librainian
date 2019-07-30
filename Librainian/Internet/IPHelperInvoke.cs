@@ -47,7 +47,7 @@ namespace Librainian.Internet {
 	/// <summary>
 	///     http://pastebin.com/u9159Ys8
 	/// </summary>
-	public class IPHelperInvoke {
+	public static class IPHelperInvoke {
 
 		public const Int32 ErrorBufferOverflow = 111;
 

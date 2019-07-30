@@ -60,7 +60,7 @@ namespace Librainian.Security {
 	/// <summary>
 	///     Random Password Generator, see http://www.multicians.org/thvv/gpw.html
 	/// </summary>
-	public class PronounceablePasswordCreator {
+	public static class PronounceablePasswordCreator {
 
 		[NotNull]
 		public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz";

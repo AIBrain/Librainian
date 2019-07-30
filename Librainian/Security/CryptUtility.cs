@@ -51,7 +51,7 @@ namespace Librainian.Security {
     using Graphics.Video;
     using JetBrains.Annotations;
 
-    public class CryptUtility {
+    public static class CryptUtility {
 
         //TODO use the real temp filename
         private const String TempFileName = "picturekey_temp.bmp";

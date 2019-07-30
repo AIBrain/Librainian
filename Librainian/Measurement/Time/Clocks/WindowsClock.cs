@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	/// <summary>
 	///     Pulled from BenchmarkDotNet.Horology
 	/// </summary>
-	public class WindowsClock {
+	public static class WindowsClock {
 
 		public static Int64 Frequency { get; }
 

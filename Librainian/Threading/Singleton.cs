@@ -51,7 +51,7 @@ namespace Librainian.Threading {
 
 		private Singleton() { }
 
-		public class SingletonCreator {
+		public static class SingletonCreator {
 
 			internal static T SingleInstance { get; } = new T();
 

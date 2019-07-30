@@ -52,7 +52,7 @@ namespace Librainian.Persistence
     using Logging;
 
     [Obsolete("Container for obsolete Persistence classes.")]
-    public class ObsoletePersistenceClasses
+    public static class ObsoletePersistenceClasses
     {
 
         /// <summary>

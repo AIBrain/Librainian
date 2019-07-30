@@ -45,7 +45,7 @@ namespace Librainian.Maths {
 	using System.Collections.Generic;
 	using System.Linq;
 
-	public class PrimeNumbers {
+	public static class PrimeNumbers {
 
 		public static readonly HashSet<Int32> MemoizedPrimes = new HashSet<Int32>();
 

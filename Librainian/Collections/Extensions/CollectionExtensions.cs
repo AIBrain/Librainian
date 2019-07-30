@@ -855,15 +855,6 @@ namespace Librainian.Collections.Extensions {
             }
         }
 
-        public static void ShuffleByGuid<T>( ref List<T> list, Int32 iterations = 1 ) {
-            while ( iterations.Any() ) {
-                iterations--;
-                var copy = list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).ToList();
-                list.Clear();
-                list.AddRange( collection: copy.AsParallel() );
-            }
-        }
-
         public static IEnumerable<T> SideEffects<T>( [NotNull] this IEnumerable<T> items, [CanBeNull] Action<T> perfomAction ) {
             if ( items == null ) {
                 throw new ArgumentNullException( nameof( items ) );

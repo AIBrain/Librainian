@@ -1323,7 +1323,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         }
                     }
 
-                    thisComputer.FileSystem.MoveFile( sourceFileName: this.FullPath, destinationFileName: destination.FullPath, showUI: UIOption.AllDialogs,
+                    thisComputer.FileSystem.MoveFile( sourceFileName: this.FullPath, destinationFileName: destination.FullPath, showUI: UIOption.OnlyErrorDialogs,
                         onUserCancel: UICancelOption.DoNothing );
 
                     if ( exact ) {

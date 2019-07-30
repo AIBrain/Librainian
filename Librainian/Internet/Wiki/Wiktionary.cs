@@ -46,7 +46,7 @@ namespace Librainian.Internet.Wiki {
 	using JetBrains.Annotations;
 	using Parsing;
 
-	public class Wiktionary {
+	public static class Wiktionary {
 
 		private static DateTime _lastWikiResponse = DateTime.MinValue;
 

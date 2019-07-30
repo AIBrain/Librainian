@@ -50,7 +50,7 @@ namespace Librainian.Internet.Wiki {
 	using Logging;
 	using Parsing;
 
-	public class WikiPedia {
+	public static class WikiPedia {
 
 		[NotNull]
 		private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();

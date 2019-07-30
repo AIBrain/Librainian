@@ -53,7 +53,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 	///     defrag stuff
 	/// </summary>
 	/// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
-	public class IOWrapper {
+	public static class IOWrapper {
 
         private const UInt32 ErrorInsufficientBuffer = 122;
 

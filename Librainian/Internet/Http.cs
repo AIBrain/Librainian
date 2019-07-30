@@ -54,7 +54,7 @@ namespace Librainian.Internet {
 	/// <summary>
 	/// TODO this class really needs an update to use WebClient
 	/// </summary>
-	public class Http {
+	public static class Http {
 
 		private static readonly Object Synch = new Object();
 

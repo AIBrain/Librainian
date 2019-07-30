@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/07/14 at 1:17 PM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/07/30 at 5:01 PM.
 
 namespace Librainian.Parsing {
 
@@ -72,17 +72,6 @@ namespace Librainian.Parsing {
 
     public static class ParsingExtensions {
 
-        public static Lazy<String> AllLetters { get; } = new Lazy<String>( () =>
-            new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ).Distinct().OrderBy( c => c ).ToArray() ) );
-
-        public static String[] Consonants { get; } = "B,C,CH,CL,D,F,FF,G,GH,GL,J,K,L,LL,M,MN,N,P,PH,PS,R,RH,S,SC,SH,SK,ST,T,TH,V,W,X,Y,Z".Split( ',' );
-
-        [NotNull]
-        public static String EnglishAlphabetUppercase { get; } = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToUpper();
-
-        [NotNull]
-        public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz".ToLower();
-
         [NotNull]
         public static Lazy<PluralizationService> LazyPluralizationService { get; } =
             new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
@@ -106,62 +95,9 @@ namespace Librainian.Parsing {
 
         public static Regex RegexJustDigits { get; } = new Regex( @"\D+", RegexOptions.Compiled );
 
-        public static Char[] SpaceSplitBy { get; } = {
-            Singlespace[ 0 ]
+        public static Char[] SplitBySpace { get; } = {
+            ParsingConstants.Singlespace[ 0 ]
         };
-
-        /// <summary>
-        /// </summary>
-        public static String[] TensMap { get; } = {
-            "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
-        };
-
-        /// <summary>
-        /// </summary>
-        public static String[] UnitsMap { get; } = {
-            "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
-            "seventeen", "eighteen", "nineteen"
-        };
-
-        /// <summary>
-        ///     The set of characters that are unreserved in RFC 2396 but are NOT unreserved in RFC 3986.
-        /// </summary>
-        public static IEnumerable<String> UriRfc3986CharsToEscape { get; } = new[] {
-            "!", "*", "'", "(", ")"
-        };
-
-        public static String[] Vowels { get; } = "A,AI,AU,E,EA,EE,I,IA,IO,O,OA,OI,OO,OU,U".Split( ',' );
-
-        public const String Doublespace = Singlespace + Singlespace;
-
-        public const String Lowercase = "abcdefghijklmnopqrstuvwxyz";
-
-        public const String MatchMoney = @"//\$\s*[-+]?([0-9]{0,3}(,[0-9]{3})*(\.[0-9]+)?)";
-
-        public const String Numbers = "0123456789";
-
-        public const String Singlespace = @" ";
-
-        public const String SplitByEnglish = @"(?:\p{Lu}(?:\.\p{Lu})+)(?:,\s*\p{Lu}(?:\.\p{Lu})+)*";
-
-        /// <summary>
-        ///     Regex pattern for words that don't start with a number
-        /// </summary>
-        public const String SplitByWordNotNumber = @"([a-zA-Z]\w+)\W*";
-
-        /// <summary> ~`!@#$%^&*()-_=+?:,./\[]{}|' </summary>
-        public const String Symbols = @"~`!@#$%^&*()-_=+<>?:,./\[]{}|'";
-
-        /// <summary>
-        ///     ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        /// </summary>
-        public const String Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        public const String TriplePipes = "⦀";
-
-        public const String NotApplicable = "ⁿ̸ₐ";
-
-        private static readonly Regex UpperCaseRegeEx = new Regex( @"^[A-Z]+$", RegexOptions.Compiled, Minutes.One );
 
         /*
 		[NotNull]
@@ -182,6 +118,26 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [CanBeNull]
         public static String Limit( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) );
+
+        [CanBeNull]
+        public static String Left( [CanBeNull] this String self, Int32 count ) => self?.Substring( 0, Math.Min( count, self.Length ) );
+
+        /// <summary>
+        ///     Does not Trim().
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        public static String Right( [CanBeNull] this String self, Int32 count ) {
+            if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
+                return default;
+            }
+
+            var startIndex = self.Length - count;
+
+            return startIndex > 0 ? self.Substring( startIndex, count ) : self;
+        }
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
@@ -253,7 +209,7 @@ namespace Librainian.Parsing {
 
             foreach ( var c in word ) {
                 if ( Char.IsUpper( c ) ) {
-                    sb.Append( Singlespace );
+                    sb.Append( ParsingConstants.Singlespace );
                 }
 
                 sb.Append( c );
@@ -568,7 +524,7 @@ namespace Librainian.Parsing {
             var escaped = new StringBuilder( Uri.EscapeDataString( value ) );
 
             // Upgrade the escaping to RFC 3986, if necessary.
-            foreach ( var t in UriRfc3986CharsToEscape ) {
+            foreach ( var t in ParsingConstants.UriRfc3986CharsToEscape ) {
                 escaped.Replace( t, Uri.HexEscape( t[ 0 ] ) );
             }
 
@@ -667,7 +623,7 @@ namespace Librainian.Parsing {
             var coded = new StringBuilder();
 
             // do the encoding
-            foreach ( var index in s.Select( t => EnglishAlphabetUppercase.IndexOf( t ) ).Where( index => index >= 0 ) ) {
+            foreach ( var index in s.Select( t => ParsingConstants.EnglishAlphabetUppercase.IndexOf( t ) ).Where( index => index >= 0 ) ) {
                 coded.Append( codes[ index ] );
             }
 
@@ -783,7 +739,7 @@ namespace Librainian.Parsing {
         /// <param name="inputString">String to check</param>
         /// <returns>Boolean</returns>
         [DebuggerStepThrough]
-        public static Boolean IsUpperCase( [NotNull] this String inputString ) => UpperCaseRegeEx.IsMatch( inputString );
+        public static Boolean IsUpperCase( [NotNull] this String inputString ) => ParsingConstants.UpperCaseRegeEx.IsMatch( inputString );
 
         /// <summary>
         ///     <para>String sentence = "10 cats, 20 dogs, 40 fish and 1 programmer.";</para>
@@ -1200,10 +1156,10 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static String Prepend( [CanBeNull] this String result, [CanBeNull] String prependThis ) => $"{prependThis ?? String.Empty}{result ?? String.Empty}";
+        public static String Prepend( [CanBeNull] this String @this, [CanBeNull] String prependThis ) => $"{prependThis}{@this}";
 
         [NotNull]
-        public static String Quoted( [CanBeNull] this String s ) => $"\"{s}\"";
+        public static String Quoted( [CanBeNull] this String @this ) => $"\"{@this}\"";
 
         [NotNull]
         public static String ReadToEnd( [NotNull] this MemoryStream ms ) {
@@ -1232,7 +1188,7 @@ namespace Librainian.Parsing {
         public static String RemoveNullChars( [NotNull] this String text ) => text.Replace( "\0", String.Empty );
 
         /// <summary>
-        ///     Remove leading and trailing " from a String
+        ///     Remove leading and trailing " from a string.
         /// </summary>
         /// <param name="input">String to parse</param>
         /// <returns>String</returns>
@@ -1275,7 +1231,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( (@this.Length * repetitions) + (separator.Length * ( repetitions - 1 )) );
+            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1366,20 +1322,6 @@ namespace Librainian.Parsing {
             }
 
             return new String( tokens );
-        }
-
-        [NotNull]
-        public static String Right( [CanBeNull] this String s, Int32 count ) {
-            var newString = String.Empty;
-
-            if ( String.IsNullOrEmpty( s ) || count <= 0 ) {
-                return newString;
-            }
-
-            var startIndex = s.Length - count;
-            newString = startIndex > 0 ? s.Substring( startIndex, count ) : s;
-
-            return newString;
         }
 
         /// <summary>
@@ -1570,7 +1512,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
+            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -1810,7 +1752,7 @@ namespace Librainian.Parsing {
         /// <param name="when"></param>
         /// <returns></returns>
         [NotNull]
-        public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + Singlespace + when.ToLongTimeString();
+        public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + ParsingConstants.Singlespace + when.ToLongTimeString();
 
         /// <summary>
         ///     Converts a String to camel case
@@ -1881,11 +1823,11 @@ namespace Librainian.Parsing {
             }
 
             //clean it up some
-            paragraph = paragraph.Replace( "\t", Singlespace );
+            paragraph = paragraph.Replace( "\t", ParsingConstants.Singlespace );
 
             do {
-                paragraph = paragraph.Replace( Doublespace, Singlespace );
-            } while ( paragraph.Contains( Doublespace ) );
+                paragraph = paragraph.Replace( ParsingConstants.Doublespace, ParsingConstants.Singlespace );
+            } while ( paragraph.Contains( ParsingConstants.Doublespace ) );
 
             paragraph = paragraph.Replace( "\n\n", Environment.NewLine );
             paragraph = paragraph.Replace( "\r\n", Environment.NewLine );
@@ -1894,8 +1836,8 @@ namespace Librainian.Parsing {
 
             //paragraph = paragraph.Replace( Environment.NewLine, Singlespace );
 
-            while ( paragraph.Contains( Doublespace ) ) {
-                paragraph = paragraph.Replace( oldValue: Doublespace, newValue: Singlespace );
+            while ( paragraph.Contains( ParsingConstants.Doublespace ) ) {
+                paragraph = paragraph.Replace( oldValue: ParsingConstants.Doublespace, newValue: ParsingConstants.Singlespace );
             }
 
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() )
@@ -1946,13 +1888,13 @@ namespace Librainian.Parsing {
             }
 
             if ( number < 20 ) {
-                words += UnitsMap[ number ];
+                words += ParsingConstants.UnitsMap[ number ];
             }
             else {
-                words += TensMap[ number / 10 ];
+                words += ParsingConstants.TensMap[ number / 10 ];
 
                 if ( number % 10 > 0 ) {
-                    words += "-" + UnitsMap[ number % 10 ];
+                    words += "-" + ParsingConstants.UnitsMap[ number % 10 ];
                 }
             }
 
@@ -2014,17 +1956,11 @@ namespace Librainian.Parsing {
 
             //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
 
-            if ( sentence == null ) {
-
-                //throw new ArgumentNullException( nameof( sentence ) );
-                return new[] {
-                    String.Empty
-                };
+            if ( String.IsNullOrWhiteSpace( sentence ) ) {
+                return Enumerable.Empty<String>();
             }
 
-            var result = RegexByWordBreak.Split( sentence ).ToStrings( " " ).Split( SpaceSplitBy, StringSplitOptions.RemoveEmptyEntries );
-
-            return result;
+            return RegexByWordBreak.Split( sentence ).ToStrings( " " ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
             //var sb = new StringBuilder( sentence.Length );
             //foreach ( var wrod in Regex_ByWordBreak.Split( sentence ) ) {

@@ -39,6 +39,8 @@
 // 
 // Project: "Librainian", "Wallet.cs" was last formatted by Protiguous on 2019/03/05 at 5:17 AM.
 
+#pragma warning disable RCS1138 // Add summary to documentation comment.
+
 namespace Librainian.Financial.Containers.Wallets {
 
     using System;

@@ -68,7 +68,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		///     A list of drives that exist in the system.
 		/// </summary>
 		[NotNull]
-		public List<Disk> PossibleDrives { get; } = new List<Disk>( ParsingExtensions.EnglishAlphabetUppercase.Length );
+		public List<Disk> PossibleDrives { get; } = new List<Disk>( ParsingConstants.EnglishAlphabetUppercase.Length );
 
 		public IProgress<Single> Progress { get; }
 
@@ -81,7 +81,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public Task StartScanning() =>
 			Task.Run( () => {
 
-				foreach ( var ch in ParsingExtensions.EnglishAlphabetUppercase ) {
+				foreach ( var ch in ParsingConstants.EnglishAlphabetUppercase ) {
 					var drive = new Disk( ch );
 
 					if ( drive.Exists() && drive.Info.IsReady ) {

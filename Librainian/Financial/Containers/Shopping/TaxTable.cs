@@ -44,7 +44,7 @@ namespace Librainian.Financial.Containers.Shopping {
     using System;
     using System.Collections.Generic;
 
-    public class TaxTable {
+    public static class TaxTable {
 
         //TODO this should look up factors like area/state/zip/country, if this were a real project.
         public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new Dictionary<ItemCategory, Decimal> {

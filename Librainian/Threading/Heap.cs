@@ -23,7 +23,7 @@ namespace Librainian.Threading {
     using System;
     using System.Runtime.InteropServices;
 
-    public class Heap {
+    public static class Heap {
 
         [Flags]
         public enum HeapFlags {

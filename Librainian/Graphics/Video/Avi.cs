@@ -44,7 +44,7 @@ namespace Librainian.Graphics.Video {
 	using System;
 	using System.Runtime.InteropServices;
 
-	public class Avi {
+	public static class Avi {
 
 		public const Int32 BmpMagicCookie = 19778;
 

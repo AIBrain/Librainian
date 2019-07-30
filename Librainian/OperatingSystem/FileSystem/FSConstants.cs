@@ -46,7 +46,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 	/// <summary>
 	///     constants lifted from winioctl.h from platform sdk
 	/// </summary>
-	internal class FSConstants {
+	internal static class FSConstants {
 
 		private const UInt32 FileAnyAccess = 0;
 

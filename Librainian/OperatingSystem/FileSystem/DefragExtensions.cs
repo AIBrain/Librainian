@@ -49,7 +49,7 @@ namespace Librainian.OperatingSystem.FileSystem
     using JetBrains.Annotations;
     using OperatingSystem;
 
-    public class DefragExtensions
+    public static class DefragExtensions
     {
 
         /// <summary>

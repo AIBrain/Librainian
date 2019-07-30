@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// this entire copyright notice and license must be retained and must be kept visible
+// 
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// this source code contained in "WalletExtensions.cs" belongs to Protiguous@Protiguous.com and
+// 
+// This source code contained in "WalletExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,19 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "WalletExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:04 PM.
+// 
+// Project: "Librainian", "WalletExtensions.cs" was last formatted by Protiguous on 2019/07/21 at 4:55 AM.
+// 
+
+#pragma warning disable RCS1138 // Add summary to documentation comment.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -60,9 +63,13 @@ namespace Librainian.Financial.Containers.Wallets {
         public static HashSet<IDenomination> PossibleDenominations { get; } = new HashSet<IDenomination>();
 
         static WalletExtensions() {
-            foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) { PossibleDenominations.Add( denomination ); }
+            foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+                PossibleDenominations.Add( denomination );
+            }
 
-            foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) { PossibleDenominations.Add( denomination ); }
+            foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+                PossibleDenominations.Add( denomination );
+            }
         }
 
         /// <summary>
@@ -72,7 +79,9 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <remarks>Performs locks on the internal tables.</remarks>
         /// <returns>Returns the new quantity.</returns>
         public static Boolean Deposit( [NotNull] this Wallet wallet, TransactionMessage message ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             switch ( message.Denomination ) {
                 case IBankNote bankNote: return wallet.Deposit( bankNote, message.Quantity );
@@ -88,28 +97,41 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="wallet"></param>
         /// <param name="bankNotes"></param>
         /// <param name="coins"></param>
-        public static void Deposit( [NotNull] this Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IBankNote, UInt64>> bankNotes = null, IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+        public static void Deposit( [NotNull] this Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IBankNote, UInt64>> bankNotes = null,
+            IEnumerable<KeyValuePair<ICoin, UInt64>> coins = null ) {
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             bankNotes = bankNotes ?? Enumerable.Empty<KeyValuePair<IBankNote, UInt64>>();
 
-            foreach ( var pair in bankNotes ) { wallet.Deposit( denomination: pair.Key, quantity: pair.Value ); }
+            foreach ( var pair in bankNotes ) {
+                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+            }
 
             coins = coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>();
 
-            foreach ( var pair in coins ) { wallet.Deposit( denomination: pair.Key, quantity: pair.Value ); }
+            foreach ( var pair in coins ) {
+                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+            }
         }
 
         public static void Fund( [NotNull] this Wallet wallet, [CanBeNull] params KeyValuePair<IDenomination, UInt64>[] sourceAmounts ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             wallet.Fund( sourceAmounts.AsEnumerable() );
         }
 
         public static void Fund( [NotNull] this Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
-            if ( null == sourceAmounts ) { return; }
+            if ( null == sourceAmounts ) {
+                return;
+            }
 
             Parallel.ForEach( sourceAmounts, pair => wallet.Deposit( pair.Key, pair.Value ) );
         }
@@ -122,7 +144,9 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="amount"></param>
         /// <returns></returns>
         public static async Task<Decimal> Fund( [NotNull] this Wallet wallet, Decimal amount ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             var notesAndCoins = amount.ToOptimal( out var leftOverFund );
             await StartDeposit( wallet, notesAndCoins ).ConfigureAwait( false );
@@ -137,12 +161,15 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static Task StartDeposit( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             sourceAmounts = sourceAmounts ?? Enumerable.Empty<KeyValuePair<IDenomination, UInt64>>();
             var actionBlock = new ActionBlock<KeyValuePair<IDenomination, UInt64>>( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
             Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
             actionBlock.Complete();
+
             return actionBlock.Completion;
         }
 
@@ -155,7 +182,9 @@ namespace Librainian.Financial.Containers.Wallets {
         [NotNull]
         public static Task<ConcurrentDictionary<IDenomination, UInt64>> StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) =>
             Task.Run( () => {
-                if ( null == source || null == target ) { return new ConcurrentDictionary<IDenomination, UInt64>(); }
+                if ( null == source || null == target ) {
+                    return new ConcurrentDictionary<IDenomination, UInt64>();
+                }
 
                 return new ConcurrentDictionary<IDenomination, UInt64>( Transfer( source, target ) );
             } );
@@ -180,7 +209,7 @@ namespace Librainian.Financial.Containers.Wallets {
             while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
                 var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
 
-                var chunks = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
+                var chunks = ( UInt64 ) ( leftOverAmount / highestBill.FaceValue );
 
                 if ( chunks > Decimal.Zero ) {
                     optimal[ highestBill ] += chunks;
@@ -195,14 +224,20 @@ namespace Librainian.Financial.Containers.Wallets {
 
         [NotNull]
         public static IEnumerable<KeyValuePair<IDenomination, UInt64>> Transfer( [NotNull] this Wallet source, [NotNull] Wallet target ) {
-            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
+            }
 
-            if ( target == null ) { throw new ArgumentNullException( nameof( target ) ); }
+            if ( target == null ) {
+                throw new ArgumentNullException( nameof( target ) );
+            }
 
             var transferred = new ConcurrentDictionary<IDenomination, UInt64>();
 
             foreach ( var pair in source.GetNotesGrouped() ) {
-                if ( !source.Transfer( target, pair ) ) { continue; }
+                if ( !source.Transfer( target, pair ) ) {
+                    continue;
+                }
 
                 var denomination = pair.Key;
                 var count = pair.Value;
@@ -210,7 +245,9 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             foreach ( var pair in source.GetCoinsGrouped() ) {
-                if ( !source.Transfer( target, pair ) ) { continue; }
+                if ( !source.Transfer( target, pair ) ) {
+                    continue;
+                }
 
                 var denomination = pair.Key;
                 var count = pair.Value;
@@ -221,27 +258,40 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<IDenomination, UInt64> denominationAndAmount ) {
-            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
+            }
 
-            if ( target == null ) { throw new ArgumentNullException( nameof( target ) ); }
+            if ( target == null ) {
+                throw new ArgumentNullException( nameof( target ) );
+            }
 
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value );
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<IBankNote, UInt64> denominationAndAmount ) {
-            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
+            }
 
-            if ( target == null ) { throw new ArgumentNullException( nameof( target ) ); }
+            if ( target == null ) {
+                throw new ArgumentNullException( nameof( target ) );
+            }
 
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value );
         }
 
         public static Boolean Transfer( [NotNull] this Wallet source, [NotNull] Wallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
-            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source == null ) {
+                throw new ArgumentNullException( nameof( source ) );
+            }
 
-            if ( target == null ) { throw new ArgumentNullException( nameof( target ) ); }
+            if ( target == null ) {
+                throw new ArgumentNullException( nameof( target ) );
+            }
 
-            return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0m;
+            return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) &&
+                   target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0m;
         }
 
         /// <summary>
@@ -251,12 +301,16 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
         public static Task Transfer( [NotNull] Wallet wallet, [CanBeNull] IEnumerable<KeyValuePair<IDenomination, UInt64>> sourceAmounts ) {
-            if ( wallet == null ) { throw new ArgumentNullException( nameof( wallet ) ); }
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
             var block = new ActionBlock<KeyValuePair<IDenomination, UInt64>>( pair => wallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
             block.Complete();
 
             return block.Completion;
         }
+
     }
+
 }

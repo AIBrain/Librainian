@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Randem.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     paypal@AIBrain.Org
 //     (We're still looking into other solutions! Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we *might* make available.
-// 
+//
 // Project: "Librainian", "Randem.cs" was last formatted by Protiguous on 2019/03/02 at 4:32 PM.
 
 namespace Librainian.Maths {
@@ -91,6 +91,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () => new Lazy<Random>( valueFactory: () => {
             var seed = DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode();
+
             //Trace.WriteLine( $"Init new Random() on thread {Thread.CurrentThread.ManagedThreadId:X} with seed {seed:X} on thread {Thread.CurrentThread.ManagedThreadId:X}." );
 
             return new Random( seed );
@@ -106,14 +107,12 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        [NotNull]
-        private static String NextChar( [NotNull] this Char[] range ) {
+        private static Char NextChar( [NotNull] this Char[] range ) {
             if ( range == null ) {
                 throw new ArgumentNullException( nameof( range ) );
             }
 
-            //TODO
-            return range[ 0.Next( maxValue: range.Length ) ].ToString();
+            return range[ 0.Next( maxValue: range.Length ) ];
         }
 
         /// <summary>
@@ -333,7 +332,7 @@ namespace Librainian.Maths {
             if ( max <= min || count < 0 ||
 
                  // max - min > 0 required to avoid overflow
-                 (count > max - min && max - min > 0) ) {
+                 count > max - min && max - min > 0 ) {
 
                 // need to use 64-bit to support big ranges (negative min, positive max)
                 throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({( Int64 ) max - min} values), or count {count} is illegal." );
@@ -544,6 +543,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static BigInteger NextBigInteger( this UInt16 numberOfDigits ) {
+
             //numberOfDigits.Should().BeGreaterThan( expected: 0 );
 
             if ( numberOfDigits <= 0 ) {
@@ -562,6 +562,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static BigInteger NextBigIntegerPositive( this UInt16 numberOfDigits ) {
+
             //numberOfDigits.Should().BeGreaterThan( expected: 0 );
 
             if ( numberOfDigits <= 0 ) {
@@ -576,6 +577,7 @@ namespace Librainian.Maths {
         }
 
         public static BigInteger NextBigIntegerSecure( this UInt16 numberOfDigits ) {
+
             //numberOfDigits.Should().BeGreaterThan( expected: 0 );
 
             if ( numberOfDigits <= 0 ) {
@@ -704,7 +706,7 @@ namespace Librainian.Maths {
             var max = Math.Max( val1: minValue, val2: maxValue );
             var range = max - min;
 
-            return min + (NextDecimal() * range);
+            return min + NextDecimal() * range;
         }
 
         public static Decimal NextDecimal( [NotNull] this DecimalRange decimalRange ) => decimalRange.Min.NextDecimal( maxValue: decimalRange.Max );
@@ -764,7 +766,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Double NextDouble( this DoubleRange range ) => range.Min + (Instance().NextDouble() * range.Length);
+        public static Double NextDouble( this DoubleRange range ) => range.Min + Instance().NextDouble() * range.Length;
 
         public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( min: variance.Low, max: variance.High );
 
@@ -786,7 +788,8 @@ namespace Librainian.Maths {
             Double result;
 
             if ( !Double.IsInfinity( d: range ) ) {
-                result = min + (Instance().NextDouble() * range);
+                result = min + Instance().NextDouble() * range;
+
                 //result.Should().BeInRange( minimumValue: min, maximumValue: max );
 
                 return result;
@@ -829,7 +832,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + (Instance().NextDouble() * range.Length) );
+        public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + Instance().NextDouble() * range.Length );
 
         /// <summary>
         ///     Returns a random float between <paramref name="min" /> and <paramref name="max" />.
@@ -837,7 +840,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single ) ( min + (Instance().NextDouble() * ( max - min )) );
+        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single ) ( min + Instance().NextDouble() * ( max - min ) );
 
         public static Guid NextGuid() => Guid.NewGuid();
 
@@ -860,7 +863,7 @@ namespace Librainian.Maths {
         ///     Return a random number somewhere in the full range of 0 to <see cref="Int16" />.
         /// </summary>
         /// <returns></returns>
-        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 ) ( min + (Instance().NextDouble() * ( max - min )) );
+        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 ) ( min + Instance().NextDouble() * ( max - min ) );
 
         /// <summary>
         ///     Return a random number somewhere in the full range of <see cref="Int32" />.
@@ -886,7 +889,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single ) ( min + (Instance().NextDouble() * ( max - min )) );
+        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single ) ( min + Instance().NextDouble() * ( max - min ) );
 
         public static Single NextSingle( this SingleRange singleRange ) => NextSingle( min: singleRange.Min, max: singleRange.Max );
 
@@ -924,16 +927,16 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="length"> How many characters long.</param>
         /// <param name="lowers">
-        ///     <see cref="ParsingExtensions.Lowercase" />
+        ///     <see cref="ParsingConstants.Lowercase" />
         /// </param>
         /// <param name="uppers">
-        ///     <see cref="ParsingExtensions.Uppercase" />
+        ///     <see cref="ParsingConstants.Uppercase" />
         /// </param>
         /// <param name="numbers">
-        ///     <see cref="ParsingExtensions.Numbers" />
+        ///     <see cref="ParsingConstants.Numbers" />
         /// </param>
         /// <param name="symbols">
-        ///     <see cref="ParsingExtensions.Symbols" />
+        ///     <see cref="ParsingConstants.Symbols" />
         /// </param>
         /// <returns></returns>
         [CanBeNull]
@@ -949,19 +952,19 @@ namespace Librainian.Maths {
             var sb = new StringBuilder();
 
             if ( lowers ) {
-                sb.Append( ParsingExtensions.Lowercase );
+                sb.Append( ParsingConstants.Lowercase );
             }
 
             if ( uppers ) {
-                sb.Append( ParsingExtensions.Uppercase );
+                sb.Append( ParsingConstants.Uppercase );
             }
 
             if ( numbers ) {
-                sb.Append( ParsingExtensions.Numbers );
+                sb.Append( ParsingConstants.Numbers );
             }
 
             if ( symbols ) {
-                sb.Append( ParsingExtensions.Symbols );
+                sb.Append( ParsingConstants.Symbols );
             }
 
             var charPool = sb.ToString();
@@ -1039,9 +1042,9 @@ namespace Librainian.Maths {
             var buffer = ( bound << 16 ).ToByteArray(); // << 16 adds two bytes, which decrease the chance of a retry later on
 
             //Compute where the last partial fragment starts, in order to retry if we end up in it
-            var generatedValueBound = BigInteger.One << ((buffer.Length * 8) - 1); //-1 accounts for the sign bit
+            var generatedValueBound = BigInteger.One << ( buffer.Length * 8 - 1 ); //-1 accounts for the sign bit
             Contract.Assert( condition: generatedValueBound >= bound );
-            var validityBound = generatedValueBound - (generatedValueBound % bound);
+            var validityBound = generatedValueBound - generatedValueBound % bound;
             Contract.Assert( condition: validityBound >= bound );
 
             while ( true ) {
@@ -1097,8 +1100,8 @@ namespace Librainian.Maths {
 
             for ( var i = 0; i < aboutLength; i++ ) {
                 word.Append( consonant ?
-                    ParsingExtensions.Consonants[ 0.Next( maxValue: ParsingExtensions.Consonants.Length ) ] :
-                    ParsingExtensions.Vowels[ 0.Next( maxValue: ParsingExtensions.Vowels.Length ) ] );
+                    ParsingConstants.Consonants[ 0.Next( maxValue: ParsingConstants.Consonants.Length ) ] :
+                    ParsingConstants.Vowels[ 0.Next( maxValue: ParsingConstants.Vowels.Length ) ] );
 
                 consonant = !consonant;
             }
@@ -1141,9 +1144,9 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [NotNull]
         public static String RandomString( Int32 length = 10, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
-            var charPool = String.Concat( str0: lowerCase ? ParsingExtensions.EnglishAlphabetLowercase : String.Empty,
-                str1: upperCase ? ParsingExtensions.EnglishAlphabetUppercase : String.Empty, str2: numbers ? ParsingExtensions.Numbers : String.Empty,
-                str3: symbols ? ParsingExtensions.Symbols : String.Empty );
+            var charPool = String.Concat( str0: lowerCase ? ParsingConstants.EnglishAlphabetLowercase : String.Empty,
+                str1: upperCase ? ParsingConstants.EnglishAlphabetUppercase : String.Empty, str2: numbers ? ParsingConstants.Numbers : String.Empty,
+                str3: symbols ? ParsingConstants.Symbols : String.Empty );
 
             return new String( Enumerable.Range( start: 0, count: length ).Select( selector: i => charPool[ index: 0.Next( maxValue: charPool.Length ) ] ).ToArray() );
         }

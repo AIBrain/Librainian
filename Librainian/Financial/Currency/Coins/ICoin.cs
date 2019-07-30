@@ -39,6 +39,8 @@
 //
 // Project: "Librainian", "ICoin.cs" was last formatted by Protiguous on 2018/07/10 at 9:05 PM.
 
+#pragma warning disable RCS1138 // Add summary to documentation comment.
+
 namespace Librainian.Financial.Currency.Coins {
 
 	/// <summary>

@@ -102,7 +102,7 @@ namespace Librainian.Controls {
     */
 
 	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-	public class FlexibleMessageBox {
+	public static class FlexibleMessageBox {
 
 		/// <summary>
 		///     Defines the font for all FlexibleMessageBox instances. Default is: SystemFonts.MessageBoxFont

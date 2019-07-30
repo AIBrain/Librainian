@@ -53,5 +53,11 @@ namespace Librainian.Financial.Containers.Banking {
 		protected BankException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
 		public BankException( String message ) : base( message ) { }
+
+		public BankException() {
+		}
+
+		public BankException( String message, Exception innerException ) : base( message, innerException ) {
+		}
 	}
 }

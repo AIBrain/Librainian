@@ -47,7 +47,6 @@ namespace Librainian.Database {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    using System.Diagnostics;
     using System.Linq;
     using System.Net;
     using System.ServiceProcess;
@@ -336,7 +335,7 @@ namespace Librainian.Database {
         /// <param name="parameters"> </param>
         /// <returns></returns>
         [CanBeNull]
-        public TResult ExecuteScalar<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public T ExecuteScalar<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -358,15 +357,15 @@ namespace Librainian.Database {
                             return default;
                         }
 
-                        if ( scalar is TResult executeScalar ) {
+                        if ( scalar is T executeScalar ) {
                             return executeScalar;
                         }
 
-                        if ( scalar.TryCast<TResult>( out var result ) ) {
+                        if ( scalar.TryCast<T>( out var result ) ) {
                             return result;
                         }
 
-                        return ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) );
+                        return ( T ) Convert.ChangeType( scalar, typeof( T ) );
                     }
                 }
             }
@@ -388,7 +387,7 @@ namespace Librainian.Database {
         /// <param name="parameters"> </param>
         /// <returns></returns>
         [ItemCanBeNull]
-        public async Task<TResult> ExecuteScalarAsync<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public async Task<T> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -406,15 +405,11 @@ namespace Librainian.Database {
 
                         var result = await command.ExecuteScalarAsync().ConfigureAwait( false );
 
-                        if ( result == null ) {
+                        if ( result == null || result == DBNull.Value ) {
                             return default;
                         }
 
-                        if ( result == DBNull.Value ) {
-                            return default;
-                        }
-
-                        return ( TResult ) result;
+                        return ( T ) result;
                     }
                 }
             }
@@ -530,7 +525,8 @@ namespace Librainian.Database {
         }
 
         [NotNull]
-        public static ConcurrentDictionary<String, ServiceControllerStatus> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines,
+        [ItemNotNull]
+        public static async Task<ConcurrentDictionary<String, ServiceControllerStatus>> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines,
             TimeSpan timeout ) {
 
             "Searching for any database servers...".Log();
@@ -547,31 +543,32 @@ namespace Librainian.Database {
 
             var status = new ConcurrentDictionary<String, ServiceControllerStatus>();
 
-            Parallel.ForEach( machines.AsParallel(), machine => {
-                try {
-                    $"Searching for database server {machine}...".Log();
-
-                    var stopwatch = Stopwatch.StartNew();
-
+            await Task.Run( () => {
+                Parallel.ForEach( machines.AsParallel(), machine => {
                     try {
-                        var service = new ServiceController {
-                            ServiceName = "SQLBrowser", MachineName = machine
-                        };
+                        $"Searching for database server on {machine}...".Log();
 
-                        if ( service.Status != ServiceControllerStatus.Running ) {
-                            service.Start();
+                        try {
+                            var service = new ServiceController {
+                                ServiceName = "SQLBrowser", MachineName = machine
+                            };
+
+                            if ( service.Status != ServiceControllerStatus.Running ) {
+                                service.Start();
+                            }
+
+                            service.WaitForStatus( ServiceControllerStatus.Running, timeout );
+                            status[ machine ] = service.Status;
                         }
-                        service.WaitForStatus( ServiceControllerStatus.Running, timeout );
-                        status[ machine ] = service.Status;
+                        catch ( InvalidOperationException exception ) {
+                            exception.Log();
+                        }
                     }
-                    catch ( InvalidOperationException exception ) {
+                    catch ( Exception exception ) {
                         exception.Log();
                     }
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
-            } );
+                } );
+            } ).ConfigureAwait( false );
 
             return status;
         }
@@ -595,12 +592,12 @@ namespace Librainian.Database {
                 ConnectRetryCount = 3,
                 ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
                 ConnectRetryInterval = 1,
-                PacketSize = 8000,
+                PacketSize = 8060,
                 Pooling = true
             };
 
             //security
-            if ( credentials != default ) {
+            if ( !String.IsNullOrWhiteSpace( credentials?.Username ) ) {
                 builder.Remove( "Integrated Security" );
                 builder.Remove( "Authentication" );
                 builder.Encrypt = false;
@@ -621,9 +618,9 @@ namespace Librainian.Database {
             return builder;
         }
 
-        public static void StartAnySQLBrowers( TimeSpan searchTimeout ) => FindAndStartSqlBrowserServices( new[] {
+        public static async Task StartAnySQLBrowsers( TimeSpan searchTimeout ) => await FindAndStartSqlBrowserServices( new[] {
                 "TheServer" //TheServer is my development server's name. Feel free to remove or add your own.
-            }, searchTimeout );
+            }, searchTimeout ).ConfigureAwait( false );
 
     }
 

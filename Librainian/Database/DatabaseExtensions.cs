@@ -51,6 +51,7 @@ namespace Librainian.Database {
 	using System.Management;
 	using System.Media;
 	using System.Reflection;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using Internet;
 	using JetBrains.Annotations;
@@ -591,6 +592,7 @@ namespace Librainian.Database {
 				throw new ArgumentNullException( paramName: nameof( builderToTest ) );
 			}
 
+			var stopwatch = Stopwatch.StartNew();
 			try {
 				var version = await builderToTest.AdhocCommand<String>( "select @@VERSION;" ).ConfigureAwait( false );
 				var getdate = await builderToTest.AdhocCommand<DateTime>( "select SYSUTCDATETIME();" ).ConfigureAwait( false );
@@ -607,7 +609,7 @@ namespace Librainian.Database {
 
 							var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
 
-							return ( FlowStatus.Success, builder, version.response, serverDateTime, version.responseTime + getdate.responseTime );
+							return ( FlowStatus.Success, builder, version.response, serverDateTime, stopwatch.Elapsed );
 						}
 					}
 				}
@@ -617,7 +619,7 @@ namespace Librainian.Database {
 				exception.Log();
 			}
 
-            return (FlowStatus.Failure, default, default, default, TimeSpan.Zero);
+            return (FlowStatus.Failure, default, default, default, stopwatch.Elapsed);
 		}
 
 		public static async Task<(FlowStatus status, T response, TimeSpan responseTime)> AdhocCommand<T>(
@@ -648,11 +650,43 @@ namespace Librainian.Database {
 		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( this TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
 
 			foreach ( DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows ) {
-				var serverName = row[ "ServerName" ].ToString();
-				var instanceName = row[ "InstanceName" ].ToString();
+				var serverName = row[ "ServerName" ].Trimmed();
+				var instanceName = row[ "InstanceName" ].Trimmed();
 
-				yield return Database.OurConnectionStringBuilder( serverName, instanceName, connectTimeout: connectTimeout, credentials );
+				if ( serverName != null && instanceName != null ) {
+					yield return Database.OurConnectionStringBuilder( serverName, instanceName, connectTimeout: connectTimeout, credentials );
+				}
 			}
+		}
+
+		/// <summary>
+		/// //TODO Make this better later on.. just return any working connection for now..
+		/// //TODO Move this into Database or extensions if I haven't already..
+		/// </summary>
+		/// <param name="token"></param>
+		/// <param name="credentials"></param>
+		/// <returns></returns>
+		[ItemCanBeNull]
+		public static async Task<SqlConnectionStringBuilder> FindUsableServer( this CancellationToken token, params Credentials[] credentials ) {
+			try {
+				foreach ( var builder in credentials.SelectMany( credential => TimeSpan.FromSeconds( 10 ).LookForAnyDatabases( credential ) ) ) {
+					try {
+						var response = await builder.TryConnectAndRespond().ConfigureAwait( false );
+
+						if ( response.status == FlowStatus.Success ) {
+							return builder;
+						}
+					}
+					catch ( SqlException exception ) {
+						exception.Log();
+					}
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+
+			return default;
 		}
 
 	}

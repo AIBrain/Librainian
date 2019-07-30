@@ -46,7 +46,7 @@ namespace Librainian.Internet.Wiki {
 	using JetBrains.Annotations;
 	using Parsing;
 
-	public class YanWiki {
+	public static class YanWiki {
 
 		[NotNull]
 		private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";

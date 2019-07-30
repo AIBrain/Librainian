@@ -194,7 +194,7 @@ namespace Librainian.Persistence {
                     throw new ArgumentNullException( paramName: nameof( keys ) );
                 }
 
-                return keys.ToStrings( ParsingExtensions.TriplePipes );
+                return keys.ToStrings( ParsingConstants.TriplePipes );
             }
 
             public static TaskStatus? GetLocalDiscoveryStatus() => LocalDiscoveryTask?.Status;
