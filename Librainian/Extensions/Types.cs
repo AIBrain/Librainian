@@ -396,9 +396,9 @@ namespace Librainian.Extensions {
 
 				// Just one edge case you might want to handle.
 				if ( underlyingType == typeof( Guid ) ) {
-					if ( value is String ) { value = new Guid( ( String )value ); }
+					if ( value is String s ) { value = new Guid( s ); }
 
-					if ( value is Byte[] ) { value = new Guid( ( Byte[] )value ); }
+					if ( value is Byte[] bytes ) { value = new Guid( bytes ); }
 
 					result = ( T )Convert.ChangeType( value, underlyingType );
 

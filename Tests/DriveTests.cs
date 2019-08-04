@@ -52,7 +52,7 @@ namespace LibrainianTests {
 
         [Test]
         public static void TestAllDrives() {
-            var alphabet = ParsingExtensions.EnglishAlphabetUppercase;
+            var alphabet = ParsingConstants.EnglishAlphabetUppercase;
             Debug.WriteLine( alphabet );
 
             foreach ( var letter in alphabet ) {

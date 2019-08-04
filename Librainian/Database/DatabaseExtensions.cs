@@ -647,7 +647,7 @@ namespace Librainian.Database {
 		}
 
 		[NotNull]
-		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
+		public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( this TimeSpan connectTimeout, [CanBeNull] Credentials credentials ) {
 
 			foreach ( DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows ) {
 				var serverName = row[ "ServerName" ].Trimmed();
@@ -661,7 +661,6 @@ namespace Librainian.Database {
 
 		/// <summary>
 		/// //TODO Make this better later on.. just return any working connection for now..
-		/// //TODO Move this into Database or extensions if I haven't already..
 		/// </summary>
 		/// <param name="token"></param>
 		/// <param name="credentials"></param>

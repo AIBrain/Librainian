@@ -46,7 +46,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following set of attributes.
 // Change these attribute values to modify the information associated with an assembly.
 [assembly: AssemblyTitle( "Librainian" )]
-[assembly: AssemblyDescription( "AIBrain's Librainian library that I will use in my projects." )]
+[assembly: AssemblyDescription( "AIBrain's Librainian Library that I will use in my Projects." )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Protiguous" )]
 [assembly: AssemblyProduct( "Librainian" )]
@@ -70,6 +70,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( "2019.4.15.594" )]
-[assembly: AssemblyFileVersion( "2019.4.15.594" )]
+[assembly: AssemblyVersion( "2019.8.4.0" )]
+[assembly: AssemblyFileVersion( "2019.8.4.0" )]
 [assembly: NeutralResourcesLanguage( "en-US" )]

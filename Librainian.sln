@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianTests", "Tests\LibrainianTests.csproj", "{9145F7DE-0F34-436D-B3BA-FA7E96E430E7}"
 EndProject
@@ -46,7 +46,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 	EndGlobalSection
 EndGlobal

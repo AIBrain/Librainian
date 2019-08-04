@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/07/30 at 5:15 PM.
+// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/07/30 at 10:49 PM.
 
 namespace Librainian.Graphics {
 
@@ -1082,6 +1082,7 @@ namespace Librainian.Graphics {
                 if ( bestGuesses.Any() ) {
 #if DEBUG
                     var first4 = justName.Left( 4 ).ToIntOrNull();
+
                     if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
                         $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
                     }
@@ -1248,10 +1249,7 @@ namespace Librainian.Graphics {
             }
 
             try {
-
-                //if ( null != BitmapFromUri( new Uri( file.FullName ) ) ) { return true; }
-
-                using ( Image.FromFile( file.FullName ) ) {
+                using ( var _ = Image.FromFile( file.FullName ) ) {
                     return true;
                 }
             }
@@ -1264,6 +1262,8 @@ namespace Librainian.Graphics {
             catch ( Exception exception ) {
                 exception.Log();
             }
+
+            GC.Collect( 2, GCCollectionMode.Forced, true, true );
 
             return false;
         }

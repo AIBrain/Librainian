@@ -59,8 +59,8 @@ namespace LibrainianTests.Linguistics {
 
             //var list = sentence.ToList();
 
-            var bob = sentence.Possibles().ToList();
-            bob.Count.Should().Be( 511 );
+            //var bob = sentence.Possibles().ToList();
+            //bob.Count.Should().Be( 511 );
         }
 
         [NotNull]

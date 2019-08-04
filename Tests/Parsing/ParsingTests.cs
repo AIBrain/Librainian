@@ -49,12 +49,12 @@ namespace LibrainianTests.Parsing {
         }
 
         [Test]
-        public void ConfirmStringLimitShorter() => ParsingExtensions.EnglishAlphabetLowercase.Limit( 6 ).Should().Be( "abcdef" );
+        public void ConfirmStringLimitShorter() => ParsingConstants.EnglishAlphabetLowercase.Limit( 6 ).Should().Be( "abcdef" );
 
         [Test]
         public void ConfirmStringLimitLonger() =>
-            ParsingExtensions.EnglishAlphabetLowercase.Limit( ParsingExtensions.EnglishAlphabetLowercase.Length * 2 ).Should()
-                .Be( ParsingExtensions.EnglishAlphabetLowercase );
+            ParsingConstants.EnglishAlphabetLowercase.Limit( ParsingConstants.EnglishAlphabetLowercase.Length * 2 ).Should()
+                .Be( ParsingConstants.EnglishAlphabetLowercase );
 
     }
 }

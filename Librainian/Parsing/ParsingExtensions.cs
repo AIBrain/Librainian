@@ -1231,7 +1231,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
+            var builder = new StringBuilder( (@this.Length * repetitions) + (separator.Length * ( repetitions - 1 )) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1512,7 +1512,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
+            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
 
             if ( stopwatch.Elapsed > timeout ) {
 

@@ -62,13 +62,13 @@ namespace Librainian.OperatingSystem.Compression {
 		public static Boolean RunSimulation() {
 			var buffer = new Byte[ MathConstants.Sizes.OneMegaByte ]; //one megabyte
 			var bufferLength = buffer.LongLength;
-			var randem = Randem.ThreadSafeRandom;
+			
 
 			var counter = 10;
 
 			while ( counter-- > 0 ) {
 				Debug.WriteLine( $"Generating {bufferLength} bytes of data.." );
-				randem.Value.Value.NextBytes( buffer );
+				Randem.NextBytes( ref buffer );
 
 				Debug.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
 				var before = RandomnessFeeding.HowManyBytesFed;

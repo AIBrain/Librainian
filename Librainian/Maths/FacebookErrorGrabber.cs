@@ -86,7 +86,7 @@ namespace Librainian.Maths {
             if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
 
             var fallback = new Byte[ fallbackByteCount ];
-            Randem.Instance().NextBytes( fallback );
+            Randem.NextBytes( ref fallback );
 
             return fallback;
         }
