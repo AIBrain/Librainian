@@ -8,7 +8,7 @@
 // goes to the Authors.
 // 
 // Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
+//  PayPal: Protiguous@Protiguous.com
 //  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
 // 

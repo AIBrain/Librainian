@@ -1,20 +1,25 @@
-﻿// Copyright © 1995-2018 to Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PersistTable.cs" belongs to Rick@AIBrain.org and
-// Protiguous@Protiguous.com unless otherwise specified or the original license has
-// been overwritten by automatic formatting.
+// This source code contained in "PersistTable.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Donations, royalties from any software that uses any of our code, or license fees can be paid
-// to us via bitcoin at the address 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -25,14 +30,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com .
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we might have available.
+// Feel free to browse any source code we make available.
 //
-// ***  Solution "ArtificialllyIntelligentBrain"   Project "Librainian"  ***
-// File "PersistTable.cs" was last formatted by Protiguous on 2018/09/24 at 6:50 AM.
+// Project: "Librainian", "PersistTable.cs" was last formatted by Protiguous on 2019/08/08 at 9:30 AM.
 
 namespace Librainian.Persistence {
 
@@ -66,20 +71,6 @@ namespace Librainian.Persistence {
     [JsonObject]
     public sealed class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue> where TKey : IComparable<TKey> {
 
-        [JsonProperty]
-        [NotNull]
-        private PersistentDictionary<TKey, String> Dictionary {
-            get;
-        }
-
-        /// <summary>
-        ///     No path given?
-        /// </summary>
-        [NotNull]
-        public Folder Folder {
-            get;
-        }
-
         public Int32 Count => this.Dictionary.Count;
 
         public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
@@ -87,9 +78,9 @@ namespace Librainian.Persistence {
         public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         /// <summary>
-        /// This deserializes the list of values.. I have a feeling this cannot be very fast.
+        ///     This deserializes the list of values.. I have a feeling this cannot be very fast.
         /// </summary>
-        public ICollection<TValue> Values => ( ICollection<TValue> )this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() );
+        public ICollection<TValue> Values => ( ICollection<TValue> ) this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() );
 
         /// <summary>
         /// </summary>
@@ -125,69 +116,6 @@ namespace Librainian.Persistence {
             }
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private PersistTable() => throw new NotImplementedException();
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder, applicationName: null, subFolder: tableName ) ) { }
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder, tableName ) ) { }
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder, tableName ) ) { }
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
-            try {
-                this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
-
-                if ( !this.Folder.Create() ) {
-                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
-                }
-
-                var customConfig = new DatabaseConfig {
-                    CreatePathIfNotExist = true,
-                    EnableShrinkDatabase = ShrinkDatabaseGrbit.On,
-                    DefragmentSequentialBTrees = true
-                };
-
-                this.Dictionary = new PersistentDictionary<TKey, String>( directory: this.Folder.FullName, customConfig: customConfig );
-
-                if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
-                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." );
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-        }
-
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
-
-        /// <summary>
-        ///     Return true if we can read/write in the <see cref="Folder" /> .
-        /// </summary>
-        /// <returns></returns>
-        private Boolean TestForReadWriteAccess() {
-            try {
-                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
-                    var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
-                    document.AppendText( text: text );
-                    document.TryDeleting( tryFor: Seconds.Five );
-
-                    return true;
-                }
-            }
-            catch { }
-
-            return false;
-        }
-
         public void Add( TKey key, TValue value ) => this[ key ] = value;
 
         public void Add( KeyValuePair<TKey, TValue> item ) => this[ item.Key ] = item.Value;
@@ -205,35 +133,7 @@ namespace Librainian.Persistence {
 
         public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
-        /// <summary>
-        ///     Dispose any disposable managed fields or properties.
-        /// </summary>
-        public override void DisposeManaged() {
-            Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
-
-            using ( this.Dictionary ) { }
-
-            Trace.WriteLine( "done." );
-            
-        }
-
-        public void Flush() => this.Dictionary.Flush();
-
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
-
-        public void Initialize() {
-
-            if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
-                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
-            }
-        }
-
-        /// <summary>
-        ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
-        /// </summary>
-        /// <returns></returns>
-        [NotNull]
-        public IEnumerable<KeyValuePair<TKey, TValue>> Items() => this.Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
         /// <summary>
         ///     Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
@@ -273,22 +173,6 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.Count} items";
-
-        public void TryAdd( [NotNull] TKey key, TValue value ) {
-            if ( key == null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
-            }
-
-            if ( !this.Dictionary.ContainsKey( key ) ) {
-                this[ key ] = value;
-            }
-        }
-
-        /// <summary>
         ///     Gets the value associated with the specified key.
         /// </summary>
         /// <returns>
@@ -317,6 +201,130 @@ namespace Librainian.Persistence {
             return true;
         }
 
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        [JsonProperty]
+        [NotNull]
+        private PersistentDictionary<TKey, String> Dictionary { get; }
+
+        /// <summary>
+        ///     No path given?
+        /// </summary>
+        [NotNull]
+        public Folder Folder { get; }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        private PersistTable() => throw new NotImplementedException();
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder,
+            applicationName: null, subFolder: tableName ) ) { }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
+            tableName ) ) { }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder,
+            tableName ) ) { }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+            try {
+                this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
+
+                if ( !this.Folder.Create() ) {
+                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
+                }
+
+                var customConfig = new DatabaseConfig {
+                    CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
+                };
+
+                this.Dictionary = new PersistentDictionary<TKey, String>( directory: this.Folder.FullName, customConfig: customConfig );
+
+                if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
+                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." );
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+        }
+
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PersistTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
+
+        /// <summary>
+        ///     Return true if we can read/write in the <see cref="Folder" /> .
+        /// </summary>
+        /// <returns></returns>
+        private Boolean TestForReadWriteAccess() {
+            try {
+                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
+                    var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
+                    document.AppendText( text: text );
+                    document.TryDeleting( tryFor: Seconds.Five );
+
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Dispose any disposable managed fields or properties.
+        /// </summary>
+        public override void DisposeManaged() {
+            Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
+
+            using ( this.Dictionary ) { }
+
+            Trace.WriteLine( "done." );
+        }
+
+        public void Flush() => this.Dictionary.Flush();
+
+        public void Initialize() {
+
+            if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
+                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
+            }
+        }
+
+        /// <summary>
+        ///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="TValue" /> deserialized.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public IEnumerable<KeyValuePair<TKey, TValue>> Items() =>
+            this.Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
+
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override String ToString() => $"{this.Count} items";
+
+        public void TryAdd( [NotNull] TKey key, TValue value ) {
+            if ( key == null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
+            }
+
+            if ( !this.Dictionary.ContainsKey( key ) ) {
+                this[ key ] = value;
+            }
+        }
+
         public Boolean TryRemove( [NotNull] TKey key ) {
             if ( key == null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
@@ -324,11 +332,5 @@ namespace Librainian.Persistence {
 
             return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
+// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2019/08/08 at 9:17 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -47,34 +47,12 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.InteropServices;
-    using OperatingSystem;
 
     /// <summary>
-	///     defrag stuff
-	/// </summary>
-	/// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
-	public static class IOWrapper {
-
-        private const UInt32 ErrorInsufficientBuffer = 122;
-
-        private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-        private const UInt32 FileReadAttributes = 0x0080;
-
-        private const UInt32 FileShareDelete = 0x00000004;
-
-        // CreateFile constants
-        private const UInt32 FileShareRead = 0x00000001;
-
-        private const UInt32 FileShareWrite = 0x00000002;
-
-        private const UInt32 FileWriteAttributes = 0x0100;
-
-        private const UInt32 GenericRead = 0x80000000;
-
-        private const UInt32 GenericWrite = 0x40000000;
-
-        private const UInt32 OpenExisting = 3;
+    ///     defrag stuff
+    /// </summary>
+    /// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
+    public static class IOWrapper {
 
         /// <summary>Access flags.</summary>
         [Flags]
@@ -85,8 +63,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             DELETE = 0x00010000,
 
             /// <summary>
-            /// The right to read the information in the object's security descriptor, not including the information in the system access control
-            /// list (SACL).
+            ///     The right to read the information in the object's security descriptor, not including the information in the system
+            ///     access control
+            ///     list (SACL).
             /// </summary>
             READ_CONTROL = 0x00020000,
 
@@ -97,8 +76,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             WRITE_OWNER = 0x00080000,
 
             /// <summary>
-            /// The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled state. Some
-            /// object types do not support this access right.
+            ///     The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled
+            ///     state. Some
+            ///     object types do not support this access right.
             /// </summary>
             SYNCHRONIZE = 0x00100000,
 
@@ -121,8 +101,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             SPECIFIC_RIGHTS_ALL = 0x0000FFFF,
 
             /// <summary>
-            /// Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right only if the
-            /// SE_SECURITY_NAME privilege is enabled in the access token of the requesting thread.
+            ///     Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right
+            ///     only if the
+            ///     SE_SECURITY_NAME privilege is enabled in the access token of the requesting thread.
             /// </summary>
             ACCESS_SYSTEM_SECURITY = 0x01000000,
 
@@ -161,7 +142,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             GENERIC_ALL = ACCESS_MASK.GENERIC_ALL,
 
             /// <summary>
-            /// For a file object, the right to read the corresponding file data. For a directory object, the right to read the corresponding directory data.
+            ///     For a file object, the right to read the corresponding file data. For a directory object, the right to read the
+            ///     corresponding directory data.
             /// </summary>
             FILE_READ_DATA = 0x0001, // file & pipe
 
@@ -169,7 +151,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             FILE_LIST_DIRECTORY = 0x0001, // directory
 
             /// <summary>
-            /// For a file object, the right to write data to the file. For a directory object, the right to create a file in the directory ( <see cref="FILE_ADD_FILE"/>).
+            ///     For a file object, the right to write data to the file. For a directory object, the right to create a file in the
+            ///     directory ( <see cref="FILE_ADD_FILE" />).
             /// </summary>
             FILE_WRITE_DATA = 0x0002, // file & pipe
 
@@ -177,8 +160,10 @@ namespace Librainian.OperatingSystem.FileSystem {
             FILE_ADD_FILE = 0x0002, // directory
 
             /// <summary>
-            /// For a file object, the right to append data to the file. (For local files, write operations will not overwrite existing data if this flag is
-            /// specified without <see cref="FILE_WRITE_DATA"/>.) For a directory object, the right to create a subdirectory ( <see cref="FILE_ADD_SUBDIRECTORY"/>).
+            ///     For a file object, the right to append data to the file. (For local files, write operations will not overwrite
+            ///     existing data if this flag is
+            ///     specified without <see cref="FILE_WRITE_DATA" />.) For a directory object, the right to create a subdirectory (
+            ///     <see cref="FILE_ADD_SUBDIRECTORY" />).
             /// </summary>
             FILE_APPEND_DATA = 0x0004, // file
 
@@ -195,14 +180,16 @@ namespace Librainian.OperatingSystem.FileSystem {
             FILE_WRITE_EA = 0x0010, // file & directory
 
             /// <summary>
-            /// For a native code file, the right to execute the file. this access right given to scripts may cause the script to be executable, depending on the
-            /// script interpreter.
+            ///     For a native code file, the right to execute the file. this access right given to scripts may cause the script to
+            ///     be executable, depending on the
+            ///     script interpreter.
             /// </summary>
             FILE_EXECUTE = 0x0020, // file
 
             /// <summary>
-            /// For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING privilege, which ignores the
-            /// FILE_TRAVERSE access right.
+            ///     For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING
+            ///     privilege, which ignores the
+            ///     FILE_TRAVERSE access right.
             /// </summary>
             FILE_TRAVERSE = 0x0020, // directory
 
@@ -223,8 +210,29 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
 
-            FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE,
+            FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
         }
+
+        private const UInt32 ErrorInsufficientBuffer = 122;
+
+        private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+        private const UInt32 FileReadAttributes = 0x0080;
+
+        private const UInt32 FileShareDelete = 0x00000004;
+
+        // CreateFile constants
+        private const UInt32 FileShareRead = 0x00000001;
+
+        private const UInt32 FileShareWrite = 0x00000002;
+
+        private const UInt32 FileWriteAttributes = 0x0100;
+
+        private const UInt32 GenericRead = 0x80000000;
+
+        private const UInt32 GenericWrite = 0x40000000;
+
+        private const UInt32 OpenExisting = 3;
 
         /// <summary>
         ///     returns a 2*number of extents array - the vcn and the lcn as pairs
@@ -249,7 +257,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var pDest = pAlloc;
                 var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-                if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+                if ( !fResult ) {
+                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                }
 
                 handle.Free();
 
@@ -265,15 +275,15 @@ namespace Librainian.OperatingSystem.FileSystem {
                     } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
                 */
 
-                var extentCount = ( Int32 )Marshal.PtrToStructure( pDest, typeof( Int32 ) );
+                var extentCount = ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
 
-                pDest = ( IntPtr )( ( Int64 )pDest + 4 );
+                pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
-                var startingVcn = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                var startingVcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-                Debug.Assert( startingVcn == 0 );
+                Trace.Assert( startingVcn == 0 );
 
-                pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+                pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
                 // now pDest points at an array of pairs of Int64s.
 
@@ -283,13 +293,13 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 for ( var i = 0; i < extentCount; i++ ) {
                     for ( var j = 0; j < 2; j++ ) {
-                        var v = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                        var v = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
                         retVal.SetValue( v, new[] {
                             i, j
                         } );
 
-                        pDest = ( IntPtr )( ( Int64 )pDest + 8 );
+                        pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
                     }
                 }
 
@@ -335,7 +345,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
-                if ( !result ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+                if ( !result ) {
+                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                }
 
                 handle.Free();
 
@@ -348,24 +360,24 @@ namespace Librainian.OperatingSystem.FileSystem {
                        BYTE Buffer[1];
                   } VOLUME_BITMAP_BUFFER, *PVOLUME_BITMAP_BUFFER;
                 */
-                var startingLcn = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                var startingLcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-                Debug.Assert( startingLcn == 0 );
+                Trace.Assert( startingLcn == 0 );
 
-                pDest = ( IntPtr )( ( Int64 )pDest + 8 );
-                var bitmapSize = ( Int64 )Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
+                var bitmapSize = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-                var byteSize = ( Int32 )( bitmapSize / 8 );
+                var byteSize = ( Int32 ) ( bitmapSize / 8 );
                 byteSize++; // round up - even with no remainder
 
-                var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
+                var bitmapBegin = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
                 var byteArr = new Byte[ byteSize ];
 
                 Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
                 var retVal = new BitArray( byteArr ) {
-                    Length = ( Int32 )bitmapSize
+                    Length = ( Int32 ) bitmapSize
                 };
 
                 // truncate to exact cluster count
@@ -402,19 +414,19 @@ namespace Librainian.OperatingSystem.FileSystem {
                 hFile = OpenFile( path );
 
                 var mfd = new MoveFileData {
-                    HFile = hFile,
-                    StartingVcn = vcn,
-                    StartingLcn = lcn,
-                    ClusterCount = count
+                    HFile = hFile, StartingVcn = vcn, StartingLcn = lcn, ClusterCount = count
                 };
 
                 var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
-                var bufSize = ( UInt32 )Marshal.SizeOf( mfd );
+                var bufSize = ( UInt32 ) Marshal.SizeOf( mfd );
 
-                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
+                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size,
+                    IntPtr.Zero );
 
-                if ( !fResult ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+                if ( !fResult ) {
+                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                }
 
                 handle.Free();
             }
@@ -425,17 +437,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static IntPtr OpenFile( String path ) {
-            var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+            var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
+                FileMode.Open, 0, IntPtr.Zero );
 
-            if ( hFile.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+            if ( hFile.IsInvalid ) {
+                throw new Exception( Marshal.GetLastWin32Error().ToString() );
+            }
 
             return hFile.DangerousGetHandle();
         }
 
         public static IntPtr OpenVolume( String deviceName ) {
-            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
+                IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-            if ( hDevice.IsInvalid ) { throw new Exception( Marshal.GetLastWin32Error().ToString() ); }
+            if ( hDevice.IsInvalid ) {
+                throw new Exception( Marshal.GetLastWin32Error().ToString() );
+            }
 
             return hDevice.DangerousGetHandle();
         }
@@ -444,9 +462,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     input structure for use in MoveFile
         /// </summary>
         public struct MoveFileData {
+
             public Int32 ClusterCount;
+
             public IntPtr HFile;
+
             public Int64 StartingLcn;
+
             public Int64 StartingVcn;
         }
     }

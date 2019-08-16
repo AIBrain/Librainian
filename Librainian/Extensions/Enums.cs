@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,119 +35,137 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Enums.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
+// Project: "Librainian", "Enums.cs" was last formatted by Protiguous on 2019/08/08 at 7:12 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Strongly typed version of Enum with Parsing and performance improvements.
-	/// </summary>
-	/// <typeparam name="T">Type of Enum</typeparam>
-	/// <remarks>
-	///     Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version
-	///     2. 0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the
-	///     License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at
-	///     http: //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
-	/// </remarks>
-	public static class Enums<T> where T : struct {
+    /// <summary>
+    ///     Strongly typed version of Enum with Parsing and performance improvements.
+    /// </summary>
+    /// <typeparam name="T">Type of Enum</typeparam>
+    /// <remarks>
+    ///     Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version
+    ///     2. 0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the
+    ///     License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at
+    ///     http: //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
+    /// </remarks>
+    public static class Enums<T> where T : struct {
 
-		private static IEnumerable<T> All { get; } = Enum.GetValues( typeof( T ) ).Cast<T>();
+        private static IEnumerable<T> All { get; } = Enum.GetValues( typeof( T ) ).Cast<T>();
 
-		private static Dictionary<String, T> InsensitiveNames { get; } = All.ToDictionary( k => Enum.GetName( typeof( T ), k )?.ToUpperInvariant() );
+        private static Dictionary<String, T> InsensitiveNames { get; } = All.ToDictionary( k => Enum.GetName( typeof( T ), k )?.ToUpperInvariant() );
 
-		private static Dictionary<T, String> Names { get; } = All.ToDictionary( k => k, v => v.ToString() );
+        private static Dictionary<T, String> Names { get; } = All.ToDictionary( k => k, v => v.ToString() );
 
-		private static Dictionary<String, T> SensitiveNames { get; } = All.ToDictionary( k => Enum.GetName( typeof( T ), k ) );
+        private static Dictionary<String, T> SensitiveNames { get; } = All.ToDictionary( k => Enum.GetName( typeof( T ), k ) );
 
-		private static Dictionary<Int32, T> Values { get; } = All.ToDictionary( k => Convert.ToInt32( k ) );
+        private static Dictionary<Int32, T> Values { get; } = All.ToDictionary( k => Convert.ToInt32( k ) );
 
-		public static T? CastOrNull( Int32 value ) {
-			if ( Values.TryGetValue( value, out var foundValue ) ) { return foundValue; }
+        public static T? CastOrNull( Int32 value ) {
+            if ( Values.TryGetValue( value, out var foundValue ) ) {
+                return foundValue;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		/// <summary>
-		///     Gets all items for an enum type.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<T> GetAllItems() => Enum.GetValues( typeof( T ) ).Cast<T>();
+        /// <summary>
+        ///     Gets all items for an enum type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [NotNull]
+        public static IEnumerable<T> GetAllItems() => Enum.GetValues( typeof( T ) ).Cast<T>();
 
-		[NotNull]
-		public static IEnumerable<T> GetFlags( T flagEnum ) {
-			var flagInt = Convert.ToInt32( flagEnum );
+        [NotNull]
+        public static IEnumerable<T> GetFlags( T flagEnum ) {
+            var flagInt = Convert.ToInt32( flagEnum );
 
-			return All.Where( value => ( Convert.ToInt32( value ) & flagInt ) != 0 );
-		}
+            return All.Where( value => ( Convert.ToInt32( value ) & flagInt ) != 0 );
+        }
 
-		[CanBeNull]
-		public static String GetName( T value ) {
-			Names.TryGetValue( value, out var name );
+        [CanBeNull]
+        public static String GetName( T value ) {
+            Names.TryGetValue( value, out var name );
 
-			return name;
-		}
+            return name;
+        }
 
-		[NotNull]
-		public static String[] GetNames() => Names.Values.ToArray();
+        [NotNull]
+        public static String[] GetNames() => Names.Values.ToArray();
 
-		public static IEnumerable<T> GetValues() => All;
+        public static IEnumerable<T> GetValues() => All;
 
-		public static Boolean IsDefined( T value ) => Names.Keys.Contains( value );
+        public static Boolean IsDefined( T value ) => Names.Keys.Contains( value );
 
-		public static Boolean IsDefined( String value ) => SensitiveNames.Keys.Contains( value );
+        public static Boolean IsDefined( String value ) => SensitiveNames.Keys.Contains( value );
 
-		public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
+        public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
-		public static T Parse( [NotNull] String value ) {
-			if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
+        public static T Parse( [NotNull] String value ) {
+            if ( !SensitiveNames.TryGetValue( value, out var parsed ) ) {
+                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
+            }
 
-			return parsed;
-		}
+            return parsed;
+        }
 
-		public static T Parse( [NotNull] String value, Boolean ignoreCase ) {
-			if ( !ignoreCase ) { return Parse( value ); }
+        public static T Parse( [NotNull] String value, Boolean ignoreCase ) {
+            if ( !ignoreCase ) {
+                return Parse( value );
+            }
 
-			if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) { throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) ); }
+            if ( !InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var parsed ) ) {
+                throw new ArgumentException( "Value is not one of the named constants defined for the enumeration", nameof( value ) );
+            }
 
-			return parsed;
-		}
+            return parsed;
+        }
 
-		public static T? ParseOrNull( [CanBeNull] String value ) {
-			if ( String.IsNullOrEmpty( value ) ) { return null; }
+        public static T? ParseOrNull( [CanBeNull] String value ) {
+            if ( String.IsNullOrEmpty( value ) ) {
+                return null;
+            }
 
-			if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) { return foundValue; }
+            if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) {
+                return foundValue;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public static T? ParseOrNull( String value, Boolean ignoreCase ) {
-			if ( !ignoreCase ) { return ParseOrNull( value ); }
+        public static T? ParseOrNull( String value, Boolean ignoreCase ) {
+            if ( !ignoreCase ) {
+                return ParseOrNull( value );
+            }
 
-			if ( String.IsNullOrEmpty( value ) ) { return null; }
+            if ( String.IsNullOrEmpty( value ) ) {
+                return null;
+            }
 
-			if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) { return foundValue; }
+            if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) {
+                return foundValue;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public static T SetFlags( [NotNull] IEnumerable<T> flags ) {
-			var combined = flags.Aggregate( default( Int32 ), ( current, flag ) => current | Convert.ToInt32( flag ) );
+        public static T SetFlags( [NotNull] IEnumerable<T> flags ) {
+            var combined = flags.Aggregate( default( Int32 ), ( current, flag ) => current | Convert.ToInt32( flag ) );
 
-			return Values.TryGetValue( combined, out var result ) ? result : default;
-		}
+            return Values.TryGetValue( combined, out var result ) ? result : default;
+        }
 
-		public static Boolean TryParse( [NotNull] String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
+        public static Boolean TryParse( [NotNull] String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );
 
-		public static Boolean TryParse( [NotNull] String value, Boolean ignoreCase, out T returnValue ) =>
-			ignoreCase ? InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
-	}
+        public static Boolean TryParse( [NotNull] String value, Boolean ignoreCase, out T returnValue ) =>
+            ignoreCase ? InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
+    }
 }

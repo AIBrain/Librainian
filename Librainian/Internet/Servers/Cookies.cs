@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,21 +35,19 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Cookies.cs" was last formatted by Protiguous on 2018/07/10 at 9:10 PM.
+// Project: "Librainian", "Cookies.cs" was last formatted by Protiguous on 2019/08/08 at 7:59 AM.
 
-namespace Librainian.Internet.Servers
-{
+namespace Librainian.Internet.Servers {
 
-    using JetBrains.Annotations;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Web;
+    using JetBrains.Annotations;
 
-    public class Cookies
-    {
+    public class Cookies {
 
         private readonly SortedList<String, Cookie> _cookieCollection = new SortedList<String, Cookie>();
 
@@ -61,24 +59,26 @@ namespace Librainian.Internet.Servers
         /// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
         /// <returns></returns>
         [NotNull]
-        public static Cookies FromString(String str)
-        {
+        public static Cookies FromString( String str ) {
             var cookies = new Cookies();
 
-            if (str == null) { return cookies; }
+            if ( str == null ) {
+                return cookies;
+            }
 
-            str = HttpUtility.UrlDecode(str);
-            var parts = str.Split(';');
+            str = HttpUtility.UrlDecode( str );
+            var parts = str.Split( ';' );
 
-            foreach (var s in parts)
-            {
-                var idxEquals = s.IndexOf('=');
+            foreach ( var s in parts ) {
+                var idxEquals = s.IndexOf( '=' );
 
-                if (idxEquals < 1) { continue; }
+                if ( idxEquals < 1 ) {
+                    continue;
+                }
 
-                var name = s.Substring(0, idxEquals).Trim();
-                var value = s.Substring(idxEquals + 1).Trim();
-                cookies.Add(name, value);
+                var name = s.Substring( 0, idxEquals ).Trim();
+                var value = s.Substring( idxEquals + 1 ).Trim();
+                cookies.Add( name, value );
             }
 
             return cookies;
@@ -90,18 +90,19 @@ namespace Librainian.Internet.Servers
         /// </summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
-        public void Add(String name, String value) => this.Add(name, value, TimeSpan.Zero);
+        public void Add( String name, String value ) => this.Add( name, value, TimeSpan.Zero );
 
         /// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
         /// <param name="expireTime">The amount of time before the cookie should expire.</param>
-        public void Add(String name, String value, TimeSpan expireTime)
-        {
-            if (name == null) { return; }
+        public void Add( String name, String value, TimeSpan expireTime ) {
+            if ( name == null ) {
+                return;
+            }
 
             name = name.ToLower();
-            this._cookieCollection[name] = new Cookie(name, value, expireTime);
+            this._cookieCollection[ name ] = new Cookie( name, value, expireTime );
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace Librainian.Internet.Servers
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
         [CanBeNull]
-        public Cookie Get([NotNull] String name) => this._cookieCollection.TryGetValue(name, out var cookie) ? cookie : null;
+        public Cookie Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
         /// <summary>
         ///     Gets the value of the cookie with the specified name. If the cookie is not found, an
@@ -118,11 +119,12 @@ namespace Librainian.Internet.Servers
         /// </summary>
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
-        public String GetValue([NotNull] String name)
-        {
-            var cookie = this.Get(name);
+        public String GetValue( [NotNull] String name ) {
+            var cookie = this.Get( name );
 
-            if (cookie == null) { return ""; }
+            if ( cookie == null ) {
+                return "";
+            }
 
             return cookie.Value;
         }
@@ -135,12 +137,11 @@ namespace Librainian.Internet.Servers
         ///     A String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated
         ///     by "\r\n". There is no leading or trailing "\r\n".
         /// </returns>
-        public override String ToString()
-        {
-            var cookiesStr = this._cookieCollection.Values.Select(cookie =>
-               $"Set-Cookie: {cookie.Name}={cookie.Value}{(cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + (Int64)cookie.Expire.TotalSeconds)}; Path=/");
+        public override String ToString() {
+            var cookiesStr = this._cookieCollection.Values.Select( cookie =>
+                $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 ) cookie.Expire.TotalSeconds )}; Path=/" );
 
-            return String.Join("\r\n", cookiesStr);
+            return String.Join( "\r\n", cookiesStr );
         }
     }
 }

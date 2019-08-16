@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,103 +35,108 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ComputerFingerPrint.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
+// Project: "Librainian", "ComputerFingerPrint.cs" was last formatted by Protiguous on 2019/08/08 at 9:14 AM.
 
 namespace Librainian.OperatingSystem {
 
-	using System;
-	using JetBrains.Annotations;
-	using Parsing;
-	using WMI;
+    using System;
+    using JetBrains.Annotations;
+    using Parsing;
+    using WMI;
 
-	/// <summary>
-	///     Generates a n*16 byte Unique Identification code (hash) of a computer
-	///     Example: 4876-8DB5-EE85-69D3-FE52-8CF7-395D-2EA9
-	/// </summary>
-	public static class ComputerFingerPrint {
+    /// <summary>
+    ///     Generates a n*16 byte Unique Identification code (hash) of a computer
+    ///     Example: 4876-8DB5-EE85-69D3-FE52-8CF7-395D-2EA9
+    /// </summary>
+    public static class ComputerFingerPrint {
 
-		//TODO totally unfinished and untested.
+        //TODO totally unfinished and untested.
 
-		//        public static String bob() {
-		//            DriveListEx diskInfo = new DriveListEx();
-		//            diskInfo.Load();
-		//String serialNo = diskInfo[ 0 ].SerialNumber;
+        //        public static String bob() {
+        //            DriveListEx diskInfo = new DriveListEx();
+        //            diskInfo.Load();
+        //String serialNo = diskInfo[ 0 ].SerialNumber;
 
-		// }
+        // }
 
-		/*
+        /*
                 private static String _fingerPrint = String.Empty;
         */
 
-		//public static String Value() {
-		//    if ( !String.IsNullOrEmpty( _fingerPrint ) ) {
-		//        return _fingerPrint;
-		//    }
-		//    _fingerPrint = GetHash( "CPU >> " + CPUID() + "\nBIOS >> " + biosId() + "\nBASE >> " + baseId()
+        //public static String Value() {
+        //    if ( !String.IsNullOrEmpty( _fingerPrint ) ) {
+        //        return _fingerPrint;
+        //    }
+        //    _fingerPrint = GetHash( "CPU >> " + CPUID() + "\nBIOS >> " + biosId() + "\nBASE >> " + baseId()
 
-		//    //+"\nDISK >> "+ diskId() + "\nVIDEO >> " +
-		//    videoId() + "\nMAC >> " + macId()
-		//    )
-		//    ;
-		//    return _fingerPrint;
-		//}
+        //    //+"\nDISK >> "+ diskId() + "\nVIDEO >> " +
+        //    videoId() + "\nMAC >> " + macId()
+        //    )
+        //    ;
+        //    return _fingerPrint;
+        //}
 
-		//Return a hardware identifier
+        //Return a hardware identifier
 
-		//Return a hardware identifier
+        //Return a hardware identifier
 
-		//BIOS Identifier
-		[NotNull]
-		private static String BiosId() =>
-			WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" ) + WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" ) +
-			WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" ) + WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" ) + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
+        //BIOS Identifier
+        [NotNull]
+        private static String BiosId() =>
+            WMIExtensions.Identifier( "Win32_BIOS", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BIOS", "SMBIOSBIOSVersion" ) +
+            WMIExtensions.Identifier( "Win32_BIOS", "IdentificationCode" ) + WMIExtensions.Identifier( "Win32_BIOS", "SerialNumber" ) +
+            WMIExtensions.Identifier( "Win32_BIOS", "ReleaseDate" ) + WMIExtensions.Identifier( "Win32_BIOS", "Version" );
 
-		[NotNull]
-		private static String CPUID() {
+        [NotNull]
+        private static String CPUID() {
 
-			//Uses first CPU identifier available in order of preference
-			//Don't get all identifiers, as it is very time consuming
-			var retVal = WMIExtensions.Identifier( "Win32_Processor", "UniqueId" );
+            //Uses first CPU identifier available in order of preference
+            //Don't get all identifiers, as it is very time consuming
+            var retVal = WMIExtensions.Identifier( "Win32_Processor", "UniqueId" );
 
-			if ( !retVal.IsNullOrEmpty() ) { return retVal; }
+            if ( !retVal.IsNullOrEmpty() ) {
+                return retVal;
+            }
 
-			retVal = WMIExtensions.Identifier( "Win32_Processor", "ProcessorId" );
+            retVal = WMIExtensions.Identifier( "Win32_Processor", "ProcessorId" );
 
-			if ( !retVal.IsNullOrEmpty() ) { return retVal; }
+            if ( !retVal.IsNullOrEmpty() ) {
+                return retVal;
+            }
 
-			retVal = WMIExtensions.Identifier( "Win32_Processor", "Name" );
+            retVal = WMIExtensions.Identifier( "Win32_Processor", "Name" );
 
-			if ( retVal == String.Empty ) //If no Name, use Manufacturer
-			{
-				retVal = WMIExtensions.Identifier( "Win32_Processor", "Manufacturer" );
-			}
+            if ( retVal == String.Empty ) //If no Name, use Manufacturer
+            {
+                retVal = WMIExtensions.Identifier( "Win32_Processor", "Manufacturer" );
+            }
 
-			//Add clock speed for extra security
-			retVal += WMIExtensions.Identifier( "Win32_Processor", "MaxClockSpeed" );
+            //Add clock speed for extra security
+            retVal += WMIExtensions.Identifier( "Win32_Processor", "MaxClockSpeed" );
 
-			return retVal;
-		}
+            return retVal;
+        }
 
-		//Main physical hard drive ID
-		[NotNull]
-		private static String DiskId() =>
-			WMIExtensions.Identifier( "Win32_DiskDrive", "Model" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Signature" ) +
-			WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
+        //Main physical hard drive ID
+        [NotNull]
+        private static String DiskId() =>
+            WMIExtensions.Identifier( "Win32_DiskDrive", "Model" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "Manufacturer" ) +
+            WMIExtensions.Identifier( "Win32_DiskDrive", "Signature" ) + WMIExtensions.Identifier( "Win32_DiskDrive", "TotalHeads" );
 
-		//First enabled network card ID
-		[NotNull]
-		private static String MacId() => WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
+        //First enabled network card ID
+        [NotNull]
+        private static String MacId() => WMIExtensions.Identifier( "Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled" );
 
-		//Motherboard ID
-		[NotNull]
-		private static String MotherboardId() =>
-			WMIExtensions.Identifier( "Win32_BaseBoard", "Model" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Manufacturer" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Name" ) +
-			WMIExtensions.Identifier( "Win32_BaseBoard", "SerialNumber" );
+        //Motherboard ID
+        [NotNull]
+        private static String MotherboardId() =>
+            WMIExtensions.Identifier( "Win32_BaseBoard", "Model" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "Manufacturer" ) +
+            WMIExtensions.Identifier( "Win32_BaseBoard", "Name" ) + WMIExtensions.Identifier( "Win32_BaseBoard", "SerialNumber" );
 
-		//Primary video controller ID
-		[NotNull]
-		private static String VideoId() => WMIExtensions.Identifier( "Win32_VideoController", "DriverVersion" ) + WMIExtensions.Identifier( "Win32_VideoController", "Name" );
-	}
+        //Primary video controller ID
+        [NotNull]
+        private static String VideoId() => WMIExtensions.Identifier( "Win32_VideoController", "DriverVersion" ) + WMIExtensions.Identifier( "Win32_VideoController", "Name" );
+    }
 }

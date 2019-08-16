@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,27 +35,27 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2018/08/08 at 6:45 PM.
+// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2019/08/08 at 9:24 AM.
 
 namespace Librainian.Parsing {
 
-    using Exceptions;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Diagnostics;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using Exceptions;
+    using Extensions;
+    using JetBrains.Annotations;
     using Maths;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     This <see cref="T:System.String" /> will always be <see cref="F:System.String.Empty" /> or trimmed, but *never*
     ///     null. I hope.
     /// </summary>
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
     [Immutable]
@@ -64,60 +64,58 @@ namespace Librainian.Parsing {
         /// <summary>
         ///     An immutable empty <see cref="TrimmedString" /> ( our version of <see cref="String.Empty" />).
         /// </summary>
-        public static readonly TrimmedString Empty = new TrimmedString(String.Empty);
-
-        public Boolean IsEmpty() => !this.Value.Length.Any() || !this.Value.Any() || this.Equals(Empty);
-
-        public Boolean IsNotEmpty() => this.Value.Length.Any() || this.Value.Any() || !this.Equals(Empty);
+        public static readonly TrimmedString Empty = new TrimmedString( String.Empty );
 
         [JsonProperty]
         [NotNull]
         public String Value { [NotNull] [DebuggerStepThrough] get; }
 
         [DebuggerStepThrough]
-        public TrimmedString([CanBeNull] String value, Boolean veryTrim = false) {
+        public TrimmedString( [CanBeNull] String value, Boolean veryTrim = false ) {
             value = value ?? String.Empty;
 
-            if (veryTrim) {
+            if ( veryTrim ) {
                 TryAgain:
                 var anychange = false;
 
-                while (value.Contains(Replacements.Space + Replacements.Return)) {
-                    value = value.Replace(Replacements.Space + Replacements.Return, Replacements.Return).Trim();
+                while ( value.Contains( Replacements.Space + Replacements.Return ) ) {
+                    value = value.Replace( Replacements.Space + Replacements.Return, Replacements.Return ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Replacements.Space + Replacements.Feed)) {
-                    value = value.Replace(Replacements.Space + Replacements.Feed, Replacements.Feed).Trim();
+                while ( value.Contains( Replacements.Space + Replacements.Feed ) ) {
+                    value = value.Replace( Replacements.Space + Replacements.Feed, Replacements.Feed ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Patterns.Feeds)) {
-                    value = value.Replace(Patterns.Feeds, Replacements.Feed).Trim();
+                while ( value.Contains( Patterns.Feeds ) ) {
+                    value = value.Replace( Patterns.Feeds, Replacements.Feed ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Patterns.Returns)) {
-                    value = value.Replace(Patterns.Returns, Replacements.Return).Trim();
+                while ( value.Contains( Patterns.Returns ) ) {
+                    value = value.Replace( Patterns.Returns, Replacements.Return ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Patterns.NewLines)) {
-                    value = value.Replace(Patterns.NewLines, Replacements.NewLine).Trim();
+                while ( value.Contains( Patterns.NewLines ) ) {
+                    value = value.Replace( Patterns.NewLines, Replacements.NewLine ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Patterns.Spaces)) {
-                    value = value.Replace(Patterns.Spaces, Replacements.Space).Trim();
+                while ( value.Contains( Patterns.Spaces ) ) {
+                    value = value.Replace( Patterns.Spaces, Replacements.Space ).Trim();
                     anychange = true;
                 }
 
-                while (value.Contains(Patterns.Tabs)) {
-                    value = value.Replace(Patterns.Tabs, Replacements.Tab).Trim();
+                while ( value.Contains( Patterns.Tabs ) ) {
+                    value = value.Replace( Patterns.Tabs, Replacements.Tab ).Trim();
                     anychange = true;
                 }
 
-                if (anychange) { goto TryAgain; }
+                if ( anychange ) {
+                    goto TryAgain;
+                }
             }
 
             this.Value = value.Trim();
@@ -128,7 +126,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="value"></param>
         [DebuggerStepThrough]
-        public TrimmedString([CanBeNull] Object value) => this.Value = (value?.ToString() ?? String.Empty).Trim();
+        public TrimmedString( [CanBeNull] Object value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
 
         /// <summary>
         ///     Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)
@@ -136,22 +134,22 @@ namespace Librainian.Parsing {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Boolean Equals(TrimmedString left, TrimmedString right) => String.Equals(left.Value, right.Value, StringComparison.Ordinal);
+        public static Boolean Equals( TrimmedString left, TrimmedString right ) => String.Equals( left.Value, right.Value, StringComparison.Ordinal );
 
         [NotNull]
-        public static implicit operator String(TrimmedString value) => value.Value;
+        public static implicit operator String( TrimmedString value ) => value.Value;
 
-        public static implicit operator TrimmedString(String value) => new TrimmedString(value);
+        public static implicit operator TrimmedString( String value ) => new TrimmedString( value );
 
-        public Int32 CompareTo(TrimmedString other) => String.Compare(this.Value, other.Value, StringComparison.CurrentCulture);
+        public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.CurrentCulture );
 
-        public Int32 CompareTo(String other) => String.Compare(this.Value, other, StringComparison.CurrentCulture);
+        public Int32 CompareTo( String other ) => String.Compare( this.Value, other, StringComparison.CurrentCulture );
 
-        public Boolean Equals(TrimmedString other) => Equals(this, other);
+        public Boolean Equals( TrimmedString other ) => Equals( this, other );
 
-        public override Boolean Equals(Object obj) => obj is TrimmedString right && Equals(this, right);
+        public override Boolean Equals( Object obj ) => obj is TrimmedString right && Equals( this, right );
 
         [DebuggerStepThrough]
         public override Int32 GetHashCode() => this.Value.GetHashCode();
@@ -159,13 +157,9 @@ namespace Librainian.Parsing {
         [DebuggerStepThrough]
         public TypeCode GetTypeCode() => this.Value.GetTypeCode();
 
-        /// <summary>
-        ///     Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)
-        /// </summary>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        public Boolean Like(String right) => this.Value.Like(right);
+        public Boolean IsEmpty() => !this.Value.Length.Any() || !this.Value.Any() || this.Equals( Empty );
+
+        public Boolean IsNotEmpty() => this.Value.Length.Any() || this.Value.Any() || !this.Equals( Empty );
 
         /// <summary>
         ///     Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)
@@ -173,65 +167,75 @@ namespace Librainian.Parsing {
         /// <param name="right"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public Boolean Like(TrimmedString right) => this.Value.Like(right.Value);
+        public Boolean Like( String right ) => this.Value.Like( right );
+
+        /// <summary>
+        ///     Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)
+        /// </summary>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        public Boolean Like( TrimmedString right ) => this.Value.Like( right.Value );
 
         [DebuggerStepThrough]
         public void ThrowIfEmpty() {
-            if (this.Value == null || this.IsEmpty()) { throw new ArgumentEmptyException("Value was empty."); }
+            if ( this.Value == null || this.IsEmpty() ) {
+                throw new ArgumentEmptyException( "Value was empty." );
+            }
         }
 
         [DebuggerStepThrough]
-        public Boolean ToBoolean(IFormatProvider provider) => (this.Value as IConvertible).ToBoolean(provider: provider);
+        public Boolean ToBoolean( IFormatProvider provider ) => ( this.Value as IConvertible ).ToBoolean( provider: provider );
 
         [DebuggerStepThrough]
-        public Byte ToByte(IFormatProvider provider) => (this.Value as IConvertible).ToByte(provider: provider);
+        public Byte ToByte( IFormatProvider provider ) => ( this.Value as IConvertible ).ToByte( provider: provider );
 
         [DebuggerStepThrough]
-        public Char ToChar(IFormatProvider provider) => (this.Value as IConvertible).ToChar(provider: provider);
+        public Char ToChar( IFormatProvider provider ) => ( this.Value as IConvertible ).ToChar( provider: provider );
 
         [DebuggerStepThrough]
-        public DateTime ToDateTime(IFormatProvider provider) => (this.Value as IConvertible).ToDateTime(provider: provider);
+        public DateTime ToDateTime( IFormatProvider provider ) => ( this.Value as IConvertible ).ToDateTime( provider: provider );
 
         [DebuggerStepThrough]
-        public Decimal ToDecimal(IFormatProvider provider) => (this.Value as IConvertible).ToDecimal(provider: provider);
+        public Decimal ToDecimal( IFormatProvider provider ) => ( this.Value as IConvertible ).ToDecimal( provider: provider );
 
         [DebuggerStepThrough]
-        public Double ToDouble(IFormatProvider provider) => (this.Value as IConvertible).ToDouble(provider: provider);
+        public Double ToDouble( IFormatProvider provider ) => ( this.Value as IConvertible ).ToDouble( provider: provider );
 
         [DebuggerStepThrough]
-        public Int16 ToInt16(IFormatProvider provider) => (this.Value as IConvertible).ToInt16(provider: provider);
+        public Int16 ToInt16( IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt16( provider: provider );
 
         [DebuggerStepThrough]
-        public Int32 ToInt32(IFormatProvider provider) => (this.Value as IConvertible).ToInt32(provider: provider);
+        public Int32 ToInt32( IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt32( provider: provider );
 
         [DebuggerStepThrough]
-        public Int64 ToInt64(IFormatProvider provider) => (this.Value as IConvertible).ToInt64(provider: provider);
+        public Int64 ToInt64( IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt64( provider: provider );
 
         public TrimmedString ToLower() => this.Value.ToLower();
 
         [DebuggerStepThrough]
-        public SByte ToSByte(IFormatProvider provider) => (this.Value as IConvertible).ToSByte(provider: provider);
+        public SByte ToSByte( IFormatProvider provider ) => ( this.Value as IConvertible ).ToSByte( provider: provider );
 
         [DebuggerStepThrough]
-        public Single ToSingle(IFormatProvider provider) => (this.Value as IConvertible).ToSingle(provider: provider);
+        public Single ToSingle( IFormatProvider provider ) => ( this.Value as IConvertible ).ToSingle( provider: provider );
 
         [DebuggerStepThrough]
         public override String ToString() => this.Value;
 
         [DebuggerStepThrough]
-        public String ToString(IFormatProvider provider) => this.Value.ToString(provider: provider);
+        public String ToString( IFormatProvider provider ) => this.Value.ToString( provider: provider );
 
         [DebuggerStepThrough]
-        public Object ToType(Type conversionType, IFormatProvider provider) => (this.Value as IConvertible).ToType(conversionType: conversionType, provider: provider);
+        public Object ToType( Type conversionType, IFormatProvider provider ) => ( this.Value as IConvertible ).ToType( conversionType: conversionType, provider: provider );
 
         [DebuggerStepThrough]
-        public UInt16 ToUInt16(IFormatProvider provider) => (this.Value as IConvertible).ToUInt16(provider: provider);
+        public UInt16 ToUInt16( IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt16( provider: provider );
 
         [DebuggerStepThrough]
-        public UInt32 ToUInt32(IFormatProvider provider) => (this.Value as IConvertible).ToUInt32(provider: provider);
+        public UInt32 ToUInt32( IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt32( provider: provider );
 
         [DebuggerStepThrough]
-        public UInt64 ToUInt64(IFormatProvider provider) => (this.Value as IConvertible).ToUInt64(provider: provider);
+        public UInt64 ToUInt64( IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt64( provider: provider );
 
         [DebuggerStepThrough]
         public TrimmedString ToUpper() => this.Value.ToUpper();
@@ -268,8 +272,10 @@ namespace Librainian.Parsing {
 
     public static class TrimmedStringExtensions {
 
-        public static TrimmedString ToTrimmedString([NotNull] this Object obj) {
-            if (obj == null) { throw new ArgumentNullException(paramName: nameof(obj)); }
+        public static TrimmedString ToTrimmedString( [NotNull] this Object obj ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
 
             return obj.ToString();
         }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Yoctoseconds.cs" was last formatted by Protiguous on 2018/08/28 at 9:33 PM.
+// Project: "Librainian", "Yoctoseconds.cs" was last formatted by Protiguous on 2019/08/08 at 9:12 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -113,7 +113,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Yoctoseconds( Decimal value ) => this.Value = ( Rational )value;
+        public Yoctoseconds( Decimal value ) => this.Value = ( Rational ) value;
 
         public Yoctoseconds( Rational value ) => this.Value = value;
 
@@ -153,13 +153,13 @@ namespace Librainian.Measurement.Time {
 
         public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, right: -right );
 
-        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
 
         public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left, right );
 
         public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
 
-        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational )yoctoseconds );
+        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational ) yoctoseconds );
 
         public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
 
@@ -167,21 +167,23 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
 
         public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
         public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) { return false; }
+            if ( obj == null ) {
+                return false;
+            }
 
             return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
@@ -193,7 +195,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "ys" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "ys" )}";
         }

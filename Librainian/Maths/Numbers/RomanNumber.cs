@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,38 +35,38 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "RomanNumber.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "RomanNumber.cs" was last formatted by Protiguous on 2019/08/08 at 8:31 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	public enum RomanNumber {
+    public enum RomanNumber {
 
-		I = 1,
+        I = 1,
 
-		Iv = 4,
+        Iv = 4,
 
-		V = 5,
+        V = 5,
 
-		Ix = 9,
+        Ix = 9,
 
-		X = 10,
+        X = 10,
 
-		Xl = 40,
+        Xl = 40,
 
-		L = 50,
+        L = 50,
 
-		Xc = 90,
+        Xc = 90,
 
-		C = 100,
+        C = 100,
 
-		Cd = 400,
+        Cd = 400,
 
-		D = 500,
+        D = 500,
 
-		Cm = 900,
+        Cm = 900,
 
-		M = 1000
-	}
+        M = 1000
+    }
 }

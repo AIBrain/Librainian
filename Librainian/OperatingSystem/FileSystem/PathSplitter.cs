@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
+// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2019/08/08 at 9:18 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -50,13 +50,15 @@ namespace Librainian.OperatingSystem.FileSystem {
     public class PathSplitter {
 
         [NotNull]
-        private List<String> Parts { get; } = new List<String>( 3 );
+        private List<String> Parts { get; }
 
+        [NotNull]
         public String FileName { get; }
 
         [CanBeNull]
         public String OriginalPath { get; }
 
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public PathSplitter( String fullpathandfilename ) {
             if ( String.IsNullOrWhiteSpace( value: fullpathandfilename ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpathandfilename ) );
@@ -65,26 +67,33 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.FileName = Path.GetFileName( fullpathandfilename );
             this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
 
-            if ( default == this.OriginalPath ) { return; }
+            if ( default == this.OriginalPath ) {
+                return;
+            }
 
             var strings = this.OriginalPath.Split( new[] {
                 Path.DirectorySeparatorChar
             }, StringSplitOptions.RemoveEmptyEntries );
 
-            this.Parts.AddRange( strings );
+            this.Parts = new List<String>( strings );
         }
 
-        public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) {
-        }
+        // ReSharper disable once NotNullMemberIsNotInitialized
+        public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) { }
 
+        // ReSharper disable once NotNullMemberIsNotInitialized
         public PathSplitter( [NotNull] Folder folder ) : this( folder.FullName ) { }
 
         public Boolean InsertRoot( [NotNull] String path ) {
-            if ( path == null ) { throw new ArgumentNullException( nameof( path ) ); }
+            if ( path == null ) {
+                throw new ArgumentNullException( nameof( path ) );
+            }
 
             this.Parts.Insert( 1, path );
 
-            if ( path[ 1 ] == ':' ) { this.Parts.RemoveAt( 0 ); }
+            if ( path[ 1 ] == ':' ) {
+                this.Parts.RemoveAt( 0 );
+            }
 
             return true;
         }
@@ -101,7 +110,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public Boolean SubstituteDrive( Char c ) {
-            if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) { return false; }
+            if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) {
+                return false;
+            }
 
             this.Parts[ 0 ] = $"{new String( new[] { c } )}:";
 

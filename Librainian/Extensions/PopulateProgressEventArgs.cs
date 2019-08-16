@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,31 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PopulateProgressEventArgs.cs" was last formatted by Protiguous on 2018/07/10 at 9:03 PM.
+// Project: "Librainian", "PopulateProgressEventArgs.cs" was last formatted by Protiguous on 2019/08/08 at 7:19 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Simple EventArg for the two progress events
-	///     NOTE: There will typically be some errors which is fine as some parts of the Registry are not accessible with
-	///     standard security
-	/// </summary>
-	public class PopulateProgressEventArgs : EventArgs {
+    /// <summary>
+    ///     Simple EventArg for the two progress events
+    ///     NOTE: There will typically be some errors which is fine as some parts of the Registry are not accessible with
+    ///     standard security
+    /// </summary>
+    public class PopulateProgressEventArgs : EventArgs {
 
-		public Int32 ItemCount { get; internal set; }
+        public Int32 ItemCount { get; internal set; }
 
-		public String KeyName { get; }
+        public String KeyName { get; }
 
-		public PopulateProgressEventArgs( Int32 itemCount, [CanBeNull] String keyName = null ) {
-			this.ItemCount = itemCount;
-			this.KeyName = keyName;
-		}
+        public PopulateProgressEventArgs( Int32 itemCount, [CanBeNull] String keyName = null ) {
+            this.ItemCount = itemCount;
+            this.KeyName = keyName;
+        }
 
-		public PopulateProgressEventArgs() : this( -1 ) { }
-	}
+        public PopulateProgressEventArgs() : this( -1 ) { }
+    }
 }

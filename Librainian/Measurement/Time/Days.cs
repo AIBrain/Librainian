@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Days.cs" was last formatted by Protiguous on 2019/03/03 at 8:08 AM.
+// Project: "Librainian", "Days.cs" was last formatted by Protiguous on 2019/08/08 at 9:00 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Days( Decimal value ) => this.Value = ( Rational )value;
+        public Days( Decimal value ) => this.Value = ( Rational ) value;
 
         public Days( Rational value ) => this.Value = value;
 
@@ -125,7 +125,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days );
 
-        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double ) days.Value );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
@@ -138,31 +138,40 @@ namespace Librainian.Measurement.Time {
 
         public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
 
-        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
+        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational ) ( -days ) );
 
         public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
         public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational ) days );
 
         public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days ) right;
 
         public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days ) right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Days other ) => this.Value.CompareTo( other.Value );
 
-        /// <summary>Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object. </summary>
+        /// <summary>
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates
+        ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
+        ///     object.
+        /// </summary>
         /// <param name="other">An object to compare with this instance. </param>
-        /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows <paramref name="other" /> in the sort order. </returns>
+        /// <returns>
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings:
+        ///     Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This
+        ///     instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This
+        ///     instance follows <paramref name="other" /> in the sort order.
+        /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( paramName: nameof( other ) );
@@ -171,11 +180,21 @@ namespace Librainian.Measurement.Time {
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
         }
 
-        /// <summary>Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.</summary>
+        /// <summary>
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates
+        ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
+        ///     object.
+        /// </summary>
         /// <param name="obj">An object to compare with this instance. </param>
-        /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes <paramref name="obj" /> in the sort order. Zero This instance occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows <paramref name="obj" /> in the sort order. </returns>
+        /// <returns>
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings:
+        ///     Value Meaning Less than zero This instance precedes <paramref name="obj" /> in the sort order. Zero This instance
+        ///     occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
+        ///     <paramref name="obj" /> in the sort order.
+        /// </returns>
         /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="obj" /> is not the same type as this instance. </exception>
+        ///     <paramref name="obj" /> is not the same type as this instance.
+        /// </exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return 1;
@@ -198,10 +217,10 @@ namespace Librainian.Measurement.Time {
 
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneDay * this.Value );
 
         [NotNull]
-        public Seconds ToSeconds() => new Seconds( ( Rational )TimeSpan.FromDays( ( Double )this.Value ).TotalSeconds );
+        public Seconds ToSeconds() => new Seconds( ( Rational ) TimeSpan.FromDays( ( Double ) this.Value ).TotalSeconds );
 
         public override String ToString() {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
@@ -210,7 +229,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "day" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "day" )}";
         }

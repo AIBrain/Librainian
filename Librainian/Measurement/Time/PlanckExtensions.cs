@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,60 +35,61 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PlanckExtensions.cs" was last formatted by Protiguous on 2018/08/15 at 7:16 PM.
+// Project: "Librainian", "PlanckExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:08 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Numerics;
-	using Rationals;
+    using System;
+    using System.Numerics;
+    using Rationals;
 
-	public static class PlanckExtensions {
+    public static class PlanckExtensions {
 
-		/// <summary>
-		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
-		/// </summary>
-		/// <param name="constant"></param>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
+        /// <summary>
+        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
+        /// </summary>
+        /// <param name="constant"></param>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
 
-			var integer = BigInteger.Divide( planckTimes, constant );
-			planckTimes -= BigInteger.Multiply( integer, constant );
+            var integer = BigInteger.Divide( planckTimes, constant );
+            planckTimes -= BigInteger.Multiply( integer, constant );
 
-			return integer;
-		}
+            return integer;
+        }
 
-		/// <summary>
-		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
-		/// </summary>
-		/// <param name="constant"></param>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
+        /// <summary>
+        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
+        /// </summary>
+        /// <param name="constant"></param>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
 
-			var pullPlancks = planckTimes / (Rational)constant;
-			planckTimes -= ( pullPlancks * (Rational)constant ).WholePart;
+            var pullPlancks = planckTimes / ( Rational ) constant;
+            planckTimes -= ( pullPlancks * ( Rational ) constant ).WholePart;
 
-			return pullPlancks.WholePart;
-		}
+            return pullPlancks.WholePart;
+        }
 
-		/*
-		/// <summary>
-		///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
-		/// </summary>
-		/// <param name="constant"></param>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
+        /*
 
-			var pullPlancks = Rational.Divide( planckTimes, constant );
-			planckTimes -= ( BigInteger )Rational.Multiply( pullPlancks, constant );
+        /// <summary>
+        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
+        /// </summary>
+        /// <param name="constant"></param>
+        /// <param name="planckTimes"></param>
+        /// <returns></returns>
+        public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
 
-			return ( BigInteger )pullPlancks;
-		}
-		*/
-	}
+            var pullPlancks = Rational.Divide( planckTimes, constant );
+            planckTimes -= ( BigInteger )Rational.Multiply( pullPlancks, constant );
+
+            return ( BigInteger )pullPlancks;
+        }
+        */
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2019/08/08 at 8:18 AM.
 
 namespace Librainian.Maths {
 
@@ -90,8 +90,12 @@ namespace Librainian.Maths {
             get => this._value;
 
             set {
-                if ( value > MaxValue ) { value = MaxValue; }
-                else if ( value < MinValue ) { value = MinValue; }
+                if ( value > MaxValue ) {
+                    value = MaxValue;
+                }
+                else if ( value < MinValue ) {
+                    value = MinValue;
+                }
 
                 this._value.Value = value;
             }
@@ -105,22 +109,34 @@ namespace Librainian.Maths {
         ///     Initializes a random number between 0 and 1
         /// </summary>
         public Fuzzy( Double? value = null ) : this() {
-            if ( value.HasValue ) { this.Value = value.Value; }
-            else { this.Randomize(); }
+            if ( value.HasValue ) {
+                this.Value = value.Value;
+            }
+            else {
+                this.Randomize();
+            }
         }
 
         public static Double Combine( Double left, Double rhs ) {
-            if ( !left.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( left ) ); }
+            if ( !left.IsNumber() ) {
+                throw new ArgumentOutOfRangeException( nameof( left ) );
+            }
 
-            if ( !rhs.IsNumber() ) { throw new ArgumentOutOfRangeException( nameof( rhs ) ); }
+            if ( !rhs.IsNumber() ) {
+                throw new ArgumentOutOfRangeException( nameof( rhs ) );
+            }
 
             return ( left + rhs ) / 2D;
         }
 
         public static Fuzzy Parse( [CanBeNull] String value ) {
-            if ( String.IsNullOrWhiteSpace( value ) ) { throw new ArgumentNullException( nameof( value ) ); }
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                throw new ArgumentNullException( nameof( value ) );
+            }
 
-            if ( Double.TryParse( value, out var result ) ) { return new Fuzzy( result ); }
+            if ( Double.TryParse( value, out var result ) ) {
+                return new Fuzzy( result );
+            }
 
             return Empty;
         }
@@ -153,19 +169,25 @@ namespace Librainian.Maths {
                     switch ( lmh.Value ) {
                         case LowMiddleHigh.Low:
 
-                            do { this.Value = Randem.NextDouble( 0.0D, 0.25D ); } while ( this.Value < MinValue || this.Value > 0.25D );
+                            do {
+                                this.Value = Randem.NextDouble( 0.0D, 0.25D );
+                            } while ( this.Value < MinValue || this.Value > 0.25D );
 
                             break;
 
                         case LowMiddleHigh.Middle:
 
-                            do { this.Value = Randem.NextDouble( 0.25D, 0.75D ); } while ( this.Value < 0.25D || this.Value > 0.75D );
+                            do {
+                                this.Value = Randem.NextDouble( 0.25D, 0.75D );
+                            } while ( this.Value < 0.25D || this.Value > 0.75D );
 
                             break;
 
                         case LowMiddleHigh.High:
 
-                            do { this.Value = Randem.NextDouble(); } while ( this.Value < 0.75D || this.Value > MaxValue );
+                            do {
+                                this.Value = Randem.NextDouble();
+                            } while ( this.Value < 0.75D || this.Value > MaxValue );
 
                             break;
 

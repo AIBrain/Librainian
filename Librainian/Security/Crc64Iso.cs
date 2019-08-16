@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,35 +35,38 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Crc64Iso.cs" was last formatted by Protiguous on 2018/07/13 at 1:37 AM.
+// Project: "Librainian", "Crc64Iso.cs" was last formatted by Protiguous on 2019/08/08 at 9:31 AM.
 
 namespace Librainian.Security {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     <see cref="CRC64" />
-	/// </summary>
-	/// <copyright>Damien Guard. All rights reserved.</copyright>
-	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
-	public class Crc64Iso : CRC64 {
+    /// <summary>
+    ///     <see cref="CRC64" />
+    /// </summary>
+    /// <copyright>Damien Guard. All rights reserved.</copyright>
+    /// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+    public class Crc64Iso : CRC64 {
 
-		internal static UInt64[] Table;
-		public const UInt64 Iso3309Polynomial = 0xD800000000000000;
+        public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
-		public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }
+        internal static UInt64[] Table;
 
-		public Crc64Iso( UInt64 seed ) : base( polynomial: Iso3309Polynomial, seed: seed ) { }
+        public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }
 
-		public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
+        public Crc64Iso( UInt64 seed ) : base( polynomial: Iso3309Polynomial, seed: seed ) { }
 
-		public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
-			if ( Table == null ) { Table = CreateTable( polynomial: Iso3309Polynomial ); }
+        public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
 
-			return CalculateHash( seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length );
-		}
-	}
+        public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
+            if ( Table == null ) {
+                Table = CreateTable( polynomial: Iso3309Polynomial );
+            }
+
+            return CalculateHash( seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length );
+        }
+    }
 }

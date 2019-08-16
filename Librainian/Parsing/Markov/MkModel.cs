@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,26 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MkModel.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "MkModel.cs" was last formatted by Protiguous on 2019/08/08 at 9:23 AM.
 
-namespace Librainian.Parsing.Markov
-{
+namespace Librainian.Parsing.Markov {
 
-    using Extensions;
-    using JetBrains.Annotations;
-    using Maths;
-    using Persistence;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Persistence;
 
-    public class MkModel
-    {
+    public class MkModel {
 
         private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
 
@@ -62,26 +60,27 @@ namespace Librainian.Parsing.Markov
 
         public MkModel() => throw new NotImplementedException();
 
-        public MkModel(String name) => this.Name = name;
+        public MkModel( String name ) => this.Name = name;
 
         [NotNull]
-        public String GenerateRandomCorpus(Int32 numberOfWords)
-        {
-            if (!this._markovChains.Any()) { return String.Empty; }
+        public String GenerateRandomCorpus( Int32 numberOfWords ) {
+            if ( !this._markovChains.Any() ) {
+                return String.Empty;
+            }
 
-            var startWord = this._markovChains.OrderBy(o => Randem.Next()).FirstOrDefault().Key;
-            var newCorpus = new StringBuilder(startWord);
+            var startWord = this._markovChains.OrderBy( o => Randem.Next() ).FirstOrDefault().Key;
+            var newCorpus = new StringBuilder( startWord );
 
-            while (numberOfWords > 0)
-            {
+            while ( numberOfWords > 0 ) {
                 var word = startWord;
-                var randomChain = this.Nexts(word: word).OrderBy(o => Randem.Next());
+                var randomChain = this.Nexts( word: word ).OrderBy( o => Randem.Next() );
 
-                foreach (var w in randomChain)
-                {
-                    newCorpus.Append($"{w} ");
+                foreach ( var w in randomChain ) {
+                    newCorpus.Append( $"{w} " );
 
-                    if (String.IsNullOrEmpty(w)) { continue; }
+                    if ( String.IsNullOrEmpty( w ) ) {
+                        continue;
+                    }
 
                     startWord = w;
                     numberOfWords -= 1;
@@ -95,18 +94,21 @@ namespace Librainian.Parsing.Markov
         ///     Need to use JSON loader here..
         /// </summary>
         /// <returns></returns>
-        public Boolean Load() => this.Name.Loader<MkModel>(source => source.DeepClone(destination: this));
+        public Boolean Load() => this.Name.Loader<MkModel>( source => source.DeepClone( destination: this ) );
 
         /// <summary>
         ///     Return the list of strings found after this <paramref name="word" />.
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public IEnumerable<String> Nexts([CanBeNull] String word)
-        {
-            if (word == null) { return Enumerable.Empty<String>(); }
+        public IEnumerable<String> Nexts( [CanBeNull] String word ) {
+            if ( word == null ) {
+                return Enumerable.Empty<String>();
+            }
 
-            if (this._markovChains.ContainsKey(word)) { return this._markovChains[word]; }
+            if ( this._markovChains.ContainsKey( word ) ) {
+                return this._markovChains[ word ];
+            }
 
             return Enumerable.Empty<String>();
         }
@@ -115,13 +117,12 @@ namespace Librainian.Parsing.Markov
         ///     Need to use JSON saver here..
         /// </summary>
         /// <returns></returns>
-        public Boolean Save() => this.Saver(this.Name);
+        public Boolean Save() => this.Saver( this.Name );
 
-        public void Train(String corpus, Int32 level = 3)
-        {
+        public void Train( String corpus, Int32 level = 3 ) {
             var words = corpus.ToWords().AsParallel().ToArray();
 
-            Parallel.For(0, words.Length, (i, state) => this._markovChains.TryAdd(words[i], words.Skip(i + 1).Take(level).ToList()));
+            Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );
         }
     }
 }

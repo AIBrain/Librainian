@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,120 +35,120 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PercentageNonTS.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "PercentageNonTS.cs" was last formatted by Protiguous on 2019/08/08 at 8:30 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>Restricts the value to between 0.0 and 1.0</summary>
-	/// <remarks>Just wanted a threadsafe wrapper for Min and Max.</remarks>
-	[JsonObject]
-	public sealed class PercentageNonTs {
+    /// <summary>Restricts the value to between 0.0 and 1.0</summary>
+    /// <remarks>Just wanted a threadsafe wrapper for Min and Max.</remarks>
+    [JsonObject]
+    public sealed class PercentageNonTs {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _value;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Double _value;
 
-		public Double Value {
-			get => Thread.VolatileRead( ref this._value );
+        public Double Value {
+            get => Thread.VolatileRead( ref this._value );
 
-			set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
-		}
+            set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
+        }
 
-		public const Double Epsilon = Double.Epsilon;
+        public const Double Epsilon = Double.Epsilon;
 
-		public const Double MaxValue = 1D;
+        public const Double MaxValue = 1D;
 
-		public const Double MinValue = 0D;
+        public const Double MinValue = 0D;
 
-		/// <summary>Initializes and constrain the value to stay between 0.0 and 1.0.</summary>
-		/// <param name="value"></param>
-		public PercentageNonTs( Double value ) => this.Value = value;
+        /// <summary>Initializes and constrain the value to stay between 0.0 and 1.0.</summary>
+        /// <param name="value"></param>
+        public PercentageNonTs( Double value ) => this.Value = value;
 
-		public PercentageNonTs( Double min, Double max ) : this( Randem.NextDouble( min: min, max: max ) ) { }
+        public PercentageNonTs( Double min, Double max ) : this( Randem.NextDouble( min: min, max: max ) ) { }
 
-		///// <summary>
-		/////   Initializes a random number between 0.0 and 1.0
-		///// </summary>
-		//public Percentage() : this( Randem.NextDouble() ) { }
-		public static implicit operator Double( [NotNull] PercentageNonTs special ) => special.Value;
+        ///// <summary>
+        /////   Initializes a random number between 0.0 and 1.0
+        ///// </summary>
+        //public Percentage() : this( Randem.NextDouble() ) { }
+        public static implicit operator Double( [NotNull] PercentageNonTs special ) => special.Value;
 
-		[NotNull]
-		public static implicit operator PercentageNonTs( Double value ) => new PercentageNonTs( value );
+        [NotNull]
+        public static implicit operator PercentageNonTs( Double value ) => new PercentageNonTs( value );
 
-		[NotNull]
-		public static PercentageNonTs Parse( [NotNull] String value ) => new PercentageNonTs( Double.Parse( value ) );
+        [NotNull]
+        public static PercentageNonTs Parse( [NotNull] String value ) => new PercentageNonTs( Double.Parse( value ) );
 
-		public void DropByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value;
+        public void DropByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value;
 
-		public void DropByRelative( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value * this.Value;
+        public void DropByRelative( [NotNull] PercentageNonTs percentage ) => this.Value -= percentage.Value * this.Value;
 
-		public void RaiseByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value;
+        public void RaiseByAbsolute( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value;
 
-		public void RaiseByRelative( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value * this.Value;
+        public void RaiseByRelative( [NotNull] PercentageNonTs percentage ) => this.Value += percentage.Value * this.Value;
 
-		public override String ToString() => $"{this.Value:P1}";
-	}
+        public override String ToString() => $"{this.Value:P1}";
+    }
 
-	//public static class Percentage_Extension {
-	//    ///// <summary>
-	//    /////   Bring the value closer to <see cref = "Percentage.MaxValue" />
-	//    ///// </summary>
-	//    ///// <param name = "percentage"></param>
-	//    ///// <returns></returns>
-	//    //public static Double Increment( this Percentage percentage ) {
-	//    //    if ( null == percentage ) {
-	//    //        throw new ArgumentNullException( "percentage" );
-	//    //    }
-	//    //    percentage.Value = Percentage.Combine( percentage, 1D );
-	//    //    return percentage.Value;
-	//    //}
+    //public static class Percentage_Extension {
+    //    ///// <summary>
+    //    /////   Bring the value closer to <see cref = "Percentage.MaxValue" />
+    //    ///// </summary>
+    //    ///// <param name = "percentage"></param>
+    //    ///// <returns></returns>
+    //    //public static Double Increment( this Percentage percentage ) {
+    //    //    if ( null == percentage ) {
+    //    //        throw new ArgumentNullException( "percentage" );
+    //    //    }
+    //    //    percentage.Value = Percentage.Combine( percentage, 1D );
+    //    //    return percentage.Value;
+    //    //}
 
-	// /* ///
-	// <summary>
-	// /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
-	// to <see cref="Percentage.MaxValue" />)</i> ///
-	// </summary>
-	// ///
-	// <param name="percentage"></param>
-	// ///
-	// <param name="goal"></param>
-	// ///
-	// <returns></returns>
-	// public static void BringCloserTo( this Double percentage, Double goal = Percentage.MaxValue )
-	// { percentage = ( percentage + goal ) / 2D; }
-	// * /
+    // /* ///
+    // <summary>
+    // /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
+    // to <see cref="Percentage.MaxValue" />)</i> ///
+    // </summary>
+    // ///
+    // <param name="percentage"></param>
+    // ///
+    // <param name="goal"></param>
+    // ///
+    // <returns></returns>
+    // public static void BringCloserTo( this Double percentage, Double goal = Percentage.MaxValue )
+    // { percentage = ( percentage + goal ) / 2D; }
+    // * /
 
-	// ///
-	// <summary>
-	// /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
-	// to <see cref="Percentage.MaxValue" />)</i> ///
-	// </summary>
-	// ///
-	// <param name="percentage"></param>
-	// ///
-	// <param name="goal"></param>
-	// ///
-	// <returns></returns>
-	// public static void BringCloserTo( this Percentage percentage, Double goal =
-	// Percentage.MaxValue ) { percentage.Value = ( percentage.Value + goal ) / 2D; //return
-	// percentage; }
+    // ///
+    // <summary>
+    // /// Brings the <see cref="Percentage" /> closer to <paramref name="goal" />. /// <i>(defaults
+    // to <see cref="Percentage.MaxValue" />)</i> ///
+    // </summary>
+    // ///
+    // <param name="percentage"></param>
+    // ///
+    // <param name="goal"></param>
+    // ///
+    // <returns></returns>
+    // public static void BringCloserTo( this Percentage percentage, Double goal =
+    // Percentage.MaxValue ) { percentage.Value = ( percentage.Value + goal ) / 2D; //return
+    // percentage; }
 
-	//    /////// <summary>
-	//    ///////   Brings the <see cref = "potential" /> closer to <paramref name = "goal" />.
-	//    /////// </summary>
-	//    /////// <param name="potential"></param>
-	//    /////// <param name = "goal"></param>
-	//    /////// <returns></returns>
-	//    ////public static void BringCloserTo( this Potential potential, Double goal ) {
-	//    ////    potential.Voltage = ( potential.Voltage + goal ) / 2D;
-	//    ////    //return potential;
-	//    ////}
-	//}
+    //    /////// <summary>
+    //    ///////   Brings the <see cref = "potential" /> closer to <paramref name = "goal" />.
+    //    /////// </summary>
+    //    /////// <param name="potential"></param>
+    //    /////// <param name = "goal"></param>
+    //    /////// <returns></returns>
+    //    ////public static void BringCloserTo( this Potential potential, Double goal ) {
+    //    ////    potential.Voltage = ( potential.Voltage + goal ) / 2D;
+    //    ////    //return potential;
+    //    ////}
+    //}
 }

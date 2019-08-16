@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,26 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ETACalculator.cs" was last formatted by Protiguous on 2018/07/13 at 1:28 AM.
+// Project: "Librainian", "ETACalculator.cs" was last formatted by Protiguous on 2019/08/08 at 9:01 AM.
 
-namespace Librainian.Measurement.Time
-{
+namespace Librainian.Measurement.Time {
 
-    using FluentTime;
-    using JetBrains.Annotations;
-    using Maths;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Timers;
+    using FluentTime;
+    using JetBrains.Annotations;
+    using Maths;
 
     /// <summary>
     ///     <para>Calculates the "Estimated Time of Arrival", aka ETA</para>
     /// </summary>
-    public class EtaCalculator
-    {
+    public class EtaCalculator {
 
         /// <summary>
         ///     At these points in time, how far along have we progressed?
@@ -82,15 +80,19 @@ namespace Librainian.Measurement.Time
             get => this._progress;
 
             set {
-                if (!value.IsNumber()) { throw new InvalidOperationException(); }
+                if ( !value.IsNumber() ) {
+                    throw new InvalidOperationException();
+                }
 
-                if (value < 0 || value > 1) { throw new ArgumentOutOfRangeException(nameof(this.Progress), $"{value:R} is out of the range 0 to 1."); }
+                if ( value < 0 || value > 1 ) {
+                    throw new ArgumentOutOfRangeException( nameof( this.Progress ), $"{value:R} is out of the range 0 to 1." );
+                }
 
                 this._progress = value;
             }
         }
 
-        public EtaCalculator() => this.Reset(Seconds.One);
+        public EtaCalculator() => this.Reset( Seconds.One );
 
         /// <summary>
         ///     <para>Returns True when there is enough data to calculate the ETA.</para>
@@ -109,16 +111,12 @@ namespace Librainian.Measurement.Time
         /// <returns></returns>
         [NotNull]
         public IEnumerable<TimeProgression> GetDataPoints() =>
-            this._datapoints.OrderBy(pair => pair.Key).Select(pair => new TimeProgression
-            {
-                MillisecondsPassed = pair.Key.TotalMilliseconds,
-                Progress = pair.Value
-            });
+            this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
+                MillisecondsPassed = pair.Key.TotalMilliseconds, Progress = pair.Value
+            } );
 
-        public void Reset(TimeSpan samplingPeriod)
-        {
-            using (this._timer)
-            {
+        public void Reset( TimeSpan samplingPeriod ) {
+            using ( this._timer ) {
 
                 //TODO what happens if this == null?
                 //this._timer?.Close();
@@ -131,22 +129,21 @@ namespace Librainian.Measurement.Time
             this.Progress = 0;
 
             // ReSharper disable once UseObjectOrCollectionInitializer
-            this._timer = new Timer
-            {
-                Interval = samplingPeriod.TotalMilliseconds,
-                AutoReset = true
+            this._timer = new Timer {
+                Interval = samplingPeriod.TotalMilliseconds, AutoReset = true
             };
 
-            this._timer.Elapsed += (sender, args) => this.Update();
+            this._timer.Elapsed += ( sender, args ) => this.Update();
             this._timer?.Start();
         }
 
         /// <summary>
         ///     <para>Manually add the known <see cref="Progress" /> to the internal data points.</para>
         /// </summary>
-        public void Update()
-        {
-            if (this.Progress >= 0 && this.Progress <= 1 && !this.Progress.IsNumber()) { this._datapoints.TryAdd(this._stopwatch.Elapsed, this.Progress); }
+        public void Update() {
+            if ( this.Progress >= 0 && this.Progress <= 1 && !this.Progress.IsNumber() ) {
+                this._datapoints.TryAdd( this._stopwatch.Elapsed, this.Progress );
+            }
 
             //throw new ArgumentOutOfRangeException( "Progress", "The Progress is out of the range 0 to 1." );
         }

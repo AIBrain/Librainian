@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Hours.cs" was last formatted by Protiguous on 2018/11/03 at 6:45 PM.
+// Project: "Librainian", "Hours.cs" was last formatted by Protiguous on 2019/08/08 at 9:04 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Hours( Decimal value ) => this.Value = ( Rational )value;
+        public Hours( Decimal value ) => this.Value = ( Rational ) value;
 
         public Hours( Rational value ) => this.Value = value;
 
@@ -135,29 +135,29 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator SpanOfTime( Hours hours ) => new SpanOfTime( hours );
 
-        public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double )hours.Value );
+        public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double ) hours.Value );
 
         public static Hours operator -( Hours hours ) => new Hours( hours.Value * -1 );
 
         public static Hours operator -( Hours left, Hours right ) => Combine( left: left, right: -right );
 
-        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, ( Rational )( -hours ) );
+        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, ( Rational ) ( -hours ) );
 
         public static Boolean operator !=( Hours left, Hours right ) => !Equals( left, right );
 
         public static Hours operator +( Hours left, Hours right ) => Combine( left, right );
 
-        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, ( Rational )hours );
+        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, ( Rational ) hours );
 
         public static Hours operator +( Hours left, BigInteger hours ) => Combine( left, hours );
 
         public static Boolean operator <( Hours left, Hours right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours )right;
+        public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours ) right;
 
         public static Boolean operator ==( Hours left, Hours right ) => Equals( left, right );
 
-        public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours )right;
+        public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours ) right;
 
         public static Boolean operator >( Hours left, Hours right ) => left.Value > right.Value;
 
@@ -179,7 +179,7 @@ namespace Librainian.Measurement.Time {
 
         public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value.WholePart * ( BigInteger )PlanckTimes.InOneHour );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value.WholePart * ( BigInteger ) PlanckTimes.InOneHour );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value / Seconds.InOneHour );
@@ -191,7 +191,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "hour" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "hour" )}";
         }

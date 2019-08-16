@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,30 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MicroStopwatch.cs" was last formatted by Protiguous on 2018/07/13 at 1:26 AM.
+// Project: "Librainian", "MicroStopwatch.cs" was last formatted by Protiguous on 2019/08/08 at 8:56 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using System.Diagnostics;
+    using System;
+    using System.Diagnostics;
 
-	/// <summary>
-	///     MicroStopwatch class
-	/// </summary>
-	public class MicroStopwatch : Stopwatch {
+    /// <summary>
+    ///     MicroStopwatch class
+    /// </summary>
+    public class MicroStopwatch : Stopwatch {
 
-		/// <summary>
-		/// </summary>
-		public readonly Double MicrosecondsPerTick = 1000000d / Frequency;
+        /// <summary>
+        /// </summary>
+        public readonly Double MicrosecondsPerTick = 1000000d / Frequency;
 
-		public UInt64 ElapsedMicroseconds => (UInt64)(this.ElapsedTicks * this.MicrosecondsPerTick);
+        public UInt64 ElapsedMicroseconds => ( UInt64 ) ( this.ElapsedTicks * this.MicrosecondsPerTick );
 
-		public MicroStopwatch() {
-			if (!IsHighResolution) { throw new InvalidOperationException("The high-resolution performance counter is not available"); }
-		}
-	}
+        public MicroStopwatch() {
+            if ( !IsHighResolution ) {
+                throw new InvalidOperationException( "The high-resolution performance counter is not available" );
+            }
+        }
+    }
 }

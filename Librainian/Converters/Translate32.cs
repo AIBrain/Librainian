@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,59 +35,59 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Translate32.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
+// Project: "Librainian", "Translate32.cs" was last formatted by Protiguous on 2019/08/08 at 6:50 AM.
 
 namespace Librainian.Converters {
 
-	using System;
-	using System.Runtime.InteropServices;
+    using System;
+    using System.Runtime.InteropServices;
 
 #pragma warning disable IDE0015 // Use framework type
 
     /// <summary>
-    ///     Struct for combining two <see cref="UInt16" /> (or <see cref="Int16" />) to and from a <see cref="UInt32" /> (or
-    ///     <see cref="Int32" />) as easily as possible.
+    ///     Struct for combining two <see cref="ushort" /> (or <see cref="short" />) to and from a <see cref="uint" /> (or
+    ///     <see cref="int" />) as easily as possible.
     /// </summary>
     [StructLayout( LayoutKind.Explicit, Pack = 0 )]
 #pragma warning restore IDE0015 // Use framework type
-	public struct Translate32 {
+    public struct Translate32 {
 
-		[FieldOffset( 0 )]
-		public readonly UInt32 UnsignedValue;
+        [FieldOffset( 0 )]
+        public readonly UInt32 UnsignedValue;
 
-		[FieldOffset( 0 )]
-		public readonly Int32 SignedValue;
+        [FieldOffset( 0 )]
+        public readonly Int32 SignedValue;
 
-		[FieldOffset( 0 )]
-		public readonly Int16 SignedLow;
+        [FieldOffset( 0 )]
+        public readonly Int16 SignedLow;
 
-		[FieldOffset( 0 )]
-		public readonly UInt16 UnsignedLow;
+        [FieldOffset( 0 )]
+        public readonly UInt16 UnsignedLow;
 
-		[FieldOffset( sizeof( UInt16 ) )]
-		public readonly UInt16 UnsignedHigh;
+        [FieldOffset( sizeof( UInt16 ) )]
+        public readonly UInt16 UnsignedHigh;
 
-		[FieldOffset( sizeof( Int16 ) )]
-		public readonly Int16 SignedHigh;
+        [FieldOffset( sizeof( Int16 ) )]
+        public readonly Int16 SignedHigh;
 
-		public Translate32( Byte a, Byte b, Byte c, Byte d ) : this( BitConverter.ToInt32( new[] {
-			a, b, c, d
-		}, 0 ) ) { }
+        public Translate32( Byte a, Byte b, Byte c, Byte d ) : this( BitConverter.ToInt32( new[] {
+            a, b, c, d
+        }, 0 ) ) { }
 
-		public Translate32( Int16 signedHigh, Int16 signedLow ) : this() {
-			this.SignedHigh = signedHigh;
-			this.SignedLow = signedLow;
-		}
+        public Translate32( Int16 signedHigh, Int16 signedLow ) : this() {
+            this.SignedHigh = signedHigh;
+            this.SignedLow = signedLow;
+        }
 
-		public Translate32( UInt32 unsignedValue ) : this() => this.UnsignedValue = unsignedValue;
+        public Translate32( UInt32 unsignedValue ) : this() => this.UnsignedValue = unsignedValue;
 
-		public Translate32( Int32 signedValue ) : this() => this.SignedValue = signedValue;
+        public Translate32( Int32 signedValue ) : this() => this.SignedValue = signedValue;
 
-		public Translate32( UInt16 unsignedLow, UInt16 unsignedHigh ) : this() {
-			this.UnsignedLow = unsignedLow;
-			this.UnsignedHigh = unsignedHigh;
-		}
-	}
+        public Translate32( UInt16 unsignedLow, UInt16 unsignedHigh ) : this() {
+            this.UnsignedLow = unsignedLow;
+            this.UnsignedHigh = unsignedHigh;
+        }
+    }
 }

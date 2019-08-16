@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,40 +35,40 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UnknownException.cs" was last formatted by Protiguous on 2018/07/10 at 9:00 PM.
+// Project: "Librainian", "UnknownException.cs" was last formatted by Protiguous on 2019/08/08 at 7:05 AM.
 
 namespace Librainian.Exceptions {
 
-	using System;
+    using System;
 
-	/// <inheritdoc />
-	/// <summary>
-	///     <para>Something should not have happened, but it did.</para>
-	/// </summary>
-	[Serializable]
-	public class UnknownException : Exception {
+    /// <inheritdoc />
+    /// <summary>
+    ///     <para>Something should not have happened, but it did.</para>
+    /// </summary>
+    [Serializable]
+    public class UnknownException : Exception {
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		public UnknownException() { }
+        /// <inheritdoc />
+        /// <summary>
+        ///     <para>Something should not have happened, but it did.</para>
+        /// </summary>
+        public UnknownException() { }
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		public UnknownException( String message ) : base( message ) { }
+        /// <inheritdoc />
+        /// <summary>
+        ///     <para>Something should not have happened, but it did.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        public UnknownException( String message ) : base( message ) { }
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="innerException"></param>
-		public UnknownException( String message, Exception innerException ) : base( message, innerException ) { }
-	}
+        /// <inheritdoc />
+        /// <summary>
+        ///     <para>Something should not have happened, but it did.</para>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
+        public UnknownException( String message, Exception innerException ) : base( message, innerException ) { }
+    }
 }

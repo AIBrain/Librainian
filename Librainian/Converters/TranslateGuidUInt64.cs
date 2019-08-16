@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,31 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TranslateGuidUInt64.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
+// Project: "Librainian", "TranslateGuidUInt64.cs" was last formatted by Protiguous on 2019/08/08 at 6:51 AM.
 
 namespace Librainian.Converters {
 
-	using System;
-	using System.Runtime.InteropServices;
+    using System;
+    using System.Runtime.InteropServices;
 
-	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
-	public struct TranslateGuidUInt64 {
+    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    public struct TranslateGuidUInt64 {
 
-		[FieldOffset( 0 )] // bytes 0..15 == 16 bytes
-		public Guid guid;
+        [FieldOffset( 0 )] // bytes 0..15 == 16 bytes
+        public Guid guid;
 
-		[FieldOffset( 0 )]
-		public readonly UInt64 Low;
+        [FieldOffset( 0 )]
+        public readonly UInt64 Low;
 
-		[FieldOffset( sizeof( UInt64 ) )]
-		public readonly UInt64 High;
+        [FieldOffset( sizeof( UInt64 ) )]
+        public readonly UInt64 High;
 
-		public TranslateGuidUInt64( UInt64 high, UInt64 low ) {
-			this.guid = Guid.Empty;
-			this.Low = low;
-			this.High = high;
-		}
-	}
+        public TranslateGuidUInt64( UInt64 high, UInt64 low ) {
+            this.guid = Guid.Empty;
+            this.Low = low;
+            this.High = high;
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,27 +35,25 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "RandomnessFeeding.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
+// Project: "Librainian", "RandomnessFeeding.cs" was last formatted by Protiguous on 2019/08/08 at 9:13 AM.
 
-namespace Librainian.OperatingSystem.Compression
-{
+namespace Librainian.OperatingSystem.Compression {
 
-    using Extensions;
-    using JetBrains.Annotations;
-    using Magic;
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
     using System.Numerics;
+    using Extensions;
     using FileSystem;
+    using JetBrains.Annotations;
+    using Magic;
     using Rationals;
 
-    public class RandomnessFeeding : ABetterClassDispose
-    {
+    public class RandomnessFeeding : ABetterClassDispose {
 
         [NotNull]
         private GZipStream GZipStream { get; }
@@ -67,47 +65,44 @@ namespace Librainian.OperatingSystem.Compression
 
         public BigInteger HowManyBytesFed { get; private set; }
 
-        public RandomnessFeeding()
-        {
+        public RandomnessFeeding() {
             this.HowManyBytesAsCompressed = BigInteger.Zero;
             this.HowManyBytesFed = BigInteger.Zero;
-            this.GZipStream = new GZipStream(stream: this.NullStream, compressionLevel: CompressionLevel.Optimal);
+            this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
         }
 
-        public override void DisposeManaged()
-        {
-            using (this.GZipStream) { }
+        public override void DisposeManaged() {
+            using ( this.GZipStream ) { }
 
-            using (this.NullStream) { }
+            using ( this.NullStream ) { }
         }
 
-        public void FeedItData([NotNull] Byte[] data)
-        {
-            if (data == null) { throw new ArgumentNullException(nameof(data)); }
+        public void FeedItData( [NotNull] Byte[] data ) {
+            if ( data == null ) {
+                throw new ArgumentNullException( nameof( data ) );
+            }
 
             this.HowManyBytesFed += data.LongLength;
-            this.GZipStream.Write(data, 0, data.Length);
+            this.GZipStream.Write( data, 0, data.Length );
             this.HowManyBytesAsCompressed += this.NullStream.Length;
-            this.NullStream.Seek(0, SeekOrigin.Begin); //rewind our 'position' so we don't overrun a long
+            this.NullStream.Seek( 0, SeekOrigin.Begin ); //rewind our 'position' so we don't overrun a long
         }
 
-        public void FeedItData([NotNull] Document document)
-        {
+        public void FeedItData( [NotNull] Document document ) {
             var data = document.AsBytes().ToArray();
-            this.FeedItData(data);
+            this.FeedItData( data );
         }
 
         /// <summary>
         ///     The smaller the compressed 'data' is, the less the random it was.
         /// </summary>
         /// <returns></returns>
-        public Double GetCurrentCompressionRatio()
-        {
-            var d = (Double)new Rational(this.HowManyBytesAsCompressed, this.HowManyBytesFed);
+        public Double GetCurrentCompressionRatio() {
+            var d = ( Double ) new Rational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
 
             return 1 - d; // BUG ?
         }
 
-        public void Report() => Debug.WriteLine($"Current compression is now {this.GetCurrentCompressionRatio():P4}");
+        public void Report() => Debug.WriteLine( $"Current compression is now {this.GetCurrentCompressionRatio():P4}" );
     }
 }

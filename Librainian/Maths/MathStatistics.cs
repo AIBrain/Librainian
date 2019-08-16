@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,26 +35,25 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MathStatistics.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
+// Project: "Librainian", "MathStatistics.cs" was last formatted by Protiguous on 2019/08/08 at 8:23 AM.
 
-namespace Librainian.Maths
-{
+namespace Librainian.Maths {
 
-    using JetBrains.Annotations;
-    using Measurement.Time;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using JetBrains.Annotations;
+    using Measurement.Time;
     using Rationals;
 
-    public static class MathStatistics
-    {
+    public static class MathStatistics {
 
-        public static Decimal CalcAvg([NotNull] this IEnumerable<Decimal> values) => values.DefaultIfEmpty().Average(arg => arg);
+        public static Decimal CalcAvg( [NotNull] this IEnumerable<Decimal> values ) => values.DefaultIfEmpty().Average( arg => arg );
 
-        public static Decimal CalcEma([NotNull] this IEnumerable<Decimal> values, Decimal alpha) => values.DefaultIfEmpty().Aggregate((ema, nextQuote) => (alpha * nextQuote) + ((1 - alpha) * ema));
+        public static Decimal CalcEma( [NotNull] this IEnumerable<Decimal> values, Decimal alpha ) =>
+            values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => (alpha * nextQuote) + (( 1 - alpha ) * ema) );
 
         /// <summary>
         ///     <para>
@@ -68,11 +67,10 @@ namespace Librainian.Maths
         /// <param name="items"></param>
         /// <returns></returns>
         /// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static Double GeometricMean([NotNull] this IEnumerable<Double> data, Int32 items)
-        {
-            var aggregate = data.Aggregate(1.0, (current, d) => current * d);
+        public static Double GeometricMean( [NotNull] this IEnumerable<Double> data, Int32 items ) {
+            var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
 
-            return Math.Pow(aggregate, 1.0 / items);
+            return Math.Pow( aggregate, 1.0 / items );
         }
 
         /// <summary>
@@ -87,11 +85,10 @@ namespace Librainian.Maths
         /// <param name="items"></param>
         /// <returns></returns>
         /// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static Decimal GeometricMean([NotNull] this IEnumerable<Decimal> data, Int32 items)
-        {
-            var aggregate = data.Aggregate(1.0m, (current, d) => current * d);
+        public static Decimal GeometricMean( [NotNull] this IEnumerable<Decimal> data, Int32 items ) {
+            var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
-            return (Decimal)Math.Pow((Double)aggregate, (Double)(1.0m / items)); //BUG possible conversion errors here
+            return ( Decimal ) Math.Pow( ( Double ) aggregate, ( Double ) ( 1.0m / items ) ); //BUG possible conversion errors here
         }
 
         /// <summary>
@@ -106,53 +103,47 @@ namespace Librainian.Maths
         /// <param name="items"></param>
         /// <returns></returns>
         /// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-        public static Rational GeometricMean([NotNull] this IEnumerable<Rational> data, Int32 items)
-        {
-            var aggregate = data.Aggregate(Rational.One, (current, d) => current * d);
+        public static Rational GeometricMean( [NotNull] this IEnumerable<Rational> data, Int32 items ) {
+            var aggregate = data.Aggregate( Rational.One, ( current, d ) => current * d );
 
-            return Rational.Pow(aggregate, ( Int32 ) (1.0 / items)); //BUG possible conversion errors here
+            return Rational.Pow( aggregate, ( Int32 ) ( 1.0 / items ) ); //BUG possible conversion errors here
         }
 
-        public static Double Intercept([NotNull] this List<TimeProgression> data)
-        {
-            if (data == null) { throw new ArgumentNullException(nameof(data)); }
+        public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
+            if ( data == null ) {
+                throw new ArgumentNullException( nameof( data ) );
+            }
 
             var slope = data.Slope();
 
-            return data.Average(d => d.Progress) - (slope * data.Average(d => d.MillisecondsPassed));
+            return data.Average( d => d.Progress ) - (slope * data.Average( d => d.MillisecondsPassed ));
         }
 
-        public static Double MeanGeometric([NotNull] this IEnumerable<Double> numbers)
-        {
+        public static Double MeanGeometric( [NotNull] this IEnumerable<Double> numbers ) {
             var enumerable = numbers as IList<Double> ?? numbers.ToList();
 
-            return Math.Pow(enumerable.Aggregate((s, i) => s * i), 1.0 / enumerable.Count);
+            return Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
         }
 
-        public static Int32 MeanGeometric([NotNull] this IEnumerable<Int32> numbers)
-        {
+        public static Int32 MeanGeometric( [NotNull] this IEnumerable<Int32> numbers ) {
             var enumerable = numbers as IList<Int32> ?? numbers.ToList();
 
-            return (Int32)Math.Pow(enumerable.Aggregate((s, i) => s * i), 1.0 / enumerable.Count);
+            return ( Int32 ) Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
         }
 
-        public static Single MeanGeometric([NotNull] this IEnumerable<Single> numbers)
-        {
+        public static Single MeanGeometric( [NotNull] this IEnumerable<Single> numbers ) {
             var enumerable = numbers as IList<Single> ?? numbers.ToList();
 
-            return (Single)Math.Pow(enumerable.Aggregate((s, i) => s * i), 1.0 / enumerable.Count);
+            return ( Single ) Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
         }
 
-        public static Decimal MeanGeometric([NotNull] this IEnumerable<Decimal> numbers)
-        {
+        public static Decimal MeanGeometric( [NotNull] this IEnumerable<Decimal> numbers ) {
             var enumerable = numbers as IList<Decimal> ?? numbers.ToList();
             Decimal result = 0;
             var first = true;
 
-            foreach (var @decimal in enumerable)
-            {
-                if (first)
-                {
+            foreach ( var @decimal in enumerable ) {
+                if ( first ) {
                     first = false;
                     result = @decimal;
 
@@ -162,35 +153,31 @@ namespace Librainian.Maths
                 result = result * @decimal;
             }
 
-            return (Decimal)Math.Pow((Double)result, 1.0 / enumerable.Count);
+            return ( Decimal ) Math.Pow( ( Double ) result, 1.0 / enumerable.Count );
         }
 
-        public static Double MeanHarmonic([NotNull] this IEnumerable<Double> numbers)
-        {
+        public static Double MeanHarmonic( [NotNull] this IEnumerable<Double> numbers ) {
             var enumerable = numbers as IList<Double> ?? numbers.ToList();
 
-            return enumerable.Count / enumerable.Sum(i => 1 / i);
+            return enumerable.Count / enumerable.Sum( i => 1 / i );
         }
 
-        public static Int32 MeanHarmonic([NotNull] this IEnumerable<Int32> numbers)
-        {
+        public static Int32 MeanHarmonic( [NotNull] this IEnumerable<Int32> numbers ) {
             var enumerable = numbers as IList<Int32> ?? numbers.ToList();
 
-            return enumerable.Count / enumerable.Sum(i => 1 / i);
+            return enumerable.Count / enumerable.Sum( i => 1 / i );
         }
 
-        public static Single MeanHarmonic([NotNull] this IEnumerable<Single> numbers)
-        {
+        public static Single MeanHarmonic( [NotNull] this IEnumerable<Single> numbers ) {
             var enumerable = numbers as IList<Single> ?? numbers.ToList();
 
-            return enumerable.Count / enumerable.Sum(i => 1 / i);
+            return enumerable.Count / enumerable.Sum( i => 1 / i );
         }
 
-        public static Decimal MeanHarmonic([NotNull] this IEnumerable<Decimal> numbers)
-        {
+        public static Decimal MeanHarmonic( [NotNull] this IEnumerable<Decimal> numbers ) {
             var enumerable = numbers as IList<Decimal> ?? numbers.ToList();
 
-            return enumerable.Count / enumerable.Sum(i => 1 / i);
+            return enumerable.Count / enumerable.Sum( i => 1 / i );
         }
 
         /// <summary>
@@ -199,7 +186,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000f.OneIn();</example>
-        public static Single OneIn(this Single possible) => 1f / possible;
+        public static Single OneIn( this Single possible ) => 1f / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -207,7 +194,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this Double possible) => 1d / possible;
+        public static Double OneIn( this Double possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -215,7 +202,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this UInt64 possible) => 1d / possible;
+        public static Double OneIn( this UInt64 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -223,7 +210,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this Int64 possible) => 1d / possible;
+        public static Double OneIn( this Int64 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -231,7 +218,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this UInt32 possible) => 1d / possible;
+        public static Double OneIn( this UInt32 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -239,7 +226,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this Int32 possible) => 1d / possible;
+        public static Double OneIn( this Int32 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -247,7 +234,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this UInt16 possible) => 1d / possible;
+        public static Double OneIn( this UInt16 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -255,7 +242,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this Int16 possible) => 1d / possible;
+        public static Double OneIn( this Int16 possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -263,7 +250,7 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this Byte possible) => 1d / possible;
+        public static Double OneIn( this Byte possible ) => 1d / possible;
 
         /// <summary>
         ///     One in <paramref name="possible" />
@@ -271,17 +258,17 @@ namespace Librainian.Maths
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
-        public static Double OneIn(this SByte possible) => 1d / possible;
+        public static Double OneIn( this SByte possible ) => 1d / possible;
 
-        public static Int32 Percent(this Int32 x, Single percent) => (Int32)(x * percent / 100.0f);
+        public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 ) ( x * percent / 100.0f );
 
-        public static Single Percent(this Single x, Single percent) => x * percent / 100.0f;
+        public static Single Percent( this Single x, Single percent ) => x * percent / 100.0f;
 
-        public static Double Percent(this Double x, Double percent) => x * percent / 100.0;
+        public static Double Percent( this Double x, Double percent ) => x * percent / 100.0;
 
-        public static Decimal Percent(this Decimal x, Decimal percent) => x * percent / 100.0m;
+        public static Decimal Percent( this Decimal x, Decimal percent ) => x * percent / 100.0m;
 
-        public static UInt64 Percent(this UInt64 x, Single percent) => (UInt64)(x * percent / 100.0f);
+        public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 ) ( x * percent / 100.0f );
 
         /// <summary>
         ///     Returns true if this probability happens.
@@ -289,9 +276,8 @@ namespace Librainian.Maths
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this UInt64 probability, UInt64 maxvalue)
-        {
-            var chance = Randem.Next(0, maxvalue);
+        public static Boolean Probability( this UInt64 probability, UInt64 maxvalue ) {
+            var chance = Randem.Next( 0, maxvalue );
 
             return probability >= chance;
         }
@@ -302,9 +288,8 @@ namespace Librainian.Maths
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this UInt32 probability, UInt32 maxvalue)
-        {
-            var chance = Randem.Next(0, maxvalue);
+        public static Boolean Probability( this UInt32 probability, UInt32 maxvalue ) {
+            var chance = Randem.Next( 0, maxvalue );
 
             return probability >= chance;
         }
@@ -315,9 +300,8 @@ namespace Librainian.Maths
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this UInt16 probability, UInt16 maxvalue)
-        {
-            var chance = 0.Next(maxvalue);
+        public static Boolean Probability( this UInt16 probability, UInt16 maxvalue ) {
+            var chance = 0.Next( maxvalue );
 
             return probability >= chance;
         }
@@ -328,9 +312,8 @@ namespace Librainian.Maths
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this Int32 probability, Int32 maxvalue)
-        {
-            var chance = 0.Next(maxValue: maxvalue);
+        public static Boolean Probability( this Int32 probability, Int32 maxvalue ) {
+            var chance = 0.Next( maxValue: maxvalue );
 
             return probability >= chance;
         }
@@ -340,9 +323,8 @@ namespace Librainian.Maths
         /// </summary>
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this Double probability)
-        {
-            var chance = Randem.NextDouble(min: 0.0d, max: 1.0d);
+        public static Boolean Probability( this Double probability ) {
+            var chance = Randem.NextDouble( min: 0.0d, max: 1.0d );
 
             return probability >= chance;
         }
@@ -352,9 +334,8 @@ namespace Librainian.Maths
         /// </summary>
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
-        public static Boolean Probability(this Single probability)
-        {
-            var chance = Randem.NextSingle(min: 0.0f, max: 1.0f);
+        public static Boolean Probability( this Single probability ) {
+            var chance = Randem.NextSingle( min: 0.0f, max: 1.0f );
 
             return probability >= chance;
 
@@ -370,24 +351,26 @@ namespace Librainian.Maths
             // a chance of 0.90 will return false
         }
 
-        public static Double StandardDeviation([NotNull] this IEnumerable<Double> values)
-        {
-            if (values == null) { throw new ArgumentNullException(nameof(values)); }
+        public static Double StandardDeviation( [NotNull] this IEnumerable<Double> values ) {
+            if ( values == null ) {
+                throw new ArgumentNullException( nameof( values ) );
+            }
 
             var doubles = values as Double[] ?? values.ToArray();
             var avg = doubles.Average();
 
-            return Math.Sqrt(doubles.Average(v => Math.Pow(v - avg, 2)));
+            return Math.Sqrt( doubles.Average( v => Math.Pow( v - avg, 2 ) ) );
         }
 
-        public static Decimal StandardDeviation([NotNull] this IEnumerable<Decimal> values)
-        {
-            if (values == null) { throw new ArgumentNullException(nameof(values)); }
+        public static Decimal StandardDeviation( [NotNull] this IEnumerable<Decimal> values ) {
+            if ( values == null ) {
+                throw new ArgumentNullException( nameof( values ) );
+            }
 
             var decimals = values as Decimal[] ?? values.ToArray();
             var avg = decimals.Average();
 
-            return (Decimal)Math.Sqrt(decimals.Average(v => Math.Pow((Double)(v - avg), 2)));
+            return ( Decimal ) Math.Sqrt( decimals.Average( v => Math.Pow( ( Double ) ( v - avg ), 2 ) ) );
         }
     }
 }

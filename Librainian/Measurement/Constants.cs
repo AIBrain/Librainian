@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,37 +35,37 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Constants.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
+// Project: "Librainian", "Constants.cs" was last formatted by Protiguous on 2019/08/08 at 8:38 AM.
 
 namespace Librainian.Measurement {
 
-	using System;
-	using System.Numerics;
-	using JetBrains.Annotations;
-	using Rationals;
+    using System;
+    using System.Numerics;
+    using JetBrains.Annotations;
+    using Rationals;
 
-	public static class Constants {
+    public static class Constants {
 
-		/// <summary>
-		///     <para>This value is too high. like really high.</para>
-		/// </summary>
-		[NotNull]
-		public const String ValueIsTooHigh = "this value is too high. like really high.";
+        /// <summary>
+        ///     <para>This value is too high. like really high.</para>
+        /// </summary>
+        [NotNull]
+        public const String ValueIsTooHigh = "this value is too high. like really high.";
 
-		/// <summary>
-		///     <para>This value is too low. like really low.</para>
-		/// </summary>
-		[NotNull]
-		public const String ValueIsTooLow = "this value is too low. like really low.";
+        /// <summary>
+        ///     <para>This value is too low. like really low.</para>
+        /// </summary>
+        [NotNull]
+        public const String ValueIsTooLow = "this value is too low. like really low.";
 
-		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MaximumUsefulDecimal = new BigInteger( Decimal.MaxValue );
+        /// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>
+        public static readonly BigInteger MaximumUsefulDecimal = new BigInteger( Decimal.MaxValue );
 
-		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MinimumUsefulDecimal = new BigInteger( Decimal.MinValue );
+        /// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
+        public static readonly BigInteger MinimumUsefulDecimal = new BigInteger( Decimal.MinValue );
 
-		public static readonly Rational OneOverTwo = new Rational( 1, 2 ); //TODO overkill. But correct. lol.
-	}
+        public static readonly Rational OneOverTwo = new Rational( 1, 2 ); //TODO overkill. But correct. lol.
+    }
 }

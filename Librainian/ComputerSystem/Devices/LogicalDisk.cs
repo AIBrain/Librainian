@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,41 +35,41 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "LogicalDisk.cs" was last formatted by Protiguous on 2018/07/10 at 8:53 PM.
+// Project: "Librainian", "LogicalDisk.cs" was last formatted by Protiguous on 2019/08/08 at 6:42 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using OperatingSystem.WMI;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using OperatingSystem.WMI;
 
-	public class LogicalDisk {
+    public class LogicalDisk {
 
-		public String DriveLetter { get; set; }
+        public String DriveLetter { get; set; }
 
-		public DriveType DriveType { get; set; }
+        public DriveType DriveType { get; set; }
 
-		public UInt64 FreeSpace { get; set; }
+        public UInt64 FreeSpace { get; set; }
 
-		public UInt64 TotalSpace { get; set; }
+        public UInt64 TotalSpace { get; set; }
 
-		public String VolumeName { get; set; }
+        public String VolumeName { get; set; }
 
-		public static IEnumerable<LogicalDisk> GetLogicalDisks( String machineName ) {
-			foreach ( var o in WMIExtensions.QueryWMI( machineName, "cimv2", "SELECT * FROM Win32_LogicalDisk" ) ) {
-				var disk = new LogicalDisk {
-					DriveLetter = o[ "Name" ].ToString(),
-					FreeSpace = Convert.ToUInt64( o[ "FreeSpace" ].ToString() ),
-					TotalSpace = Convert.ToUInt64( o[ "Size" ].ToString() ),
-					VolumeName = o[ "VolumeName" ].ToString(),
-					DriveType = ( DriveType ) Convert.ToByte( o[ "DriveType" ].ToString() )
-				};
+        public static IEnumerable<LogicalDisk> GetLogicalDisks( String machineName ) {
+            foreach ( var o in WMIExtensions.QueryWMI( machineName, "cimv2", "SELECT * FROM Win32_LogicalDisk" ) ) {
+                var disk = new LogicalDisk {
+                    DriveLetter = o[ "Name" ].ToString(),
+                    FreeSpace = Convert.ToUInt64( o[ "FreeSpace" ].ToString() ),
+                    TotalSpace = Convert.ToUInt64( o[ "Size" ].ToString() ),
+                    VolumeName = o[ "VolumeName" ].ToString(),
+                    DriveType = ( DriveType ) Convert.ToByte( o[ "DriveType" ].ToString() )
+                };
 
-				yield return disk;
-			}
-		}
-	}
+                yield return disk;
+            }
+        }
+    }
 }

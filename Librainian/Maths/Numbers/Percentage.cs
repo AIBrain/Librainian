@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Percentage.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
-//
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,166 +28,151 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
-//
-// Project: "Librainian", "Percentage.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Feel free to browse any source code we make available.
+// 
+// Project: "Librainian", "Percentage.cs" was last formatted by Protiguous on 2019/08/12 at 10:24 AM.
 
-namespace Librainian.Maths.Numbers
-{
+namespace Librainian.Maths.Numbers {
 
+    using System;
+    using System.Diagnostics;
     using Extensions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using System;
-    using System.Numerics;
     using Rationals;
 
     /// <summary>
     ///     <para>Restricts the value to between 0.0 and 1.0.</para>
     /// </summary>
     [JsonObject]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage>
-    {
+    public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage>, IComparable<Decimal> {
 
-        /// <summary>1</summary>
-        public const Double Maximum = 1d;
+        [Pure]
+        public Int32 CompareTo( Decimal other ) => this.Quotient.CompareTo( other );
 
-        /// <summary>0</summary>
-        public const Double Minimum = 0d;
+        [Pure]
+        public Int32 CompareTo( Double other ) => this.Quotient.CompareTo( other );
 
-        [JsonProperty]
-        public readonly Rational Denominator;
+        [Pure]
+        public Int32 CompareTo( [NotNull] Percentage other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
 
-        [CanBeNull]
-        [JsonProperty]
-        public readonly BigInteger? LeastCommonDenominator;
-
-        [JsonProperty]
-        public readonly Rational Numerator;
-
-        [JsonProperty]
-        public readonly Rational Quotient;
-
-        public Percentage( Rational numerator, Rational denominator ) {
-            this.Numerator = numerator;
-            this.Denominator = denominator;
+            return this.Quotient.CompareTo( other.Quotient );
         }
 
+        public Boolean Equals( Percentage other ) => Equals( this, other );
+
         /// <summary>
-        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
+        ///     The number resulting from the division of one number by another.
         /// </summary>
-        /// <param name="value"></param>
-        public Percentage( Rational value ) : this(value,1) {
-        }
+        [JsonProperty]
+        public Rational Quotient { get; }
 
-
-        /*
         /// <summary>
-        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
         /// </summary>
-        /// <param name="numerator"></param>
-        /// <param name="denominator"></param>
-        public Percentage(Double numerator, Double denominator)
-        {
-            if (Double.IsNaN(numerator)) { throw new ArgumentOutOfRangeException(nameof(numerator), "Numerator is not a number."); }
+        /// <param name="numerator">
+        ///     The part of a fraction that is above the line and signifies the number to be divided by the
+        ///     denominator.
+        /// </param>
+        /// <param name="denominator">
+        ///     The part of a fraction that is below the line and that functions as the divisor of the
+        ///     numerator.
+        /// </param>
+        public Percentage( Rational numerator, Rational denominator ) => this.Quotient = numerator / denominator;
 
-            if (Double.IsNaN(denominator)) { throw new ArgumentOutOfRangeException(nameof(denominator), "Denominator is not a number."); }
+        public Percentage( Rational value ) : this( value, Rational.One ) { }
 
-            this.Numerator = new BigInteger(numerator);
-            this.Denominator = new BigInteger(denominator);
+        public Percentage( Single value ) : this( ( Rational ) value ) { }
 
-            this.LeastCommonDenominator = Rational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
+        public Percentage( Double value ) : this( ( Rational ) value ) { }
 
-            this.Quotient = denominator <= 0 ? new Rational(0.0) : new Rational(numerator / denominator);
+        public Percentage( Decimal value ) : this( ( Rational ) value ) { }
 
-            if (this.Quotient < Minimum) { this.Quotient = Minimum; }
-            else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
-        }
-        */
-
-        /*
-        /// <summary>
-        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-        /// </summary>
-        /// <param name="numerator"></param>
-        /// <param name="denominator"></param>
-        public Percentage(BigInteger numerator, BigInteger denominator)
-        {
-            this.Numerator = numerator;
-            this.Denominator = denominator;
-            this.LeastCommonDenominator = Rational.LeastCommonDenominator(this.Numerator.Value, this.Denominator.Value);
-
-            this.Quotient = denominator == BigInteger.Zero ? new Rational(0.0) : new Rational(numerator / denominator);
-
-            if (this.Quotient < Minimum) { this.Quotient = Minimum; }
-            else if (this.Quotient > Maximum) { this.Quotient = Maximum; }
-        }
-        */
-
-        /*
-        /// <summary>
-        ///     <para>Restricts the value to between <see cref="Minimum" /> and <see cref="Maximum" />.</para>
-        /// </summary>
-        /// <param name="value"></param>
-        public Percentage(Rational value) : this(value.Numerator, value.Denominator) { }
-        */
+        public Percentage( Int32 value ) : this( ( Rational ) value ) { }
 
         /// <summary>Lerp?</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         [NotNull]
-        public static Percentage Combine([NotNull] Percentage left, [NotNull] Percentage right) => new Percentage((left.Quotient + right.Quotient) / 2);
+        public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) =>
+            new Percentage( ( left.Quotient + right.Quotient ) / ( Rational.One + Rational.One ) );
 
-        //TODO BigDecimal any better here?
         /// <summary>static comparison</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(Percentage left, Percentage right)
-        {
-            if (ReferenceEquals(left, right)) { return true; }
+        public static Boolean Equals( Percentage left, Percentage right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
 
-            if (left == null) { return false; }
+            if ( left == null ) {
+                return false;
+            }
 
-            if (right == null) { return false; }
+            if ( right == null ) {
+                return false;
+            }
 
             return left.Quotient == right.Quotient;
         }
 
-        public static implicit operator Double([NotNull] Percentage special) => (Double)special.Quotient;
+        public static explicit operator Double( [NotNull] Percentage special ) => ( Double ) special.Quotient;
 
         [NotNull]
-        public static implicit operator Percentage(Single value) => new Percentage(( Rational ) value);
+        public static implicit operator Percentage( Single value ) => new Percentage( ( Rational ) value );
 
         [NotNull]
-        public static implicit operator Percentage(Double value) => new Percentage(( Rational ) value);
+        public static implicit operator Percentage( Double value ) => new Percentage( ( Rational ) value );
 
         [NotNull]
-        public static Percentage operator +([NotNull] Percentage left, [NotNull] Percentage right) => Combine(left, right);
+        public static implicit operator Percentage( Decimal value ) => new Percentage( ( Rational ) value );
 
         [NotNull]
-        public static Percentage Parse([NotNull] String value)
-        {
-            if (value == null) { throw new ArgumentNullException(nameof(value)); }
+        public static implicit operator Percentage( Int32 value ) => new Percentage( value );
 
-            return new Percentage(( Rational ) Double.Parse(value));
+        [NotNull]
+        public static Percentage operator +( [NotNull] Percentage left, [NotNull] Percentage right ) => Combine( left, right );
+
+        [CanBeNull]
+        public static Percentage Parse( [NotNull] String value ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( nameof( value ) );
+            }
+
+            if ( Decimal.TryParse( value, out var dec ) ) {
+                return new Percentage( ( Rational ) dec );
+            }
+
+            if ( Double.TryParse( value, out var dob ) ) {
+                return new Percentage( ( Rational ) dob );
+            }
+
+            return null;
         }
 
-        public static Boolean TryParse([NotNull] String numberString, [CanBeNull] out Percentage result)
-        {
-            if (numberString == null) { throw new ArgumentNullException(nameof(numberString)); }
+        public static Boolean TryParse( [NotNull] String numberString, [CanBeNull] out Percentage result ) {
 
-            if ( Rational.TryParse( numberString, out var value ) ) {
-                result = new Percentage( value );
+            if ( Decimal.TryParse( numberString, out var dec ) ) {
+                result = new Percentage( ( Rational ) dec );
+
+                return true;
+            }
+
+            if ( Double.TryParse( numberString, out var dob ) ) {
+                result = new Percentage( ( Rational ) dob );
 
                 return true;
             }
@@ -197,19 +182,8 @@ namespace Librainian.Maths.Numbers
             return false;
         }
 
-        [Pure]
-        public Int32 CompareTo(Double other) => ((Double)this.Quotient).CompareTo(other);
-
-        [Pure]
-        public Int32 CompareTo([NotNull] Percentage other)
-        {
-            if (other == null) { throw new ArgumentNullException(nameof(other)); }
-
-            return this.Quotient.CompareTo(other.Quotient);
-        }
-
-        public Boolean Equals(Percentage other) => Equals(this, other);
-
         public override String ToString() => $"{this.Quotient}";
+
     }
+
 }

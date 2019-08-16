@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,26 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
+// Project: "Librainian", "WordToGuidAndGuidToWord.cs" was last formatted by Protiguous on 2019/08/08 at 6:39 AM.
 
-namespace Librainian.Collections
-{
+namespace Librainian.Collections {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Persistence;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using JetBrains.Annotations;
     using Logging;
+    using Newtonsoft.Json;
     using OperatingSystem.FileSystem;
+    using Persistence;
 
     /// <summary>
     ///     Contains Words and their guids. Persisted to and from storage? Thread-safe?
     /// </summary>
     [JsonObject]
-    public class WordToGuidAndGuidToWord
-    {
+    public class WordToGuidAndGuidToWord {
 
         [JsonProperty]
         private ConcurrentDictionary<Guid, String> Guids { get; } = new ConcurrentDictionary<Guid, String>();
@@ -73,23 +71,27 @@ namespace Librainian.Collections
         [JsonIgnore]
         public Boolean IsDirty { get; set; }
 
-        public Int32 Count => (this.Words.Count + this.Guids.Count) / 2;
+        public Int32 Count => ( this.Words.Count + this.Guids.Count ) / 2;
 
         /// <summary>
         ///     Get or set the guid for this word.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Guid this[[CanBeNull] String key] {
-            get => String.IsNullOrEmpty(key) ? Guid.Empty : this.Words[key];
+        public Guid this[ [CanBeNull] String key ] {
+            get => String.IsNullOrEmpty( key ) ? Guid.Empty : this.Words[ key ];
 
             set {
-                if (String.IsNullOrEmpty(key)) { return; }
+                if ( String.IsNullOrEmpty( key ) ) {
+                    return;
+                }
 
-                if (this.Words.ContainsKey(key) && value == this.Words[key]) { return; }
+                if ( this.Words.ContainsKey( key ) && value == this.Words[ key ] ) {
+                    return;
+                }
 
-                this.Words[key] = value;
-                this[value] = key;
+                this.Words[ key ] = value;
+                this[ value ] = key;
 
                 this.IsDirty = true;
             }
@@ -100,38 +102,44 @@ namespace Librainian.Collections
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public String this[Guid key] {
-            get => Guid.Empty.Equals(g: key) ? String.Empty : this.Guids[key];
+        public String this[ Guid key ] {
+            get => Guid.Empty.Equals( g: key ) ? String.Empty : this.Guids[ key ];
 
             set {
-                if (Guid.Empty.Equals(g: key)) { return; }
+                if ( Guid.Empty.Equals( g: key ) ) {
+                    return;
+                }
 
                 //Are they removing the guid from both lists?
-                if (String.IsNullOrEmpty(value))
-                {
-                    this.Guids.TryRemove(key, out var oldstringfortheguid);
+                if ( String.IsNullOrEmpty( value ) ) {
+                    this.Guids.TryRemove( key, out var oldstringfortheguid );
 
-                    if (String.IsNullOrEmpty(oldstringfortheguid)) { return; }
+                    if ( String.IsNullOrEmpty( oldstringfortheguid ) ) {
+                        return;
+                    }
 
-                    this.Words.TryRemove(oldstringfortheguid, out var oldguid);
+                    this.Words.TryRemove( oldstringfortheguid, out var oldguid );
+
                     //oldguid.Equals(g: key).BreakIfFalse();
                     this.IsDirty = true;
                 }
-                else
-                {
-                    if (this.Guids.ContainsKey(key) && value == this.Guids[key]) { return; }
+                else {
+                    if ( this.Guids.ContainsKey( key ) && value == this.Guids[ key ] ) {
+                        return;
+                    }
 
-                    this.Guids[key] = value;
+                    this.Guids[ key ] = value;
                     this.IsDirty = true;
                 }
             }
         }
 
-        public WordToGuidAndGuidToWord([NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt) { }
+        public WordToGuidAndGuidToWord( [NotNull] String baseCollectionName, [NotNull] String baseCollectionNameExt ) { }
 
-        public void Clear()
-        {
-            if (this.Words.IsEmpty && this.Guids.IsEmpty) { return; }
+        public void Clear() {
+            if ( this.Words.IsEmpty && this.Guids.IsEmpty ) {
+                return;
+            }
 
             this.Words.Clear();
             this.Guids.Clear();
@@ -143,11 +151,12 @@ namespace Librainian.Collections
         /// </summary>
         /// <param name="theWord"></param>
         /// <returns></returns>
-        public Boolean Contains([NotNull] String theWord)
-        {
-            if (theWord == null) { throw new ArgumentNullException(nameof(theWord)); }
+        public Boolean Contains( [NotNull] String theWord ) {
+            if ( theWord == null ) {
+                throw new ArgumentNullException( nameof( theWord ) );
+            }
 
-            return this.Words.Keys.Contains(item: theWord) && this.Guids.Values.Contains(item: theWord);
+            return this.Words.Keys.Contains( item: theWord ) && this.Guids.Values.Contains( item: theWord );
         }
 
         /// <summary>
@@ -155,10 +164,9 @@ namespace Librainian.Collections
         /// </summary>
         /// <param name="theGuid"></param>
         /// <returns></returns>
-        public Boolean Contains(Guid theGuid) => this.Words.Values.Contains(item: theGuid) && this.Guids.Keys.Contains(item: theGuid);
+        public Boolean Contains( Guid theGuid ) => this.Words.Values.Contains( item: theGuid ) && this.Guids.Keys.Contains( item: theGuid );
 
-        public Boolean Load()
-        {
+        public Boolean Load() {
 
             "".Break();
 
@@ -179,6 +187,6 @@ namespace Librainian.Collections
         ///     Returns true if the collections are persisted to storage (or empty).
         /// </summary>
         /// <returns></returns>
-        public Boolean Save() => !this.IsDirty || this.Words.TrySave(new Document(nameof(WordToGuidAndGuidToWord)));
+        public Boolean Save() => !this.IsDirty || this.Words.TrySave( new Document( nameof( WordToGuidAndGuidToWord ) ) );
     }
 }

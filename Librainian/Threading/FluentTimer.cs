@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,108 +35,124 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FluentTimer.cs" was last formatted by Protiguous on 2018/08/23 at 7:42 PM.
+// Project: "Librainian", "FluentTimer.cs" was last formatted by Protiguous on 2019/08/08 at 9:36 AM.
 
 namespace Librainian.Threading {
 
-	using System;
-	using System.Timers;
-	using JetBrains.Annotations;
-	using Measurement.Frequency;
-	using Measurement.Time;
+    using System;
+    using System.Timers;
+    using JetBrains.Annotations;
+    using Measurement.Frequency;
+    using Measurement.Time;
 
-	public static class FluentTimer {
+    public static class FluentTimer {
 
-		/// <summary>
-		///     Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Timer AutoReset( [NotNull] this Timer timer ) {
-			if ( timer == null ) { throw new ArgumentNullException( nameof( timer ) ); }
+        /// <summary>
+        ///     Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Timer AutoReset( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( nameof( timer ) );
+            }
 
-			timer.AutoReset = true;
+            timer.AutoReset = true;
 
-			return timer;
-		}
+            return timer;
+        }
 
-		[NotNull]
-		public static Timer Create( this Hertz frequency, Action onTick ) => Create( ( TimeSpan )frequency, onTick );
+        [NotNull]
+        public static Timer Create( this Hertz frequency, Action onTick ) => Create( ( TimeSpan ) frequency, onTick );
 
-		/// <summary>
-		///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
-		///     <para>Defaults to a one-time <see cref="Timer.Elapsed" /></para>
-		/// </summary>
-		/// <param name="interval"> </param>
-		/// <param name="onTick"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		[NotNull]
-		public static Timer Create( this TimeSpan interval, [CanBeNull] Action onTick ) {
-			if ( interval < Milliseconds.One ) { interval = Milliseconds.One; }
+        /// <summary>
+        ///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
+        ///     <para>Defaults to a one-time <see cref="Timer.Elapsed" /></para>
+        /// </summary>
+        /// <param name="interval"> </param>
+        /// <param name="onTick"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        [NotNull]
+        public static Timer Create( this TimeSpan interval, [CanBeNull] Action onTick ) {
+            if ( interval < Milliseconds.One ) {
+                interval = Milliseconds.One;
+            }
 
-			if ( onTick == null ) { onTick = () => { }; }
+            if ( onTick == null ) {
+                onTick = () => { };
+            }
 
-			var mills = interval.TotalMilliseconds;
+            var mills = interval.TotalMilliseconds;
 
-			if ( mills <= 0 ) { mills = 1; }
+            if ( mills <= 0 ) {
+                mills = 1;
+            }
 
-			var timer = new Timer( interval: mills ) {
-				AutoReset = false
-			};
+            var timer = new Timer( interval: mills ) {
+                AutoReset = false
+            };
 
-			timer.Elapsed += ( sender, args ) => {
-				try {
-					timer.Stop();
-					onTick();
-				}
-				finally {
-					if ( timer.AutoReset ) { timer.Start(); }
-				}
-			};
+            timer.Elapsed += ( sender, args ) => {
+                try {
+                    timer.Stop();
+                    onTick();
+                }
+                finally {
+                    if ( timer.AutoReset ) {
+                        timer.Start();
+                    }
+                }
+            };
 
-			return timer;
-		}
+            return timer;
+        }
 
-		/// <summary>
-		///     <para>Make the <paramref name="timer" /> fire only once.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Timer Once( [NotNull] this Timer timer ) {
-			if ( timer == null ) { throw new ArgumentNullException( nameof( timer ) ); }
+        /// <summary>
+        ///     <para>Make the <paramref name="timer" /> fire only once.</para>
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Timer Once( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( nameof( timer ) );
+            }
 
-			timer.AutoReset = false;
+            timer.AutoReset = false;
 
-			return timer;
-		}
+            return timer;
+        }
 
-		/// <summary>
-		///     <para>Start the <paramref name="timer" />.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		[NotNull]
-		public static Timer Start( [NotNull] this Timer timer ) {
-			if ( timer == null ) { throw new ArgumentNullException( paramName: nameof( timer ) ); }
+        /// <summary>
+        ///     <para>Start the <paramref name="timer" />.</para>
+        /// </summary>
+        /// <param name="timer"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        [NotNull]
+        public static Timer Start( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( paramName: nameof( timer ) );
+            }
 
-			timer.Start();
+            timer.Start();
 
-			return timer;
-		}
+            return timer;
+        }
 
-		[NotNull]
-		public static Timer Stop( [NotNull] this Timer timer ) {
-			if ( timer == null ) { throw new ArgumentNullException( nameof( timer ) ); }
+        [NotNull]
+        public static Timer Stop( [NotNull] this Timer timer ) {
+            if ( timer == null ) {
+                throw new ArgumentNullException( nameof( timer ) );
+            }
 
-			timer.Stop();
+            timer.Stop();
 
-			return timer;
-		}
-	}
+            return timer;
+        }
+    }
 }

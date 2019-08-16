@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,20 +35,19 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GuidExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
+// Project: "Librainian", "GuidExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 7:14 AM.
 
-namespace Librainian.Extensions
-{
+namespace Librainian.Extensions {
 
-    using JetBrains.Annotations;
-    using Maths.Numbers;
     using System;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using JetBrains.Annotations;
     using Logging;
+    using Maths.Numbers;
     using OperatingSystem.FileSystem;
 
     /// <summary>
@@ -56,37 +55,41 @@ namespace Librainian.Extensions
     ///     identifier is required.
     /// </summary>
     /// <remarks>I just love guids!</remarks>
-    public static class GuidExtensions
-    {
+    public static class GuidExtensions {
 
         public static readonly Regex InGuidFormat =
             new Regex(
                 pattern: "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
-                         "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", options: RegexOptions.Compiled);
+                         "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$",
+                options: RegexOptions.Compiled );
 
         /// <summary>
         ///     <see cref="Converters.ConverterExtensions.ToPath" />
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static Guid FromPath([NotNull] this DirectoryInfo path)
-        {
+        public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
             var s = path.ToPaths().ToList();
-            s.RemoveAll(s1 => s1.Any(c => !Char.IsDigit(c)));
+            s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
 
-            if (s.Count < 16) { return Guid.Empty; }
+            if ( s.Count < 16 ) {
+                return Guid.Empty;
+            }
 
-            var b = new Byte[s.Count];
+            var b = new Byte[ s.Count ];
 
-            for (var i = 0; i < s.Count; i++) { b[i] = Convert.ToByte(s[i]); }
+            for ( var i = 0; i < s.Count; i++ ) {
+                b[ i ] = Convert.ToByte( s[ i ] );
+            }
 
-            try
-            {
-                var result = new Guid(b);
+            try {
+                var result = new Guid( b );
 
                 return result;
             }
-            catch (ArgumentException exception) { exception.Log(); }
+            catch ( ArgumentException exception ) {
+                exception.Log();
+            }
 
             return Guid.Empty;
         }
@@ -113,11 +116,12 @@ namespace Librainian.Extensions
         /// </value>
         /// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
         /// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
-        public static Boolean IsGuid([NotNull] this String s)
-        {
-            if (s == null) { throw new ArgumentNullException(nameof(s)); }
+        public static Boolean IsGuid( [NotNull] this String s ) {
+            if ( s == null ) {
+                throw new ArgumentNullException( nameof( s ) );
+            }
 
-            var match = InGuidFormat.Match(input: s);
+            var match = InGuidFormat.Match( input: s );
 
             return match.Success;
         }
@@ -128,19 +132,19 @@ namespace Librainian.Extensions
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Guid Munge(this Guid left, Guid right)
-        {
+        public static Guid Munge( this Guid left, Guid right ) {
             const Int32 bytecount = 16;
-            var destByte = new Byte[bytecount];
+            var destByte = new Byte[ bytecount ];
             var lhsBytes = left.ToByteArray();
             var rhsBytes = right.ToByteArray();
-            
-            for (var i = 0; i < bytecount; i++)
-            {
-                unchecked { destByte[i] = (Byte)(lhsBytes[i] ^ rhsBytes[i]); }
+
+            for ( var i = 0; i < bytecount; i++ ) {
+                unchecked {
+                    destByte[ i ] = ( Byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                }
             }
 
-            return new Guid(b: destByte);
+            return new Guid( b: destByte );
         }
 
         /// <summary>
@@ -149,14 +153,13 @@ namespace Librainian.Extensions
         /// <param name="guid">  </param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static Guid Next(this Guid guid, Int64 amount = 1)
-        {
+        public static Guid Next( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger(bytes: bytes);
+            var uBigInteger = new UBigInteger( bytes: bytes );
             uBigInteger += amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize(array: ref array, newSize: 16);
-            var next = new Guid(b: array);
+            Array.Resize( array: ref array, newSize: 16 );
+            var next = new Guid( b: array );
 
             return next;
         }
@@ -167,14 +170,13 @@ namespace Librainian.Extensions
         /// <param name="guid">  </param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public static Guid Previous(this Guid guid, Int64 amount = 1)
-        {
+        public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger(bytes: bytes);
+            var uBigInteger = new UBigInteger( bytes: bytes );
             uBigInteger -= amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize(array: ref array, newSize: 16);
-            var next = new Guid(b: array);
+            Array.Resize( array: ref array, newSize: 16 );
+            var next = new Guid( b: array );
 
             return next;
         }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,110 +35,114 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FuzzyNonTS.cs" was last formatted by Protiguous on 2018/08/23 at 7:49 PM.
+// Project: "Librainian", "FuzzyNonTS.cs" was last formatted by Protiguous on 2019/08/08 at 8:19 AM.
 
 namespace Librainian.Maths {
 
-	using System;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     A Double number, constrained between 0 and 1. Not thread safe!
-	/// </summary>
-	[JsonObject]
-	public sealed class FuzzyNonTs {
+    /// <summary>
+    ///     A Double number, constrained between 0 and 1. Not thread safe!
+    /// </summary>
+    [JsonObject]
+    public sealed class FuzzyNonTs {
 
-		/// <summary>
-		///     ONLY used in the getter and setter.
-		/// </summary>
-		[JsonProperty]
-		private Double _value;
+        /// <summary>
+        ///     ONLY used in the getter and setter.
+        /// </summary>
+        [JsonProperty]
+        private Double _value;
 
-		public const Double MaxValue = 1D;
+        public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - (new FuzzyNonTs( 0.5D ) / 2) );
 
-		public const Double MinValue = 0D;
+        public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + (new FuzzyNonTs( 0.5D ) / 2) );
 
-		public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - (new FuzzyNonTs( 0.5D ) / 2) );
+        public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
 
-		public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + (new FuzzyNonTs( 0.5D ) / 2) );
+        public Double Value {
+            get => this._value;
 
-		public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
+            set {
+                var correctedvalue = value;
 
-		public Double Value {
-			get => this._value;
+                if ( value > MaxValue ) {
+                    correctedvalue = MaxValue;
+                }
+                else if ( value < MinValue ) {
+                    correctedvalue = MinValue;
+                }
 
-			set {
-				var correctedvalue = value;
+                this._value = correctedvalue;
+            }
+        }
 
-				if ( value > MaxValue ) { correctedvalue = MaxValue; }
-				else if ( value < MinValue ) { correctedvalue = MinValue; }
+        public const Double MaxValue = 1D;
 
-				this._value = correctedvalue;
-			}
-		}
+        public const Double MinValue = 0D;
 
-		public FuzzyNonTs( Double value ) => this.Value = value;
+        public FuzzyNonTs( Double value ) => this.Value = value;
 
-		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
+        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( FuzzyNonTs value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        [NotNull]
+        public static FuzzyNonTs Combine( FuzzyNonTs value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        [NotNull]
+        public static FuzzyNonTs Combine( FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( Double value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        [NotNull]
+        public static FuzzyNonTs Combine( Double value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
-		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
+        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-		public static implicit operator Double( [NotNull] FuzzyNonTs special ) => special.Value;
+        public static implicit operator Double( [NotNull] FuzzyNonTs special ) => special.Value;
 
-		public static Boolean IsFalser( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value <= Falser.Value;
+        public static Boolean IsFalser( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value <= Falser.Value;
 
-		public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
+        public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
 
-		public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+        public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
-		[NotNull]
-		public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );
+        [NotNull]
+        public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );
 
-		public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
+        public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 
-		public void MoreLikely( [CanBeNull] FuzzyNonTs towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
+        public void MoreLikely( [CanBeNull] FuzzyNonTs towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
 
-		public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
+        public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
 
-		/// <summary>
-		///     Initializes a random number between 0 and 1 within a range, defaulting to Middle
-		/// </summary>
-		public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
-			switch ( lmh ) {
-				case LowMiddleHigh.Low:
-					this.Value = Randem.NextDouble() / 10;
+        /// <summary>
+        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle
+        /// </summary>
+        public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
+            switch ( lmh ) {
+                case LowMiddleHigh.Low:
+                    this.Value = Randem.NextDouble() / 10;
 
-					break;
+                    break;
 
-				case LowMiddleHigh.Middle:
-					this.Value = ( 1 - (Randem.NextDouble() / 10) ) / 2;
+                case LowMiddleHigh.Middle:
+                    this.Value = ( 1 - (Randem.NextDouble() / 10) ) / 2;
 
-					break;
+                    break;
 
-				case LowMiddleHigh.High:
-					this.Value = 1 - (Randem.NextDouble() / 10);
+                case LowMiddleHigh.High:
+                    this.Value = 1 - (Randem.NextDouble() / 10);
 
-					break;
+                    break;
 
-				default:
-					this.Value = Randem.NextDouble();
+                default:
+                    this.Value = Randem.NextDouble();
 
-					break;
-			}
-		}
+                    break;
+            }
+        }
 
-		public override String ToString() => $"{this.Value:R}";
-	}
+        public override String ToString() => $"{this.Value:R}";
+    }
 }

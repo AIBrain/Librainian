@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Nanoseconds.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "Nanoseconds.cs" was last formatted by Protiguous on 2019/08/08 at 9:07 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Nanoseconds( Decimal value ) => this.Value = ( Rational )value;
+        public Nanoseconds( Decimal value ) => this.Value = ( Rational ) value;
 
         public Nanoseconds( Rational value ) => this.Value = value;
 
@@ -165,32 +165,34 @@ namespace Librainian.Measurement.Time {
 
         public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );
 
-        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
+        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) ( -nanoseconds ) );
 
         public static Boolean operator !=( Nanoseconds left, Nanoseconds right ) => !Equals( left, right );
 
         public static Nanoseconds operator +( Nanoseconds left, Nanoseconds right ) => Combine( left, right );
 
-        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
+        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) nanoseconds );
 
         public static Nanoseconds operator +( Nanoseconds left, BigInteger nanoseconds ) => Combine( left, nanoseconds );
 
         public static Boolean operator <( Nanoseconds left, Nanoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds )left < right;
+        public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds ) left < right;
 
         public static Boolean operator ==( Nanoseconds left, Nanoseconds right ) => Equals( left, right );
 
         public static Boolean operator >( Nanoseconds left, Nanoseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds )left > right;
+        public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds ) left > right;
 
         public Int32 CompareTo( Nanoseconds other ) => this.Value.CompareTo( other.Value );
 
         public Boolean Equals( Nanoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) { return false; }
+            if ( obj == null ) {
+                return false;
+            }
 
             return obj is Nanoseconds nanoseconds && this.Equals( nanoseconds );
         }
@@ -201,7 +203,7 @@ namespace Librainian.Measurement.Time {
 
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneNanosecond * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneNanosecond * this.Value );
 
         public Seconds ToSeconds() => throw new NotImplementedException();
 
@@ -212,7 +214,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "ns" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "ns" )}";
         }

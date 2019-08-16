@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,60 +35,64 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Minus1to1TS.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
+// Project: "Librainian", "Minus1to1TS.cs" was last formatted by Protiguous on 2019/08/08 at 8:29 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     Uses Interlocked to ensure thread safety and restricts the value to between -1 and 1.
-	/// </summary>
-	[JsonObject]
-	public class Minus1To1Ts : ICloneable {
+    /// <summary>
+    ///     Uses Interlocked to ensure thread safety and restricts the value to between -1 and 1.
+    /// </summary>
+    [JsonObject]
+    public class Minus1To1Ts : ICloneable {
 
-		public Object Clone() => new Minus1To1Ts( this.Value );
+        public Object Clone() => new Minus1To1Ts( this.Value );
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _value;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Double _value;
 
-		public Double Value {
-			get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
+        public Double Value {
+            get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
 
-			set {
-				if ( value > MaxValue ) { value = MaxValue; }
-				else if ( value < MinValue ) { value = MinValue; }
+            set {
+                if ( value > MaxValue ) {
+                    value = MaxValue;
+                }
+                else if ( value < MinValue ) {
+                    value = MinValue;
+                }
 
-				Interlocked.CompareExchange( ref this._value, value, this._value );
-			}
-		}
+                Interlocked.CompareExchange( ref this._value, value, this._value );
+            }
+        }
 
-		private const Double NaNValue = 2D;
+        private const Double NaNValue = 2D;
 
-		public const Double MaxValue = 1D;
+        public const Double MaxValue = 1D;
 
-		public const Double MinValue = -1D;
+        public const Double MinValue = -1D;
 
-		private static readonly Random Rand = new Random( ( Int32 ) DateTime.UtcNow.Ticks );
+        private static readonly Random Rand = new Random( ( Int32 ) DateTime.UtcNow.Ticks );
 
-		/// <summary>Initialize the value to a random value between -1 and 1.</summary>
-		public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
+        /// <summary>Initialize the value to a random value between -1 and 1.</summary>
+        public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
 
-		/// <summary>Initialize the value to between -1 and 1.</summary>
-		/// <param name="value"></param>
-		public Minus1To1Ts( Double value ) => this.Value = value;
+        /// <summary>Initialize the value to between -1 and 1.</summary>
+        /// <param name="value"></param>
+        public Minus1To1Ts( Double value ) => this.Value = value;
 
-		public static implicit operator Double( [NotNull] Minus1To1Ts special ) => special.Value;
+        public static implicit operator Double( [NotNull] Minus1To1Ts special ) => special.Value;
 
-		[NotNull]
-		public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
+        [NotNull]
+        public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
 
-		public override String ToString() => $"{this.Value:R}";
-	}
+        public override String ToString() => $"{this.Value:R}";
+    }
 }

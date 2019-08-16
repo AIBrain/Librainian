@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,56 +35,56 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Positionial.cs" was last formatted by Protiguous on 2018/07/10 at 8:51 PM.
+// Project: "Librainian", "Positionial.cs" was last formatted by Protiguous on 2019/08/08 at 6:35 AM.
 
 namespace Librainian.Collections {
 
-	using System;
-	using System.Runtime.Serialization;
+    using System;
+    using System.Runtime.Serialization;
 
-	public enum Positionial : Byte {
+    public enum Positionial : Byte {
 
-		[EnumMember( Value = nameof( Lowest ) )]
-		Lowest,
+        [EnumMember( Value = nameof( Lowest ) )]
+        Lowest,
 
-		/// <summary>
-		///     Randomly between <see cref="Lowest" /> and <see cref="Middle" />.
-		/// </summary>
-		[EnumMember( Value = nameof( Lowish ) )]
-		Lowish,
+        /// <summary>
+        ///     Randomly between <see cref="Lowest" /> and <see cref="Middle" />.
+        /// </summary>
+        [EnumMember( Value = nameof( Lowish ) )]
+        Lowish,
 
-		//[EnumMember( Value = nameof( Lower ) )]
-		//Lower,
+        //[EnumMember( Value = nameof( Lower ) )]
+        //Lower,
 
-		//[EnumMember( Value = nameof( Low ) )]
-		//Low,
+        //[EnumMember( Value = nameof( Low ) )]
+        //Low,
 
-		/// <summary>
-		///     smack dab in the middle.
-		/// </summary>
-		[EnumMember( Value = nameof( Middle ) )]
-		Middle,
+        /// <summary>
+        ///     smack dab in the middle.
+        /// </summary>
+        [EnumMember( Value = nameof( Middle ) )]
+        Middle,
 
-		///// <summary>Halfway between high and avg</summary>
-		//[EnumMember( Value = nameof( High ) )]
-		//High,
+        ///// <summary>Halfway between high and avg</summary>
+        //[EnumMember( Value = nameof( High ) )]
+        //High,
 
-		///// <summary>Slightly higher than high.</summary>
-		//[EnumMember( Value = nameof( Higher ) )]
-		//Higher,
+        ///// <summary>Slightly higher than high.</summary>
+        //[EnumMember( Value = nameof( Higher ) )]
+        //Higher,
 
-		/// <summary>
-		///     Randomly between <see cref="Middle" /> and <see cref="Highest" />.
-		/// </summary>
-		[EnumMember( Value = nameof( Highish ) )]
-		Highish,
+        /// <summary>
+        ///     Randomly between <see cref="Middle" /> and <see cref="Highest" />.
+        /// </summary>
+        [EnumMember( Value = nameof( Highish ) )]
+        Highish,
 
-		/// <summary>
-		///     Highest priority.
-		/// </summary>
-		[EnumMember( Value = nameof( Highest ) )]
-		Highest
-	}
+        /// <summary>
+        ///     Highest priority.
+        /// </summary>
+        [EnumMember( Value = nameof( Highest ) )]
+        Highest
+    }
 }

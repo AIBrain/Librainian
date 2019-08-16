@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,52 +35,61 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ValueTypeCheck.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "ValueTypeCheck.cs" was last formatted by Protiguous on 2019/08/08 at 7:00 AM.
 
 namespace Librainian.Database.MMF {
 
-	using System;
-	using System.Linq;
-	using System.Reflection;
-	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Check if a Type is a value type
-	/// </summary>
-	internal class ValueTypeCheck {
+    /// <summary>
+    ///     Check if a Type is a value type
+    /// </summary>
+    internal class ValueTypeCheck {
 
-		private Type Type { get; }
+        private Type Type { get; }
 
-		public ValueTypeCheck( Type objectType ) => this.Type = objectType;
+        public ValueTypeCheck( Type objectType ) => this.Type = objectType;
 
-		private static Boolean HasMarshalDefinedSize( [NotNull] MemberInfo info ) {
-			var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
+        private static Boolean HasMarshalDefinedSize( [NotNull] MemberInfo info ) {
+            var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
 
-			if ( customAttributes.Length == 0 ) { return false; }
+            if ( customAttributes.Length == 0 ) {
+                return false;
+            }
 
-			var attribute = ( MarshalAsAttribute ) customAttributes[ 0 ];
+            var attribute = ( MarshalAsAttribute ) customAttributes[ 0 ];
 
-			if ( attribute.Value == UnmanagedType.Currency ) { return true; }
+            if ( attribute.Value == UnmanagedType.Currency ) {
+                return true;
+            }
 
-			return attribute.SizeConst > 0;
-		}
+            return attribute.SizeConst > 0;
+        }
 
-		private Boolean FieldSizesAreDefined() =>
-			this.Type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive ).All( HasMarshalDefinedSize );
+        private Boolean FieldSizesAreDefined() =>
+            this.Type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive )
+                .All( HasMarshalDefinedSize );
 
-		private Boolean PropertySizesAreDefined() {
-			foreach ( var propertyInfo in this.Type.GetProperties( BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic ) ) {
-				if ( !propertyInfo.CanRead || !propertyInfo.CanWrite ) { return false; }
+        private Boolean PropertySizesAreDefined() {
+            foreach ( var propertyInfo in this.Type.GetProperties( BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic ) ) {
+                if ( !propertyInfo.CanRead || !propertyInfo.CanWrite ) {
+                    return false;
+                }
 
-				if ( !propertyInfo.PropertyType.IsPrimitive && !HasMarshalDefinedSize( propertyInfo ) ) { return false; }
-			}
+                if ( !propertyInfo.PropertyType.IsPrimitive && !HasMarshalDefinedSize( propertyInfo ) ) {
+                    return false;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || (this.PropertySizesAreDefined() && this.FieldSizesAreDefined());
-	}
+        internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,90 +35,90 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Win32DiskPartition.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
+// Project: "Librainian", "Win32DiskPartition.cs" was last formatted by Protiguous on 2019/08/08 at 9:19 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-	using System;
-	using System.Diagnostics;
+    using System;
+    using System.Diagnostics;
 
-	/// <summary>
-	/// </summary>
+    /// <summary>
+    /// </summary>
 
-	// ReSharper disable once InconsistentNaming
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class Win32DiskPartition {
+    // ReSharper disable once InconsistentNaming
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    public class Win32DiskPartition {
 
-		public UInt16? Access;
+        public UInt16? Access;
 
-		public UInt16? Availability;
+        public UInt16? Availability;
 
-		public UInt64? BlockSize;
+        public UInt64? BlockSize;
 
-		public Boolean? Bootable;
+        public Boolean? Bootable;
 
-		public Boolean? BootPartition;
+        public Boolean? BootPartition;
 
-		public String Caption;
+        public String Caption;
 
-		public UInt32? ConfigManagerErrorCode;
+        public UInt32? ConfigManagerErrorCode;
 
-		public Boolean? ConfigManagerUserConfig;
+        public Boolean? ConfigManagerUserConfig;
 
-		public String CreationClassName;
+        public String CreationClassName;
 
-		public String Description;
+        public String Description;
 
-		public String DeviceID;
+        public String DeviceID;
 
-		public UInt32? DiskIndex;
+        public UInt32? DiskIndex;
 
-		public Boolean? ErrorCleared;
+        public Boolean? ErrorCleared;
 
-		public String ErrorDescription;
+        public String ErrorDescription;
 
-		public String ErrorMethodology;
+        public String ErrorMethodology;
 
-		public UInt32? HiddenSectors;
+        public UInt32? HiddenSectors;
 
-		public UInt32? Index;
+        public UInt32? Index;
 
-		public DateTime? InstallDate;
+        public DateTime? InstallDate;
 
-		public UInt32? LastErrorCode;
+        public UInt32? LastErrorCode;
 
-		public String Name;
+        public String Name;
 
-		public UInt64? NumberOfBlocks;
+        public UInt64? NumberOfBlocks;
 
-		public String PNPDeviceID;
+        public String PNPDeviceID;
 
-		public UInt16[] PowerManagementCapabilities;
+        public UInt16[] PowerManagementCapabilities;
 
-		public Boolean? PowerManagementSupported;
+        public Boolean? PowerManagementSupported;
 
-		public Boolean? PrimaryPartition;
+        public Boolean? PrimaryPartition;
 
-		public String Purpose;
+        public String Purpose;
 
-		public Boolean? RewritePartition;
+        public Boolean? RewritePartition;
 
-		public UInt64? Size;
+        public UInt64? Size;
 
-		public UInt64? StartingOffset;
+        public UInt64? StartingOffset;
 
-		public String Status;
+        public String Status;
 
-		public UInt16? StatusInfo;
+        public UInt16? StatusInfo;
 
-		public String SystemCreationClassName;
+        public String SystemCreationClassName;
 
-		public String SystemName;
+        public String SystemName;
 
-		public String Type;
+        public String Type;
 
-		public override String ToString() => this.Name;
-	}
+        public override String ToString() => this.Name;
+    }
 }

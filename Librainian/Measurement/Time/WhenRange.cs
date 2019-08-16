@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,47 +35,47 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WhenRange.cs" was last formatted by Protiguous on 2018/07/13 at 1:31 AM.
+// Project: "Librainian", "WhenRange.cs" was last formatted by Protiguous on 2019/08/08 at 9:11 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using Newtonsoft.Json;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     Represents a <see cref="UniversalDateTime" /> range with minimum and maximum values.
-	/// </summary>
-	[JsonObject]
-	public struct WhenRange {
+    /// <summary>
+    ///     Represents a <see cref="UniversalDateTime" /> range with minimum and maximum values.
+    /// </summary>
+    [JsonObject]
+    public struct WhenRange {
 
-		/// <summary>Length of the range (difference between maximum and minimum values).</summary>
-		[JsonProperty]
-		public readonly SpanOfTime Length;
+        /// <summary>Length of the range (difference between maximum and minimum values).</summary>
+        [JsonProperty]
+        public readonly SpanOfTime Length;
 
-		/// <summary>Maximum value</summary>
-		[JsonProperty]
-		public readonly UniversalDateTime Max;
+        /// <summary>Maximum value</summary>
+        [JsonProperty]
+        public readonly UniversalDateTime Max;
 
-		/// <summary>Minimum value</summary>
-		[JsonProperty]
-		public readonly UniversalDateTime Min;
+        /// <summary>Minimum value</summary>
+        [JsonProperty]
+        public readonly UniversalDateTime Min;
 
-		/// <summary>Initializes a new instance of the <see cref="WhenRange" /> class</summary>
-		/// <param name="min">Minimum value of the range</param>
-		/// <param name="max">Maximum value of the range</param>
-		public WhenRange( UniversalDateTime min, UniversalDateTime max ) {
-			if ( min < max ) {
-				this.Min = min;
-				this.Max = max;
-			}
-			else {
-				this.Min = max;
-				this.Max = min;
-			}
+        /// <summary>Initializes a new instance of the <see cref="WhenRange" /> class</summary>
+        /// <param name="min">Minimum value of the range</param>
+        /// <param name="max">Maximum value of the range</param>
+        public WhenRange( UniversalDateTime min, UniversalDateTime max ) {
+            if ( min < max ) {
+                this.Min = min;
+                this.Max = max;
+            }
+            else {
+                this.Min = max;
+                this.Max = min;
+            }
 
-			var δ = this.Max.Value - this.Min.Value;
-			this.Length = new SpanOfTime( planckTimes: δ );
-		}
-	}
+            var δ = this.Max.Value - this.Min.Value;
+            this.Length = new SpanOfTime( planckTimes: δ );
+        }
+    }
 }

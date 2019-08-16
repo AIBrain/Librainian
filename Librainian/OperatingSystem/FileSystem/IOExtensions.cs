@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
+// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:17 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -63,7 +63,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Logging;
     using Maths;
     using Measurement.Time;
-    using OperatingSystem;
     using Parsing;
     using Threading;
 
@@ -73,9 +72,13 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         private static FileInfo InternalSearchFoundFile( this FileInfo info, [CanBeNull] Action<FileInfo> onFindFile, [CanBeNull] SimpleCancel cancellation ) {
             try {
-                if ( cancellation?.HaveAnyCancellationsBeenRequested() == false ) { onFindFile?.Invoke( info ); }
+                if ( cancellation?.HaveAnyCancellationsBeenRequested() == false ) {
+                    onFindFile?.Invoke( info );
+                }
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
             return info;
         }
@@ -88,25 +91,42 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="text">    </param>
         /// <returns></returns>
         public static async Task AppendTextAsync( [NotNull] this FileInfo fileInfo, [CanBeNull] String text ) {
-            if ( fileInfo == null ) { throw new ArgumentNullException( nameof( fileInfo ) ); }
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( nameof( fileInfo ) );
+            }
 
-            if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) { return; }
+            if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
+                return;
+            }
 
             try {
                 var encodedText = Encoding.Unicode.GetBytes( text );
                 var length = encodedText.Length;
 
-                using ( var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length, useAsync: true ) ) {
+                using ( var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length,
+                    useAsync: true ) ) {
                     await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length ).ConfigureAwait( false );
                     await sourceStream.FlushAsync().ConfigureAwait( false );
                 }
             }
-            catch ( UnauthorizedAccessException exception ) { exception.Log(); }
-            catch ( ArgumentNullException exception ) { exception.Log(); }
-            catch ( DirectoryNotFoundException exception ) { exception.Log(); }
-            catch ( PathTooLongException exception ) { exception.Log(); }
-            catch ( SecurityException exception ) { exception.Log(); }
-            catch ( IOException exception ) { exception.Log(); }
+            catch ( UnauthorizedAccessException exception ) {
+                exception.Log();
+            }
+            catch ( ArgumentNullException exception ) {
+                exception.Log();
+            }
+            catch ( DirectoryNotFoundException exception ) {
+                exception.Log();
+            }
+            catch ( PathTooLongException exception ) {
+                exception.Log();
+            }
+            catch ( SecurityException exception ) {
+                exception.Log();
+            }
+            catch ( IOException exception ) {
+                exception.Log();
+            }
         }
 
         /// <summary>
@@ -115,24 +135,34 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         public static IEnumerable<Byte> AsBytes( [NotNull] this FileInfo fileInfo ) {
-            if ( fileInfo == null ) { throw new ArgumentNullException( nameof( fileInfo ) ); }
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( nameof( fileInfo ) );
+            }
 
-            if ( !fileInfo.Exists ) { yield break; }
+            if ( !fileInfo.Exists ) {
+                yield break;
+            }
 
             var stream = ReTry( () => new FileStream( fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
-            if ( stream == null ) { yield break; }
+            if ( stream == null ) {
+                yield break;
+            }
 
-            if ( !stream.CanRead ) { throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" ); }
+            if ( !stream.CanRead ) {
+                throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
+            }
 
             using ( stream ) {
                 using ( var buffered = new BufferedStream( stream ) ) {
                     do {
                         var b = buffered.ReadByte();
 
-                        if ( b == -1 ) { yield break; }
+                        if ( b == -1 ) {
+                            yield break;
+                        }
 
-                        yield return ( Byte )b;
+                        yield return ( Byte ) b;
                     } while ( true );
                 }
             }
@@ -144,24 +174,34 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="filename"></param>
         /// <returns></returns>
         public static IEnumerable<Byte> AsBytes( [NotNull] this String filename ) {
-            if ( filename == null ) { throw new ArgumentNullException( nameof( filename ) ); }
+            if ( filename == null ) {
+                throw new ArgumentNullException( nameof( filename ) );
+            }
 
-            if ( !File.Exists( filename ) ) { yield break; }
+            if ( !File.Exists( filename ) ) {
+                yield break;
+            }
 
             var stream = ReTry( () => new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
-            if ( stream == null ) { yield break; }
+            if ( stream == null ) {
+                yield break;
+            }
 
-            if ( !stream.CanRead ) { throw new NotSupportedException( $"Cannot read from file {filename}." ); }
+            if ( !stream.CanRead ) {
+                throw new NotSupportedException( $"Cannot read from file {filename}." );
+            }
 
             using ( stream ) {
                 using ( var buffered = new BufferedStream( stream ) ) {
                     do {
                         var b = buffered.ReadByte();
 
-                        if ( b == -1 ) { yield break; }
+                        if ( b == -1 ) {
+                            yield break;
+                        }
 
-                        yield return ( Byte )b;
+                        yield return ( Byte ) b;
                     } while ( true );
                 }
             }
@@ -174,15 +214,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public static Folder AskUserForStorageFolder( String hint ) {
             using ( var folderBrowserDialog = new FolderBrowserDialog {
-                ShowNewFolderButton = true,
-                Description = $"Please direct me to a storage folder for {hint}.",
-                RootFolder = Environment.SpecialFolder.MyComputer
+                ShowNewFolderButton = true, Description = $"Please direct me to a storage folder for {hint}.", RootFolder = Environment.SpecialFolder.MyComputer
             } ) {
                 var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
 
                 var dialog = folderBrowserDialog.ShowDialog( owner );
 
-                if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) { return null; }
+                if ( dialog != DialogResult.OK || folderBrowserDialog.SelectedPath.IsNullOrWhiteSpace() ) {
+                    return null;
+                }
 
                 return new Folder( folderBrowserDialog.SelectedPath );
             }
@@ -196,31 +236,39 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         // TODO this needs a unit test for endianness
         public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
-            if ( fileInfo == null ) { throw new ArgumentNullException( nameof( fileInfo ) ); }
+            if ( fileInfo == null ) {
+                throw new ArgumentNullException( nameof( fileInfo ) );
+            }
 
             if ( !fileInfo.Exists ) {
                 fileInfo.Refresh(); //check one more time
 
-                if ( !fileInfo.Exists ) { yield break; }
+                if ( !fileInfo.Exists ) {
+                    yield break;
+                }
             }
 
             using ( var stream = new FileStream( fileInfo.FullName, FileMode.Open ) ) {
-                if ( !stream.CanRead ) { throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" ); }
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
+                }
 
                 using ( var buffered = new BufferedStream( stream ) ) {
                     var low = buffered.ReadByte();
 
-                    if ( low == -1 ) { yield break; }
+                    if ( low == -1 ) {
+                        yield break;
+                    }
 
                     var high = buffered.ReadByte();
 
                     if ( high == -1 ) {
-                        yield return ( ( Byte )low ).CombineBytes( high: 0 );
+                        yield return ( ( Byte ) low ).CombineBytes( high: 0 );
 
                         yield break;
                     }
 
-                    yield return ( ( Byte )low ).CombineBytes( high: ( Byte )high );
+                    yield return ( ( Byte ) low ).CombineBytes( high: ( Byte ) high );
                 }
             }
         }
@@ -233,22 +281,35 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchPattern"></param>
         /// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
         /// <returns></returns>
-        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo target, String searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories ) {
-            if ( target == null ) { yield break; }
+        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo target, String searchPattern = "*",
+            SearchOption searchOption = SearchOption.AllDirectories ) {
+            if ( target == null ) {
+                yield break;
+            }
 
             var searchPath = Path.Combine( target.FullName, searchPattern );
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
                 do {
-                    if ( hFindFile.IsInvalid ) { break; }
+                    if ( hFindFile.IsInvalid ) {
+                        break;
+                    }
 
-                    if ( !IsDirectory( findData ) ) { continue; }
+                    if ( !IsDirectory( findData ) ) {
+                        continue;
+                    }
 
-                    if ( IsParentOrCurrent( findData ) ) { continue; }
+                    if ( IsParentOrCurrent( findData ) ) {
+                        continue;
+                    }
 
-                    if ( IsReparsePoint( findData ) ) { continue; }
+                    if ( IsReparsePoint( findData ) ) {
+                        continue;
+                    }
 
-                    if ( IsIgnoreFolder( findData ) ) { continue; }
+                    if ( IsIgnoreFolder( findData ) ) {
+                        continue;
+                    }
 
                     var subFolder = Path.Combine( target.FullName, findData.cFileName );
 
@@ -264,7 +325,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                     switch ( searchOption ) {
                         case SearchOption.AllDirectories:
 
-                            foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) { yield return info; }
+                            foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
+                                yield return info;
+                            }
 
                             break;
                     }
@@ -273,21 +336,33 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static IEnumerable<FileInfo> BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
-            if ( target == null ) { throw new ArgumentNullException( nameof( target ) ); }
+            if ( target == null ) {
+                throw new ArgumentNullException( nameof( target ) );
+            }
 
-            if ( searchPattern == null ) { throw new ArgumentNullException( nameof( searchPattern ) ); }
+            if ( searchPattern == null ) {
+                throw new ArgumentNullException( nameof( searchPattern ) );
+            }
 
             var searchPath = Path.Combine( target.FullName, searchPattern );
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
                 do {
-                    if ( hFindFile.IsInvalid ) { break; }
+                    if ( hFindFile.IsInvalid ) {
+                        break;
+                    }
 
-                    if ( IsParentOrCurrent( findData ) ) { continue; }
+                    if ( IsParentOrCurrent( findData ) ) {
+                        continue;
+                    }
 
-                    if ( IsReparsePoint( findData ) ) { continue; }
+                    if ( IsReparsePoint( findData ) ) {
+                        continue;
+                    }
 
-                    if ( !IsFile( findData ) ) { continue; }
+                    if ( !IsFile( findData ) ) {
+                        continue;
+                    }
 
                     var newfName = Path.Combine( target.FullName, findData.cFileName );
 
@@ -299,11 +374,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String description = "Please select a folder." ) {
             using ( var folderDialog = new FolderBrowserDialog {
-                Description = description,
-                RootFolder = startFolder,
-                ShowNewFolderButton = false
+                Description = description, RootFolder = startFolder, ShowNewFolderButton = false
             } ) {
-                if ( folderDialog.ShowDialog() == DialogResult.OK ) { return new DirectoryInfo( folderDialog.SelectedPath ); }
+                if ( folderDialog.ShowDialog() == DialogResult.OK ) {
+                    return new DirectoryInfo( folderDialog.SelectedPath );
+                }
             }
 
             return null;
@@ -316,15 +391,21 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="source">The source stream to copy from.</param>
         /// <param name="target">The destination stream to copy to.</param>
         public static void CopyStream( [NotNull] this Stream source, [NotNull] Stream target ) {
-            if ( !source.CanRead ) { throw new Exception( $"Cannot read from {nameof( source )}" ); }
+            if ( !source.CanRead ) {
+                throw new Exception( $"Cannot read from {nameof( source )}" );
+            }
 
-            if ( !target.CanWrite ) { throw new Exception( $"Cannot write to {nameof( target )}" ); }
+            if ( !target.CanWrite ) {
+                throw new Exception( $"Cannot write to {nameof( target )}" );
+            }
 
             const Int32 size = 0xffff;
             var buffer = new Byte[ size ];
             Int32 bytesRead;
 
-            while ( ( bytesRead = source.Read( buffer, 0, size ) ) > 0 ) { target.Write( buffer, 0, bytesRead ); }
+            while ( ( bytesRead = source.Read( buffer, 0, size ) ) > 0 ) {
+                target.Write( buffer, 0, bytesRead );
+            }
         }
 
         /// <summary>
@@ -337,7 +418,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static FileInfo DateAndTimeAsFile( [NotNull] this DirectoryInfo info, [CanBeNull] String withExtension, Int32 toBase = 16 ) {
-            if ( info == null ) { throw new ArgumentNullException( nameof( info ) ); }
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
 
             var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase: toBase );
             var fileName = $"{now}{withExtension ?? info.Extension}";
@@ -355,9 +438,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="requestWriteAccess"> </param>
         /// <returns></returns>
         [CanBeNull]
-        public static DirectoryInfo Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? changeCompressionTo = null, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
+        public static DirectoryInfo Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? changeCompressionTo = null, Boolean? requestReadAccess = null,
+            Boolean? requestWriteAccess = null ) {
 
-            if ( directoryInfo == null ) { throw new ArgumentNullException( nameof( directoryInfo ) ); }
+            if ( directoryInfo == null ) {
+                throw new ArgumentNullException( nameof( directoryInfo ) );
+            }
 
             try {
                 directoryInfo.Refresh();
@@ -372,7 +458,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                     directoryInfo.Refresh();
                 }
 
-                if ( requestReadAccess.HasValue ) { directoryInfo.Refresh(); }
+                if ( requestReadAccess.HasValue ) {
+                    directoryInfo.Refresh();
+                }
 
                 if ( requestWriteAccess.HasValue ) {
                     var temp = Path.Combine( directoryInfo.FullName, Path.GetRandomFileName() );
@@ -391,22 +479,34 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static DateTime FileNameAsDateAndTime( [NotNull] this FileInfo info, DateTime? defaultValue = null ) {
-            if ( info == null ) { throw new ArgumentNullException( nameof( info ) ); }
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
 
-            if ( null == defaultValue ) { defaultValue = DateTime.MinValue; }
+            if ( null == defaultValue ) {
+                defaultValue = DateTime.MinValue;
+            }
 
             var now = defaultValue.Value;
             var fName = Path.GetFileNameWithoutExtension( info.Name );
 
-            if ( String.IsNullOrWhiteSpace( fName ) ) { return now; }
+            if ( String.IsNullOrWhiteSpace( fName ) ) {
+                return now;
+            }
 
             fName = fName.Trim();
 
-            if ( String.IsNullOrWhiteSpace( fName ) ) { return now; }
+            if ( String.IsNullOrWhiteSpace( fName ) ) {
+                return now;
+            }
 
-            if ( Int64.TryParse( fName, NumberStyles.AllowHexSpecifier, null, out var data ) ) { return DateTime.FromBinary( data ); }
+            if ( Int64.TryParse( fName, NumberStyles.AllowHexSpecifier, null, out var data ) ) {
+                return DateTime.FromBinary( data );
+            }
 
-            if ( Int64.TryParse( fName, NumberStyles.Any, null, out data ) ) { return DateTime.FromBinary( data ); }
+            if ( Int64.TryParse( fName, NumberStyles.Any, null, out data ) ) {
+                return DateTime.FromBinary( data );
+            }
 
             return now;
         }
@@ -420,26 +520,38 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle">       </param>
-        public static void FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, [CanBeNull] Action<FileInfo> onFindFile = null,
-            [CanBeNull] Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
-            if ( fileSearchPatterns == null ) { throw new ArgumentNullException( nameof( fileSearchPatterns ) ); }
+        public static void FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation,
+            [CanBeNull] Action<FileInfo> onFindFile = null, [CanBeNull] Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
+            if ( fileSearchPatterns == null ) {
+                throw new ArgumentNullException( nameof( fileSearchPatterns ) );
+            }
 
-            if ( startingFolder == null ) { throw new ArgumentNullException( nameof( startingFolder ) ); }
+            if ( startingFolder == null ) {
+                throw new ArgumentNullException( nameof( startingFolder ) );
+            }
 
             try {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
 
                 searchPatterns.AsParallel().ForAll( searchPattern => {
-                    if ( cancellation.HaveAnyCancellationsBeenRequested() ) { return; }
+                    if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                        return;
+                    }
 
                     try {
                         var folders = startingFolder.BetterEnumerateDirectories( "*" /*, SearchOption.TopDirectoryOnly*/ );
 
                         folders.AsParallel().ForAll( folder => {
-                            if ( cancellation.HaveAnyCancellationsBeenRequested() ) { return; }
+                            if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                                return;
+                            }
 
-                            try { onEachDirectory?.Invoke( folder ); }
-                            catch ( Exception exception ) { exception.Log(); }
+                            try {
+                                onEachDirectory?.Invoke( folder );
+                            }
+                            catch ( Exception exception ) {
+                                exception.Log();
+                            }
 
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
                                 folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
@@ -447,7 +559,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                             }
 
                             try {
-                                foreach ( var file in folder.BetterEnumerateFiles( searchPattern /*, SearchOption.TopDirectoryOnly*/ ) ) { file.InternalSearchFoundFile( onFindFile, cancellation ); }
+                                foreach ( var file in folder.BetterEnumerateFiles( searchPattern /*, SearchOption.TopDirectoryOnly*/ ) ) {
+                                    file.InternalSearchFoundFile( onFindFile, cancellation );
+                                }
                             }
                             catch ( UnauthorizedAccessException ) { }
                             catch ( DirectoryNotFoundException ) { }
@@ -460,7 +574,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                                         case DirectoryNotFoundException _:
                                         case IOException _:
                                         case SecurityException _:
-
                                             return true;
                                     }
 
@@ -470,7 +583,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                                 } );
                             }
 
-                            folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle ); //recurse
+                            folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
+                                searchStyle: searchStyle ); //recurse
                         } );
                     }
                     catch ( UnauthorizedAccessException ) { }
@@ -484,7 +598,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                                 case DirectoryNotFoundException _:
                                 case IOException _:
                                 case SecurityException _:
-
                                     return true;
                             }
 
@@ -506,7 +619,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                         case DirectoryNotFoundException _:
                         case IOException _:
                         case SecurityException _:
-
                             return true;
                     }
 
@@ -529,11 +641,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using ( var searcher = new ManagementObjectSearcher( $"select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{driveLetter}'" ) ) {
                 var bob = searcher.Get().Cast<ManagementObject>().First();
-                clusterSize = ( UInt32 )bob[ "BlockSize" ];
+                clusterSize = ( UInt32 ) bob[ "BlockSize" ];
             }
 
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var hosize );
-            var size = (hosize << 32) | losize;
+            var size = ( hosize << 32 ) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
@@ -548,20 +660,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
         public static UInt32? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
-            var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory?.Root.FullName, lpSectorsPerCluster: out var sectorsPerCluster, lpBytesPerSector: out var bytesPerSector,
-                lpNumberOfFreeClusters: out var dummy, lpTotalNumberOfClusters: out _ );
+            var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory?.Root.FullName, lpSectorsPerCluster: out var sectorsPerCluster,
+                lpBytesPerSector: out var bytesPerSector, lpNumberOfFreeClusters: out var dummy, lpTotalNumberOfClusters: out _ );
 
-            if ( result == 0 ) { throw new Win32Exception(); }
+            if ( result == 0 ) {
+                throw new Win32Exception();
+            }
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out var sizeHigh );
-            var size = (sizeHigh << 32) | losize;
+            var size = ( sizeHigh << 32 ) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
 
         [CanBeNull]
-        public static DriveInfo GetLargestEmptiestDrive() => DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
+        public static DriveInfo GetLargestEmptiestDrive() =>
+            DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
 
         /// <summary>
         ///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the
@@ -573,16 +688,22 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
-            if ( !Directory.Exists( path ) ) { return String.Empty; }
+            if ( !Directory.Exists( path ) ) {
+                return String.Empty;
+            }
 
             var dir = new DirectoryInfo( path );
 
-            if ( !dir.Exists ) { return String.Empty; }
+            if ( !dir.Exists ) {
+                return String.Empty;
+            }
 
             var files = Directory.EnumerateFiles( dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
             var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
 
-            if ( pickedfile != null && File.Exists( pickedfile ) ) { return new FileInfo( pickedfile ).FullName; }
+            if ( pickedfile != null && File.Exists( pickedfile ) ) {
+                return new FileInfo( pickedfile ).FullName;
+            }
 
             return String.Empty;
         }
@@ -595,14 +716,22 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="cancellation">  </param>
         /// <returns></returns>
         public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound, SimpleCancel cancellation ) {
-            if ( startingFolder == null ) { throw new ArgumentNullException( nameof( startingFolder ) ); }
+            if ( startingFolder == null ) {
+                throw new ArgumentNullException( nameof( startingFolder ) );
+            }
 
-            if ( foldersFound == null ) { throw new ArgumentNullException( nameof( foldersFound ) ); }
+            if ( foldersFound == null ) {
+                throw new ArgumentNullException( nameof( foldersFound ) );
+            }
 
             try {
-                if ( cancellation.HaveAnyCancellationsBeenRequested() ) { return false; }
+                if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                    return false;
+                }
 
-                if ( !startingFolder.Exists() ) { return false; }
+                if ( !startingFolder.Exists() ) {
+                    return false;
+                }
 
                 //if ( startingFolder.Name.Like( "$OF" ) ) {return false;}
 
@@ -632,8 +761,12 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 return true;
             }
-            catch ( OutOfMemoryException ) { GC.Collect(); }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( OutOfMemoryException ) {
+                GC.Collect();
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
             return false;
         }
@@ -647,19 +780,28 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="progressFolders">       </param>
         /// <param name="progressDocuments">     </param>
         /// <returns></returns>
-        public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, IEnumerable<String> documentSearchPatterns, [NotNull] Action<Document> onEachDocumentFound, IProgress<Int64> progressFolders,
-            IProgress<Int64> progressDocuments, [NotNull] CancellationTokenSource cancellation ) {
-            if ( startingFolder == null ) { throw new ArgumentNullException( nameof( startingFolder ) ); }
+        public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, IEnumerable<String> documentSearchPatterns,
+            [NotNull] Action<Document> onEachDocumentFound, IProgress<Int64> progressFolders, IProgress<Int64> progressDocuments,
+            [NotNull] CancellationTokenSource cancellation ) {
+            if ( startingFolder == null ) {
+                throw new ArgumentNullException( nameof( startingFolder ) );
+            }
 
-            if ( onEachDocumentFound == null ) { throw new ArgumentNullException( nameof( onEachDocumentFound ) ); }
+            if ( onEachDocumentFound == null ) {
+                throw new ArgumentNullException( nameof( onEachDocumentFound ) );
+            }
 
             //if ( foldersFound == null ) {
             //    throw new ArgumentNullException( nameof( foldersFound ) );
             //}
 
-            if ( cancellation.IsCancellationRequested ) { return false; }
+            if ( cancellation.IsCancellationRequested ) {
+                return false;
+            }
 
-            if ( !startingFolder.Exists() ) { return false; }
+            if ( !startingFolder.Exists() ) {
+                return false;
+            }
 
             //foldersFound.Add( startingFolder );
             var searchPatterns = documentSearchPatterns as IList<String> ?? documentSearchPatterns.ToList();
@@ -676,7 +818,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                     progressDocuments.Report( 1 );
                     onEachDocumentFound( new Document( info ) );
 
-                    if ( cancellation.IsCancellationRequested ) { return false; }
+                    if ( cancellation.IsCancellationRequested ) {
+                        return false;
+                    }
                 }
             }
 
@@ -697,29 +841,40 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
 
         /// <summary>
-        /// Hard coded folders to skip.
+        ///     Hard coded folders to skip.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         [Pure]
         public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
-            data.cFileName.EndsLike( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
+            data.cFileName.EndsLike( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ ||
+            data.cFileName.Like( "System Volume Information" );
 
         [Pure]
         public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName == "." || data.cFileName == "..";
 
         [Pure]
         public static Boolean IsProtected( [NotNull] this FileSystemInfo fileSystemInfo ) {
-            if ( fileSystemInfo == null ) { throw new ArgumentNullException( nameof( fileSystemInfo ) ); }
+            if ( fileSystemInfo == null ) {
+                throw new ArgumentNullException( nameof( fileSystemInfo ) );
+            }
 
-            if ( !fileSystemInfo.Exists ) { return false; }
+            if ( !fileSystemInfo.Exists ) {
+                return false;
+            }
 
             DirectorySecurity ds;
 
-            try { ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access ); }
-            catch ( UnauthorizedAccessException ) { return true; }
+            try {
+                ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access );
+            }
+            catch ( UnauthorizedAccessException ) {
+                return true;
+            }
 
-            if ( !ds.AreAccessRulesProtected ) { return false; }
+            if ( !ds.AreAccessRulesProtected ) {
+                return false;
+            }
 
             using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
                 var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
@@ -785,9 +940,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static FileInfo PlusDateTime( [NotNull] this FileInfo info, [CanBeNull] String newExtension = null ) {
-            if ( info == null ) { throw new ArgumentNullException( nameof( info ) ); }
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
 
-            if ( info.Directory == null ) { throw new NullReferenceException( "info.directory" ); }
+            if ( info.Directory == null ) {
+                throw new NullReferenceException( "info.directory" );
+            }
 
             var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase: 16 );
             var formatted = $"{Path.GetFileNameWithoutExtension( info.Name )} {now}{newExtension ?? info.Extension}";
@@ -806,12 +965,18 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<String> ReadTextAsync( [NotNull] String filePath, Int32? bufferSize = 4096, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
-            if ( String.IsNullOrWhiteSpace( filePath ) ) { throw new ArgumentNullException( nameof( filePath ) ); }
+            if ( String.IsNullOrWhiteSpace( filePath ) ) {
+                throw new ArgumentNullException( nameof( filePath ) );
+            }
 
-            if ( !bufferSize.HasValue ) { bufferSize = 4096; }
+            if ( !bufferSize.HasValue ) {
+                bufferSize = 4096;
+            }
 
             while ( fileMissingRetries.HasValue && fileMissingRetries.Value > 0 ) {
-                if ( File.Exists( filePath ) ) { break; }
+                if ( File.Exists( filePath ) ) {
+                    break;
+                }
 
                 await Task.Delay( retryDelay ?? Seconds.One );
                 fileMissingRetries--;
@@ -819,7 +984,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( File.Exists( filePath ) ) {
                 try {
-                    using ( var sourceStream = new FileStream( filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value, useAsync: true ) ) {
+                    using ( var sourceStream = new FileStream( filePath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: bufferSize.Value,
+                        useAsync: true ) ) {
                         var sb = new StringBuilder( bufferSize.Value );
                         var buffer = new Byte[ bufferSize.Value ];
                         Int32 numRead;
@@ -832,7 +998,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return sb.ToString();
                     }
                 }
-                catch ( FileNotFoundException exception ) { exception.Log(); }
+                catch ( FileNotFoundException exception ) {
+                    exception.Log();
+                }
             }
 
             return String.Empty;
@@ -849,13 +1017,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         [CanBeNull]
         public static TResult ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken token ) {
-            if ( ioFunction == null ) { throw new ArgumentNullException( nameof( ioFunction ) ); }
+            if ( ioFunction == null ) {
+                throw new ArgumentNullException( nameof( ioFunction ) );
+            }
 
             //var oneTenth = TimeSpan.FromMilliseconds( tryFor.TotalMilliseconds / 10 );
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
 
-            if ( token.IsCancellationRequested ) { return default; }
+            if ( token.IsCancellationRequested ) {
+                return default;
+            }
 
             try {
                 Application.DoEvents();
@@ -865,7 +1037,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             catch ( IOException exception ) {
                 exception.Message.Error();
 
-                if ( stopwatch.Elapsed > tryFor ) { return default; }
+                if ( stopwatch.Elapsed > tryFor ) {
+                    return default;
+                }
 
                 Thread.CurrentThread.Fraggle( Seconds.One );
 
@@ -889,13 +1063,21 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public static Boolean SameContent( [CanBeNull] this FileInfo left, [CanBeNull] FileInfo right ) {
-            if ( left == null || right == null ) { return false; }
+            if ( left == null || right == null ) {
+                return false;
+            }
 
-            if ( !left.Exists ) { return false; }
+            if ( !left.Exists ) {
+                return false;
+            }
 
-            if ( !right.Exists ) { return false; }
+            if ( !right.Exists ) {
+                return false;
+            }
 
-            if ( left.Length != right.Length ) { return false; }
+            if ( left.Length != right.Length ) {
+                return false;
+            }
 
             var lba = left.AsBytes(); //.ToArray();
             var rba = right.AsBytes(); //.ToArray();
@@ -919,13 +1101,21 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public static Boolean SameContent( [CanBeNull] this String leftFileName, [CanBeNull] String rightFileName ) {
-            if ( leftFileName == null || rightFileName == null ) { return false; }
+            if ( leftFileName == null || rightFileName == null ) {
+                return false;
+            }
 
-            if ( !File.Exists( leftFileName ) ) { return false; }
+            if ( !File.Exists( leftFileName ) ) {
+                return false;
+            }
 
-            if ( !File.Exists( rightFileName ) ) { return false; }
+            if ( !File.Exists( rightFileName ) ) {
+                return false;
+            }
 
-            if ( leftFileName.Length != rightFileName.Length ) { return false; }
+            if ( leftFileName.Length != rightFileName.Length ) {
+                return false;
+            }
 
             var lba = leftFileName.AsBytes().ToArray();
             var rba = rightFileName.AsBytes().ToArray();
@@ -949,13 +1139,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public static Boolean SameContent( [CanBeNull] this Document left, [CanBeNull] FileInfo right ) {
-            if ( left == null || right == null ) { return false; }
+            if ( left == null || right == null ) {
+                return false;
+            }
 
             if ( left.Exists() == false ) {
                 return false;
             }
 
             var leftLength = left.Length;
+
             if ( !leftLength.HasValue ) {
                 return false;
             }
@@ -968,7 +1161,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 )right.Length;
+            var rightLength = ( UInt64 ) right.Length;
 
             if ( !rightLength.Any() ) {
                 return false;
@@ -993,7 +1186,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public static Boolean SameContent( [CanBeNull] this FileInfo left, [CanBeNull] Document right ) {
-            if ( left == default || right == default ) { return false; }
+            if ( left == default || right == default ) {
+                return false;
+            }
 
             if ( !left.Exists ) {
                 left.Refresh();
@@ -1003,7 +1198,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 )left.Length;
+            var rightLength = ( UInt64 ) left.Length;
 
             if ( !rightLength.Any() ) {
                 return false;
@@ -1014,6 +1209,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             var leftLength = right.Length;
+
             if ( !leftLength.HasValue ) {
                 return false;
             }
@@ -1031,14 +1227,20 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchStyle">       </param>
         public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, [CanBeNull] Action<FileInfo> onFindFile = null,
             [CanBeNull] Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
-            if ( fileSearchPatterns == null ) { throw new ArgumentNullException( nameof( fileSearchPatterns ) ); }
+            if ( fileSearchPatterns == null ) {
+                throw new ArgumentNullException( nameof( fileSearchPatterns ) );
+            }
 
             try {
                 DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism( 26 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism ).ForAll( drive => {
-                    if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) { return; }
+                    if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
+                        return;
+                    }
 
                     $"Scanning [{drive.VolumeLabel}]".Info();
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+
+                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile,
+                        onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) { }
@@ -1052,8 +1254,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                         case DirectoryNotFoundException _:
                         case IOException _:
                         case SecurityException _: {
-                                return true;
-                            }
+                            return true;
+                        }
                     }
 
                     ex.Log();
@@ -1069,7 +1271,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                     using ( var dir = new ManagementObject( directoryInfo.ToManagementPath() ) ) {
                         var outParams = dir.InvokeMethod( compressed ? "Compress" : "Uncompress", null, null );
 
-                        if ( null == outParams ) { return false; }
+                        if ( null == outParams ) {
+                            return false;
+                        }
 
                         var result = Convert.ToUInt32( outParams.Properties[ "ReturnValue" ].Value );
 
@@ -1077,20 +1281,26 @@ namespace Librainian.OperatingSystem.FileSystem {
                     }
                 }
             }
-            catch ( ManagementException exception ) { exception.Log(); }
+            catch ( ManagementException exception ) {
+                exception.Log();
+            }
 
             return false;
         }
 
         public static Boolean SetCompression( [CanBeNull] this String folderPath, Boolean compressed = true ) {
-            if ( String.IsNullOrWhiteSpace( folderPath ) ) { return false; }
+            if ( String.IsNullOrWhiteSpace( folderPath ) ) {
+                return false;
+            }
 
             try {
                 var dirInfo = new DirectoryInfo( folderPath );
 
                 return dirInfo.SetCompression( compressed );
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
             return false;
         }
@@ -1101,7 +1311,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static String SimplifyFileName( [NotNull] this Document document /*, Folder hintFolder*/ ) {
-            if ( document == null ) { throw new ArgumentNullException( nameof( document ) ); }
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
+            }
 
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
 
@@ -1158,7 +1370,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
             var fullPath = systemPath.FullName;
 
-            while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) { fullPath = fullPath.Substring( 0, fullPath.Length - 1 ); }
+            while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
+                fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
+            }
 
             fullPath = "Win32_Directory.Name=\"" + fullPath.Replace( "\\", "\\\\" ) + "\"";
             var managed = new ManagementPath( fullPath );
@@ -1168,13 +1382,16 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
-            if ( directoryInfo == null ) { throw new ArgumentNullException( nameof( directoryInfo ) ); }
+            if ( directoryInfo == null ) {
+                throw new ArgumentNullException( nameof( directoryInfo ) );
+            }
 
             return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
         }
 
         [NotNull]
-        public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+        public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
+            FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO
             TryAgain:
@@ -1183,7 +1400,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             try {
                 if ( File.Exists( filePath ) ) {
                     using ( var fileStream = File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
-                        var length = ( Int32 )fileStream.Length;
+                        var length = ( Int32 ) fileStream.Length;
 
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
@@ -1196,7 +1413,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 // IOExcception is thrown if the file is in use by another process.
                 if ( bePatient ) {
-                    if ( !Thread.Yield() ) { Thread.Sleep( 0 ); }
+                    if ( !Thread.Yield() ) {
+                        Thread.Sleep( 0 );
+                    }
 
                     goto TryAgain;
                 }
@@ -1205,7 +1424,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             return memoryStream;
         }
 
-        public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) => TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
+        public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) =>
+            TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
 
         public static Boolean TryGetFolderFromPath( [CanBeNull] this String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {
 
@@ -1245,14 +1465,20 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static Boolean TryGetTempDocument( [NotNull] this Folder folder, [NotNull] out Document document, String extension = null ) {
-            if ( folder == null ) { throw new ArgumentNullException( nameof( folder ) ); }
+            if ( folder == null ) {
+                throw new ArgumentNullException( nameof( folder ) );
+            }
 
             try {
                 var randomFileName = Guid.NewGuid().ToString();
 
-                if ( String.IsNullOrWhiteSpace( extension ) ) { randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) ); }
+                if ( String.IsNullOrWhiteSpace( extension ) ) {
+                    randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) );
+                }
                 else {
-                    if ( !extension.StartsWith( "." ) ) { extension = $".{extension}"; }
+                    if ( !extension.StartsWith( "." ) ) {
+                        extension = $".{extension}";
+                    }
 
                     randomFileName = Path.Combine( folder.FullName, Path.GetFileNameWithoutExtension( randomFileName ) + extension );
                 }
@@ -1288,7 +1514,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
             //TODO
-            try { return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare ); }
+            try {
+                return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare );
+            }
             catch ( IOException ) {
 
                 // IOExcception is thrown if the file is in use by another process.
@@ -1298,20 +1526,27 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+        public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
+            FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO
             TryAgain:
 
             try {
-                if ( File.Exists( filePath ) ) { return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare ); }
+                if ( File.Exists( filePath ) ) {
+                    return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare );
+                }
             }
             catch ( IOException ) {
 
                 // IOExcception is thrown if the file is in use by another process.
-                if ( !bePatient ) { return null; }
+                if ( !bePatient ) {
+                    return null;
+                }
 
-                if ( !Thread.Yield() ) { Thread.Sleep( 0 ); }
+                if ( !Thread.Yield() ) {
+                    Thread.Sleep( 0 );
+                }
 
                 goto TryAgain;
             }
@@ -1320,10 +1555,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.ReadWrite ) {
+        public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write,
+            FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO
-            try { return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare ); }
+            try {
+                return File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare );
+            }
             catch ( IOException ) {
 
                 // IOExcception is thrown if the file is in use by another process.
@@ -1333,12 +1571,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static Int32? TurnOnCompression( [NotNull] this FileInfo info ) {
-            if ( info == null ) { throw new ArgumentNullException( nameof( info ) ); }
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
 
             if ( !info.Exists ) {
                 info.Refresh();
 
-                if ( !info.Exists ) { return null; }
+                if ( !info.Exists ) {
+                    return null;
+                }
             }
 
             var lpBytesReturned = 0;
@@ -1351,11 +1593,13 @@ namespace Librainian.OperatingSystem.FileSystem {
                     if ( fileStream.SafeFileHandle != null ) {
                         fileStream.SafeFileHandle.DangerousAddRef( success: ref success );
 
-                        NativeMethods.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ), IntPtr.Zero, nOutBufferSize: 0,
-                            lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
+                        NativeMethods.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ),
+                            IntPtr.Zero, nOutBufferSize: 0, lpBytesReturned: ref lpBytesReturned, lpOverlapped: IntPtr.Zero );
                     }
                 }
-                finally { fileStream.SafeFileHandle?.DangerousRelease(); }
+                finally {
+                    fileStream.SafeFileHandle?.DangerousRelease();
+                }
 
                 return lpBytesReturned;
             }

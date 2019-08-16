@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,43 +35,43 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Year.cs" was last formatted by Protiguous on 2018/08/23 at 7:10 PM.
+// Project: "Librainian", "Year.cs" was last formatted by Protiguous on 2019/08/08 at 8:58 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using Extensions;
-	using Newtonsoft.Json;
-	using System;
-	using System.Numerics;
+    using System;
+    using System.Numerics;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a Year.</summary>
-	[JsonObject]
-	[Immutable]
-	public struct Year : IComparable<Year>, IClockPart {
+    /// <summary>A simple struct for a Year.</summary>
+    [JsonObject]
+    [Immutable]
+    public struct Year : IComparable<Year>, IClockPart {
 
-		public static Year Zero { get; } = new Year(0);
+        public static Year Zero { get; } = new Year( 0 );
 
-		public Int32 MaxValue { get; }
+        public Int32 MaxValue { get; }
 
-		public Int32 MinValue { get; }
+        public Int32 MinValue { get; }
 
-		[JsonProperty]
-		public BigInteger Value { get; }
+        [JsonProperty]
+        public BigInteger Value { get; }
 
-		public Year(BigInteger value) : this() => this.Value = value;
+        public Year( BigInteger value ) : this() => this.Value = value;
 
-		public static implicit operator BigInteger(Year value) => value.Value;
+        public static implicit operator BigInteger( Year value ) => value.Value;
 
-		public static Boolean operator <(Year left, Year right) => left.Value < right.Value;
+        public static Boolean operator <( Year left, Year right ) => left.Value < right.Value;
 
-		public static Boolean operator >(Year left, Year right) => left.Value > right.Value;
+        public static Boolean operator >( Year left, Year right ) => left.Value > right.Value;
 
-		public Int32 CompareTo(Year other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( Year other ) => this.Value.CompareTo( other.Value );
 
-		public Year Next() => new Year(this.Value + 1);
+        public Year Next() => new Year( this.Value + 1 );
 
-		public Year Previous() => new Year(this.Value - 1);
-	}
+        public Year Previous() => new Year( this.Value - 1 );
+    }
 }

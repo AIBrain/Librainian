@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,31 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "YANWiki.cs" was last formatted by Protiguous on 2018/07/10 at 9:12 PM.
+// Project: "Librainian", "YANWiki.cs" was last formatted by Protiguous on 2019/08/08 at 8:03 AM.
 
 namespace Librainian.Internet.Wiki {
 
-	using System;
-	using System.Xml;
-	using JetBrains.Annotations;
-	using Parsing;
+    using System;
+    using System.Xml;
+    using JetBrains.Annotations;
+    using Parsing;
 
-	public static class YanWiki {
+    public static class YanWiki {
 
-		[NotNull]
-		private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
+        [NotNull]
+        private static String BaseQuery => @"http://en.wiktionary.org/w/api.php?action=query&format=xml&prop=info&search=";
 
-		[NotNull]
-		private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
+        [NotNull]
+        private static XmlDocument BaseResponse => "<?xml version=\"1.0\" ?><api /> ".ToXmlDoc();
 
-		public static Boolean DoesWikiRespond {
-			get {
-				var doc = Http.Get( BaseQuery ).ToXmlDoc();
+        public static Boolean DoesWikiRespond {
+            get {
+                var doc = Http.Get( BaseQuery ).ToXmlDoc();
 
-				return BaseResponse.OuterXml.Equals( doc.OuterXml );
-			}
-		}
-	}
+                return BaseResponse.OuterXml.Equals( doc.OuterXml );
+            }
+        }
+    }
 }

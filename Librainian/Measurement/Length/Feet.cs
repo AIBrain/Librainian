@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,18 +35,17 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Feet.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "Feet.cs" was last formatted by Protiguous on 2019/08/08 at 8:45 AM.
 
-namespace Librainian.Measurement.Length
-{
+namespace Librainian.Measurement.Length {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
     using Parsing;
     using Rationals;
 
@@ -58,52 +57,51 @@ namespace Librainian.Measurement.Length
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
     [JsonObject]
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
-    public struct Feet : IComparable<Feet>, IQuantityOfDistance
-    {
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    public struct Feet : IComparable<Feet>, IQuantityOfDistance {
 
         /// <summary>60</summary>
         public const Byte InOneYard = 3;
 
         /// <summary><see cref="Five" /> .</summary>
-        public static readonly Feet Five = new Feet(5);
+        public static readonly Feet Five = new Feet( 5 );
 
         /// <summary><see cref="One" /> .</summary>
-        public static readonly Feet One = new Feet(1);
+        public static readonly Feet One = new Feet( 1 );
 
         /// <summary><see cref="Seven" /> .</summary>
-        public static readonly Feet Seven = new Feet(7);
+        public static readonly Feet Seven = new Feet( 7 );
 
         /// <summary><see cref="Ten" /> .</summary>
-        public static readonly Feet Ten = new Feet(10);
+        public static readonly Feet Ten = new Feet( 10 );
 
         /// <summary><see cref="Thirteen" /> .</summary>
-        public static readonly Feet Thirteen = new Feet(13);
+        public static readonly Feet Thirteen = new Feet( 13 );
 
         /// <summary><see cref="Thirty" /> .</summary>
-        public static readonly Feet Thirty = new Feet(30);
+        public static readonly Feet Thirty = new Feet( 30 );
 
         /// <summary><see cref="Three" /> .</summary>
-        public static readonly Feet Three = new Feet(3);
+        public static readonly Feet Three = new Feet( 3 );
 
         /// <summary><see cref="Two" /> .</summary>
-        public static readonly Feet Two = new Feet(2);
+        public static readonly Feet Two = new Feet( 2 );
 
         /// <summary></summary>
-        public static readonly Feet Zero = new Feet(0);
+        public static readonly Feet Zero = new Feet( 0 );
 
         [JsonProperty]
         public readonly Rational Value;
 
-        public Feet(Rational value) => this.Value = value;
+        public Feet( Rational value ) => this.Value = value;
 
-        public Feet(Int64 value) => this.Value = value;
+        public Feet( Int64 value ) => this.Value = value;
 
-        public Feet(BigInteger value) => this.Value = value;
+        public Feet( BigInteger value ) => this.Value = value;
 
-        public static Feet Combine(Feet left, Rational feet) => new Feet(left.Value + feet);
+        public static Feet Combine( Feet left, Rational feet ) => new Feet( left.Value + feet );
 
-        public static Feet Combine(Feet left, BigInteger seconds) => new Feet(left.Value + seconds);
+        public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( left.Value + seconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -111,37 +109,38 @@ namespace Librainian.Measurement.Length
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(Feet left, Feet right) => left.Value == right.Value;
+        public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
-        public static Feet operator -(Feet feet) => new Feet(feet.Value * -1);
+        public static Feet operator -( Feet feet ) => new Feet( feet.Value * -1 );
 
-        public static Feet operator -(Feet left, Feet right) => Combine(left, -right.Value);
+        public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-        public static Feet operator -(Feet left, Decimal seconds) => Combine(left, ( Rational ) (-seconds));
+        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
 
-        public static Boolean operator !=(Feet left, Feet right) => !Equals(left, right);
+        public static Boolean operator !=( Feet left, Feet right ) => !Equals( left, right );
 
-        public static Feet operator +(Feet left, Feet right) => Combine(left, right.Value);
+        public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-        public static Feet operator +(Feet left, Decimal seconds) => Combine(left, ( Rational ) seconds);
+        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
 
-        public static Feet operator +(Feet left, BigInteger seconds) => Combine(left, seconds);
+        public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 
-        public static Boolean operator <(Feet left, Feet right) => left.Value < right.Value;
+        public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
 
-        public static Boolean operator ==(Feet left, Feet right) => Equals(left, right);
+        public static Boolean operator ==( Feet left, Feet right ) => Equals( left, right );
 
-        public static Boolean operator >(Feet left, Feet right) => left.Value > right.Value;
+        public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
 
-        public Int32 CompareTo(Feet other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( Feet other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals(Feet other) => Equals(this, other);
+        public Boolean Equals( Feet other ) => Equals( this, other );
 
-        public override Boolean Equals(Object obj)
-        {
-            if (obj == null) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) {
+                return false;
+            }
 
-            return obj is Feet feet && this.Equals(feet);
+            return obj is Feet feet && this.Equals( feet );
         }
 
         [Pure]
@@ -149,8 +148,6 @@ namespace Librainian.Measurement.Length
 
         public Rational ToMeters() => throw new NotImplementedException();
 
-        public override String ToString() => $"{this.Value} {this.Value.PluralOf("foot")}";
+        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
     }
-
-    
 }

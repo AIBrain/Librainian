@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2018/11/19 at 8:47 PM.
+// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 6:31 AM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -105,8 +105,8 @@ namespace Librainian.Collections.Extensions {
 
             var enumerable = self as T[] ?? self.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) =>
-                enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Any( value => value );
+            return enumerable.Select( selector: ( a, aIndex ) => enumerable.Skip( count: aIndex + 1 ).Any( b =>
+                ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Any( value => value );
         }
 
         /// <summary>
@@ -318,8 +318,8 @@ namespace Librainian.Collections.Extensions {
 
             var enumerable = self as T[] ?? self.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) =>
-                enumerable.Skip( count: aIndex + 1 ).Any( b => ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Count( value => value );
+            return enumerable.Select( selector: ( a, aIndex ) => enumerable.Skip( count: aIndex + 1 ).Any( b =>
+                ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Count( value => value );
         }
 
         /// <summary>
@@ -462,7 +462,8 @@ namespace Librainian.Collections.Extensions {
         /// <param name="generator"></param>
         /// <param name="added">    </param>
         /// <returns></returns>
-        public static TValue GetOrAdd<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dict, [NotNull] TKey key, [NotNull] Func<TKey, TValue> generator, out Boolean added ) {
+        public static TValue GetOrAdd<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dict, [NotNull] TKey key, [NotNull] Func<TKey, TValue> generator,
+            out Boolean added ) {
             if ( generator == null ) {
                 throw new ArgumentNullException( nameof( generator ) );
             }
@@ -491,7 +492,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
+            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
         }
 
         public static Boolean HasDuplicates<T>( [NotNull] this IEnumerable<T> sequence ) {
@@ -632,10 +633,7 @@ namespace Librainian.Collections.Extensions {
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]
-        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
-
-        [Pure]
-        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 ) u );
 
         public static LinkedListNode<TType> NextOrFirst<TType>( [NotNull] this LinkedListNode<TType> current ) {
             if ( current == null ) {
@@ -791,7 +789,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( T )( ValueType )( ( Int32 )( ValueType )type & ~( Int32 )( ValueType )value );
+            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
         }
 
         /// <summary>
@@ -1079,7 +1077,7 @@ namespace Librainian.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( count: ( Int32 )( x * sources.Count ) );
+            return sources.Take( count: ( Int32 ) ( x * sources.Count ) );
         }
 
         [NotNull]
@@ -1089,15 +1087,6 @@ namespace Librainian.Collections.Extensions {
 
             return list;
         }
-
-        /*
-		        public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
-		            if ( type == null ) {
-		                throw new ArgumentNullException( "type" );
-		            }
-		            return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
-		        }
-		*/
 
         public static String ToStrings( [NotNull] this IEnumerable<Object> enumerable, Char c ) =>
             ToStrings( enumerable: enumerable, separator: new String( new[] {
@@ -1168,7 +1157,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
 
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         /// <summary>
@@ -1204,6 +1193,18 @@ namespace Librainian.Collections.Extensions {
 
             return stack.TryPop( result: out item );
         }
+
+        [Pure]
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 ) u );
+
+        /*
+		        public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {
+		            if ( type == null ) {
+		                throw new ArgumentNullException( "type" );
+		            }
+		            return ( T )( ValueType )( ( ( int )( ValueType )type | ( int )( ValueType )value ) );
+		        }
+		*/
 
         /// <summary>
         ///     why?

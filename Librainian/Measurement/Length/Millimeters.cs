@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,45 +35,45 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Millimeters.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "Millimeters.cs" was last formatted by Protiguous on 2019/08/08 at 8:46 AM.
 
 namespace Librainian.Measurement.Length {
 
-	using System;
-	using Newtonsoft.Json;
-	using Rationals;
+    using System;
+    using Newtonsoft.Json;
+    using Rationals;
 
-	[JsonObject]
-	public struct Millimeters {
+    [JsonObject]
+    public struct Millimeters {
 
-		///// <summary>.</summary>
-		//public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
+        ///// <summary>.</summary>
+        //public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
 
-		//public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
+        //public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
 
-		/// <summary>One <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters One = new Millimeters( 1 );
+        /// <summary>One <see cref="Millimeters" /> .</summary>
+        public static readonly Millimeters One = new Millimeters( 1 );
 
-		/// <summary>Two <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters Two = new Millimeters( 2 );
+        /// <summary>Two <see cref="Millimeters" /> .</summary>
+        public static readonly Millimeters Two = new Millimeters( 2 );
 
-		[JsonProperty]
-		public readonly Rational Value;
+        [JsonProperty]
+        public readonly Rational Value;
 
-		public Millimeters( Decimal millimeters ) => this.Value = ( Rational ) millimeters;
+        public Millimeters( Decimal millimeters ) => this.Value = ( Rational ) millimeters;
 
-		//public Millimeters( Centimeters centimeters ) {
-		//    var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Millimeters( Centimeters centimeters ) {
+        //    var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		//public Millimeters( Meters meters ) {
-		//    var val = meters.Value * Extensions.MillimetersInSingleMeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Millimeters( Meters meters ) {
+        //    var val = meters.Value * Extensions.MillimetersInSingleMeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+    }
 }

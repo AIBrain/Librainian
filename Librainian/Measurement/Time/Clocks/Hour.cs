@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,76 +35,76 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Hour.cs" was last formatted by Protiguous on 2018/11/03 at 7:39 PM.
+// Project: "Librainian", "Hour.cs" was last formatted by Protiguous on 2019/08/08 at 8:55 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>A simple struct for an <see cref="Hour" />.</para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public struct Hour : IClockPart {
+    /// <summary>
+    ///     <para>A simple struct for an <see cref="Hour" />.</para>
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public struct Hour : IClockPart {
 
-		public const SByte MaxValue = Hours.InOneDay;
+        public const SByte MaxValue = Hours.InOneDay;
 
-		public const SByte MinValue = 1;
+        public const SByte MinValue = 1;
 
-		[JsonProperty]
-		public readonly SByte Value;
+        [JsonProperty]
+        public readonly SByte Value;
 
-		public static Hour Maximum { get; } = new Hour( MaxValue );
+        public static Hour Maximum { get; } = new Hour( MaxValue );
 
-		public static Hour Minimum { get; } = new Hour( MinValue );
+        public static Hour Minimum { get; } = new Hour( MinValue );
 
-		public Hour( SByte value ) {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
-			}
+        public Hour( SByte value ) {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+            }
 
-			this.Value = value;
-		}
+            this.Value = value;
+        }
 
-		public static explicit operator Byte( Hour value ) => ( Byte )value.Value;
+        public static explicit operator Byte( Hour value ) => ( Byte ) value.Value;
 
-		public static implicit operator Hour( Byte value ) => new Hour( ( SByte )value );
+        public static implicit operator Hour( Byte value ) => new Hour( ( SByte ) value );
 
-		public static implicit operator SByte( Hour value ) => value.Value;
+        public static implicit operator SByte( Hour value ) => value.Value;
 
-		/// <summary>
-		///     Provide the next <see cref="Hour" />.
-		/// </summary>
-		public Hour Next( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value + 1;
+        /// <summary>
+        ///     Provide the next <see cref="Hour" />.
+        /// </summary>
+        public Hour Next( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value + 1;
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				tocked = true;
-			}
+            if ( next > Maximum ) {
+                next = Minimum;
+                tocked = true;
+            }
 
-			return ( Hour )next;
-		}
+            return ( Hour ) next;
+        }
 
-		/// <summary>
-		///     Provide the previous <see cref="Hour" />.
-		/// </summary>
-		public Hour Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value - 1;
+        /// <summary>
+        ///     Provide the previous <see cref="Hour" />.
+        /// </summary>
+        public Hour Previous( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value - 1;
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				tocked = true;
-			}
+            if ( next < Minimum ) {
+                next = Maximum;
+                tocked = true;
+            }
 
-			return ( Hour )next;
-		}
-	}
+            return ( Hour ) next;
+        }
+    }
 }

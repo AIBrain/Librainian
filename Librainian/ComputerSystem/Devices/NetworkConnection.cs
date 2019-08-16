@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,200 +35,201 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NetworkConnection.cs" was last formatted by Protiguous on 2018/07/10 at 8:55 PM.
+// Project: "Librainian", "NetworkConnection.cs" was last formatted by Protiguous on 2019/08/08 at 6:42 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
-	using System;
-	using System.ComponentModel;
-	using System.Net;
-	using System.Net.NetworkInformation;
-	using System.Runtime.InteropServices;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Logging;
-	using Measurement.Time;
-	using OperatingSystem;
+    using System;
+    using System.ComponentModel;
+    using System.Net;
+    using System.Net.NetworkInformation;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Logging;
+    using Measurement.Time;
+    using OperatingSystem;
 
-	public enum ResourceDisplaytype {
+    public enum ResourceDisplaytype {
 
-		Generic = 0x0,
+        Generic = 0x0,
 
-		Domain = 0x01,
+        Domain = 0x01,
 
-		Server = 0x02,
+        Server = 0x02,
 
-		Share = 0x03,
+        Share = 0x03,
 
-		File = 0x04,
+        File = 0x04,
 
-		Group = 0x05,
+        Group = 0x05,
 
-		Network = 0x06,
+        Network = 0x06,
 
-		Root = 0x07,
+        Root = 0x07,
 
-		Shareadmin = 0x08,
+        Shareadmin = 0x08,
 
-		Directory = 0x09,
+        Directory = 0x09,
 
-		Tree = 0x0a,
+        Tree = 0x0a,
 
-		Ndscontainer = 0x0b
-	}
+        Ndscontainer = 0x0b
+    }
 
-	public enum ResourceDisplayType {
+    public enum ResourceDisplayType {
 
-		RESOURCEDISPLAYTYPE_GENERIC,
+        RESOURCEDISPLAYTYPE_GENERIC,
 
-		RESOURCEDISPLAYTYPE_DOMAIN,
+        RESOURCEDISPLAYTYPE_DOMAIN,
 
-		RESOURCEDISPLAYTYPE_SERVER,
+        RESOURCEDISPLAYTYPE_SERVER,
 
-		RESOURCEDISPLAYTYPE_SHARE,
+        RESOURCEDISPLAYTYPE_SHARE,
 
-		RESOURCEDISPLAYTYPE_FILE,
+        RESOURCEDISPLAYTYPE_FILE,
 
-		RESOURCEDISPLAYTYPE_GROUP,
+        RESOURCEDISPLAYTYPE_GROUP,
 
-		RESOURCEDISPLAYTYPE_NETWORK,
+        RESOURCEDISPLAYTYPE_NETWORK,
 
-		RESOURCEDISPLAYTYPE_ROOT,
+        RESOURCEDISPLAYTYPE_ROOT,
 
-		RESOURCEDISPLAYTYPE_SHAREADMIN,
+        RESOURCEDISPLAYTYPE_SHAREADMIN,
 
-		RESOURCEDISPLAYTYPE_DIRECTORY,
+        RESOURCEDISPLAYTYPE_DIRECTORY,
 
-		RESOURCEDISPLAYTYPE_TREE,
+        RESOURCEDISPLAYTYPE_TREE,
 
-		RESOURCEDISPLAYTYPE_NDSCONTAINER
-	}
+        RESOURCEDISPLAYTYPE_NDSCONTAINER
+    }
 
-	public enum ResourceScope {
+    public enum ResourceScope {
 
-		Connected = 1,
+        Connected = 1,
 
-		GlobalNetwork,
+        GlobalNetwork,
 
-		Remembered,
+        Remembered,
 
-		Recent,
+        Recent,
 
-		Context
-	}
+        Context
+    }
 
-	public enum ResourceType {
+    public enum ResourceType {
 
-		Any = 0,
+        Any = 0,
 
-		Disk = 1,
+        Disk = 1,
 
-		Print = 2,
+        Print = 2,
 
-		Reserved = 8
-	}
+        Reserved = 8
+    }
 
-	public enum ResourceUsage {
+    public enum ResourceUsage {
 
-		RESOURCEUSAGE_CONNECTABLE = 0x00000001,
+        RESOURCEUSAGE_CONNECTABLE = 0x00000001,
 
-		RESOURCEUSAGE_CONTAINER = 0x00000002,
+        RESOURCEUSAGE_CONTAINER = 0x00000002,
 
-		RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
+        RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
 
-		RESOURCEUSAGE_SIBLING = 0x00000008,
+        RESOURCEUSAGE_SIBLING = 0x00000008,
 
-		RESOURCEUSAGE_ATTACHED = 0x00000010,
+        RESOURCEUSAGE_ATTACHED = 0x00000010,
 
-		RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED
-	}
+        RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED
+    }
 
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	public class NetResource {
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+    public class NetResource {
 
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String Comment;
+        [MarshalAs( UnmanagedType.LPWStr )]
+        public String Comment;
 
-		public ResourceDisplaytype DisplayType;
+        public ResourceDisplaytype DisplayType;
 
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String LocalName;
+        [MarshalAs( UnmanagedType.LPWStr )]
+        public String LocalName;
 
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String Provider;
+        [MarshalAs( UnmanagedType.LPWStr )]
+        public String Provider;
 
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String RemoteName;
+        [MarshalAs( UnmanagedType.LPWStr )]
+        public String RemoteName;
 
-		public ResourceType ResourceType;
+        public ResourceType ResourceType;
 
-		public ResourceScope Scope;
+        public ResourceScope Scope;
 
-		public Int32 Usage;
-	}
+        public Int32 Usage;
+    }
 
-	[StructLayout( LayoutKind.Sequential )]
-	public class NETRESOURCE {
+    [StructLayout( LayoutKind.Sequential )]
+    public class NETRESOURCE {
 
-		public ResourceDisplayType dwDisplayType = 0;
+        public ResourceDisplayType dwDisplayType = 0;
 
-		public ResourceScope dwScope = 0;
+        public ResourceScope dwScope = 0;
 
-		public ResourceType dwType = 0;
+        public ResourceType dwType = 0;
 
-		public ResourceUsage dwUsage = 0;
+        public ResourceUsage dwUsage = 0;
 
-		public String lpComment = null;
+        public String lpComment = null;
 
-		public String lpLocalName = null;
+        public String lpLocalName = null;
 
-		public String lpProvider = null;
+        public String lpProvider = null;
 
-		public String lpRemoteName = null;
-	}
+        public String lpRemoteName = null;
+    }
 
-	public class NetworkConnection : IDisposable {
+    public class NetworkConnection : IDisposable {
 
-		public void Dispose() {
-			this.Dispose( true );
-			GC.SuppressFinalize( this );
-		}
+        public void Dispose() {
+            this.Dispose( true );
+            GC.SuppressFinalize( this );
+        }
 
-		private String NetworkName { get; }
+        private String NetworkName { get; }
 
-		public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
-			this.NetworkName = networkName;
+        public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
+            this.NetworkName = networkName;
 
-			var netResource = new NetResource {
-				Scope = ResourceScope.GlobalNetwork,
-				ResourceType = ResourceType.Disk,
-				DisplayType = ResourceDisplaytype.Share,
-				RemoteName = networkName
-			};
+            var netResource = new NetResource {
+                Scope = ResourceScope.GlobalNetwork, ResourceType = ResourceType.Disk, DisplayType = ResourceDisplaytype.Share, RemoteName = networkName
+            };
 
-			var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
+            var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
 
-			var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
+            var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
 
-			if ( result != 0 ) { throw new Win32Exception( result, "Error connecting to remote share" ); }
-		}
+            if ( result != 0 ) {
+                throw new Win32Exception( result, "Error connecting to remote share" );
+            }
+        }
 
-		~NetworkConnection() { this.Dispose( false ); }
+        ~NetworkConnection() {
+            this.Dispose( false );
+        }
 
-		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
+        protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
-		public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
-			var counter = retries;
+        public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+            var counter = retries;
 
-			while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
-				--counter;
-				$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
-				Thread.Sleep( Seconds.One );
-			}
+            while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
+                --counter;
+                $"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
+                Thread.Sleep( Seconds.One );
+            }
 
-			return NetworkInterface.GetIsNetworkAvailable();
-		}
-	}
+            return NetworkInterface.GetIsNetworkAvailable();
+        }
+    }
 }

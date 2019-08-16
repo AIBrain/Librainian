@@ -1,22 +1,43 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This source code contained in "RegistryServer.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
-// "Librainian/RegistryServer.cs" was last cleaned by Rick on 2016/06/18 at 10:51 PM
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "RegistryServer.cs" was last formatted by Protiguous on 2019/08/08 at 7:20 AM.
 
 namespace Librainian.Extensions {
 
@@ -36,40 +57,42 @@ namespace Librainian.Extensions {
     /// </summary>
     public class RegistryServer : IEqualityComparer<RegistryKey> /*, IInitializable*/, IEnumerable<RegistryKey> {
 
-        // IInitializable is from Castle.Core Contractually saying we need a call on our
-        // Initialize() method before we can be given out as a service to others
+        public IEnumerator<RegistryKey> GetEnumerator() {
+            if ( !this._isInitialized ) {
+                throw new InvalidOperationException( "Please initialize the backing store first" );
+            }
 
-        private static readonly RegistryServer Instance;
-        private static Int32 _iCounter;
+            return this._allKeys.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     If either contains a null, the result is false (actually it is null be we do not have
+        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
+        ///     'known to be empty' where null is 'could be anything we have no idea'.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
+
+        /// <summary>
+        ///     For null names here we will calculate a funky random number as null != null
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+
         private HashSet<RegistryKey> _allKeys;
+
         private PopulateProgressEventArgs _eventArgStatus;
+
         private Boolean _isInitialized;
+
         private PopulateProgressDelegateError _populateError;
+
         private PopulateProgressDelegate _populateEventOk;
-
-        static RegistryServer() => Instance = new RegistryServer();
-
-	    private RegistryServer() {
-        }
-
-        public static event PopulateProgressDelegate PopulateProgress {
-            add => Instance._populateEventOk += value;
-
-	        // ReSharper disable DelegateSubtraction
-            remove => Instance._populateEventOk -= value;
-
-	        // ReSharper restore DelegateSubtraction
-        }
-
-        //void IInitializable.Initialize() { Initialize(); }
-        public static event PopulateProgressDelegateError PopulateProgressItemError {
-            add => Instance._populateError += value;
-
-	        // ReSharper disable DelegateSubtraction
-            remove => Instance._populateError -= value;
-
-	        // ReSharper restore DelegateSubtraction
-        }
 
         public static Int64 Count {
             get {
@@ -92,34 +115,35 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void Initialize() => Initialize( Registry.LocalMachine );
+        // IInitializable is from Castle.Core Contractually saying we need a call on our
+        // Initialize() method before we can be given out as a service to others
 
-        /// <summary>
-        ///     If either contains a null, the result is false (actually it is null be we do not have
-        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
-        ///     'known to be empty' where null is 'could be anything we have no idea'.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
+        private static readonly RegistryServer Instance;
 
-        public IEnumerator<RegistryKey> GetEnumerator() {
-            if ( !this._isInitialized ) {
-                throw new InvalidOperationException( "Please initialize the backing store first" );
-            }
+        private static Int32 _iCounter;
 
-            return this._allKeys.GetEnumerator();
+        static RegistryServer() => Instance = new RegistryServer();
+
+        private RegistryServer() { }
+
+        public static event PopulateProgressDelegate PopulateProgress {
+            add => Instance._populateEventOk += value;
+
+            // ReSharper disable DelegateSubtraction
+            remove => Instance._populateEventOk -= value;
+
+            // ReSharper restore DelegateSubtraction
         }
 
-        /// <summary>
-        ///     For null names here we will calculate a funky random number as null != null
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+        //void IInitializable.Initialize() { Initialize(); }
+        public static event PopulateProgressDelegateError PopulateProgressItemError {
+            add => Instance._populateError += value;
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+            // ReSharper disable DelegateSubtraction
+            remove => Instance._populateError -= value;
+
+            // ReSharper restore DelegateSubtraction
+        }
 
         private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, String nodeKey ) {
             Instance.InvokePopulateProgress();
@@ -128,11 +152,11 @@ namespace Librainian.Extensions {
                 yield break;
             }
 
+            if ( !TryOpenSubKey( startkeyIn, nodeKey, out var subItemRoot ) ) {
+                yield break;
+            }
 
-			if ( !TryOpenSubKey( startkeyIn, nodeKey, out var subItemRoot ) ) {
-				yield break;
-			}
-			yield return subItemRoot;
+            yield return subItemRoot;
 
             foreach ( var sub in subItemRoot.GetSubKeyNames().SelectMany( s => GetAllSubkeys( subItemRoot, s ) ) ) {
                 yield return sub;
@@ -143,6 +167,7 @@ namespace Librainian.Extensions {
             if ( Instance._isInitialized ) {
                 return;
             }
+
             Instance._eventArgStatus = new PopulateProgressEventArgs();
 
             Instance._allKeys = GetAllSubkeys( registryStartKey, "" ).ToHashSet( Instance );
@@ -150,14 +175,15 @@ namespace Librainian.Extensions {
             Instance._isInitialized = true;
         }
 
-		private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
+        private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
 
-		private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, String name, [CanBeNull] out RegistryKey itemOut ) {
+        private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, String name, [CanBeNull] out RegistryKey itemOut ) {
             var bIsOk = false;
             itemOut = null;
 
             try {
                 itemOut = startFrom.OpenSubKey( name, RegistryKeyPermissionCheck.ReadSubTree );
+
                 if ( itemOut != null ) {
                     bIsOk = true;
                 }
@@ -171,11 +197,15 @@ namespace Librainian.Extensions {
 
         private void InvokePopulateProgress() {
             var populateProgressDelegate = Instance._populateEventOk;
+
             if ( populateProgressDelegate == null ) {
                 return;
             }
+
             this._eventArgStatus.ItemCount = Interlocked.Increment( ref _iCounter );
             populateProgressDelegate( this, this._eventArgStatus );
         }
+
+        public static void Initialize() => Initialize( Registry.LocalMachine );
     }
 }

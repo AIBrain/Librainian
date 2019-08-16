@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,42 +35,39 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "USD.cs" was last formatted by Protiguous on 2018/07/10 at 9:05 PM.
+// Project: "Librainian", "USD.cs" was last formatted by Protiguous on 2019/08/08 at 7:33 AM.
 
 namespace Librainian.Financial.Currency {
 
-	using System;
-	using Containers.Wallets;
-	using Logging;
-	using Newtonsoft.Json;
+    using System;
+    using Containers.Wallets;
+    using Logging;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     USA dollars and coins.
-	/// </summary>
-	[JsonObject]
-	public class USD : Wallet {
+    /// <summary>
+    ///     USA dollars and coins.
+    /// </summary>
+    [JsonObject]
+    public class USD : Wallet {
 
-		/// <summary>
-		///     Example new Money(123.4567).Cents == 0.4567
-		/// </summary>
-		public Decimal Cents => this.TotalCoins();
+        /// <summary>
+        ///     Example new Money(123.4567).Cents == 0.4567
+        /// </summary>
+        public Decimal Cents => this.TotalCoins();
 
-		/// <summary>
-		///     Example new Money(123.4567).Dollars == 123.0000
-		/// </summary>
-		public Decimal Dollars => this.TotalBankNotes();
+        /// <summary>
+        ///     Example new Money(123.4567).Dollars == 123.0000
+        /// </summary>
+        public Decimal Dollars => this.TotalBankNotes();
 
-		public USD( Decimal amount ) : base( Guid.NewGuid() ) {
-			this.Deposit( amount, out var leftOver);
+        public USD( Decimal amount ) : base( Guid.NewGuid() ) {
+            this.Deposit( amount, out var leftOver );
 
-			if ( leftOver != Decimal.Zero ) {
-				throw new InvalidOperationException( $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
-			}
-		}
-
-		
-
-	}
+            if ( leftOver != Decimal.Zero ) {
+                throw new InvalidOperationException( $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
+            }
+        }
+    }
 }

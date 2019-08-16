@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,29 +35,29 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SerializableExceptionWithoutCustomProperties.cs" was last formatted by Protiguous on 2018/07/10 at 9:03 PM.
+// Project: "Librainian", "SerializableExceptionWithoutCustomProperties.cs" was last formatted by Protiguous on 2019/08/08 at 7:21 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Runtime.Serialization;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	// Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
-	[JsonObject]
-	[Serializable]
-	public class SerializableExceptionWithoutCustomProperties : Exception {
+    // Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
+    [JsonObject]
+    [Serializable]
+    public class SerializableExceptionWithoutCustomProperties : Exception {
 
-		// Without this constructor, deserialization will fail
-		protected SerializableExceptionWithoutCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+        // Without this constructor, deserialization will fail
+        protected SerializableExceptionWithoutCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
-		public SerializableExceptionWithoutCustomProperties() { }
+        public SerializableExceptionWithoutCustomProperties() { }
 
-		public SerializableExceptionWithoutCustomProperties( String message ) : base( message ) { }
+        public SerializableExceptionWithoutCustomProperties( String message ) : base( message ) { }
 
-		public SerializableExceptionWithoutCustomProperties( String message, Exception innerException ) : base( message, innerException ) { }
-	}
+        public SerializableExceptionWithoutCustomProperties( String message, Exception innerException ) : base( message, innerException ) { }
+    }
 }

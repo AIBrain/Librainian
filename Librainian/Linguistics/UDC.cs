@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,32 +35,32 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UDC.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
+// Project: "Librainian", "UDC.cs" was last formatted by Protiguous on 2019/08/08 at 8:11 AM.
 
 namespace Librainian.Linguistics {
 
-	using System;
+    using System;
 
-	/// <summary>Universal Decimal Classification</summary>
-	/// <see cref="http://wikipedia.org/wiki/Universal_Decimal_Classification"></see>
-	/// <example>
-	///     539. 120 Theoretical problems of elementary particles physics. Theories and models of
-	///     fundamental interactions.
-	///     539. 120.2 Symmetries of quantum physics
-	///     539. 120.224 Reflection in time and space
-	/// </example>
-	public class UDC {
+    /// <summary>Universal Decimal Classification</summary>
+    /// <see cref="http://wikipedia.org/wiki/Universal_Decimal_Classification"></see>
+    /// <example>
+    ///     539. 120 Theoretical problems of elementary particles physics. Theories and models of
+    ///     fundamental interactions.
+    ///     539. 120.2 Symmetries of quantum physics
+    ///     539. 120.224 Reflection in time and space
+    /// </example>
+    public class UDC {
 
-		public static UDC Unknown { get; } = new UDC( String.Empty );
+        public static UDC Unknown { get; } = new UDC( String.Empty );
 
-		public String Notation { get; }
+        public String Notation { get; }
 
-		public UDC( String notation ) => this.Notation = notation;
+        public UDC( String notation ) => this.Notation = notation;
 
-		/// <summary>Serves as the default hash function. </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Notation.GetHashCode();
-	}
+        /// <summary>Serves as the default hash function. </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override Int32 GetHashCode() => this.Notation.GetHashCode();
+    }
 }

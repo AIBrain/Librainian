@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,35 +35,35 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ProductExampleClass.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
+// Project: "Librainian", "ProductExampleClass.cs" was last formatted by Protiguous on 2019/08/08 at 9:13 AM.
 
 namespace Librainian.Misc {
 
-	using System;
-	using System.Linq;
-	using Extensions;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using Extensions;
+    using JetBrains.Annotations;
 
-	internal static class ProductExampleClass {
+    internal static class ProductExampleClass {
 
-		[NotNull]
-		private static IQueryable<Product> SearchProducts( [NotNull] IQueryable<Product> products, [NotNull] params String[] keywords ) {
+        [NotNull]
+        private static IQueryable<Product> SearchProducts( [NotNull] IQueryable<Product> products, [NotNull] params String[] keywords ) {
 
-			//var predicate = keywords.Aggregate( False<Product>(), ( current, temp ) => current.Or( p => p.Description.Contains( temp ) ).And( p => true ) );
-			var predicate = BooleanPredicateBuilder.False<Product>();
+            //var predicate = keywords.Aggregate( False<Product>(), ( current, temp ) => current.Or( p => p.Description.Contains( temp ) ).And( p => true ) );
+            var predicate = BooleanPredicateBuilder.False<Product>();
 
-			foreach ( var keyword in keywords ) {
-				var temp = keyword;
-				predicate = predicate.Or( p => p.Description.Contains( temp ) );
-				predicate = predicate.And( p => p.Description.Contains( temp ) );
-				predicate = predicate.Or( p => !p.Description.Contains( temp + temp ) );
-			}
+            foreach ( var keyword in keywords ) {
+                var temp = keyword;
+                predicate = predicate.Or( p => p.Description.Contains( temp ) );
+                predicate = predicate.And( p => p.Description.Contains( temp ) );
+                predicate = predicate.Or( p => !p.Description.Contains( temp + temp ) );
+            }
 
-			return products.Where( predicate );
+            return products.Where( predicate );
 
-			/* from http://www.albahari.com/nutshell/predicatebuilder.aspx
+            /* from http://www.albahari.com/nutshell/predicatebuilder.aspx
             IQueryable<Product> SearchProducts (params String[] keywords) {
                 var predicate = PredicateBuilder.False<Product>();
 
@@ -73,11 +73,11 @@ namespace Librainian.Misc {
                 }
                 return dataContext.Products.Where (predicate);
             }*/
-		}
+        }
 
-		private class Product {
+        private class Product {
 
-			public String Description { get; set; }
-		}
-	}
+            public String Description { get; set; }
+        }
+    }
 }

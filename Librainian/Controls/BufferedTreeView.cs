@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,28 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BufferedTreeView.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
+// Project: "Librainian", "BufferedTreeView.cs" was last formatted by Protiguous on 2019/08/08 at 6:43 AM.
 
 namespace Librainian.Controls {
 
-	using System;
-	using System.Windows.Forms;
-	using OperatingSystem;
+    using System;
+    using System.Windows.Forms;
+    using OperatingSystem;
 
-	public class BufferedTreeView : TreeView {
+    public class BufferedTreeView : TreeView {
 
-		private const Int32 TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
+        private const Int32 TVM_GETEXTENDEDSTYLE = 0x1100 + 45;
 
-		// Pinvoke:
-		private const Int32 TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
+        // Pinvoke:
+        private const Int32 TVM_SETEXTENDEDSTYLE = 0x1100 + 44;
 
-		private const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
+        private const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
 
-		protected override void OnHandleCreated( EventArgs e ) {
-			NativeMethods.SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr ) TVS_EX_DOUBLEBUFFER, ( IntPtr ) TVS_EX_DOUBLEBUFFER );
-			base.OnHandleCreated( e );
-		}
-	}
+        protected override void OnHandleCreated( EventArgs e ) {
+            NativeMethods.SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr ) TVS_EX_DOUBLEBUFFER, ( IntPtr ) TVS_EX_DOUBLEBUFFER );
+            base.OnHandleCreated( e );
+        }
+    }
 }

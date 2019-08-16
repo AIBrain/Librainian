@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,63 +35,62 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AtomicDouble.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
+// Project: "Librainian", "AtomicDouble.cs" was last formatted by Protiguous on 2019/08/08 at 8:25 AM.
 
-namespace Librainian.Maths.Numbers
-{
+namespace Librainian.Maths.Numbers {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.ComponentModel;
     using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>A Double number thread-safe by <see cref="Interlocked" />.</summary>
     [JsonObject]
-    [Description("A Double number thread-safe by Interlocked.")]
-    public struct AtomicDouble
-    {
+    [Description( "A Double number thread-safe by Interlocked." )]
+    public struct AtomicDouble {
 
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _value;
 
         public Double Value {
-            get => Interlocked.Exchange(ref this._value, this._value);
+            get => Interlocked.Exchange( ref this._value, this._value );
 
-            set => Interlocked.Exchange(ref this._value, value);
+            set => Interlocked.Exchange( ref this._value, value );
         }
 
-        public AtomicDouble(Double value) : this() => this.Value = value;
+        public AtomicDouble( Double value ) : this() => this.Value = value;
 
-        public static implicit operator Double(AtomicDouble special) => special.Value;
+        public static implicit operator Double( AtomicDouble special ) => special.Value;
 
-        public static AtomicDouble operator -(AtomicDouble a1, AtomicDouble a2) => new AtomicDouble(a1.Value - a2.Value);
+        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value - a2.Value );
 
-        public static AtomicDouble operator *(AtomicDouble a1, AtomicDouble a2) => new AtomicDouble(a1.Value * a2.Value);
+        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value * a2.Value );
 
-        public static AtomicDouble operator +(AtomicDouble a1, AtomicDouble a2) => new AtomicDouble(a1.Value + a2.Value);
+        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value + a2.Value );
 
-        public static AtomicDouble operator ++(AtomicDouble a1)
-        {
+        public static AtomicDouble operator ++( AtomicDouble a1 ) {
             a1.Value++;
 
             return a1;
         }
 
-        public static AtomicDouble Parse([NotNull] String value)
-        {
-            if (value == null) { throw new ArgumentNullException(nameof(value)); }
+        public static AtomicDouble Parse( [NotNull] String value ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( nameof( value ) );
+            }
 
-            return new AtomicDouble(Double.Parse(value));
+            return new AtomicDouble( Double.Parse( value ) );
         }
 
         /// <summary>Resets the value to zero if less than zero;</summary>
-        public void CheckReset()
-        {
-            if (this.Value < 0) { this.Value = 0; }
+        public void CheckReset() {
+            if ( this.Value < 0 ) {
+                this.Value = 0;
+            }
         }
 
         public override String ToString() => $"{this.Value:R}";

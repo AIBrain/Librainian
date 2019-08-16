@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +35,40 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CashDrawer.cs" was last formatted by Protiguous on 2018/07/10 at 9:04 PM.
+// Project: "Librainian", "CashDrawer.cs" was last formatted by Protiguous on 2019/08/08 at 7:26 AM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
-	using System;
-	using System.Linq;
-	using Currency.BankNotes;
-	using Currency.Coins;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using Currency.BankNotes;
+    using Currency.Coins;
+    using JetBrains.Annotations;
 
-	public class CashDrawer : Wallet {
+    public class CashDrawer : Wallet {
 
-		//TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
+        //TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
 
-		public CashDrawer( Guid id ) : base( id ) { }
+        public CashDrawer( Guid id ) : base( id ) { }
 
-		public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {
-			if ( null == bankNotes ) { throw new ArgumentNullException( nameof( bankNotes ) ); }
+        public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {
+            if ( null == bankNotes ) {
+                throw new ArgumentNullException( nameof( bankNotes ) );
+            }
 
-			return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
-		}
+            return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
+        }
 
-		public Boolean Fund( [NotNull] params ICoin[] coins ) {
-			if ( null == coins ) { throw new ArgumentNullException( nameof( coins ) ); }
+        public Boolean Fund( [NotNull] params ICoin[] coins ) {
+            if ( null == coins ) {
+                throw new ArgumentNullException( nameof( coins ) );
+            }
 
-			return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
-		}
+            return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
+        }
 
-		public Decimal RunningTotal() => this.Total();
-	}
+        public Decimal RunningTotal() => this.Total();
+    }
 }

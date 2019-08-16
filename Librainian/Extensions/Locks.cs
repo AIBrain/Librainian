@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,156 +35,162 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Locks.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
+// Project: "Librainian", "Locks.cs" was last formatted by Protiguous on 2019/08/08 at 7:17 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
 
-	public static class Locks {
+    public static class Locks {
 
-		/// <summary>
-		///     put a Read ( will-read ) lock on the access object.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
-		[NotNull]
-		public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
+        /// <summary>
+        ///     put a Read ( will-read ) lock on the access object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+        [NotNull]
+        public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
-		/// <summary>
-		///     put an upgradeable ( will-read / may-write ) lock on the access object.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
-		[NotNull]
-		public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
+        /// <summary>
+        ///     put an upgradeable ( will-read / may-write ) lock on the access object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+        [NotNull]
+        public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
-		/// <summary>
-		///     put a Write ( will-write ) lock on the access object.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		/// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
-		[NotNull]
-		public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
+        /// <summary>
+        ///     put a Write ( will-write ) lock on the access object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
+        [NotNull]
+        public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
 
-		private sealed class ReadLockToken : IDisposable {
+        private sealed class ReadLockToken : IDisposable {
 
-			public void Dispose() {
-				var slim = this._readerWriterLockSlim;
+            public void Dispose() {
+                var slim = this._readerWriterLockSlim;
 
-				if ( slim.IsReadLockHeld ) { slim.ExitReadLock(); }
+                if ( slim.IsReadLockHeld ) {
+                    slim.ExitReadLock();
+                }
 
-				this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
-			}
+                this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
+            }
 
-			private ReaderWriterLockSlim _readerWriterLockSlim;
+            private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public ReadLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
-				this._readerWriterLockSlim = slimLock;
-				slimLock.EnterReadLock();
-			}
-		}
+            public ReadLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
+                this._readerWriterLockSlim = slimLock;
+                slimLock.EnterReadLock();
+            }
+        }
 
-		private sealed class UpgradeLockToken : IDisposable {
+        private sealed class UpgradeLockToken : IDisposable {
 
-			public void Dispose() {
-				var slim = this._readerWriterLockSlim;
+            public void Dispose() {
+                var slim = this._readerWriterLockSlim;
 
-				if ( slim.IsUpgradeableReadLockHeld ) { slim.ExitUpgradeableReadLock(); }
+                if ( slim.IsUpgradeableReadLockHeld ) {
+                    slim.ExitUpgradeableReadLock();
+                }
 
-				this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
-			}
+                this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
+            }
 
-			private ReaderWriterLockSlim _readerWriterLockSlim;
+            private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public UpgradeLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
-				this._readerWriterLockSlim = slimLock;
-				slimLock.EnterUpgradeableReadLock();
-			}
-		}
+            public UpgradeLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
+                this._readerWriterLockSlim = slimLock;
+                slimLock.EnterUpgradeableReadLock();
+            }
+        }
 
-		private sealed class WriteLockToken : IDisposable {
+        private sealed class WriteLockToken : IDisposable {
 
-			public void Dispose() {
-				var slim = this._readerWriterLockSlim;
+            public void Dispose() {
+                var slim = this._readerWriterLockSlim;
 
-				if ( slim.IsWriteLockHeld ) { slim.ExitWriteLock(); }
+                if ( slim.IsWriteLockHeld ) {
+                    slim.ExitWriteLock();
+                }
 
-				this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
-			}
+                this._readerWriterLockSlim = null; //don't hold a ref to the lock anymore.
+            }
 
-			private ReaderWriterLockSlim _readerWriterLockSlim;
+            private ReaderWriterLockSlim _readerWriterLockSlim;
 
-			public WriteLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
-				this._readerWriterLockSlim = slimLock;
-				slimLock.EnterWriteLock();
-			}
-		}
+            public WriteLockToken( [NotNull] ReaderWriterLockSlim slimLock ) {
+                this._readerWriterLockSlim = slimLock;
+                slimLock.EnterWriteLock();
+            }
+        }
 
-		public sealed class Manager : IDisposable {
+        public sealed class Manager : IDisposable {
 
-			public void Dispose() {
-				this.Dispose( true );
+            public void Dispose() {
+                this.Dispose( true );
 
-				// ReSharper disable GCSuppressFinalizeForTypeWithoutDestructor
-				GC.SuppressFinalize( this );
+                // ReSharper disable GCSuppressFinalizeForTypeWithoutDestructor
+                GC.SuppressFinalize( this );
 
-				// ReSharper restore GCSuppressFinalizeForTypeWithoutDestructor
-			}
+                // ReSharper restore GCSuppressFinalizeForTypeWithoutDestructor
+            }
 
-			private Boolean _isDisposed;
+            private Boolean _isDisposed;
 
-			private LockTypes _lockType = LockTypes.None;
+            private LockTypes _lockType = LockTypes.None;
 
-			private ReaderWriterLockSlim SlimLock { get; }
+            private ReaderWriterLockSlim SlimLock { get; }
 
-			public Manager( [NotNull] ReaderWriterLockSlim slimLock ) => this.SlimLock = slimLock;
+            public Manager( [NotNull] ReaderWriterLockSlim slimLock ) => this.SlimLock = slimLock;
 
-			private enum LockTypes {
+            private enum LockTypes {
 
-				None,
+                None,
 
-				Read,
+                Read,
 
-				Write
-			}
+                Write
+            }
 
-			private void Dispose( Boolean freeManagedObjectsAlso ) {
-				if ( !this._isDisposed ) {
-					if ( freeManagedObjectsAlso ) {
-						switch ( this._lockType ) {
-							case LockTypes.Read:
-								this.SlimLock.ExitReadLock();
+            private void Dispose( Boolean freeManagedObjectsAlso ) {
+                if ( !this._isDisposed ) {
+                    if ( freeManagedObjectsAlso ) {
+                        switch ( this._lockType ) {
+                            case LockTypes.Read:
+                                this.SlimLock.ExitReadLock();
 
-								break;
+                                break;
 
-							case LockTypes.Write:
-								this.SlimLock.ExitWriteLock();
+                            case LockTypes.Write:
+                                this.SlimLock.ExitWriteLock();
 
-								break;
-						}
-					}
-				}
+                                break;
+                        }
+                    }
+                }
 
-				this._isDisposed = true;
-			}
+                this._isDisposed = true;
+            }
 
-			public void EnterReadLock() {
-				this.SlimLock.EnterReadLock();
-				this._lockType = LockTypes.Read;
-			}
+            public void EnterReadLock() {
+                this.SlimLock.EnterReadLock();
+                this._lockType = LockTypes.Read;
+            }
 
-			public void EnterWriteLock() {
-				this.SlimLock.EnterWriteLock();
-				this._lockType = LockTypes.Write;
-			}
-		}
-	}
+            public void EnterWriteLock() {
+                this.SlimLock.EnterWriteLock();
+                this._lockType = LockTypes.Write;
+            }
+        }
+    }
 }

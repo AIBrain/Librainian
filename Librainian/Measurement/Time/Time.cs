@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,100 +35,102 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Time.cs" was last formatted by Protiguous on 2018/11/03 at 7:51 PM.
+// Project: "Librainian", "Time.cs" was last formatted by Protiguous on 2019/08/08 at 9:10 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using Clocks;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Clocks;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para></para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public struct Time {
+    /// <summary>
+    ///     <para></para>
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public struct Time {
 
-		public static Time Zero = new Time( Hour.Minimum, Minute.Minimum, Second.Minimum, Millisecond.Minimum );
+        public static Time Zero = new Time( Hour.Minimum, Minute.Minimum, Second.Minimum, Millisecond.Minimum );
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Hour Hour { get; }
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Hour Hour { get; }
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Microsecond Microsecond { get; }
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Microsecond Microsecond { get; }
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Millisecond Millisecond { get; }
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Millisecond Millisecond { get; }
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Minute Minute { get; }
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Minute Minute { get; }
 
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public Second Second { get; }
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Second Second { get; }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="hour"></param>
-		/// <param name="minute"></param>
-		/// <param name="second"></param>
-		/// <param name="millisecond"></param>
-		/// <param name="microsecond"></param>
-		public Time( SByte hour = 0, SByte minute = 0, SByte second = 0, Int16 millisecond = 0, Int16 microsecond = 0 ) : this() {
-			this.Hour = new Hour( hour );
-			this.Minute = minute;
-			this.Second = second;
-			this.Millisecond = millisecond;
-			this.Microsecond = new Microsecond( microsecond );
-		}
+        /// <summary>
+        /// </summary>
+        /// <param name="hour"></param>
+        /// <param name="minute"></param>
+        /// <param name="second"></param>
+        /// <param name="millisecond"></param>
+        /// <param name="microsecond"></param>
+        public Time( SByte hour = 0, SByte minute = 0, SByte second = 0, Int16 millisecond = 0, Int16 microsecond = 0 ) : this() {
+            this.Hour = new Hour( hour );
+            this.Minute = minute;
+            this.Second = second;
+            this.Millisecond = millisecond;
+            this.Microsecond = new Microsecond( microsecond );
+        }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="dateTime"></param>
-		public Time( DateTime dateTime ) : this( hour: ( SByte )dateTime.Hour, minute: ( SByte )dateTime.Minute, second: ( SByte )dateTime.Second, millisecond: ( Int16 )dateTime.Millisecond ) { }
+        /// <summary>
+        /// </summary>
+        /// <param name="dateTime"></param>
+        public Time( DateTime dateTime ) : this( hour: ( SByte ) dateTime.Hour, minute: ( SByte ) dateTime.Minute, second: ( SByte ) dateTime.Second,
+            millisecond: ( Int16 ) dateTime.Millisecond ) { }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="spanOfTime"></param>
-		public Time( SpanOfTime spanOfTime ) : this( hour: ( SByte )spanOfTime.Hours.Value, minute: ( SByte )spanOfTime.Minutes.Value, second: ( SByte )spanOfTime.Seconds.Value,
-			millisecond: ( Int16 )spanOfTime.Milliseconds.Value, microsecond: ( Int16 )spanOfTime.Microseconds.Value ) { }
+        /// <summary>
+        /// </summary>
+        /// <param name="spanOfTime"></param>
+        public Time( SpanOfTime spanOfTime ) : this( hour: ( SByte ) spanOfTime.Hours.Value, minute: ( SByte ) spanOfTime.Minutes.Value,
+            second: ( SByte ) spanOfTime.Seconds.Value, millisecond: ( Int16 ) spanOfTime.Milliseconds.Value, microsecond: ( Int16 ) spanOfTime.Microseconds.Value ) { }
 
-		public static explicit operator Time( DateTime dateTime ) => new Time( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second, ( Int16 )dateTime.Millisecond );
+        public static explicit operator Time( DateTime dateTime ) =>
+            new Time( ( SByte ) dateTime.Hour, ( SByte ) dateTime.Minute, ( SByte ) dateTime.Second, ( Int16 ) dateTime.Millisecond );
 
-		/// <summary>
-		/// </summary>
-		/// <param name="date"></param>
-		/// <returns></returns>
-		public static implicit operator DateTime( Time date ) =>
-			new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value, second: date.Second.Value,
-				millisecond: date.Millisecond.Value );
+        /// <summary>
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static implicit operator DateTime( Time date ) =>
+            new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value,
+                second: date.Second.Value, millisecond: date.Millisecond.Value );
 
-		/// <summary>
-		///     Get the local system's computer time.
-		/// </summary>
-		public static Time Now() {
-			var now = DateTime.Now;
+        /// <summary>
+        ///     Get the local system's computer time.
+        /// </summary>
+        public static Time Now() {
+            var now = DateTime.Now;
 
-			return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
-		}
+            return new Time( hour: ( SByte ) now.Hour, minute: ( SByte ) now.Minute, second: ( SByte ) now.Second, millisecond: ( Int16 ) now.Millisecond );
+        }
 
-		public static Time UtcNow() {
-			var now = DateTime.UtcNow;
+        public static Time UtcNow() {
+            var now = DateTime.UtcNow;
 
-			return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
-		}
-	}
+            return new Time( hour: ( SByte ) now.Hour, minute: ( SByte ) now.Minute, second: ( SByte ) now.Second, millisecond: ( Int16 ) now.Millisecond );
+        }
+    }
 }

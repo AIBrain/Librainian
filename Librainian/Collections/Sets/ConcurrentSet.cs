@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConcurrentSet.cs" was last formatted by Protiguous on 2019/02/12 at 2:22 PM.
+// Project: "Librainian", "ConcurrentSet.cs" was last formatted by Protiguous on 2019/08/08 at 6:37 AM.
 
 namespace Librainian.Collections.Sets {
 
@@ -58,12 +58,6 @@ namespace Librainian.Collections.Sets {
     public class ConcurrentSet<T> : ISet<T> {
 
         /// <summary>
-        ///     Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.
-        /// </summary>
-        [JsonProperty]
-        private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
-
-        /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </summary>
         /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.</returns>
@@ -73,17 +67,6 @@ namespace Librainian.Collections.Sets {
         ///     Gets the number of elements in the set.
         /// </summary>
         public Int32 Count => this.Dictionary.Count;
-
-        /// <summary>
-        ///     Gets a value that indicates if the set is empty.
-        /// </summary>
-        public Boolean IsEmpty => this.Dictionary.IsEmpty;
-
-        public ConcurrentSet() { }
-
-        public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( other: items );
-
-        public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( other: items );
 
         /// <summary>
         ///     Adds an element to the current set and returns a value to indicate if the element was successfully added.
@@ -251,31 +234,6 @@ namespace Librainian.Collections.Sets {
         public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
         /// <summary>
-        ///     Returns a copy of the items to an array.
-        /// </summary>
-        /// <returns></returns>
-        [NotNull]
-        public T[] ToArray() => this.Dictionary.Keys.ToArray();
-
-        public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
-
-        public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out _ );
-
-        public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out _ );
-
-        public Boolean TryTakeAny( out T item ) {
-            foreach ( var pair in this.Dictionary ) {
-                item = pair.Key;
-
-                return true;
-            }
-
-            item = default;
-
-            return false;
-        }
-
-        /// <summary>
         ///     Modifies the current set so that it contains all elements that are present in both the current set and in the
         ///     specified collection.
         /// </summary>
@@ -307,5 +265,47 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.
+        /// </summary>
+        [JsonProperty]
+        private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
+
+        /// <summary>
+        ///     Gets a value that indicates if the set is empty.
+        /// </summary>
+        public Boolean IsEmpty => this.Dictionary.IsEmpty;
+
+        public ConcurrentSet() { }
+
+        public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( other: items );
+
+        public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( other: items );
+
+        /// <summary>
+        ///     Returns a copy of the items to an array.
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+        public T[] ToArray() => this.Dictionary.Keys.ToArray();
+
+        public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
+
+        public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out _ );
+
+        public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out _ );
+
+        public Boolean TryTakeAny( out T item ) {
+            foreach ( var pair in this.Dictionary ) {
+                item = pair.Key;
+
+                return true;
+            }
+
+            item = default;
+
+            return false;
+        }
     }
 }

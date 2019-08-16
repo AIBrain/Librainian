@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,35 +35,33 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ContinuousSentence.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "ContinuousSentence.cs" was last formatted by Protiguous on 2019/08/08 at 9:22 AM.
 
-namespace Librainian.Parsing
-{
+namespace Librainian.Parsing {
 
-    using JetBrains.Annotations;
-    using Magic;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading;
+    using JetBrains.Annotations;
+    using Magic;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     A thread-safe object to contain a moving target of sentences. I'd like to make this act like a
     ///     <see cref="Stream" /> if possible?
     /// </summary>
     [JsonObject]
-    public class ContinuousSentence : ABetterClassDispose
-    {
+    public class ContinuousSentence : ABetterClassDispose {
 
         [JsonProperty]
         private String _inputBuffer = String.Empty;
 
         [JsonProperty]
-        private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] {
             ".", "?", "!"
@@ -71,35 +69,38 @@ namespace Librainian.Parsing
 
         public String CurrentBuffer {
             get {
-                try
-                {
+                try {
                     this.AccessInputBuffer.EnterReadLock();
 
                     return this._inputBuffer;
                 }
-                finally { this.AccessInputBuffer.ExitReadLock(); }
+                finally {
+                    this.AccessInputBuffer.ExitReadLock();
+                }
             }
 
             set {
-                try
-                {
+                try {
                     this.AccessInputBuffer.EnterWriteLock();
                     this._inputBuffer = value;
                 }
-                finally { this.AccessInputBuffer.ExitWriteLock(); }
+                finally {
+                    this.AccessInputBuffer.ExitWriteLock();
+                }
             }
         }
 
-        public ContinuousSentence([CanBeNull] String startingInput = null) => this.CurrentBuffer = startingInput ?? String.Empty;
+        public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
         /// <summary>
         ///     Append the <paramref name="text" /> to the current sentence buffer.
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public ContinuousSentence Add([CanBeNull] String text)
-        {
-            if (text == null) { text = String.Empty; }
+        public ContinuousSentence Add( [CanBeNull] String text ) {
+            if ( text == null ) {
+                text = String.Empty;
+            }
 
             this.CurrentBuffer += text;
 
@@ -109,77 +110,78 @@ namespace Librainian.Parsing
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
-        public override void DisposeManaged()
-        {
-            using (this.AccessInputBuffer) { }
+        public override void DisposeManaged() {
+            using ( this.AccessInputBuffer ) { }
         }
 
         [NotNull]
         public String PeekNextChar() =>
-            new String(new[] {
+            new String( new[] {
                 this.CurrentBuffer.FirstOrDefault()
-            });
+            } );
 
         [NotNull]
-        public String PeekNextSentence()
-        {
-            try
-            {
+        public String PeekNextSentence() {
+            try {
                 this.AccessInputBuffer.EnterReadLock();
 
                 var sentence = this.CurrentBuffer.FirstSentence();
 
-                return String.IsNullOrEmpty(sentence) ? String.Empty : sentence;
+                return String.IsNullOrEmpty( sentence ) ? String.Empty : sentence;
             }
-            finally { this.AccessInputBuffer.ExitReadLock(); }
+            finally {
+                this.AccessInputBuffer.ExitReadLock();
+            }
         }
 
         [NotNull]
-        public String PeekNextWord()
-        {
+        public String PeekNextWord() {
             var word = this.CurrentBuffer.FirstWord();
 
-            return String.IsNullOrEmpty(word) ? String.Empty : word;
+            return String.IsNullOrEmpty( word ) ? String.Empty : word;
         }
 
-        public String PullNextChar()
-        {
-            try
-            {
+        public String PullNextChar() {
+            try {
                 this.AccessInputBuffer.EnterWriteLock();
 
-                if (String.IsNullOrEmpty(this._inputBuffer)) { return String.Empty; }
+                if ( String.IsNullOrEmpty( this._inputBuffer ) ) {
+                    return String.Empty;
+                }
 
-                var result = new String(new[] {
+                var result = new String( new[] {
                     this._inputBuffer.FirstOrDefault()
-                });
+                } );
 
-                if (!String.IsNullOrEmpty(result)) { this._inputBuffer = this._inputBuffer.Remove(0, 1); }
+                if ( !String.IsNullOrEmpty( result ) ) {
+                    this._inputBuffer = this._inputBuffer.Remove( 0, 1 );
+                }
 
                 return result;
             }
-            finally { this.AccessInputBuffer.ExitWriteLock(); }
+            finally {
+                this.AccessInputBuffer.ExitWriteLock();
+            }
         }
 
-        public String PullNextSentence()
-        {
-            try
-            {
+        public String PullNextSentence() {
+            try {
                 this.AccessInputBuffer.EnterUpgradeableReadLock();
 
                 var sentence = this.PeekNextSentence();
 
-                if (!String.IsNullOrWhiteSpace(sentence))
-                {
-                    var position = this._inputBuffer.IndexOf(sentence, StringComparison.Ordinal);
-                    this.CurrentBuffer = this._inputBuffer.Substring(position + sentence.Length);
+                if ( !String.IsNullOrWhiteSpace( sentence ) ) {
+                    var position = this._inputBuffer.IndexOf( sentence, StringComparison.Ordinal );
+                    this.CurrentBuffer = this._inputBuffer.Substring( position + sentence.Length );
 
                     return sentence;
                 }
 
                 return String.Empty;
             }
-            finally { this.AccessInputBuffer.ExitUpgradeableReadLock(); }
+            finally {
+                this.AccessInputBuffer.ExitUpgradeableReadLock();
+            }
         }
     }
 }

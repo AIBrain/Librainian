@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,37 +35,37 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Polygon.cs" was last formatted by Protiguous on 2018/07/10 at 9:06 PM.
+// Project: "Librainian", "Polygon.cs" was last formatted by Protiguous on 2019/08/08 at 7:36 AM.
 
 namespace Librainian.Graphics.DD {
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Drawing;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Drawing;
 
-	public struct Polygon : IEnumerable<PointF> {
+    public struct Polygon : IEnumerable<PointF> {
 
-		public PointF[] Points { get; set; }
+        public PointF[] Points { get; set; }
 
-		public Int32 Length => this.Points.Length;
+        public Int32 Length => this.Points.Length;
 
-		public PointF this[ Int32 index ] {
-			get => this.Points[ index ];
+        public PointF this[ Int32 index ] {
+            get => this.Points[ index ];
 
-			set => this.Points[ index ] = value;
-		}
+            set => this.Points[ index ] = value;
+        }
 
-		public Polygon( PointF[] points ) : this() => this.Points = points;
+        public Polygon( PointF[] points ) : this() => this.Points = points;
 
-		public static implicit operator PointF[]( Polygon polygon ) => polygon.Points;
+        public static implicit operator PointF[]( Polygon polygon ) => polygon.Points;
 
-		public static implicit operator Polygon( PointF[] points ) => new Polygon( points );
+        public static implicit operator Polygon( PointF[] points ) => new Polygon( points );
 
-		public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
+        public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
 
-		IEnumerator<PointF> IEnumerable<PointF>.GetEnumerator() => ( IEnumerator<PointF> ) this.Points.GetEnumerator();
-	}
+        IEnumerator<PointF> IEnumerable<PointF>.GetEnumerator() => ( IEnumerator<PointF> ) this.Points.GetEnumerator();
+    }
 }

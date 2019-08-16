@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,41 +35,41 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PartsOfSpeech.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
+// Project: "Librainian", "PartsOfSpeech.cs" was last formatted by Protiguous on 2019/08/08 at 8:10 AM.
 
 namespace Librainian.Linguistics.PoS {
 
-	using System.ComponentModel;
+    using System.ComponentModel;
 
-	public enum PartsOfSpeech {
+    public enum PartsOfSpeech {
 
-		[Description( "A noun is a naming word. It names a person, place, thing, idea, quality, or action." )]
-		Noun,
+        [Description( "A noun is a naming word. It names a person, place, thing, idea, quality, or action." )]
+        Noun,
 
-		[Description( "A verb is a word which describes an action (doing something) or a state (being something)." )]
-		Verb,
+        [Description( "A verb is a word which describes an action (doing something) or a state (being something)." )]
+        Verb,
 
-		[Description( "An adjective is a word that describes a noun." )]
-		Adjective,
+        [Description( "An adjective is a word that describes a noun." )]
+        Adjective,
 
-		[Description( "An adverb is a word which usually describes a verb." )]
-		Adverb,
+        [Description( "An adverb is a word which usually describes a verb." )]
+        Adverb,
 
-		[Description( "A pronoun is used instead of a noun, to avoid repeating the noun." )]
-		Pronoun,
+        [Description( "A pronoun is used instead of a noun, to avoid repeating the noun." )]
+        Pronoun,
 
-		[Description( "A conjunction joins two words, phrases or sentences together." )]
-		Conjunction,
+        [Description( "A conjunction joins two words, phrases or sentences together." )]
+        Conjunction,
 
-		[Description( "A preposition usually comes before a noun, pronoun or noun phrase and then joins the noun to some other part of the sentence." )]
-		Preposition,
+        [Description( "A preposition usually comes before a noun, pronoun or noun phrase and then joins the noun to some other part of the sentence." )]
+        Preposition,
 
-		[Description( "An interjection is an unusual kind of word, because it often stands alone." )]
-		Interjection,
+        [Description( "An interjection is an unusual kind of word, because it often stands alone." )]
+        Interjection,
 
-		[Description( "An article is used to introduce a noun." )]
-		Article
-	}
+        [Description( "An article is used to introduce a noun." )]
+        Article
+    }
 }

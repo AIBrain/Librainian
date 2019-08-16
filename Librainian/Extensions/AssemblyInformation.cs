@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,64 +35,66 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AssemblyInformation.cs" was last formatted by Protiguous on 2018/07/10 at 9:00 PM.
+// Project: "Librainian", "AssemblyInformation.cs" was last formatted by Protiguous on 2019/08/08 at 7:07 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.IO;
-	using System.Reflection;
-	using JetBrains.Annotations;
+    using System;
+    using System.IO;
+    using System.Reflection;
+    using JetBrains.Annotations;
 
-	public static class AssemblyInformation {
+    public static class AssemblyInformation {
 
-		public static String Company {
-			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCompanyAttribute ), false );
+        public static String Company {
+            get {
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCompanyAttribute ), false );
 
-				return attributes.Length == 0 ? String.Empty : ( ( AssemblyCompanyAttribute ) attributes[ 0 ] ).Company;
-			}
-		}
+                return attributes.Length == 0 ? String.Empty : ( ( AssemblyCompanyAttribute ) attributes[ 0 ] ).Company;
+            }
+        }
 
-		public static String Copyright {
-			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCopyrightAttribute ), false );
+        public static String Copyright {
+            get {
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCopyrightAttribute ), false );
 
-				return attributes.Length == 0 ? String.Empty : ( ( AssemblyCopyrightAttribute ) attributes[ 0 ] ).Copyright;
-			}
-		}
+                return attributes.Length == 0 ? String.Empty : ( ( AssemblyCopyrightAttribute ) attributes[ 0 ] ).Copyright;
+            }
+        }
 
-		public static String Description {
-			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyDescriptionAttribute ), false );
+        public static String Description {
+            get {
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyDescriptionAttribute ), false );
 
-				return attributes.Length == 0 ? String.Empty : ( ( AssemblyDescriptionAttribute ) attributes[ 0 ] ).Description;
-			}
-		}
+                return attributes.Length == 0 ? String.Empty : ( ( AssemblyDescriptionAttribute ) attributes[ 0 ] ).Description;
+            }
+        }
 
-		public static String Product {
-			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyProductAttribute ), false );
+        public static String Product {
+            get {
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyProductAttribute ), false );
 
-				return attributes.Length == 0 ? String.Empty : ( ( AssemblyProductAttribute ) attributes[ 0 ] ).Product;
-			}
-		}
+                return attributes.Length == 0 ? String.Empty : ( ( AssemblyProductAttribute ) attributes[ 0 ] ).Product;
+            }
+        }
 
-		public static String Title {
-			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyTitleAttribute ), false );
+        public static String Title {
+            get {
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyTitleAttribute ), false );
 
-				if ( attributes.Length <= 0 ) { return Path.GetFileNameWithoutExtension( Assembly.GetExecutingAssembly().CodeBase ); }
+                if ( attributes.Length <= 0 ) {
+                    return Path.GetFileNameWithoutExtension( Assembly.GetExecutingAssembly().CodeBase );
+                }
 
-				var titleAttribute = ( AssemblyTitleAttribute ) attributes[ 0 ];
+                var titleAttribute = ( AssemblyTitleAttribute ) attributes[ 0 ];
 
-				return titleAttribute.Title != String.Empty ? titleAttribute.Title : Path.GetFileNameWithoutExtension( Assembly.GetExecutingAssembly().CodeBase );
-			}
-		}
+                return titleAttribute.Title != String.Empty ? titleAttribute.Title : Path.GetFileNameWithoutExtension( Assembly.GetExecutingAssembly().CodeBase );
+            }
+        }
 
-		[NotNull]
-		public static String Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
-	}
+        [NotNull]
+        public static String Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+    }
 }

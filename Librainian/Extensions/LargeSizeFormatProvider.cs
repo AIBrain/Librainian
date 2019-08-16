@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,65 +35,77 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
+// Project: "Librainian", "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2019/08/08 at 7:16 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using JetBrains.Annotations;
-	using Maths;
+    using System;
+    using JetBrains.Annotations;
+    using Maths;
 
-	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
+    public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
-		private const String FileSizeFormat = "fs";
+        [NotNull]
+        public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
+            if ( format?.StartsWith( FileSizeFormat ) != true ) {
+                return DefaultFormat( format, arg, formatProvider );
+            }
 
-		[NotNull]
-		private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
-			var formattableArg = arg as IFormattable;
+            if ( arg is String ) {
+                return DefaultFormat( format, arg, formatProvider );
+            }
 
-			return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
-		}
+            Single size;
 
-		[NotNull]
-		public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
-			if ( format?.StartsWith( FileSizeFormat ) != true ) { return DefaultFormat( format, arg, formatProvider ); }
+            try {
+                size = Convert.ToUInt64( arg );
+            }
+            catch ( InvalidCastException ) {
+                return DefaultFormat( format, arg, formatProvider );
+            }
 
-			if ( arg is String ) { return DefaultFormat( format, arg, formatProvider ); }
+            var suffix = "n/a";
 
-			Single size;
+            if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+                size /= MathConstants.Sizes.OneTeraByte;
+                suffix = "trillion";
+            }
+            else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
+                size /= MathConstants.Sizes.OneGigaByte;
+                suffix = "billion";
+            }
+            else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
+                size /= MathConstants.Sizes.OneMegaByte;
+                suffix = "million";
+            }
+            else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
+                size /= MathConstants.Sizes.OneKiloByte;
+                suffix = "thousand";
+            }
+            else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
+                suffix = "";
+            }
 
-			try { size = Convert.ToUInt64( arg ); }
-			catch ( InvalidCastException ) { return DefaultFormat( format, arg, formatProvider ); }
+            return $"{size:N3} {suffix}";
+        }
 
-			var suffix = "n/a";
+        public Object GetFormat( [NotNull] Type formatType ) {
+            if ( formatType == null ) {
+                throw new ArgumentNullException( nameof( formatType ) );
+            }
 
-			if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
-				size /= MathConstants.Sizes.OneTeraByte;
-				suffix = "trillion";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
-				size /= MathConstants.Sizes.OneGigaByte;
-				suffix = "billion";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
-				size /= MathConstants.Sizes.OneMegaByte;
-				suffix = "million";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
-				size /= MathConstants.Sizes.OneKiloByte;
-				suffix = "thousand";
-			}
-			else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) { suffix = ""; }
+            return formatType == typeof( ICustomFormatter ) ? this : null;
+        }
 
-			return $"{size:N3} {suffix}";
-		}
+        private const String FileSizeFormat = "fs";
 
-		public Object GetFormat( [NotNull] Type formatType ) {
-			if ( formatType == null ) { throw new ArgumentNullException( nameof( formatType ) ); }
+        [NotNull]
+        private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
+            var formattableArg = arg as IFormattable;
 
-			return formatType == typeof( ICustomFormatter ) ? this : null;
-		}
-	}
+            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
+        }
+    }
 }

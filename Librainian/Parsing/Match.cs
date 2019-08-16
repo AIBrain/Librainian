@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,109 +35,115 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Match.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "Match.cs" was last formatted by Protiguous on 2019/08/08 at 9:23 AM.
 
 namespace Librainian.Parsing {
 
-	using System;
-	using System.Collections.ObjectModel;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using JetBrains.Annotations;
 
-	public static class Match<T, TResult> {
+    public static class Match<T, TResult> {
 
-		[NotNull]
-		public static Func<T, TResult> On<TCxt>( [NotNull] Func<OpenMatchContext<T, TResult>, TCxt> cond1, [NotNull] Func<TCxt, ClosedMatchContext> cond2 ) where TCxt : MatchContext<T, TResult> {
-			var ctx = cond2( cond1( new ContextImpl() ) );
+        [NotNull]
+        public static Func<T, TResult> On<TCxt>( [NotNull] Func<OpenMatchContext<T, TResult>, TCxt> cond1, [NotNull] Func<TCxt, ClosedMatchContext> cond2 )
+            where TCxt : MatchContext<T, TResult> {
+            var ctx = cond2( cond1( new ContextImpl() ) );
 
-			return ( ( ContextImpl )ctx ).Compile();
-		}
+            return ( ( ContextImpl ) ctx ).Compile();
+        }
 
-		[NotNull]
-		public static Func<T, TResult> On<TCtx1, TCtx2>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, ClosedMatchContext> cond3 )
-			where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> {
-			var ctx = cond3( cond2( cond1( new ContextImpl() ) ) );
+        [NotNull]
+        public static Func<T, TResult> On<TCtx1, TCtx2>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2,
+            [NotNull] Func<TCtx2, ClosedMatchContext> cond3 ) where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> {
+            var ctx = cond3( cond2( cond1( new ContextImpl() ) ) );
 
-			return ( ( ContextImpl )ctx ).Compile();
-		}
+            return ( ( ContextImpl ) ctx ).Compile();
+        }
 
-		[NotNull]
-		public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, TCtx3> cond3,
-			[NotNull] Func<TCtx3, ClosedMatchContext> cond4 ) where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> where TCtx3 : MatchContext<T, TResult> {
-			var ctx = cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) );
+        [NotNull]
+        public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2,
+            [NotNull] Func<TCtx2, TCtx3> cond3, [NotNull] Func<TCtx3, ClosedMatchContext> cond4 ) where TCtx1 : MatchContext<T, TResult>
+            where TCtx2 : MatchContext<T, TResult>
+            where TCtx3 : MatchContext<T, TResult> {
+            var ctx = cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) );
 
-			return ( ( ContextImpl )ctx ).Compile();
-		}
+            return ( ( ContextImpl ) ctx ).Compile();
+        }
 
-		[NotNull]
-		public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3, TCtx4>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2, [NotNull] Func<TCtx2, TCtx3> cond3,
-			[NotNull] Func<TCtx3, TCtx4> cond4, [NotNull] Func<TCtx4, ClosedMatchContext> cond5 ) where TCtx1 : MatchContext<T, TResult>
-			where TCtx2 : MatchContext<T, TResult>
-			where TCtx3 : MatchContext<T, TResult>
-			where TCtx4 : MatchContext<T, TResult> {
-			var ctx = cond5( cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) ) );
+        [NotNull]
+        public static Func<T, TResult> On<TCtx1, TCtx2, TCtx3, TCtx4>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2,
+            [NotNull] Func<TCtx2, TCtx3> cond3, [NotNull] Func<TCtx3, TCtx4> cond4, [NotNull] Func<TCtx4, ClosedMatchContext> cond5 ) where TCtx1 : MatchContext<T, TResult>
+            where TCtx2 : MatchContext<T, TResult>
+            where TCtx3 : MatchContext<T, TResult>
+            where TCtx4 : MatchContext<T, TResult> {
+            var ctx = cond5( cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) ) );
 
-			return ( ( ContextImpl )ctx ).Compile();
-		}
+            return ( ( ContextImpl ) ctx ).Compile();
+        }
 
-		private sealed class ContextImpl : OpenMatchContext<T, TResult> {
+        private sealed class ContextImpl : OpenMatchContext<T, TResult> {
 
-			private readonly ReadOnlyCollection<MatchExpression> _matches;
+            private readonly ReadOnlyCollection<MatchExpression> _matches;
 
-			public ContextImpl() => this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
+            public ContextImpl() => this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
 
-			public ContextImpl( [NotNull] ContextImpl baseContext, MatchExpression newExpr ) => this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
+            public ContextImpl( [NotNull] ContextImpl baseContext, MatchExpression newExpr ) =>
+                this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
 
-			[NotNull]
-			public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
+            [NotNull]
+            public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
 
-			[NotNull]
-			public override OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith ) => new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
+            [NotNull]
+            public override OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith ) =>
+                new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
 
-			[NotNull]
-			public override ClosedMatchContext Return( TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
+            [NotNull]
+            public override ClosedMatchContext Return( TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
 
-			[NotNull]
-			public override ClosedMatchContext Return( Func<T, TResult> resultProjection ) => new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
+            [NotNull]
+            public override ClosedMatchContext Return( Func<T, TResult> resultProjection ) => new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
 
-			[NotNull]
-			public override IntermediateMatchResultContext<T, TResult> When( Func<T, Boolean> condition ) => new IntermediateContextImpl( this, condition );
-		}
+            [NotNull]
+            public override IntermediateMatchResultContext<T, TResult> When( Func<T, Boolean> condition ) => new IntermediateContextImpl( this, condition );
+        }
 
-		private sealed class IntermediateContextImpl : IntermediateMatchResultContext<T, TResult> {
+        private sealed class IntermediateContextImpl : IntermediateMatchResultContext<T, TResult> {
 
-			private readonly ContextImpl _baseContext;
+            private readonly ContextImpl _baseContext;
 
-			private readonly Func<T, Boolean> _condition;
+            private readonly Func<T, Boolean> _condition;
 
-			public IntermediateContextImpl( ContextImpl baseContext, Func<T, Boolean> condition ) {
-				this._baseContext = baseContext;
-				this._condition = condition;
-			}
+            public IntermediateContextImpl( ContextImpl baseContext, Func<T, Boolean> condition ) {
+                this._baseContext = baseContext;
+                this._condition = condition;
+            }
 
-			[NotNull]
-			public override MatchContext<T, TResult> Return( TResult result ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
+            [NotNull]
+            public override MatchContext<T, TResult> Return( TResult result ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
 
-			[NotNull]
-			public override MatchContext<T, TResult> Return( Func<T, TResult> resultProjection ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
-		}
+            [NotNull]
+            public override MatchContext<T, TResult> Return( Func<T, TResult> resultProjection ) =>
+                new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
+        }
 
-		private sealed class MatchExpression {
+        private sealed class MatchExpression {
 
-			private readonly Func<T, TResult> _getResult;
+            private readonly Func<T, TResult> _getResult;
 
-			private readonly Func<T, Boolean> _isMatch;
+            private readonly Func<T, Boolean> _isMatch;
 
-			public MatchExpression( Func<T, Boolean> isMatch, Func<T, TResult> getResult ) {
-				this._isMatch = isMatch;
-				this._getResult = getResult;
-			}
+            public MatchExpression( Func<T, Boolean> isMatch, Func<T, TResult> getResult ) {
+                this._isMatch = isMatch;
+                this._getResult = getResult;
+            }
 
-			public TResult Evaluate( T value ) => this._getResult( value );
+            public TResult Evaluate( T value ) => this._getResult( value );
 
-			public Boolean Matches( T value ) => this._isMatch( value );
-		}
-	}
+            public Boolean Matches( T value ) => this._isMatch( value );
+        }
+    }
 }

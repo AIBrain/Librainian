@@ -1,22 +1,43 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This source code contained in "InternetExtensions.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
-// "Librainian/InternetExtensions.cs" was last cleaned by Rick on 2016/08/15 at 4:59 PM
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "InternetExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 7:55 AM.
 
 namespace Librainian.Internet {
 
@@ -36,30 +57,18 @@ namespace Librainian.Internet {
 
     public static class InternetExtensions {
 
-        public static Boolean IsValidIp( this String ip ) {
-            if ( !Regex.IsMatch( ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" ) ) {
-                return false;   //TODO precompile this regex
-            }
-
-            var ips = ip.Split( '.' );
-            if ( ips.Length == 4 || ips.Length == 6 ) {
-                return Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
-            }
-
-            return false;
-        }
-
         private static Regex ValidateURLRegex { get; } = new Regex( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
-
-        public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );
 
         public static async Task<TextReader> DoRequestAsync( [NotNull] this WebRequest request ) {
             if ( request == null ) {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
-            var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( asyncCallback, state ), asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request );
+            var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest ) state ).BeginGetResponse( asyncCallback, state ),
+                asyncResult => ( ( HttpWebRequest ) asyncResult.AsyncState ).EndGetResponse( asyncResult ), request );
+
             var stream = result.GetResponseStream();
+
             return stream != null ? new StreamReader( stream ) : TextReader.Null;
         }
 
@@ -72,6 +81,7 @@ namespace Librainian.Internet {
 
             //request.AllowReadStreamBuffering = true;
             var textReader = await request.DoRequestAsync();
+
             return textReader;
         }
 
@@ -80,14 +90,16 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
-            var reader = await DoRequestAsync( request ).ConfigureAwait( false ); 
-            var response = await reader.ReadToEndAsync().ConfigureAwait( false ); 
+            var reader = await DoRequestAsync( request ).ConfigureAwait( false );
+            var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+
             return JsonConvert.DeserializeObject<T>( response );
         }
 
         public static async Task<T> DoRequestJsonAsync<T>( [NotNull] Uri uri ) {
-            var reader = await DoRequestAsync( uri ).ConfigureAwait(false);
+            var reader = await DoRequestAsync( uri ).ConfigureAwait( false );
             var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+
             return JsonConvert.DeserializeObject<T>( response );
         }
 
@@ -98,6 +110,7 @@ namespace Librainian.Internet {
             var listData = data as IList<Byte> ?? data.ToList();
 
             var len = IPAddress.NetworkToHostOrder( BitConverter.ToInt16( listData.Take( 2 ).ToArray(), 0 ) );
+
             if ( listData.Count < 2 + len ) {
                 throw new ArgumentException( "Too few bytes in packet" );
             }
@@ -111,7 +124,8 @@ namespace Librainian.Internet {
 
         public static JObject GetNonAsync( Uri uri ) {
             var httpClient = new HttpClient();
-            var content = httpClient.GetStringAsync( uri ).Result;  //TODO bad
+            var content = httpClient.GetStringAsync( uri ).Result; //TODO bad
+
             return JObject.Parse( content );
         }
 
@@ -123,10 +137,12 @@ namespace Librainian.Internet {
 
                 using ( var response = request.GetResponse() as HttpWebResponse ) {
                     var dataStream = response?.GetResponseStream();
+
                     if ( dataStream != null ) {
                         try {
                             using ( var reader = new StreamReader( dataStream ) ) {
                                 var responseFromServer = reader.ReadToEnd();
+
                                 return responseFromServer;
                             }
                         }
@@ -149,11 +165,13 @@ namespace Librainian.Internet {
                 var request = WebRequest.Create( url );
                 request.Proxy = null;
                 request.Credentials = CredentialCache.DefaultCredentials;
+
                 using ( var response = await request.GetResponseAsync() ) {
                     using ( var dataStream = response.GetResponseStream() ) {
                         if ( dataStream != null ) {
                             using ( var reader = new StreamReader( dataStream ) ) {
                                 var responseFromServer = reader.ReadToEnd();
+
                                 return responseFromServer;
                             }
                         }
@@ -167,12 +185,28 @@ namespace Librainian.Internet {
             return null;
         }
 
+        public static Boolean IsValidIp( this String ip ) {
+            if ( !Regex.IsMatch( ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" ) ) {
+                return false; //TODO precompile this regex
+            }
+
+            var ips = ip.Split( '.' );
+
+            if ( ips.Length == 4 || ips.Length == 6 ) {
+                return Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
+            }
+
+            return false;
+        }
+
+        public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );
+
         /// <summary>Convert a string to network bytes</summary>
         [NotNull]
         public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
             var bytes = Encoding.UTF8.GetBytes( data );
 
-            var len = IPAddress.HostToNetworkOrder( ( Int16 )bytes.Length );
+            var len = IPAddress.HostToNetworkOrder( ( Int16 ) bytes.Length );
 
             return BitConverter.GetBytes( len ).Concat( bytes );
         }

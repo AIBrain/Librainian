@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,61 +35,64 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Matrix3.cs" was last formatted by Protiguous on 2018/07/10 at 9:08 PM.
+// Project: "Librainian", "Matrix3.cs" was last formatted by Protiguous on 2019/08/08 at 7:46 AM.
 
 namespace Librainian.Graphics {
 
-	using System;
-	using System.Windows.Media.Media3D;
-	using JetBrains.Annotations;
+    using System;
+    using System.Windows.Media.Media3D;
+    using JetBrains.Annotations;
 
-	public class Matrix3 : Matrix {
+    public class Matrix3 : Matrix {
 
-		public Matrix3() : base( 3, 3 ) { }
+        public Matrix3() : base( 3, 3 ) { }
 
-		public Matrix3( [NotNull] Single[ , ] matrix ) : base( matrix ) {
-			if ( this.Rows != 3 || this.Cols != 3 ) { throw new ArgumentException(); }
-		}
+        public Matrix3( [NotNull] Single[ , ] matrix ) : base( matrix ) {
+            if ( this.Rows != 3 || this.Cols != 3 ) {
+                throw new ArgumentException();
+            }
+        }
 
-		[NotNull]
-		public static Matrix3 I() =>
-			new Matrix3( new[ , ] {
-				{
-					1.0f, 0.0f, 0.0f
-				}, {
-					0.0f, 1.0f, 0.0f
-				}, {
-					0.0f, 0.0f, 1.0f
-				}
-			} );
+        [NotNull]
+        public static Matrix3 I() =>
+            new Matrix3( new[ , ] {
+                {
+                    1.0f, 0.0f, 0.0f
+                }, {
+                    0.0f, 1.0f, 0.0f
+                }, {
+                    0.0f, 0.0f, 1.0f
+                }
+            } );
 
-		public static Vector3D operator *( [NotNull] Matrix3 matrix3, Vector3D v ) {
-			var m = matrix3.matrix;
+        public static Vector3D operator *( [NotNull] Matrix3 matrix3, Vector3D v ) {
+            var m = matrix3.matrix;
 
-			return new Vector3D( (m[ 0, 0 ] * v.X) + (m[ 0, 1 ] * v.Y) + (m[ 0, 2 ] * v.Z), (m[ 1, 0 ] * v.X) + (m[ 1, 1 ] * v.Y) + (m[ 1, 2 ] * v.Z), (m[ 2, 0 ] * v.X) + (m[ 2, 1 ] * v.Y) + (m[ 2, 2 ] * v.Z) );
-		}
+            return new Vector3D( (m[ 0, 0 ] * v.X) + (m[ 0, 1 ] * v.Y) + (m[ 0, 2 ] * v.Z), (m[ 1, 0 ] * v.X) + (m[ 1, 1 ] * v.Y) + (m[ 1, 2 ] * v.Z),
+                (m[ 2, 0 ] * v.X) + (m[ 2, 1 ] * v.Y) + (m[ 2, 2 ] * v.Z) );
+        }
 
-		[NotNull]
-		public static Matrix3 operator *( [NotNull] Matrix3 mat1, [NotNull] Matrix3 mat2 ) {
-			var m1 = mat1.matrix;
-			var m2 = mat2.matrix;
-			var m3 = new Single[ 3, 3 ];
-			m3[ 0, 0 ] = (m1[ 0, 0 ] * m2[ 0, 0 ]) + (m1[ 0, 1 ] * m2[ 1, 0 ]) + (m1[ 0, 2 ] * m2[ 2, 0 ]);
-			m3[ 0, 1 ] = (m1[ 0, 0 ] * m2[ 0, 1 ]) + (m1[ 0, 1 ] * m2[ 1, 1 ]) + (m1[ 0, 2 ] * m2[ 2, 1 ]);
-			m3[ 0, 2 ] = (m1[ 0, 0 ] * m2[ 0, 2 ]) + (m1[ 0, 1 ] * m2[ 1, 2 ]) + (m1[ 0, 2 ] * m2[ 2, 2 ]);
-			m3[ 1, 0 ] = (m1[ 1, 0 ] * m2[ 0, 0 ]) + (m1[ 1, 1 ] * m2[ 1, 0 ]) + (m1[ 1, 2 ] * m2[ 2, 0 ]);
-			m3[ 1, 1 ] = (m1[ 1, 0 ] * m2[ 0, 1 ]) + (m1[ 1, 1 ] * m2[ 1, 1 ]) + (m1[ 1, 2 ] * m2[ 2, 1 ]);
-			m3[ 1, 2 ] = (m1[ 1, 0 ] * m2[ 0, 2 ]) + (m1[ 1, 1 ] * m2[ 1, 2 ]) + (m1[ 1, 2 ] * m2[ 2, 2 ]);
-			m3[ 2, 0 ] = (m1[ 2, 0 ] * m2[ 0, 0 ]) + (m1[ 2, 1 ] * m2[ 1, 0 ]) + (m1[ 2, 2 ] * m2[ 2, 0 ]);
-			m3[ 2, 1 ] = (m1[ 2, 0 ] * m2[ 0, 1 ]) + (m1[ 2, 1 ] * m2[ 1, 1 ]) + (m1[ 2, 2 ] * m2[ 2, 1 ]);
-			m3[ 2, 2 ] = (m1[ 2, 0 ] * m2[ 0, 2 ]) + (m1[ 2, 1 ] * m2[ 1, 2 ]) + (m1[ 2, 2 ] * m2[ 2, 2 ]);
+        [NotNull]
+        public static Matrix3 operator *( [NotNull] Matrix3 mat1, [NotNull] Matrix3 mat2 ) {
+            var m1 = mat1.matrix;
+            var m2 = mat2.matrix;
+            var m3 = new Single[ 3, 3 ];
+            m3[ 0, 0 ] = (m1[ 0, 0 ] * m2[ 0, 0 ]) + (m1[ 0, 1 ] * m2[ 1, 0 ]) + (m1[ 0, 2 ] * m2[ 2, 0 ]);
+            m3[ 0, 1 ] = (m1[ 0, 0 ] * m2[ 0, 1 ]) + (m1[ 0, 1 ] * m2[ 1, 1 ]) + (m1[ 0, 2 ] * m2[ 2, 1 ]);
+            m3[ 0, 2 ] = (m1[ 0, 0 ] * m2[ 0, 2 ]) + (m1[ 0, 1 ] * m2[ 1, 2 ]) + (m1[ 0, 2 ] * m2[ 2, 2 ]);
+            m3[ 1, 0 ] = (m1[ 1, 0 ] * m2[ 0, 0 ]) + (m1[ 1, 1 ] * m2[ 1, 0 ]) + (m1[ 1, 2 ] * m2[ 2, 0 ]);
+            m3[ 1, 1 ] = (m1[ 1, 0 ] * m2[ 0, 1 ]) + (m1[ 1, 1 ] * m2[ 1, 1 ]) + (m1[ 1, 2 ] * m2[ 2, 1 ]);
+            m3[ 1, 2 ] = (m1[ 1, 0 ] * m2[ 0, 2 ]) + (m1[ 1, 1 ] * m2[ 1, 2 ]) + (m1[ 1, 2 ] * m2[ 2, 2 ]);
+            m3[ 2, 0 ] = (m1[ 2, 0 ] * m2[ 0, 0 ]) + (m1[ 2, 1 ] * m2[ 1, 0 ]) + (m1[ 2, 2 ] * m2[ 2, 0 ]);
+            m3[ 2, 1 ] = (m1[ 2, 0 ] * m2[ 0, 1 ]) + (m1[ 2, 1 ] * m2[ 1, 1 ]) + (m1[ 2, 2 ] * m2[ 2, 1 ]);
+            m3[ 2, 2 ] = (m1[ 2, 0 ] * m2[ 0, 2 ]) + (m1[ 2, 1 ] * m2[ 1, 2 ]) + (m1[ 2, 2 ] * m2[ 2, 2 ]);
 
-			return new Matrix3( m3 );
-		}
+            return new Matrix3( m3 );
+        }
 
-		[NotNull]
-		public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
-	}
+        [NotNull]
+        public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
+    }
 }

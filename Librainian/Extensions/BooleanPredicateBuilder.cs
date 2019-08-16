@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,30 +35,30 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BooleanPredicateBuilder.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
+// Project: "Librainian", "BooleanPredicateBuilder.cs" was last formatted by Protiguous on 2019/08/08 at 7:08 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Linq.Expressions;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq.Expressions;
+    using JetBrains.Annotations;
 
-	public static class BooleanPredicateBuilder {
+    public static class BooleanPredicateBuilder {
 
-		[NotNull]
-		public static Expression<Func<TTt, Boolean>> And<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
-			Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
+        [NotNull]
+        public static Expression<Func<TTt, Boolean>> And<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
+            Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
-		[NotNull]
-		public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
+        [NotNull]
+        public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
 
-		[NotNull]
-		public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
-			Expression.Lambda<Func<TTt, Boolean>>( Expression.OrElse( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
+        [NotNull]
+        public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
+            Expression.Lambda<Func<TTt, Boolean>>( Expression.OrElse( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
-		[NotNull]
-		public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;
-	}
+        [NotNull]
+        public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;
+    }
 }

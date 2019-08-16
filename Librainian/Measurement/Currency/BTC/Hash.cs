@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,41 +35,43 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Hash.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
+// Project: "Librainian", "Hash.cs" was last formatted by Protiguous on 2019/08/08 at 8:40 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
-	using System;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using JetBrains.Annotations;
 
-	/// <summary></summary>
-	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
-	public class Hash {
+    /// <summary></summary>
+    /// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
+    public class Hash {
 
-		public readonly Byte[] HashBytes;
+        public readonly Byte[] HashBytes;
 
-		public Byte this[ Int32 i ] {
-			get => this.HashBytes[ i ];
+        public Byte this[ Int32 i ] {
+            get => this.HashBytes[ i ];
 
-			set => this.HashBytes[ i ] = value;
-		}
+            set => this.HashBytes[ i ] = value;
+        }
 
-		public Hash( Byte[] b ) => this.HashBytes = b;
+        public Hash( Byte[] b ) => this.HashBytes = b;
 
-		public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
+        public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
 
-		[NotNull]
-		public static implicit operator Hash( Byte[] bytes ) => new Hash( bytes );
+        [NotNull]
+        public static implicit operator Hash( Byte[] bytes ) => new Hash( bytes );
 
-		public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
+        public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 
-		public override Int32 GetHashCode() {
-			if ( this.HashBytes.Length >= 4 ) { return (this.HashBytes[ 0 ] << 24) | (this.HashBytes[ 1 ] << 16) | (this.HashBytes[ 2 ] << 8) | (this.HashBytes[ 3 ] << 0); }
+        public override Int32 GetHashCode() {
+            if ( this.HashBytes.Length >= 4 ) {
+                return ( this.HashBytes[ 0 ] << 24 ) | ( this.HashBytes[ 1 ] << 16 ) | ( this.HashBytes[ 2 ] << 8 ) | ( this.HashBytes[ 3 ] << 0 );
+            }
 
-			return this.HashBytes.GetHashCode();
-		}
-	}
+            return this.HashBytes.GetHashCode();
+        }
+    }
 }

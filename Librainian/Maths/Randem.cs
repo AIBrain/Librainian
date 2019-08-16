@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Randem.cs" was last formatted by Protiguous on 2019/03/02 at 4:32 PM.
+// Project: "Librainian", "Randem.cs" was last formatted by Protiguous on 2019/08/08 at 8:34 AM.
 
 namespace Librainian.Maths {
 
@@ -70,6 +70,13 @@ namespace Librainian.Maths {
 
     public static partial class Randem {
 
+        /// <summary>
+        ///     Provide to each thread its own <see cref="Random" /> with a random seed.
+        /// </summary>
+        [NotNull]
+        private static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () =>
+            new Lazy<Random>( valueFactory: () => new Random( DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() ) ) );
+
         internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
 
         [NotNull]
@@ -86,16 +93,15 @@ namespace Librainian.Maths {
             new ThreadLocal<RandomNumberGenerator>( valueFactory: () => new RNGCryptoServiceProvider(), trackAllValues: true );
 
         /// <summary>
-        ///     Provide to each thread its own <see cref="Random" /> with a random seed.
-        /// </summary>
-        [NotNull]
-        private static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } = new ThreadLocal<Lazy<Random>>( valueFactory: () =>
-            new Lazy<Random>( valueFactory: () => new Random( DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() ) ) );
-
-        /// <summary>
         ///     A Double-sized byte buffer per-thread.
         /// </summary>
         private static readonly ThreadLocal<Byte[]> LocalByteBuffer = new ThreadLocal<Byte[]>( valueFactory: () => new Byte[ sizeof( Double ) ], trackAllValues: true );
+
+        /// <summary>
+        ///     A thread-local (threadsafe) <see cref="Random" />.
+        /// </summary>
+        [NotNull]
+        private static Random Instance() => ThreadSafeRandom.Value.Value;
 
         /// <summary>
         ///     Untested.
@@ -327,7 +333,7 @@ namespace Librainian.Maths {
             if ( max <= min || count < 0 ||
 
                  // max - min > 0 required to avoid overflow
-                 (count > max - min && max - min > 0) ) {
+                 count > max - min && max - min > 0 ) {
 
                 // need to use 64-bit to support big ranges (negative min, positive max)
                 throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({( Int64 ) max - min} values), or count {count} is illegal." );
@@ -459,7 +465,6 @@ namespace Librainian.Maths {
             return BitConverter.ToUInt64( data, startIndex: 0 );
         }
 
-
         /// <summary>
         ///     Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .
         /// </summary>
@@ -528,13 +533,7 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     A thread-local (threadsafe) <see cref="Random" />.
-        /// </summary>
-        [NotNull]
-        private static Random Instance() => ThreadSafeRandom.Value.Value;
-
-        /// <summary>
-        /// Untested.
+        ///     Untested.
         /// </summary>
         /// <param name="numberOfDigits"></param>
         /// <returns></returns>
@@ -643,6 +642,10 @@ namespace Librainian.Maths {
                     buffer[ p ] = min.NextByte( max: max );
                 }
             }
+        }
+
+        public static void NextBytes( ref Byte[] buffer ) {
+            Instance().NextBytes( buffer );
         }
 
         /// <summary>
@@ -1244,11 +1247,5 @@ namespace Librainian.Maths {
 
             return lowResult.NextDecimal( maxValue: highResult );
         }
-
-        public static void NextBytes( ref Byte[] buffer ) {
-            Instance().NextBytes( buffer );
-        }
-
     }
-
 }

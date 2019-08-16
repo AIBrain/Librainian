@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Section.cs" was last formatted by Protiguous on 2018/11/19 at 8:54 PM.
+// Project: "Librainian", "Section.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
 
 namespace Librainian.Persistence.InIFiles {
 
@@ -64,6 +64,8 @@ namespace Librainian.Persistence.InIFiles {
     [JsonObject]
     public class Section : IEquatable<Section> {
 
+        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
+
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
@@ -75,11 +77,11 @@ namespace Librainian.Persistence.InIFiles {
 
         [JsonIgnore]
         [NotNull]
-        public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
+        public IReadOnlyList<String> Keys => ( IReadOnlyList<String> ) this.Data.Keys;
 
         [JsonIgnore]
         [NotNull]
-        public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
+        public IReadOnlyList<String> Values => ( IReadOnlyList<String> ) this.Data.Values;
 
         [JsonIgnore]
         [CanBeNull]
@@ -146,8 +148,6 @@ namespace Librainian.Persistence.InIFiles {
                     }
                 }
             } );
-
-        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
 
         public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this, right: obj as Section );
 

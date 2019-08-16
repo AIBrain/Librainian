@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,42 +35,42 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ContainerStream.cs" was last formatted by Protiguous on 2018/07/13 at 1:33 AM.
+// Project: "Librainian", "ContainerStream.cs" was last formatted by Protiguous on 2019/08/08 at 9:21 AM.
 
 namespace Librainian.OperatingSystem.Streams {
 
-	using System;
-	using System.IO;
-	using JetBrains.Annotations;
+    using System;
+    using System.IO;
+    using JetBrains.Annotations;
 
-	public abstract class ContainerStream : Stream {
+    public abstract class ContainerStream : Stream {
 
-		protected Stream ContainedStream => this.Stream;
+        protected Stream ContainedStream => this.Stream;
 
-		protected Stream Stream { get; }
+        protected Stream Stream { get; }
 
-		public override Boolean CanRead => this.Stream.CanRead;
+        public override Int64 Position {
+            get => this.Stream.Position;
 
-		public override Boolean CanSeek => this.Stream.CanSeek;
+            set => this.Stream.Position = value;
+        }
 
-		public override Boolean CanWrite => this.Stream.CanWrite;
+        public override Boolean CanRead => this.Stream.CanRead;
 
-		public override Int64 Length => this.Stream.Length;
+        public override Boolean CanSeek => this.Stream.CanSeek;
 
-		public override Int64 Position {
-			get => this.Stream.Position;
+        public override Boolean CanWrite => this.Stream.CanWrite;
 
-			set => this.Stream.Position = value;
-		}
+        public override Int64 Length => this.Stream.Length;
 
-		protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
+        protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
 
-		public override void Flush() => this.Stream.Flush();
+        public override void Flush() => this.Stream.Flush();
 
-		public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Read( buffer, offset, count );
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Read( buffer, offset, count );
 
-		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
-	}
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
+    }
 }

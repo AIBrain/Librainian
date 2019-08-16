@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WindowWrapper.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
+// Project: "Librainian", "WindowWrapper.cs" was last formatted by Protiguous on 2019/08/08 at 6:48 AM.
 
 namespace Librainian.Controls {
 
-	using System;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
+    using System;
+    using System.Windows.Forms;
+    using JetBrains.Annotations;
 
-	public class WindowWrapper : IWin32Window {
+    public class WindowWrapper : IWin32Window {
 
-		public IntPtr Handle { get; }
+        public IntPtr Handle { get; }
 
-		private WindowWrapper( IntPtr handle ) => this.Handle = handle;
+        private WindowWrapper( IntPtr handle ) => this.Handle = handle;
 
-		[NotNull]
-		public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
-	}
-
+        [NotNull]
+        public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UniqueExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
+// Project: "Librainian", "UniqueExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:19 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -48,10 +48,12 @@ namespace Librainian.OperatingSystem.FileSystem {
     public static class UniqueExtensions {
 
         [NotNull]
-        public static Unique ToUnique([NotNull] this String location) {
-            if (String.IsNullOrWhiteSpace(value: location)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(location)); }
+        public static Unique ToUnique( [NotNull] this String location ) {
+            if ( String.IsNullOrWhiteSpace( value: location ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( location ) );
+            }
 
-            return Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+            return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
         }
 
         /// <summary>
@@ -60,13 +62,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="location"></param>
         /// <returns></returns>
         [NotNull]
-        public static Unique ToUnique(this TrimmedString location) => Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+        public static Unique ToUnique( this TrimmedString location ) =>
+            Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
 
         [NotNull]
-        public static Unique ToUnique([NotNull] this Uri location) {
-            if (location == null) { throw new ArgumentNullException(paramName: nameof(location)); }
+        public static Unique ToUnique( [NotNull] this Uri location ) {
+            if ( location == null ) {
+                throw new ArgumentNullException( paramName: nameof( location ) );
+            }
 
-            return Unique.TryCreate(location, out var unique) ? unique : throw new InvalidOperationException($"Invalid location '{location}' given.");
+            return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
         }
     }
 }

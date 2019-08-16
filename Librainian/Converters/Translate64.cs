@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "Translate64.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Translate64.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Translate64.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
+// Project: "Librainian", "Translate64.cs" was last formatted by Protiguous on 2019/08/08 at 6:50 AM.
 
 namespace Librainian.Converters {
 
@@ -45,8 +45,8 @@ namespace Librainian.Converters {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     Struct for combining two <see cref="Int32" /> (or <see cref="UInt32" />) to and from a <see cref="UInt64" /> (or
-    ///     <see cref="Int64" />) as easily as possible. Fast? No idea yet..
+    ///     Struct for combining two <see cref="int" /> (or <see cref="uint" />) to and from a <see cref="ulong" /> (or
+    ///     <see cref="long" />) as easily as possible. Fast? No idea yet..
     /// </summary>
     [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct Translate64 {

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,26 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ChainElement.cs" was last formatted by Protiguous on 2018/07/13 at 1:15 AM.
+// Project: "Librainian", "ChainElement.cs" was last formatted by Protiguous on 2019/08/08 at 8:14 AM.
 
 namespace Librainian.Magic {
 
-	public class ChainElement {
+    public class ChainElement {
 
-		private readonly ChainElement _next;
+        private readonly ChainElement _next;
 
-		protected ChainElement( ChainElement next ) => this._next = next;
+        protected ChainElement( ChainElement next ) => this._next = next;
 
-		protected ChainElement() { }
+        protected ChainElement() { }
 
-		public T As<T>( T defaultValue ) where T : class {
-			if ( this is T ) { return this as T; }
+        public T As<T>( T defaultValue ) where T : class {
+            if ( this is T ) {
+                return this as T;
+            }
 
-			return this._next != null ? this._next.As( defaultValue ) : defaultValue;
-		}
-	}
+            return this._next != null ? this._next.As( defaultValue ) : defaultValue;
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +35,38 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WindowsClock.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
+// Project: "Librainian", "WindowsClock.cs" was last formatted by Protiguous on 2019/08/08 at 8:58 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using OperatingSystem;
-	using System;
+    using System;
+    using OperatingSystem;
 
-	/// <summary>
-	///     Pulled from BenchmarkDotNet.Horology
-	/// </summary>
-	public static class WindowsClock {
+    /// <summary>
+    ///     Pulled from BenchmarkDotNet.Horology
+    /// </summary>
+    public static class WindowsClock {
 
-		public static Int64 Frequency { get; }
+        public static Int64 Frequency { get; }
 
-		public static Boolean IsAvailable { get; }
+        public static Boolean IsAvailable { get; }
 
-		static WindowsClock() {
-			try {
-				IsAvailable = NativeMethods.QueryPerformanceFrequency(out var frequency) && NativeMethods.QueryPerformanceCounter(out _);
-				Frequency = frequency;
-			}
-			catch (Exception) { IsAvailable = false; }
-		}
+        static WindowsClock() {
+            try {
+                IsAvailable = NativeMethods.QueryPerformanceFrequency( out var frequency ) && NativeMethods.QueryPerformanceCounter( out _ );
+                Frequency = frequency;
+            }
+            catch ( Exception ) {
+                IsAvailable = false;
+            }
+        }
 
-		public static Int64 GetTimestamp() {
-			NativeMethods.QueryPerformanceCounter(out var value);
+        public static Int64 GetTimestamp() {
+            NativeMethods.QueryPerformanceCounter( out var value );
 
-			return value;
-		}
-	}
+            return value;
+        }
+    }
 }

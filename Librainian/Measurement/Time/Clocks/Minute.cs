@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,70 +35,70 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Minute.cs" was last formatted by Protiguous on 2018/11/03 at 7:39 PM.
+// Project: "Librainian", "Minute.cs" was last formatted by Protiguous on 2019/08/08 at 8:56 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="Minute" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public struct Minute : IClockPart {
+    /// <summary>A simple struct for a <see cref="Minute" />.</summary>
+    [JsonObject]
+    [Immutable]
+    public struct Minute : IClockPart {
 
-		public const Int32 MaxValue = 59;
+        public const Int32 MaxValue = 59;
 
-		public const Int32 MinValue = 0;
+        public const Int32 MinValue = 0;
 
-		[JsonProperty]
-		public readonly SByte Value;
+        [JsonProperty]
+        public readonly SByte Value;
 
-		public static Minute Maximum { get; } = new Minute( MaxValue );
+        public static Minute Maximum { get; } = new Minute( MaxValue );
 
-		public static Minute Minimum { get; } = new Minute( MinValue );
+        public static Minute Minimum { get; } = new Minute( MinValue );
 
-		public Minute( SByte value ) {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
-			}
+        public Minute( SByte value ) {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+            }
 
-			this.Value = value;
-		}
+            this.Value = value;
+        }
 
-		public static explicit operator Byte( Minute value ) => ( Byte )value.Value;
+        public static explicit operator Byte( Minute value ) => ( Byte ) value.Value;
 
-		public static implicit operator Minute( SByte value ) => new Minute( value );
+        public static implicit operator Minute( SByte value ) => new Minute( value );
 
-		public static implicit operator SByte( Minute value ) => value.Value;
+        public static implicit operator SByte( Minute value ) => value.Value;
 
-		/// <summary>Provide the next minute.</summary>
-		public Minute Next( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value + 1;
+        /// <summary>Provide the next minute.</summary>
+        public Minute Next( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value + 1;
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				tocked = true;
-			}
+            if ( next > Maximum ) {
+                next = Minimum;
+                tocked = true;
+            }
 
-			return ( SByte )next;
-		}
+            return ( SByte ) next;
+        }
 
-		/// <summary>Provide the previous minute.</summary>
-		public Minute Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value - 1;
+        /// <summary>Provide the previous minute.</summary>
+        public Minute Previous( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value - 1;
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				tocked = true;
-			}
+            if ( next < Minimum ) {
+                next = Maximum;
+                tocked = true;
+            }
 
-			return ( SByte )next;
-		}
-	}
+            return ( SByte ) next;
+        }
+    }
 }

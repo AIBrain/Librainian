@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,73 +35,78 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "EvalProvider.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
+// Project: "Librainian", "EvalProvider.cs" was last formatted by Protiguous on 2019/08/08 at 7:13 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.CodeDom.Compiler;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
-	using JetBrains.Annotations;
-	using Microsoft.CSharp;
+    using System;
+    using System.CodeDom.Compiler;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using JetBrains.Annotations;
+    using Microsoft.CSharp;
 
-	/// <summary>
-	///     <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/" />.</para>
-	/// </summary>
-	public static class EvalProvider {
+    /// <summary>
+    ///     <para>Pulled from <see cref="http://www.ckode.dk/programming/eval-in-c-yes-its-possible/" />.</para>
+    /// </summary>
+    public static class EvalProvider {
 
-		[NotNull]
-		private static String GetUsing( [NotNull] IEnumerable<String> usingStatements ) {
-			var result = new StringBuilder();
+        [NotNull]
+        private static String GetUsing( [NotNull] IEnumerable<String> usingStatements ) {
+            var result = new StringBuilder();
 
-			foreach ( var usingStatement in usingStatements ) { result.AppendLine( $"using {usingStatement};" ); }
+            foreach ( var usingStatement in usingStatements ) {
+                result.AppendLine( $"using {usingStatement};" );
+            }
 
-			return result.ToString();
-		}
+            return result.ToString();
+        }
 
-		/// <summary>
-		///     Example:
-		///     <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
-		///     <para>Console.WriteLine(HelloWorld(42));</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="code">           </param>
-		/// <param name="usingStatements"></param>
-		/// <param name="assemblies">     </param>
-		/// <returns></returns>
-		[NotNull]
-		public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, [CanBeNull] String[] usingStatements = null, [CanBeNull] String[] assemblies = null ) {
-			var returnType = typeof( TResult );
-			var inputType = typeof( T );
+        /// <summary>
+        ///     Example:
+        ///     <para>var HelloWorld = EvalProvider.CreateEvalMethod&lt;Int32, string&gt;(@"return ""Hello world "" + arg;");</para>
+        ///     <para>Console.WriteLine(HelloWorld(42));</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="code">           </param>
+        /// <param name="usingStatements"></param>
+        /// <param name="assemblies">     </param>
+        /// <returns></returns>
+        [NotNull]
+        public static Func<T, TResult> CreateEvalMethod<T, TResult>( String code, [CanBeNull] String[] usingStatements = null, [CanBeNull] String[] assemblies = null ) {
+            var returnType = typeof( TResult );
+            var inputType = typeof( T );
 
-			var includeUsings = new HashSet<String>( new[] {
-				"System"
-			} ) {
-				returnType.Namespace,
-				inputType.Namespace
-			};
+            var includeUsings = new HashSet<String>( new[] {
+                "System"
+            } ) {
+                returnType.Namespace, inputType.Namespace
+            };
 
-			if ( usingStatements != null ) {
-				foreach ( var usingStatement in usingStatements ) { includeUsings.Add( usingStatement ); }
-			}
+            if ( usingStatements != null ) {
+                foreach ( var usingStatement in usingStatements ) {
+                    includeUsings.Add( usingStatement );
+                }
+            }
 
-			using ( var compiler = new CSharpCodeProvider() ) {
-				var includeAssemblies = new HashSet<String>( new[] {
-					"system.dll"
-				} );
+            using ( var compiler = new CSharpCodeProvider() ) {
+                var includeAssemblies = new HashSet<String>( new[] {
+                    "system.dll"
+                } );
 
-				if ( assemblies != null ) {
-					foreach ( var assembly in assemblies ) { includeAssemblies.Add( assembly ); }
-				}
+                if ( assemblies != null ) {
+                    foreach ( var assembly in assemblies ) {
+                        includeAssemblies.Add( assembly );
+                    }
+                }
 
-				var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
+                var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
 
-				var source = $@"
+                var source = $@"
 {GetUsing( includeUsings )}
 namespace {name}
 {{
@@ -114,17 +119,17 @@ namespace {name}
 	}}
 }}";
 
-				var parameters = new CompilerParameters( includeAssemblies.ToArray() ) {
-					GenerateInMemory = true
-				};
+                var parameters = new CompilerParameters( includeAssemblies.ToArray() ) {
+                    GenerateInMemory = true
+                };
 
-				var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
-				var compiledAssembly = compilerResult.CompiledAssembly;
-				var type = compiledAssembly.GetType( $"{name}.EvalClass" );
-				var method = type.GetMethod( "Eval" );
+                var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
+                var compiledAssembly = compilerResult.CompiledAssembly;
+                var type = compiledAssembly.GetType( $"{name}.EvalClass" );
+                var method = type.GetMethod( "Eval" );
 
-				return ( Func<T, TResult> ) Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
-			}
-		}
-	}
+                return ( Func<T, TResult> ) Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
+            }
+        }
+    }
 }

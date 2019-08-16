@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,40 +35,40 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Centimeters.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "Centimeters.cs" was last formatted by Protiguous on 2019/08/08 at 8:45 AM.
 
 namespace Librainian.Measurement.Length {
 
-	using System;
-	using Newtonsoft.Json;
-	using Rationals;
+    using System;
+    using Newtonsoft.Json;
+    using Rationals;
 
-	[JsonObject]
-	public struct Centimeters {
+    [JsonObject]
+    public struct Centimeters {
 
-		/// <summary>One <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters One = new Centimeters( centimeters: 1 );
+        /// <summary>One <see cref="Centimeters" /> .</summary>
+        public static readonly Centimeters One = new Centimeters( centimeters: 1 );
 
-		/// <summary>Two <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters Two = new Centimeters( centimeters: 2 );
+        /// <summary>Two <see cref="Centimeters" /> .</summary>
+        public static readonly Centimeters Two = new Centimeters( centimeters: 2 );
 
-		[JsonProperty]
-		public readonly Rational Value;
+        [JsonProperty]
+        public readonly Rational Value;
 
-		public Centimeters( Decimal centimeters ) => this.Value = ( Rational ) centimeters;
+        public Centimeters( Decimal centimeters ) => this.Value = ( Rational ) centimeters;
 
-		//public Centimeters( Millimeters millimeters ) {
-		//    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Centimeters( Millimeters millimeters ) {
+        //    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		//public Centimeters( Meters meters ) {
-		//    var val = meters.Value / Extensions.CentimetersinSingleMeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Centimeters( Meters meters ) {
+        //    var val = meters.Value / Extensions.CentimetersinSingleMeter;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+    }
 }

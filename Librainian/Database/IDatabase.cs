@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,82 +35,82 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
+// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2019/08/08 at 6:55 AM.
 
 namespace Librainian.Database {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Data;
-	using System.Data.SqlClient;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
-	public interface IDatabase {
+    public interface IDatabase {
 
-		/// <summary>
-		///     Opens and then closes a <see cref="SqlConnection" />.
-		/// </summary>
-		/// <returns></returns>
-		Boolean ExecuteNonQuery( String query, params SqlParameter[] parameters );
+        /// <summary>
+        ///     Opens and then closes a <see cref="SqlConnection" />.
+        /// </summary>
+        /// <returns></returns>
+        Boolean ExecuteNonQuery( String query, params SqlParameter[] parameters );
 
-		Boolean ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters );
+        Boolean ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters );
 
-		Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
+        Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		/// <summary>
-		///     Returns a <see cref="DataTable" />
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="table">      </param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		Boolean ExecuteReader( [NotNull] String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
+        /// <summary>
+        ///     Returns a <see cref="DataTable" />
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="table">      </param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        Boolean ExecuteReader( [NotNull] String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
 
-		/// <summary>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		Task<SqlDataReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters );
+        /// <summary>
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        Task<SqlDataReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		/// <summary>
-		///     Returns a <see cref="DataTable" />
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		Task<DataTable> ExecuteReaderAsyncDataTable( String query, CommandType commandType, params SqlParameter[] parameters );
+        /// <summary>
+        ///     Returns a <see cref="DataTable" />
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        Task<DataTable> ExecuteReaderAsyncDataTable( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		TResult ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        /// <summary>
+        ///     <para>Returns the first column of the first row.</para>
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        TResult ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        /// <summary>
+        ///     <para>Returns the first column of the first row.</para>
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
-		/// <summary>
-		///     Returns a <see cref="IEnumerable{T}" />
-		/// </summary>
-		/// <param name="query">     </param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, params SqlParameter[] parameters );
-	}
+        /// <summary>
+        ///     Returns a <see cref="IEnumerable{T}" />
+        /// </summary>
+        /// <param name="query">     </param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, params SqlParameter[] parameters );
+    }
 }

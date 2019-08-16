@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WWWManager.cs" was last formatted by Protiguous on 2018/07/10 at 9:12 PM.
+// Project: "Librainian", "WWWManager.cs" was last formatted by Protiguous on 2019/08/08 at 8:04 AM.
 
 namespace Librainian.Internet {
 
@@ -46,30 +46,30 @@ namespace Librainian.Internet {
     using System.Threading;
     using System.Threading.Tasks.Dataflow;
 
-    [Obsolete("Needs rewriting")]
+    [Obsolete( "Needs rewriting" )]
     public class WwwManager {
-
-        public static readonly ThreadLocal<WebClient> WebClients = new ThreadLocal<WebClient>(() => {
-            var webClient = new WebClient();
-            webClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15");
-
-            return webClient;
-        }, true);
 
         public BufferBlock<Tuple<Uri, String>> DownloadedStrings { get; }
 
         public ActionBlock<String> StringsToDownload { get; }
 
+        public static readonly ThreadLocal<WebClient> WebClients = new ThreadLocal<WebClient>( () => {
+            var webClient = new WebClient();
+            webClient.Headers.Add( "user-agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15" );
+
+            return webClient;
+        }, true );
+
         //public void
         public WwwManager() {
-            this.StringsToDownload = new ActionBlock<String>(StartDownloadingString);
+            this.StringsToDownload = new ActionBlock<String>( StartDownloadingString );
             this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
         }
 
-        private static void StartDownloadingString(String address) {
-            if (Uri.TryCreate(address, UriKind.Absolute, out var uri)) {
+        private static void StartDownloadingString( String address ) {
+            if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
                 var webclient = WebClients.Value;
-                var stringTaskAsync = webclient.DownloadStringTaskAsync(uri);
+                var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
 
                 //stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple<Uri, String>( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
             }

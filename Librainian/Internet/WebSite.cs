@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,47 +35,47 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WebSite.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
+// Project: "Librainian", "WebSite.cs" was last formatted by Protiguous on 2019/08/08 at 8:03 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Net;
-	using Newtonsoft.Json;
+    using System;
+    using System.Net;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public class WebSite {
+    [JsonObject]
+    public class WebSite {
 
-		[JsonProperty]
-		public String Document { get; set; }
+        [JsonProperty]
+        public String Document { get; set; }
 
-		/// <summary>URI of the website.</summary>
-		[JsonProperty]
-		public Uri Location { get; set; }
+        /// <summary>URI of the website.</summary>
+        [JsonProperty]
+        public Uri Location { get; set; }
 
-		/// <summary>The <see cref="HttpWebRequest" />.</summary>
-		public HttpWebRequest Request { get; set; }
+        /// <summary>The <see cref="HttpWebRequest" />.</summary>
+        public HttpWebRequest Request { get; set; }
 
-		/// <summary>A count of the requests to scrape this website.</summary>
-		[JsonProperty]
-		public UInt64 RequestCount { get; set; }
+        /// <summary>A count of the requests to scrape this website.</summary>
+        [JsonProperty]
+        public UInt64 RequestCount { get; set; }
 
-		/// <summary>A count of the responses for this url.</summary>
-		[JsonProperty]
-		public UInt64 ResponseCount { get; set; }
+        /// <summary>A count of the responses for this url.</summary>
+        [JsonProperty]
+        public UInt64 ResponseCount { get; set; }
 
-		/// <summary>When this website was added.</summary>
-		[JsonProperty]
-		public DateTime WhenAddedToQueue { get; set; }
+        /// <summary>When this website was added.</summary>
+        [JsonProperty]
+        public DateTime WhenAddedToQueue { get; set; }
 
-		/// <summary>When the last webrequest was started.</summary>
-		[JsonProperty]
-		public DateTime WhenRequestStarted { get; set; }
+        /// <summary>When the last webrequest was started.</summary>
+        [JsonProperty]
+        public DateTime WhenRequestStarted { get; set; }
 
-		/// <summary>When the last webrequest got a response.</summary>
-		[JsonProperty]
-		public DateTime WhenResponseCame { get; set; }
-	}
+        /// <summary>When the last webrequest got a response.</summary>
+        [JsonProperty]
+        public DateTime WhenResponseCame { get; set; }
+    }
 }

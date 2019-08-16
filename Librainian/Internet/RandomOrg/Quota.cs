@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Quota.cs" was last formatted by Protiguous on 2018/07/13 at 1:40 AM.
+// Project: "Librainian", "Quota.cs" was last formatted by Protiguous on 2019/08/08 at 7:58 AM.
 
 namespace Librainian.Internet.RandomOrg {
 
-	using System;
-	using System.Net;
-	using Librainian.Internet;
+    using System;
+    using System.Net;
 
-	public static class Quota {
+    public static class Quota {
 
-		private const String Unexpected = "Error: unexpected data.";
+        private const String Unexpected = "Error: unexpected data.";
 
-		public const Int64 Error = Int64.MinValue;
+        public const Int64 Error = Int64.MinValue;
 
-		public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
+        public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
 
-		public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
-	}
+        public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
+    }
 }

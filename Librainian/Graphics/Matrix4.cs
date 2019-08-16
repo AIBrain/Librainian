@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,74 +35,76 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Matrix4.cs" was last formatted by Protiguous on 2018/07/10 at 9:08 PM.
+// Project: "Librainian", "Matrix4.cs" was last formatted by Protiguous on 2019/08/08 at 7:48 AM.
 
 namespace Librainian.Graphics {
 
-	using System;
-	using System.Windows.Media.Media3D;
-	using JetBrains.Annotations;
+    using System;
+    using System.Windows.Media.Media3D;
+    using JetBrains.Annotations;
 
-	internal class Matrix4 : Matrix {
+    internal class Matrix4 : Matrix {
 
-		public static Matrix4 I = NewI();
+        public static Matrix4 I = NewI();
 
-		public Matrix4() : base( 4, 4 ) { }
+        public Matrix4() : base( 4, 4 ) { }
 
-		public Matrix4( [NotNull] Single[ , ] matrix ) : base( matrix ) {
-			if ( this.Rows != 4 || this.Cols != 4 ) { throw new ArgumentException(); }
-		}
+        public Matrix4( [NotNull] Single[ , ] matrix ) : base( matrix ) {
+            if ( this.Rows != 4 || this.Cols != 4 ) {
+                throw new ArgumentException();
+            }
+        }
 
-		[NotNull]
-		public static Matrix4 NewI() =>
-			new Matrix4( new[ , ] {
-				{
-					1.0f, 0.0f, 0.0f, 0.0f
-				}, {
-					0.0f, 1.0f, 0.0f, 0.0f
-				}, {
-					0.0f, 0.0f, 1.0f, 0.0f
-				}, {
-					0.0f, 0.0f, 0.0f, 1.0f
-				}
-			} );
+        [NotNull]
+        public static Matrix4 NewI() =>
+            new Matrix4( new[ , ] {
+                {
+                    1.0f, 0.0f, 0.0f, 0.0f
+                }, {
+                    0.0f, 1.0f, 0.0f, 0.0f
+                }, {
+                    0.0f, 0.0f, 1.0f, 0.0f
+                }, {
+                    0.0f, 0.0f, 0.0f, 1.0f
+                }
+            } );
 
-		public static Vector3D operator *( [NotNull] Matrix4 matrix4, Vector3D v ) {
-			var m = matrix4.matrix;
-			var w = (m[ 3, 0 ] * v.X) + (m[ 3, 1 ] * v.Y) + (m[ 3, 2 ] * v.Z) + m[ 3, 3 ];
+        public static Vector3D operator *( [NotNull] Matrix4 matrix4, Vector3D v ) {
+            var m = matrix4.matrix;
+            var w = (m[ 3, 0 ] * v.X) + (m[ 3, 1 ] * v.Y) + (m[ 3, 2 ] * v.Z) + m[ 3, 3 ];
 
-			return new Vector3D( ( (m[ 0, 0 ] * v.X) + (m[ 0, 1 ] * v.Y) + (m[ 0, 2 ] * v.Z) + m[ 0, 3 ] ) / w, ( (m[ 1, 0 ] * v.X) + (m[ 1, 1 ] * v.Y) + (m[ 1, 2 ] * v.Z) + m[ 1, 3 ] ) / w,
-				( (m[ 2, 0 ] * v.X) + (m[ 2, 1 ] * v.Y) + (m[ 2, 2 ] * v.Z) + m[ 2, 3 ] ) / w );
-		}
+            return new Vector3D( ( (m[ 0, 0 ] * v.X) + (m[ 0, 1 ] * v.Y) + (m[ 0, 2 ] * v.Z) + m[ 0, 3 ] ) / w,
+                ( (m[ 1, 0 ] * v.X) + (m[ 1, 1 ] * v.Y) + (m[ 1, 2 ] * v.Z) + m[ 1, 3 ] ) / w, ( (m[ 2, 0 ] * v.X) + (m[ 2, 1 ] * v.Y) + (m[ 2, 2 ] * v.Z) + m[ 2, 3 ] ) / w );
+        }
 
-		[NotNull]
-		public static Matrix4 operator *( [NotNull] Matrix4 mat1, [NotNull] Matrix4 mat2 ) {
-			var m1 = mat1.matrix;
-			var m2 = mat2.matrix;
-			var m3 = new Single[ 4, 4 ];
-			m3[ 0, 0 ] = (m1[ 0, 0 ] * m2[ 0, 0 ]) + (m1[ 0, 1 ] * m2[ 1, 0 ]) + (m1[ 0, 2 ] * m2[ 2, 0 ]) + (m1[ 0, 3 ] * m2[ 3, 0 ]);
-			m3[ 0, 1 ] = (m1[ 0, 0 ] * m2[ 0, 1 ]) + (m1[ 0, 1 ] * m2[ 1, 1 ]) + (m1[ 0, 2 ] * m2[ 2, 1 ]) + (m1[ 0, 3 ] * m2[ 3, 1 ]);
-			m3[ 0, 2 ] = (m1[ 0, 0 ] * m2[ 0, 2 ]) + (m1[ 0, 1 ] * m2[ 1, 2 ]) + (m1[ 0, 2 ] * m2[ 2, 2 ]) + (m1[ 0, 3 ] * m2[ 3, 2 ]);
-			m3[ 0, 3 ] = (m1[ 0, 0 ] * m2[ 0, 3 ]) + (m1[ 0, 1 ] * m2[ 1, 3 ]) + (m1[ 0, 2 ] * m2[ 2, 3 ]) + (m1[ 0, 3 ] * m2[ 3, 3 ]);
-			m3[ 1, 0 ] = (m1[ 1, 0 ] * m2[ 0, 0 ]) + (m1[ 1, 1 ] * m2[ 1, 0 ]) + (m1[ 1, 2 ] * m2[ 2, 0 ]) + (m1[ 1, 3 ] * m2[ 3, 0 ]);
-			m3[ 1, 1 ] = (m1[ 1, 0 ] * m2[ 0, 1 ]) + (m1[ 1, 1 ] * m2[ 1, 1 ]) + (m1[ 1, 2 ] * m2[ 2, 1 ]) + (m1[ 1, 3 ] * m2[ 3, 1 ]);
-			m3[ 1, 2 ] = (m1[ 1, 0 ] * m2[ 0, 2 ]) + (m1[ 1, 1 ] * m2[ 1, 2 ]) + (m1[ 1, 2 ] * m2[ 2, 2 ]) + (m1[ 1, 3 ] * m2[ 3, 2 ]);
-			m3[ 1, 3 ] = (m1[ 1, 0 ] * m2[ 0, 3 ]) + (m1[ 1, 1 ] * m2[ 1, 3 ]) + (m1[ 1, 2 ] * m2[ 2, 3 ]) + (m1[ 1, 3 ] * m2[ 3, 3 ]);
-			m3[ 2, 0 ] = (m1[ 2, 0 ] * m2[ 0, 0 ]) + (m1[ 2, 1 ] * m2[ 1, 0 ]) + (m1[ 2, 2 ] * m2[ 2, 0 ]) + (m1[ 2, 3 ] * m2[ 3, 0 ]);
-			m3[ 2, 1 ] = (m1[ 2, 0 ] * m2[ 0, 1 ]) + (m1[ 2, 1 ] * m2[ 1, 1 ]) + (m1[ 2, 2 ] * m2[ 2, 1 ]) + (m1[ 2, 3 ] * m2[ 3, 1 ]);
-			m3[ 2, 2 ] = (m1[ 2, 0 ] * m2[ 0, 2 ]) + (m1[ 2, 1 ] * m2[ 1, 2 ]) + (m1[ 2, 2 ] * m2[ 2, 2 ]) + (m1[ 2, 3 ] * m2[ 3, 2 ]);
-			m3[ 2, 3 ] = (m1[ 2, 0 ] * m2[ 0, 3 ]) + (m1[ 2, 1 ] * m2[ 1, 3 ]) + (m1[ 2, 2 ] * m2[ 2, 3 ]) + (m1[ 2, 3 ] * m2[ 3, 3 ]);
-			m3[ 3, 0 ] = (m1[ 3, 0 ] * m2[ 0, 0 ]) + (m1[ 3, 1 ] * m2[ 1, 0 ]) + (m1[ 3, 2 ] * m2[ 2, 0 ]) + (m1[ 3, 3 ] * m2[ 3, 0 ]);
-			m3[ 3, 1 ] = (m1[ 3, 0 ] * m2[ 0, 1 ]) + (m1[ 3, 1 ] * m2[ 1, 1 ]) + (m1[ 3, 2 ] * m2[ 2, 1 ]) + (m1[ 3, 3 ] * m2[ 3, 1 ]);
-			m3[ 3, 2 ] = (m1[ 3, 0 ] * m2[ 0, 2 ]) + (m1[ 3, 1 ] * m2[ 1, 2 ]) + (m1[ 3, 2 ] * m2[ 2, 2 ]) + (m1[ 3, 3 ] * m2[ 3, 2 ]);
-			m3[ 3, 3 ] = (m1[ 3, 0 ] * m2[ 0, 3 ]) + (m1[ 3, 1 ] * m2[ 1, 3 ]) + (m1[ 3, 2 ] * m2[ 2, 3 ]) + (m1[ 3, 3 ] * m2[ 3, 3 ]);
+        [NotNull]
+        public static Matrix4 operator *( [NotNull] Matrix4 mat1, [NotNull] Matrix4 mat2 ) {
+            var m1 = mat1.matrix;
+            var m2 = mat2.matrix;
+            var m3 = new Single[ 4, 4 ];
+            m3[ 0, 0 ] = (m1[ 0, 0 ] * m2[ 0, 0 ]) + (m1[ 0, 1 ] * m2[ 1, 0 ]) + (m1[ 0, 2 ] * m2[ 2, 0 ]) + (m1[ 0, 3 ] * m2[ 3, 0 ]);
+            m3[ 0, 1 ] = (m1[ 0, 0 ] * m2[ 0, 1 ]) + (m1[ 0, 1 ] * m2[ 1, 1 ]) + (m1[ 0, 2 ] * m2[ 2, 1 ]) + (m1[ 0, 3 ] * m2[ 3, 1 ]);
+            m3[ 0, 2 ] = (m1[ 0, 0 ] * m2[ 0, 2 ]) + (m1[ 0, 1 ] * m2[ 1, 2 ]) + (m1[ 0, 2 ] * m2[ 2, 2 ]) + (m1[ 0, 3 ] * m2[ 3, 2 ]);
+            m3[ 0, 3 ] = (m1[ 0, 0 ] * m2[ 0, 3 ]) + (m1[ 0, 1 ] * m2[ 1, 3 ]) + (m1[ 0, 2 ] * m2[ 2, 3 ]) + (m1[ 0, 3 ] * m2[ 3, 3 ]);
+            m3[ 1, 0 ] = (m1[ 1, 0 ] * m2[ 0, 0 ]) + (m1[ 1, 1 ] * m2[ 1, 0 ]) + (m1[ 1, 2 ] * m2[ 2, 0 ]) + (m1[ 1, 3 ] * m2[ 3, 0 ]);
+            m3[ 1, 1 ] = (m1[ 1, 0 ] * m2[ 0, 1 ]) + (m1[ 1, 1 ] * m2[ 1, 1 ]) + (m1[ 1, 2 ] * m2[ 2, 1 ]) + (m1[ 1, 3 ] * m2[ 3, 1 ]);
+            m3[ 1, 2 ] = (m1[ 1, 0 ] * m2[ 0, 2 ]) + (m1[ 1, 1 ] * m2[ 1, 2 ]) + (m1[ 1, 2 ] * m2[ 2, 2 ]) + (m1[ 1, 3 ] * m2[ 3, 2 ]);
+            m3[ 1, 3 ] = (m1[ 1, 0 ] * m2[ 0, 3 ]) + (m1[ 1, 1 ] * m2[ 1, 3 ]) + (m1[ 1, 2 ] * m2[ 2, 3 ]) + (m1[ 1, 3 ] * m2[ 3, 3 ]);
+            m3[ 2, 0 ] = (m1[ 2, 0 ] * m2[ 0, 0 ]) + (m1[ 2, 1 ] * m2[ 1, 0 ]) + (m1[ 2, 2 ] * m2[ 2, 0 ]) + (m1[ 2, 3 ] * m2[ 3, 0 ]);
+            m3[ 2, 1 ] = (m1[ 2, 0 ] * m2[ 0, 1 ]) + (m1[ 2, 1 ] * m2[ 1, 1 ]) + (m1[ 2, 2 ] * m2[ 2, 1 ]) + (m1[ 2, 3 ] * m2[ 3, 1 ]);
+            m3[ 2, 2 ] = (m1[ 2, 0 ] * m2[ 0, 2 ]) + (m1[ 2, 1 ] * m2[ 1, 2 ]) + (m1[ 2, 2 ] * m2[ 2, 2 ]) + (m1[ 2, 3 ] * m2[ 3, 2 ]);
+            m3[ 2, 3 ] = (m1[ 2, 0 ] * m2[ 0, 3 ]) + (m1[ 2, 1 ] * m2[ 1, 3 ]) + (m1[ 2, 2 ] * m2[ 2, 3 ]) + (m1[ 2, 3 ] * m2[ 3, 3 ]);
+            m3[ 3, 0 ] = (m1[ 3, 0 ] * m2[ 0, 0 ]) + (m1[ 3, 1 ] * m2[ 1, 0 ]) + (m1[ 3, 2 ] * m2[ 2, 0 ]) + (m1[ 3, 3 ] * m2[ 3, 0 ]);
+            m3[ 3, 1 ] = (m1[ 3, 0 ] * m2[ 0, 1 ]) + (m1[ 3, 1 ] * m2[ 1, 1 ]) + (m1[ 3, 2 ] * m2[ 2, 1 ]) + (m1[ 3, 3 ] * m2[ 3, 1 ]);
+            m3[ 3, 2 ] = (m1[ 3, 0 ] * m2[ 0, 2 ]) + (m1[ 3, 1 ] * m2[ 1, 2 ]) + (m1[ 3, 2 ] * m2[ 2, 2 ]) + (m1[ 3, 3 ] * m2[ 3, 2 ]);
+            m3[ 3, 3 ] = (m1[ 3, 0 ] * m2[ 0, 3 ]) + (m1[ 3, 1 ] * m2[ 1, 3 ]) + (m1[ 3, 2 ] * m2[ 2, 3 ]) + (m1[ 3, 3 ] * m2[ 3, 3 ]);
 
-			return new Matrix4( m3 );
-		}
+            return new Matrix4( m3 );
+        }
 
-		[NotNull]
-		public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
-	}
+        [NotNull]
+        public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
+    }
 }

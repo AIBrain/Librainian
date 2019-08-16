@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,59 +35,61 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Captcha.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "Captcha.cs" was last formatted by Protiguous on 2019/08/08 at 7:51 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Collections.Concurrent;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Collections.Concurrent;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public sealed class Captcha {
+    [JsonObject]
+    public sealed class Captcha {
 
-		[JsonProperty]
-		private CaptchaStatus _status;
+        [JsonProperty]
+        private CaptchaStatus _status;
 
-		[CanBeNull]
-		[JsonProperty]
-		public String ChallengeElementID { get; set; }
+        [CanBeNull]
+        [JsonProperty]
+        public String ChallengeElementID { get; set; }
 
-		[CanBeNull]
-		[JsonProperty]
-		public String FormID { get; set; }
+        [CanBeNull]
+        [JsonProperty]
+        public String FormID { get; set; }
 
-		[CanBeNull]
-		[JsonProperty]
-		public Uri ImageUri { get; set; }
+        [CanBeNull]
+        [JsonProperty]
+        public Uri ImageUri { get; set; }
 
-		[CanBeNull]
-		[JsonProperty]
-		public String ResponseElementID { get; set; }
+        [CanBeNull]
+        [JsonProperty]
+        public String ResponseElementID { get; set; }
 
-		public CaptchaStatus Status {
-			get => this._status;
+        public CaptchaStatus Status {
+            get => this._status;
 
-			set {
-				if ( !Equals( this._status, value ) ) { this.StatusHistory.TryAdd( DateTime.Now, value ); }
+            set {
+                if ( !Equals( this._status, value ) ) {
+                    this.StatusHistory.TryAdd( DateTime.Now, value );
+                }
 
-				this._status = value;
-			}
-		}
+                this._status = value;
+            }
+        }
 
-		[NotNull]
-		[JsonProperty]
-		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new ConcurrentDictionary<DateTime, CaptchaStatus>();
+        [NotNull]
+        [JsonProperty]
+        public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new ConcurrentDictionary<DateTime, CaptchaStatus>();
 
-		[CanBeNull]
-		[JsonProperty]
-		public String SubmitID { get; set; }
+        [CanBeNull]
+        [JsonProperty]
+        public String SubmitID { get; set; }
 
-		[CanBeNull]
-		[JsonProperty]
-		public Uri Uri { get; set; }
-	}
+        [CanBeNull]
+        [JsonProperty]
+        public Uri Uri { get; set; }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,126 +35,139 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Statistically.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "Statistically.cs" was last formatted by Protiguous on 2019/08/08 at 8:31 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using JetBrains.Annotations;
-	using Logging;
-	using Newtonsoft.Json;
+    using System;
+    using JetBrains.Annotations;
+    using Logging;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>Ups: Probability between 0.0 and 100.0%</para>
-	///     <para>Downs: Probability between 0.0 and 100.0%</para>
-	/// </summary>
-	/// <remarks>Not thread safe.</remarks>
-	[JsonObject]
-	public class Statistically {
+    /// <summary>
+    ///     <para>Ups: Probability between 0.0 and 100.0%</para>
+    ///     <para>Downs: Probability between 0.0 and 100.0%</para>
+    /// </summary>
+    /// <remarks>Not thread safe.</remarks>
+    [JsonObject]
+    public class Statistically {
 
-		[JsonProperty]
-		public Double Downs { get; private set; }
+        [JsonProperty]
+        public Double Downs { get; private set; }
 
-		public Boolean IsDowner => this.Downs > this.Ups;
+        public Boolean IsDowner => this.Downs > this.Ups;
 
-		public Boolean IsProtiguous => this.IsUpper && !this.Downs.Near( 0 ) && !this.Ups.Near( 0 );
+        public Boolean IsProtiguous => this.IsUpper && !this.Downs.Near( 0 ) && !this.Ups.Near( 0 );
 
-		public Boolean IsUpper => this.Ups > this.Downs;
+        public Boolean IsUpper => this.Ups > this.Downs;
 
-		[JsonProperty]
-		public Double Total { get; private set; }
+        [JsonProperty]
+        public Double Total { get; private set; }
 
-		[JsonProperty]
-		public Double Ups { get; private set; }
+        [JsonProperty]
+        public Double Ups { get; private set; }
 
-		public static readonly Statistically Zero = new Statistically( ups: 0, downs: 0 );
+        public static readonly Statistically Zero = new Statistically( ups: 0, downs: 0 );
 
-		public static Statistically Undecided = new Statistically( 0.5, 0.5 );
+        public static Statistically Undecided = new Statistically( 0.5, 0.5 );
 
-		//public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
-		public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
+        //public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
+        public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
 
-		[NotNull]
-		public static Statistically Combine( [NotNull] Statistically value1, [NotNull] Statistically value2 ) => new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
+        [NotNull]
+        public static Statistically Combine( [NotNull] Statistically value1, [NotNull] Statistically value2 ) =>
+            new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
 
-		public static void Reset( [NotNull] Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
-			statistically.Ups = 0d;
-			statistically.Downs = 0d;
-			statistically.Total = 0d;
-			statistically.IncrementUps( newUps );
-			statistically.IncrementDowns( newDowns );
-		}
+        public static void Reset( [NotNull] Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
+            statistically.Ups = 0d;
+            statistically.Downs = 0d;
+            statistically.Total = 0d;
+            statistically.IncrementUps( newUps );
+            statistically.IncrementDowns( newDowns );
+        }
 
-		public void Add( [NotNull] Statistically other ) {
-			this.IncrementUps( other.Ups );
-			this.IncrementDowns( other.Downs );
-		}
+        public void Add( [NotNull] Statistically other ) {
+            this.IncrementUps( other.Ups );
+            this.IncrementDowns( other.Downs );
+        }
 
-		[NotNull]
-		public Statistically Clone() => new Statistically( ups: this.Ups, downs: this.Downs );
+        [NotNull]
+        public Statistically Clone() => new Statistically( ups: this.Ups, downs: this.Downs );
 
-		public void DecrementDowns( Double byAmount = 1d ) {
-			this.Downs -= byAmount;
-			this.Total -= byAmount;
-		}
+        public void DecrementDowns( Double byAmount = 1d ) {
+            this.Downs -= byAmount;
+            this.Total -= byAmount;
+        }
 
-		public void DecrementDownsIfAny( Double byAmount = 1d ) {
-			if ( this.Downs < byAmount ) { return; }
+        public void DecrementDownsIfAny( Double byAmount = 1d ) {
+            if ( this.Downs < byAmount ) {
+                return;
+            }
 
-			this.Downs -= byAmount;
-			this.Total -= byAmount;
-		}
+            this.Downs -= byAmount;
+            this.Total -= byAmount;
+        }
 
-		public void DecrementUps( Double byAmount = 1d ) {
-			this.Ups -= byAmount;
-			this.Total -= byAmount;
-		}
+        public void DecrementUps( Double byAmount = 1d ) {
+            this.Ups -= byAmount;
+            this.Total -= byAmount;
+        }
 
-		public void DecrementUpsIfAny( Double byAmount = 1d ) {
-			if ( this.Ups < byAmount ) { return; }
+        public void DecrementUpsIfAny( Double byAmount = 1d ) {
+            if ( this.Ups < byAmount ) {
+                return;
+            }
 
-			this.Ups -= byAmount;
-			this.Total -= byAmount;
-		}
+            this.Ups -= byAmount;
+            this.Total -= byAmount;
+        }
 
-		public Double GetDownProbability() {
-			try {
-				var total = this.Total;
+        public Double GetDownProbability() {
+            try {
+                var total = this.Total;
 
-				if ( !total.Near( 0 ) ) { return this.Downs / total; }
-			}
-			catch ( DivideByZeroException exception ) { exception.Log(); }
+                if ( !total.Near( 0 ) ) {
+                    return this.Downs / total;
+                }
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Log();
+            }
 
-			return 0;
-		}
+            return 0;
+        }
 
-		public Double GetUpProbability() {
-			try {
-				var total = this.Total;
+        public Double GetUpProbability() {
+            try {
+                var total = this.Total;
 
-				if ( !total.Near( 0 ) ) { return this.Ups / total; }
-			}
-			catch ( DivideByZeroException exception ) { exception.Log(); }
+                if ( !total.Near( 0 ) ) {
+                    return this.Ups / total;
+                }
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Log();
+            }
 
-			return 0;
-		}
+            return 0;
+        }
 
-		/// <summary>Increments <see cref="Downs" /> and <see cref="Total" /> by <paramref name="byAmount" />.</summary>
-		/// <param name="byAmount"></param>
-		public void IncrementDowns( Double byAmount = 1 ) {
-			this.Downs += byAmount;
-			this.Total += byAmount;
-		}
+        /// <summary>Increments <see cref="Downs" /> and <see cref="Total" /> by <paramref name="byAmount" />.</summary>
+        /// <param name="byAmount"></param>
+        public void IncrementDowns( Double byAmount = 1 ) {
+            this.Downs += byAmount;
+            this.Total += byAmount;
+        }
 
-		/// <summary>Increments <see cref="Ups" /> and <see cref="Total" /> by <paramref name="byAmount" />.</summary>
-		/// <param name="byAmount"></param>
-		public void IncrementUps( Double byAmount = 1 ) {
-			this.Ups += byAmount;
-			this.Total += byAmount;
-		}
+        /// <summary>Increments <see cref="Ups" /> and <see cref="Total" /> by <paramref name="byAmount" />.</summary>
+        /// <param name="byAmount"></param>
+        public void IncrementUps( Double byAmount = 1 ) {
+            this.Ups += byAmount;
+            this.Total += byAmount;
+        }
 
-		public override String ToString() => $"U:{this.Ups:f1} vs D:{this.Downs:f1} out of {this.Total:f1}";
-	}
+        public override String ToString() => $"U:{this.Ups:f1} vs D:{this.Downs:f1} out of {this.Total:f1}";
+    }
 }

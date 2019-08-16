@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,31 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SpeedOfLight.cs" was last formatted by Protiguous on 2018/07/13 at 1:24 AM.
+// Project: "Librainian", "SpeedOfLight.cs" was last formatted by Protiguous on 2019/08/08 at 8:49 AM.
 
 namespace Librainian.Measurement.Physics {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     Speed in meters per second at which light travels in a vacuum.
-	///     http: //wikipedia.org/wiki/Speed_of_light
-	/// </summary>
-	public static class SpeedOfLight {
+    /// <summary>
+    ///     Speed in meters per second at which light travels in a vacuum.
+    ///     http: //wikipedia.org/wiki/Speed_of_light
+    /// </summary>
+    public static class SpeedOfLight {
 
-		/// <summary>http: //www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second</summary>
-		public static Decimal KiloMetersPerSecond { get; } = 299792M;
+        /// <summary>http: //www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second</summary>
+        public static Decimal KiloMetersPerSecond { get; } = 299792M;
 
-		public static Decimal MetersPerSecond { get; } = 299792458M;
+        public static Decimal MetersPerSecond { get; } = 299792458M;
 
-		public static Decimal MetersPerSecondSquared { get; } = 299792458M * 299792458M;
+        public static Decimal MetersPerSecondSquared { get; } = 299792458M * 299792458M;
 
-		/// <summary>http: //www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second</summary>
-		public static Decimal MilesPerSecond { get; } = 186282M;
+        /// <summary>http: //www.wolframalpha.com/input/?i=299%2C792%2C458+metres+per+second</summary>
+        public static Decimal MilesPerSecond { get; } = 186282M;
 
-		/// <summary>http: //wikipedia.org/wiki/Planck_units</summary>
-		public static Decimal PlanckUnits { get; } = 1M;
-	}
+        /// <summary>http: //wikipedia.org/wiki/Planck_units</summary>
+        public static Decimal PlanckUnits { get; } = 1M;
+    }
 }

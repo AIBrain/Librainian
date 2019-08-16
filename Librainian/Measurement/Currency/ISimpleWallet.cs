@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,60 +35,60 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ISimpleWallet.cs" was last formatted by Protiguous on 2018/07/13 at 1:22 AM.
+// Project: "Librainian", "ISimpleWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:42 AM.
 
 namespace Librainian.Measurement.Currency {
 
-	using System;
-	using System.Windows.Forms;
-	using JetBrains.Annotations;
+    using System;
+    using System.Windows.Forms;
+    using JetBrains.Annotations;
 
-	public interface ISimpleWallet {
+    public interface ISimpleWallet {
 
-		Decimal Balance { get; }
+        Decimal Balance { get; }
 
-		[CanBeNull]
-		Label LabelToFlashOnChanges { get; set; }
+        [CanBeNull]
+        Label LabelToFlashOnChanges { get; set; }
 
-		[CanBeNull]
-		Action<Decimal> OnAfterDeposit { get; set; }
+        [CanBeNull]
+        Action<Decimal> OnAfterDeposit { get; set; }
 
-		[CanBeNull]
-		Action<Decimal> OnAfterWithdraw { get; set; }
+        [CanBeNull]
+        Action<Decimal> OnAfterWithdraw { get; set; }
 
-		[CanBeNull]
-		Action<Decimal> OnAnyUpdate { get; set; }
+        [CanBeNull]
+        Action<Decimal> OnAnyUpdate { get; set; }
 
-		[CanBeNull]
-		Action<Decimal> OnBeforeDeposit { get; set; }
+        [CanBeNull]
+        Action<Decimal> OnBeforeDeposit { get; set; }
 
-		[CanBeNull]
-		Action<Decimal> OnBeforeWithdraw { get; set; }
+        [CanBeNull]
+        Action<Decimal> OnBeforeWithdraw { get; set; }
 
-		/// <summary>Add any (+-)amount directly to the balance.</summary>
-		/// <param name="amount"></param>
-		/// <param name="sanitize"></param>
-		/// <returns></returns>
-		Boolean TryAdd( Decimal amount, Boolean sanitize = true );
+        /// <summary>Add any (+-)amount directly to the balance.</summary>
+        /// <param name="amount"></param>
+        /// <param name="sanitize"></param>
+        /// <returns></returns>
+        Boolean TryAdd( Decimal amount, Boolean sanitize = true );
 
-		Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true );
+        Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true );
 
-		/// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
-		/// <param name="amount"></param>
-		/// <param name="sanitize"></param>
-		/// <returns></returns>
-		Boolean TryDeposit( Decimal amount, Boolean sanitize = true );
+        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
+        /// <param name="amount"></param>
+        /// <param name="sanitize"></param>
+        /// <returns></returns>
+        Boolean TryDeposit( Decimal amount, Boolean sanitize = true );
 
-		Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true );
+        Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true );
 
-		Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true );
+        Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true );
 
-		void TryUpdateBalance( SimpleWallet simpleWallet );
+        void TryUpdateBalance( SimpleWallet simpleWallet );
 
-		Boolean TryWithdraw( Decimal amount, Boolean sanitize = true );
+        Boolean TryWithdraw( Decimal amount, Boolean sanitize = true );
 
-		Boolean TryWithdraw( [NotNull] SimpleWallet wallet );
-	}
+        Boolean TryWithdraw( [NotNull] SimpleWallet wallet );
+    }
 }

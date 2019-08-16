@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,43 +35,43 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Customer.cs" was last formatted by Protiguous on 2018/07/10 at 9:05 PM.
+// Project: "Librainian", "Customer.cs" was last formatted by Protiguous on 2019/08/08 at 7:33 AM.
 
 namespace Librainian.Financial.Customers {
 
-	using System;
-	using Containers.Accounts;
-	using Containers.Wallets;
-	using Magic;
-	using Newtonsoft.Json;
+    using System;
+    using Containers.Accounts;
+    using Containers.Wallets;
+    using Magic;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public class Customer : ABetterClassDispose, ICustomer {
+    [JsonObject]
+    public class Customer : ABetterClassDispose, ICustomer {
 
-		[JsonProperty]
-		public Wallet Wallet { get; }
+        [JsonProperty]
+        public Wallet Wallet { get; }
 
-		[JsonProperty]
-		public CheckingAccount CheckingAccount { get; }
+        [JsonProperty]
+        public CheckingAccount CheckingAccount { get; }
 
-		[JsonProperty]
-		public SavingsAccount SavingsAccount { get; }
+        [JsonProperty]
+        public SavingsAccount SavingsAccount { get; }
 
-		public Customer( Guid customerID ) {
-			this.Wallet = new Wallet( customerID );
-			this.CheckingAccount = new CheckingAccount( customerID );
-			this.SavingsAccount = new SavingsAccount( customerID );
-		}
+        public Customer( Guid customerID ) {
+            this.Wallet = new Wallet( customerID );
+            this.CheckingAccount = new CheckingAccount( customerID );
+            this.SavingsAccount = new SavingsAccount( customerID );
+        }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() {
-			this.Wallet.Dispose();
-			this.CheckingAccount.Dispose();
-			this.SavingsAccount.Dispose();
-		}
-	}
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            this.Wallet.Dispose();
+            this.CheckingAccount.Dispose();
+            this.SavingsAccount.Dispose();
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,192 +35,210 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Murmur3.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
+// Project: "Librainian", "Murmur3.cs" was last formatted by Protiguous on 2019/08/08 at 8:24 AM.
 
 namespace Librainian.Maths {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     128 bit output, 64 bit platform version
-	/// </summary>
-	/// <see cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
-	public class Murmur3 {
+    /// <summary>
+    ///     128 bit output, 64 bit platform version
+    /// </summary>
+    /// <see cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
+    public class Murmur3 {
 
-		private const UInt64 C1 = 0x87c37b91114253d5L;
-		private const UInt64 C2 = 0x4cf5ad432745937fL;
-		private readonly UInt32 _seed;
+        private readonly UInt32 _seed;
 
-		private UInt64 _h1;
+        private UInt64 _h1;
 
-		private UInt64 _h2;
+        private UInt64 _h2;
 
-		private UInt64 _length;
-		public const UInt64 ReadSize = 16;
+        private UInt64 _length;
 
-		public Murmur3( UInt32 seed ) => this._seed = seed;
+        private const UInt64 C1 = 0x87c37b91114253d5L;
 
-		private static UInt64 MixFinal( UInt64 k ) {
+        private const UInt64 C2 = 0x4cf5ad432745937fL;
 
-			// avalanche bits
+        public const UInt64 ReadSize = 16;
 
-			k ^= k >> 33;
-			k *= 0xff51afd7ed558ccdL;
-			k ^= k >> 33;
-			k *= 0xc4ceb9fe1a85ec53L;
-			k ^= k >> 33;
+        public Murmur3( UInt32 seed ) => this._seed = seed;
 
-			return k;
-		}
+        private static UInt64 MixFinal( UInt64 k ) {
 
-		private static UInt64 MixKey1( UInt64 k1 ) {
-			k1 *= C1;
-			k1 = k1.RotateLeft( bits: 31 );
-			k1 *= C2;
+            // avalanche bits
 
-			return k1;
-		}
+            k ^= k >> 33;
+            k *= 0xff51afd7ed558ccdL;
+            k ^= k >> 33;
+            k *= 0xc4ceb9fe1a85ec53L;
+            k ^= k >> 33;
 
-		private static UInt64 MixKey2( UInt64 k2 ) {
-			k2 *= C2;
-			k2 = k2.RotateLeft( bits: 33 );
-			k2 *= C1;
+            return k;
+        }
 
-			return k2;
-		}
+        private static UInt64 MixKey1( UInt64 k1 ) {
+            k1 *= C1;
+            k1 = k1.RotateLeft( bits: 31 );
+            k1 *= C2;
 
-		private void MixBody( UInt64 k1, UInt64 k2 ) {
-			this._h1 ^= MixKey1( k1: k1 );
+            return k1;
+        }
 
-			this._h1 = this._h1.RotateLeft( bits: 27 );
-			this._h1 += this._h2;
-			this._h1 = (this._h1 * 5) + 0x52dce729;
+        private static UInt64 MixKey2( UInt64 k2 ) {
+            k2 *= C2;
+            k2 = k2.RotateLeft( bits: 33 );
+            k2 *= C1;
 
-			this._h2 ^= MixKey2( k2: k2 );
+            return k2;
+        }
 
-			this._h2 = this._h2.RotateLeft( bits: 31 );
-			this._h2 += this._h1;
-			this._h2 = (this._h2 * 5) + 0x38495ab5;
-		}
+        private void MixBody( UInt64 k1, UInt64 k2 ) {
+            this._h1 ^= MixKey1( k1: k1 );
 
-		private void ProcessBytes( [NotNull] Byte[] bb ) {
-			this._h1 = this._seed;
-			this._length = 0L;
+            this._h1 = this._h1.RotateLeft( bits: 27 );
+            this._h1 += this._h2;
+            this._h1 = (this._h1 * 5) + 0x52dce729;
 
-			var pos = 0;
-			var remaining = ( UInt64 )bb.Length;
+            this._h2 ^= MixKey2( k2: k2 );
 
-			// read 128 bits, 16 bytes, 2 longs in eacy cycle
-			while ( remaining >= ReadSize ) {
-				var k1 = bb.ToUInt64( pos: pos );
-				pos += 8;
+            this._h2 = this._h2.RotateLeft( bits: 31 );
+            this._h2 += this._h1;
+            this._h2 = (this._h2 * 5) + 0x38495ab5;
+        }
 
-				var k2 = bb.ToUInt64( pos: pos );
-				pos += 8;
+        private void ProcessBytes( [NotNull] Byte[] bb ) {
+            this._h1 = this._seed;
+            this._length = 0L;
 
-				this._length += ReadSize;
-				remaining -= ReadSize;
+            var pos = 0;
+            var remaining = ( UInt64 ) bb.Length;
 
-				this.MixBody( k1: k1, k2: k2 );
-			}
+            // read 128 bits, 16 bytes, 2 longs in eacy cycle
+            while ( remaining >= ReadSize ) {
+                var k1 = bb.ToUInt64( pos: pos );
+                pos += 8;
 
-			// if the input MOD 16 != 0
-			if ( remaining > 0 ) { this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos ); }
-		}
+                var k2 = bb.ToUInt64( pos: pos );
+                pos += 8;
 
-		private void ProcessBytesRemaining( [NotNull] Byte[] bb, UInt64 remaining, Int32 pos ) {
-			UInt64 k1 = 0;
-			UInt64 k2 = 0;
-			this._length += remaining;
+                this._length += ReadSize;
+                remaining -= ReadSize;
 
-			// little endian (x86) processing
-			switch ( remaining ) {
-				case 15:
-					k2 ^= ( UInt64 )bb[ pos + 14 ] << 48; // fall through
-					goto case 14;
-				case 14:
-					k2 ^= ( UInt64 )bb[ pos + 13 ] << 40; // fall through
-					goto case 13;
-				case 13:
-					k2 ^= ( UInt64 )bb[ pos + 12 ] << 32; // fall through
-					goto case 12;
-				case 12:
-					k2 ^= ( UInt64 )bb[ pos + 11 ] << 24; // fall through
-					goto case 11;
-				case 11:
-					k2 ^= ( UInt64 )bb[ pos + 10 ] << 16; // fall through
-					goto case 10;
-				case 10:
-					k2 ^= ( UInt64 )bb[ pos + 9 ] << 8; // fall through
-					goto case 9;
-				case 9:
-					k2 ^= bb[ pos + 8 ]; // fall through
-					goto case 8;
-				case 8:
-					k1 ^= bb.ToUInt64( pos: pos );
+                this.MixBody( k1: k1, k2: k2 );
+            }
 
-					break;
+            // if the input MOD 16 != 0
+            if ( remaining > 0 ) {
+                this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos );
+            }
+        }
 
-				case 7:
-					k1 ^= ( UInt64 )bb[ pos + 6 ] << 48; // fall through
-					goto case 6;
-				case 6:
-					k1 ^= ( UInt64 )bb[ pos + 5 ] << 40; // fall through
-					goto case 5;
-				case 5:
-					k1 ^= ( UInt64 )bb[ pos + 4 ] << 32; // fall through
-					goto case 4;
-				case 4:
-					k1 ^= ( UInt64 )bb[ pos + 3 ] << 24; // fall through
-					goto case 3;
-				case 3:
-					k1 ^= ( UInt64 )bb[ pos + 2 ] << 16; // fall through
-					goto case 2;
-				case 2:
-					k1 ^= ( UInt64 )bb[ pos + 1 ] << 8; // fall through
-					goto case 1;
-				case 1:
-					k1 ^= bb[ pos ]; // fall through
+        private void ProcessBytesRemaining( [NotNull] Byte[] bb, UInt64 remaining, Int32 pos ) {
+            UInt64 k1 = 0;
+            UInt64 k2 = 0;
+            this._length += remaining;
 
-					break;
+            // little endian (x86) processing
+            switch ( remaining ) {
+                case 15:
+                    k2 ^= ( UInt64 ) bb[ pos + 14 ] << 48; // fall through
+                    goto case 14;
 
-				default: throw new InvalidOperationException( "Something went wrong with remaining bytes calculation." );
-			}
+                case 14:
+                    k2 ^= ( UInt64 ) bb[ pos + 13 ] << 40; // fall through
+                    goto case 13;
 
-			this._h1 ^= MixKey1( k1: k1 );
-			this._h2 ^= MixKey2( k2: k2 );
-		}
+                case 13:
+                    k2 ^= ( UInt64 ) bb[ pos + 12 ] << 32; // fall through
+                    goto case 12;
 
-		[NotNull]
-		public Byte[] ComputeHash( [NotNull] Byte[] bb ) {
-			this.ProcessBytes( bb: bb );
+                case 12:
+                    k2 ^= ( UInt64 ) bb[ pos + 11 ] << 24; // fall through
+                    goto case 11;
 
-			return this.GetHash();
-		}
+                case 11:
+                    k2 ^= ( UInt64 ) bb[ pos + 10 ] << 16; // fall through
+                    goto case 10;
 
-		[NotNull]
-		public Byte[] GetHash() {
-			this._h1 ^= this._length;
-			this._h2 ^= this._length;
+                case 10:
+                    k2 ^= ( UInt64 ) bb[ pos + 9 ] << 8; // fall through
+                    goto case 9;
 
-			this._h1 += this._h2;
-			this._h2 += this._h1;
+                case 9:
+                    k2 ^= bb[ pos + 8 ]; // fall through
+                    goto case 8;
 
-			this._h1 = MixFinal( k: this._h1 );
-			this._h2 = MixFinal( k: this._h2 );
+                case 8:
+                    k1 ^= bb.ToUInt64( pos: pos );
 
-			this._h1 += this._h2;
-			this._h2 += this._h1;
+                    break;
 
-			var hash = new Byte[ ReadSize ];
+                case 7:
+                    k1 ^= ( UInt64 ) bb[ pos + 6 ] << 48; // fall through
+                    goto case 6;
 
-			Buffer.BlockCopy( BitConverter.GetBytes( this._h1 ), 0, hash, 0, 8 );
-			Buffer.BlockCopy( BitConverter.GetBytes( this._h2 ), 0, hash, 8, 8 );
+                case 6:
+                    k1 ^= ( UInt64 ) bb[ pos + 5 ] << 40; // fall through
+                    goto case 5;
 
-			return hash;
-		}
-	}
+                case 5:
+                    k1 ^= ( UInt64 ) bb[ pos + 4 ] << 32; // fall through
+                    goto case 4;
+
+                case 4:
+                    k1 ^= ( UInt64 ) bb[ pos + 3 ] << 24; // fall through
+                    goto case 3;
+
+                case 3:
+                    k1 ^= ( UInt64 ) bb[ pos + 2 ] << 16; // fall through
+                    goto case 2;
+
+                case 2:
+                    k1 ^= ( UInt64 ) bb[ pos + 1 ] << 8; // fall through
+                    goto case 1;
+
+                case 1:
+                    k1 ^= bb[ pos ]; // fall through
+
+                    break;
+
+                default: throw new InvalidOperationException( "Something went wrong with remaining bytes calculation." );
+            }
+
+            this._h1 ^= MixKey1( k1: k1 );
+            this._h2 ^= MixKey2( k2: k2 );
+        }
+
+        [NotNull]
+        public Byte[] ComputeHash( [NotNull] Byte[] bb ) {
+            this.ProcessBytes( bb: bb );
+
+            return this.GetHash();
+        }
+
+        [NotNull]
+        public Byte[] GetHash() {
+            this._h1 ^= this._length;
+            this._h2 ^= this._length;
+
+            this._h1 += this._h2;
+            this._h2 += this._h1;
+
+            this._h1 = MixFinal( k: this._h1 );
+            this._h2 = MixFinal( k: this._h2 );
+
+            this._h1 += this._h2;
+            this._h2 += this._h1;
+
+            var hash = new Byte[ ReadSize ];
+
+            Buffer.BlockCopy( BitConverter.GetBytes( this._h1 ), 0, hash, 0, 8 );
+            Buffer.BlockCopy( BitConverter.GetBytes( this._h2 ), 0, hash, 8, 8 );
+
+            return hash;
+        }
+    }
 }

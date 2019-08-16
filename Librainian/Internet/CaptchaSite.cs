@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,37 +35,37 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CaptchaSite.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "CaptchaSite.cs" was last formatted by Protiguous on 2019/08/08 at 7:52 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public class CaptchaSite {
+    [JsonObject]
+    public class CaptchaSite {
 
-		[JsonProperty]
-		public CaptchaStatus CaptchaStatus { get; set; }
+        [JsonProperty]
+        public CaptchaStatus CaptchaStatus { get; set; }
 
-		/// <summary>URI of the captcha.</summary>
-		[CanBeNull]
-		[JsonProperty]
-		public Uri Location { get; set; }
+        /// <summary>URI of the captcha.</summary>
+        [CanBeNull]
+        [JsonProperty]
+        public Uri Location { get; set; }
 
-		/// <summary>A count of the requests to scrape this captcha.</summary>
-		[JsonProperty]
-		public UInt64 RequestCount { get; set; }
+        /// <summary>A count of the requests to scrape this captcha.</summary>
+        [JsonProperty]
+        public UInt64 RequestCount { get; set; }
 
-		/// <summary>A count of the responses for this url.</summary>
-		[JsonProperty]
-		public UInt64 ResponseCount { get; set; }
+        /// <summary>A count of the responses for this url.</summary>
+        [JsonProperty]
+        public UInt64 ResponseCount { get; set; }
 
-		/// <summary>When this website was added.</summary>
-		[JsonProperty]
-		public DateTime WhenAdded { get; set; }
-	}
+        /// <summary>When this website was added.</summary>
+        [JsonProperty]
+        public DateTime WhenAdded { get; set; }
+    }
 }

@@ -42,6 +42,7 @@
     <LangVersion>7.3</LangVersion>
     <FileAlignment>8192</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Single Image|AnyCPU'">
     <OutputPath>bin\Single Image\</OutputPath>

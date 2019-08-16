@@ -1,51 +1,71 @@
-﻿// Copyright 2016 Rick@AIBrain.org.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This source code contained in "Text.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
-// "Librainian/Text.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "Text.cs" was last formatted by Protiguous on 2019/08/08 at 7:01 AM.
 
 namespace Librainian.Database {
 
     using System;
     using System.Data;
     using System.Data.OleDb;
+    using System.Diagnostics.CodeAnalysis;
     using JetBrains.Annotations;
     using Logging;
 
     public class Text {
 
+        private String ConnectionString { get; }
+
+        private Char Delimiter { get; }
+
+        private String Path { get; }
+
         public Text( String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
-            var connectionStringBuilder = new OleDbConnectionStringBuilder { Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path };
+
+            var connectionStringBuilder = new OleDbConnectionStringBuilder {
+                Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path
+            };
+
             connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
             this.ConnectionString = connectionStringBuilder.ToString();
-        }
-
-        private String ConnectionString {
-            get;
-        }
-
-        private Char Delimiter {
-            get;
-        }
-
-        private String Path {
-            get;
         }
 
         [NotNull]
@@ -55,13 +75,17 @@ namespace Librainian.Database {
             try {
                 var connection = new OleDbConnection( this.ConnectionString );
                 connection.Open();
-                var tableColumns = connection.GetSchema( "Columns", new[] { null, null, worksheet + '$', null } );
+
+                var tableColumns = connection.GetSchema( "Columns", new[] {
+                    null, null, worksheet + '$', null
+                } );
+
                 connection.Close();
 
                 columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String )tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
                 }
             }
             catch ( Exception exception ) {
@@ -78,12 +102,13 @@ namespace Librainian.Database {
                     var workplace = new DataSet();
                     adaptor.FillSchema( workplace, SchemaType.Source );
                     adaptor.Fill( workplace );
+
                     return workplace;
                 }
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [NotNull]
         public DataTable GetWorksheet( String worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
@@ -91,6 +116,7 @@ namespace Librainian.Database {
                     var ws = new DataTable( worksheet );
                     adaptor.FillSchema( ws, SchemaType.Source );
                     adaptor.Fill( ws );
+
                     return ws;
                 }
             }
@@ -102,6 +128,7 @@ namespace Librainian.Database {
 
             try {
                 DataTable tableWorksheets;
+
                 using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                     connection.Open();
                     tableWorksheets = connection.GetSchema( "Tables" );
@@ -110,7 +137,7 @@ namespace Librainian.Database {
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
                 for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String )tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
                     worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
                 }
             }

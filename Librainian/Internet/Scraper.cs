@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Scraper.cs" was last formatted by Protiguous on 2018/07/10 at 9:10 PM.
+// Project: "Librainian", "Scraper.cs" was last formatted by Protiguous on 2019/08/08 at 7:59 AM.
 
 namespace Librainian.Internet {
 
@@ -59,6 +59,20 @@ namespace Librainian.Internet {
     [Obsolete]
     public static class Scraper {
 
+        [CanBeNull]
+        public static List<WebSite> ScrapedSites {
+            get {
+                try {
+                    MAccess.EnterReadLock();
+
+                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
+                }
+                finally {
+                    MAccess.ExitReadLock();
+                }
+            }
+        }
+
         [JsonProperty]
         private static readonly CookieContainer Cookies = new CookieContainer();
 
@@ -70,25 +84,15 @@ namespace Librainian.Internet {
         private static readonly List<WebSite> MWebsites = new List<WebSite>();
 
         [CanBeNull]
-        public static List<WebSite> ScrapedSites {
-            get {
-                try {
-                    MAccess.EnterReadLock();
-
-                    return MWebsites.Where( w => w.ResponseCount > 0 ) as List<WebSite>;
-                }
-                finally { MAccess.ExitReadLock(); }
-            }
-        }
-
-        [CanBeNull]
         private static WebSite GetNextToScrape() {
             try {
                 MAccess.EnterReadLock();
 
                 return MWebsites.FirstOrDefault( w => w.WhenRequestStarted.Equals( DateTime.MinValue ) );
             }
-            finally { MAccess.ExitReadLock(); }
+            finally {
+                MAccess.ExitReadLock();
+            }
         }
 
         private static void RespCallback( IAsyncResult asynchronousResult ) {
@@ -120,14 +124,18 @@ namespace Librainian.Internet {
                 //}
             }
             catch ( WebException ) { }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
         }
 
         private static void StartNextScrape() {
             try {
                 var web = GetNextToScrape();
 
-                if ( null == web ) { return; }
+                if ( null == web ) {
+                    return;
+                }
 
                 if ( null == web.Request ) {
                     try {
@@ -152,19 +160,27 @@ namespace Librainian.Internet {
 
                         web.WhenRequestStarted = DateTime.UtcNow;
                     }
-                    finally { MAccess.ExitWriteLock(); }
+                    finally {
+                        MAccess.ExitWriteLock();
+                    }
                 }
 
                 web.Request?.BeginGetResponse( RespCallback, web );
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
         }
 
         public static void AddSiteToScrape( String url, Action<WebSite> responseaction ) {
             try {
-                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) { AddSiteToScrape( uri, responseaction ); }
+                if ( Uri.TryCreate( url, UriKind.RelativeOrAbsolute, out var uri ) ) {
+                    AddSiteToScrape( uri, responseaction );
+                }
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
         }
 
         public static void AddSiteToScrape( Uri uri, Action<WebSite> responseaction ) {
@@ -185,14 +201,18 @@ namespace Librainian.Internet {
                     MAccess.EnterWriteLock();
                     MWebsites.Add( web );
                 }
-                finally { MAccess.ExitWriteLock(); }
+                finally {
+                    MAccess.ExitWriteLock();
+                }
             }
             else {
                 try {
                     MAccess.EnterWriteLock();
                     MWebsites.Where( w => w.Location.Equals( uri ) ).ForEach( r => r.RequestCount++ );
                 }
-                finally { MAccess.ExitWriteLock(); }
+                finally {
+                    MAccess.ExitWriteLock();
+                }
             }
 
             StartNextScrape();
@@ -204,7 +224,9 @@ namespace Librainian.Internet {
 
                 return MWebsites.Exists( w => w.Location.Equals( uri ) );
             }
-            finally { MAccess.ExitReadLock(); }
+            finally {
+                MAccess.ExitReadLock();
+            }
         }
     }
 }

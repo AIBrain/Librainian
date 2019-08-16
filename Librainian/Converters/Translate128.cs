@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,61 +35,61 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Translate128.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
+// Project: "Librainian", "Translate128.cs" was last formatted by Protiguous on 2019/08/08 at 6:49 AM.
 
 namespace Librainian.Converters {
 
-	using System;
-	using System.Runtime.InteropServices;
-	using Maths;
+    using System;
+    using System.Runtime.InteropServices;
+    using Maths;
 
-	/// <summary>
-	///     Struct for easily converting <see cref="Guid" /> to <see cref="FourBytes" />, <see cref="EightBytes" />, and
-	///     <see cref="Translate64" />.
-	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
-	public struct Translate128 {
+    /// <summary>
+    ///     Struct for easily converting <see cref="Guid" /> to <see cref="FourBytes" />, <see cref="EightBytes" />, and
+    ///     <see cref="Translate64" />.
+    /// </summary>
+    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    public struct Translate128 {
 
-		[FieldOffset( offset: 0 )]
-		public Translate64 Lower;
+        [FieldOffset( offset: 0 )]
+        public Translate64 Lower;
 
-		[FieldOffset( offset: 0 )]
-		public Guid Guid;
+        [FieldOffset( offset: 0 )]
+        public Guid Guid;
 
-		/// <summary>
-		///     Just the first four bytes.
-		/// </summary>
-		[FieldOffset( offset: 0 )]
-		public FourBytes FourBytes;
+        /// <summary>
+        ///     Just the first four bytes.
+        /// </summary>
+        [FieldOffset( offset: 0 )]
+        public FourBytes FourBytes;
 
-		[FieldOffset( offset: 0 )]
-		public EightBytes EightBytesLow;
+        [FieldOffset( offset: 0 )]
+        public EightBytes EightBytesLow;
 
-		[FieldOffset( offset: sizeof( UInt64 ) )]
-		public Translate64 Higher;
+        [FieldOffset( offset: sizeof( UInt64 ) )]
+        public Translate64 Higher;
 
-		[FieldOffset( offset: sizeof( UInt64 ) )]
-		public EightBytes EightBytesHigh;
+        [FieldOffset( offset: sizeof( UInt64 ) )]
+        public EightBytes EightBytesHigh;
 
-		public Translate128( Guid guid ) {
-			this.FourBytes = default;
-			this.EightBytesLow = default;
-			this.EightBytesHigh = default;
-			this.Lower = default;
-			this.Higher = default;
-			this.Guid = guid;
-		}
+        public Translate128( Guid guid ) {
+            this.FourBytes = default;
+            this.EightBytesLow = default;
+            this.EightBytesHigh = default;
+            this.Lower = default;
+            this.Higher = default;
+            this.Guid = guid;
+        }
 
-		public Translate128( Translate64 lower, Translate64 higher ) : this( Guid.Empty ) {
-			this.Lower = lower;
-			this.Higher = higher;
-		}
+        public Translate128( Translate64 lower, Translate64 higher ) : this( Guid.Empty ) {
+            this.Lower = lower;
+            this.Higher = higher;
+        }
 
-		public Translate128( EightBytes lower, EightBytes higher ) : this( Guid.Empty ) {
-			this.EightBytesLow = lower;
-			this.EightBytesHigh = higher;
-		}
-	}
+        public Translate128( EightBytes lower, EightBytes higher ) : this( Guid.Empty ) {
+            this.EightBytesLow = lower;
+            this.EightBytesHigh = higher;
+        }
+    }
 }

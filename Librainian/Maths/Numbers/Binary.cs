@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,118 +35,130 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Binary.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
+// Project: "Librainian", "Binary.cs" was last formatted by Protiguous on 2019/08/08 at 8:26 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Text;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
-	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	public class Binary : IEnumerable<Boolean> {
+    /// <summary>
+    ///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
+    /// </summary>
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+    public class Binary : IEnumerable<Boolean> {
 
-		public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
+        public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
 
-		IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
 
-		[NotNull]
-		public List<Boolean> Booleans { get; }
+        [NotNull]
+        public List<Boolean> Booleans { get; }
 
-		public Int32 Length => this.Booleans.Count;
+        public Int32 Length => this.Booleans.Count;
 
-		public Boolean this[ Int32 index ] {
-			get => this.Booleans[ index ];
+        public Boolean this[ Int32 index ] {
+            get => this.Booleans[ index ];
 
-			set => this.Booleans[ index ] = value;
-		}
+            set => this.Booleans[ index ] = value;
+        }
 
-		public Binary( [NotNull] IReadOnlyCollection<Boolean> booleans ) {
-			this.Booleans = booleans.ToList();
-			this.Booleans.Capacity = this.Booleans.Count;
-		}
+        public Binary( [NotNull] IReadOnlyCollection<Boolean> booleans ) {
+            this.Booleans = booleans.ToList();
+            this.Booleans.Capacity = this.Booleans.Count;
+        }
 
-		public Binary( [NotNull] IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> ) binary ) { }
+        public Binary( [NotNull] IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> ) binary ) { }
 
-		public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
+        public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
 
-		public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
+        public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
 
-		[NotNull]
-		public static Binary Concatenate( [NotNull] Binary a, [NotNull] Binary b ) {
-			var result = new Binary( new Boolean[ a.Length + b.Length ] );
-			var n = 0;
+        [NotNull]
+        public static Binary Concatenate( [NotNull] Binary a, [NotNull] Binary b ) {
+            var result = new Binary( new Boolean[ a.Length + b.Length ] );
+            var n = 0;
 
-			foreach ( var bit in a ) {
-				result[ n ] = bit;
-				n++;
-			}
+            foreach ( var bit in a ) {
+                result[ n ] = bit;
+                n++;
+            }
 
-			foreach ( var bit in b ) {
-				result[ n ] = bit;
-				n++;
-			}
+            foreach ( var bit in b ) {
+                result[ n ] = bit;
+                n++;
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		[NotNull]
-		public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
-			var binaryString = Convert.ToString( value, 2 );
+        [NotNull]
+        public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
+            var binaryString = Convert.ToString( value, 2 );
 
-			return binaryString.Select( c => c == '1' );
-		}
+            return binaryString.Select( c => c == '1' );
+        }
 
-		[NotNull]
-		public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
-			var toBinary = new List<Boolean>( ConvertToBinary( value ) );
+        [NotNull]
+        public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
+            var toBinary = new List<Boolean>( ConvertToBinary( value ) );
 
-			while ( toBinary.Count != minSize ) { toBinary.Insert( 0, false ); }
+            while ( toBinary.Count != minSize ) {
+                toBinary.Insert( 0, false );
+            }
 
-			return toBinary;
-		}
+            return toBinary;
+        }
 
-		[NotNull]
-		public static Binary operator &( [NotNull] Binary a, [NotNull] Binary b ) {
-			if ( a.Length != b.Length ) { throw new ArgumentException( "Binaries must have same length" ); }
+        [NotNull]
+        public static Binary operator &( [NotNull] Binary a, [NotNull] Binary b ) {
+            if ( a.Length != b.Length ) {
+                throw new ArgumentException( "Binaries must have same length" );
+            }
 
-			var result = new Boolean[ a.Length ];
+            var result = new Boolean[ a.Length ];
 
-			for ( var i = 0; i < a.Length; i++ ) { result[ i ] = a[ i ] & b[ i ]; }
+            for ( var i = 0; i < a.Length; i++ ) {
+                result[ i ] = a[ i ] & b[ i ];
+            }
 
-			return new Binary( result );
-		}
+            return new Binary( result );
+        }
 
-		[NotNull]
-		public static Binary operator ^( [NotNull] Binary a, [NotNull] Binary b ) {
-			if ( a.Length != b.Length ) { throw new ArgumentException( "Binaries must have same length" ); }
+        [NotNull]
+        public static Binary operator ^( [NotNull] Binary a, [NotNull] Binary b ) {
+            if ( a.Length != b.Length ) {
+                throw new ArgumentException( "Binaries must have same length" );
+            }
 
-			var result = new Boolean[ a.Length ];
+            var result = new Boolean[ a.Length ];
 
-			for ( var i = 0; i < a.Length; i++ ) { result[ i ] = a[ i ] ^ b[ i ]; }
+            for ( var i = 0; i < a.Length; i++ ) {
+                result[ i ] = a[ i ] ^ b[ i ];
+            }
 
-			return new Binary( result );
-		}
+            return new Binary( result );
+        }
 
-		public Int32 CountOnes() => this.Booleans.Count( bit => bit );
+        public Int32 CountOnes() => this.Booleans.Count( bit => bit );
 
-		public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
+        public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
 
-		public override String ToString() {
-			var stringBuilder = new StringBuilder( this.Length );
+        public override String ToString() {
+            var stringBuilder = new StringBuilder( this.Length );
 
-			foreach ( var bit in this.Booleans ) { stringBuilder.Append( bit ? '1' : '0' ); }
+            foreach ( var bit in this.Booleans ) {
+                stringBuilder.Append( bit ? '1' : '0' );
+            }
 
-			return stringBuilder.ToString();
-		}
-	}
+            return stringBuilder.ToString();
+        }
+    }
 }

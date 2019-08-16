@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Years.cs" was last formatted by Protiguous on 2018/07/13 at 1:31 AM.
+// Project: "Librainian", "Years.cs" was last formatted by Protiguous on 2019/08/08 at 9:11 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -77,7 +77,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Years( Decimal value ) => this.Value = ( Rational )value;
+        public Years( Decimal value ) => this.Value = ( Rational ) value;
 
         public Years( Rational value ) => this.Value = value;
 
@@ -87,7 +87,7 @@ namespace Librainian.Measurement.Time {
 
         public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
 
-        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational )years );
+        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational ) years );
 
         public static Years Combine( Years left, Rational years ) => new Years( left.Value + years );
 
@@ -128,7 +128,9 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Years other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) { return false; }
+            if ( obj == null ) {
+                return false;
+            }
 
             return obj is Years years && this.Equals( years );
         }
@@ -139,7 +141,7 @@ namespace Librainian.Measurement.Time {
 
         public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYear );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYear );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
@@ -151,13 +153,13 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "year" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "year" )}";
         }
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
 
-        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneCommonYear );
+        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational ) Weeks.InOneCommonYear );
     }
 }

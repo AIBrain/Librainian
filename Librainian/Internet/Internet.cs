@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Internet.cs" was last formatted by Protiguous on 2018/12/25 at 7:44 AM.
+// Project: "Librainian", "Internet.cs" was last formatted by Protiguous on 2019/08/08 at 7:55 AM.
 
 namespace Librainian.Internet {
 
@@ -54,10 +54,6 @@ namespace Librainian.Internet {
 
     public static class Internet {
 
-        private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
-
-        internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new ThreadLocal<WebClientWithTimeout>( () => new WebClientWithTimeout(), true );
-
         public enum ResponseCode {
 
             Error = -1,
@@ -66,6 +62,10 @@ namespace Librainian.Internet {
 
             Success = 1
         }
+
+        private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
+
+        internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new ThreadLocal<WebClientWithTimeout>( () => new WebClientWithTimeout(), true );
 
         public interface IDownloader {
 
@@ -189,16 +189,6 @@ namespace Librainian.Internet {
 
         public abstract class UnderlyingDownloader : IDownloader {
 
-            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
-
-            /// <summary>
-            ///     -1 milliseconds
-            /// </summary>
-            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
-
-            [NotNull]
-            public WebClientWithTimeout AttachedToWebClient { get; set; }
-
             [CanBeNull]
             public ICredentials Credentials { get; set; }
 
@@ -208,17 +198,10 @@ namespace Librainian.Internet {
             [NotNull]
             public Document DestinationDocument { get; set; }
 
-            public AutoResetEvent Downloaded { get; } = new AutoResetEvent( false );
-
             /// <summary>
             ///     The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.
             /// </summary>
             public Stopwatch Elasped { get; set; }
-
-            /// <summary>
-            ///     The unique identifier assigned to this download.
-            /// </summary>
-            public Guid Id { get; set; }
 
             [CanBeNull]
             public Action OnCancelled { get; set; }
@@ -248,40 +231,6 @@ namespace Librainian.Internet {
             /// </summary>
             public DateTime WhenStarted { get; set; }
 
-            /// <summary>
-            ///     ctor
-            /// </summary>
-            /// <param name="source"></param>
-            /// <param name="destination"></param>
-            /// <param name="waitIfBusy"></param>
-            /// <param name="timeout"></param>
-            /// <param name="credentials"></param>
-            /// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
-            protected UnderlyingDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitIfBusy, TimeSpan timeout,
-                [CanBeNull] ICredentials credentials = null ) {
-                var web = WebClients.Value;
-
-                if ( web.IsBusy ) {
-                    if ( waitIfBusy ) {
-                        this.Wait( timeout );
-                    }
-                    else {
-                        throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
-                    }
-                }
-
-                this.AttachedToWebClient = web;
-                this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
-                this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
-                this.Timeout = timeout;
-                this.Id = Guid.NewGuid();
-                this.Credentials = credentials;
-
-                this.AttachedToWebClient.Credentials = this.Credentials;
-                this.AttachedToWebClient.CachePolicy = DefaultCachePolicy;
-                this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
-            }
-
             public virtual Boolean Cancel() {
                 try {
                     this.AttachedToWebClient.CancelAsync();
@@ -291,19 +240,6 @@ namespace Librainian.Internet {
                 }
 
                 return this.IsBusy();
-            }
-
-            public (ResponseCode responseCode, Int64 fileLength) GetContentLength() {
-
-                if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
-                    request.Method = "HEAD";
-
-                    using ( var response = request.GetResponse() ) {
-                        return (ResponseCode.Success, response.ContentLength);
-                    }
-                }
-
-                return (ResponseCode.Error, default);
             }
 
             /// <summary>
@@ -360,6 +296,70 @@ namespace Librainian.Internet {
                     throw;
                 }
             }
+
+            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
+
+            /// <summary>
+            ///     -1 milliseconds
+            /// </summary>
+            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
+
+            [NotNull]
+            public WebClientWithTimeout AttachedToWebClient { get; set; }
+
+            public AutoResetEvent Downloaded { get; } = new AutoResetEvent( false );
+
+            /// <summary>
+            ///     The unique identifier assigned to this download.
+            /// </summary>
+            public Guid Id { get; set; }
+
+            /// <summary>
+            ///     ctor
+            /// </summary>
+            /// <param name="source"></param>
+            /// <param name="destination"></param>
+            /// <param name="waitIfBusy"></param>
+            /// <param name="timeout"></param>
+            /// <param name="credentials"></param>
+            /// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
+            protected UnderlyingDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitIfBusy, TimeSpan timeout,
+                [CanBeNull] ICredentials credentials = null ) {
+                var web = WebClients.Value;
+
+                if ( web.IsBusy ) {
+                    if ( waitIfBusy ) {
+                        this.Wait( timeout );
+                    }
+                    else {
+                        throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
+                    }
+                }
+
+                this.AttachedToWebClient = web;
+                this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
+                this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
+                this.Timeout = timeout;
+                this.Id = Guid.NewGuid();
+                this.Credentials = credentials;
+
+                this.AttachedToWebClient.Credentials = this.Credentials;
+                this.AttachedToWebClient.CachePolicy = DefaultCachePolicy;
+                this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
+            }
+
+            public (ResponseCode responseCode, Int64 fileLength) GetContentLength() {
+
+                if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+                    request.Method = "HEAD";
+
+                    using ( var response = request.GetResponse() ) {
+                        return ( ResponseCode.Success, response.ContentLength );
+                    }
+                }
+
+                return ( ResponseCode.Error, default );
+            }
         }
 
         public class WebClientWithTimeout : WebClient {
@@ -382,7 +382,7 @@ namespace Librainian.Internet {
                 var webRequest = this.Request;
 
                 if ( webRequest != null ) {
-                    webRequest.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
+                    webRequest.Timeout = ( Int32 ) this.Timeout.TotalMilliseconds;
                 }
 
                 return webRequest;

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,35 +35,36 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FSConstants.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "FSConstants.cs" was last formatted by Protiguous on 2019/08/08 at 9:17 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     constants lifted from winioctl.h from platform sdk
-	/// </summary>
-	internal static class FSConstants {
+    /// <summary>
+    ///     constants lifted from winioctl.h from platform sdk
+    /// </summary>
+    internal static class FSConstants {
 
-		private const UInt32 FileAnyAccess = 0;
+        private const UInt32 FileAnyAccess = 0;
 
-		private const UInt32 FileDeviceFileSystem = 0x00000009;
+        private const UInt32 FileDeviceFileSystem = 0x00000009;
 
-		private const UInt32 FileSpecialAccess = FileAnyAccess;
+        private const UInt32 FileSpecialAccess = FileAnyAccess;
 
-		private const UInt32 MethodBuffered = 0;
+        private const UInt32 MethodBuffered = 0;
 
-		private const UInt32 MethodNeither = 3;
+        private const UInt32 MethodNeither = 3;
 
-		public static UInt32 FsctlGetRetrievalPointers = CTL_CODE( FileDeviceFileSystem, 28, MethodNeither, FileAnyAccess );
+        public static UInt32 FsctlGetRetrievalPointers = CTL_CODE( FileDeviceFileSystem, 28, MethodNeither, FileAnyAccess );
 
-		public static UInt32 FsctlGetVolumeBitmap = CTL_CODE( FileDeviceFileSystem, 27, MethodNeither, FileAnyAccess );
+        public static UInt32 FsctlGetVolumeBitmap = CTL_CODE( FileDeviceFileSystem, 27, MethodNeither, FileAnyAccess );
 
-		public static UInt32 FsctlMoveFile = CTL_CODE( FileDeviceFileSystem, 29, MethodBuffered, FileSpecialAccess );
+        public static UInt32 FsctlMoveFile = CTL_CODE( FileDeviceFileSystem, 29, MethodBuffered, FileSpecialAccess );
 
-		private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => (deviceType << 16) | (access << 14) | (function << 2) | method;
-	}
+        private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
+            ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
+    }
 }

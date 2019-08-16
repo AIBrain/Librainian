@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,57 +35,60 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AsyncLock.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
+// Project: "Librainian", "AsyncLock.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
 
 namespace Librainian.Threading {
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Magic;
-	using Maths;
-	using Measurement.Time;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Magic;
+    using Maths;
+    using Measurement.Time;
 
-	/// <summary>
-	///     Usage: private readonly AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
-	///     /*...*/ }
-	/// </summary>
-	public sealed class AsyncLock : ABetterClassDispose {
+    /// <summary>
+    ///     Usage: private readonly AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
+    ///     /*...*/ }
+    /// </summary>
+    public sealed class AsyncLock : ABetterClassDispose {
 
-		private readonly Task<IDisposable> _releaser;
+        private readonly Task<IDisposable> _releaser;
 
-		private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
+        private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
 
-		public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
+        public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() => this.Semaphore.Dispose();
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this.Semaphore.Dispose();
 
-		public Task<IDisposable> LockAsync() {
-			var wait = this.Semaphore.WaitAsync( Minutes.Ten );
+        public Task<IDisposable> LockAsync() {
+            var wait = this.Semaphore.WaitAsync( Minutes.Ten );
 
-			return wait.IsCompleted ?
-				this._releaser :
-				wait.ContinueWith( ( _, state ) => ( IDisposable ) state, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
-		}
+            return wait.IsCompleted ?
+                this._releaser :
+                wait.ContinueWith( ( _, state ) => ( IDisposable ) state, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously,
+                    TaskScheduler.Default );
+        }
 
-		private sealed class Releaser : ABetterClassDispose {
+        private sealed class Releaser : ABetterClassDispose {
 
-			private readonly AsyncLock _mToRelease;
+            private readonly AsyncLock _mToRelease;
 
-			internal Releaser( AsyncLock toRelease ) => this._mToRelease = toRelease;
+            internal Releaser( AsyncLock toRelease ) => this._mToRelease = toRelease;
 
-			public override void DisposeManaged() {
-				if ( !this._mToRelease.Semaphore.CurrentCount.Any() ) { this._mToRelease.Semaphore.Release(); }
-				else { Debugger.Break(); }
-
-				
-			}
-		}
-	}
+            public override void DisposeManaged() {
+                if ( !this._mToRelease.Semaphore.CurrentCount.Any() ) {
+                    this._mToRelease.Semaphore.Release();
+                }
+                else {
+                    Debugger.Break();
+                }
+            }
+        }
+    }
 }

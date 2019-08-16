@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PersistenceExtensions.cs" was last formatted by Protiguous on 2019/01/29 at 10:46 PM.
+// Project: "Librainian", "PersistenceExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -73,6 +73,16 @@ namespace Librainian.Persistence {
 
     public static class PersistenceExtensions {
 
+        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
+
+            //ContractResolver = new MyContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
+        }, true );
+
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
             var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
 
@@ -101,8 +111,7 @@ namespace Librainian.Persistence {
 
         [NotNull]
         public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.All
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
         }, true );
 
         ///// <summary>
@@ -135,15 +144,6 @@ namespace Librainian.Persistence {
 
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
-
-        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
-            //ContractResolver = new MyContractResolver(),
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
-        }, true );
 
         /// <summary>
         ///     Can the file be read from at this moment in time ?
@@ -324,7 +324,7 @@ namespace Librainian.Persistence {
             using ( var memoryStream = new MemoryStream( bytes ) ) {
                 var binaryFormatter = new BinaryFormatter();
 
-                return ( T )binaryFormatter.Deserialize( memoryStream );
+                return ( T ) binaryFormatter.Deserialize( memoryStream );
             }
         }
 
@@ -381,7 +381,8 @@ namespace Librainian.Persistence {
         /// <param name="data"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static TKey FromJSON<TKey>( [CanBeNull] this String data ) => String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss.Value );
+        public static TKey FromJSON<TKey>( [CanBeNull] this String data ) =>
+            String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss.Value );
 
         /// <summary>
         ///     Deserialize from an IsolatedStorageFile.
@@ -629,11 +630,11 @@ namespace Librainian.Persistence {
 
                         if ( useCompression ) {
                             using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                obj = ( T )serializer.ReadObject( stream: decompress );
+                                obj = ( T ) serializer.ReadObject( stream: decompress );
                             }
                         }
                         else {
-                            obj = ( T )serializer.ReadObject( stream: isfs );
+                            obj = ( T ) serializer.ReadObject( stream: isfs );
                         }
 
                         return !Equals( obj, default );
@@ -987,7 +988,7 @@ namespace Librainian.Persistence {
                     throw new DirectoryNotFoundException( folder.FullName );
                 }
 
-                var itemCount = ( UInt64 )dictionary.LongCount();
+                var itemCount = ( UInt64 ) dictionary.LongCount();
 
                 String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ).Info();
 
@@ -1192,7 +1193,7 @@ namespace Librainian.Persistence {
         /// <param name="obj">       </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static String ToJSON<T>( this T @obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( @obj, formatting, Jss.Value );
+        public static String ToJSON<T>( this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
 
         /*
 
@@ -1265,8 +1266,7 @@ namespace Librainian.Persistence {
 
                         //see also http://stackoverflow.com/a/8711702/956364
                         var serializer = new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                            PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
                         };
 
                         serializer.Serialize( jw, @object );

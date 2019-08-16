@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2019/01/29 at 10:46 PM.
+// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
 
 namespace Librainian.Persistence.InIFiles {
 
@@ -56,36 +56,33 @@ namespace Librainian.Persistence.InIFiles {
     using Parsing;
 
     /// <summary>
-    ///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.
+    ///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common
+    ///     Sections.
     /// </summary>
     [JsonObject]
     public class IniFile {
-
-        /// <summary>
-        /// If true, the section names have whitespace removed when added.
-        /// </summary>
-        public Boolean TrimSections { get; set; }
-
-        /// <summary>
-        /// If true, the keys have whitespace removed when added.
-        /// </summary>
-        public Boolean TrimKeys { get; set; }
-
-        /// <summary>
-        /// If true, the value have whitespace removed when added.
-        /// </summary>
-        public Boolean TrimValues { get; set; }
 
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<String, IniSection> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, IniSection>();
 
-        public const String SectionBegin = "[";
-
-        public const String SectionEnd = "]";
-
         [NotNull]
         public IEnumerable<String> Sections => this.Data.Keys;
+
+        /// <summary>
+        ///     If true, the keys have whitespace removed when added.
+        /// </summary>
+        public Boolean TrimKeys { get; set; }
+
+        /// <summary>
+        ///     If true, the section names have whitespace removed when added.
+        /// </summary>
+        public Boolean TrimSections { get; set; }
+
+        /// <summary>
+        ///     If true, the value have whitespace removed when added.
+        /// </summary>
+        public Boolean TrimValues { get; set; }
 
         [CanBeNull]
         public IniSection this[ [CanBeNull] String section ] {
@@ -106,12 +103,14 @@ namespace Librainian.Persistence.InIFiles {
 
                 return null;
             }
+
             set {
                 if ( String.IsNullOrEmpty( section ) ) {
                     return;
                 }
 
                 if ( this.Data.ContainsKey( section ) ) {
+
                     //TODO merge, not overwrite
                     this.Data[ section ] = value;
 
@@ -156,8 +155,12 @@ namespace Librainian.Persistence.InIFiles {
             }
         }
 
+        public const String SectionBegin = "[";
+
+        public const String SectionEnd = "]";
+
         [DebuggerStepThrough]
-        public IniFile( [NotNull] IDocument document, Boolean trimSections=true, Boolean trimKeys=true, Boolean trimValues=true ) {
+        public IniFile( [NotNull] IDocument document, Boolean trimSections = true, Boolean trimKeys = true, Boolean trimValues = true ) {
             if ( document == null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
@@ -170,8 +173,10 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         public IniFile( String data ) {
+
             //cheat: write out to temp file, read in, then delete temp file
             var document = Document.GetTempDocument();
+
             try {
                 document.AppendText( data );
                 this.Add( document );
@@ -286,7 +291,7 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             try {
-                var found = this.Data[ section ].FirstOrDefault(line => line.Key.Like(kvp.Key));
+                var found = this.Data[ section ].FirstOrDefault( line => line.Key.Like( kvp.Key ) );
 
                 if ( found == default ) {
                     this.Data[ section ].Add( kvp.Key, this.TrimValues ? kvp.Value?.Trim() : kvp.Value );
@@ -366,6 +371,7 @@ namespace Librainian.Persistence.InIFiles {
                     if ( this.TrimSections ) {
                         section = section.Trim();
                     }
+
                     continue;
                 }
 
@@ -503,7 +509,5 @@ namespace Librainian.Persistence.InIFiles {
 
             return this.Data[ section ].Remove( key );
         }
-
     }
-
 }

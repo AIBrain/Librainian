@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +35,53 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "EAPCommon.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "EAPCommon.cs" was last formatted by Protiguous on 2019/08/08 at 7:53 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.ComponentModel;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+    using System;
+    using System.ComponentModel;
+    using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
-	public static class EapCommon {
+    public static class EapCommon {
 
-		public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult, [NotNull] Action unregisterHandler ) {
-			if ( taskCompletionSource == null ) { throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) ); }
+        public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult,
+            [NotNull] Action unregisterHandler ) {
+            if ( taskCompletionSource == null ) {
+                throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) );
+            }
 
-			if ( e == null ) { throw new ArgumentNullException( paramName: nameof( e ) ); }
+            if ( e == null ) {
+                throw new ArgumentNullException( paramName: nameof( e ) );
+            }
 
-			if ( getResult == null ) { throw new ArgumentNullException( paramName: nameof( getResult ) ); }
+            if ( getResult == null ) {
+                throw new ArgumentNullException( paramName: nameof( getResult ) );
+            }
 
-			if ( unregisterHandler == null ) { throw new ArgumentNullException( paramName: nameof( unregisterHandler ) ); }
+            if ( unregisterHandler == null ) {
+                throw new ArgumentNullException( paramName: nameof( unregisterHandler ) );
+            }
 
-			try {
-				if ( e.UserState == taskCompletionSource ) {
-					if ( e.Cancelled ) { taskCompletionSource.TrySetCanceled(); }
-					else if ( e.Error != null ) { taskCompletionSource.TrySetException( e.Error ); }
-					else { taskCompletionSource.TrySetResult( getResult() ); }
-				}
-			}
-			finally { unregisterHandler(); }
-		}
-	}
+            try {
+                if ( e.UserState == taskCompletionSource ) {
+                    if ( e.Cancelled ) {
+                        taskCompletionSource.TrySetCanceled();
+                    }
+                    else if ( e.Error != null ) {
+                        taskCompletionSource.TrySetException( e.Error );
+                    }
+                    else {
+                        taskCompletionSource.TrySetResult( getResult() );
+                    }
+                }
+            }
+            finally {
+                unregisterHandler();
+            }
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,30 +35,30 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StringHex.cs" was last formatted by Protiguous on 2018/12/01 at 4:45 PM.
+// Project: "Librainian", "StringHex.cs" was last formatted by Protiguous on 2019/08/08 at 9:25 AM.
 
 namespace Librainian.Parsing.Validation {
 
-	using System;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	[Serializable]
-	[JsonObject]
-	public class StringHex : RegexString {
+    [Serializable]
+    [JsonObject]
+    public class StringHex : RegexString {
 
-		protected override Boolean AllowNull => true;
+        protected override Boolean AllowNull => true;
 
-		[NotNull]
-		protected override String RegexValidation => "^[0-9a-fA-F]*$";
+        [NotNull]
+        protected override String RegexValidation => "^[0-9a-fA-F]*$";
 
-		public override String Requirements => "be a hexadecimal number";
+        public override String Requirements => "be a hexadecimal number";
 
-		public StringHex( String value ) : base( value ) { }
+        public StringHex( String value ) : base( value ) { }
 
-		[NotNull]
-		public static explicit operator StringHex( String str ) => new StringHex( str );
-	}
+        [NotNull]
+        public static explicit operator StringHex( String str ) => new StringHex( str );
+    }
 }

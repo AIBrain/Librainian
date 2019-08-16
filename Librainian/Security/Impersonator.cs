@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,51 +35,63 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Impersonator.cs" was last formatted by Protiguous on 2018/07/13 at 1:38 AM.
+// Project: "Librainian", "Impersonator.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
 
 namespace Librainian.Security {
 
-    using Magic;
-    using OperatingSystem;
     using System;
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Security.Principal;
+    using Magic;
+    using OperatingSystem;
 
     /// <summary>
     /// </summary>
     public class Impersonator : ABetterClassDispose {
 
-        private const Int32 Logon32LogonInteractive = 2;
-        private const Int32 Logon32ProviderDefault = 0;
         private WindowsImpersonationContext _impersonationContext;
 
-        public Impersonator(String userName, String domainName, String password) => this.ImpersonateValidUser(userName: userName, domain: domainName, password: password);
+        private const Int32 Logon32LogonInteractive = 2;
 
-        private void ImpersonateValidUser(String userName, String domain, String password) {
+        private const Int32 Logon32ProviderDefault = 0;
+
+        public Impersonator( String userName, String domainName, String password ) => this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
+
+        private void ImpersonateValidUser( String userName, String domain, String password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 
             try {
-                if (!NativeMethods.RevertToSelf()) { throw new Win32Exception(error: Marshal.GetLastWin32Error()); }
+                if ( !NativeMethods.RevertToSelf() ) {
+                    throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                }
                 else {
-                    if (NativeMethods.LogonUser(lpszUserName: userName, lpszDomain: domain, lpszPassword: password, dwLogonType: Logon32LogonInteractive, dwLogonProvider: Logon32ProviderDefault, phToken: ref token) ==
-                         0) { throw new Win32Exception(error: Marshal.GetLastWin32Error()); }
+                    if ( NativeMethods.LogonUser( lpszUserName: userName, lpszDomain: domain, lpszPassword: password, dwLogonType: Logon32LogonInteractive,
+                             dwLogonProvider: Logon32ProviderDefault, phToken: ref token ) == 0 ) {
+                        throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    }
                     else {
-                        if (NativeMethods.DuplicateToken(hToken: token, impersonationLevel: 2, hNewToken: ref tokenDuplicate) == 0) { throw new Win32Exception(error: Marshal.GetLastWin32Error()); }
+                        if ( NativeMethods.DuplicateToken( hToken: token, impersonationLevel: 2, hNewToken: ref tokenDuplicate ) == 0 ) {
+                            throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                        }
                         else {
-                            var tempWindowsIdentity = new WindowsIdentity(userToken: tokenDuplicate);
+                            var tempWindowsIdentity = new WindowsIdentity( userToken: tokenDuplicate );
                             this._impersonationContext = tempWindowsIdentity.Impersonate();
                         }
                     }
                 }
             }
             finally {
-                if (token != IntPtr.Zero) { token.CloseHandle(); }
+                if ( token != IntPtr.Zero ) {
+                    token.CloseHandle();
+                }
 
-                if (tokenDuplicate != IntPtr.Zero) { tokenDuplicate.CloseHandle(); }
+                if ( tokenDuplicate != IntPtr.Zero ) {
+                    tokenDuplicate.CloseHandle();
+                }
             }
         }
 

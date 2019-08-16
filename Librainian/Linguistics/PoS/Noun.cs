@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,25 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Noun.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
+// Project: "Librainian", "Noun.cs" was last formatted by Protiguous on 2019/08/08 at 8:10 AM.
 
-namespace Librainian.Linguistics.PoS
-{
+namespace Librainian.Linguistics.PoS {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Linq;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     [JsonObject]
-    public class Noun : Word, ITaggedWord
-    {
+    public class Noun : Word, ITaggedWord {
 
         public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
 
-        public Noun(String word) : base(word) { }
+        public Noun( String word ) : base( word ) { }
 
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
@@ -63,11 +61,12 @@ namespace Librainian.Linguistics.PoS
         ///     otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals([CanBeNull] Noun other)
-        {
-            if (other == null) { return false; }
+        public Boolean Equals( [CanBeNull] Noun other ) {
+            if ( other == null ) {
+                return false;
+            }
 
-            return ReferenceEquals(this, other) || this.SequenceEqual(other);
+            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
     }
 }

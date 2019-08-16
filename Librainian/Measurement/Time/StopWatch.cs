@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,43 +35,54 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StopWatch.cs" was last formatted by Protiguous on 2018/07/13 at 1:30 AM.
+// Project: "Librainian", "StopWatch.cs" was last formatted by Protiguous on 2019/08/08 at 9:10 AM.
 
-namespace Librainian.Measurement.Time
-{
+namespace Librainian.Measurement.Time {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Diagnostics;
     using System.Threading;
-
-    // ==++==
-    //
-    // Copyright (c) Microsoft Corporation. All rights reserved.
-    //
-    // ==--==
-    /*============================================================
-    **
-    ** Class:  Stopwatch
-    **
-    ** Purpose: Implementation for Stopwatch class.
-    **
-    ** Date:  Nov 27, 2002
-    **
-    ===========================================================*/
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
-    ///     Pulled from Microsoft's Stopwatch() source. Wanted to see how it works.
+    ///     Pulled from Microsoft's Stopwatch() source code.
+    /// <para>Wanted to see how it works.</para>
     ///     <para>Made my changes to it. Needs some unit tests.</para>
     /// </summary>
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    [Obsolete("Not really obsolete, but bugs might have been introduced.")]
-    public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan>
-    {
+    [Obsolete( "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
+    public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
+
+        /// <summary>
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// </summary>
+        /// <returns>
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
+        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
+        ///     <paramref name="other" /> in the sort order.
+        /// </returns>
+        /// <param name="other">An object to compare with this instance. </param>
+        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
+
+        /// <summary>
+        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// </summary>
+        /// <returns>
+        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
+        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
+        ///     <paramref name="other" /> in the sort order.
+        /// </returns>
+        /// <param name="other">An object to compare with this instance. </param>
+        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
         [JsonProperty]
         private Int64 _endTimeStamp;
@@ -82,11 +93,7 @@ namespace Librainian.Measurement.Time
         [JsonProperty]
         private Int64 _startTimeStamp;
 
-        public const Int64 TicksPerMicrosecond = 10;
-
-        public const Int64 TicksPerMillisecond = 10000;
-
-        public TimeSpan Elapsed => new TimeSpan(ticks: this.GetElapsedTicks());
+        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -95,9 +102,9 @@ namespace Librainian.Measurement.Time
         public Int64 ElapsedTicks => this.GetElapsedTicks();
 
         public Int64 EndTimeStamp {
-            get => Interlocked.Read(ref this._endTimeStamp);
+            get => Interlocked.Read( ref this._endTimeStamp );
 
-            private set => Interlocked.Exchange(ref this._endTimeStamp, value);
+            private set => Interlocked.Exchange( ref this._endTimeStamp, value );
         }
 
         public Boolean IsRunning {
@@ -107,93 +114,70 @@ namespace Librainian.Measurement.Time
         }
 
         public Int64 StartTimeStamp {
-            get => Interlocked.Read(ref this._startTimeStamp);
+            get => Interlocked.Read( ref this._startTimeStamp );
 
-            private set => Interlocked.Exchange(ref this._startTimeStamp, value);
+            private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
+
+        public const Int64 TicksPerMicrosecond = 10;
+
+        public const Int64 TicksPerMillisecond = 10000;
 
         public StopWatch() => this.Reset();
 
-        private Int64 GetElapsedTicks()
-        {
-            if (this.IsRunning) { return DateTime.UtcNow.Ticks - this.StartTimeStamp; }
+        private Int64 GetElapsedTicks() {
+            if ( this.IsRunning ) {
+                return DateTime.UtcNow.Ticks - this.StartTimeStamp;
+            }
 
             return this.EndTimeStamp - this.StartTimeStamp;
         }
 
-        public static implicit operator TimeSpan([NotNull] StopWatch stopWatch) => TimeSpan.FromMilliseconds(stopWatch.ElapsedMilliseconds);
+        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
 
         [NotNull]
-        public static StopWatch StartNew()
-        {
+        public static StopWatch StartNew() {
             var stopWatch = new StopWatch();
             stopWatch.Start();
 
             return stopWatch;
         }
 
-        /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
-        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
-        ///     <paramref name="other" /> in the sort order.
-        /// </returns>
-        /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo([NotNull] StopWatch other) => this.GetElapsedTicks().CompareTo(other.GetElapsedTicks());
-
-        /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-        ///     the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-        ///     Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This instance
-        ///     occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance follows
-        ///     <paramref name="other" /> in the sort order.
-        /// </returns>
-        /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo(TimeSpan other) => this.Elapsed.CompareTo(other);
-
         public void Pause() => throw new NotImplementedException();
 
         /// <summary>
         ///     Stops the stopwatch and resets all the values to default.
         /// </summary>
-        public void Reset()
-        {
+        public void Reset() {
             this.IsRunning = false;
             this.StartTimeStamp = 0;
             this.EndTimeStamp = 0;
         }
 
-        public void Restart()
-        {
+        public void Restart() {
             this.StartTimeStamp = DateTime.UtcNow.Ticks;
             this.IsRunning = true;
         }
 
-        public void Resume()
-        {
+        public void Resume() {
             this.Start();
 
             throw new NotImplementedException();
         }
 
-        public void Start()
-        {
-            if (this.IsRunning) { return; }
+        public void Start() {
+            if ( this.IsRunning ) {
+                return;
+            }
 
             this.StartTimeStamp = DateTime.UtcNow.Ticks; //BUG possible bug here?
             this.IsRunning = true;
         }
 
-        public void Stop()
-        {
-            if (!this.IsRunning) { return; }
+        public void Stop() {
+            if ( !this.IsRunning ) {
+                return;
+            }
 
             this.EndTimeStamp = DateTime.UtcNow.Ticks;
         }
@@ -204,6 +188,6 @@ namespace Librainian.Measurement.Time
         /// <returns>
         ///     A string that represents the current object.
         /// </returns>
-        public override String ToString() => this.Elapsed.ToString("g");
+        public override String ToString() => this.Elapsed.ToString( "g" );
     }
 }

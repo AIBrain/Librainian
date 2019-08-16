@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,48 +35,47 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2018/07/13 at 1:22 AM.
+// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:43 AM.
 
-namespace Librainian.Measurement.Currency
-{
+namespace Librainian.Measurement.Currency {
 
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Windows.Forms;
     using BTC;
     using Controls;
     using JetBrains.Annotations;
     using Magic;
     using Maths;
     using Newtonsoft.Json;
-    using System;
-    using System.Diagnostics;
-    using System.Threading;
-    using System.Windows.Forms;
     using Time;
 
     /// <summary>
     ///     A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.
     /// </summary>
     /// <remarks>TODO add in support for automatic persisting</remarks>
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet>
-    {
+    public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-        [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-
-        private readonly Int32 _hashcode;
-
-        [JsonProperty]
-        private Decimal _balance;
+        /// <summary>
+        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
+        /// </summary>
+        /// <param name="other">Annother to compare with this wallet.</param>
+        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
         public Decimal Balance {
             get {
-                try { return this._access.TryEnterReadLock(this.Timeout) ? this._balance : Decimal.Zero; }
-                finally
-                {
-                    if (this._access.IsReadLockHeld) { this._access.ExitReadLock(); }
+                try {
+                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
+                }
+                finally {
+                    if ( this._access.IsReadLockHeld ) {
+                        this._access.ExitReadLock();
+                    }
                 }
             }
         }
@@ -94,87 +93,41 @@ namespace Librainian.Measurement.Currency
         public Action<Decimal> OnBeforeWithdraw { get; set; }
 
         /// <summary>
-        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
-        /// </summary>
-        public TimeSpan Timeout { get; set; }
-
-        public SimpleWallet()
-        {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
-        /// </summary>
-        /// <param name="balance"></param>
-        public SimpleWallet(Decimal balance) : this() => this._balance = balance.Sanitize();
-
-        /// <summary>
-        ///     <para>Static comparison.</para>
-        ///     <para>Returns true if the wallets ARE the same instance.</para>
-        ///     <para>Returns true if the wallets HAVE the same balance.</para>
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals([CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right)
-        {
-            if (ReferenceEquals(left, right)) { return true; }
-
-            if (null == left || null == right) { return false; }
-
-            return left.Balance == right.Balance;
-        }
-
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this._access.Dispose();
-
-        /// <summary>
-        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
-        /// </summary>
-        /// <param name="other">Annother to compare with this wallet.</param>
-        public Boolean Equals(SimpleWallet other) => Equals(this, other);
-
-        [Pure]
-        public override Int32 GetHashCode() => this._hashcode;
-
-        public override String ToString() => $"{this.Balance:F8}";
-
-        /// <summary>
         ///     Add any (+-)amount directly to the balance.
         /// </summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryAdd(Decimal amount, Boolean sanitize = true)
-        {
-            if (sanitize) { amount = amount.Sanitize(); }
+        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
+            }
 
-            try
-            {
-                if (!this._access.TryEnterWriteLock(this.Timeout)) { return false; }
+            try {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+                    return false;
+                }
 
                 this._balance += amount;
                 this.LabelToFlashOnChanges.Flash();
 
                 return true;
             }
-            finally
-            {
-                if (this._access.IsWriteLockHeld) { this._access.ExitWriteLock(); }
+            finally {
+                if ( this._access.IsWriteLockHeld ) {
+                    this._access.ExitWriteLock();
+                }
 
-                this.OnAnyUpdate?.Invoke(amount);
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryAdd(SimpleWallet wallet, Boolean sanitize = true)
-        {
-            if (wallet == null) { throw new ArgumentNullException(nameof(wallet)); }
+        public Boolean TryAdd( SimpleWallet wallet, Boolean sanitize = true ) {
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
-            return this.TryAdd(wallet.Balance, sanitize);
+            return this.TryAdd( wallet.Balance, sanitize );
         }
 
         /// <summary>
@@ -183,34 +136,45 @@ namespace Librainian.Measurement.Currency
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryDeposit(Decimal amount, Boolean sanitize = true)
-        {
-            if (sanitize) { amount = amount.Sanitize(); }
+        public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
+            }
 
-            if (amount <= Decimal.Zero) { return false; }
+            if ( amount <= Decimal.Zero ) {
+                return false;
+            }
 
-            this.OnBeforeDeposit?.Invoke(amount);
+            this.OnBeforeDeposit?.Invoke( amount );
 
-            if (!this.TryAdd(amount)) { return false; }
+            if ( !this.TryAdd( amount ) ) {
+                return false;
+            }
 
-            this.OnAfterDeposit?.Invoke(amount);
+            this.OnAfterDeposit?.Invoke( amount );
 
             return true;
         }
 
-        public Boolean TryTransfer(Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true)
-        {
-            if (sanitize) { amount = amount.Sanitize(); }
+        public Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
+            }
 
-            if (amount <= Decimal.Zero) { return false; }
+            if ( amount <= Decimal.Zero ) {
+                return false;
+            }
 
             Decimal? withdrewAmount = null;
 
-            try
-            {
-                if (!this._access.TryEnterWriteLock(this.Timeout)) { return false; }
+            try {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+                    return false;
+                }
 
-                if (this._balance < amount) { return false; }
+                if ( this._balance < amount ) {
+                    return false;
+                }
 
                 this._balance -= amount;
                 this.LabelToFlashOnChanges.Flash();
@@ -218,14 +182,17 @@ namespace Librainian.Measurement.Currency
 
                 return true;
             }
-            finally
-            {
-                if (this._access.IsWriteLockHeld) { this._access.ExitWriteLock(); }
+            finally {
+                if ( this._access.IsWriteLockHeld ) {
+                    this._access.ExitWriteLock();
+                }
 
-                if (withdrewAmount.HasValue) { intoWallet.TryDeposit(amount: withdrewAmount.Value, sanitize: false); }
+                if ( withdrewAmount.HasValue ) {
+                    intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
+                }
 
-                this.OnAfterWithdraw?.Invoke(amount);
-                this.OnAnyUpdate?.Invoke(amount);
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -235,11 +202,11 @@ namespace Librainian.Measurement.Currency
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryUpdateBalance(Decimal amount, Boolean sanitize = true)
-        {
-            try
-            {
-                if (!this._access.TryEnterWriteLock(this.Timeout)) { return false; }
+        public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
+            try {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+                    return false;
+                }
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
 
@@ -247,15 +214,16 @@ namespace Librainian.Measurement.Currency
 
                 return true;
             }
-            finally
-            {
-                if (this._access.IsWriteLockHeld) { this._access.ExitWriteLock(); }
+            finally {
+                if ( this._access.IsWriteLockHeld ) {
+                    this._access.ExitWriteLock();
+                }
 
-                this.OnAnyUpdate?.Invoke(amount);
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public void TryUpdateBalance([NotNull] SimpleWallet simpleWallet) => this.TryUpdateBalance(simpleWallet.Balance);
+        public void TryUpdateBalance( [NotNull] SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
         /// <summary>
         ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -264,37 +232,99 @@ namespace Librainian.Measurement.Currency
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryWithdraw(Decimal amount, Boolean sanitize = true)
-        {
-            if (sanitize) { amount = amount.Sanitize(); }
+        public Boolean TryWithdraw( Decimal amount, Boolean sanitize = true ) {
+            if ( sanitize ) {
+                amount = amount.Sanitize();
+            }
 
-            if (amount <= Decimal.Zero) { return false; }
+            if ( amount <= Decimal.Zero ) {
+                return false;
+            }
 
-            try
-            {
-                if (!this._access.TryEnterWriteLock(this.Timeout)) { return false; }
+            try {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+                    return false;
+                }
 
-                if (this._balance < amount) { return false; }
+                if ( this._balance < amount ) {
+                    return false;
+                }
 
                 this._balance -= amount;
                 this.LabelToFlashOnChanges.Flash();
 
                 return true;
             }
-            finally
-            {
-                if (this._access.IsWriteLockHeld) { this._access.ExitWriteLock(); }
+            finally {
+                if ( this._access.IsWriteLockHeld ) {
+                    this._access.ExitWriteLock();
+                }
 
-                this.OnAfterWithdraw?.Invoke(amount);
-                this.OnAnyUpdate?.Invoke(amount);
+                this.OnAfterWithdraw?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryWithdraw(SimpleWallet wallet)
-        {
-            if (wallet == null) { throw new ArgumentNullException(nameof(wallet)); }
+        public Boolean TryWithdraw( SimpleWallet wallet ) {
+            if ( wallet == null ) {
+                throw new ArgumentNullException( nameof( wallet ) );
+            }
 
-            return this.TryWithdraw(wallet.Balance);
+            return this.TryWithdraw( wallet.Balance );
         }
+
+        [NotNull]
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        private readonly Int32 _hashcode;
+
+        [JsonProperty]
+        private Decimal _balance;
+
+        /// <summary>
+        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+        /// </summary>
+        public TimeSpan Timeout { get; set; }
+
+        public SimpleWallet() {
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        /// <summary>
+        ///     Initialize the wallet with the specified <paramref name="balance" />.
+        /// </summary>
+        /// <param name="balance"></param>
+        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
+
+        /// <summary>
+        ///     <para>Static comparison.</para>
+        ///     <para>Returns true if the wallets ARE the same instance.</para>
+        ///     <para>Returns true if the wallets HAVE the same balance.</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( null == left || null == right ) {
+                return false;
+            }
+
+            return left.Balance == right.Balance;
+        }
+
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this._access.Dispose();
+
+        [Pure]
+        public override Int32 GetHashCode() => this._hashcode;
+
+        public override String ToString() => $"{this.Balance:F8}";
     }
 }

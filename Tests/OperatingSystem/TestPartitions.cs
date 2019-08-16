@@ -18,7 +18,7 @@
 // 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
+//     PayPal:Protiguous@Protiguous.com
 //     (We're still looking into other solutions! Any ideas?)
 // 
 // =========================================================

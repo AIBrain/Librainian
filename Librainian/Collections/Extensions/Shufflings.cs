@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2019/01/05 at 9:49 PM.
+// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2019/08/08 at 6:31 AM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -55,6 +55,7 @@ namespace Librainian.Collections.Extensions {
     public static class Shufflings {
 
         /*
+
         /// <summary>
         ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
         /// </summary>
@@ -81,6 +82,7 @@ namespace Librainian.Collections.Extensions {
 
                 // make a copy of all items
                 var bag = new ConcurrentBag<T>( array );
+
                 //bag.Should().NotBeEmpty();
                 var originalcount = bag.Count;
 
@@ -126,18 +128,8 @@ namespace Librainian.Collections.Extensions {
         }
         */
 
-        public static void ShuffleByGuid<T>( ref List<T> list, Int32 iterations = 1 ) {
-            var l = new List<T>( list.Count );
-            while ( iterations.Any() ) {
-                iterations--;
-                l.Clear();
-                l.AddRange( list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).AsUnordered() );
-                //TODO this is not finished
-            }
-        }
-
         /// <summary>
-        /// Take a buffer and scramble.
+        ///     Take a buffer and scramble.
         /// </summary>
         /// <param name="buffer"></param>
         /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
@@ -145,19 +137,20 @@ namespace Librainian.Collections.Extensions {
             if ( buffer == null ) {
                 throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
+
             var length = buffer.Length;
 
             for ( var i = length - 1; i >= 0; i-- ) {
                 var a = 0.Next( length );
                 var b = 0.Next( length );
-                var (v1, v2) = (buffer[ a ], buffer[ b ]);
+                var (v1, v2) = ( buffer[ a ], buffer[ b ] );
                 buffer[ a ] = v2;
                 buffer[ b ] = v1;
             }
         }
 
         /// <summary>
-        /// Take a list and scramble the order of its items.
+        ///     Take a list and scramble the order of its items.
         /// </summary>
         /// <param name="list"></param>
         /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
@@ -165,17 +158,17 @@ namespace Librainian.Collections.Extensions {
             if ( list == null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
             }
+
             var length = list.Count;
 
             for ( var i = length - 1; i >= 0; i-- ) {
                 var a = 0.Next( length );
                 var b = 0.Next( length );
-                var (v1, v2) = (list[ a ], list[ b ]);
+                var (v1, v2) = ( list[ a ], list[ b ] );
                 list[ a ] = v2;
                 list[ b ] = v1;
             }
         }
-
 
         /// <summary>
         ///     <para>Shuffle a list in <paramref name="iterations" />.</para>
@@ -204,34 +197,34 @@ namespace Librainian.Collections.Extensions {
 
                 switch ( shufflingType ) {
                     case ShufflingType.ByGuid: {
-                            ShuffleByGuid( list: ref list, iterations: iterations );
+                        ShuffleByGuid( list: ref list, iterations: iterations );
 
-                            break;
-                        }
+                        break;
+                    }
 
                     case ShufflingType.ByRandom: {
-                            ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
+                        ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
 
-                            break;
-                        }
+                        break;
+                    }
 
                     case ShufflingType.ByHarker: {
-                            ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
+                        ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
 
-                            break;
-                        }
+                        break;
+                    }
 
                     case ShufflingType.ByBags: {
-                            ShuffleByBags( list: ref list, iterations: iterations, originalcount: list.LongCount() );
+                        ShuffleByBags( list: ref list, iterations: iterations, originalcount: list.LongCount() );
 
-                            break;
-                        }
+                        break;
+                    }
 
                     case ShufflingType.AutoChoice: {
-                            ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
+                        ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, orUntilCancelled: orUntilCancelled );
 
-                            break;
-                        }
+                        break;
+                    }
 
                     default: throw new ArgumentOutOfRangeException( nameof( shufflingType ) );
                 }
@@ -255,15 +248,30 @@ namespace Librainian.Collections.Extensions {
                 iterations--;
 
                 bag.AddRange( items: list.AsParallel() );
+
                 //bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
 
                 list.Clear();
+
                 //list.Should().BeEmpty( because: "emptied the original list" );
 
                 list.AddRange( collection: bag );
+
                 //list.LongCount().Should().Be( expected: originalcount );
 
                 bag.RemoveAll();
+            }
+        }
+
+        public static void ShuffleByGuid<T>( ref List<T> list, Int32 iterations = 1 ) {
+            var l = new List<T>( list.Count );
+
+            while ( iterations.Any() ) {
+                iterations--;
+                l.Clear();
+                l.AddRange( list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).AsUnordered() );
+
+                //TODO this is not finished
             }
         }
 

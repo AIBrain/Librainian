@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Extensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:10 PM.
+// Project: "Librainian", "Extensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:00 AM.
 
 namespace Librainian.Internet.Servers {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	public static class Extensions {
+    public static class Extensions {
 
-		/// <summary>
-		///     Returns the date and time formatted for insertion as the expiration date in a
-		///     "Set-Cookie" header.
-		/// </summary>
-		/// <param name="time"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String ToCookieTime( this DateTime time ) => time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
-	}
+        /// <summary>
+        ///     Returns the date and time formatted for insertion as the expiration date in a
+        ///     "Set-Cookie" header.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String ToCookieTime( this DateTime time ) => time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
+    }
 }

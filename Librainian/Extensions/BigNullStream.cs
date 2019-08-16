@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,87 +35,95 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BigNullStream.cs" was last formatted by Protiguous on 2018/07/10 at 9:00 PM.
+// Project: "Librainian", "BigNullStream.cs" was last formatted by Protiguous on 2019/08/08 at 7:07 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.IO;
-	using Exceptions;
+    using System;
+    using System.IO;
+    using Exceptions;
 
-	/// <inheritdoc />
-	/// <summary>
-	///     TODO make this class able to use a BigInteger?
-	/// </summary>
-	public abstract class BigNullStream : Stream {
+    /// <inheritdoc />
+    /// <summary>
+    ///     TODO make this class able to use a BigInteger?
+    /// </summary>
+    public abstract class BigNullStream : Stream {
 
-		private Int64 _length;
+        private Int64 _length;
 
-		private Int64 _position;
+        private Int64 _position;
 
-		public override Boolean CanRead => false;
+        public override Boolean CanRead => false;
 
-		public override Boolean CanSeek => true;
+        public override Boolean CanSeek => true;
 
-		public override Boolean CanWrite => true;
+        public override Boolean CanWrite => true;
 
-		public override Int64 Length => this._length;
+        public override Int64 Length => this._length;
 
-		public override Int64 Position {
-			get => this._position;
+        public override Int64 Position {
+            get => this._position;
 
-			set {
-				this._position = value;
+            set {
+                this._position = value;
 
-				if ( this._position > this._length ) { this._length = this._position; }
-			}
-		}
+                if ( this._position > this._length ) {
+                    this._length = this._position;
+                }
+            }
+        }
 
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
-			if ( !this.CanRead ) { throw new StreamReadException( "This stream doesn't support reading." ); }
+        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
+            if ( !this.CanRead ) {
+                throw new StreamReadException( "This stream doesn't support reading." );
+            }
 
-			throw new UnknownException();
-		}
+            throw new UnknownException();
+        }
 
-		public override void Flush() { }
+        public override void Flush() { }
 
-		public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
-			if ( !this.CanRead ) { throw new StreamReadException( "This stream doesn't support reading." ); }
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
+            if ( !this.CanRead ) {
+                throw new StreamReadException( "This stream doesn't support reading." );
+            }
 
-			throw new UnknownException();
-		}
+            throw new UnknownException();
+        }
 
-		public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
-			var newPosition = this.Position;
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
+            var newPosition = this.Position;
 
-			switch ( origin ) {
-				case SeekOrigin.Begin:
-					newPosition = offset;
+            switch ( origin ) {
+                case SeekOrigin.Begin:
+                    newPosition = offset;
 
-					break;
+                    break;
 
-				case SeekOrigin.Current:
-					newPosition = this.Position + offset;
+                case SeekOrigin.Current:
+                    newPosition = this.Position + offset;
 
-					break;
+                    break;
 
-				case SeekOrigin.End:
-					newPosition = this.Length + offset;
+                case SeekOrigin.End:
+                    newPosition = this.Length + offset;
 
-					break;
-			}
+                    break;
+            }
 
-			if ( newPosition < 0 ) { throw new ArgumentException( "Attempt to seek before start of stream." ); }
+            if ( newPosition < 0 ) {
+                throw new ArgumentException( "Attempt to seek before start of stream." );
+            }
 
-			this.Position = newPosition;
+            this.Position = newPosition;
 
-			return newPosition;
-		}
+            return newPosition;
+        }
 
-		public override void SetLength( Int64 value ) => this._length = value;
+        public override void SetLength( Int64 value ) => this._length = value;
 
-		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
-	}
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Partitions.cs" was last formatted by Protiguous on 2019/03/17 at 12:38 PM.
+// Project: "Librainian", "Partitions.cs" was last formatted by Protiguous on 2019/08/08 at 9:18 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -60,40 +60,40 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var collection = searcher.Get();
 
                 foreach ( var item in collection.OfType<ManagementObject>().Select( obj => new Win32DiskPartition {
-                    Access = ( UInt16? )obj[ "Access" ],
-                    Availability = ( UInt16? )obj[ "Availability" ],
-                    BlockSize = ( UInt64? )obj[ "BlockSize" ],
-                    Bootable = ( Boolean? )obj[ "Bootable" ],
-                    BootPartition = ( Boolean? )obj[ "BootPartition" ],
-                    Caption = ( String )obj[ "Caption" ],
-                    ConfigManagerErrorCode = ( UInt32? )obj[ "ConfigManagerErrorCode" ],
-                    ConfigManagerUserConfig = ( Boolean? )obj[ "ConfigManagerUserConfig" ],
-                    CreationClassName = ( String )obj[ "CreationClassName" ],
-                    Description = ( String )obj[ "Description" ],
-                    DeviceID = ( String )obj[ "DeviceID" ],
-                    DiskIndex = ( UInt32? )obj[ "DiskIndex" ],
-                    ErrorCleared = ( Boolean? )obj[ "ErrorCleared" ],
-                    ErrorDescription = ( String )obj[ "ErrorDescription" ],
-                    ErrorMethodology = ( String )obj[ "ErrorMethodology" ],
-                    HiddenSectors = ( UInt32? )obj[ "HiddenSectors" ],
-                    Index = ( UInt32? )obj[ "Index" ],
-                    InstallDate = ( DateTime? )obj[ "InstallDate" ],
-                    LastErrorCode = ( UInt32? )obj[ "LastErrorCode" ],
-                    Name = ( String )obj[ "Name" ],
-                    NumberOfBlocks = ( UInt64? )obj[ "NumberOfBlocks" ],
-                    PNPDeviceID = ( String )obj[ "PNPDeviceID" ],
-                    PowerManagementCapabilities = ( UInt16[] )obj[ "PowerManagementCapabilities" ],
-                    PowerManagementSupported = ( Boolean? )obj[ "PowerManagementSupported" ],
-                    PrimaryPartition = ( Boolean? )obj[ "PrimaryPartition" ],
-                    Purpose = ( String )obj[ "Purpose" ],
-                    RewritePartition = ( Boolean? )obj[ "RewritePartition" ],
-                    Size = ( UInt64? )obj[ "Size" ],
-                    StartingOffset = ( UInt64? )obj[ "StartingOffset" ],
-                    Status = ( String )obj[ "Status" ],
-                    StatusInfo = ( UInt16? )obj[ "StatusInfo" ],
-                    SystemCreationClassName = ( String )obj[ "SystemCreationClassName" ],
-                    SystemName = ( String )obj[ "SystemName" ],
-                    Type = ( String )obj[ "Type" ]
+                    Access = ( UInt16? ) obj[ "Access" ],
+                    Availability = ( UInt16? ) obj[ "Availability" ],
+                    BlockSize = ( UInt64? ) obj[ "BlockSize" ],
+                    Bootable = ( Boolean? ) obj[ "Bootable" ],
+                    BootPartition = ( Boolean? ) obj[ "BootPartition" ],
+                    Caption = ( String ) obj[ "Caption" ],
+                    ConfigManagerErrorCode = ( UInt32? ) obj[ "ConfigManagerErrorCode" ],
+                    ConfigManagerUserConfig = ( Boolean? ) obj[ "ConfigManagerUserConfig" ],
+                    CreationClassName = ( String ) obj[ "CreationClassName" ],
+                    Description = ( String ) obj[ "Description" ],
+                    DeviceID = ( String ) obj[ "DeviceID" ],
+                    DiskIndex = ( UInt32? ) obj[ "DiskIndex" ],
+                    ErrorCleared = ( Boolean? ) obj[ "ErrorCleared" ],
+                    ErrorDescription = ( String ) obj[ "ErrorDescription" ],
+                    ErrorMethodology = ( String ) obj[ "ErrorMethodology" ],
+                    HiddenSectors = ( UInt32? ) obj[ "HiddenSectors" ],
+                    Index = ( UInt32? ) obj[ "Index" ],
+                    InstallDate = ( DateTime? ) obj[ "InstallDate" ],
+                    LastErrorCode = ( UInt32? ) obj[ "LastErrorCode" ],
+                    Name = ( String ) obj[ "Name" ],
+                    NumberOfBlocks = ( UInt64? ) obj[ "NumberOfBlocks" ],
+                    PNPDeviceID = ( String ) obj[ "PNPDeviceID" ],
+                    PowerManagementCapabilities = ( UInt16[] ) obj[ "PowerManagementCapabilities" ],
+                    PowerManagementSupported = ( Boolean? ) obj[ "PowerManagementSupported" ],
+                    PrimaryPartition = ( Boolean? ) obj[ "PrimaryPartition" ],
+                    Purpose = ( String ) obj[ "Purpose" ],
+                    RewritePartition = ( Boolean? ) obj[ "RewritePartition" ],
+                    Size = ( UInt64? ) obj[ "Size" ],
+                    StartingOffset = ( UInt64? ) obj[ "StartingOffset" ],
+                    Status = ( String ) obj[ "Status" ],
+                    StatusInfo = ( UInt16? ) obj[ "StatusInfo" ],
+                    SystemCreationClassName = ( String ) obj[ "SystemCreationClassName" ],
+                    SystemName = ( String ) obj[ "SystemName" ],
+                    Type = ( String ) obj[ "Type" ]
                 } ) ) {
                     yield return item;
                 }

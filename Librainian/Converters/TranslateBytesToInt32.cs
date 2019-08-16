@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TranslateBytesToInt32.cs" was last formatted by Protiguous on 2018/07/26 at 2:33 PM.
+// Project: "Librainian", "TranslateBytesToInt32.cs" was last formatted by Protiguous on 2019/08/08 at 6:51 AM.
 
 namespace Librainian.Converters {
 
-	using System;
-	using System.Runtime.InteropServices;
+    using System;
+    using System.Runtime.InteropServices;
 
-	/// <summary>
-	/// </summary>
-	[StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
-	public struct TranslateBytesToInt32 {
+    /// <summary>
+    /// </summary>
+    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    public struct TranslateBytesToInt32 {
 
-		[FieldOffset( offset: 0 )]
-		public Byte[] Bytes;
+        [FieldOffset( offset: 0 )]
+        public Byte[] Bytes;
 
-		[FieldOffset( offset: 0 )]
-		public readonly Int32[] Ints;
-	}
+        [FieldOffset( offset: 0 )]
+        public readonly Int32[] Ints;
+    }
 }

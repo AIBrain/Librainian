@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,88 +35,89 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MasterDocumentTable.cs" was last formatted by Protiguous on 2018/11/21 at 10:26 PM.
+// Project: "Librainian", "MasterDocumentTable.cs" was last formatted by Protiguous on 2019/08/08 at 9:18 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Persistence;
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using JetBrains.Annotations;
+    using Persistence;
 
-	/// <summary>
-	///     A persisted cache of all found <see cref="Document" />.
-	/// </summary>
-	public static class MasterDocumentTable {
+    /// <summary>
+    ///     A persisted cache of all found <see cref="Document" />.
+    /// </summary>
+    public static class MasterDocumentTable {
 
-		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
-		/// <summary>
-		///     DocumentInfos[StringPath]=DocumentInfo
-		/// </summary>
-		public static PersistTable<String, DocumentInfo> DocumentInfos { get; } = new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
+        /// <summary>
+        ///     DocumentInfos[StringPath]=DocumentInfo
+        /// </summary>
+        public static PersistTable<String, DocumentInfo> DocumentInfos { get; } =
+            new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
 
-		/// <summary>
-		///     Documents[StringPath]=Document
-		/// </summary>
-		public static PersistTable<String, Document> Documents { get; } =
-			new PersistTable<String, Document>( Environment.SpecialFolder.CommonApplicationData, Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( Documents ) );
+        /// <summary>
+        ///     Documents[StringPath]=Document
+        /// </summary>
+        public static PersistTable<String, Document> Documents { get; } = new PersistTable<String, Document>( Environment.SpecialFolder.CommonApplicationData,
+            Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( Documents ) );
 
-		public static StringKVPTable Settings { get; } =
-			new StringKVPTable( Environment.SpecialFolder.LocalApplicationData, Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( MasterDocumentTable ) );
+        public static StringKVPTable Settings { get; } = new StringKVPTable( Environment.SpecialFolder.LocalApplicationData,
+            Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( MasterDocumentTable ) );
 
-		/// <summary>
-		///     Start searching in the givin <paramref name="folder" />, and update our "MFT" with found documents.
-		/// </summary>
-		/// <param name="folder"></param>
-		/// <param name="folders"></param>
-		/// <param name="documents"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> documents = null ) {
-			var task = Task.Run( async () => {
-				if ( CancellationTokenSource.IsCancellationRequested ) {
-					return Task.FromResult( default( IFolder ) );   //TODO
-				}
+        /// <summary>
+        ///     Start searching in the givin <paramref name="folder" />, and update our "MFT" with found documents.
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <param name="folders"></param>
+        /// <param name="documents"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> documents = null ) {
+            var task = Task.Run( async () => {
+                if ( CancellationTokenSource.IsCancellationRequested ) {
+                    return Task.FromResult( default( IFolder ) ); //TODO
+                }
 
-				//Find all documents in this folder...
-				var files = folder.GetDocuments( "*.*" );
+                //Find all documents in this folder...
+                var files = folder.GetDocuments( "*.*" );
 
-				//And update the MFT
-				Parallel.ForEach( files.AsParallel(), document => {
-					if ( CancellationTokenSource.IsCancellationRequested ) {
-						return;
-					}
+                //And update the MFT
+                Parallel.ForEach( files.AsParallel(), document => {
+                    if ( CancellationTokenSource.IsCancellationRequested ) {
+                        return;
+                    }
 
-					Documents[ document.FullPath ] = document;
-					documents?.Report( document );
-				} );
+                    Documents[ document.FullPath ] = document;
+                    documents?.Report( document );
+                } );
 
-				if ( CancellationTokenSource.IsCancellationRequested ) {
-					return Task.FromResult( default( IFolder ) );   //TODO
-				}
+                if ( CancellationTokenSource.IsCancellationRequested ) {
+                    return Task.FromResult( default( IFolder ) ); //TODO
+                }
 
-				//And then scan down into any subfolders.
-				foreach ( var subFolder in folder.BetterGetFolders( "*.*" ) ) {
-					if ( CancellationTokenSource.IsCancellationRequested ) {
-						return Task.FromResult( default( IFolder ) );
-					}
+                //And then scan down into any subfolders.
+                foreach ( var subFolder in folder.BetterGetFolders( "*.*" ) ) {
+                    if ( CancellationTokenSource.IsCancellationRequested ) {
+                        return Task.FromResult( default( IFolder ) );
+                    }
 
-					await SearchAsync( subFolder, folders, documents ).ConfigureAwait( false );
+                    await SearchAsync( subFolder, folders, documents ).ConfigureAwait( false );
 
-					folders?.Report( subFolder ); //best before or after await?
-				}
+                    folders?.Report( subFolder ); //best before or after await?
+                }
 
-				return Task.FromResult( default( IFolder ) );	//TODO
-			} );
+                return Task.FromResult( default( IFolder ) ); //TODO
+            } );
 
-			return task;
-		}
-	}
+            return task;
+        }
+    }
 }

@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2019/01/05 at 9:46 PM.
+// Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:25 AM.
 
 namespace Librainian.Maths {
 
@@ -54,37 +54,6 @@ namespace Librainian.Maths {
 
     public static class NumberExtensions {
 
-        [NotNull]
-        [DebuggerStepThrough]
-        [Pure]
-        public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
-            if ( value < 0 ) {
-                return "-" + SizeSuffix( -value );
-            }
-
-            if ( value == 0 ) {
-                return "0.0 bytes";
-            }
-
-            // mag is 0 for bytes, 1 for KB, 2, for MB.
-            var mag = ( Int32 )Math.Log( value, 1024 );
-
-            // 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
-            var adjustedSize = ( Decimal )value / ( 1L << (mag * 10) );
-
-            // make adjustment when the value is large enough that it would round up to 1000 or more
-            if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
-                mag += 1;
-                adjustedSize /= 1024;
-            }
-
-            return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[ mag ] );
-        }
-
-        private static readonly String[] SizeSuffixes = {
-            "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
-        };
-
         /// <summary>
         ///     Table used for reversing bits.
         /// </summary>
@@ -99,6 +68,10 @@ namespace Librainian.Maths {
             0xBD, 0x7D, 0xFD, 0x03, 0x83, 0x43, 0xC3, 0x23, 0xA3, 0x63, 0xE3, 0x13, 0x93, 0x53, 0xD3, 0x33, 0xB3, 0x73, 0xF3, 0x0B, 0x8B, 0x4B, 0xCB, 0x2B, 0xAB, 0x6B, 0xEB,
             0x1B, 0x9B, 0x5B, 0xDB, 0x3B, 0xBB, 0x7B, 0xFB, 0x07, 0x87, 0x47, 0xC7, 0x27, 0xA7, 0x67, 0xE7, 0x17, 0x97, 0x57, 0xD7, 0x37, 0xB7, 0x77, 0xF7, 0x0F, 0x8F, 0x4F,
             0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
+        };
+
+        private static readonly String[] SizeSuffixes = {
+            "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
         };
 
         /// <summary>
@@ -295,7 +268,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Int16 )( value - 1 );
+                value &= ( Int16 ) ( value - 1 );
             }
 
             return i;
@@ -311,7 +284,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( UInt16 )( value - 1 );
+                value &= ( UInt16 ) ( value - 1 );
             }
 
             return i;
@@ -327,7 +300,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Byte )( value - 1 );
+                value &= ( Byte ) ( value - 1 );
             }
 
             return i;
@@ -343,7 +316,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( SByte )( value - 1 );
+                value &= ( SByte ) ( value - 1 );
             }
 
             return i;
@@ -475,7 +448,7 @@ namespace Librainian.Maths {
         /// <returns>True for even, False for odd.</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Parity( this Byte value ) => ( (( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF) & 1 ) != 0;
+        public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 ) ( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -484,7 +457,7 @@ namespace Librainian.Maths {
         /// <returns>Input value with reversed bits</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ReverseBits( this Byte source ) => ( Byte )( (( ((source * 0x0802) & 0x22110) | ((source * 0x8020) & 0x88440) ) * 0x10101) >> 16 );
+        public static Byte ReverseBits( this Byte source ) => ( Byte ) ( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -492,8 +465,8 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static Int32 ReverseBits( this Int32 source ) =>
-            (BitReverseTable256[ source & 0xff ] << 24) | (BitReverseTable256[ (source >> 8) & 0xff ] << 16) | (BitReverseTable256[ (source >> 16) & 0xff ] << 8) |
-            BitReverseTable256[ (source >> 24) & 0xff ];
+            ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) |
+            BitReverseTable256[ ( source >> 24 ) & 0xff ];
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -501,8 +474,8 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt32 ReverseBits( this UInt32 source ) =>
-            ( UInt32 )( (BitReverseTable256[ source & 0xff ] << 24) | (BitReverseTable256[ (source >> 8) & 0xff ] << 16) |
-                         (BitReverseTable256[ (source >> 16) & 0xff ] << 8) | BitReverseTable256[ (source >> 24) & 0xff ] );
+            ( UInt32 ) ( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
+                         ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -510,11 +483,11 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt16 ReverseBits( this UInt16 source ) {
-            source = ( UInt16 )( ((source >> 1) & 0x5555) | (( source & 0x5555 ) << 1) );
-            source = ( UInt16 )( ((source >> 2) & 0x3333) | (( source & 0x3333 ) << 2) );
-            source = ( UInt16 )( ((source >> 4) & 0x0F0F) | (( source & 0x0F0F ) << 4) );
+            source = ( UInt16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( UInt16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( UInt16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( UInt16 )( (source >> 8) | (source << 8) );
+            return ( UInt16 ) ( ( source >> 8 ) | ( source << 8 ) );
         }
 
         /// <summary>
@@ -523,11 +496,38 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static Int16 ReverseBits( this Int16 source ) {
-            source = ( Int16 )( ((source >> 1) & 0x5555) | (( source & 0x5555 ) << 1) );
-            source = ( Int16 )( ((source >> 2) & 0x3333) | (( source & 0x3333 ) << 2) );
-            source = ( Int16 )( ((source >> 4) & 0x0F0F) | (( source & 0x0F0F ) << 4) );
+            source = ( Int16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( Int16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( Int16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( Int16 )( (source >> 8) | (source << 8) );
+            return ( Int16 ) ( ( source >> 8 ) | ( source << 8 ) );
+        }
+
+        [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
+        public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
+            if ( value < 0 ) {
+                return "-" + SizeSuffix( -value );
+            }
+
+            if ( value == 0 ) {
+                return "0.0 bytes";
+            }
+
+            // mag is 0 for bytes, 1 for KB, 2, for MB.
+            var mag = ( Int32 ) Math.Log( value, 1024 );
+
+            // 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
+            var adjustedSize = ( Decimal ) value / ( 1L << ( mag * 10 ) );
+
+            // make adjustment when the value is large enough that it would round up to 1000 or more
+            if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
+                mag += 1;
+                adjustedSize /= 1024;
+            }
+
+            return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[ mag ] );
         }
 
         public static IEnumerable<Int32> Through( this Int32 startValue, Int32 end ) {
@@ -593,9 +593,9 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            var reFrom = ( UInt64 )start;
+            var reFrom = ( UInt64 ) start;
 
-            if ( start <= ( Decimal )end ) {
+            if ( start <= ( Decimal ) end ) {
                 for ( var ul = reFrom; ul <= end; ul += step ) {
                     yield return ul;
 
@@ -665,8 +665,8 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            if ( @from <= end ) {
-                for ( var ul = @from; ul <= end; ul += step ) {
+            if ( from <= end ) {
+                for ( var ul = from; ul <= end; ul += step ) {
                     yield return ul;
 
                     if ( ul == UInt64.MaxValue ) {
@@ -675,7 +675,7 @@ namespace Librainian.Maths {
                 }
             }
             else {
-                for ( var ul = @from; ul >= end; ul -= step ) {
+                for ( var ul = from; ul >= end; ul -= step ) {
                     yield return ul;
 
                     if ( ul == UInt64.MinValue ) {
@@ -697,8 +697,8 @@ namespace Librainian.Maths {
                 step = 1L;
             }
 
-            if ( @from <= end ) {
-                for ( var ul = @from; ul <= end; ul += step ) {
+            if ( from <= end ) {
+                for ( var ul = from; ul <= end; ul += step ) {
                     yield return ul;
 
                     if ( ul == Int64.MaxValue ) {
@@ -707,7 +707,7 @@ namespace Librainian.Maths {
                 }
             }
             else {
-                for ( var ul = @from; ul >= end; ul -= step ) {
+                for ( var ul = from; ul >= end; ul -= step ) {
                     yield return ul;
 
                     if ( ul == Int64.MinValue ) {
@@ -729,13 +729,13 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            if ( @from <= to ) {
-                for ( var ul = @from; ul <= to; ul += step ) {
+            if ( from <= to ) {
+                for ( var ul = from; ul <= to; ul += step ) {
                     yield return ul;
                 }
             }
             else {
-                for ( var ul = @from; ul >= to; ul -= step ) {
+                for ( var ul = from; ul >= to; ul -= step ) {
                     yield return ul;
                 }
             }
@@ -753,7 +753,7 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            BigInteger reFrom = @from;
+            BigInteger reFrom = from;
 
             if ( reFrom <= to ) {
                 for ( var ul = reFrom; ul <= to; ul += step ) {
@@ -810,11 +810,11 @@ namespace Librainian.Maths {
             if ( !step.HasValue ) {
                 TimeSpan diff;
 
-                if ( @from > to ) {
-                    diff = @from - @from;
+                if ( from > to ) {
+                    diff = from - from;
                 }
                 else {
-                    diff = to - @from;
+                    diff = to - from;
                 }
 
                 if ( diff.TotalDays > 1 ) {
@@ -834,12 +834,12 @@ namespace Librainian.Maths {
                 }
             }
 
-            if ( @from > to ) {
+            if ( from > to ) {
                 if ( !step.HasValue ) {
                     yield break;
                 }
 
-                for ( var dateTime = @from; dateTime >= to; dateTime -= step.Value ) {
+                for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) {
                     yield return dateTime;
                 }
             }
@@ -848,7 +848,7 @@ namespace Librainian.Maths {
                     yield break;
                 }
 
-                for ( var dateTime = @from; dateTime <= to; dateTime += step.Value ) {
+                for ( var dateTime = from; dateTime <= to; dateTime += step.Value ) {
                     yield return dateTime;
                 }
             }

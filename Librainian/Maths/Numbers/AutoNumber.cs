@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,52 +35,52 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AutoNumber.cs" was last formatted by Protiguous on 2018/07/13 at 1:17 AM.
+// Project: "Librainian", "AutoNumber.cs" was last formatted by Protiguous on 2019/08/08 at 8:25 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Threading;
-	using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using Newtonsoft.Json;
 
 #pragma warning disable IDE0015 // Use framework type
 
     /// <summary>
     ///     An automatically incrementing Identity class. ( <see cref="Identity" /> is
-    ///     <see cref="UInt64" /> )
+    ///     <see cref="ulong" /> )
     /// </summary>
     [JsonObject]
 #pragma warning restore IDE0015 // Use framework type
-	public sealed class AutoNumber {
+    public sealed class AutoNumber {
 
-		[JsonProperty]
-		private Int64 _identity;
+        [JsonProperty]
+        private Int64 _identity;
 
-		/// <summary>The current value of the AutoNumber</summary>
-		public UInt64 Identity => ( UInt64 ) Interlocked.Read( ref this._identity );
+        /// <summary>The current value of the AutoNumber</summary>
+        public UInt64 Identity => ( UInt64 ) Interlocked.Read( ref this._identity );
 
-		/// <summary>Initialize the Identity with the specified seed value.</summary>
-		/// <param name="seed"></param>
-		public AutoNumber( UInt64 seed = UInt64.MinValue ) => this.Reseed( seed );
+        /// <summary>Initialize the Identity with the specified seed value.</summary>
+        /// <param name="seed"></param>
+        public AutoNumber( UInt64 seed = UInt64.MinValue ) => this.Reseed( seed );
 
-		public void Ensure( UInt64 atLeast ) {
-			if ( this.Identity < atLeast ) {
+        public void Ensure( UInt64 atLeast ) {
+            if ( this.Identity < atLeast ) {
 
-				//TODO make this an atomic operation
-				this.Reseed( atLeast );
-			}
-		}
+                //TODO make this an atomic operation
+                this.Reseed( atLeast );
+            }
+        }
 
-		/// <summary>Returns the incremented Identity</summary>
-		/// <returns></returns>
-		public UInt64 Next() => ( UInt64 ) Interlocked.Increment( ref this._identity );
+        /// <summary>Returns the incremented Identity</summary>
+        /// <returns></returns>
+        public UInt64 Next() => ( UInt64 ) Interlocked.Increment( ref this._identity );
 
-		/// <summary>Resets the Identity to the specified seed value</summary>
-		/// <param name="newIdentity"></param>
-		public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 ) newIdentity );
+        /// <summary>Resets the Identity to the specified seed value</summary>
+        /// <param name="newIdentity"></param>
+        public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 ) newIdentity );
 
-		public override String ToString() => $"{this.Identity}";
-	}
+        public override String ToString() => $"{this.Identity}";
+    }
 }

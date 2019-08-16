@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TheInternet.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
+// Project: "Librainian", "TheInternet.cs" was last formatted by Protiguous on 2019/08/08 at 8:01 AM.
 
 namespace Librainian.Internet {
 
@@ -65,12 +65,16 @@ namespace Librainian.Internet {
         /// <param name="onWebException"></param>
         /// <returns></returns>
         [ItemCanBeNull]
-        public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null, [CanBeNull] VolatileBoolean inProgress = null,
-            [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
-            if ( address == null ) { throw new ArgumentNullException( nameof( address ) ); }
+        public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null,
+            [CanBeNull] VolatileBoolean inProgress = null, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
+            if ( address == null ) {
+                throw new ArgumentNullException( nameof( address ) );
+            }
 
             try {
-                if ( inProgress != null ) { inProgress.Value = true; }
+                if ( inProgress != null ) {
+                    inProgress.Value = true;
+                }
 
                 reportProgress?.Report( ZeroToOne.MinValue );
 
@@ -82,7 +86,7 @@ namespace Librainian.Internet {
                 };
 
                 webclient.DownloadProgressChanged += ( sender, args ) => {
-                    var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+                    var progress = args.BytesReceived / ( Double ) args.TotalBytesToReceive;
                     reportProgress?.Report( progress );
                 };
 
@@ -91,19 +95,29 @@ namespace Librainian.Internet {
 
                 var task = await Task.WhenAny( timeoutTask, downloadTask );
 
-                if ( task.Id == timeoutTask.Id ) { webclient.CancelAsync(); }
+                if ( task.Id == timeoutTask.Id ) {
+                    webclient.CancelAsync();
+                }
 
                 return tempDocument;
             }
             catch ( WebException exception ) {
-                try { onWebException?.Invoke( address, exception.Status ); }
-                catch ( Exception exception2 ) { exception2.Log(); }
+                try {
+                    onWebException?.Invoke( address, exception.Status );
+                }
+                catch ( Exception exception2 ) {
+                    exception2.Log();
+                }
             }
-            catch ( Exception exception ) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
             finally {
                 reportProgress?.Report( ZeroToOne.MaxValue );
 
-                if ( inProgress != null ) { inProgress.Value = false; }
+                if ( inProgress != null ) {
+                    inProgress.Value = false;
+                }
             }
 
             return null;
@@ -111,7 +125,9 @@ namespace Librainian.Internet {
 
         public static IEnumerable<Document> FindFile( String filename, [NotNull] IEnumerable<String> locationClues ) {
             foreach ( var locationClue in locationClues ) {
-                if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) { continue; }
+                if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
+                    continue;
+                }
 
                 //TODO this /totally/ is not finished yet.
 

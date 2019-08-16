@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,24 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NonRandomSequence.cs" was last formatted by Protiguous on 2019/01/05 at 9:40 PM.
+// Project: "Librainian", "NonRandomSequence.cs" was last formatted by Protiguous on 2019/08/08 at 8:24 AM.
 
 namespace Librainian.Maths {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     <para>Not really a 'random' sequence, but it does (*should*) hit every number eventually.</para>
-	///     <para>Don't use in anything security-related, because the sequence can be predicted.</para>
-	/// </summary>
-	public class NonRandomSequence {
+    /// <summary>
+    ///     <para>Not really a 'random' sequence, but it does (*should*) hit every number eventually.</para>
+    ///     <para>Don't use in anything security-related, because the sequence can be predicted.</para>
+    /// </summary>
+    public class NonRandomSequence {
 
-		private Int32 _actual;
+        private Int32 _actual;
 
-		public NonRandomSequence( Int32 seed ) => this._actual = seed;
+        public NonRandomSequence( Int32 seed ) => this._actual = seed;
 
-		public Int32 Next() => this._actual = 16807 * this._actual % Int32.MaxValue;
-	}
+        public Int32 Next() => this._actual = 16807 * this._actual % Int32.MaxValue;
+    }
 }

@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Volume.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
+// Project: "Librainian", "Volume.cs" was last formatted by Protiguous on 2019/08/08 at 9:19 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -51,14 +51,14 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Text;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
-    using OperatingSystem;
 
     /// <summary>
     ///     A volume device.
     /// </summary>
     public class Volume : Device {
 
-        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index ) : base( deviceClass, deviceInfoData, path, index ) { }
+        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index ) : base( deviceClass, deviceInfoData, path,
+            index ) { }
 
         /// <summary>
         ///     Compares the current instance with another object of the same type.
@@ -66,11 +66,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
         public override Int32 CompareTo( Object obj ) {
-            if ( !( obj is Volume device ) ) { throw new ArgumentException(); }
+            if ( !( obj is Volume device ) ) {
+                throw new ArgumentException();
+            }
 
-            if ( this.GetLogicalDrive() == null ) { return 1; }
+            if ( this.GetLogicalDrive() == null ) {
+                return 1;
+            }
 
-            if ( device.GetLogicalDrive() == null ) { return -1; }
+            if ( device.GetLogicalDrive() == null ) {
+                return -1;
+            }
 
             return String.Compare( this.GetLogicalDrive(), device.GetLogicalDrive(), StringComparison.Ordinal );
         }
@@ -85,26 +91,31 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var hFile = NativeMethods.CreateFile( $@"\\.\{this.GetLogicalDrive()}", 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
-                if ( hFile.IsInvalid ) { throw new Win32Exception( Marshal.GetLastWin32Error() ); }
+                if ( hFile.IsInvalid ) {
+                    throw new Win32Exception( Marshal.GetLastWin32Error() );
+                }
 
                 const Int32 size = 0x400; // some big size
                 var buffer = Marshal.AllocHGlobal( size );
                 UInt32 bytesReturned;
 
                 try {
-                    if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size, out bytesReturned, IntPtr.Zero ) ) {
+                    if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size,
+                        out bytesReturned, IntPtr.Zero ) ) {
 
                         // do nothing here on purpose
                     }
                 }
-                finally { hFile.DangerousGetHandle().CloseHandle(); }
+                finally {
+                    hFile.DangerousGetHandle().CloseHandle();
+                }
 
                 if ( bytesReturned > 0 ) {
-                    var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
+                    var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
                     for ( var i = 0; i < numberOfDiskExtents; i++ ) {
                         var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + (i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) )) );
-                        var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
+                        var extent = ( NativeMethods.DISK_EXTENT ) Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
                         numbers.Add( extent.DiskNumber );
                     }
                 }
@@ -125,7 +136,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             var devices = disks.GetDevices().ToList();
 
             foreach ( var disk in devices ) {
-                foreach ( var _ in this.GetDiskNumbers().Where( index => disk.DiskNumber == index ) ) { yield return disk; }
+                foreach ( var _ in this.GetDiskNumbers().Where( index => disk.DiskNumber == index ) ) {
+                    yield return disk;
+                }
             }
         }
 
@@ -137,7 +150,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             var volumeName = this.GetVolumeName();
             String logicalDrive = null;
 
-            if ( volumeName != null ) { ( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive ); }
+            if ( volumeName != null ) {
+                ( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );
+            }
 
             return logicalDrive;
         }
@@ -147,11 +162,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         public override IEnumerable<Device> GetRemovableDevices() {
             if ( this.GetDisks() == null ) {
-                foreach ( var removableDevice in base.GetRemovableDevices() ) { yield return removableDevice; }
+                foreach ( var removableDevice in base.GetRemovableDevices() ) {
+                    yield return removableDevice;
+                }
             }
             else {
                 foreach ( var disk in this.GetDisks() ) {
-                    foreach ( var device in disk.GetRemovableDevices() ) { yield return device; }
+                    foreach ( var device in disk.GetRemovableDevices() ) {
+                        yield return device;
+                    }
                 }
             }
         }
@@ -163,7 +182,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String GetVolumeName() {
             var sb = new StringBuilder( 1024 );
 
-            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
+            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 ) sb.Capacity ) ) {
 
                 // throw new Win32Exception(Marshal.GetLastWin32Error());
                 return null;

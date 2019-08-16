@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,21 +35,20 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Page.cs" was last formatted by Protiguous on 2018/07/10 at 9:13 PM.
+// Project: "Librainian", "Page.cs" was last formatted by Protiguous on 2019/08/08 at 8:09 AM.
 
-namespace Librainian.Linguistics
-{
+namespace Librainian.Linguistics {
 
-    using Extensions;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
@@ -57,10 +56,21 @@ namespace Librainian.Linguistics
     /// <see cref="Book"></see>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay("{" + nameof(ToString) + "()}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
-    public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph>
-    {
+    public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
+
+        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public Boolean Equals( [CanBeNull] Page other ) {
+            if ( other == null ) {
+                return false;
+            }
+
+            return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
+        }
 
         [NotNull]
         [JsonProperty]
@@ -70,26 +80,16 @@ namespace Librainian.Linguistics
 
         private Page() { }
 
-        public Page([NotNull] IEnumerable<Paragraph> paragraphs)
-        {
-            if (paragraphs == null) { throw new ArgumentNullException(nameof(paragraphs)); }
+        public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
+            if ( paragraphs == null ) {
+                throw new ArgumentNullException( nameof( paragraphs ) );
+            }
 
-            this.Paragraphs.AddRange(paragraphs.Where(paragraph => paragraph != null));
+            this.Paragraphs.AddRange( paragraphs.Where( paragraph => paragraph != null ) );
         }
-
-        public Boolean Equals([CanBeNull] Page other)
-        {
-            if (other == null) { return false; }
-
-            return ReferenceEquals(this, other) || this.Paragraphs.SequenceEqual(other.Paragraphs);
-        }
-
-        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,105 +35,111 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TraceExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
+// Project: "Librainian", "TraceExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:02 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Net;
-	using System.Net.NetworkInformation;
-	using System.Net.Sockets;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Net;
+    using System.Net.NetworkInformation;
+    using System.Net.Sockets;
+    using JetBrains.Annotations;
 
-	public class TraceExtensions {
+    public class TraceExtensions {
 
-		/// <summary>
-		///     Traces the route which data have to travel through in order to reach an IP address.
-		/// </summary>
-		/// <param name="ipAddress">The IP address of the destination.</param>
-		/// <param name="maxHops">Max hops to be returned.</param>
-		/// <param name="timeout"></param>
-		[ItemNotNull]
-		public IEnumerable<TracertEntry> Tracert( [NotNull] String ipAddress, Int32 maxHops, Int32 timeout ) {
+        /// <summary>
+        ///     Traces the route which data have to travel through in order to reach an IP address.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the destination.</param>
+        /// <param name="maxHops">Max hops to be returned.</param>
+        /// <param name="timeout"></param>
+        [ItemNotNull]
+        public IEnumerable<TracertEntry> Tracert( [NotNull] String ipAddress, Int32 maxHops, Int32 timeout ) {
 
-			// Ensure that the argument address is valid.
-			if ( !IPAddress.TryParse( ipAddress, out var address ) ) { throw new ArgumentException( $"{ipAddress} is not a valid IP address." ); }
+            // Ensure that the argument address is valid.
+            if ( !IPAddress.TryParse( ipAddress, out var address ) ) {
+                throw new ArgumentException( $"{ipAddress} is not a valid IP address." );
+            }
 
-			// Max hops should be at least one or else there won't be any data to return.
-			if ( maxHops < 1 ) { throw new ArgumentException( "Max hops can't be lower than 1." ); }
+            // Max hops should be at least one or else there won't be any data to return.
+            if ( maxHops < 1 ) {
+                throw new ArgumentException( "Max hops can't be lower than 1." );
+            }
 
-			// Ensure that the timeout is not set to 0 or a negative number.
-			if ( timeout < 1 ) { throw new ArgumentException( "Timeout value must be higher than 0." ); }
+            // Ensure that the timeout is not set to 0 or a negative number.
+            if ( timeout < 1 ) {
+                throw new ArgumentException( "Timeout value must be higher than 0." );
+            }
 
-			var ping = new Ping();
-			var pingOptions = new PingOptions( 1, true );
-			var replyTime = new Stopwatch();
-			PingReply pingReply;
+            var ping = new Ping();
+            var pingOptions = new PingOptions( 1, true );
+            var replyTime = new Stopwatch();
+            PingReply pingReply;
 
-			do {
-				replyTime.Start();
+            do {
+                replyTime.Start();
 
-				pingReply = ping.Send( address: address, timeout: timeout, buffer: new Byte[] {
-					0
-				}, options: pingOptions );
+                pingReply = ping.Send( address: address, timeout: timeout, buffer: new Byte[] {
+                    0
+                }, options: pingOptions );
 
-				replyTime.Stop();
+                replyTime.Stop();
 
-				var hostname = String.Empty;
+                var hostname = String.Empty;
 
-				if ( pingReply?.Address != null ) {
-					try {
+                if ( pingReply?.Address != null ) {
+                    try {
 
-						//hostname = Dns.GetHostByAddress( reply.Address ).HostName; // Retrieve the hostname for the replied address.
-						hostname = Dns.GetHostEntry( pingReply.Address ).HostName;
-					}
-					catch ( SocketException ) {
-						/* No host available for that address. */
-					}
-				}
+                        //hostname = Dns.GetHostByAddress( reply.Address ).HostName; // Retrieve the hostname for the replied address.
+                        hostname = Dns.GetHostEntry( pingReply.Address ).HostName;
+                    }
+                    catch ( SocketException ) {
+                        /* No host available for that address. */
+                    }
+                }
 
-				// Return out TracertEntry object with all the information about the hop.
-				if ( pingReply != null ) {
-					yield return new TracertEntry {
-						HopID = pingOptions.Ttl,
-						Address = pingReply.Address?.ToString() ?? "N/A",
-						Hostname = hostname,
-						ReplyTime = replyTime.ElapsedMilliseconds,
-						ReplyStatus = pingReply.Status
-					};
-				}
+                // Return out TracertEntry object with all the information about the hop.
+                if ( pingReply != null ) {
+                    yield return new TracertEntry {
+                        HopID = pingOptions.Ttl,
+                        Address = pingReply.Address?.ToString() ?? "N/A",
+                        Hostname = hostname,
+                        ReplyTime = replyTime.ElapsedMilliseconds,
+                        ReplyStatus = pingReply.Status
+                    };
+                }
 
-				pingOptions.Ttl++;
+                pingOptions.Ttl++;
 
-				//replyTime.Reset();
-			} while ( pingReply != null && pingReply.Status != IPStatus.Success && pingOptions.Ttl <= maxHops );
-		}
+                //replyTime.Reset();
+            } while ( pingReply != null && pingReply.Status != IPStatus.Success && pingOptions.Ttl <= maxHops );
+        }
 
-		public sealed class TracertEntry {
+        public sealed class TracertEntry {
 
-			/// <summary>The IP address.</summary>
-			public String Address { get; set; }
+            /// <summary>The IP address.</summary>
+            public String Address { get; set; }
 
-			/// <summary>The hop id. Represents the number of the hop.</summary>
-			public Int32 HopID { get; set; }
+            /// <summary>The hop id. Represents the number of the hop.</summary>
+            public Int32 HopID { get; set; }
 
-			/// <summary>The hostname</summary>
-			public String Hostname { get; set; }
+            /// <summary>The hostname</summary>
+            public String Hostname { get; set; }
 
-			/// <summary>The reply status of the request.</summary>
-			public IPStatus ReplyStatus { get; set; }
+            /// <summary>The reply status of the request.</summary>
+            public IPStatus ReplyStatus { get; set; }
 
-			/// <summary>
-			///     The reply time it took for the host to receive and reply to the request in milliseconds.
-			/// </summary>
-			public Int64 ReplyTime { get; set; }
+            /// <summary>
+            ///     The reply time it took for the host to receive and reply to the request in milliseconds.
+            /// </summary>
+            public Int64 ReplyTime { get; set; }
 
-			public override String ToString() =>
-				$"{this.HopID} | {( String.IsNullOrEmpty( this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
-		}
-	}
+            public override String ToString() =>
+                $"{this.HopID} | {( String.IsNullOrEmpty( this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
+        }
+    }
 }

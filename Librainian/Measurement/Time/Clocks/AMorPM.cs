@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,26 +35,26 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AMorPM.cs" was last formatted by Protiguous on 2018/11/02 at 11:04 PM.
+// Project: "Librainian", "AMorPM.cs" was last formatted by Protiguous on 2019/08/08 at 8:53 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	/// <summary>
-	///     from the Latin: ante meridiem meaning "before midday", or post meridiem "after midday"
-	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/12-hour_clock" />
-	public enum AMorPM {
+    /// <summary>
+    ///     from the Latin: ante meridiem meaning "before midday", or post meridiem "after midday"
+    /// </summary>
+    /// <see cref="http://wikipedia.org/wiki/12-hour_clock" />
+    public enum AMorPM {
 
-		/// <summary>
-		///     from the Latin ante meridiem, meaning "before midday"
-		/// </summary>
-		AM,
+        /// <summary>
+        ///     from the Latin ante meridiem, meaning "before midday"
+        /// </summary>
+        AM,
 
-		/// <summary>
-		///     from the Latin post meridiem, meaning "after midday"
-		/// </summary>
-		PM
-	}
+        /// <summary>
+        ///     from the Latin post meridiem, meaning "after midday"
+        /// </summary>
+        PM
+    }
 }

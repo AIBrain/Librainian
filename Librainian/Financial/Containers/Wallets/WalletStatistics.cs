@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,94 +35,102 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WalletStatistics.cs" was last formatted by Protiguous on 2018/07/10 at 9:04 PM.
+// Project: "Librainian", "WalletStatistics.cs" was last formatted by Protiguous on 2019/08/08 at 7:29 AM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Magic;
-	using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Magic;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	public class WalletStatistics : ABetterClassDispose {
+    [JsonObject]
+    public class WalletStatistics : ABetterClassDispose {
 
-		[NotNull]
-		private readonly ReaderWriterLockSlim _depositLock;
+        [NotNull]
+        private readonly ReaderWriterLockSlim _depositLock;
 
-		[NotNull]
-		private readonly ReaderWriterLockSlim _withwrawLock;
+        [NotNull]
+        private readonly ReaderWriterLockSlim _withwrawLock;
 
-		[JsonProperty]
-		private Decimal _allTimeDeposited;
+        [JsonProperty]
+        private Decimal _allTimeDeposited;
 
-		[JsonProperty]
-		private Decimal _allTimeWithdrawn;
+        [JsonProperty]
+        private Decimal _allTimeWithdrawn;
 
-		public Decimal AllTimeDeposited {
-			get {
-				try {
-					this._depositLock.EnterReadLock();
+        public Decimal AllTimeDeposited {
+            get {
+                try {
+                    this._depositLock.EnterReadLock();
 
-					return this._allTimeDeposited;
-				}
-				finally { this._depositLock.ExitReadLock(); }
-			}
+                    return this._allTimeDeposited;
+                }
+                finally {
+                    this._depositLock.ExitReadLock();
+                }
+            }
 
-			set {
-				try {
-					this._depositLock.EnterWriteLock();
-					this._allTimeDeposited = value;
-				}
-				finally { this._depositLock.ExitWriteLock(); }
-			}
-		}
+            set {
+                try {
+                    this._depositLock.EnterWriteLock();
+                    this._allTimeDeposited = value;
+                }
+                finally {
+                    this._depositLock.ExitWriteLock();
+                }
+            }
+        }
 
-		[JsonProperty]
-		public Decimal AllTimeWithdrawn {
-			get {
-				try {
-					this._withwrawLock.EnterReadLock();
+        [JsonProperty]
+        public Decimal AllTimeWithdrawn {
+            get {
+                try {
+                    this._withwrawLock.EnterReadLock();
 
-					return this._allTimeWithdrawn;
-				}
-				finally { this._withwrawLock.ExitReadLock(); }
-			}
+                    return this._allTimeWithdrawn;
+                }
+                finally {
+                    this._withwrawLock.ExitReadLock();
+                }
+            }
 
-			set {
-				try {
-					this._withwrawLock.EnterWriteLock();
-					this._allTimeWithdrawn = value;
-				}
-				finally { this._withwrawLock.ExitWriteLock(); }
-			}
-		}
+            set {
+                try {
+                    this._withwrawLock.EnterWriteLock();
+                    this._allTimeWithdrawn = value;
+                }
+                finally {
+                    this._withwrawLock.ExitWriteLock();
+                }
+            }
+        }
 
-		[JsonProperty]
-		public DateTime InstanceCreationTime { get; private set; }
+        [JsonProperty]
+        public DateTime InstanceCreationTime { get; private set; }
 
-		public WalletStatistics() {
-			this._depositLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-			this._withwrawLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        public WalletStatistics() {
+            this._depositLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+            this._withwrawLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-			this.Reset();
-		}
+            this.Reset();
+        }
 
-		/// <summary>
-		///     Dispose any disposable members.
-		/// </summary>
-		public override void DisposeManaged() {
-			this._depositLock.Dispose();
-			this._withwrawLock.Dispose();
-		}
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() {
+            this._depositLock.Dispose();
+            this._withwrawLock.Dispose();
+        }
 
-		public void Reset() {
-			this.InstanceCreationTime = DateTime.UtcNow;
-			this.AllTimeDeposited = Decimal.Zero;
-			this.AllTimeWithdrawn = Decimal.Zero;
-		}
-	}
+        public void Reset() {
+            this.InstanceCreationTime = DateTime.UtcNow;
+            this.AllTimeDeposited = Decimal.Zero;
+            this.AllTimeWithdrawn = Decimal.Zero;
+        }
+    }
 }

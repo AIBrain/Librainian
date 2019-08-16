@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,177 +35,197 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2018/07/10 at 9:01 PM.
+// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2019/08/08 at 7:09 AM.
 
 namespace Librainian.Extensions {
 
-	using System.Collections.Generic;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using System.Collections.Generic;
+    using System.Linq;
+    using JetBrains.Annotations;
 
-	public static class Combiner {
+    public static class Combiner {
 
-		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, IEnumerable<T> b ) {
-			foreach ( var item in a ) { yield return item; }
+        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, IEnumerable<T> b ) {
+            foreach ( var item in a ) {
+                yield return item;
+            }
 
-			foreach ( var item in b ) { yield return item; }
-		}
+            foreach ( var item in b ) {
+                yield return item;
+            }
+        }
 
-		/// <summary>
-		///     add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" />
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static IEnumerable<T> Append<T>( this T a, IEnumerable<T> b ) {
-			yield return a;
+        /// <summary>
+        ///     add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" />
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Append<T>( this T a, IEnumerable<T> b ) {
+            yield return a;
 
-			foreach ( var item in b ) { yield return item; }
-		}
+            foreach ( var item in b ) {
+                yield return item;
+            }
+        }
 
-		/// <summary>
-		///     add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" />
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, T b ) {
-			foreach ( var item in a ) { yield return item; }
+        /// <summary>
+        ///     add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" />
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, T b ) {
+            foreach ( var item in a ) {
+                yield return item;
+            }
 
-			yield return b;
-		}
+            yield return b;
+        }
 
-		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
-			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
-				Enumerable.Empty<T>()
-			};
+        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
+            IEnumerable<IEnumerable<T>> emptyProduct = new[] {
+                Enumerable.Empty<T>()
+            };
 
-			return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
-				var enumerable = sequence as IList<T> ?? sequence.ToList();
+            return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
+                var enumerable = sequence as IList<T> ?? sequence.ToList();
 
-				return
-					from accseq in accumulator
-					from item in enumerable
-					where !accseq.Contains( item )
-					select accseq.Concat( new[] {
-						item
-					} );
-			} );
-		}
+                return
+                    from accseq in accumulator
+                    from item in enumerable
+                    where !accseq.Contains( item )
+                    select accseq.Concat( new[] {
+                        item
+                    } );
+            } );
+        }
 
-		public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
-			IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
+        public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
+            IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
 
-			return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinationss() ) );
-		}
+            return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinationss() ) );
+        }
 
-		[NotNull]
-		public static IEnumerable<IEnumerable<T>> Combinationss<T>( [NotNull] this IEnumerable<T> input ) =>
-			input.Select( item => new[] {
-				item
-			} );
+        [NotNull]
+        public static IEnumerable<IEnumerable<T>> Combinationss<T>( [NotNull] this IEnumerable<T> input ) =>
+            input.Select( item => new[] {
+                item
+            } );
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
-			var found = false;
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
+            var found = false;
 
-			var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
+            var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
 
-			foreach ( var groupA in groupAs ) {
-				found = true;
+            foreach ( var groupA in groupAs ) {
+                found = true;
 
-				foreach ( var groupB in bs ) { yield return groupA.Append( groupB ); }
-			}
+                foreach ( var groupB in bs ) {
+                    yield return groupA.Append( groupB );
+                }
+            }
 
-			if ( found ) { yield break; }
+            if ( found ) {
+                yield break;
+            }
 
-			foreach ( var groupB in bs ) { yield return groupB; }
-		}
+            foreach ( var groupB in bs ) {
+                yield return groupB;
+            }
+        }
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
-			var found = false;
+        public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+            var found = false;
 
-			foreach ( var bGroup in b ) {
-				found = true;
+            foreach ( var bGroup in b ) {
+                found = true;
 
-				yield return a.Append( bGroup );
-			}
+                yield return a.Append( bGroup );
+            }
 
-			if ( !found ) { yield return a; }
-		}
+            if ( !found ) {
+                yield return a;
+            }
+        }
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
-			var found = false;
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
+            var found = false;
 
-			foreach ( var aGroup in a ) {
-				found = true;
+            foreach ( var aGroup in a ) {
+                found = true;
 
-				yield return aGroup.Append( b );
-			}
+                yield return aGroup.Append( b );
+            }
 
-			if ( !found ) { yield return b; }
-		}
+            if ( !found ) {
+                yield return b;
+            }
+        }
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
-			var found = false;
+        public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+            var found = false;
 
-			foreach ( var bGroup in b ) {
-				found = true;
+            foreach ( var bGroup in b ) {
+                found = true;
 
-				yield return a.Append( bGroup );
-			}
+                yield return a.Append( bGroup );
+            }
 
-			if ( !found ) {
-				yield return new[] {
-					a
-				};
-			}
-		}
+            if ( !found ) {
+                yield return new[] {
+                    a
+                };
+            }
+        }
 
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, T b ) {
-			var found = false;
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, T b ) {
+            var found = false;
 
-			foreach ( var aGroup in a ) {
-				found = true;
+            foreach ( var aGroup in a ) {
+                found = true;
 
-				yield return aGroup.Append( b );
-			}
+                yield return aGroup.Append( b );
+            }
 
-			if ( !found ) {
-				yield return new[] {
-					b
-				};
-			}
-		}
+            if ( !found ) {
+                yield return new[] {
+                    b
+                };
+            }
+        }
 
-		[NotNull]
-		public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
-			var powerSet = new T[ 1 << seq.Length ][];
-			powerSet[ 0 ] = new T[ 0 ];
+        [NotNull]
+        public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
+            var powerSet = new T[ 1 << seq.Length ][];
+            powerSet[ 0 ] = new T[ 0 ];
 
-			for ( var i = 0; i < seq.Length; i++ ) {
-				var cur = seq[ i ];
-				var count = 1 << i;
+            for ( var i = 0; i < seq.Length; i++ ) {
+                var cur = seq[ i ];
+                var count = 1 << i;
 
-				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[ j ];
-					var destination = powerSet[ count + j ] = new T[ source.Length + 1 ];
+                for ( var j = 0; j < count; j++ ) {
+                    var source = powerSet[ j ];
+                    var destination = powerSet[ count + j ] = new T[ source.Length + 1 ];
 
-					for ( var q = 0; q < source.Length; q++ ) { destination[ q ] = source[ q ]; }
+                    for ( var q = 0; q < source.Length; q++ ) {
+                        destination[ q ] = source[ q ];
+                    }
 
-					destination[ source.Length ] = cur;
-				}
-			}
+                    destination[ source.Length ] = cur;
+                }
+            }
 
-			return powerSet;
-		}
+            return powerSet;
+        }
 
-		public static IEnumerable<T> Group<T>( this T a, T b ) {
-			yield return a;
-			yield return b;
-		}
-	}
+        public static IEnumerable<T> Group<T>( this T a, T b ) {
+            yield return a;
+            yield return b;
+        }
+    }
 }

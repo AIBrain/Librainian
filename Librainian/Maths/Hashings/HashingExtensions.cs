@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HashingExtensions.cs" was last formatted by Protiguous on 2018/11/21 at 8:59 PM.
+// Project: "Librainian", "HashingExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:19 AM.
 
 namespace Librainian.Maths.Hashings {
 
@@ -121,7 +121,7 @@ namespace Librainian.Maths.Hashings {
             return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
         }
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => (( h1 << 5 ) + h1) ^ h2;
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => ( ( h1 << 5 ) + h1 ) ^ h2;
 
         public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
 
@@ -129,9 +129,11 @@ namespace Librainian.Maths.Hashings {
 
         public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) => h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) =>
+            h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
+        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) =>
+            h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
 
         /// <summary>
         ///     Takes one <see cref="UInt64" />, and returns another Deterministic <see cref="UInt64" />.
@@ -156,7 +158,8 @@ namespace Librainian.Maths.Hashings {
         }
 
         /// <summary>
-        ///     Takes one <see cref="Int32" />, and returns another Deterministic <see cref="Int32" /> by using the <see cref="Random"/> generator.
+        ///     Takes one <see cref="Int32" />, and returns another Deterministic <see cref="Int32" /> by using the
+        ///     <see cref="Random" /> generator.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -197,9 +200,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( Byte )objectA.GetHashCode();
+                var hashA = ( Byte ) objectA.GetHashCode();
 
-                return ( Byte )( ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum );
+                return ( Byte ) ( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
             }
         }
 
@@ -222,7 +225,7 @@ namespace Librainian.Maths.Hashings {
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
 
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => (( current << 5 ) + current) ^ hashB );
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
             }
         }
 
@@ -245,7 +248,7 @@ namespace Librainian.Maths.Hashings {
                 var objectA = objects[ 0 ];
                 var hashA = objectA.GetHashCode();
 
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => (( current << 5 ) + current) ^ hashB );
+                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
             }
         }
 
@@ -278,9 +281,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt16 )objectA.GetHashCode();
+                var hashA = ( UInt16 ) objectA.GetHashCode();
 
-                return ( UInt16 )( ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum );
+                return ( UInt16 ) ( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
             }
         }
 
@@ -290,9 +293,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt32 )objectA.GetHashCode();
+                var hashA = ( UInt32 ) objectA.GetHashCode();
 
-                return ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum;
+                return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
             }
         }
 
@@ -302,9 +305,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt64 )objectA.GetHashCode();
+                var hashA = ( UInt64 ) objectA.GetHashCode();
 
-                return ( (( hashA << 5 ) + hashA) ^ hashA ) % maximum;
+                return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
             }
         }
 
@@ -326,7 +329,7 @@ namespace Librainian.Maths.Hashings {
             unchecked {
                 var hashA = objectA.GetHashCode();
                 var hashB = objectB.GetHashCode();
-                var combined = (( hashA << 5 ) + hashA) ^ hashB;
+                var combined = ( ( hashA << 5 ) + hashA ) ^ hashB;
 
                 return combined;
             }

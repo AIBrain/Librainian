@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,27 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DecimalRange.cs" was last formatted by Protiguous on 2018/07/13 at 1:20 AM.
+// Project: "Librainian", "DecimalRange.cs" was last formatted by Protiguous on 2019/08/08 at 8:35 AM.
 
-namespace Librainian.Maths.Ranges
-{
+namespace Librainian.Maths.Ranges {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Runtime.Serialization;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>Represents a Decimal range with minimum and maximum values</summary>
     /// <remarks>
     ///     Modified from the AForge Library Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com
     /// </remarks>
     [JsonObject]
-    public class DecimalRange
-    {
-
-        public static readonly DecimalRange ZeroToOne = new DecimalRange(0.0M, 1.0M);
+    public class DecimalRange {
 
         /// <summary>Maximum value</summary>
         [JsonProperty]
@@ -72,13 +68,14 @@ namespace Librainian.Maths.Ranges
         [OptionalField]
         public readonly Decimal Range;
 
+        public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
+
         /// <summary>Initializes a new instance of the <see cref="DecimalRange" /> class</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
-        public DecimalRange(Decimal min, Decimal max)
-        {
-            this.Min = Math.Min(min, max);
-            this.Max = Math.Max(min, max);
+        public DecimalRange( Decimal min, Decimal max ) {
+            this.Min = Math.Min( min, max );
+            this.Max = Math.Max( min, max );
             this.Range = this.Max - this.Min;
         }
 
@@ -87,23 +84,20 @@ namespace Librainian.Maths.Ranges
         /// <returns>
         ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
         /// </returns>
-
-        public Boolean IsInside(Decimal x) => this.Min <= x && x <= this.Max;
+        public Boolean IsInside( Decimal x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>Check if the specified range is inside this range</summary>
         /// <param name="range">Range to check</param>
         /// <returns>
         ///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
         /// </returns>
-
-        public Boolean IsInside([NotNull] DecimalRange range) => this.IsInside(range.Min) && this.IsInside(range.Max);
+        public Boolean IsInside( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
         /// <summary>Check if the specified range overlaps with this range</summary>
         /// <param name="range">Range to check for overlapping</param>
         /// <returns>
         ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
         /// </returns>
-
-        public Boolean IsOverlapping([NotNull] DecimalRange range) => this.IsInside(range.Min) || this.IsInside(range.Max);
+        public Boolean IsOverlapping( [NotNull] DecimalRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
     }
 }

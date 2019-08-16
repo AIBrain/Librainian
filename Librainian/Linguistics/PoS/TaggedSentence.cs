@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TaggedSentence.cs" was last formatted by Protiguous on 2018/07/10 at 9:14 PM.
+// Project: "Librainian", "TaggedSentence.cs" was last formatted by Protiguous on 2019/08/08 at 8:11 AM.
 
 namespace Librainian.Linguistics.PoS {
 
@@ -52,17 +52,21 @@ namespace Librainian.Linguistics.PoS {
     [JsonObject]
     public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {
 
-        [JsonProperty]
-        public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
+        ///     through the collection.
+        /// </returns>
+        /// <filterpriority>1</filterpriority>
+        public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
-        public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
-            if ( words == null ) { throw new ArgumentNullException( nameof( words ) ); }
-
-            this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
-        }
-
-        [Pure]
-        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>
+        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
+        ///     through the collection.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
@@ -74,28 +78,28 @@ namespace Librainian.Linguistics.PoS {
         /// <param name="other">An object to compare with this object.</param>
         [Pure]
         public Boolean Equals( TaggedSentence other ) {
-            if ( other == null ) { return false; }
+            if ( other == null ) {
+                return false;
+            }
 
             return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
-        ///     through the collection.
-        /// </returns>
-        /// <filterpriority>1</filterpriority>
-        public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
+        [JsonProperty]
+        public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
+
+        public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
+            if ( words == null ) {
+                throw new ArgumentNullException( nameof( words ) );
+            }
+
+            this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
+        }
+
+        [Pure]
+        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
         [Pure]
         public override String ToString() => this.Tokens.ToStrings( " " );
-
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
-        ///     through the collection.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

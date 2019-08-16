@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,42 +35,44 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HighResolutionDateTime.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "HighResolutionDateTime.cs" was last formatted by Protiguous on 2019/08/08 at 9:04 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using OperatingSystem;
+    using System;
+    using OperatingSystem;
 
-	/// <summary>
-	///     From https://manski.net/2014/07/high-resolution-clock-in-csharp/
-	/// </summary>
-	public static class HighResolutionDateTime {
+    /// <summary>
+    ///     From https://manski.net/2014/07/high-resolution-clock-in-csharp/
+    /// </summary>
+    public static class HighResolutionDateTime {
 
-		public static Boolean IsAvailable { get; }
+        public static Boolean IsAvailable { get; }
 
-		public static DateTime UtcNow {
-			get {
-				if ( !IsAvailable ) { throw new InvalidOperationException( "High resolution clock is not available." ); }
+        public static DateTime UtcNow {
+            get {
+                if ( !IsAvailable ) {
+                    throw new InvalidOperationException( "High resolution clock is not available." );
+                }
 
-				NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
+                NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
 
-				return DateTime.FromFileTimeUtc( filetime );
-			}
-		}
+                return DateTime.FromFileTimeUtc( filetime );
+            }
+        }
 
-		static HighResolutionDateTime() {
-			try {
-				NativeMethods.GetSystemTimePreciseAsFileTime( out _ );
-				IsAvailable = true;
-			}
-			catch ( EntryPointNotFoundException ) {
+        static HighResolutionDateTime() {
+            try {
+                NativeMethods.GetSystemTimePreciseAsFileTime( out _ );
+                IsAvailable = true;
+            }
+            catch ( EntryPointNotFoundException ) {
 
-				// Not running Windows 8 or higher.
-				IsAvailable = false;
-			}
-		}
-	}
+                // Not running Windows 8 or higher.
+                IsAvailable = false;
+            }
+        }
+    }
 }

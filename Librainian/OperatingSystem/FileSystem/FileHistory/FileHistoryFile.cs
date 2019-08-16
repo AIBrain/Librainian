@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,15 +35,14 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FileHistoryFile.cs" was last formatted by Protiguous on 2018/07/13 at 1:32 AM.
+// Project: "Librainian", "FileHistoryFile.cs" was last formatted by Protiguous on 2019/08/08 at 9:15 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.FileHistory {
 
     using System;
     using System.IO;
-    using FileSystem;
     using JetBrains.Annotations;
 
     public class FileHistoryFile {
@@ -54,6 +53,13 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
 
         private readonly DateTime? _when;
 
+        /// <summary>
+        ///     (includes the extension)
+        /// </summary>
+        public String FileName => this._filename;
+
+        public IFolder Folder => this._folder;
+
         [NotNull]
         public IDocument FullPathAndName => new Document( folder: this.Folder, filename: this.FileName );
 
@@ -62,13 +68,6 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         public Document OriginalPath { get; }
 
         public DateTime? When => this._when;
-
-        /// <summary>
-        ///     (includes the extension)
-        /// </summary>
-        public String FileName => this._filename;
-
-        public IFolder Folder => this._folder;
 
         public FileHistoryFile( [NotNull] Document biglongpath ) {
             this.OriginalPath = biglongpath;

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2019/01/29 at 10:48 PM.
+// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2019/08/08 at 9:21 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -59,7 +59,6 @@ namespace Librainian.OperatingSystem {
     using Maths;
     using Measurement.Time;
     using Parsing;
-
     using TimeoutException = System.ServiceProcess.TimeoutException;
 
     public static class Windows {
@@ -229,31 +228,6 @@ namespace Librainian.OperatingSystem {
                 return null;
             } );
 
-        [CanBeNull]
-        public static Process OpenWithExplorer( String value ) {
-            try {
-                //Verb = "runas", //demand elevated permissions
-                var proc = new ProcessStartInfo {
-                    UseShellExecute = false,
-                    WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullName, "explorer.exe" ),
-                    Arguments = $" /separate /select,\"{value}\" ",
-                    CreateNoWindow = false,
-                    ErrorDialog = true,
-                    WindowStyle = ProcessWindowStyle.Normal
-                };
-
-                $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
-
-                return Process.Start( startInfo: proc );
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return null;
-        }
-
         [NotNull]
         public static Task<Boolean> ExecutePowershellCommandAsync( String arguments, Boolean elevated = false ) =>
             Task.Run( () => {
@@ -279,7 +253,7 @@ namespace Librainian.OperatingSystem {
                         return false;
                     }
 
-                    process.WaitForExit( milliseconds: ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
+                    process.WaitForExit( milliseconds: ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
                     "success.".Info();
 
                     return true;
@@ -368,6 +342,32 @@ namespace Librainian.OperatingSystem {
         public static Task<Boolean> MirrorFolderStructureAsync( [NotNull] Folder folder, [NotNull] Folder baseFolder ) =>
             ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullName}\" \"{baseFolder.FullName}\" /E /T" );
 
+        [CanBeNull]
+        public static Process OpenWithExplorer( String value ) {
+            try {
+
+                //Verb = "runas", //demand elevated permissions
+                var proc = new ProcessStartInfo {
+                    UseShellExecute = false,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullName, "explorer.exe" ),
+                    Arguments = $" /separate /select,\"{value}\" ",
+                    CreateNoWindow = false,
+                    ErrorDialog = true,
+                    WindowStyle = ProcessWindowStyle.Normal
+                };
+
+                $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
+
+                return Process.Start( startInfo: proc );
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return null;
+        }
+
         public static async Task<Boolean> RestartServiceAsync( String serviceName, TimeSpan timeout ) =>
             await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
             await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
@@ -455,7 +455,5 @@ namespace Librainian.OperatingSystem {
                 Thread.Yield();
             }
         }
-
-
     }
 }

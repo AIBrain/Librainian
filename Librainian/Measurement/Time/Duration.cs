@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Duration.cs" was last formatted by Protiguous on 2018/11/23 at 12:34 AM.
+// Project: "Librainian", "Duration.cs" was last formatted by Protiguous on 2019/08/08 at 9:00 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -76,21 +76,21 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Double Microseconds { get; }
 
-        public Duration( Microseconds microseconds ) => this.Microseconds = ( Double )microseconds.Value * MicrosecondsPerMicrosecond;
+        public Duration( Microseconds microseconds ) => this.Microseconds = ( Double ) microseconds.Value * MicrosecondsPerMicrosecond;
 
-        public Duration( Milliseconds milliseconds ) => this.Microseconds = ( Double )milliseconds.Value * MicrosecondsPerMillisecond;
+        public Duration( Milliseconds milliseconds ) => this.Microseconds = ( Double ) milliseconds.Value * MicrosecondsPerMillisecond;
 
-        public Duration( [NotNull] Seconds seconds ) => this.Microseconds = ( Double )seconds.Value * MicrosecondsPerSecond;
+        public Duration( [NotNull] Seconds seconds ) => this.Microseconds = ( Double ) seconds.Value * MicrosecondsPerSecond;
 
-        public Duration( Minutes minutes ) => this.Microseconds = ( Double )minutes.Value * MicrosecondsPerMinute;
+        public Duration( Minutes minutes ) => this.Microseconds = ( Double ) minutes.Value * MicrosecondsPerMinute;
 
-        public Duration( Hours hours ) => this.Microseconds = ( Double )hours.Value * MicrosecondsPerHour;
+        public Duration( Hours hours ) => this.Microseconds = ( Double ) hours.Value * MicrosecondsPerHour;
 
-        public Duration( Days days ) => this.Microseconds = ( Double )days.Value * MicrosecondsPerDay;
+        public Duration( Days days ) => this.Microseconds = ( Double ) days.Value * MicrosecondsPerDay;
 
-        public Duration( Weeks weeks ) => this.Microseconds = ( Double )weeks.Value * MicrosecondsPerWeek;
+        public Duration( Weeks weeks ) => this.Microseconds = ( Double ) weeks.Value * MicrosecondsPerWeek;
 
-        public Duration( Years years ) => this.Microseconds = ( Double )years.Value * MicrosecondsPerYear;
+        public Duration( Years years ) => this.Microseconds = ( Double ) years.Value * MicrosecondsPerYear;
 
         public Duration( Int64 ticks ) => this.Microseconds = ticks / 10.0;
 
@@ -106,23 +106,23 @@ namespace Librainian.Measurement.Time {
             this.Microseconds = totalMilliseconds * MicrosecondsPerMillisecond;
         }
 
-        public static Duration FromDays( Double value ) => new Duration( new Days( ( Rational )value ) );
+        public static Duration FromDays( Double value ) => new Duration( new Days( ( Rational ) value ) );
 
-        public static Duration FromHours( Double value ) => new Duration( new Hours( ( Rational )value ) );
+        public static Duration FromHours( Double value ) => new Duration( new Hours( ( Rational ) value ) );
 
-        public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( ( Rational )value ) );
+        public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( ( Rational ) value ) );
 
         public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
 
-        public static Duration FromMinutes( Double value ) => new Duration( new Minutes( ( Rational )value ) );
+        public static Duration FromMinutes( Double value ) => new Duration( new Minutes( ( Rational ) value ) );
 
-        public static Duration FromSeconds( Double value ) => new Duration( new Seconds( ( Rational )value ) );
+        public static Duration FromSeconds( Double value ) => new Duration( new Seconds( ( Rational ) value ) );
 
         public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
 
-        public static Duration FromWeeks( Double value ) => new Duration( new Weeks( ( Rational )value ) );
+        public static Duration FromWeeks( Double value ) => new Duration( new Weeks( ( Rational ) value ) );
 
-        public static Duration FromYears( Double value ) => new Duration( new Years( ( Rational )value ) );
+        public static Duration FromYears( Double value ) => new Duration( new Years( ( Rational ) value ) );
 
         /// <summary>
         ///     <para>Compares <see cref="Microseconds" /></para>
@@ -147,16 +147,16 @@ namespace Librainian.Measurement.Time {
         public override Int32 GetHashCode() => this.Microseconds.GetHashCode();
 
         [Pure]
-        public Double Hours() => ( Byte )( this.Minutes() / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
+        public Double Hours() => ( Byte ) ( this.Minutes() / Measurement.Time.Minutes.InOneHour % Measurement.Time.Minutes.InOneHour );
 
         [Pure]
-        public Double Milliseconds() => ( UInt16 )( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
+        public Double Milliseconds() => ( UInt16 ) ( this.Microseconds / Measurement.Time.Microseconds.InOneMillisecond % Measurement.Time.Microseconds.InOneMillisecond );
 
         [Pure]
-        public Double Minutes() => ( Byte )( this.Seconds() / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
+        public Double Minutes() => ( Byte ) ( this.Seconds() / Measurement.Time.Seconds.InOneMinute % Measurement.Time.Seconds.InOneMinute );
 
         [Pure]
-        public Double Seconds() => ( Byte )( this.Milliseconds() / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
+        public Double Seconds() => ( Byte ) ( this.Milliseconds() / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
 
         [Pure]
         public override String ToString() => this.Simpler();

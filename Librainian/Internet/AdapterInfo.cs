@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,67 +35,67 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AdapterInfo.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "AdapterInfo.cs" was last formatted by Protiguous on 2019/08/08 at 7:51 AM.
 
 namespace Librainian.Internet {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
-	using OperatingSystem;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using JetBrains.Annotations;
+    using OperatingSystem;
 
-	/// <summary>
-	///     http://pastebin.com/u9159Ys8
-	/// </summary>
-	public static class AdapterInfo {
+    /// <summary>
+    ///     http://pastebin.com/u9159Ys8
+    /// </summary>
+    public static class AdapterInfo {
 
-		public static Dictionary<UInt32, IPHelperInvoke.IPAdapterInfo> IndexedIpAdapterInfos { get; }
+        public static Dictionary<UInt32, IPHelperInvoke.IPAdapterInfo> IndexedIpAdapterInfos { get; }
 
-		public static IEnumerable<IPHelperInvoke.IPAdapterInfo> IpAdapterInfos { get; }
+        public static IEnumerable<IPHelperInvoke.IPAdapterInfo> IpAdapterInfos { get; }
 
-		static AdapterInfo() {
-			IpAdapterInfos = RetrieveAdapters();
-			IndexedIpAdapterInfos = IpAdapterInfos.ToDictionary( o => ( UInt32 ) o.Index );
-		}
+        static AdapterInfo() {
+            IpAdapterInfos = RetrieveAdapters();
+            IndexedIpAdapterInfos = IpAdapterInfos.ToDictionary( o => ( UInt32 ) o.Index );
+        }
 
-		[NotNull]
-		private static IEnumerable<IPHelperInvoke.IPAdapterInfo> RetrieveAdapters() {
-			Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );
-			var pArray = Marshal.AllocHGlobal( new IntPtr( structSize ) );
+        [NotNull]
+        private static IEnumerable<IPHelperInvoke.IPAdapterInfo> RetrieveAdapters() {
+            Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );
+            var pArray = Marshal.AllocHGlobal( new IntPtr( structSize ) );
 
-			var ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
+            var ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
 
-			var pEntry = pArray;
+            var pEntry = pArray;
 
-			if ( ret == IPHelperInvoke.ErrorBufferOverflow ) {
+            if ( ret == IPHelperInvoke.ErrorBufferOverflow ) {
 
-				// Buffer was too small, reallocate the correct size for the buffer.
-				pArray = Marshal.ReAllocHGlobal( pArray, new IntPtr( structSize ) ); //BUG memory leak? or does realloc take into account?
-				ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
-			}
+                // Buffer was too small, reallocate the correct size for the buffer.
+                pArray = Marshal.ReAllocHGlobal( pArray, new IntPtr( structSize ) ); //BUG memory leak? or does realloc take into account?
+                ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
+            }
 
-			var result = new List<IPHelperInvoke.IPAdapterInfo>();
+            var result = new List<IPHelperInvoke.IPAdapterInfo>();
 
-			if ( ret == 0 ) {
-				do {
+            if ( ret == 0 ) {
+                do {
 
-					// Retrieve the adapter info from the memory address
-					var entry = ( IPHelperInvoke.IPAdapterInfo ) Marshal.PtrToStructure( pEntry, typeof( IPHelperInvoke.IPAdapterInfo ) );
+                    // Retrieve the adapter info from the memory address
+                    var entry = ( IPHelperInvoke.IPAdapterInfo ) Marshal.PtrToStructure( pEntry, typeof( IPHelperInvoke.IPAdapterInfo ) );
 
-					result.Add( entry );
+                    result.Add( entry );
 
-					// Get next adapter (if any)
-					pEntry = entry.Next;
-				} while ( pEntry != IntPtr.Zero );
-			}
+                    // Get next adapter (if any)
+                    pEntry = entry.Next;
+                } while ( pEntry != IntPtr.Zero );
+            }
 
-			Marshal.FreeHGlobal( pArray );
+            Marshal.FreeHGlobal( pArray );
 
-			return result;
-		}
-	}
+            return result;
+        }
+    }
 }

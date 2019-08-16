@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,12 +35,11 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FolderBag.Node.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "FolderBag.Node.cs" was last formatted by Protiguous on 2019/08/08 at 9:16 AM.
 
-namespace Librainian.OperatingSystem.FileSystem
-{
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Generic;
@@ -49,13 +48,15 @@ namespace Librainian.OperatingSystem.FileSystem
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
-    public partial class FolderBag
-    {
+    public partial class FolderBag {
 
         [JsonObject]
-        [DebuggerDisplay("{" + nameof(ToString) + "()}")]
-        public class Node : IEquatable<Node>, IComparable<Node>
-        {
+        [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+        public class Node : IEquatable<Node>, IComparable<Node> {
+
+            public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
+
+            public Boolean Equals( Node other ) => Equals( this, other );
 
             [JsonProperty]
             public String Data { get; }
@@ -68,10 +69,9 @@ namespace Librainian.OperatingSystem.FileSystem
             [JsonProperty]
             public List<Node> SubFolders { get; } = new List<Node>();
 
-            public Node(String data) => this.Data = data;
+            public Node( String data ) => this.Data = data;
 
-            public Node(String data, Node parent)
-            {
+            public Node( String data, Node parent ) {
                 this.Data = data;
                 this.Parent = parent;
             }
@@ -82,18 +82,17 @@ namespace Librainian.OperatingSystem.FileSystem
             /// <param name="left"></param>
             /// <param name="rhs"> </param>
             /// <returns></returns>
-            public static Boolean Equals(Node left, Node rhs)
-            {
-                if (ReferenceEquals(left, rhs)) { return true; }
+            public static Boolean Equals( Node left, Node rhs ) {
+                if ( ReferenceEquals( left, rhs ) ) {
+                    return true;
+                }
 
-                if (left == null || rhs == null) { return false; }
+                if ( left == null || rhs == null ) {
+                    return false;
+                }
 
-                return String.Equals(left.Data, rhs.Data, StringComparison.Ordinal);
+                return String.Equals( left.Data, rhs.Data, StringComparison.Ordinal );
             }
-
-            public Int32 CompareTo([NotNull] Node other) => String.Compare(this.Data, other.Data, StringComparison.Ordinal);
-
-            public Boolean Equals(Node other) => Equals(this, other);
 
             //public override Boolean Equals( Object obj ) {
             //    var bob = obj as Node;

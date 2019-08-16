@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ListBoxLog.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
-// 
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
-// 
-// Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2018/10/11 at 6:32 PM.
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2019/08/08 at 6:47 AM.
 
 namespace Librainian.Controls {
 
@@ -124,8 +124,10 @@ namespace Librainian.Controls {
         private static String FormatALogEventMessage( [NotNull] LogEvent logEvent, [NotNull] String messageFormat ) {
             var message = logEvent.Message ?? "*null*";
 
-            return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
-                logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */ logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
+            return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */
+                logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
+                logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
+                logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
                 logEvent.LoggingLevel.LevelName()[ 0 ], /* {6} */
                 logEvent.LoggingLevel.LevelName(), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
         }
@@ -171,7 +173,9 @@ namespace Librainian.Controls {
 
             var selectedItemsAsRTFText = new StringBuilder();
             selectedItemsAsRTFText.AppendLine( @"{\rtf1\ansi\deff0{\fonttbl{\f0\fcharset0 Courier;}}" );
-            selectedItemsAsRTFText.AppendLine( @"{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red218\green165\blue32;\red0\green128\blue0;\red0\green0\blue255;\red0\green0\blue0}" );
+
+            selectedItemsAsRTFText.AppendLine(
+                @"{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red218\green165\blue32;\red0\green128\blue0;\red0\green0\blue255;\red0\green0\blue0}" );
 
             foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
 
@@ -264,8 +268,6 @@ namespace Librainian.Controls {
             this.Box.Items.Clear();
             this.Box.DrawMode = DrawMode.Normal;
             this.Box = null;
-
-            
         }
 
         public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
@@ -274,7 +276,8 @@ namespace Librainian.Controls {
 
         public void LogLine( [CanBeNull] String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format == null ? null : String.Format( format, args ) );
 
-        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args ) => this.LogLine( loggingLevel, format == null ? null : String.Format( format, args ) );
+        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args ) =>
+            this.LogLine( loggingLevel, format == null ? null : String.Format( format, args ) );
 
         public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
@@ -291,9 +294,6 @@ namespace Librainian.Controls {
                 this.LoggingLevel = loggingLevel;
                 this.Message = message;
             }
-
         }
-
     }
-
 }

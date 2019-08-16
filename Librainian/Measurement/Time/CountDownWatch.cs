@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,85 +35,92 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CountDownWatch.cs" was last formatted by Protiguous on 2018/07/13 at 1:27 AM.
+// Project: "Librainian", "CountDownWatch.cs" was last formatted by Protiguous on 2019/08/08 at 8:59 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using JetBrains.Annotations;
-	using Logging;
-	using Newtonsoft.Json;
-	using Threading;
-	using Timer = System.Timers.Timer;
+    using System;
+    using System.Timers;
+    using JetBrains.Annotations;
+    using Logging;
+    using Newtonsoft.Json;
+    using Threading;
 
-	
-	/// <summary>
-	///     The 'reverse' of the Stopwatch class.
-	///     //TODO needs unit testing.
-	/// </summary>
-	[JsonObject( MemberSerialization.Fields )]
-	public class CountDownWatch {
+    /// <summary>
+    ///     The 'reverse' of the Stopwatch class.
+    ///     //TODO needs unit testing.
+    /// </summary>
+    [JsonObject( MemberSerialization.Fields )]
+    public class CountDownWatch {
 
-		[NotNull]
-		private Action Liftoff { get; }
+        [NotNull]
+        private Action Liftoff { get; }
 
-		private Timer Timer { get; set; }
+        private Timer Timer { get; set; }
 
-		public TimeSpan Countdown { get; }
+        public TimeSpan Countdown { get; }
 
-		public DateTime TargetTime { get; private set; }
+        public Boolean HasLaunched { get; private set; }
 
-		public DateTime WhenStarted { get; private set; }
+        public Boolean IsRunning { get; private set; }
 
-		public DateTime WhenStopped { get; private set; }
+        public DateTime TargetTime { get; private set; }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="countdown"></param>
-		/// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
-		public CountDownWatch( TimeSpan countdown, [CanBeNull] Action liftoff = null ) {
-			if ( countdown < TimeSpan.Zero ) { throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." ); }
+        public DateTime WhenStarted { get; private set; }
 
-			this.Countdown = countdown;
-			this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
+        public DateTime WhenStopped { get; private set; }
 
-			this.Liftoff = () => {
-				try {
-					this.HasLaunched = true;
-					liftoff?.Invoke();
-				}
-				catch ( Exception exception ) { exception.Log(); }
-			};
-		}
+        /// <summary>
+        /// </summary>
+        /// <param name="countdown"></param>
+        /// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
+        public CountDownWatch( TimeSpan countdown, [CanBeNull] Action liftoff = null ) {
+            if ( countdown < TimeSpan.Zero ) {
+                throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." );
+            }
 
-		public Boolean HasLaunched { get; private set; }
+            this.Countdown = countdown;
+            this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
 
-		public Boolean IsRunning { get; private set; }
+            this.Liftoff = () => {
+                try {
+                    this.HasLaunched = true;
+                    liftoff?.Invoke();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            };
+        }
 
-		public TimeSpan Remaining() {
-			if ( this.IsRunning) { return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted ); }
+        public TimeSpan Remaining() {
+            if ( this.IsRunning ) {
+                return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
+            }
 
-			if ( this.HasLaunched) { return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted ); }
+            if ( this.HasLaunched ) {
+                return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted );
+            }
 
-			throw new InvalidOperationException( "???" );
-		}
+            throw new InvalidOperationException( "???" );
+        }
 
-		public void Start() {
-			this.WhenStarted = DateTime.UtcNow;
-			this.IsRunning = true;
+        public void Start() {
+            this.WhenStarted = DateTime.UtcNow;
+            this.IsRunning = true;
 
-			this.Timer = FluentTimer.Start( this.Countdown.Create( () => {
-				this.Stop();
-				this.Liftoff();
-			} ).Once() );
-		}
+            this.Timer = FluentTimer.Start( this.Countdown.Create( () => {
+                this.Stop();
+                this.Liftoff();
+            } ).Once() );
+        }
 
-		public void Stop() {
-			this.IsRunning = false;
-			this.WhenStopped = DateTime.UtcNow;
-			this.Timer.Stop();
-		}
-	}
+        public void Stop() {
+            this.IsRunning = false;
+            this.WhenStopped = DateTime.UtcNow;
+            this.Timer.Stop();
+        }
+    }
 }

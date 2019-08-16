@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,48 +35,50 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Base58CheckString.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "Base58CheckString.cs" was last formatted by Protiguous on 2019/08/08 at 9:22 AM.
 
 namespace Librainian.Parsing {
 
-	using System;
-	using System.Linq;
-	using System.Security.Cryptography;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using JetBrains.Annotations;
 
-	public static class Base58CheckString {
+    public static class Base58CheckString {
 
-		[NotNull]
-		public static String FromByteArray( Byte[] b, Byte version ) {
-			using ( SHA256 sha256 = new SHA256Managed() ) {
-				b = new[] {
-					version
-				}.Concat( b ).ToArray();
+        [NotNull]
+        public static String FromByteArray( Byte[] b, Byte version ) {
+            using ( SHA256 sha256 = new SHA256Managed() ) {
+                b = new[] {
+                    version
+                }.Concat( b ).ToArray();
 
-				var hash = sha256.ComputeHash( sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
+                var hash = sha256.ComputeHash( sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
 
-				return b.Concat( hash ).ToArray().FromByteArray();
-			}
-		}
+                return b.Concat( hash ).ToArray().FromByteArray();
+            }
+        }
 
-		[NotNull]
-		public static Byte[] ToByteArray( [NotNull] String s, out Byte version ) {
-			var b = s.ToByteArray();
+        [NotNull]
+        public static Byte[] ToByteArray( [NotNull] String s, out Byte version ) {
+            var b = s.ToByteArray();
 
-			using ( SHA256 sha256 = new SHA256Managed() ) {
-				var hash = sha256.ComputeHash( sha256.ComputeHash( b.Take( b.Length - 4 ).ToArray() ) );
+            using ( SHA256 sha256 = new SHA256Managed() ) {
+                var hash = sha256.ComputeHash( sha256.ComputeHash( b.Take( b.Length - 4 ).ToArray() ) );
 
-				if ( !hash.Take( 4 ).SequenceEqual( b.Skip( b.Length - 4 ).Take( 4 ) ) ) { throw new ArgumentException( "Invalid Base58Check String" ); }
+                if ( !hash.Take( 4 ).SequenceEqual( b.Skip( b.Length - 4 ).Take( 4 ) ) ) {
+                    throw new ArgumentException( "Invalid Base58Check String" );
+                }
 
-				version = b.First();
+                version = b.First();
 
-				return b.Skip( 1 ).Take( b.Length - 5 ).ToArray();
-			}
-		}
+                return b.Skip( 1 ).Take( b.Length - 5 ).ToArray();
+            }
+        }
 
-		[NotNull]
-		public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, out var b );
-	}
+        [NotNull]
+        public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, out var b );
+    }
 }

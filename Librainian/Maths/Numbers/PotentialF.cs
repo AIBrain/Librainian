@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,78 +35,80 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PotentialF.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "PotentialF.cs" was last formatted by Protiguous on 2019/08/08 at 8:30 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>Restricts the value to between 0.0 and 1.0.</para>
-	/// </summary>
-	/// <remarks>
-	///     <para>Just wanted a threadsafe wrapper for Min and Max.</para>
-	/// </remarks>
-	[JsonObject]
-	public sealed class PotentialF {
+    /// <summary>
+    ///     <para>Restricts the value to between 0.0 and 1.0.</para>
+    /// </summary>
+    /// <remarks>
+    ///     <para>Just wanted a threadsafe wrapper for Min and Max.</para>
+    /// </remarks>
+    [JsonObject]
+    public sealed class PotentialF {
 
-		/// <summary></summary>
-		/// <remarks>ONLY used in the getter and setter.</remarks>
-		[JsonProperty]
-		private Single _value = MinValue;
+        /// <summary></summary>
+        /// <remarks>ONLY used in the getter and setter.</remarks>
+        [JsonProperty]
+        private Single _value = MinValue;
 
-		/// <summary>
-		///     <para>Thread-safe getter and setter.</para>
-		/// </summary>
-		/// <remarks>
-		///     <para>
-		///         Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .
-		///     </para>
-		/// </remarks>
-		public Single Value {
-			get => Thread.VolatileRead( ref this._value );
+        /// <summary>
+        ///     <para>Thread-safe getter and setter.</para>
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .
+        ///     </para>
+        /// </remarks>
+        public Single Value {
+            get => Thread.VolatileRead( ref this._value );
 
-			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
-		}
+            private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
+        }
 
-		/// <summary>1</summary>
-		public const Single MaxValue = 1.0f;
+        /// <summary>1</summary>
+        public const Single MaxValue = 1.0f;
 
-		/// <summary>
-		///     <para>0.000000000000000000000000000000000000000000001401298</para>
-		///     <para>"1.401298E-45"</para>
-		/// </summary>
-		public const Single MinValue = 0.0f;
+        /// <summary>
+        ///     <para>0.000000000000000000000000000000000000000000001401298</para>
+        ///     <para>"1.401298E-45"</para>
+        /// </summary>
+        public const Single MinValue = 0.0f;
 
-		/// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
-		public PotentialF( Boolean randomValue ) {
-			if ( randomValue ) { this.Value = Randem.NextFloat( MinValue, MaxValue ); }
-		}
+        /// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
+        public PotentialF( Boolean randomValue ) {
+            if ( randomValue ) {
+                this.Value = Randem.NextFloat( MinValue, MaxValue );
+            }
+        }
 
-		/// <summary>Initializes with <paramref name="initialValue" />.</summary>
-		/// <param name="initialValue"></param>
-		public PotentialF( Single initialValue ) => this.Value = initialValue;
+        /// <summary>Initializes with <paramref name="initialValue" />.</summary>
+        /// <param name="initialValue"></param>
+        public PotentialF( Single initialValue ) => this.Value = initialValue;
 
-		public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) { }
+        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) { }
 
-		public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
+        public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
 
-		[NotNull]
-		public static PotentialF Parse( [NotNull] String value ) => new PotentialF( Single.Parse( value ) );
+        [NotNull]
+        public static PotentialF Parse( [NotNull] String value ) => new PotentialF( Single.Parse( value ) );
 
-		public void Add( Single amount ) => this.Value += amount;
+        public void Add( Single amount ) => this.Value += amount;
 
-		public void Divide( Single amount ) => this.Value /= amount;
+        public void Divide( Single amount ) => this.Value /= amount;
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public void Multiply( Single amount ) => this.Value *= amount;
+        public void Multiply( Single amount ) => this.Value *= amount;
 
-		public override String ToString() => $"{this.Value:P3}";
-	}
+        public override String ToString() => $"{this.Value:P3}";
+    }
 }

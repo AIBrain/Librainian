@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,34 +35,34 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "InvalidParameterException.cs" was last formatted by Protiguous on 2018/07/10 at 9:00 PM.
+// Project: "Librainian", "InvalidParameterException.cs" was last formatted by Protiguous on 2019/08/08 at 7:03 AM.
 
 namespace Librainian.Exceptions {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Use when a parameter is, well.. invalid.
-	/// </summary>
-	[Serializable]
-	public class InvalidParameterException : ArgumentException {
+    /// <summary>
+    ///     Use when a parameter is, well.. invalid.
+    /// </summary>
+    [Serializable]
+    public class InvalidParameterException : ArgumentException {
 
-		/// <summary>
-		///     Disallow no message.
-		/// </summary>
-		private InvalidParameterException() { }
+        /// <summary>
+        ///     Disallow no message.
+        /// </summary>
+        private InvalidParameterException() { }
 
-		public InvalidParameterException( [NotNull] String message ) : base( message ) {
+        public InvalidParameterException( [NotNull] String message ) : base( message ) {
 
-			//if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
-		}
+            //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
+        }
 
-		public InvalidParameterException( [NotNull] String message, Exception inner ) : base( message, inner ) {
+        public InvalidParameterException( [NotNull] String message, Exception inner ) : base( message, inner ) {
 
-			//if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
-		}
-	}
+            //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
+        }
+    }
 }

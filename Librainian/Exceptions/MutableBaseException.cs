@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,34 +35,40 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MutableBaseException.cs" was last formatted by Protiguous on 2018/07/10 at 9:00 PM.
+// Project: "Librainian", "MutableBaseException.cs" was last formatted by Protiguous on 2019/08/08 at 7:03 AM.
 
 namespace Librainian.Exceptions {
 
-	using System;
-	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Runtime.Serialization;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	[Serializable]
-	public class MutableBaseException : ImmutableFailureException {
+    [JsonObject]
+    [Serializable]
+    public class MutableBaseException : ImmutableFailureException {
 
-		protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+        protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
-			if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+        internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
+            if ( type == null ) {
+                throw new ArgumentNullException( paramName: nameof( type ) );
+            }
 
-			if ( inner == null ) { throw new ArgumentNullException( paramName: nameof( inner ) ); }
-		}
+            if ( inner == null ) {
+                throw new ArgumentNullException( paramName: nameof( inner ) );
+            }
+        }
 
-		[NotNull]
-		private static String FormatMessage( [NotNull] Type type ) {
-			if ( type == null ) { throw new ArgumentNullException( paramName: nameof( type ) ); }
+        [NotNull]
+        private static String FormatMessage( [NotNull] Type type ) {
+            if ( type == null ) {
+                throw new ArgumentNullException( paramName: nameof( type ) );
+            }
 
-			return $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
-		}
-	}
+            return $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
+        }
+    }
 }

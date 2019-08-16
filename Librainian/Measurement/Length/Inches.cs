@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,44 +35,44 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Inches.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "Inches.cs" was last formatted by Protiguous on 2019/08/08 at 8:46 AM.
 
 namespace Librainian.Measurement.Length {
 
-	using System;
-	using Newtonsoft.Json;
-	using Rationals;
+    using System;
+    using Newtonsoft.Json;
+    using Rationals;
 
-	[JsonObject]
-	public struct Inches {
+    [JsonObject]
+    public struct Inches {
 
-		//public static readonly Inches MaxValue = new Inches( inches: Decimal.MaxValue );
+        //public static readonly Inches MaxValue = new Inches( inches: Decimal.MaxValue );
 
-		//public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
+        //public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
 
-		/// <summary>One <see cref="Inches" /> .</summary>
-		public static readonly Inches One = new Inches( inches: 1 );
+        /// <summary>One <see cref="Inches" /> .</summary>
+        public static readonly Inches One = new Inches( inches: 1 );
 
-		/// <summary>Two <see cref="Inches" /> .</summary>
-		public static readonly Inches Two = new Inches( inches: 2 );
+        /// <summary>Two <see cref="Inches" /> .</summary>
+        public static readonly Inches Two = new Inches( inches: 2 );
 
-		[JsonProperty]
-		public readonly Rational Value;
+        [JsonProperty]
+        public readonly Rational Value;
 
-		public Inches( Decimal inches ) => this.Value = ( Rational ) inches;
+        public Inches( Decimal inches ) => this.Value = ( Rational ) inches;
 
-		//public Inches( Millimeters millimeters ) {
-		//    var val = millimeters.Value / Extensions.MillimetersInSingleInch;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Inches( Millimeters millimeters ) {
+        //    var val = millimeters.Value / Extensions.MillimetersInSingleInch;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		//public Inches( Centimeters centimeters ) {
-		//    var val = centimeters.Value * 2.54;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+        //public Inches( Centimeters centimeters ) {
+        //    var val = centimeters.Value * 2.54;
+        //    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+        //}
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+    }
 }

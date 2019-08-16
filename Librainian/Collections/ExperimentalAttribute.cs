@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,31 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ExperimentalAttribute.cs" was last formatted by Protiguous on 2018/07/10 at 8:50 PM.
+// Project: "Librainian", "ExperimentalAttribute.cs" was last formatted by Protiguous on 2019/08/08 at 6:30 AM.
 
 namespace Librainian.Collections {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     This type is experimental and that usually means untested.
-	/// </summary>
-	[AttributeUsage( AttributeTargets.All )]
-	public class ExperimentalAttribute : Attribute {
+    /// <summary>
+    ///     This type is experimental and that usually means untested.
+    /// </summary>
+    [AttributeUsage( AttributeTargets.All )]
+    public class ExperimentalAttribute : Attribute {
 
-		public String Message { get; }
+        public String Message { get; }
 
-		/// <summary>
-		///     This type is experimental and that usually means untested.
-		/// </summary>
-		public ExperimentalAttribute() { }
+        /// <summary>
+        ///     This type is experimental and that usually means untested.
+        /// </summary>
+        public ExperimentalAttribute() { }
 
-		/// <summary>
-		///     This type is experimental and that usually means untested.
-		/// </summary>
-		/// <param name="message"></param>
-		public ExperimentalAttribute( String message ) => this.Message = message;
-	}
+        /// <summary>
+        ///     This type is experimental and that usually means untested.
+        /// </summary>
+        /// <param name="message"></param>
+        public ExperimentalAttribute( String message ) => this.Message = message;
+    }
 }

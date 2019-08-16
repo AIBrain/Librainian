@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Seconds.cs" was last formatted by Protiguous on 2019/03/17 at 8:33 PM.
+// Project: "Librainian", "Seconds.cs" was last formatted by Protiguous on 2019/08/08 at 9:09 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -63,35 +63,28 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public class Seconds : IQuantityOfTime, IEquatable<Seconds> {
 
-        /// <summary>
-        ///     31536000
-        /// </summary>
-        public const UInt32 InOneCommonYear = 31536000;
+        public Boolean Equals( Seconds other ) => other != null && this.Value.Equals( other.Value );
 
-        /// <summary>
-        ///     86400
-        /// </summary>
-        public const UInt32 InOneDay = 86400;
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        /// <summary>
-        ///     3600
-        /// </summary>
-        public const UInt16 InOneHour = 3600;
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneSecond );
 
-        /// <summary>
-        ///     60
-        /// </summary>
-        public const Byte InOneMinute = 60;
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value );
 
-        /// <summary>
-        ///     2635200 (30.5 days)
-        /// </summary>
-        public const UInt32 InOneMonth = 2635200;
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
 
-        /// <summary>
-        ///     604800
-        /// </summary>
-        public const UInt32 InOneWeek = 604800;
+                return $"{whole} {whole.PluralOf( "second" )}";
+            }
+
+            var dec = ( Decimal ) this.Value;
+
+            return $"{dec} {dec.PluralOf( "second" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.Value );
 
         /// <summary>
         ///     <see cref="Five" /><see cref="Seconds" />.
@@ -150,9 +143,39 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Seconds( Decimal value ) => this.Value = ( Rational )value;
+        /// <summary>
+        ///     31536000
+        /// </summary>
+        public const UInt32 InOneCommonYear = 31536000;
 
-        public Seconds( Double value ) => this.Value = ( Rational )value;
+        /// <summary>
+        ///     86400
+        /// </summary>
+        public const UInt32 InOneDay = 86400;
+
+        /// <summary>
+        ///     3600
+        /// </summary>
+        public const UInt16 InOneHour = 3600;
+
+        /// <summary>
+        ///     60
+        /// </summary>
+        public const Byte InOneMinute = 60;
+
+        /// <summary>
+        ///     2635200 (30.5 days)
+        /// </summary>
+        public const UInt32 InOneMonth = 2635200;
+
+        /// <summary>
+        ///     604800
+        /// </summary>
+        public const UInt32 InOneWeek = 604800;
+
+        public Seconds( Decimal value ) => this.Value = ( Rational ) value;
+
+        public Seconds( Double value ) => this.Value = ( Rational ) value;
 
         public Seconds( Rational value ) => this.Value = value;
 
@@ -177,9 +200,10 @@ namespace Librainian.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( Seconds left, Seconds right ) {
-            if ( ReferenceEquals(left,right) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
+
             if ( left is null || right is null ) {
                 return false;
             }
@@ -209,15 +233,15 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         public static implicit operator TimeSpan( [NotNull] Seconds seconds ) {
 
-            if ( seconds.Value >= ( Int64 )TimeSpan.MaxValue.TotalSeconds ) {
+            if ( seconds.Value >= ( Int64 ) TimeSpan.MaxValue.TotalSeconds ) {
                 return TimeSpan.MaxValue;
             }
 
-            if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) {
+            if ( seconds.Value <= ( Int64 ) TimeSpan.MinValue.TotalSeconds ) {
                 return TimeSpan.MinValue;
             }
 
-            return TimeSpan.FromSeconds( ( Double )seconds.Value );
+            return TimeSpan.FromSeconds( ( Double ) seconds.Value );
         }
 
         [NotNull]
@@ -227,7 +251,7 @@ namespace Librainian.Measurement.Time {
         public static Seconds operator -( [NotNull] Seconds left, Seconds right ) => Combine( left: left, right: -right );
 
         [NotNull]
-        public static Seconds operator -( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+        public static Seconds operator -( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
 
         public static Boolean operator !=( [NotNull] Seconds left, [NotNull] Seconds right ) => !Equals( left, right );
 
@@ -235,16 +259,16 @@ namespace Librainian.Measurement.Time {
         public static Seconds operator +( [NotNull] Seconds left, [NotNull] Seconds right ) => Combine( left, right );
 
         [NotNull]
-        public static Seconds operator +( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational )seconds );
+        public static Seconds operator +( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
 
         [NotNull]
         public static Seconds operator +( [NotNull] Seconds left, BigInteger seconds ) => Combine( left, seconds );
 
         public static Boolean operator <( [NotNull] Seconds left, [NotNull] Seconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds )right;
+        public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds ) right;
 
-        public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes )left < right;
+        public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes ) left < right;
 
         public static Boolean operator ==( [NotNull] Seconds left, [NotNull] Seconds right ) {
             if ( left == null ) {
@@ -258,11 +282,11 @@ namespace Librainian.Measurement.Time {
             return Equals( left, right );
         }
 
-        public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes )left > right;
+        public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes ) left > right;
 
         public static Boolean operator >( [NotNull] Seconds left, [NotNull] Seconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds )right;
+        public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds ) right;
 
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that indicates
@@ -284,37 +308,14 @@ namespace Librainian.Measurement.Time {
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
         }
 
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Seconds );
 
         public Milliseconds ToMilliseconds() => new Milliseconds( this.Value * Milliseconds.InOneSecond );
 
         public Minutes ToMinutes() => new Minutes( this.Value / InOneMinute );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneSecond );
-
-        [NotNull]
-        public Seconds ToSeconds() => new Seconds( this.Value );
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "second" )}";
-            }
-
-            var dec = ( Decimal )this.Value;
-
-            return $"{dec} {dec.PluralOf( "second" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.Value );
-
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
 
         public Years ToYears() => new Years( this.Value / InOneCommonYear );
-
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Seconds );
-
-        public Boolean Equals( Seconds other ) => other != null && this.Value.Equals( other.Value );
     }
 }

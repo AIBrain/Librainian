@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,25 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ObsoletePersistenceClasses.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "ObsoletePersistenceClasses.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
 
-namespace Librainian.Persistence
-{
+namespace Librainian.Persistence {
 
-    using JetBrains.Annotations;
     using System;
     using System.ComponentModel;
     using System.IO;
     using System.IO.Compression;
     using System.IO.IsolatedStorage;
     using System.Runtime.Serialization;
+    using JetBrains.Annotations;
     using Logging;
 
-    [Obsolete("Container for obsolete Persistence classes.")]
-    public static class ObsoletePersistenceClasses
-    {
+    [Obsolete( "Container for obsolete Persistence classes." )]
+    public static class ObsoletePersistenceClasses {
 
         /// <summary>
         ///     Deserialize from an IsolatedStorageFile.
@@ -63,103 +61,100 @@ namespace Librainian.Persistence
         /// <param name="feedback"> </param>
         /// <returns></returns>
         [Obsolete]
-        public static Boolean Load<TSource>([CanBeNull] out TSource obj, [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null) where TSource : class
-        {
-            if (fileName == null) { throw new ArgumentNullException(nameof(fileName)); }
+        public static Boolean Load<TSource>( [CanBeNull] out TSource obj, [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null )
+            where TSource : class {
+            if ( fileName == null ) {
+                throw new ArgumentNullException( nameof( fileName ) );
+            }
 
             obj = default;
 
-            try
-            {
-                if (IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace(fileName))
-                {
-                    using (var isolatedStorageFile = IsolatedStorageFile.GetMachineStoreForDomain())
-                    {
-                        var dir = Path.GetDirectoryName(fileName);
+            try {
+                if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
+                    using ( var isolatedStorageFile = IsolatedStorageFile.GetMachineStoreForDomain() ) {
+                        var dir = Path.GetDirectoryName( fileName );
 
-                        if (!String.IsNullOrWhiteSpace(dir) && !isolatedStorageFile.DirectoryExists(dir)) { isolatedStorageFile.CreateDirectory(dir); }
+                        if ( !String.IsNullOrWhiteSpace( dir ) && !isolatedStorageFile.DirectoryExists( dir ) ) {
+                            isolatedStorageFile.CreateDirectory( dir );
+                        }
 
-                        if (!isolatedStorageFile.FileExists(fileName)) { return false; }
+                        if ( !isolatedStorageFile.FileExists( fileName ) ) {
+                            return false;
+                        }
 
                         //if ( 0 == isf.GetFileNames( fileName ).GetLength( 0 ) ) { return false; }
 
                         var deletefile = false;
 
-                        try
-                        {
-                            using (var test = isolatedStorageFile.OpenFile(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                            {
-                                var length = test.Seek(0, SeekOrigin.End);
+                        try {
+                            using ( var test = isolatedStorageFile.OpenFile( fileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
+                                var length = test.Seek( 0, SeekOrigin.End );
 
-                                if (length <= 3) { deletefile = true; }
+                                if ( length <= 3 ) {
+                                    deletefile = true;
+                                }
                             }
                         }
-                        catch (IsolatedStorageException exception)
-                        {
+                        catch ( IsolatedStorageException exception ) {
                             exception.Log();
 
                             return false;
                         }
 
-                        try
-                        {
-                            if (deletefile)
-                            {
-                                isolatedStorageFile.DeleteFile(fileName);
+                        try {
+                            if ( deletefile ) {
+                                isolatedStorageFile.DeleteFile( fileName );
 
                                 return false;
                             }
                         }
-                        catch (IsolatedStorageException exception)
-                        {
+                        catch ( IsolatedStorageException exception ) {
                             exception.Log();
 
                             return false;
                         }
 
-                        try
-                        {
-                            var fileStream = new IsolatedStorageFileStream(fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isolatedStorageFile);
-                            var ext = Path.GetExtension(fileName);
-                            var useCompression = ext.EndsWith("Z", ignoreCase: true, culture: null);
+                        try {
+                            var fileStream = new IsolatedStorageFileStream( fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isolatedStorageFile );
+                            var ext = Path.GetExtension( fileName );
+                            var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
-                            if (useCompression)
-                            {
-                                using (var decompress = new GZipStream(stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true))
-                                {
-                                    obj = PersistenceExtensions.Deserialize<TSource>(stream: decompress, feedback: feedback);
+                            if ( useCompression ) {
+                                using ( var decompress = new GZipStream( stream: fileStream, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
+                                    obj = PersistenceExtensions.Deserialize<TSource>( stream: decompress, feedback: feedback );
                                 }
                             }
-                            else
-                            {
+                            else {
 
                                 //obj = Deserialize<TSource>( stream: isfs, feedback: feedback );
                                 var serializer = new NetDataContractSerializer();
-                                obj = serializer.Deserialize(fileStream) as TSource;
+                                obj = serializer.Deserialize( fileStream ) as TSource;
                             }
 
-                            return obj != default(TSource);
+                            return obj != default( TSource );
                         }
-                        catch (InvalidOperationException exception) { exception.Log(); }
-                        catch (ArgumentNullException exception) { exception.Log(); }
-                        catch (SerializationException exception)
-                        {
+                        catch ( InvalidOperationException exception ) {
+                            exception.Log();
+                        }
+                        catch ( ArgumentNullException exception ) {
+                            exception.Log();
+                        }
+                        catch ( SerializationException exception ) {
                             deletefile = true;
                             exception.Log();
                         }
-                        catch (Exception exception) { exception.Log(); }
+                        catch ( Exception exception ) {
+                            exception.Log();
+                        }
 
-                        try
-                        {
-                            if (deletefile)
-                            {
-                                isolatedStorageFile.DeleteFile(fileName);
+                        try {
+                            if ( deletefile ) {
+                                isolatedStorageFile.DeleteFile( fileName );
 
                                 return false;
                             }
                         }
-                        catch (IsolatedStorageException exception)
-                        {
+                        catch ( IsolatedStorageException exception ) {
                             exception.Log();
 
                             return false;
@@ -167,7 +162,9 @@ namespace Librainian.Persistence
                     }
                 }
             }
-            catch (IsolatedStorageException exception) { exception.Log(); }
+            catch ( IsolatedStorageException exception ) {
+                exception.Log();
+            }
 
             return false;
         }

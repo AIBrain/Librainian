@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,106 +35,101 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "LineExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
+// Project: "Librainian", "LineExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 7:44 AM.
 
 namespace Librainian.Graphics.Line {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Drawing;
-	using System.Numerics;
-	using System.Windows.Media.Media3D;
-	using Maths.Numbers;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Numerics;
+    using System.Windows.Media.Media3D;
+    using Maths.Numbers;
 
-	public static class LineExtensions {
+    public static class LineExtensions {
 
-		// evaluate a point on a bezier-curve. t goes from 0 to 1.0
-		public static Point Bezier( this Point a, Point b, Point c, Point d, ZeroToOne t ) {
-			var ab = a.Lerp( b, t );
-			var bc = b.Lerp( c, t ); // point between b and c (green)
-			var cd = c.Lerp( d, t ); // point between c and d (green)
-			var abbc = ab.Lerp( bc, t ); // point between ab and bc (blue)
-			var bccd = bc.Lerp( cd, t ); // point between bc and cd (blue)
+        // evaluate a point on a bezier-curve. t goes from 0 to 1.0
+        public static Point Bezier( this Point a, Point b, Point c, Point d, ZeroToOne t ) {
+            var ab = a.Lerp( b, t );
+            var bc = b.Lerp( c, t ); // point between b and c (green)
+            var cd = c.Lerp( d, t ); // point between c and d (green)
+            var abbc = ab.Lerp( bc, t ); // point between ab and bc (blue)
+            var bccd = bc.Lerp( cd, t ); // point between bc and cd (blue)
 
-			return abbc.Lerp( bccd, t ); // point on the bezier-curve (black)
-		}
+            return abbc.Lerp( bccd, t ); // point on the bezier-curve (black)
+        }
 
-		public static IEnumerable<Point> BezierPath( Point start, Point end, Single stepping, Int32 height ) {
-			yield return start;
+        public static IEnumerable<Point> BezierPath( Point start, Point end, Single stepping, Int32 height ) {
+            yield return start;
 
-			var offesetX = Math.Abs( end.X - start.X ) / 2;
+            var offesetX = Math.Abs( end.X - start.X ) / 2;
 
-			var c = new Point( start.X + (offesetX / 2), start.Y - (height / 2) );
-			var d = new Point( end.X - (offesetX / 2), start.Y + (height / 2) );
+            var c = new Point( start.X + (offesetX / 2), start.Y - (height / 2) );
+            var d = new Point( end.X - (offesetX / 2), start.Y + (height / 2) );
 
-			var at = 0.0f;
+            var at = 0.0f;
 
-			while ( at < 1.0f ) {
-				var point = Bezier( start, end, c, d, at );
+            while ( at < 1.0f ) {
+                var point = Bezier( start, end, c, d, at );
 
-				yield return point;
-				at += stepping;
-			}
+                yield return point;
+                at += stepping;
+            }
 
-			yield return end;
-		}
+            yield return end;
+        }
 
-		/// <summary>
-		///     simple linear interpolation between two points
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		public static Point Lerp( this Point a, Point b, ZeroToOne t ) {
-			var dest = new Point {
-				X = ( Int32 ) ( a.X + (( b.X - a.X ) * t) ),
-				Y = ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) )
-			};
+        /// <summary>
+        ///     simple linear interpolation between two points
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static Point Lerp( this Point a, Point b, ZeroToOne t ) {
+            var dest = new Point {
+                X = ( Int32 ) ( a.X + (( b.X - a.X ) * t) ), Y = ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) )
+            };
 
-			return dest;
-		}
+            return dest;
+        }
 
-		/// <summary>
-		///     simple linear interpolation between two points
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		public static Point3D Lerp( this Point3D a, Point3D b, ZeroToOne t ) {
-			var dest = new Point3D {
-				X = a.X + (( b.X - a.X ) * t),
-				Y = a.Y + (( b.Y - a.Y ) * t),
-				Z = a.Z + (( b.Z - a.Z ) * t)
-			};
+        /// <summary>
+        ///     simple linear interpolation between two points
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static Point3D Lerp( this Point3D a, Point3D b, ZeroToOne t ) {
+            var dest = new Point3D {
+                X = a.X + (( b.X - a.X ) * t), Y = a.Y + (( b.Y - a.Y ) * t), Z = a.Z + (( b.Z - a.Z ) * t)
+            };
 
-			return dest;
-		}
+            return dest;
+        }
 
-		/// <summary>
-		///     simple linear interpolation between two 3D points
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		public static Vector3 Lerp( this Vector3 a, Vector3 b, Single t ) {
-			var dest = new Vector3 {
-				X = a.X + (( b.X - a.X ) * t),
-				Y = a.Y + (( b.Y - a.Y ) * t),
-				Z = a.Z + (( b.Z - a.Z ) * t)
-			};
+        /// <summary>
+        ///     simple linear interpolation between two 3D points
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static Vector3 Lerp( this Vector3 a, Vector3 b, Single t ) {
+            var dest = new Vector3 {
+                X = a.X + (( b.X - a.X ) * t), Y = a.Y + (( b.Y - a.Y ) * t), Z = a.Z + (( b.Z - a.Z ) * t)
+            };
 
-			return dest;
-		}
+            return dest;
+        }
 
-		public static Point3Di Lerp( Point3Di a, Point3Di b, Single t ) {
-			var dest = new Point3Di( ( Int32 ) ( a.X + (( b.X - a.X ) * t) ), ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) ), ( Int32 ) ( a.Z + (( b.Z - a.Z ) * t) ) );
+        public static Point3Di Lerp( Point3Di a, Point3Di b, Single t ) {
+            var dest = new Point3Di( ( Int32 ) ( a.X + (( b.X - a.X ) * t) ), ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) ), ( Int32 ) ( a.Z + (( b.Z - a.Z ) * t) ) );
 
-			return dest;
-		}
-	}
+            return dest;
+        }
+    }
 }

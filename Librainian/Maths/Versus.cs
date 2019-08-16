@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,108 +35,112 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Versus.cs" was last formatted by Protiguous on 2018/07/13 at 1:20 AM.
+// Project: "Librainian", "Versus.cs" was last formatted by Protiguous on 2019/08/08 at 8:37 AM.
 
 namespace Librainian.Maths {
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Logging;
-	using Newtonsoft.Json;
-	using Rationals;
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using JetBrains.Annotations;
+    using Logging;
+    using Newtonsoft.Json;
+    using Rationals;
 
-	/// <summary>
-	///     <para>Keep count of Success or Failure counts (threadsafe).</para>
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class Versus {
+    /// <summary>
+    ///     <para>Keep count of Success or Failure counts (threadsafe).</para>
+    /// </summary>
+    [JsonObject]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    public class Versus {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Int64 _failures;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Int64 _failures;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Int64 _successes;
+        /// <summary>ONLY used in the getter and setter.</summary>
+        [JsonProperty]
+        private Int64 _successes;
 
-		public Int64 Failures {
-			get => Thread.VolatileRead( ref this._failures );
+        public Int64 Failures {
+            get => Thread.VolatileRead( ref this._failures );
 
-			private set => Thread.VolatileWrite( ref this._failures, value );
-		}
+            private set => Thread.VolatileWrite( ref this._failures, value );
+        }
 
-		public Int64 Successes {
-			get => Thread.VolatileRead( ref this._successes );
+        public Int64 Successes {
+            get => Thread.VolatileRead( ref this._successes );
 
-			private set => Thread.VolatileWrite( ref this._successes, value );
-		}
+            private set => Thread.VolatileWrite( ref this._successes, value );
+        }
 
-		public Int64 Total => this.Successes + this.Failures;
+        public Int64 Total => this.Successes + this.Failures;
 
-		/// <summary>One failure.</summary>
-		public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
+        /// <summary>One failure.</summary>
+        public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
 
-		/// <summary>One success.</summary>
-		public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
+        /// <summary>One success.</summary>
+        public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
 
-		/// <summary>None for either.</summary>
-		public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
+        /// <summary>None for either.</summary>
+        public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
 
-		public Versus( Int64 successes = 0, Int64 failures = 0 ) {
-			this.Successes = successes;
-			this.Failures = failures;
-		}
+        public Versus( Int64 successes = 0, Int64 failures = 0 ) {
+            this.Successes = successes;
+            this.Failures = failures;
+        }
 
-		[NotNull]
-		public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
+        [NotNull]
+        public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
 
-		/// <summary>
-		///     <para>Increments the <see cref="Failures" /> count by <paramref name="amount" />.</para>
-		/// </summary>
-		public void Failure( Int64 amount = 1 ) => this.Failures += amount;
+        /// <summary>
+        ///     <para>Increments the <see cref="Failures" /> count by <paramref name="amount" />.</para>
+        /// </summary>
+        public void Failure( Int64 amount = 1 ) => this.Failures += amount;
 
-		public Single FailurePercentage() {
-			try {
-				var total = this.Total;
+        public Single FailurePercentage() {
+            try {
+                var total = this.Total;
 
-				if ( !total.Near( 0 ) ) {
-					var result = new Rational( this.Failures, total );
+                if ( !total.Near( 0 ) ) {
+                    var result = new Rational( this.Failures, total );
 
-					return ( Single ) result;
-				}
-			}
-			catch ( DivideByZeroException exception ) { exception.Log(); }
+                    return ( Single ) result;
+                }
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Log();
+            }
 
-			return 0;
-		}
+            return 0;
+        }
 
-		/// <summary>
-		///     <para>Increments the <see cref="Successes" /> count by <paramref name="amount" />.</para>
-		/// </summary>
-		public void Success( Int64 amount = 1 ) => this.Successes += amount;
+        /// <summary>
+        ///     <para>Increments the <see cref="Successes" /> count by <paramref name="amount" />.</para>
+        /// </summary>
+        public void Success( Int64 amount = 1 ) => this.Successes += amount;
 
-		public Single SuccessPercentage() {
-			try {
-				var total = this.Total;
+        public Single SuccessPercentage() {
+            try {
+                var total = this.Total;
 
-				if ( total.Near( 0 ) ) { return 0; }
+                if ( total.Near( 0 ) ) {
+                    return 0;
+                }
 
-				var chance = new Rational( this.Successes, total );
+                var chance = new Rational( this.Successes, total );
 
-				return ( Single ) chance;
-			}
-			catch ( DivideByZeroException exception ) {
-				exception.Log();
+                return ( Single ) chance;
+            }
+            catch ( DivideByZeroException exception ) {
+                exception.Log();
 
-				return 0;
-			}
-		}
+                return 0;
+            }
+        }
 
-		public override String ToString() => $"{this.SuccessPercentage():P1} successes vs {this.FailurePercentage():p1} failures out of {this.Total} total.";
-	}
+        public override String ToString() => $"{this.SuccessPercentage():P1} successes vs {this.FailurePercentage():p1} failures out of {this.Total} total.";
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,67 +35,67 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BigIntegerRange.cs" was last formatted by Protiguous on 2018/07/13 at 1:20 AM.
+// Project: "Librainian", "BigIntegerRange.cs" was last formatted by Protiguous on 2019/08/08 at 8:35 AM.
 
 namespace Librainian.Maths.Ranges {
 
-	using System;
-	using System.Numerics;
-	using Newtonsoft.Json;
+    using System;
+    using System.Numerics;
+    using Newtonsoft.Json;
 
-	/// <summary>Represents a <see cref="BigInteger" /> range with minimum and maximum values.</summary>
-	[JsonObject]
-	public struct BigIntegerRange {
+    /// <summary>Represents a <see cref="BigInteger" /> range with minimum and maximum values.</summary>
+    [JsonObject]
+    public struct BigIntegerRange {
 
-		/// <summary>Length of the range (difference between maximum and minimum values).</summary>
-		[JsonProperty]
-		public BigInteger Length { get; }
+        /// <summary>Length of the range (difference between maximum and minimum values).</summary>
+        [JsonProperty]
+        public BigInteger Length { get; }
 
-		/// <summary>Maximum value</summary>
-		[JsonProperty]
-		public BigInteger Max { get; }
+        /// <summary>Maximum value</summary>
+        [JsonProperty]
+        public BigInteger Max { get; }
 
-		/// <summary>Minimum value</summary>
-		[JsonProperty]
-		public BigInteger Min { get; }
+        /// <summary>Minimum value</summary>
+        [JsonProperty]
+        public BigInteger Min { get; }
 
-		/// <summary>Initializes a new instance of the <see cref="BigIntegerRange" /> class</summary>
-		/// <param name="min">Minimum value of the range</param>
-		/// <param name="max">Maximum value of the range</param>
-		public BigIntegerRange( BigInteger min, BigInteger max ) {
-			if ( min <= max ) {
-				this.Min = min;
-				this.Max = max;
-			}
-			else {
-				this.Min = max;
-				this.Max = min;
-			}
+        /// <summary>Initializes a new instance of the <see cref="BigIntegerRange" /> class</summary>
+        /// <param name="min">Minimum value of the range</param>
+        /// <param name="max">Maximum value of the range</param>
+        public BigIntegerRange( BigInteger min, BigInteger max ) {
+            if ( min <= max ) {
+                this.Min = min;
+                this.Max = max;
+            }
+            else {
+                this.Min = max;
+                this.Max = min;
+            }
 
-			this.Length = this.Max - this.Min;
-		}
+            this.Length = this.Max - this.Min;
+        }
 
-		/// <summary>Check if the specified range is inside this range</summary>
-		/// <param name="range">Range to check</param>
-		/// <returns>
-		///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
-		/// </returns>
-		public Boolean IsInside( BigIntegerRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
+        /// <summary>Check if the specified range is inside this range</summary>
+        /// <param name="range">Range to check</param>
+        /// <returns>
+        ///     <b>True</b> if the specified range is inside this range or <b>false</b> otherwise.
+        /// </returns>
+        public Boolean IsInside( BigIntegerRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
-		/// <summary>Check if the specified value is inside this range</summary>
-		/// <param name="x">Value to check</param>
-		/// <returns>
-		///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
-		/// </returns>
-		public Boolean IsInside( BigInteger x ) => this.Min <= x && x <= this.Max;
+        /// <summary>Check if the specified value is inside this range</summary>
+        /// <param name="x">Value to check</param>
+        /// <returns>
+        ///     <b>True</b> if the specified value is inside this range or <b>false</b> otherwise.
+        /// </returns>
+        public Boolean IsInside( BigInteger x ) => this.Min <= x && x <= this.Max;
 
-		/// <summary>Check if the specified range overlaps with this range</summary>
-		/// <param name="range">Range to check for overlapping</param>
-		/// <returns>
-		///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
-		/// </returns>
-		public Boolean IsOverlapping( BigIntegerRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
-	}
+        /// <summary>Check if the specified range overlaps with this range</summary>
+        /// <param name="range">Range to check for overlapping</param>
+        /// <returns>
+        ///     <b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.
+        /// </returns>
+        public Boolean IsOverlapping( BigIntegerRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
+    }
 }

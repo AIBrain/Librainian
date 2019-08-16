@@ -1,10 +1,10 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "DocumentCopyStatistics.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "DocumentCopyStatistics.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DocumentCopyStatistics.cs" was last formatted by Protiguous on 2018/09/28 at 2:31 PM.
+// Project: "Librainian", "DocumentCopyStatistics.cs" was last formatted by Protiguous on 2019/08/08 at 9:15 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -52,50 +52,29 @@ namespace Librainian.OperatingSystem.FileSystem {
     public class DocumentCopyStatistics {
 
         [JsonProperty]
-        public UInt64 BytesCopied {
-            get;
-            set;
-        }
+        public UInt64 BytesCopied { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public Document DestinationDocument {
-            get;
-            set;
-        }
+        public Document DestinationDocument { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public String DestinationDocumentCRC64 {
-            get;
-            set;
-        }
+        public String DestinationDocumentCRC64 { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public Document SourceDocument {
-            get;
-            set;
-        }
+        public Document SourceDocument { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public String SourceDocumentCRC64 {
-            get;
-            set;
-        }
+        public String SourceDocumentCRC64 { get; set; }
 
         [JsonProperty]
-        public DateTime TimeStarted {
-            get;
-            set;
-        }
+        public DateTime TimeStarted { get; set; }
 
         [JsonProperty]
-        public TimeSpan TimeTaken {
-            get;
-            set;
-        }
+        public TimeSpan TimeTaken { get; set; }
 
         public Double BytesPerMillisecond() {
             if ( Math.Abs( this.TimeTaken.TotalMilliseconds ) < Double.Epsilon ) {
@@ -110,7 +89,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return 0;
             }
 
-            var mb = this.BytesCopied / ( Double )MathConstants.Sizes.OneMegaByte;
+            var mb = this.BytesCopied / ( Double ) MathConstants.Sizes.OneMegaByte;
 
             return mb / this.TimeTaken.TotalSeconds;
         }

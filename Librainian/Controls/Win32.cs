@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Win32.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
+// Project: "Librainian", "Win32.cs" was last formatted by Protiguous on 2019/08/08 at 6:48 AM.
 
 namespace Librainian.Controls {
 
@@ -78,7 +78,9 @@ namespace Librainian.Controls {
 
         [NotNull]
         public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
-            if ( form == null ) { throw new ArgumentNullException( nameof( form ) ); }
+            if ( form == null ) {
+                throw new ArgumentNullException( nameof( form ) );
+            }
 
             return Task.Run( async () => {
 
@@ -87,38 +89,48 @@ namespace Librainian.Controls {
                 var cy = Cursor.Position.Y;
 
                 while ( true ) {
-                    if ( Cursor.Position.X == x && Cursor.Position.Y == y ) { break; }
+                    if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
+                        break;
+                    }
 
                     if ( Randem.NextBoolean() ) {
                         if ( cx < x ) {
                             var step = ( x - cx ) / 10.0f;
 
-                            if ( step < 1 ) { step = 1; }
+                            if ( step < 1 ) {
+                                step = 1;
+                            }
 
-                            cx -= ( Int32 )step;
+                            cx -= ( Int32 ) step;
                         }
                         else {
                             var step = ( cx - x ) / 10.0f;
 
-                            if ( step < 1 ) { step = 1; }
+                            if ( step < 1 ) {
+                                step = 1;
+                            }
 
-                            cx += ( Int32 )step;
+                            cx += ( Int32 ) step;
                         }
                     }
                     else {
                         if ( cy < y ) {
                             var step = ( y - cy ) / 10.0f;
 
-                            if ( step < 1 ) { step = 1; }
+                            if ( step < 1 ) {
+                                step = 1;
+                            }
 
-                            cy -= ( Int32 )step;
+                            cy -= ( Int32 ) step;
                         }
                         else {
                             var step = ( cy - y ) / 10.0f;
 
-                            if ( step < 1 ) { step = 1; }
+                            if ( step < 1 ) {
+                                step = 1;
+                            }
 
-                            cy += ( Int32 )step;
+                            cy += ( Int32 ) step;
                         }
                     }
 

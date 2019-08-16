@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,84 +35,102 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DoubleConverter.cs" was last formatted by Protiguous on 2018/07/10 at 8:57 PM.
+// Project: "Librainian", "DoubleConverter.cs" was last formatted by Protiguous on 2019/08/08 at 6:49 AM.
 
 namespace Librainian.Converters {
 
-	using System;
-	using JetBrains.Annotations;
-	using Maths;
+    using System;
+    using JetBrains.Annotations;
+    using Maths;
 
-	/// <summary>
-	///     A class to allow the conversion of doubles to String representations of their exact
-	///     System.Decimal values. The implementation aims for readability over efficiency.
-	/// </summary>
-	/// <see cref="http://yoda.arachsys.com/csharp/DoubleConverter.cs" />
-	public static class DoubleConverter {
+    /// <summary>
+    ///     A class to allow the conversion of doubles to String representations of their exact
+    ///     System.Decimal values. The implementation aims for readability over efficiency.
+    /// </summary>
+    /// <see cref="http://yoda.arachsys.com/csharp/DoubleConverter.cs" />
+    public static class DoubleConverter {
 
-		/// <summary>
-		///     Converts the given Double to a String representation of its exact System.Decimal value.
-		/// </summary>
-		/// <param name="d">The Double to convert.</param>
-		/// <returns>A String representation of the Double's exact System.Decimal value.</returns>
-		[NotNull]
-		public static String ToExactString( this Double d ) {
-			if ( Double.IsPositiveInfinity( d ) ) { return "+Infinity"; }
+        /// <summary>
+        ///     Converts the given Double to a String representation of its exact System.Decimal value.
+        /// </summary>
+        /// <param name="d">The Double to convert.</param>
+        /// <returns>A String representation of the Double's exact System.Decimal value.</returns>
+        [NotNull]
+        public static String ToExactString( this Double d ) {
+            if ( Double.IsPositiveInfinity( d ) ) {
+                return "+Infinity";
+            }
 
-			if ( Double.IsNegativeInfinity( d ) ) { return "-Infinity"; }
+            if ( Double.IsNegativeInfinity( d ) ) {
+                return "-Infinity";
+            }
 
-			if ( Double.IsNaN( d ) ) { return "NaN"; }
+            if ( Double.IsNaN( d ) ) {
+                return "NaN";
+            }
 
-			// Translate the Double into sign, exponent and mantissa.
-			var bits = BitConverter.DoubleToInt64Bits( d );
+            // Translate the Double into sign, exponent and mantissa.
+            var bits = BitConverter.DoubleToInt64Bits( d );
 
-			// Note that the shift is sign-extended, hence the test against -1 not 1
-			var negative = bits < 0;
-			var exponent = ( Int32 ) ( (bits >> 52) & 0x7ffL );
-			var mantissa = bits & 0xfffffffffffffL;
+            // Note that the shift is sign-extended, hence the test against -1 not 1
+            var negative = bits < 0;
+            var exponent = ( Int32 ) ( ( bits >> 52 ) & 0x7ffL );
+            var mantissa = bits & 0xfffffffffffffL;
 
-			// Subnormal numbers; exponent is effectively one higher, but there's no extra
-			// normalisation bit in the mantissa
-			if ( exponent == 0 ) { exponent++; }
+            // Subnormal numbers; exponent is effectively one higher, but there's no extra
+            // normalisation bit in the mantissa
+            if ( exponent == 0 ) {
+                exponent++;
+            }
 
-			// Normal numbers; leave exponent as it is but add extra bit to the front of the mantissa
-			else { mantissa = mantissa | (1L << 52); }
+            // Normal numbers; leave exponent as it is but add extra bit to the front of the mantissa
+            else {
+                mantissa = mantissa | ( 1L << 52 );
+            }
 
-			// Bias the exponent. It's actually biased by 1023, but we're treating the mantissa as
-			// m.0 rather than 0.m, so we need to subtract another 52 from it.
-			exponent -= 1075;
+            // Bias the exponent. It's actually biased by 1023, but we're treating the mantissa as
+            // m.0 rather than 0.m, so we need to subtract another 52 from it.
+            exponent -= 1075;
 
-			if ( mantissa == 0 ) { return "0"; }
+            if ( mantissa == 0 ) {
+                return "0";
+            }
 
-			/* Normalize */
-			while ( ( mantissa & 1 ) == 0 ) {
-				/*  i.e., Mantissa is even */
-				mantissa >>= 1;
-				exponent++;
-			}
+            /* Normalize */
+            while ( ( mantissa & 1 ) == 0 ) {
+                /*  i.e., Mantissa is even */
+                mantissa >>= 1;
+                exponent++;
+            }
 
-			// Construct a new System.Decimal expansion with the mantissa
-			var ad = new ArbitraryDecimal( mantissa );
+            // Construct a new System.Decimal expansion with the mantissa
+            var ad = new ArbitraryDecimal( mantissa );
 
-			// If the exponent is less than 0, we need to repeatedly divide by 2 - which is the
-			// equivalent of multiplying by 5 and dividing by 10.
-			if ( exponent < 0 ) {
-				for ( var i = 0; i < -exponent; i++ ) { ad.MultiplyBy( 5 ); }
+            // If the exponent is less than 0, we need to repeatedly divide by 2 - which is the
+            // equivalent of multiplying by 5 and dividing by 10.
+            if ( exponent < 0 ) {
+                for ( var i = 0; i < -exponent; i++ ) {
+                    ad.MultiplyBy( 5 );
+                }
 
-				ad.Shift( -exponent );
-			}
+                ad.Shift( -exponent );
+            }
 
-			// Otherwise, we need to repeatedly multiply by 2
-			else {
-				for ( var i = 0; i < exponent; i++ ) { ad.MultiplyBy( 2 ); }
-			}
+            // Otherwise, we need to repeatedly multiply by 2
+            else {
+                for ( var i = 0; i < exponent; i++ ) {
+                    ad.MultiplyBy( 2 );
+                }
+            }
 
-			// Finally, return the String with an appropriate sign
-			if ( negative ) { return "-" + ad; }
+            // Finally, return the String with an appropriate sign
+            if ( negative ) {
+                return "-" + ad;
+            }
 
-			return ad.ToString();
-		}
-	}
+            return ad.ToString();
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +35,36 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BitmapInfo.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "BitmapInfo.cs" was last formatted by Protiguous on 2019/08/08 at 7:50 AM.
 
 namespace Librainian.Graphics.Video {
 
-	using System;
-	using System.Drawing;
-	using JetBrains.Annotations;
+    using System;
+    using System.Drawing;
+    using JetBrains.Annotations;
 
-	public struct BitmapInfo {
+    public struct BitmapInfo {
 
-		//count of frames in the AVI stream, or 0
-		public Int32 AviCountFrames;
+        //count of frames in the AVI stream, or 0
+        public Int32 AviCountFrames;
 
-		//position of the frame in the AVI stream, or -1
-		public Int32 AviPosition;
+        //position of the frame in the AVI stream, or -1
+        public Int32 AviPosition;
 
-		//uncompressed image
-		public Bitmap Bitmap;
+        //uncompressed image
+        public Bitmap Bitmap;
 
-		//how many bytes will be hidden in this image
-		public Int64 MessageBytesToHide;
+        //how many bytes will be hidden in this image
+        public Int64 MessageBytesToHide;
 
-		//path and name of the bitmap file
-		public String SourceFileName;
+        //path and name of the bitmap file
+        public String SourceFileName;
 
-		public void LoadBitmap( [NotNull] String fileName ) {
-			this.Bitmap = new Bitmap( fileName );
-			this.SourceFileName = fileName;
-		}
-	}
+        public void LoadBitmap( [NotNull] String fileName ) {
+            this.Bitmap = new Bitmap( fileName );
+            this.SourceFileName = fileName;
+        }
+    }
 }

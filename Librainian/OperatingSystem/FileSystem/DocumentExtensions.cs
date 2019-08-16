@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,29 +35,29 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DocumentExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "DocumentExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:15 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Text.RegularExpressions;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Maths;
-	using Measurement.Time;
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using JetBrains.Annotations;
+    using Maths;
+    using Measurement.Time;
 
-	public static class DocumentExtensions {
+    public static class DocumentExtensions {
 
-		/// <summary>
-		/// 16mb
-		/// </summary>
-		public static UInt32 BufferSize { get; } = 0x1000000;
+        /// <summary>
+        ///     16mb
+        /// </summary>
+        public static UInt32 BufferSize { get; } = 0x1000000;
 
-		/*
+        /*
 
         /// <summary>
         ///     The characters not allowed in file names.
@@ -66,40 +66,41 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
         */
 
-		/// <summary>
-		/// String of invalid characters in a path or filename.
-		/// </summary>
-		[NotNull]
-		public static String InvalidPathCharacters { get; } = new String( Path.GetInvalidPathChars() );
+        [NotNull]
+        public static String InvalidFileNameCharacters { get; } = new String( Path.GetInvalidFileNameChars() );
 
-		[NotNull]
-		public static String InvalidFileNameCharacters { get; } = new String( Path.GetInvalidFileNameChars() );
+        /// <summary>
+        ///     String of invalid characters in a path or filename.
+        /// </summary>
+        [NotNull]
+        public static String InvalidPathCharacters { get; } = new String( Path.GetInvalidPathChars() );
 
-		[NotNull]
-		public static Regex RegexForInvalidPathCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]" );
-		[NotNull]
-		public static Regex RegexForInvalidFileNameCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]" );
+        [NotNull]
+        public static Regex RegexForInvalidFileNameCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]" );
 
-		private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer,
-							Single bytesToBeCopied, Stopwatch begin ) {
-			using ( var reader = new StreamReader( source.FullPath ) ) {
-				using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
-					Int32 numRead;
+        [NotNull]
+        public static Regex RegexForInvalidPathCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]" );
 
-					while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
-						await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
-						var bytesCopied = ( UInt64 )numRead;
+        private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
+            [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, Stopwatch begin ) {
+            using ( var reader = new StreamReader( source.FullPath ) ) {
+                using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
+                    Int32 numRead;
 
-						var percent = bytesCopied / bytesToBeCopied;
+                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
+                        await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
+                        var bytesCopied = ( UInt64 ) numRead;
 
-						progress?.Report( percent );
-						eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
-					}
-				}
-			}
-		}
+                        var percent = bytesCopied / bytesToBeCopied;
 
-		/*
+                        progress?.Report( percent );
+                        eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
+                    }
+                }
+            }
+        }
+
+        /*
 
         /// <summary>
         ///     Returns the <paramref name="filename" /> with any invalid chars removed.
@@ -118,7 +119,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
         */
 
-		/*
+        /*
 
         /// <summary>
         ///     Any result less than 1 is an error of some sort.
@@ -211,32 +212,35 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
         */
 
-		/*
+        /*
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
 
-		/// <summary>
-		/// Returns the path with any invalid characters replaced with <paramref name="replacement"/> and then trimmed. (Defaults to <see cref="String.Empty"/>.)
-		/// </summary>
-		/// <param name="fullpath"></param>
-		/// <param name="replacement"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String CleanPath( [NotNull] this String fullpath, [CanBeNull] String replacement = "" ) => RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
+        /// <summary>
+        ///     Returns the path with any invalid filename characters replaced with <paramref name="replacement" />. (Defaults to
+        ///     <see cref="String.Empty" />.)
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String CleanFileName( [NotNull] this String filename, [CanBeNull] String replacement = "" ) =>
+            RegexForInvalidFileNameCharacters.Replace( filename, replacement ?? String.Empty ).Trim();
 
-		/// <summary>
-		/// Returns the path with any invalid filename characters replaced with <paramref name="replacement"/>. (Defaults to <see cref="String.Empty"/>.)
-		/// </summary>
-		/// <param name="filename"></param>
-		/// <param name="replacement"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String CleanFileName( [NotNull] this String filename, [CanBeNull] String replacement = "" ) => RegexForInvalidFileNameCharacters.Replace( filename, replacement ?? String.Empty ).Trim();
+        /// <summary>
+        ///     Returns the path with any invalid characters replaced with <paramref name="replacement" /> and then trimmed.
+        ///     (Defaults to <see cref="String.Empty" />.)
+        /// </summary>
+        /// <param name="fullpath"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String CleanPath( [NotNull] this String fullpath, [CanBeNull] String replacement = "" ) =>
+            RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
+    }
 
-	}
-
-	/*
+    /*
     [TestFixture]
     public static class TestAsyncCopyAndMoves {
 

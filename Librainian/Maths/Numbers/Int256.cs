@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,34 +35,34 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Int256.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
+// Project: "Librainian", "Int256.cs" was last formatted by Protiguous on 2019/08/08 at 8:28 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     Struct with 4 readonly-fields.
-	/// </summary>
+    /// <summary>
+    ///     Struct with 4 readonly-fields.
+    /// </summary>
 
-	//TODO this class needs fleshed out
-	public struct Int256 {
+    //TODO this class needs fleshed out
+    public struct Int256 {
 
-		public Int64 Bits0 { get; }
+        public Int64 Bits0 { get; }
 
-		public Int64 Bits1 { get; }
+        public Int64 Bits1 { get; }
 
-		public Int64 Bits2 { get; }
+        public Int64 Bits2 { get; }
 
-		public Int64 Bits3 { get; }
+        public Int64 Bits3 { get; }
 
-		public Int256( Int64 bits0, Int64 bits1, Int64 bits2, Int64 bits3 ) {
-			this.Bits0 = bits0;
-			this.Bits1 = bits1;
-			this.Bits2 = bits2;
-			this.Bits3 = bits3;
-		}
-	}
+        public Int256( Int64 bits0, Int64 bits1, Int64 bits2, Int64 bits3 ) {
+            this.Bits0 = bits0;
+            this.Bits1 = bits1;
+            this.Bits2 = bits2;
+            this.Bits3 = bits3;
+        }
+    }
 }

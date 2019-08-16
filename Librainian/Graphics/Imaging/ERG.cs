@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ERG.cs" was last formatted by Protiguous on 2018/11/21 at 10:19 PM.
+// Project: "Librainian", "ERG.cs" was last formatted by Protiguous on 2019/08/08 at 7:41 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -71,13 +71,6 @@ namespace Librainian.Graphics.Imaging {
     [JsonObject]
     public class Erg {
 
-        public static readonly String Extension = ".erg";
-
-        /// <summary>
-        ///     Human readable file header.
-        /// </summary>
-        public static readonly String Header = "ERG0.1";
-
         /// <summary>
         ///     EXIF metadata
         /// </summary>
@@ -103,13 +96,20 @@ namespace Librainian.Graphics.Imaging {
 
         public UInt32 Width { get; private set; }
 
+        public static readonly String Extension = ".erg";
+
+        /// <summary>
+        ///     Human readable file header.
+        /// </summary>
+        public static readonly String Header = "ERG0.1";
+
         public Erg() => this.Checksum = UInt64.MaxValue;
 
         [NotNull]
         public Task<UInt64> CalculateChecksumAsync() =>
             Task.Run( () => {
                 unchecked {
-                    return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
+                    return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels );
                 }
             } );
 
@@ -147,14 +147,11 @@ namespace Librainian.Graphics.Imaging {
                 this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
 
                 this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem {
-                    Id = item.Id,
-                    Len = item.Len,
-                    Type = item.Type,
-                    Value = item.Value
+                    Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value
                 } ) );
 
-                this.Width = ( UInt32 )bitmap.Width;
-                this.Height = ( UInt32 )bitmap.Height;
+                this.Width = ( UInt32 ) bitmap.Width;
+                this.Height = ( UInt32 ) bitmap.Height;
 
                 var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
 
@@ -170,8 +167,8 @@ namespace Librainian.Graphics.Imaging {
                     }
 
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
-                        var pixel = new Pixel( color, x, ( UInt32 )y );
+                        var color = bitmap.GetPixel( ( Int32 ) x, ( Int32 ) y );
+                        var pixel = new Pixel( color, x, ( UInt32 ) y );
                         this.Pixels.TryAdd( pixel );
                     }
                 } );

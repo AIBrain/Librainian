@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,59 +35,59 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IViewManager.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "IViewManager.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
 
 namespace Librainian.Database.MMF {
 
-	using System;
-	using System.IO;
+    using System;
+    using System.IO;
 
-	public interface IViewManager {
+    public interface IViewManager {
 
-		/// <summary>
-		///     Keep file on exit
-		/// </summary>
-		Boolean KeepFile { get; set; }
+        /// <summary>
+        ///     Keep file on exit
+        /// </summary>
+        Boolean KeepFile { get; set; }
 
-		/// <summary>
-		///     Number of items in the file
-		/// </summary>
-		Int64 Length { get; }
+        /// <summary>
+        ///     Number of items in the file
+        /// </summary>
+        Int64 Length { get; }
 
-		/// <summary>
-		///     Remove the backing file
-		/// </summary>
-		void CleanUp();
+        /// <summary>
+        ///     Remove the backing file
+        /// </summary>
+        void CleanUp();
 
-		/// <summary>
-		///     Verify that the persisting file is large enough for the data written
-		/// </summary>
-		/// <param name="position">   Position to start writing</param>
-		/// <param name="writeLength">Number of bytes to write</param>
-		/// <returns></returns>
-		Boolean EnoughBackingCapacity( Int64 position, Int64 writeLength );
+        /// <summary>
+        ///     Verify that the persisting file is large enough for the data written
+        /// </summary>
+        /// <param name="position">   Position to start writing</param>
+        /// <param name="writeLength">Number of bytes to write</param>
+        /// <returns></returns>
+        Boolean EnoughBackingCapacity( Int64 position, Int64 writeLength );
 
-		/// <summary>
-		///     Get a working view for the current thread
-		/// </summary>
-		/// <param name="threadId"></param>
-		/// <returns></returns>
-		Stream GetView( Int32 threadId );
+        /// <summary>
+        ///     Get a working view for the current thread
+        /// </summary>
+        /// <param name="threadId"></param>
+        /// <returns></returns>
+        Stream GetView( Int32 threadId );
 
-		/// <summary>
-		///     Grow file
-		/// </summary>
-		/// <param name="sizeToGrowFrom">Size to grow from. Could be max size or an offset larger than the file</param>
-		void Grow( Int64 sizeToGrowFrom );
+        /// <summary>
+        ///     Grow file
+        /// </summary>
+        /// <param name="sizeToGrowFrom">Size to grow from. Could be max size or an offset larger than the file</param>
+        void Grow( Int64 sizeToGrowFrom );
 
-		/// <summary>
-		///     Initialize the backing file
-		/// </summary>
-		/// <param name="fileName">Filename to store the data</param>
-		/// <param name="capacity">Number of items to allocate</param>
-		/// <param name="dataSize">Size of datastructure</param>
-		void Initialize( String fileName, Int64 capacity, Int32 dataSize );
-	}
+        /// <summary>
+        ///     Initialize the backing file
+        /// </summary>
+        /// <param name="fileName">Filename to store the data</param>
+        /// <param name="capacity">Number of items to allocate</param>
+        /// <param name="dataSize">Size of datastructure</param>
+        void Initialize( String fileName, Int64 capacity, Int32 dataSize );
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,46 +35,48 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FileMapIOException.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "FileMapIOException.cs" was last formatted by Protiguous on 2019/08/08 at 6:57 AM.
 
 namespace Librainian.Database.MMF {
 
-	using System;
-	using System.IO;
-	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     An exception occured as a result of an invalid IO operation on any of the File mapping classes. It wraps the error
-	///     message and the underlying Win32 error code that caused the error.
-	/// </summary>
-	[JsonObject]
-	[Serializable]
-	public class FileMapIOException : IOException {
+    /// <summary>
+    ///     An exception occured as a result of an invalid IO operation on any of the File mapping classes. It wraps the error
+    ///     message and the underlying Win32 error code that caused the error.
+    /// </summary>
+    [JsonObject]
+    [Serializable]
+    public class FileMapIOException : IOException {
 
-		public override String Message {
-			get {
-				if ( this.Win32ErrorCode == 0 ) { return base.Message; }
+        public override String Message {
+            get {
+                if ( this.Win32ErrorCode == 0 ) {
+                    return base.Message;
+                }
 
-				//if ( this.Win32ErrorCode == 0x80070008 ) {
-				//    return base.Message + " Not enough address space available (" + this.Win32ErrorCode + ")";
-				//}
-				return base.Message + " (" + this.Win32ErrorCode.ToString( "X" ) + ")";
-			}
-		}
+                //if ( this.Win32ErrorCode == 0x80070008 ) {
+                //    return base.Message + " Not enough address space available (" + this.Win32ErrorCode + ")";
+                //}
+                return base.Message + " (" + this.Win32ErrorCode.ToString( "X" ) + ")";
+            }
+        }
 
-		public Int32 Win32ErrorCode { get; }
+        public Int32 Win32ErrorCode { get; }
 
-		protected FileMapIOException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+        protected FileMapIOException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
-		// construction
-		public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
+        // construction
+        public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
 
-		public FileMapIOException( String message ) : base( message ) { }
+        public FileMapIOException( String message ) : base( message ) { }
 
-		public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
-	}
+        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
+    }
 }

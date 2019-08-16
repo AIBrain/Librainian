@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,38 +35,38 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ReflectionPopulator.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "ReflectionPopulator.cs" was last formatted by Protiguous on 2019/08/08 at 7:00 AM.
 
 namespace Librainian.Database {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Data.SqlClient;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using JetBrains.Annotations;
 
-	public class ReflectionPopulator<T> {
+    public class ReflectionPopulator<T> {
 
-		[NotNull]
-		public virtual List<T> CreateList( [NotNull] SqlDataReader reader ) {
-			var results = new List<T>();
-			var properties = typeof( T ).GetProperties();
+        [NotNull]
+        public virtual List<T> CreateList( [NotNull] SqlDataReader reader ) {
+            var results = new List<T>();
+            var properties = typeof( T ).GetProperties();
 
-			while ( reader.Read() ) {
-				var item = Activator.CreateInstance<T>();
+            while ( reader.Read() ) {
+                var item = Activator.CreateInstance<T>();
 
-				foreach ( var property in typeof( T ).GetProperties() ) {
-					if ( !reader.IsDBNull( reader.GetOrdinal( property.Name ) ) ) {
-						var convertTo = Nullable.GetUnderlyingType( property.PropertyType ) ?? property.PropertyType;
-						property.SetValue( item, Convert.ChangeType( reader[ property.Name ], convertTo ), null );
-					}
-				}
+                foreach ( var property in typeof( T ).GetProperties() ) {
+                    if ( !reader.IsDBNull( reader.GetOrdinal( property.Name ) ) ) {
+                        var convertTo = Nullable.GetUnderlyingType( property.PropertyType ) ?? property.PropertyType;
+                        property.SetValue( item, Convert.ChangeType( reader[ property.Name ], convertTo ), null );
+                    }
+                }
 
-				results.Add( item );
-			}
+                results.Add( item );
+            }
 
-			return results;
-		}
-	}
+            return results;
+        }
+    }
 }

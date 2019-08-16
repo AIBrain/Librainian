@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,17 +35,17 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CurrentUser.cs" was last formatted by Protiguous on 2018/09/24 at 4:26 AM.
+// Project: "Librainian", "CurrentUser.cs" was last formatted by Protiguous on 2019/08/08 at 9:28 AM.
 
 namespace Librainian.Persistence {
 
-    using JetBrains.Annotations;
-    using Microsoft.Win32;
     using System;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
     using Logging;
+    using Microsoft.Win32;
 
     public static class CurrentUser {
 
@@ -55,7 +55,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <value></value>
         [NotNull]
-        internal static RegistryKey App => Protiguous.CreateSubKey(Application.ProductName, true);
+        internal static RegistryKey App => Protiguous.CreateSubKey( Application.ProductName, true );
 
         /// <summary>
         ///     Current user.
@@ -67,13 +67,13 @@ namespace Librainian.Persistence {
         ///     The <see cref="Protiguous" /> key under the <see cref="Software" /> key.
         /// </summary>
         [NotNull]
-        public static RegistryKey Protiguous => Software.CreateSubKey(nameof(Protiguous), true);
+        public static RegistryKey Protiguous => Software.CreateSubKey( nameof( Protiguous ), true );
 
         /// <summary>
         ///     The <see cref="Software" /> key under the <see cref="HKCU" /> key.
         /// </summary>
         [NotNull]
-        public static RegistryKey Software => HKCU.CreateSubKey(nameof(Software), true);
+        public static RegistryKey Software => HKCU.CreateSubKey( nameof( Software ), true );
 
         /// <summary>
         ///     By default, this retrieves the registry key under HKCU\Software\Protiguous\ProcessName.
@@ -82,15 +82,21 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static T Get<T>([NotNull] this String key) {
+        public static T Get<T>( [NotNull] this String key ) {
 
-            if (App == null) { throw new ArgumentNullException(paramName: nameof(App)); }
+            if ( App == null ) {
+                throw new ArgumentNullException( paramName: nameof( App ) );
+            }
 
-            if (String.IsNullOrWhiteSpace(value: key)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(key)); }
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
 
-            var value = App.GetValue(key);
+            var value = App.GetValue( key );
 
-            if (value is T result) { return result; }
+            if ( value is T result ) {
+                return result;
+            }
 
             return default;
         }
@@ -102,27 +108,32 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean Set<T>([NotNull] this String key, T value) {
+        public static Boolean Set<T>( [NotNull] this String key, T value ) {
 
-            if (App == null) { throw new ArgumentNullException(paramName: nameof(App)); }
+            if ( App == null ) {
+                throw new ArgumentNullException( paramName: nameof( App ) );
+            }
 
-            if (String.IsNullOrWhiteSpace(value: key)) { throw new ArgumentException(message: "Value cannot be null or whitespace.", paramName: nameof(key)); }
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
 
             try {
-                switch (value) {
+                switch ( value ) {
                     case String[] _: {
-                            App.SetValue(key, value, RegistryValueKind.MultiString);
+                        App.SetValue( key, value, RegistryValueKind.MultiString );
 
-                            return true;
-                        }
+                        return true;
+                    }
+
                     case String _:
-                        App.SetValue(key, value, RegistryValueKind.String);
+                        App.SetValue( key, value, RegistryValueKind.String );
 
                         return true;
 
                     case UInt64 _:
                     case Int64 _:
-                        App.SetValue(key, value, RegistryValueKind.QWord);
+                        App.SetValue( key, value, RegistryValueKind.QWord );
 
                         return true;
 
@@ -132,23 +143,25 @@ namespace Librainian.Persistence {
                     case Int16 _:
                     case SByte _:
                     case Byte _:
-                        App.SetValue(key, value, RegistryValueKind.DWord);
+                        App.SetValue( key, value, RegistryValueKind.DWord );
 
                         return true;
 
                     case Byte[] _:
-                        App.SetValue(key, value, RegistryValueKind.Binary);
+                        App.SetValue( key, value, RegistryValueKind.Binary );
 
                         return true;
 
                     default: {
-                            App.SetValue(key, value, RegistryValueKind.Unknown);
+                        App.SetValue( key, value, RegistryValueKind.Unknown );
 
-                            return true;
-                        }
+                        return true;
+                    }
                 }
             }
-            catch (Exception exception) { exception.Log(); }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
             return false;
         }

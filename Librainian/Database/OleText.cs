@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,110 +35,115 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "OleText.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "OleText.cs" was last formatted by Protiguous on 2019/08/08 at 7:00 AM.
 
 namespace Librainian.Database {
 
-	using System;
-	using System.Data;
-	using System.Data.OleDb;
-	using JetBrains.Annotations;
-	using Logging;
+    using System;
+    using System.Data;
+    using System.Data.OleDb;
+    using JetBrains.Annotations;
+    using Logging;
 
     public class OleText {
 
-		private String ConnectionString { get; }
+        private String ConnectionString { get; }
 
-		private Char Delimiter { get; }
+        private Char Delimiter { get; }
 
-		private String Path { get; }
+        private String Path { get; }
 
-		public OleText( String path, Boolean hasHeaders, Char delimiter ) {
-			this.Path = path;
-			this.Delimiter = delimiter;
+        public OleText( String path, Boolean hasHeaders, Char delimiter ) {
+            this.Path = path;
+            this.Delimiter = delimiter;
 
-			var connectionStringBuilder = new OleDbConnectionStringBuilder {
-				Provider = "Microsoft.Jet.OLEDB.4.0",
-				DataSource = path
-			};
+            var connectionStringBuilder = new OleDbConnectionStringBuilder {
+                Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path
+            };
 
-			connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
-			this.ConnectionString = connectionStringBuilder.ToString();
-		}
+            connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
+            this.ConnectionString = connectionStringBuilder.ToString();
+        }
 
-		[NotNull]
-		public String[] GetColumnsList( String worksheet ) {
-			String[] columns = { };
+        [NotNull]
+        public String[] GetColumnsList( String worksheet ) {
+            String[] columns = { };
 
-			try {
-				var connection = new OleDbConnection( this.ConnectionString );
-				connection.Open();
+            try {
+                var connection = new OleDbConnection( this.ConnectionString );
+                connection.Open();
 
-				var tableColumns = connection.GetSchema( "Columns", new[] {
-					null, null, worksheet + '$', null
-				} );
+                var tableColumns = connection.GetSchema( "Columns", new[] {
+                    null, null, worksheet + '$', null
+                } );
 
-				connection.Close();
+                connection.Close();
 
-				columns = new String[ tableColumns.Rows.Count ];
+                columns = new String[ tableColumns.Rows.Count ];
 
-				for ( var i = 0; i < columns.Length; i++ ) { columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ]; }
-			}
-			catch ( Exception exception ) { exception.Log(); }
+                for ( var i = 0; i < columns.Length; i++ ) {
+                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
 
-			return columns;
-		}
+            return columns;
+        }
 
-		[NotNull]
-		public DataSet GetWorkplace() {
-			using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-				using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
-					var workplace = new DataSet();
-					adaptor.FillSchema( workplace, SchemaType.Source );
-					adaptor.Fill( workplace );
+        [NotNull]
+        public DataSet GetWorkplace() {
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
+                    var workplace = new DataSet();
+                    adaptor.FillSchema( workplace, SchemaType.Source );
+                    adaptor.Fill( workplace );
 
-					return workplace;
-				}
-			}
-		}
+                    return workplace;
+                }
+            }
+        }
 
-		[NotNull]
-		public DataTable GetWorksheet( String worksheet ) {
-			using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-				using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
-					var ws = new DataTable( worksheet );
-					adaptor.FillSchema( ws, SchemaType.Source );
-					adaptor.Fill( ws );
+        [NotNull]
+        public DataTable GetWorksheet( String worksheet ) {
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
+                    var ws = new DataTable( worksheet );
+                    adaptor.FillSchema( ws, SchemaType.Source );
+                    adaptor.Fill( ws );
 
-					return ws;
-				}
-			}
-		}
+                    return ws;
+                }
+            }
+        }
 
-		[NotNull]
-		public String[] GetWorksheetList() {
-			String[] worksheets = { };
+        [NotNull]
+        public String[] GetWorksheetList() {
+            String[] worksheets = { };
 
-			try {
-				DataTable tableWorksheets;
+            try {
+                DataTable tableWorksheets;
 
-				using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-					connection.Open();
-					tableWorksheets = connection.GetSchema( "Tables" );
-				}
+                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                    connection.Open();
+                    tableWorksheets = connection.GetSchema( "Tables" );
+                }
 
-				worksheets = new String[ tableWorksheets.Rows.Count ];
+                worksheets = new String[ tableWorksheets.Rows.Count ];
 
-				for ( var i = 0; i < worksheets.Length; i++ ) {
-					worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
-					worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
-				}
-			}
-			catch ( OleDbException exception ) { exception.Log(); }
+                for ( var i = 0; i < worksheets.Length; i++ ) {
+                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
+                }
+            }
+            catch ( OleDbException exception ) {
+                exception.Log();
+            }
 
-			return worksheets;
-		}
-	}
+            return worksheets;
+        }
+    }
 }

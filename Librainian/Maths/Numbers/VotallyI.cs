@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,26 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "VotallyI.cs" was last formatted by Protiguous on 2018/07/13 at 1:19 AM.
+// Project: "Librainian", "VotallyI.cs" was last formatted by Protiguous on 2019/08/08 at 8:33 AM.
 
-namespace Librainian.Maths.Numbers
-{
+namespace Librainian.Maths.Numbers {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using JetBrains.Annotations;
     using Logging;
+    using Newtonsoft.Json;
     using Rationals;
 
     /// <summary>
     ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
-    public class VotallyI
-    {
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    public class VotallyI {
 
         /// <summary>
         ///     ONLY used in the getter and setter.
@@ -68,41 +66,43 @@ namespace Librainian.Maths.Numbers
         /// </summary>
         private UInt64 _votesYes;
 
-        /// <summary>
-        ///     No vote for either.
-        /// </summary>
-        public static readonly VotallyI Zero = new VotallyI(votesYes: 0, votesNo: 0);
-
         public UInt64 No {
-            get => Thread.VolatileRead(ref this._votesNo);
+            get => Thread.VolatileRead( ref this._votesNo );
 
-            private set => Thread.VolatileWrite(ref this._votesNo, value);
+            private set => Thread.VolatileWrite( ref this._votesNo, value );
         }
 
         public UInt64 Votes => this.Yes + this.No;
 
         public UInt64 Yes {
-            get => Thread.VolatileRead(ref this._votesYes);
+            get => Thread.VolatileRead( ref this._votesYes );
 
-            private set => Thread.VolatileWrite(ref this._votesYes, value);
+            private set => Thread.VolatileWrite( ref this._votesYes, value );
         }
 
-        public VotallyI(UInt64 votesYes = 0, UInt64 votesNo = 0)
-        {
+        /// <summary>
+        ///     No vote for either.
+        /// </summary>
+        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
+
+        public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
             this.Yes = votesYes;
             this.No = votesNo;
         }
 
         [NotNull]
-        public static VotallyI Combine([NotNull] VotallyI left, [NotNull] VotallyI right)
-        {
-            if (left == null) { throw new ArgumentNullException(nameof(left)); }
+        public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( nameof( left ) );
+            }
 
-            if (right == null) { throw new ArgumentNullException(nameof(right)); }
+            if ( right == null ) {
+                throw new ArgumentNullException( nameof( right ) );
+            }
 
             var result = left;
-            result.VoteYes(right.Yes);
-            result.VoteNo(right.No);
+            result.VoteYes( right.Yes );
+            result.VoteNo( right.No );
 
             return result;
         }
@@ -111,46 +111,45 @@ namespace Librainian.Maths.Numbers
         ///     Add in the votes from another <see cref="VotallyI" />.
         /// </summary>
         /// <param name="right"></param>
-        public void Add([NotNull] VotallyI right)
-        {
-            if (right == null) { throw new ArgumentNullException(nameof(right)); }
+        public void Add( [NotNull] VotallyI right ) {
+            if ( right == null ) {
+                throw new ArgumentNullException( nameof( right ) );
+            }
 
-            this.VoteYes(right.Yes);
-            this.VoteNo(right.No);
+            this.VoteYes( right.Yes );
+            this.VoteNo( right.No );
         }
 
-        public Double ChanceNo()
-        {
-            try
-            {
+        public Double ChanceNo() {
+            try {
                 var votes = this.Votes;
 
-                if (!votes.Near(0))
-                {
-                    var result = new Rational(this.No, votes);
+                if ( !votes.Near( 0 ) ) {
+                    var result = new Rational( this.No, votes );
 
-                    return (Double)result;
+                    return ( Double ) result;
                 }
             }
-            catch (DivideByZeroException exception) { exception.Log(); }
+            catch ( DivideByZeroException exception ) {
+                exception.Log();
+            }
 
             return 0;
         }
 
-        public Double ChanceYes()
-        {
-            try
-            {
+        public Double ChanceYes() {
+            try {
                 var votes = this.Votes;
 
-                if (votes.Near(0)) { return 0; }
+                if ( votes.Near( 0 ) ) {
+                    return 0;
+                }
 
-                var chance = new Rational(this.Yes, votes);
+                var chance = new Rational( this.Yes, votes );
 
-                return (Double)chance;
+                return ( Double ) chance;
             }
-            catch (DivideByZeroException exception)
-            {
+            catch ( DivideByZeroException exception ) {
                 exception.Log();
 
                 return 0;
@@ -158,7 +157,7 @@ namespace Librainian.Maths.Numbers
         }
 
         [NotNull]
-        public VotallyI Clone() => new VotallyI(votesYes: this.Yes, votesNo: this.No);
+        public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
 
         public UInt64 HalfOfVotes() => this.Votes / 2;
 
@@ -179,21 +178,21 @@ namespace Librainian.Maths.Numbers
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteNo(UInt64 votes = 1) => this.No += votes;
+        public void VoteNo( UInt64 votes = 1 ) => this.No += votes;
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void VoteYes(UInt64 votes = 1) => this.Yes += votes;
+        public void VoteYes( UInt64 votes = 1 ) => this.Yes += votes;
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="No" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void WithdrawNoVote(UInt64 votes = 1) => this.No -= votes;
+        public void WithdrawNoVote( UInt64 votes = 1 ) => this.No -= votes;
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="Yes" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void WithdrawYesVote(UInt64 votes = 1) => this.Yes -= votes;
+        public void WithdrawYesVote( UInt64 votes = 1 ) => this.Yes -= votes;
     }
 }

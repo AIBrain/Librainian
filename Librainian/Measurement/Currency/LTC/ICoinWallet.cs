@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,50 +35,50 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ICoinWallet.cs" was last formatted by Protiguous on 2018/07/13 at 1:22 AM.
+// Project: "Librainian", "ICoinWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:42 AM.
 
 namespace Librainian.Measurement.Currency.LTC {
 
-	using System;
-	using System.Collections.Generic;
-	using BTC;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using BTC;
+    using JetBrains.Annotations;
 
-	public interface ICoinWallet {
+    public interface ICoinWallet {
 
-		/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
-		IEnumerable<ICoin> Coins { [NotNull] get; }
+        /// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
+        IEnumerable<ICoin> Coins { [NotNull] get; }
 
-		IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped { [NotNull] get; }
+        IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped { [NotNull] get; }
 
-		String Formatted { get; }
+        String Formatted { get; }
 
-		Guid ID { get; }
+        Guid ID { get; }
 
-		Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
+        Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
 
-		Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
+        Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
 
-		/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
-		Decimal Total { get; }
+        /// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
+        Decimal Total { get; }
 
-		Boolean Contains( [NotNull] ICoin coin );
+        Boolean Contains( [NotNull] ICoin coin );
 
-		UInt64 Count( [NotNull] ICoin coin );
+        UInt64 Count( [NotNull] ICoin coin );
 
-		IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
+        IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
 
-		/// <summary>
-		///     Attempt to
-		///     <see cref="CoinWallet.TryWithdraw(Librainian.Measurement.Currency.BTC.ICoin,UInt64)" />
-		///     one or more <see cref="ICoin" /> from this <see cref="CoinWallet" /> .
-		/// </summary>
-		/// <param name="coin"></param>
-		/// <param name="quantity"></param>
-		/// <returns></returns>
-		/// <remarks>Locks the wallet.</remarks>
-		Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity );
-	}
+        /// <summary>
+        ///     Attempt to
+        ///     <see cref="CoinWallet.TryWithdraw(Librainian.Measurement.Currency.BTC.ICoin,UInt64)" />
+        ///     one or more <see cref="ICoin" /> from this <see cref="CoinWallet" /> .
+        /// </summary>
+        /// <param name="coin"></param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        /// <remarks>Locks the wallet.</remarks>
+        Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity );
+    }
 }

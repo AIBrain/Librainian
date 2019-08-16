@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,17 +35,17 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UniversalDateTime.cs" was last formatted by Protiguous on 2018/09/22 at 9:03 AM.
+// Project: "Librainian", "UniversalDateTime.cs" was last formatted by Protiguous on 2019/08/08 at 9:11 AM.
 
 namespace Librainian.Measurement.Time {
 
-    using Extensions;
-    using Newtonsoft.Json;
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using Extensions;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>Absolute universal date and time.</para>
@@ -54,28 +54,28 @@ namespace Librainian.Measurement.Time {
     /// <see cref="http://wikipedia.org/wiki/Lol" />
     [Immutable]
     [JsonObject]
-    [DebuggerDisplay("ToString()")]
+    [DebuggerDisplay( "ToString()" )]
     public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-        public static UniversalDateTime Now => new UniversalDateTime(DateTime.UtcNow);
+        public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
         ///     <para>1 planck times</para>
         /// </summary>
-        public static UniversalDateTime One { get; } = new UniversalDateTime(BigInteger.One);
+        public static UniversalDateTime One { get; } = new UniversalDateTime( BigInteger.One );
 
         /// <summary>
         ///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
         ///     <para>430,000,000,000,000,000 seconds</para>
         /// </summary>
-        public static PlanckTimes PlancksUpToMinDateTime { get; } = new PlanckTimes(new Seconds(4.3E17m));
+        public static PlanckTimes PlancksUpToMinDateTime { get; } = new PlanckTimes( new Seconds( 4.3E17m ) );
 
         /// <summary>
         ///     <para>0 planck times</para>
         /// </summary>
-        public static UniversalDateTime TheBeginning { get; } = new UniversalDateTime(BigInteger.Zero);
+        public static UniversalDateTime TheBeginning { get; } = new UniversalDateTime( BigInteger.Zero );
 
-        public static UniversalDateTime Unix { get; } = new UniversalDateTime(Epochs.Unix);
+        public static UniversalDateTime Unix { get; } = new UniversalDateTime( Epochs.Unix );
 
         /// <summary>
         /// </summary>
@@ -93,51 +93,51 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public BigInteger Value { get; }
 
-        public UniversalDateTime(BigInteger planckTimesSinceBigBang) {
+        public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
-            var span = new SpanOfTime(planckTimes: this.Value);
+            var span = new SpanOfTime( planckTimes: this.Value );
 
             //TODO
-            this.Date = new Date(span);
-            this.Time = new Time(span);
+            this.Date = new Date( span );
+            this.Time = new Time( span );
         }
 
-        public UniversalDateTime(DateTime dateTime) {
-            var span = CalcSpanSince(dateTime);
+        public UniversalDateTime( DateTime dateTime ) {
+            var span = CalcSpanSince( dateTime );
 
             this.Value = span.CalcTotalPlanckTimes().Value;
-            this.Date = new Date(span); //we can use span here because the values have been normalized. Should()Have()Been()?
-            this.Time = new Time(span);
+            this.Date = new Date( span ); //we can use span here because the values have been normalized. Should()Have()Been()?
+            this.Time = new Time( span );
 
             //this.Time = new Time();
         }
 
-        private static UniversalDateTime Combine(UniversalDateTime left, BigInteger value) => new UniversalDateTime(left.Value + value);
+        private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 
-        private static UniversalDateTime Combine(UniversalDateTime left, UniversalDateTime right) => Combine(left, right.Value);
+        private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
 
         /// <summary>
         ///     Given a <see cref="DateTime" />, calculate the <see cref="SpanOfTime" />.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        public static SpanOfTime CalcSpanSince(DateTime dateTime) {
-            var sinceThen = new SpanOfTime(dateTime - DateTime.MinValue);
+        public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
+            var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
             var plancksSinceThen = sinceThen.CalcTotalPlanckTimes();
-            var span = new SpanOfTime(planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value);
+            var span = new SpanOfTime( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
 
             return span;
         }
 
-        public static UniversalDateTime operator -(UniversalDateTime left, UniversalDateTime right) => Combine(left, -right);
+        public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
 
-        public static UniversalDateTime operator -(UniversalDateTime universalDateTime) => new UniversalDateTime(universalDateTime.Value * -1);
+        public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new UniversalDateTime( universalDateTime.Value * -1 );
 
-        public static Boolean operator <(UniversalDateTime left, UniversalDateTime right) => left.Value < right.Value;
+        public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) => left.Value < right.Value;
 
-        public static Boolean operator >(UniversalDateTime left, UniversalDateTime right) => left.Value > right.Value;
+        public static Boolean operator >( UniversalDateTime left, UniversalDateTime right ) => left.Value > right.Value;
 
-        public Int32 CompareTo(UniversalDateTime other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( UniversalDateTime other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>
         ///     Returns the fully qualified type name of this instance.

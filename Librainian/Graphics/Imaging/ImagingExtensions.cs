@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,35 +35,31 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ImagingExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
+// Project: "Librainian", "ImagingExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 7:42 AM.
 
-namespace Librainian.Graphics.Imaging
-{
+namespace Librainian.Graphics.Imaging {
 
-    using JetBrains.Annotations;
     using System;
     using System.Drawing;
+    using JetBrains.Annotations;
 
-    public static class ImagingExtensions
-    {
+    public static class ImagingExtensions {
 
-        public static Color GetAverageColor([NotNull] this Bitmap bitmap)
-        {
-            if (bitmap == null) { throw new ArgumentNullException(nameof(bitmap)); }
+        public static Color GetAverageColor( [NotNull] this Bitmap bitmap ) {
+            if ( bitmap == null ) {
+                throw new ArgumentNullException( nameof( bitmap ) );
+            }
 
             var red = 0;
             var green = 0;
             var blue = 0;
 
-            using (var faster = new Bitmap(bitmap))
-            {
-                for (var x = 0; x < bitmap.Width; x++)
-                {
-                    for (var y = 0; y < bitmap.Height; y++)
-                    {
-                        var pixel = faster.GetPixel(x, y);
+            using ( var faster = new Bitmap( bitmap ) ) {
+                for ( var x = 0; x < bitmap.Width; x++ ) {
+                    for ( var y = 0; y < bitmap.Height; y++ ) {
+                        var pixel = faster.GetPixel( x, y );
                         red += pixel.R;
                         green += pixel.G;
                         blue += pixel.B;
@@ -77,7 +73,7 @@ namespace Librainian.Graphics.Imaging
             green /= total;
             blue /= total;
 
-            return Color.FromArgb(red, green, blue);
+            return Color.FromArgb( red, green, blue );
         }
     }
 }

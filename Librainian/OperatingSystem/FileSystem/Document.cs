@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
-// 
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
-// 
-// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/03/24 at 9:13 AM.
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/08/08 at 9:14 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -129,6 +129,21 @@ namespace Librainian.OperatingSystem.FileSystem {
         Object Tag { get; set; }
 
         Boolean DeleteAfterClose { get; set; }
+
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
+        /// </summary>
+        /// <example>
+        ///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
+        /// </example>
+        /// <see cref="Path.GetFileName" />
+        String FileName { get; }
+
+        /// <summary>
+        ///     <para>Just the file's name, including the extension.</para>
+        /// </summary>
+        /// <see cref="Path.GetFileNameWithoutExtension" />
+        String Name { get; }
 
         /// <summary>
         ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.
@@ -267,15 +282,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         String Extension();
 
         /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
-        /// </summary>
-        /// <example>
-        ///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
-        /// </example>
-        /// <see cref="Path.GetFileName" />
-        String FileName { get; }
-
-        /// <summary>
         ///     Returns the size of the file, if it exists.
         /// </summary>
         /// <returns></returns>
@@ -342,15 +348,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="token"></param>
-        /// <param name="exact">If true, the file creation and lastwrite dates are set after the <see cref="IDocument.MoveAsync" />.</param>
+        /// <param name="exact">
+        ///     If true, the file creation and lastwrite dates are set after the <see cref="IDocument.MoveAsync" />
+        ///     .
+        /// </param>
         /// <returns></returns>
         Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean exact = true );
-
-        /// <summary>
-        ///     <para>Just the file's name, including the extension.</para>
-        /// </summary>
-        /// <see cref="Path.GetFileNameWithoutExtension" />
-        String Name { get; }
 
         Task<String> ReadStringAsync();
 
@@ -410,7 +413,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
 
         Task<Boolean> IsAll( Byte number );
-
     }
 
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
@@ -431,7 +433,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             UNC = 0b1000,
 
             DeleteAfterClose = 0b10000
-
         }
 
         /// <summary>
@@ -650,7 +651,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ sizeof( Int32 ) ];
 
-                using ( var buffered = new BufferedStream( stream: stream, sizeof(Int32) ) ) {
+                using ( var buffered = new BufferedStream( stream: stream, sizeof( Int32 ) ) ) {
                     while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
                         yield return BitConverter.ToInt32( value: buffer, startIndex: 0 );
                     }
@@ -678,7 +679,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ sizeof( Int64 ) ];
 
-                using ( var buffered = new BufferedStream( stream: stream, sizeof(Int64) ) ) {
+                using ( var buffered = new BufferedStream( stream: stream, sizeof( Int64 ) ) ) {
                     while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
                         yield return BitConverter.ToInt64( value: buffer, startIndex: 0 );
                     }
@@ -733,7 +734,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var bytes = new Byte[ sizeof( UInt64 ) ];
 
-                using ( var buffered = new BufferedStream( stream: stream, sizeof(UInt64) ) ) {
+                using ( var buffered = new BufferedStream( stream: stream, sizeof( UInt64 ) ) ) {
                     while ( buffered.Read( array: bytes, offset: 0, count: bytes.Length ).Any() ) {
                         yield return BitConverter.ToUInt64( value: bytes, startIndex: 0 );
                     }
@@ -880,46 +881,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             return webClient;
         }
 
-        /// <summary>
-        ///     Returns true if this IDocument was copied to the <paramref name="destination" />.
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="progress"></param>
-        /// <param name="onComplete"></param>
-        /// <returns></returns>
-        public async Task<Boolean> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
-            [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
-            if ( destination == null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
-            }
-
-            if ( !this.Exists() ) {
-                return false;
-            }
-
-            if ( destination.Exists() ) {
-                destination.Delete();
-
-                if ( destination.Exists() ) {
-                    return false;
-                }
-            }
-
-            if ( !this.Length.HasValue || !this.Length.Any() ) {
-                using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
-                    return true; //just create an empty file
-                }
-            }
-
-            var webClient = new WebClient();
-            webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
-            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, ( this, destination ) );
-            await webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath ).ConfigureAwait( false );
-
-            return destination.Exists() && destination.Size() == this.Size();
-        }
-
-
         public Int32? CRC32() {
             try {
 
@@ -934,7 +895,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return BitConverter.ToInt32( value: result, startIndex: 0 );
                     }
                 }
-
 
                 return null;
             }
@@ -1090,8 +1050,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             if ( this.DeleteAfterClose ) {
                 this.Delete();
             }
-
-            
         }
 
         /// <summary>
@@ -1136,12 +1094,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <see cref="Path.GetFileName" />
         [NotNull]
         public String FileName => Path.GetFileName( path: this.FullPath );
-
-        /// <summary>
-        /// I *really* dislike filenames starting with a period. Here's looking at you java..
-        /// </summary>
-        /// <returns></returns>
-        public Boolean BadlyNamedFile() => Path.GetFileName( this.FullPath).Like( Path.GetExtension(this.FullPath) );
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
@@ -1301,7 +1253,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             return Task.Run( () => {
                 try {
                     if ( destination.Exists() ) {
-                        if ( destination.SameContent(this) ) {
+                        if ( destination.SameContent( this ) ) {
 
                             if ( exact ) {
                                 if ( destination.Exists() ) {
@@ -1568,6 +1520,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( Uri.TryCreate( uriString: fullPath, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 if ( uri.IsFile ) {
+
                     //this.FullPath = Path.GetFullPath( uri.AbsolutePath );
                     this.FullPath = Path.GetFullPath( fullPath );
                     this.TypeOfPath = TypeOfPathType.Document;
@@ -1625,6 +1578,51 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
             fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName ), deleteAfterClose: deleteAfterClose ) { }
 
+        /// <summary>
+        ///     Returns true if this IDocument was copied to the <paramref name="destination" />.
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="progress"></param>
+        /// <param name="onComplete"></param>
+        /// <returns></returns>
+        public async Task<Boolean> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
+            [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
+            if ( destination == null ) {
+                throw new ArgumentNullException( paramName: nameof( destination ) );
+            }
+
+            if ( !this.Exists() ) {
+                return false;
+            }
+
+            if ( destination.Exists() ) {
+                destination.Delete();
+
+                if ( destination.Exists() ) {
+                    return false;
+                }
+            }
+
+            if ( !this.Length.HasValue || !this.Length.Any() ) {
+                using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
+                    return true; //just create an empty file
+                }
+            }
+
+            var webClient = new WebClient();
+            webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
+            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, ( this, destination ) );
+            await webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath ).ConfigureAwait( false );
+
+            return destination.Exists() && destination.Size() == this.Size();
+        }
+
+        /// <summary>
+        ///     I *really* dislike filenames starting with a period. Here's looking at you java..
+        /// </summary>
+        /// <returns></returns>
+        public Boolean BadlyNamedFile() => Path.GetFileName( this.FullPath ).Like( Path.GetExtension( this.FullPath ) );
+
         /*
         [DebuggerStepThrough]
         public void Refresh( Boolean throwOnError = false ) {
@@ -1681,7 +1679,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             internal Int32 nLength;
 
             internal unsafe Byte* pSecurityDescriptor = null;
-
         }
 
         /// <summary>
@@ -1821,7 +1818,5 @@ namespace Librainian.OperatingSystem.FileSystem {
         internal static Boolean IsExtended( [NotNull] String path ) =>
             path.Length >= 4 && path[ index: 0 ] == PathInternal.Constants.Backslash && ( path[ index: 1 ] == PathInternal.Constants.Backslash || path[ index: 1 ] == '?' ) &&
             path[ index: 2 ] == '?' && path[ index: 3 ] == PathInternal.Constants.Backslash;
-
     }
-
 }

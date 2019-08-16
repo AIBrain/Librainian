@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,17 +35,16 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WeightObsolete.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
+// Project: "Librainian", "WeightObsolete.cs" was last formatted by Protiguous on 2019/08/08 at 8:37 AM.
 
-namespace Librainian.Maths
-{
+namespace Librainian.Maths {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</para>
@@ -53,12 +52,28 @@ namespace Librainian.Maths
     /// </summary>
     [Obsolete]
     [JsonObject]
-    public class WeightObsolete
-    {
+    public class WeightObsolete {
 
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _value;
+
+        public Double Value {
+            get => Interlocked.Exchange( ref this._value, this._value );
+
+            set {
+                var correctedvalue = value;
+
+                if ( value >= MaxValue ) {
+                    correctedvalue = MaxValue;
+                }
+                else if ( value <= MinValue ) {
+                    correctedvalue = MinValue;
+                }
+
+                Interlocked.Exchange( ref this._value, correctedvalue );
+            }
+        }
 
         /// <summary>1 <see cref="MaxValue" /></summary>
         public const Double MaxValue = +1D;
@@ -67,41 +82,29 @@ namespace Librainian.Maths
         /// <summary>- 1 <see cref="MinValue" /></summary>
         public const Double MinValue = -1D;
 
-        public Double Value {
-            get => Interlocked.Exchange(ref this._value, this._value);
-
-            set {
-                var correctedvalue = value;
-
-                if (value >= MaxValue) { correctedvalue = MaxValue; }
-                else if (value <= MinValue) { correctedvalue = MinValue; }
-
-                Interlocked.Exchange(ref this._value, correctedvalue);
-            }
-        }
-
         /// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
         public WeightObsolete() => this.Value = (Randem.NextDouble() * 0.25) + (Randem.NextDouble() * 0.25);
 
         /// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
         /// <param name="value"></param>
-        public WeightObsolete(Double value) => this.Value = value;
+        public WeightObsolete( Double value ) => this.Value = value;
 
-        public static Double Combine(Double value1, Double value2) => (value1 + value2) / 2D;
+        public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-        public static implicit operator Double([NotNull] WeightObsolete special) => special.Value;
+        public static implicit operator Double( [NotNull] WeightObsolete special ) => special.Value;
 
         [NotNull]
-        public static WeightObsolete Parse([NotNull] String value)
-        {
-            if (value == null) { throw new ArgumentNullException(nameof(value)); }
+        public static WeightObsolete Parse( [NotNull] String value ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( nameof( value ) );
+            }
 
-            return new WeightObsolete(Double.Parse(value));
+            return new WeightObsolete( Double.Parse( value ) );
         }
 
-        public void AdjustTowardsMax() => this.Value = (this.Value + MaxValue) / 2D;
+        public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
-        public void AdjustTowardsMin() => this.Value = (this.Value + MinValue) / 2D;
+        public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
 
         public Boolean IsAgainst() => this.Value < 0.0D - Double.Epsilon;
 

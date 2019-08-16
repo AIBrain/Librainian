@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,97 +35,97 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Date.cs" was last formatted by Protiguous on 2018/11/03 at 7:58 PM.
+// Project: "Librainian", "Date.cs" was last formatted by Protiguous on 2019/08/08 at 8:59 AM.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Numerics;
-	using Clocks;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using System.Numerics;
+    using Clocks;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary><see cref="Year" />, <see cref="Month" />, and <see cref="Day" />.</summary>
-	[Immutable]
-	[JsonObject]
-	public struct Date {
+    /// <summary><see cref="Year" />, <see cref="Month" />, and <see cref="Day" />.</summary>
+    [Immutable]
+    [JsonObject]
+    public struct Date {
 
-		public static readonly Date Zero = new Date( Year.Zero, Month.MinValue, Day.MinValue );
+        public static readonly Date Zero = new Date( Year.Zero, Month.MinValue, Day.MinValue );
 
-		/// <summary>
-		///     <para>The day of the month. (valid range is 1 to 31)</para>
-		/// </summary>
-		[JsonProperty]
-		public Day Day { get; }
+        /// <summary>
+        ///     <para>The day of the month. (valid range is 1 to 31)</para>
+        /// </summary>
+        [JsonProperty]
+        public Day Day { get; }
 
-		/// <summary>
-		///     <para>The number of the month. (valid range is 1-12)</para>
-		///     <para>12 months makes 1 year.</para>
-		/// </summary>
-		[JsonProperty]
-		public Month Month { get; }
+        /// <summary>
+        ///     <para>The number of the month. (valid range is 1-12)</para>
+        ///     <para>12 months makes 1 year.</para>
+        /// </summary>
+        [JsonProperty]
+        public Month Month { get; }
 
-		/// <summary>
-		///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
-		/// </summary>
-		[JsonProperty]
-		public Year Year { get; }
+        /// <summary>
+        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
+        /// </summary>
+        [JsonProperty]
+        public Year Year { get; }
 
-		public static Date Now => new Date( DateTime.Now );
+        public static Date Now => new Date( DateTime.Now );
 
-		public static Date UtcNow => new Date( DateTime.UtcNow );
+        public static Date UtcNow => new Date( DateTime.UtcNow );
 
-		public Date( BigInteger year, SByte month, SByte day ) {
-			while ( day > Day.Maximum ) {
-				day -= Day.MaxValue;
-				month++;
+        public Date( BigInteger year, SByte month, SByte day ) {
+            while ( day > Day.Maximum ) {
+                day -= Day.MaxValue;
+                month++;
 
-				while ( month > Month.MaxValue ) {
-					month -= Month.MaxValue;
-					year++;
-				}
-			}
+                while ( month > Month.MaxValue ) {
+                    month -= Month.MaxValue;
+                    year++;
+                }
+            }
 
-			this.Day = new Day( day );
+            this.Day = new Day( day );
 
-			while ( month > Month.MaxValue ) {
-				month -= Month.MaxValue;
-				year++;
-			}
+            while ( month > Month.MaxValue ) {
+                month -= Month.MaxValue;
+                year++;
+            }
 
-			this.Month = new Month( month );
+            this.Month = new Month( month );
 
-			this.Year = new Year( year );
-		}
+            this.Year = new Year( year );
+        }
 
-		public Date( Year year, Month month, Day day ) {
-			this.Year = year;
-			this.Month = month;
-			this.Day = day;
-		}
+        public Date( Year year, Month month, Day day ) {
+            this.Year = year;
+            this.Month = month;
+            this.Day = day;
+        }
 
-		public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( SByte )dateTime.Month, day: ( SByte )dateTime.Day ) { }
+        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( SByte ) dateTime.Month, day: ( SByte ) dateTime.Day ) { }
 
-		public Date( SpanOfTime spanOfTime ) {
-			this.Year = new Year( spanOfTime.GetWholeYears() );
+        public Date( SpanOfTime spanOfTime ) {
+            this.Year = new Year( spanOfTime.GetWholeYears() );
 
-			this.Month = spanOfTime.Months.Value < Month.Minimum.Value ? new Month( Month.MinValue ) : new Month( ( SByte )spanOfTime.Months.Value );
+            this.Month = spanOfTime.Months.Value < Month.Minimum.Value ? new Month( Month.MinValue ) : new Month( ( SByte ) spanOfTime.Months.Value );
 
-			this.Day = spanOfTime.Days.Value < Day.Minimum.Value ? new Day( Day.Minimum ) : new Day( ( SByte )spanOfTime.Days.Value );
-		}
+            this.Day = spanOfTime.Days.Value < Day.Minimum.Value ? new Day( Day.Minimum ) : new Day( ( SByte ) spanOfTime.Days.Value );
+        }
 
-		public static implicit operator DateTime? ( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
+        public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
 
-		public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
+        public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
+        public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
+        public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
+        public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
-	}
+        public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
+    }
 }

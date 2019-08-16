@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,42 +35,42 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Temperature.cs" was last formatted by Protiguous on 2018/07/13 at 1:25 AM.
+// Project: "Librainian", "Temperature.cs" was last formatted by Protiguous on 2019/08/08 at 8:53 AM.
 
 namespace Librainian.Measurement {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     <see cref="Temperature" /> in <see cref="Temperature.Celsius" />, with properties in <see cref="Fahrenheit" /> and
-	///     <see cref="Kelvin" />.
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public sealed class Temperature {
+    /// <summary>
+    ///     <see cref="Temperature" /> in <see cref="Temperature.Celsius" />, with properties in <see cref="Fahrenheit" /> and
+    ///     <see cref="Kelvin" />.
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public sealed class Temperature {
 
-		[JsonProperty]
-		public Single Celsius { get; }
+        [JsonProperty]
+        public Single Celsius { get; }
 
-		public Single Fahrenheit => (this.Celsius * 9 / 5) + 32;
+        public Single Fahrenheit => (this.Celsius * 9 / 5) + 32;
 
-		public Single Kelvin => this.Celsius + 273.15f;
+        public Single Kelvin => this.Celsius + 273.15f;
 
-		/// <summary>
-		///     no no.
-		/// </summary>
-		private Temperature() { }
+        /// <summary>
+        ///     no no.
+        /// </summary>
+        private Temperature() { }
 
-		/// <summary>
-		///     <see cref="Temperature" /> in <see cref="Temperature.Celsius" />, with properties in <see cref="Fahrenheit" /> and
-		///     <see cref="Kelvin" />.
-		/// </summary>
-		public Temperature( Single celsius ) => this.Celsius = celsius;
+        /// <summary>
+        ///     <see cref="Temperature" /> in <see cref="Temperature.Celsius" />, with properties in <see cref="Fahrenheit" /> and
+        ///     <see cref="Kelvin" />.
+        /// </summary>
+        public Temperature( Single celsius ) => this.Celsius = celsius;
 
-		public override String ToString() => $"{this.Celsius} °C";
-	}
+        public override String ToString() => $"{this.Celsius} °C";
+    }
 }

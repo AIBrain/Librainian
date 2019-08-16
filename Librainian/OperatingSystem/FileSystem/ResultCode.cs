@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,41 +35,41 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ResultCode.cs" was last formatted by Protiguous on 2018/07/10 at 8:56 PM.
+// Project: "Librainian", "ResultCode.cs" was last formatted by Protiguous on 2019/08/08 at 9:18 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     Any result less than 1 is an error of some sort.
-	/// </summary>
-	public enum ResultCode : SByte {
+    /// <summary>
+    ///     Any result less than 1 is an error of some sort.
+    /// </summary>
+    public enum ResultCode : SByte {
 
-		UnableToSetLastWriteTime = -100,
+        UnableToSetLastWriteTime = -100,
 
-		UnableToSetLastAccessTime = -90,
+        UnableToSetLastAccessTime = -90,
 
-		UnableToDeleteSourceDocument = -80,
+        UnableToDeleteSourceDocument = -80,
 
-		SourceDoesNotExist = -70,
+        SourceDoesNotExist = -70,
 
-		SourceIsEmpty = -60,
+        SourceIsEmpty = -60,
 
-		FailureOnCopy = -50,
+        FailureOnCopy = -50,
 
-		DestinationDoesNotExist = -40,
+        DestinationDoesNotExist = -40,
 
-		DestinationSizeIsDifferent = -30,
+        DestinationSizeIsDifferent = -30,
 
-		UnableToSetFileAttributes = -20,
+        UnableToSetFileAttributes = -20,
 
-		UnableToSetFileCreationTime = -10,
+        UnableToSetFileCreationTime = -10,
 
-		FailureUnknown = 0,
+        FailureUnknown = 0,
 
-		Success = 1
-	}
+        Success = 1
+    }
 }

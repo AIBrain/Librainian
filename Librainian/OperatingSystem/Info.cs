@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,16 +35,15 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Info.cs" was last formatted by Protiguous on 2018/07/13 at 1:33 AM.
+// Project: "Librainian", "Info.cs" was last formatted by Protiguous on 2019/08/08 at 9:19 AM.
 
-namespace Librainian.OperatingSystem
-{
+namespace Librainian.OperatingSystem {
 
+    using System;
     using JetBrains.Annotations;
     using Microsoft.Win32;
-    using System;
     using Parsing;
 
     /// <summary>
@@ -52,8 +51,7 @@ namespace Librainian.OperatingSystem
     ///     basic hardware and os setup.
     /// </summary>
     /// <remarks>Adapted from <see cref="http://stackoverflow.com/a/37755503/956364" />.</remarks>
-    public static class Info
-    {
+    public static class Info {
 
         private const String CurrentVersion = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 
@@ -61,19 +59,20 @@ namespace Librainian.OperatingSystem
         ///     Returns the Windows build. "rs1_release"
         /// </summary>
         [CanBeNull]
-        public static String BuildBranch() => (TryGetRegistryKeyHKLM( CurrentVersion, "BuildBranch", out var value ) ? value : null) as String;
-
-
+        public static String BuildBranch() => ( TryGetRegistryKeyHKLM( CurrentVersion, "BuildBranch", out var value ) ? value : null ) as String;
 
         /// <summary>
         ///     Returns the Windows build. "14393"
         /// </summary>
-        public static UInt32? BuildMajor()
-        {
+        public static UInt32? BuildMajor() {
 
-            if (TryGetRegistryKeyHKLM(CurrentVersion, "CurrentBuildNumber", out var value)) { return Convert.ToUInt32(value); }
+            if ( TryGetRegistryKeyHKLM( CurrentVersion, "CurrentBuildNumber", out var value ) ) {
+                return Convert.ToUInt32( value );
+            }
 
-            if (TryGetRegistryKeyHKLM(CurrentVersion, "CurrentBuild", out value)) { return Convert.ToUInt32(value); }
+            if ( TryGetRegistryKeyHKLM( CurrentVersion, "CurrentBuild", out value ) ) {
+                return Convert.ToUInt32( value );
+            }
 
             return null;
         }
@@ -81,10 +80,11 @@ namespace Librainian.OperatingSystem
         /// <summary>
         ///     Returns the Windows build.
         /// </summary>
-        public static UInt32? BuildMinor()
-        {
+        public static UInt32? BuildMinor() {
 
-            if (TryGetRegistryKeyHKLM(CurrentVersion, "UBR", out var value)) { return Convert.ToUInt32(value); }
+            if ( TryGetRegistryKeyHKLM( CurrentVersion, "UBR", out var value ) ) {
+                return Convert.ToUInt32( value );
+            }
 
             return null;
         }
@@ -92,9 +92,8 @@ namespace Librainian.OperatingSystem
         /// <summary>
         ///     Returns whether or not the current computer is a server or not.
         /// </summary>
-        public static Boolean? IsServer()
-        {
-            if (TryGetRegistryKeyHKLM(CurrentVersion, "InstallationType", out var installationType)) {
+        public static Boolean? IsServer() {
+            if ( TryGetRegistryKeyHKLM( CurrentVersion, "InstallationType", out var installationType ) ) {
                 return !installationType?.ToString().Like( "Client" );
             }
 
@@ -104,39 +103,43 @@ namespace Librainian.OperatingSystem
         /// <summary>
         ///     Returns the Windows release id.
         /// </summary>
-        public static UInt32? ReleaseId() => TryGetRegistryKeyHKLM(CurrentVersion, "ReleaseId", out var value) ? Convert.ToUInt32(value) : ( UInt32? ) null;
+        public static UInt32? ReleaseId() => TryGetRegistryKeyHKLM( CurrentVersion, "ReleaseId", out var value ) ? Convert.ToUInt32( value ) : ( UInt32? ) null;
 
-        public static Boolean TryGetRegistryKeyHKLM([NotNull] String path, [NotNull] String key, [CanBeNull] out Object value)
-        {
-            if (path == null) { throw new ArgumentNullException(nameof(path)); }
+        public static Boolean TryGetRegistryKeyHKLM( [NotNull] String path, [NotNull] String key, [CanBeNull] out Object value ) {
+            if ( path == null ) {
+                throw new ArgumentNullException( nameof( path ) );
+            }
 
-            if (key == null) { throw new ArgumentNullException(nameof(key)); }
+            if ( key == null ) {
+                throw new ArgumentNullException( nameof( key ) );
+            }
 
             value = null;
 
-            try
-            {
-                using (var rk = Registry.LocalMachine.OpenSubKey(path))
-                {
-                    if (rk == null) { return false; }
+            try {
+                using ( var rk = Registry.LocalMachine.OpenSubKey( path ) ) {
+                    if ( rk == null ) {
+                        return false;
+                    }
 
-                    value = rk.GetValue(key);
+                    value = rk.GetValue( key );
 
                     return value != null;
                 }
             }
-            catch { return false; }
+            catch {
+                return false;
+            }
         }
 
         /// <summary>
         ///     Returns the Windows major version number for this computer.
         /// </summary>
-        public static UInt32? VersionMajor() => TryGetRegistryKeyHKLM(CurrentVersion, "CurrentMajorVersionNumber", out var value) ? (UInt32?)(UInt32)value : null;
+        public static UInt32? VersionMajor() => TryGetRegistryKeyHKLM( CurrentVersion, "CurrentMajorVersionNumber", out var value ) ? ( UInt32? ) ( UInt32 ) value : null;
 
         /// <summary>
         ///     Returns the Windows minor version number for this computer.
         /// </summary>
-        public static UInt32? VersionMinor() => TryGetRegistryKeyHKLM(CurrentVersion, "CurrentMinorVersionNumber", out var value) ? (UInt32?)(UInt32)value : null;
+        public static UInt32? VersionMinor() => TryGetRegistryKeyHKLM( CurrentVersion, "CurrentMinorVersionNumber", out var value ) ? ( UInt32? ) ( UInt32 ) value : null;
     }
-
 }

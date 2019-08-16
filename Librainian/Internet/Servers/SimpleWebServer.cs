@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,15 +35,12 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2018/07/10 at 9:11 PM.
+// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/08/08 at 8:00 AM.
 
-namespace Librainian.Internet.Servers
-{
+namespace Librainian.Internet.Servers {
 
-    using JetBrains.Annotations;
-    using Magic;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -52,7 +49,9 @@ namespace Librainian.Internet.Servers
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Logging;
+    using Magic;
 
     /// <summary>
     /// </summary>
@@ -66,8 +65,7 @@ namespace Librainian.Internet.Servers
     ///     DateTime.Now); }
     /// </example>
     [UsedImplicitly]
-    public class SimpleWebServer : ABetterClassDispose
-    {
+    public class SimpleWebServer : ABetterClassDispose {
 
         /// <summary>
         /// </summary>
@@ -89,48 +87,45 @@ namespace Librainian.Internet.Servers
         /// <param name="method">  </param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public SimpleWebServer(ICollection<String> prefixes, Func<HttpListenerRequest, String> method)
-        {
-            this.ImNotReady(String.Empty);
+        public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
+            this.ImNotReady( String.Empty );
 
-            if (!HttpListener.IsSupported)
-            {
-                this.ImNotReady(because: "HttpListener is not supported.");
+            if ( !HttpListener.IsSupported ) {
+                this.ImNotReady( because: "HttpListener is not supported." );
 
                 return;
             }
 
-            if (prefixes?.Any() != true)
-            {
-                this.ImNotReady(because: "URI prefixes are required.");
+            if ( prefixes?.Any() != true ) {
+                this.ImNotReady( because: "URI prefixes are required." );
 
                 return;
             }
 
-
-            if (method == null)
-            {
-                this.ImNotReady(because: "A responder method is required");
+            if ( method == null ) {
+                this.ImNotReady( because: "A responder method is required" );
 
                 return;
             }
 
-            foreach (var prefix in prefixes) { this._httpListener.Prefixes.Add(prefix); }
+            foreach ( var prefix in prefixes ) {
+                this._httpListener.Prefixes.Add( prefix );
+            }
 
             this._responderMethod = method;
 
-            try
-            {
+            try {
                 this._httpListener.Start();
                 this.IsReadyForRequests = true;
             }
-            catch { this.ImNotReady(because: "The httpListener did not Start()."); }
+            catch {
+                this.ImNotReady( because: "The httpListener did not Start()." );
+            }
         }
 
-        public SimpleWebServer(Func<HttpListenerRequest, String> method, params String[] prefixes) : this(prefixes, method) { }
+        public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
 
-        private void ImNotReady(String because)
-        {
+        private void ImNotReady( String because ) {
             this.IsReadyForRequests = false;
             this.NotReadyBecause = because;
         }
@@ -147,71 +142,63 @@ namespace Librainian.Internet.Servers
         /// <returns></returns>
         /// <see cref="Stop" />
         [NotNull]
-        public Task Run(CancellationToken cancellationToken) =>
-            Task.Run(async () =>
-            {
+        public Task Run( CancellationToken cancellationToken ) =>
+            Task.Run( async () => {
                 "Webserver running...".Info();
 
-                try
-                {
-                    while (this._httpListener.IsListening)
-                    {
-                        Debug.WriteLine("Webserver listening..");
+                try {
+                    while ( this._httpListener.IsListening ) {
+                        Debug.WriteLine( "Webserver listening.." );
 
-                        await Task.Run(async () =>
-                        {
+                        await Task.Run( async () => {
                             var listenerContext = await this._httpListener.GetContextAsync(); // Waits for an incoming request as an asynchronous operation.
 
-                            if (listenerContext == null) { return; }
+                            if ( listenerContext == null ) {
+                                return;
+                            }
 
                             var responderMethod = this._responderMethod;
 
-                            if (responderMethod == null)
-                            {
+                            if ( responderMethod == null ) {
 
                                 //no responderMethod?!?
                                 return;
                             }
 
-                            try
-                            {
-                                var response = responderMethod(listenerContext.Request);
-                                var buf = Encoding.UTF8.GetBytes(response);
+                            try {
+                                var response = responderMethod( listenerContext.Request );
+                                var buf = Encoding.UTF8.GetBytes( response );
                                 listenerContext.Response.ContentLength64 = buf.Length;
-                                listenerContext.Response.OutputStream.Write(buf, 0, buf.Length);
+                                listenerContext.Response.OutputStream.Write( buf, 0, buf.Length );
                             }
 
                             // ReSharper disable once EmptyGeneralCatchClause
-                            catch
-                            {
+                            catch {
 
                                 // suppress any exceptions
                             }
-                            finally
-                            {
+                            finally {
                                 listenerContext.Response.OutputStream.Close(); // always close the stream
                             }
-                        }, cancellationToken);
+                        }, cancellationToken );
                     }
                 }
 
                 // ReSharper disable once EmptyGeneralCatchClause
-                catch
-                {
+                catch {
 
                     // suppress any exceptions
                 }
-            }, cancellationToken);
+            }, cancellationToken );
 
-        public void Stop()
-        {
-            using (this._httpListener)
-            {
-                try
-                {
-                    if (this._httpListener.IsListening) { this._httpListener.Stop(); }
+        public void Stop() {
+            using ( this._httpListener ) {
+                try {
+                    if ( this._httpListener.IsListening ) {
+                        this._httpListener.Stop();
+                    }
                 }
-                catch (ObjectDisposedException) { }
+                catch ( ObjectDisposedException ) { }
 
                 this._httpListener.Close();
             }

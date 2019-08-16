@@ -1,22 +1,43 @@
-// Copyright 2016 Rick@AIBrain.org.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// This notice must be kept visible in the source.
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
 //
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
+// This source code contained in "JunctionPoint.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Donations and royalties can be paid via
-//  PayPal: paypal@aibrain.org
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
 //
-// Contact me by email if you have any questions or helpful criticism.
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
-// "Librainian/JunctionPoint.cs" was last cleaned by Rick on 2016/06/18 at 10:50 PM
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "JunctionPoint.cs" was last formatted by Protiguous on 2019/08/08 at 7:15 AM.
 
 namespace Librainian.Extensions {
 
@@ -30,14 +51,97 @@ namespace Librainian.Extensions {
 
     [Flags]
     public enum EFileShare : UInt32 {
+
         None = 0x00000000,
+
         Read = 0x00000001,
+
         Write = 0x00000002,
+
         Delete = 0x00000004
     }
 
     /// <summary>Provides access to NTFS junction points in .Net.</summary>
     public static class JunctionPoint {
+
+        public enum ECreationDisposition : UInt32 {
+
+            New = 1,
+
+            CreateAlways = 2,
+
+            OpenExisting = 3,
+
+            OpenAlways = 4,
+
+            TruncateExisting = 5
+        }
+
+        [Flags]
+        public enum EFileAccess : UInt32 {
+
+            GenericRead = 0x80000000,
+
+            GenericWrite = 0x40000000,
+
+            GenericExecute = 0x20000000,
+
+            GenericAll = 0x10000000
+        }
+
+        [Flags]
+        public enum EFileAttributes : UInt32 {
+
+            Readonly = 0x00000001,
+
+            Hidden = 0x00000002,
+
+            System = 0x00000004,
+
+            Directory = 0x00000010,
+
+            Archive = 0x00000020,
+
+            Device = 0x00000040,
+
+            Normal = 0x00000080,
+
+            Temporary = 0x00000100,
+
+            SparseFile = 0x00000200,
+
+            ReparsePoint = 0x00000400,
+
+            Compressed = 0x00000800,
+
+            Offline = 0x00001000,
+
+            NotContentIndexed = 0x00002000,
+
+            Encrypted = 0x00004000,
+
+            WriteThrough = 0x80000000,
+
+            Overlapped = 0x40000000,
+
+            NoBuffering = 0x20000000,
+
+            RandomAccess = 0x10000000,
+
+            SequentialScan = 0x08000000,
+
+            DeleteOnClose = 0x04000000,
+
+            BackupSemantics = 0x02000000,
+
+            PosixSemantics = 0x01000000,
+
+            OpenReparsePoint = 0x00200000,
+
+            OpenNoRecall = 0x00100000,
+
+            FirstPipeInstance = 0x00080000
+        }
 
         /// <summary>The data present in the reparse point buffer is invalid.</summary>
         private const Int32 ErrorInvalidReparseData = 4392;
@@ -77,50 +181,58 @@ namespace Librainian.Extensions {
         /// </summary>
         private const String NonInterpretedPathPrefix = @"\??\";
 
-        public enum ECreationDisposition : UInt32 {
-            New = 1,
-            CreateAlways = 2,
-            OpenExisting = 3,
-            OpenAlways = 4,
-            TruncateExisting = 5
+        private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
+            var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
+            var outBuffer = Marshal.AllocHGlobal( outBufferSize );
+
+            try {
+                var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned,
+                    IntPtr.Zero );
+
+                if ( !result ) {
+                    var error = Marshal.GetLastWin32Error();
+
+                    if ( error == ErrorNotAReparsePoint ) {
+                        return null;
+                    }
+
+                    ThrowLastWin32Error( "Unable to get information about junction point." );
+                }
+
+                var reparseDataBuffer = ( ReparseDataBuffer ) Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
+
+                if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
+                    return null;
+                }
+
+                var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
+
+                if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
+                    targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length );
+                }
+
+                return targetDir;
+            }
+            finally {
+                Marshal.FreeHGlobal( outBuffer );
+            }
         }
 
-        [Flags]
-        public enum EFileAccess : UInt32 {
-            GenericRead = 0x80000000,
-            GenericWrite = 0x40000000,
-            GenericExecute = 0x20000000,
-            GenericAll = 0x10000000
+        [NotNull]
+        private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
+            var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
+                FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
+
+            if ( Marshal.GetLastWin32Error() != 0 ) {
+                ThrowLastWin32Error( "Unable to open reparse point." );
+            }
+
+            var reparsePointHandle = new SafeFileHandle( bob.DangerousGetHandle(), true );
+
+            return reparsePointHandle;
         }
 
-        [Flags]
-        public enum EFileAttributes : UInt32 {
-            Readonly = 0x00000001,
-            Hidden = 0x00000002,
-            System = 0x00000004,
-            Directory = 0x00000010,
-            Archive = 0x00000020,
-            Device = 0x00000040,
-            Normal = 0x00000080,
-            Temporary = 0x00000100,
-            SparseFile = 0x00000200,
-            ReparsePoint = 0x00000400,
-            Compressed = 0x00000800,
-            Offline = 0x00001000,
-            NotContentIndexed = 0x00002000,
-            Encrypted = 0x00004000,
-            WriteThrough = 0x80000000,
-            Overlapped = 0x40000000,
-            NoBuffering = 0x20000000,
-            RandomAccess = 0x10000000,
-            SequentialScan = 0x08000000,
-            DeleteOnClose = 0x04000000,
-            BackupSemantics = 0x02000000,
-            PosixSemantics = 0x01000000,
-            OpenReparsePoint = 0x00200000,
-            OpenNoRecall = 0x00100000,
-            FirstPipeInstance = 0x00080000
-        }
+        private static void ThrowLastWin32Error( String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
 
         /// <summary>
         ///     Creates a junction point from the specified directory to the specified target directory.
@@ -152,7 +264,15 @@ namespace Librainian.Extensions {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
                 var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
 
-                var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ), SubstituteNameOffset = 0, SubstituteNameLength = ( UInt16 )targetDirBytes.Length, PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ), PrintNameLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
+                var reparseDataBuffer = new ReparseDataBuffer {
+                    ReparseTag = IOReparseTagMountPoint,
+                    ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
+                    SubstituteNameOffset = 0,
+                    SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
+                    PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
+                    PrintNameLength = 0,
+                    PathBuffer = new Byte[ 0x3ff0 ]
+                };
 
                 Array.Copy( targetDirBytes, reparseDataBuffer.PathBuffer, targetDirBytes.Length );
 
@@ -162,9 +282,10 @@ namespace Librainian.Extensions {
                 try {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
+                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlSetReparsePoint, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0,
+                        out var bytesReturned, IntPtr.Zero );
 
-					if ( !result ) {
+                    if ( !result ) {
                         ThrowLastWin32Error( "Unable to create junction point." );
                     }
                 }
@@ -189,17 +310,21 @@ namespace Librainian.Extensions {
                 return;
             }
 
-            using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write) ) {
-                var reparseDataBuffer = new ReparseDataBuffer { ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ] };
+            using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
+                var reparseDataBuffer = new ReparseDataBuffer {
+                    ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ]
+                };
 
                 var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
                 var inBuffer = Marshal.AllocHGlobal( inBufferSize );
+
                 try {
                     Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-					var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
+                    var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlDeleteReparsePoint, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned,
+                        IntPtr.Zero );
 
-					if ( !result ) {
+                    if ( !result ) {
                         ThrowLastWin32Error( "Unable to delete junction point." );
                     }
                 }
@@ -229,8 +354,9 @@ namespace Librainian.Extensions {
                 return false;
             }
 
-            using ( var handle = OpenReparsePoint( path, FileAccess.Read) ) {
+            using ( var handle = OpenReparsePoint( path, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
+
                 return target != null;
             }
         }
@@ -247,6 +373,7 @@ namespace Librainian.Extensions {
         public static String GetTarget( String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
+
                 if ( target == null ) {
                     throw new IOException( "Path is not a junction point." );
                 }
@@ -255,57 +382,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
-            var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
-            var outBuffer = Marshal.AllocHGlobal( outBufferSize );
-
-            try {
-				var result = NativeMethods.DeviceIoControl( handle.DangerousGetHandle(), FsctlGetReparsePoint, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned, IntPtr.Zero );
-
-				if ( !result ) {
-                    var error = Marshal.GetLastWin32Error();
-                    if ( error == ErrorNotAReparsePoint ) {
-                        return null;
-                    }
-
-                    ThrowLastWin32Error( "Unable to get information about junction point." );
-                }
-
-                var reparseDataBuffer = ( ReparseDataBuffer )Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
-
-                if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
-                    return null;
-                }
-
-                var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
-
-                if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
-                    targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length );
-                }
-
-                return targetDir;
-            }
-            finally {
-                Marshal.FreeHGlobal( outBuffer );
-            }
-        }
-
-        [NotNull]
-        private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
-            var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open, FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
-
-            if ( Marshal.GetLastWin32Error() != 0 ) {
-                ThrowLastWin32Error( "Unable to open reparse point." );
-            }
-
-            var reparsePointHandle = new SafeFileHandle( bob.DangerousGetHandle(), true );
-
-            return reparsePointHandle;
-        }
-
-		private static void ThrowLastWin32Error( String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
-
-		[StructLayout( LayoutKind.Sequential )]
+        [StructLayout( LayoutKind.Sequential )]
         private struct ReparseDataBuffer {
 
             /// <summary>Reparse point tag. Must be a Microsoft reparse point tag.</summary>

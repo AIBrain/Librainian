@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,45 +35,45 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "RegexString.cs" was last formatted by Protiguous on 2018/12/01 at 4:45 PM.
+// Project: "Librainian", "RegexString.cs" was last formatted by Protiguous on 2019/08/08 at 9:25 AM.
 
 namespace Librainian.Parsing.Validation {
 
-	using System;
-	using System.Text.RegularExpressions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Text.RegularExpressions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     Based from https://codereview.stackexchange.com/questions/208291/enforcing-string-validity-with-the-c-type-system
-	/// </summary>
-	[Serializable]
-	[JsonObject]
-	public abstract class RegexString : ValidatedString {
+    /// <summary>
+    ///     Based from https://codereview.stackexchange.com/questions/208291/enforcing-string-validity-with-the-c-type-system
+    /// </summary>
+    [Serializable]
+    [JsonObject]
+    public abstract class RegexString : ValidatedString {
 
-		private Regex _regex;
+        private Regex _regex;
 
-		protected abstract Boolean AllowNull { get; }
+        protected abstract Boolean AllowNull { get; }
 
-		protected abstract String RegexValidation { get; }
+        protected abstract String RegexValidation { get; }
 
-		[NotNull]
-		public override String Requirements => $"match the Regular Expression: {this.RegexValidation}";
+        [NotNull]
+        public override String Requirements => $"match the Regular Expression: {this.RegexValidation}";
 
-		public RegexString( String value ) : base( value ) { }
+        public RegexString( String value ) : base( value ) { }
 
-		protected override Boolean IsValid( [CanBeNull] String value ) {
-			if ( this._regex == null ) {
-				this._regex = new Regex( this.RegexValidation );
-			}
+        protected override Boolean IsValid( [CanBeNull] String value ) {
+            if ( this._regex == null ) {
+                this._regex = new Regex( this.RegexValidation );
+            }
 
-			if ( value == null ) {
-				return this.AllowNull;
-			}
+            if ( value == null ) {
+                return this.AllowNull;
+            }
 
-			return this._regex.IsMatch( value );
-		}
-	}
+            return this._regex.IsMatch( value );
+        }
+    }
 }

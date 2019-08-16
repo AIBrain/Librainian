@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,82 +35,90 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GenericPopulator.cs" was last formatted by Protiguous on 2018/07/10 at 8:58 PM.
+// Project: "Librainian", "GenericPopulator.cs" was last formatted by Protiguous on 2019/08/08 at 6:55 AM.
 
 namespace Librainian.Database {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Data;
-	using System.Data.SqlClient;
-	using System.Linq.Expressions;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq.Expressions;
+    using JetBrains.Annotations;
 
-	public static class GenericPopulator<T> {
+    public static class GenericPopulator<T> {
 
-		[NotNull]
-		private static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
-			var readerColumns = new List<String>();
+        [NotNull]
+        private static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
+            var readerColumns = new List<String>();
 
-			for ( var index = 0; index < reader.FieldCount; index++ ) { readerColumns.Add( reader.GetName( index ) ); }
+            for ( var index = 0; index < reader.FieldCount; index++ ) {
+                readerColumns.Add( reader.GetName( index ) );
+            }
 
-			// determine the information about the reader
-			var readerParam = Expression.Parameter( typeof( SqlDataReader ), "reader" );
-			var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
+            // determine the information about the reader
+            var readerParam = Expression.Parameter( typeof( SqlDataReader ), "reader" );
+            var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
 
-			// create a Constant expression of DBNull.Value to compare values to in reader
-			var dbNullValue = typeof( DBNull ).GetField( "Value" );
-			var dbNullExp = Expression.Field( Expression.Parameter( typeof( DBNull ), "System.DBNull" ), dbNullValue );
+            // create a Constant expression of DBNull.Value to compare values to in reader
+            var dbNullValue = typeof( DBNull ).GetField( "Value" );
+            var dbNullExp = Expression.Field( Expression.Parameter( typeof( DBNull ), "System.DBNull" ), dbNullValue );
 
-			// loop through the properties and create MemberBinding expressions for each property
-			var memberBindings = new List<MemberBinding>();
+            // loop through the properties and create MemberBinding expressions for each property
+            var memberBindings = new List<MemberBinding>();
 
-			foreach ( var prop in typeof( T ).GetProperties() ) {
+            foreach ( var prop in typeof( T ).GetProperties() ) {
 
-				// determine the default value of the property
-				Object defaultValue = null;
+                // determine the default value of the property
+                Object defaultValue = null;
 
-				if ( prop.PropertyType.IsValueType ) { defaultValue = Activator.CreateInstance( prop.PropertyType ); }
-				else if ( prop.PropertyType.Name.ToLower().Equals( "string" ) ) { defaultValue = String.Empty; }
+                if ( prop.PropertyType.IsValueType ) {
+                    defaultValue = Activator.CreateInstance( prop.PropertyType );
+                }
+                else if ( prop.PropertyType.Name.ToLower().Equals( "string" ) ) {
+                    defaultValue = String.Empty;
+                }
 
-				if ( readerColumns.Contains( prop.Name ) ) {
+                if ( readerColumns.Contains( prop.Name ) ) {
 
-					// build the Call expression to retrieve the data value from the reader
-					var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
-					var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
+                    // build the Call expression to retrieve the data value from the reader
+                    var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
+                    var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
 
-					// create the conditional expression to make sure the reader value != DBNull.Value
-					var testExp = Expression.NotEqual( dbNullExp, getValueExp );
-					var ifTrue = Expression.Convert( getValueExp, prop.PropertyType );
-					var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
+                    // create the conditional expression to make sure the reader value != DBNull.Value
+                    var testExp = Expression.NotEqual( dbNullExp, getValueExp );
+                    var ifTrue = Expression.Convert( getValueExp, prop.PropertyType );
+                    var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
 
-					// create the actual Bind expression to bind the value from the reader to the property value
-					var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
-					MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
-					memberBindings.Add( mb );
-				}
-			}
+                    // create the actual Bind expression to bind the value from the reader to the property value
+                    var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
+                    MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
+                    memberBindings.Add( mb );
+                }
+            }
 
-			// create a MemberInit expression for the item with the member bindings
-			var newItem = Expression.New( typeof( T ) );
-			var memberInit = Expression.MemberInit( newItem, memberBindings );
+            // create a MemberInit expression for the item with the member bindings
+            var newItem = Expression.New( typeof( T ) );
+            var memberInit = Expression.MemberInit( newItem, memberBindings );
 
-			var lambda = Expression.Lambda<Func<SqlDataReader, T>>( memberInit, readerParam );
-			Delegate resDelegate = lambda.Compile();
+            var lambda = Expression.Lambda<Func<SqlDataReader, T>>( memberInit, readerParam );
+            Delegate resDelegate = lambda.Compile();
 
-			return ( Func<SqlDataReader, T> ) resDelegate;
-		}
+            return ( Func<SqlDataReader, T> ) resDelegate;
+        }
 
-		[NotNull]
-		public static List<T> CreateList( [NotNull] SqlDataReader reader ) {
-			var results = new List<T>();
-			var readRow = GetReader( reader );
+        [NotNull]
+        public static List<T> CreateList( [NotNull] SqlDataReader reader ) {
+            var results = new List<T>();
+            var readRow = GetReader( reader );
 
-			while ( reader.Read() ) { results.Add( readRow( reader ) ); }
+            while ( reader.Read() ) {
+                results.Add( readRow( reader ) );
+            }
 
-			return results;
-		}
-	}
+            return results;
+        }
+    }
 }

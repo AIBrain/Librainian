@@ -1,102 +1,140 @@
-﻿using System;
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible
+// in any binaries, libraries, repositories, and source code (directly or derived) from
+// our binaries, libraries, projects, or solutions.
+//
+// This source code contained in "MicrosoftsRandom.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other projects still retain their original
+// license and our thanks goes to those Authors. If you find your code in this source code, please
+// let us know so we can properly attribute you and include the proper license and/or copyright.
+//
+// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
+// Sales@AIBrain.org for permission and a quote.
+//
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
+//
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "MicrosoftsRandom.cs" was last formatted by Protiguous on 2019/08/08 at 8:23 AM.
 
 namespace Librainian.Maths {
 
-	using System.Threading;
-	using JetBrains.Annotations;
+    using System;
+    using System.Threading;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	/// Based from Microsoft Reference random.cs sources.
-	/// This is purely for learning purposes.
-	/// </summary>
-	public class MicrosoftsRandom {
+    /// <summary>
+    ///     Based from Microsoft Reference random.cs sources.
+    ///     This is purely for learning purposes.
+    /// </summary>
+    public class MicrosoftsRandom {
 
-		private const Int32 Middle = 0b1001101001001110110010000110;
+        private const Int32 Middle = 0b1001101001001110110010000110;
 
+        /// <summary>
+        ///     55.. why?
+        /// </summary>
+        private const Byte Special = 0b110111;
 
-		[ThreadStatic]
-		private static Int32 inext;
+        /// <summary>
+        ///     56.. why?
+        /// </summary>
+        private const Byte SpecialLength = 0b111000;
 
-		[ThreadStatic]
-		private static Int32 inextp;
+        [ThreadStatic]
+        private static Int32 inext;
 
-		[ThreadStatic]
-		private static Int32[] SeedArray;
+        [ThreadStatic]
+        private static Int32 inextp;
 
-		/// <summary>
-		/// 55.. why?
-		/// </summary>
-		private const Byte Special = 0b110111;
+        [ThreadStatic]
+        private static Int32[] SeedArray;
 
-		/// <summary>
-		/// 56.. why?
-		/// </summary>
-		private const Byte SpecialLength = 0b111000;
+        private MicrosoftsRandom() : this( Middle ) { }
 
-		private MicrosoftsRandom() : this(Middle) {}
+        public MicrosoftsRandom( Int32 seed ) => Seed( seed );
 
-		public MicrosoftsRandom( Int32 seed ) => Seed( seed );
+        private static Int32 InternalSample() {
+            unchecked {
+                var locINext = inext;
+                var locINextp = inextp;
 
-		public static void Seed( Int32 seed ) {
-			unchecked {
-				if ( SeedArray == null || SeedArray.Length != SpecialLength ) {
-					SeedArray = new Int32[ SpecialLength ];
-				}
+                if ( ++locINext >= SpecialLength ) {
+                    locINext = 1;
+                }
 
-				var mj = Middle - ( seed ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() );
+                if ( ++locINextp >= SpecialLength ) {
+                    locINextp = 1;
+                }
 
-				SeedArray[ Special ] = mj;
+                var retVal = SeedArray[ locINext ] - SeedArray[ locINextp ];
 
-				var mk = 1;
+                SeedArray[ locINext ] = retVal;
 
-				for ( var i = 0; i < Special; i++ ) {
-					var ii = 21 * i % Special;
-					SeedArray[ ii ] = mk;
-					mk = mj - mk;
-					mj = SeedArray[ ii ];
-				}
+                inext = locINext;
+                inextp = locINextp;
 
-				for ( var k = 1; k < 5; k++ ) {
-					for ( var i = 1; i < SpecialLength; i++ ) {
-						SeedArray[ i ] -= SeedArray[ 1 + (( i + 30 ) % Special) ];
-					}
-				}
+                return retVal;
+            }
+        }
 
-				inext = 0;
-				inextp = 21;
-			}
-		}
+        protected virtual Double Sample() => InternalSample() * ( 1.0 / Int32.MaxValue );
 
-		private static Int32 InternalSample() {
-			unchecked {
-				var locINext = inext;
-				var locINextp = inextp;
+        public static void Seed( Int32 seed ) {
+            unchecked {
+                if ( SeedArray == null || SeedArray.Length != SpecialLength ) {
+                    SeedArray = new Int32[ SpecialLength ];
+                }
 
-				if ( ++locINext >= SpecialLength ) {
-					locINext = 1;
-				}
+                var mj = Middle - ( seed ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() );
 
-				if ( ++locINextp >= SpecialLength ) {
-					locINextp = 1;
-				}
+                SeedArray[ Special ] = mj;
 
-				var retVal = SeedArray[ locINext ] - SeedArray[ locINextp ];
+                var mk = 1;
 
+                for ( var i = 0; i < Special; i++ ) {
+                    var ii = 21 * i % Special;
+                    SeedArray[ ii ] = mk;
+                    mk = mj - mk;
+                    mj = SeedArray[ ii ];
+                }
 
-				SeedArray[ locINext ] = retVal;
+                for ( var k = 1; k < 5; k++ ) {
+                    for ( var i = 1; i < SpecialLength; i++ ) {
+                        SeedArray[ i ] -= SeedArray[ 1 + (( i + 30 ) % Special) ];
+                    }
+                }
 
-				inext = locINext;
-				inextp = locINextp;
+                inext = 0;
+                inextp = 21;
+            }
+        }
 
-				return retVal; 
-			}
-		}
+        public virtual Int32 Next() => InternalSample();
 
-		public virtual Int32 Next() => InternalSample();
-
-		protected virtual Double Sample() => InternalSample() * ( 1.0 / Int32.MaxValue );
-
-		/*
+        /*
 		public virtual Int32 Next( Int32 minValue, Int32 maxValue ) {
 			if ( minValue > maxValue ) {
 				minValue.Swap( maxValue );
@@ -112,37 +150,37 @@ namespace Librainian.Maths {
 		}
 		*/
 
-		public virtual Int32 Next( Int32 maxValue ) {
-			if ( maxValue < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( maxValue ) );
-			}
-			return ( Int32 )( this.Sample() * maxValue );
-		}
+        public virtual Int32 Next( Int32 maxValue ) {
+            if ( maxValue < 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( maxValue ) );
+            }
 
+            return ( Int32 ) ( this.Sample() * maxValue );
+        }
 
-		/*=====================================Next=====================================
+        /*=====================================Next=====================================
 	**Returns: A double [0..1)
 	**Arguments: None
 	**Exceptions: None
 	==============================================================================*/
-		public virtual Double NextDouble() => this.Sample();
 
+        public virtual void NextBytes( [NotNull] Byte[] buffer ) {
+            if ( buffer == null ) {
+                throw new ArgumentNullException( nameof( buffer ) );
+            }
 
-		/*==================================NextBytes===================================
+            for ( var i = 0; i < buffer.Length; i++ ) {
+                buffer[ i ] = ( Byte ) ( InternalSample() % ( Byte.MaxValue + 1 ) );
+            }
+        }
+
+        public virtual Double NextDouble() => this.Sample();
+
+        /*==================================NextBytes===================================
 	**Action:  Fills the byte array with random bytes [0..0x7f].  The entire array is filled.
 	**Returns:Void
 	**Arugments:  buffer -- the array to be filled.
 	**Exceptions: None
 	==============================================================================*/
-		public virtual void NextBytes( [NotNull] Byte[] buffer ) {
-			if ( buffer == null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
-			}
-
-			for ( var i = 0; i < buffer.Length; i++ ) {
-				buffer[ i ] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
-			}
-		}
-	}
-
+    }
 }

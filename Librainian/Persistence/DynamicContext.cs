@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,47 +35,51 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DynamicContext.cs" was last formatted by Protiguous on 2018/07/13 at 1:36 AM.
+// Project: "Librainian", "DynamicContext.cs" was last formatted by Protiguous on 2019/08/08 at 9:28 AM.
 
 namespace Librainian.Persistence {
 
-	using System;
-	using System.Collections.Generic;
-	using System.Dynamic;
-	using System.Runtime.Serialization;
-	using System.Security.Permissions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Runtime.Serialization;
+    using System.Security.Permissions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	/// <summary></summary>
-	/// <see cref="http://stackoverflow.com/a/4857322/956364" />
-	[JsonObject]
-	[Serializable]
-	public class DynamicContext : DynamicObject, ISerializable {
+    /// <summary></summary>
+    /// <see cref="http://stackoverflow.com/a/4857322/956364" />
+    [JsonObject]
+    [Serializable]
+    public class DynamicContext : DynamicObject, ISerializable {
 
-		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context ) {
-			foreach ( var kvp in this.Context ) { info.AddValue( kvp.Key, kvp.Value ); }
-		}
+        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        public virtual void GetObjectData( SerializationInfo info, StreamingContext context ) {
+            foreach ( var kvp in this.Context ) {
+                info.AddValue( kvp.Key, kvp.Value );
+            }
+        }
 
-		private Dictionary<String, Object> Context { get; } = new Dictionary<String, Object>();
+        private Dictionary<String, Object> Context { get; } = new Dictionary<String, Object>();
 
-		protected DynamicContext( [NotNull] SerializationInfo info, StreamingContext context ) {
+        protected DynamicContext( [NotNull] SerializationInfo info, StreamingContext context ) {
 
-			// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
-			foreach ( var entry in info ) { this.Context.Add( entry.Name, entry.Value ); }
-		}
+            // TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
+            foreach ( var entry in info ) {
+                this.Context.Add( entry.Name, entry.Value );
+            }
+        }
 
-		public DynamicContext() { }
+        public DynamicContext() { }
 
-		public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
+        public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
 
-		public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
-			this.Context.Add( binder.Name, value );
+        public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
+            this.Context.Add( binder.Name, value );
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }

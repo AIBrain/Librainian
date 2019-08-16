@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FolderBag.cs" was last formatted by Protiguous on 2018/07/10 at 8:54 PM.
+// Project: "Librainian", "FolderBag.cs" was last formatted by Protiguous on 2019/08/08 at 9:16 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -55,6 +55,31 @@ namespace Librainian.OperatingSystem.FileSystem {
     [JsonObject]
     public partial class FolderBag : IEnumerable<Folder> {
 
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     An enumerator that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<Folder> GetEnumerator() {
+            foreach ( var ending in this.Endings ) {
+                var node = ending;
+                var path = String.Empty;
+
+                while ( node.Parent != null ) {
+                    path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
+                    node = node.Parent;
+                }
+
+                //this.Roots.Should().Contain( node );
+                path = String.Concat( node.Data, path );
+
+                yield return new Folder( path );
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
         [JsonProperty]
         public List<Node> Endings { get; } = new List<Node>();
 
@@ -62,7 +87,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public List<Node> Roots { get; } = new List<Node>();
 
         public Boolean Add( [CanBeNull] String folderpath ) {
-            if ( null == folderpath ) { return false; }
+            if ( null == folderpath ) {
+                return false;
+            }
 
             this.FoundAnotherFolder( new Folder( folderpath ) );
 
@@ -72,7 +99,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public UInt64 AddRange( [CanBeNull] IEnumerable<String> folderpaths ) {
             var counter = 0UL;
 
-            if ( null == folderpaths ) { return counter; }
+            if ( null == folderpaths ) {
+                return counter;
+            }
 
             foreach ( var folderpath in folderpaths ) {
                 this.FoundAnotherFolder( new Folder( folderpath ) );
@@ -83,11 +112,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public void FoundAnotherFolder( [NotNull] IFolder folder ) {
-            if ( folder == null ) { throw new ArgumentNullException( nameof( folder ) ); }
+            if ( folder == null ) {
+                throw new ArgumentNullException( nameof( folder ) );
+            }
 
             var pathParts = folder.Info.SplitPath().ToList();
 
-            if ( !pathParts.Any() ) { return; }
+            if ( !pathParts.Any() ) {
+                return;
+            }
 
             var currentNode = new Node( pathParts[ 0 ] );
 
@@ -125,30 +158,5 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             this.Endings.Add( currentNode );
         }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     An enumerator that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<Folder> GetEnumerator() {
-            foreach ( var ending in this.Endings ) {
-                var node = ending;
-                var path = String.Empty;
-
-                while ( node.Parent != null ) {
-                    path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
-                    node = node.Parent;
-                }
-
-                //this.Roots.Should().Contain( node );
-                path = String.Concat( node.Data, path );
-
-                yield return new Folder( path );
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

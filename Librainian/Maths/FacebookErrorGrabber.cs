@@ -1,10 +1,10 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
-// this entire copyright notice and license must be retained and must be kept visible
+// This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// this source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2019/08/08 at 8:18 AM.
 
 namespace Librainian.Maths {
 
@@ -78,12 +78,16 @@ namespace Librainian.Maths {
                 var buffer = Encoding.UTF8.GetBytes( data );
 
                 //mix up the response a bit with our own rng.
-                foreach ( var _ in buffer ) { buffer.Swap( Randem.NextByte(), Randem.NextByte() ); }
+                foreach ( var _ in buffer ) {
+                    buffer.Swap( Randem.NextByte(), Randem.NextByte() );
+                }
 
                 return buffer;
             }
 
-            if ( !fallbackByteCount.Any() ) { throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." ); }
+            if ( !fallbackByteCount.Any() ) {
+                throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." );
+            }
 
             var fallback = new Byte[ fallbackByteCount ];
             Randem.NextBytes( ref fallback );

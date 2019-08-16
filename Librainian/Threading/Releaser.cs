@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,34 +35,36 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Releaser.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
+// Project: "Librainian", "Releaser.cs" was last formatted by Protiguous on 2019/08/08 at 9:38 AM.
 
-namespace Librainian.Threading
-{
+namespace Librainian.Threading {
 
     using System;
 
-    public struct Releaser : IDisposable
-    {
+    public struct Releaser : IDisposable {
 
         private readonly AsyncReaderWriterLock _toRelease;
 
         private readonly Boolean _writer;
 
-        internal Releaser(AsyncReaderWriterLock toRelease, Boolean writer)
-        {
+        internal Releaser( AsyncReaderWriterLock toRelease, Boolean writer ) {
             this._toRelease = toRelease;
             this._writer = writer;
         }
 
-        public void Dispose()
-        {
-            if (this._toRelease == null) { return; }
+        public void Dispose() {
+            if ( this._toRelease == null ) {
+                return;
+            }
 
-            if (this._writer) { this._toRelease.WriterRelease(); }
-            else { this._toRelease.ReaderRelease(); }
+            if ( this._writer ) {
+                this._toRelease.WriterRelease();
+            }
+            else {
+                this._toRelease.ReaderRelease();
+            }
         }
     }
 }

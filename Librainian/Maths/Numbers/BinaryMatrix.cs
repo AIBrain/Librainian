@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,66 +35,72 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BinaryMatrix.cs" was last formatted by Protiguous on 2018/07/13 at 1:18 AM.
+// Project: "Librainian", "BinaryMatrix.cs" was last formatted by Protiguous on 2019/08/08 at 8:26 AM.
 
 namespace Librainian.Maths.Numbers {
 
-	using System;
-	using System.Diagnostics;
-	using System.Text;
-	using JetBrains.Annotations;
+    using System;
+    using System.Diagnostics;
+    using System.Text;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
-	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	public class BinaryMatrix {
+    /// <summary>
+    ///     Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/
+    /// </summary>
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+    public class BinaryMatrix {
 
-		public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
+        public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
 
-		[NotNull]
-		public Boolean[ , ] Matrix { get; }
+        [NotNull]
+        public Boolean[ , ] Matrix { get; }
 
-		public Int32 RowAmount => this.Matrix.GetLength( 0 );
+        public Int32 RowAmount => this.Matrix.GetLength( 0 );
 
-		public BinaryMatrix( [NotNull] Boolean[ , ] matrix ) => this.Matrix = matrix;
+        public BinaryMatrix( [NotNull] Boolean[ , ] matrix ) => this.Matrix = matrix;
 
-		public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
+        public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
 
-		public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
+        public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
 
-		[NotNull]
-		public Binary GetColumn( Int32 index ) {
-			var column = new Boolean[ this.RowAmount ];
+        [NotNull]
+        public Binary GetColumn( Int32 index ) {
+            var column = new Boolean[ this.RowAmount ];
 
-			for ( var y = 0; y < this.RowAmount; y++ ) { column[ y ] = this.Matrix[ y, index ]; }
+            for ( var y = 0; y < this.RowAmount; y++ ) {
+                column[ y ] = this.Matrix[ y, index ];
+            }
 
-			return new Binary( column );
-		}
+            return new Binary( column );
+        }
 
-		[NotNull]
-		public Binary GetRow( Int32 index ) {
-			var row = new Boolean[ this.ColumnAmount ];
+        [NotNull]
+        public Binary GetRow( Int32 index ) {
+            var row = new Boolean[ this.ColumnAmount ];
 
-			for ( var x = 0; x < this.ColumnAmount; x++ ) { row[ x ] = this.Matrix[ index, x ]; }
+            for ( var x = 0; x < this.ColumnAmount; x++ ) {
+                row[ x ] = this.Matrix[ index, x ];
+            }
 
-			return new Binary( row );
-		}
+            return new Binary( row );
+        }
 
-		public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
+        public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
 
-		public override String ToString() {
-			var stringBuilder = new StringBuilder( this.Matrix.Length );
+        public override String ToString() {
+            var stringBuilder = new StringBuilder( this.Matrix.Length );
 
-			for ( var y = 0; y < this.RowAmount; y++ ) {
-				for ( var x = 0; x < this.ColumnAmount; x++ ) { stringBuilder.Append( this.Matrix[ y, x ] ? '1' : '0' ); }
+            for ( var y = 0; y < this.RowAmount; y++ ) {
+                for ( var x = 0; x < this.ColumnAmount; x++ ) {
+                    stringBuilder.Append( this.Matrix[ y, x ] ? '1' : '0' );
+                }
 
-				stringBuilder.Append( '\n' );
-			}
+                stringBuilder.Append( '\n' );
+            }
 
-			return stringBuilder.ToString();
-		}
-	}
+            return stringBuilder.ToString();
+        }
+    }
 }

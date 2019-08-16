@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Months.cs" was last formatted by Protiguous on 2018/07/13 at 1:29 AM.
+// Project: "Librainian", "Months.cs" was last formatted by Protiguous on 2019/08/08 at 9:06 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -84,7 +84,7 @@ namespace Librainian.Measurement.Time {
 
         private Months( Int32 value ) => this.Value = value;
 
-        public Months( Decimal value ) => this.Value = ( Rational )value;
+        public Months( Decimal value ) => this.Value = ( Rational ) value;
 
         public Months( Rational value ) => this.Value = value;
 
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Time {
 
         public static Months operator -( Months left, Months right ) => Combine( left: left, right: -right );
 
-        public static Months operator -( Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
+        public static Months operator -( Months left, Decimal months ) => Combine( left, ( Rational ) ( -months ) );
 
         public static Boolean operator !=( Months left, Months right ) => !Equals( left, right );
 
@@ -133,14 +133,16 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Months other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) { return false; }
+            if ( obj == null ) {
+                return false;
+            }
 
             return obj is Months months && this.Equals( months );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMonth * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneMonth * this.Value );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
@@ -152,7 +154,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "month" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "month" )}";
         }
@@ -161,6 +163,6 @@ namespace Librainian.Measurement.Time {
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
-        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneMonth );
+        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational ) Weeks.InOneMonth );
     }
 }

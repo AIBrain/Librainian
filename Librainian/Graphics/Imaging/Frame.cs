@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,23 +35,21 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Frame.cs" was last formatted by Protiguous on 2018/07/10 at 9:07 PM.
+// Project: "Librainian", "Frame.cs" was last formatted by Protiguous on 2019/08/08 at 7:42 AM.
 
-namespace Librainian.Graphics.Imaging
-{
+namespace Librainian.Graphics.Imaging {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     [JsonObject]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Frame : IEquatable<Frame>
-    {
+    [StructLayout( LayoutKind.Sequential )]
+    public struct Frame : IEquatable<Frame> {
 
         public static readonly String DefaultHeader = "EFGFrame";
 
@@ -97,27 +95,32 @@ namespace Librainian.Graphics.Imaging
         ///     otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals(Frame other) => Equal(this, other);
+        public Boolean Equals( Frame other ) => Equal( this, other );
 
         /// <summary>static comparision</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
         [Pure]
-        public static Boolean Equal(Frame left, Frame right)
-        {
+        public static Boolean Equal( Frame left, Frame right ) {
 
             //if ( ( left == null ) || ( right == null ) ) {
             //    return false;
             //}
 
-            if (left.Checksum != right.Checksum) { return false; }
+            if ( left.Checksum != right.Checksum ) {
+                return false;
+            }
 
-            if (left.LineCount != right.LineCount) { return false; }
+            if ( left.LineCount != right.LineCount ) {
+                return false;
+            }
 
-            if (left.Lines.LongLength != right.Lines.LongLength) { return false; }
+            if ( left.Lines.LongLength != right.Lines.LongLength ) {
+                return false;
+            }
 
-            return left.Lines.SequenceEqual(right.Lines);
+            return left.Lines.SequenceEqual( right.Lines );
         }
     }
 }

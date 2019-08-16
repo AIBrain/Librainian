@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,101 +35,107 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MultiKeyDictionary.cs" was last formatted by Protiguous on 2018/07/10 at 8:51 PM.
+// Project: "Librainian", "MultiKeyDictionary.cs" was last formatted by Protiguous on 2019/08/08 at 6:34 AM.
 
 namespace Librainian.Collections {
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Multi-Key Dictionary Class
-	/// </summary>
-	/// <typeparam name="TK">Primary Key Type</typeparam>
-	/// <typeparam name="TL">Sub Key Type</typeparam>
-	/// <typeparam name="TV">Value Type</typeparam>
-	public class MultiKeyDictionary<TK, TL, TV> : ConcurrentDictionary<TK, TV> {
+    /// <summary>
+    ///     Multi-Key Dictionary Class
+    /// </summary>
+    /// <typeparam name="TK">Primary Key Type</typeparam>
+    /// <typeparam name="TL">Sub Key Type</typeparam>
+    /// <typeparam name="TV">Value Type</typeparam>
+    public class MultiKeyDictionary<TK, TL, TV> : ConcurrentDictionary<TK, TV> {
 
-		internal ConcurrentDictionary<TK, TL> PrimaryToSubkeyMapping { get; } = new ConcurrentDictionary<TK, TL>();
+        internal ConcurrentDictionary<TK, TL> PrimaryToSubkeyMapping { get; } = new ConcurrentDictionary<TK, TL>();
 
-		internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new ConcurrentDictionary<TL, TK>();
+        internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new ConcurrentDictionary<TL, TK>();
 
-		[CanBeNull]
-		public TV this[ [NotNull] TL subKey ] {
-			get {
-				if ( this.TryGetValue( subKey: subKey, val: out var item ) ) { return item; }
+        [CanBeNull]
+        public TV this[ [NotNull] TL subKey ] {
+            get {
+                if ( this.TryGetValue( subKey: subKey, val: out var item ) ) {
+                    return item;
+                }
 
-				throw new KeyNotFoundException( $"sub key not found: {subKey}" );	//TODO I hate throwing exceptions in indexers..
-			}
-		}
+                throw new KeyNotFoundException( $"sub key not found: {subKey}" ); //TODO I hate throwing exceptions in indexers..
+            }
+        }
 
-		public new TV this[ [NotNull] TK primaryKey ] {
-			get {
-				if ( this.TryGetValue( primaryKey: primaryKey, val: out var item ) ) { return item; }
+        public new TV this[ [NotNull] TK primaryKey ] {
+            get {
+                if ( this.TryGetValue( primaryKey: primaryKey, val: out var item ) ) {
+                    return item;
+                }
 
-				throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
-			}
-		}
+                throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
+            }
+        }
 
-		public void Add( [NotNull] TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
+        public void Add( [NotNull] TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
 
-		public void Add( [NotNull] TK primaryKey, [NotNull] TL subKey, TV val ) {
-			this.TryAdd( primaryKey, val );
+        public void Add( [NotNull] TK primaryKey, [NotNull] TL subKey, TV val ) {
+            this.TryAdd( primaryKey, val );
 
-			this.Associate( subKey: subKey, primaryKey: primaryKey );
-		}
+            this.Associate( subKey: subKey, primaryKey: primaryKey );
+        }
 
-		public void Associate( [NotNull] TL subKey, [NotNull] TK primaryKey ) {
-			if ( !base.ContainsKey( primaryKey ) ) { throw new KeyNotFoundException( $"The primary dictionary does not contain the key '{primaryKey}'" ); }
+        public void Associate( [NotNull] TL subKey, [NotNull] TK primaryKey ) {
+            if ( !base.ContainsKey( primaryKey ) ) {
+                throw new KeyNotFoundException( $"The primary dictionary does not contain the key '{primaryKey}'" );
+            }
 
-			if ( this.SubDictionary.ContainsKey( subKey ) ) {
-				this.SubDictionary[ subKey ] = primaryKey;
-				this.PrimaryToSubkeyMapping[ primaryKey ] = subKey;
-			}
-			else {
-				this.SubDictionary.TryAdd( subKey, primaryKey );
-				this.PrimaryToSubkeyMapping.TryAdd( primaryKey, subKey );
-			}
-		}
+            if ( this.SubDictionary.ContainsKey( subKey ) ) {
+                this.SubDictionary[ subKey ] = primaryKey;
+                this.PrimaryToSubkeyMapping[ primaryKey ] = subKey;
+            }
+            else {
+                this.SubDictionary.TryAdd( subKey, primaryKey );
+                this.PrimaryToSubkeyMapping.TryAdd( primaryKey, subKey );
+            }
+        }
 
-		[NotNull]
-		public TK[] ClonePrimaryKeys() => this.Keys.ToArray();
+        [NotNull]
+        public TK[] ClonePrimaryKeys() => this.Keys.ToArray();
 
-		[NotNull]
-		public TL[] CloneSubKeys() => this.SubDictionary.Keys.ToArray();
+        [NotNull]
+        public TL[] CloneSubKeys() => this.SubDictionary.Keys.ToArray();
 
-		[NotNull]
-		public TV[] CloneValues() => this.Values.ToArray();
+        [NotNull]
+        public TV[] CloneValues() => this.Values.ToArray();
 
-		public Boolean ContainsKey( [NotNull] TL subKey ) => this.TryGetValue( subKey: subKey, val: out _ );
+        public Boolean ContainsKey( [NotNull] TL subKey ) => this.TryGetValue( subKey: subKey, val: out _ );
 
-		public new Boolean ContainsKey( [NotNull] TK primaryKey ) => this.TryGetValue( primaryKey: primaryKey, val: out _ );
+        public new Boolean ContainsKey( [NotNull] TK primaryKey ) => this.TryGetValue( primaryKey: primaryKey, val: out _ );
 
-		public void Remove( [NotNull] TK primaryKey ) {
-			this.SubDictionary.TryRemove( this.PrimaryToSubkeyMapping[ primaryKey ], out _ );
+        public void Remove( [NotNull] TK primaryKey ) {
+            this.SubDictionary.TryRemove( this.PrimaryToSubkeyMapping[ primaryKey ], out _ );
 
-			this.PrimaryToSubkeyMapping.TryRemove( primaryKey, out var lvalue );
+            this.PrimaryToSubkeyMapping.TryRemove( primaryKey, out var lvalue );
 
-			this.TryRemove( primaryKey, out var value );
-		}
+            this.TryRemove( primaryKey, out var value );
+        }
 
-		public void Remove( [NotNull] TL subKey ) {
-			this.TryRemove( this.SubDictionary[ subKey ], out var value );
-			this.PrimaryToSubkeyMapping.TryRemove( this.SubDictionary[ subKey ], out var lvalue );
-			this.SubDictionary.TryRemove( subKey, out var kvalue );
-		}
+        public void Remove( [NotNull] TL subKey ) {
+            this.TryRemove( this.SubDictionary[ subKey ], out var value );
+            this.PrimaryToSubkeyMapping.TryRemove( this.SubDictionary[ subKey ], out var lvalue );
+            this.SubDictionary.TryRemove( subKey, out var kvalue );
+        }
 
-		public Boolean TryGetValue( [NotNull] TL subKey, [CanBeNull] out TV val ) {
-			val = default;
+        public Boolean TryGetValue( [NotNull] TL subKey, [CanBeNull] out TV val ) {
+            val = default;
 
-			return this.SubDictionary.TryGetValue( subKey, out var ep ) && this.TryGetValue( primaryKey: ep, val: out val );
-		}
+            return this.SubDictionary.TryGetValue( subKey, out var ep ) && this.TryGetValue( primaryKey: ep, val: out val );
+        }
 
-		public new Boolean TryGetValue( [NotNull] TK primaryKey, out TV val ) => base.TryGetValue( primaryKey, out val );
-	}
+        public new Boolean TryGetValue( [NotNull] TK primaryKey, out TV val ) => base.TryGetValue( primaryKey, out val );
+    }
 }

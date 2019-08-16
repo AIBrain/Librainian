@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,26 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Device.cs" was last formatted by Protiguous on 2018/07/10 at 8:53 PM.
+// Project: "Librainian", "Device.cs" was last formatted by Protiguous on 2019/08/08 at 6:40 AM.
 
-namespace Librainian.ComputerSystem.Devices
-{
+namespace Librainian.ComputerSystem.Devices {
 
-    using JetBrains.Annotations;
-    using OperatingSystem;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Text;
+    using JetBrains.Annotations;
+    using OperatingSystem;
 
     /// <summary>
     ///     A generic base class for physical devices.
     /// </summary>
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class Device /*: IComparable<Device>*/
-    {
+    [TypeConverter( typeof( ExpandableObjectConverter ) )]
+    public class Device /*: IComparable<Device>*/ {
 
         private DeviceCapabilities _capabilities = DeviceCapabilities.Unknown;
 
@@ -73,7 +71,7 @@ namespace Librainian.ComputerSystem.Devices
         /// <summary>
         ///     Gets the device's class instance.
         /// </summary>
-        [Browsable(false)]
+        [Browsable( false )]
         public DeviceClass DeviceClass { get; }
 
         public Int32? DiskNumber { get; }
@@ -88,9 +86,8 @@ namespace Librainian.ComputerSystem.Devices
         /// </summary>
         public String Path { get; }
 
-        public Device([NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null)
-        {
-            this.DeviceClass = deviceClass ?? throw new ArgumentNullException(nameof(deviceClass));
+        public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
+            this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
             this.Path = path; // may be null
             this.DeviceInfoData = deviceInfoData;
             this.Index = index;
@@ -102,9 +99,10 @@ namespace Librainian.ComputerSystem.Devices
         /// </summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
-        public virtual Int32 CompareTo([NotNull] Object obj)
-        {
-            if (obj is Device device) { return this.Index.CompareTo(device.Index); }
+        public virtual Int32 CompareTo( [NotNull] Object obj ) {
+            if ( obj is Device device ) {
+                return this.Index.CompareTo( device.Index );
+            }
 
             throw new ArgumentException();
         }
@@ -115,25 +113,26 @@ namespace Librainian.ComputerSystem.Devices
         /// <param name="allowUI">Pass true to allow the Windows shell to display any related UI element, false otherwise.</param>
         /// <returns>null if no error occured, otherwise a contextual text.</returns>
         [CanBeNull]
-        public String Eject(Boolean allowUI)
-        {
-            foreach (var device in this.GetRemovableDevices())
-            {
-                if (allowUI)
-                {
-                    NativeMethods.CM_Request_Device_Eject_NoUi(dnDevInst: device.GetInstanceHandle(), pVetoType: IntPtr.Zero, pszVetoName: null, ulNameLength: 0, ulFlags: 0);
+        public String Eject( Boolean allowUI ) {
+            foreach ( var device in this.GetRemovableDevices() ) {
+                if ( allowUI ) {
+                    NativeMethods.CM_Request_Device_Eject_NoUi( dnDevInst: device.GetInstanceHandle(), pVetoType: IntPtr.Zero, pszVetoName: null, ulNameLength: 0,
+                        ulFlags: 0 );
 
                     // don't handle errors, there should be a UI for this
                 }
-                else
-                {
-                    var sb = new StringBuilder(1024);
+                else {
+                    var sb = new StringBuilder( 1024 );
 
-                    var hr = NativeMethods.CM_Request_Device_Eject(device.GetInstanceHandle(), out var veto, sb, sb.Capacity, 0);
+                    var hr = NativeMethods.CM_Request_Device_Eject( device.GetInstanceHandle(), out var veto, sb, sb.Capacity, 0 );
 
-                    if (hr != 0) { throw new Win32Exception(hr); }
+                    if ( hr != 0 ) {
+                        throw new Win32Exception( hr );
+                    }
 
-                    if (veto != NativeMethods.PNP_VETO_TYPE.Ok) { return veto.ToString(); }
+                    if ( veto != NativeMethods.PNP_VETO_TYPE.Ok ) {
+                        return veto.ToString();
+                    }
                 }
             }
 
@@ -143,9 +142,10 @@ namespace Librainian.ComputerSystem.Devices
         /// <summary>
         ///     Gets the device's capabilities.
         /// </summary>
-        public DeviceCapabilities GetCapabilities()
-        {
-            if (this._capabilities == DeviceCapabilities.Unknown) { this._capabilities = (DeviceCapabilities)this.DeviceClass.GetProperty(this.DeviceInfoData, NativeMethods.SPDRP_CAPABILITIES, 0); }
+        public DeviceCapabilities GetCapabilities() {
+            if ( this._capabilities == DeviceCapabilities.Unknown ) {
+                this._capabilities = ( DeviceCapabilities ) this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CAPABILITIES, 0 );
+            }
 
             return this._capabilities;
         }
@@ -153,22 +153,24 @@ namespace Librainian.ComputerSystem.Devices
         /// <summary>
         ///     Gets the device's class name.
         /// </summary>
-        public String GetClass() => this._class ?? (this._class = this.DeviceClass.GetProperty(this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null));
+        public String GetClass() => this._class ?? ( this._class = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null ) );
 
         /// <summary>
         ///     Gets the device's class Guid as a string.
         /// </summary>
-        public String GetClassGuid() => this._classGuid ?? (this._classGuid = this.DeviceClass.GetProperty(this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null));
+        public String GetClassGuid() => this._classGuid ?? ( this._classGuid = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null ) );
 
         /// <summary>
         ///     Gets the device's description.
         /// </summary>
-        public String GetDescription() => this._description ?? (this._description = this.DeviceClass.GetProperty(this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null));
+        public String GetDescription() =>
+            this._description ?? ( this._description = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null ) );
 
         /// <summary>
         ///     Gets the device's friendly name.
         /// </summary>
-        public String GetFriendlyName() => this._friendlyName ?? (this._friendlyName = this.DeviceClass.GetProperty(this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null));
+        public String GetFriendlyName() =>
+            this._friendlyName ?? ( this._friendlyName = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null ) );
 
         /// <summary>
         ///     Gets the device's instance handle.
@@ -178,23 +180,28 @@ namespace Librainian.ComputerSystem.Devices
         /// <summary>
         ///     Gets this device's list of removable devices. Removable devices are parent devices that can be removed.
         /// </summary>
-        public virtual IEnumerable<Device> GetRemovableDevices()
-        {
-            if ((this.GetCapabilities() & DeviceCapabilities.Removable) != 0) { yield return this; }
-            else
-            {
-                if (this.Parent() == null) { yield break; }
+        public virtual IEnumerable<Device> GetRemovableDevices() {
+            if ( ( this.GetCapabilities() & DeviceCapabilities.Removable ) != 0 ) {
+                yield return this;
+            }
+            else {
+                if ( this.Parent() == null ) {
+                    yield break;
+                }
 
-                foreach (var device in this.Parent().GetRemovableDevices()) { yield return device; }
+                foreach ( var device in this.Parent().GetRemovableDevices() ) {
+                    yield return device;
+                }
             }
         }
 
         /// <summary>
         ///     Gets a value indicating whether this device is a USB device.
         /// </summary>
-        public virtual Boolean IsUsb()
-        {
-            if (this.GetClass().ToUpper().Contains("USB")) { return true; }
+        public virtual Boolean IsUsb() {
+            if ( this.GetClass().ToUpper().Contains( "USB" ) ) {
+                return true;
+            }
 
             return this.Parent()?.IsUsb() == true && this.Parent().IsUsb();
         }
@@ -203,14 +210,17 @@ namespace Librainian.ComputerSystem.Devices
         ///     Gets the device's parent device or null if this device has not parent.
         /// </summary>
         [CanBeNull]
-        public Device Parent()
-        {
-            if (this._parent != null) { return this._parent; }
+        public Device Parent() {
+            if ( this._parent != null ) {
+                return this._parent;
+            }
 
             var parentDevInst = 0;
-            var hr = NativeMethods.CM_Get_Parent(ref parentDevInst, this.DeviceInfoData.devInst, 0);
+            var hr = NativeMethods.CM_Get_Parent( ref parentDevInst, this.DeviceInfoData.devInst, 0 );
 
-            if (hr == 0) { this._parent = new Device(this.DeviceClass, this.DeviceClass.GetInfo(parentDevInst), null, -1); }
+            if ( hr == 0 ) {
+                this._parent = new Device( this.DeviceClass, this.DeviceClass.GetInfo( parentDevInst ), null, -1 );
+            }
 
             return this._parent;
         }

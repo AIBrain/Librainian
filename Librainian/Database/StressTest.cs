@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,38 +35,36 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2018/07/10 at 8:59 PM.
+// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2019/08/08 at 7:01 AM.
 
-namespace Librainian.Database
-{
+namespace Librainian.Database {
 
-    using JetBrains.Annotations;
-    using Measurement.Time;
     using System;
     using System.Data;
     using System.Diagnostics;
+    using JetBrains.Annotations;
+    using Measurement.Time;
 
-    public static class StressTest
-    {
+    public static class StressTest {
 
         /// <summary>
         ///     How high can this computer count in one second?
         /// </summary>
         /// <returns></returns>
-        public static UInt64 PerformBaselineCounting()
-        {
+        public static UInt64 PerformBaselineCounting() {
             TimeSpan forHowLong = Seconds.One;
             var stopwatch = Stopwatch.StartNew();
             var counter = 0UL;
 
-            do
-            {
+            do {
                 counter++;
 
-                if (stopwatch.Elapsed >= forHowLong) { break; }
-            } while (true);
+                if ( stopwatch.Elapsed >= forHowLong ) {
+                    break;
+                }
+            } while ( true );
 
             return counter;
         }
@@ -78,22 +76,26 @@ namespace Librainian.Database
         /// <param name="forHowLong"> </param>
         /// <param name="multithread"></param>
         /// <returns></returns>
-        public static UInt64 PerformDatabaseCounting([NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false)
-        {
-            if (database == null) { throw new ArgumentNullException(nameof(database)); }
+        public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
+            if ( database == null ) {
+                throw new ArgumentNullException( nameof( database ) );
+            }
 
-            if (multithread) { throw new NotImplementedException("yet"); }
+            if ( multithread ) {
+                throw new NotImplementedException( "yet" );
+            }
 
             forHowLong = Seconds.One;
             var stopwatch = Stopwatch.StartNew();
             var counter = 0UL;
 
-            do
-            {
-                counter = database.ExecuteScalar<UInt64>($"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text);
+            do {
+                counter = database.ExecuteScalar<UInt64>( $"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text );
 
-                if (stopwatch.Elapsed >= forHowLong) { break; }
-            } while (true);
+                if ( stopwatch.Elapsed >= forHowLong ) {
+                    break;
+                }
+            } while ( true );
 
             return counter;
         }

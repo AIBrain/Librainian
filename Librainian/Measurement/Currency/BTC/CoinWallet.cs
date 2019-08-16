@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CoinWallet.cs" was last formatted by Protiguous on 2018/07/13 at 1:21 AM.
+// Project: "Librainian", "CoinWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:39 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -66,14 +66,6 @@ namespace Librainian.Measurement.Currency.BTC {
     public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
         /// <summary>
-        ///     Count of each <see cref="ICoin" />.
-        /// </summary>
-        [NotNull]
-        private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
-
-        private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
-
-        /// <summary>
         ///     Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.
         /// </summary>
         [NotNull]
@@ -88,13 +80,72 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
 
-        [JsonProperty]
-        public WalletStatistics Statistics { get; } = new WalletStatistics();
-
         /// <summary>
         ///     Return the total amount of money contained in this <see cref="CoinWallet" />.
         /// </summary>
         public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
+
+        public Boolean Contains( ICoin coin ) {
+            if ( coin == null ) {
+                throw new ArgumentNullException( nameof( coin ) );
+            }
+
+            return this._coins.ContainsKey( coin );
+        }
+
+        public UInt64 Count( ICoin coin ) {
+            if ( coin == null ) {
+                throw new ArgumentNullException( nameof( coin ) );
+            }
+
+            return this._coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
+        }
+
+        /// <summary>
+        ///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
+        ///     <see cref="CoinWallet" /> .
+        /// </summary>
+        /// <param name="coin">    </param>
+        /// <param name="quantity"></param>
+        /// <returns></returns>
+        /// <remarks>Locks the wallet.</remarks>
+        public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
+            if ( coin == null ) {
+                throw new ArgumentNullException( nameof( coin ) );
+            }
+
+            if ( quantity <= 0 ) {
+                return false;
+            }
+
+            lock ( this._coins ) {
+                if ( !this._coins.ContainsKey( coin ) || this._coins[ coin ] < quantity ) {
+                    return false; //no coins to withdraw!
+                }
+
+                this._coins[ coin ] -= quantity;
+            }
+
+            var onWithdraw = this.OnWithdraw;
+            onWithdraw?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
+
+            return true;
+        }
+
+        public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     Count of each <see cref="ICoin" />.
+        /// </summary>
+        [NotNull]
+        private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
+
+        private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
+
+        [JsonProperty]
+        public WalletStatistics Statistics { get; } = new WalletStatistics();
 
         private CoinWallet( Guid id ) {
             this.ID = id;
@@ -124,40 +175,38 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <returns></returns>
         [NotNull]
         public static CoinWallet Create( Guid? id = null ) {
-            if ( !id.HasValue || id.Value == Guid.Empty ) { id = Guid.NewGuid(); }
+            if ( !id.HasValue || id.Value == Guid.Empty ) {
+                id = Guid.NewGuid();
+            }
 
             return new CoinWallet( id: id.Value );
         }
 
-        public Boolean Contains( ICoin coin ) {
-            if ( coin == null ) { throw new ArgumentNullException( nameof( coin ) ); }
-
-            return this._coins.ContainsKey( coin );
-        }
-
-        public UInt64 Count( ICoin coin ) {
-            if ( coin == null ) { throw new ArgumentNullException( nameof( coin ) ); }
-
-            return this._coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
-        }
-
         public UInt64 Deposit( [CanBeNull] ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
-            if ( null == coin ) { return 0; }
+            if ( null == coin ) {
+                return 0;
+            }
 
             try {
                 lock ( this._coins ) {
                     UInt64 newQuantity = 0;
 
                     if ( !this._coins.ContainsKey( coin ) ) {
-                        if ( this._coins.TryAdd( coin, quantity ) ) { newQuantity = quantity; }
+                        if ( this._coins.TryAdd( coin, quantity ) ) {
+                            newQuantity = quantity;
+                        }
                     }
-                    else { newQuantity = this._coins[ coin ] += quantity; }
+                    else {
+                        newQuantity = this._coins[ coin ] += quantity;
+                    }
 
                     return newQuantity;
                 }
             }
             finally {
-                if ( updateStatistics ) { this.Statistics.AllTimeDeposited += coin.FaceValue * quantity; }
+                if ( updateStatistics ) {
+                    this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
+                }
 
                 var onDeposit = this.OnDeposit;
                 onDeposit?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
@@ -169,8 +218,6 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         public override void DisposeManaged() => this.Statistics.Dispose();
 
-        public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
-
         public override String ToString() {
 
             var coins = this._coins.Aggregate( 0UL, ( current, pair ) => current + pair.Value );
@@ -178,38 +225,13 @@ namespace Librainian.Measurement.Currency.BTC {
             return $"฿{this.Total:F8} (in {coins:N0} coins)";
         }
 
-        /// <summary>
-        ///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
-        ///     <see cref="CoinWallet" /> .
-        /// </summary>
-        /// <param name="coin">    </param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
-        /// <remarks>Locks the wallet.</remarks>
-        public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
-            if ( coin == null ) { throw new ArgumentNullException( nameof( coin ) ); }
-
-            if ( quantity <= 0 ) { return false; }
-
-            lock ( this._coins ) {
-                if ( !this._coins.ContainsKey( coin ) || this._coins[ coin ] < quantity ) {
-                    return false; //no coins to withdraw!
-                }
-
-                this._coins[ coin ] -= quantity;
-            }
-
-            var onWithdraw = this.OnWithdraw;
-            onWithdraw?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
-
-            return true;
-        }
-
         [CanBeNull]
         public ICoin TryWithdrawAnyCoin() {
             var possibleCoins = this._coins.Where( pair => pair.Value > 0 ).ToList();
 
-            if ( !possibleCoins.Any() ) { return default; }
+            if ( !possibleCoins.Any() ) {
+                return default;
+            }
 
             possibleCoins.Shuffle();
             var coin = possibleCoins.First();
@@ -221,11 +243,11 @@ namespace Librainian.Measurement.Currency.BTC {
         public ICoin TryWithdrawSmallestCoin() {
             var coin = this._coins.Where( pair => pair.Value > 0 ).Select( pair => pair.Key ).OrderBy( coin1 => coin1.FaceValue ).FirstOrDefault();
 
-            if ( coin == default( ICoin ) ) { return default; }
+            if ( coin == default( ICoin ) ) {
+                return default;
+            }
 
             return this.TryWithdraw( coin, 1 ) ? coin : default;
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

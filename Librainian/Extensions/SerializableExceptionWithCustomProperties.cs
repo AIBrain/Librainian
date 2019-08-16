@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,25 +35,23 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SerializableExceptionWithCustomProperties.cs" was last formatted by Protiguous on 2018/07/10 at 9:03 PM.
+// Project: "Librainian", "SerializableExceptionWithCustomProperties.cs" was last formatted by Protiguous on 2019/08/08 at 7:21 AM.
 
-namespace Librainian.Extensions
-{
+namespace Librainian.Extensions {
 
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Security.Permissions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     // Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
     [JsonObject]
     [Serializable]
-    public class SerializableExceptionWithCustomProperties : Exception
-    {
+    public class SerializableExceptionWithCustomProperties : Exception {
 
         public String ResourceName { get; }
 
@@ -64,45 +62,44 @@ namespace Librainian.Extensions
         /// </summary>
         /// <param name="info">   </param>
         /// <param name="context"></param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 
         // Constructor should be protected for unsealed classes, private for sealed classes. (The Serializer invokes this constructor through reflection, so it can be private)
-        protected SerializableExceptionWithCustomProperties([NotNull] SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            this.ResourceName = info.GetString("ResourceName");
-            this.ValidationErrors = (IList<String>)info.GetValue("ValidationErrors", typeof(IList<String>));
+        protected SerializableExceptionWithCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
+            this.ResourceName = info.GetString( "ResourceName" );
+            this.ValidationErrors = ( IList<String> ) info.GetValue( "ValidationErrors", typeof( IList<String> ) );
         }
 
         public SerializableExceptionWithCustomProperties() { }
 
-        public SerializableExceptionWithCustomProperties(String message) : base(message) { }
+        public SerializableExceptionWithCustomProperties( String message ) : base( message ) { }
 
-        public SerializableExceptionWithCustomProperties(String message, Exception innerException) : base(message, innerException) { }
+        public SerializableExceptionWithCustomProperties( String message, Exception innerException ) : base( message, innerException ) { }
 
-        public SerializableExceptionWithCustomProperties(String message, String resourceName, IList<String> validationErrors) : base(message)
-        {
+        public SerializableExceptionWithCustomProperties( String message, String resourceName, IList<String> validationErrors ) : base( message ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
 
-        public SerializableExceptionWithCustomProperties(String message, String resourceName, IList<String> validationErrors, Exception innerException) : base(message, innerException)
-        {
+        public SerializableExceptionWithCustomProperties( String message, String resourceName, IList<String> validationErrors, Exception innerException ) : base( message,
+            innerException ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null) { throw new ArgumentNullException(nameof(info)); }
+        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
+            if ( info == null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
 
-            info.AddValue("ResourceName", this.ResourceName);
+            info.AddValue( "ResourceName", this.ResourceName );
 
             // Note: if "List<T>" isn't serializable you may need to work out another method of adding your list, this is just for show...
-            info.AddValue("ValidationErrors", this.ValidationErrors, typeof(IList<String>));
+            info.AddValue( "ValidationErrors", this.ValidationErrors, typeof( IList<String> ) );
 
             // MUST call through to the base class to let it save its own state
-            base.GetObjectData(info, context);
+            base.GetObjectData( info, context );
         }
     }
 }

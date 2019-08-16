@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ShoppingCart.cs" was last formatted by Protiguous on 2018/07/10 at 9:04 PM.
+// Project: "Librainian", "ShoppingCart.cs" was last formatted by Protiguous on 2019/08/08 at 7:25 AM.
 
 namespace Librainian.Financial.Containers.Shopping {
 
@@ -55,27 +55,35 @@ namespace Librainian.Financial.Containers.Shopping {
     public class ShoppingCart : ABetterClassDispose {
 
         [JsonProperty]
-        private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>();   //TODO make this a dictionary of Item.Counts
+        private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>(); //TODO make this a dictionary of Item.Counts
 
         public Boolean AddItem( [CanBeNull] ShoppingItem item ) => item != null && this.Items.TryAdd( item );
 
         public UInt32 AddItems( [CanBeNull] params ShoppingItem[] items ) {
             UInt32 added = 0;
 
-            if ( null == items ) { return added; }
+            if ( null == items ) {
+                return added;
+            }
 
-            foreach ( var item in items.Where( this.AddItem ) ) { added++; }
+            foreach ( var item in items.Where( this.AddItem ) ) {
+                added++;
+            }
 
             return added;
         }
 
         public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
-            if ( item == null ) { return 0; }
+            if ( item == null ) {
+                return 0;
+            }
 
             UInt32 added = 0;
 
             while ( quantity.Any() ) {
-                if ( this.Items.TryAdd( item ) ) { added++; }
+                if ( this.Items.TryAdd( item ) ) {
+                    added++;
+                }
 
                 quantity--;
             }
@@ -102,7 +110,9 @@ namespace Librainian.Financial.Containers.Shopping {
             var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 
             foreach ( var shoppingItem in this.Items ) {
-                if ( !items.ContainsKey( shoppingItem ) ) { items.TryAdd( shoppingItem, 0 ); }
+                if ( !items.ContainsKey( shoppingItem ) ) {
+                    items.TryAdd( shoppingItem, 0 );
+                }
 
                 items[ shoppingItem ]++;
             }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,117 +35,125 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HumanCalculator.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "HumanCalculator.cs" was last formatted by Protiguous on 2019/08/08 at 8:20 AM.
 
 namespace Librainian.Maths {
 
-	using System;
-	using System.Linq;
-	using System.Numerics;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using System.Numerics;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Challenge: Do math the way we were taught in school.
-	/// </summary>
-	public static class HumanCalculator {
+    /// <summary>
+    ///     Challenge: Do math the way we were taught in school.
+    /// </summary>
+    public static class HumanCalculator {
 
-		public enum Operation {
+        public enum Operation {
 
-			/// <summary>
-			///     https://en.wikipedia.org/wiki/Addition
-			/// </summary>
-			/// <see cref="http://wikipedia.org/wiki/Addition" />
-			Addition,
+            /// <summary>
+            ///     https://en.wikipedia.org/wiki/Addition
+            /// </summary>
+            /// <see cref="http://wikipedia.org/wiki/Addition" />
+            Addition,
 
-			/// <summary>
-			/// </summary>
-			Subtraction,
+            /// <summary>
+            /// </summary>
+            Subtraction,
 
-			/// <summary>
-			/// </summary>
-			Multiplication,
+            /// <summary>
+            /// </summary>
+            Multiplication,
 
-			/// <summary>
-			/// </summary>
-			Division
-		}
+            /// <summary>
+            /// </summary>
+            Division
+        }
 
-		/// <summary>
-		///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
-		/// </summary>
-		/// <param name="whom"></param>
-		/// <param name="nombre"></param>
-		/// <returns></returns>
-		/// <see cref="http://wikipedia.org/wiki/Addition#Notation_and_terminology" />
-		public static BigInteger Add( this BigInteger whom, BigInteger nombre ) {
-			var resultant = BigInteger.Zero;
+        /// <summary>
+        ///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
+        /// </summary>
+        /// <param name="whom"></param>
+        /// <param name="nombre"></param>
+        /// <returns></returns>
+        /// <see cref="http://wikipedia.org/wiki/Addition#Notation_and_terminology" />
+        public static BigInteger Add( this BigInteger whom, BigInteger nombre ) {
+            var resultant = BigInteger.Zero;
 
-			//TODO
-			return resultant;
-		}
+            //TODO
+            return resultant;
+        }
 
-		/// <summary>
-		///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
-		/// </summary>
-		/// <param name="terms"></param>
-		/// <returns></returns>
-		public static BigInteger Add( [NotNull] params BigInteger[] terms ) {
-			var total = BigInteger.Zero;
+        /// <summary>
+        ///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
+        /// </summary>
+        /// <param name="terms"></param>
+        /// <returns></returns>
+        public static BigInteger Add( [NotNull] params BigInteger[] terms ) {
+            var total = BigInteger.Zero;
 
-			foreach ( var local in terms.Select( term => term.ToString() ) ) {
-				var term = local;
+            foreach ( var local in terms.Select( term => term.ToString() ) ) {
+                var term = local;
 
-				// total
-				//+ term
-				//______
-				//result
+                // total
+                //+ term
+                //______
+                //result
 
-				var s = total.ToString();
-				var result = String.Empty;
+                var s = total.ToString();
+                var result = String.Empty;
 
-				if ( s.Length < term.Length ) { s = s.PadLeft( term.Length, '0' ); }
-				else if ( term.Length < s.Length ) { term = term.PadLeft( s.Length, '0' ); }
+                if ( s.Length < term.Length ) {
+                    s = s.PadLeft( term.Length, '0' );
+                }
+                else if ( term.Length < s.Length ) {
+                    term = term.PadLeft( s.Length, '0' );
+                }
 
-				while ( term.Any() ) {
-					var l = Byte.Parse( s.Last().ToString() );
-					s = s.Substring( 0, s.Length - 1 );
+                while ( term.Any() ) {
+                    var l = Byte.Parse( s.Last().ToString() );
+                    s = s.Substring( 0, s.Length - 1 );
 
-					var m = Byte.Parse( term.Last().ToString() );
-					term = term.Substring( 0, term.Length - 1 );
+                    var m = Byte.Parse( term.Last().ToString() );
+                    term = term.Substring( 0, term.Length - 1 );
 
-					var t = ( l + m ).ToString();
-					var c = Byte.Parse( t.Last().ToString() );
+                    var t = ( l + m ).ToString();
+                    var c = Byte.Parse( t.Last().ToString() );
 
-					if ( 2 == t.Length ) { result = "1" + c; }
-					else { result += c; }
-				}
+                    if ( 2 == t.Length ) {
+                        result = "1" + c;
+                    }
+                    else {
+                        result += c;
+                    }
+                }
 
-				total += BigInteger.Parse( result );
-			}
+                total += BigInteger.Parse( result );
+            }
 
-			return total;
-		}
+            return total;
+        }
 
-		public static BigInteger Divide( BigInteger[] terms ) => throw new NotImplementedException();
+        public static BigInteger Divide( BigInteger[] terms ) => throw new NotImplementedException();
 
-		public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
+        public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
 
-		public static BigInteger Operate( Operation operation, params BigInteger[] terms ) {
-			switch ( operation ) {
-				case Operation.Addition: return Add( terms );
+        public static BigInteger Operate( Operation operation, params BigInteger[] terms ) {
+            switch ( operation ) {
+                case Operation.Addition: return Add( terms );
 
-				case Operation.Subtraction: return Subtract( terms );
+                case Operation.Subtraction: return Subtract( terms );
 
-				case Operation.Multiplication: return Multiply( terms );
+                case Operation.Multiplication: return Multiply( terms );
 
-				case Operation.Division: return Divide( terms );
+                case Operation.Division: return Divide( terms );
 
-				default: throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" );
-			}
-		}
+                default: throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" );
+            }
+        }
 
-		public static BigInteger Subtract( BigInteger[] terms ) => throw new NotImplementedException();
-	}
+        public static BigInteger Subtract( BigInteger[] terms ) => throw new NotImplementedException();
+    }
 }

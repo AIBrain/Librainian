@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,62 +35,66 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Base58String.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "Base58String.cs" was last formatted by Protiguous on 2019/08/08 at 9:22 AM.
 
 namespace Librainian.Parsing {
 
-	using System;
-	using System.Linq;
-	using System.Numerics;
-	using System.Text;
-	using JetBrains.Annotations;
+    using System;
+    using System.Linq;
+    using System.Numerics;
+    using System.Text;
+    using JetBrains.Annotations;
 
-	public static class Base58String {
+    public static class Base58String {
 
-		public const String Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        public const String Base58Chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-		[NotNull]
-		public static String FromByteArray( [NotNull] this Byte[] b ) {
-			var sb = new StringBuilder();
+        [NotNull]
+        public static String FromByteArray( [NotNull] this Byte[] b ) {
+            var sb = new StringBuilder();
 
-			var bi = new BigInteger( b.Reverse().Concat( new Byte[] {
-				0x00
-			} ).ToArray() ); // concat adds sign byte
+            var bi = new BigInteger( b.Reverse().Concat( new Byte[] {
+                0x00
+            } ).ToArray() ); // concat adds sign byte
 
-			// Calc base58 representation
-			while ( bi > 0 ) {
-				var mod = ( Int32 ) ( bi % 58 );
-				bi /= 58;
-				sb.Insert( 0, Base58Chars[ mod ] );
-			}
+            // Calc base58 representation
+            while ( bi > 0 ) {
+                var mod = ( Int32 ) ( bi % 58 );
+                bi /= 58;
+                sb.Insert( 0, Base58Chars[ mod ] );
+            }
 
-			// Add 1s for leading 0x00 bytes
-			for ( var i = 0; i < b.Length && b[ i ] == 0x00; i++ ) { sb.Insert( 0, '1' ); }
+            // Add 1s for leading 0x00 bytes
+            for ( var i = 0; i < b.Length && b[ i ] == 0x00; i++ ) {
+                sb.Insert( 0, '1' );
+            }
 
-			return sb.ToString();
-		}
+            return sb.ToString();
+        }
 
-		[NotNull]
-		public static Byte[] ToByteArray( [NotNull] this String s ) {
-			BigInteger bi = 0;
+        [NotNull]
+        public static Byte[] ToByteArray( [NotNull] this String s ) {
+            BigInteger bi = 0;
 
-			// Decode base58
-			foreach ( var charVal in s.Select( c => Base58Chars.IndexOf( c ) ).Where( charVal => charVal != -1 ) ) {
-				bi *= 58;
-				bi += charVal;
-			}
+            // Decode base58
+            foreach ( var charVal in s.Select( c => Base58Chars.IndexOf( c ) ).Where( charVal => charVal != -1 ) ) {
+                bi *= 58;
+                bi += charVal;
+            }
 
-			var b = bi.ToByteArray();
+            var b = bi.ToByteArray();
 
-			// Remove 0x00 sign byte if present.
-			if ( b[ b.Length - 1 ] == 0x00 ) { b = b.Take( b.Length - 1 ).ToArray(); }
+            // Remove 0x00 sign byte if present.
+            if ( b[ b.Length - 1 ] == 0x00 ) {
+                b = b.Take( b.Length - 1 ).ToArray();
+            }
 
-			// Add leading 0x00 bytes
-			var num0S = s.IndexOf( s.First( c => c != '1' ) );
+            // Add leading 0x00 bytes
+            var num0S = s.IndexOf( s.First( c => c != '1' ) );
 
-			return b.Concat( new Byte[ num0S ] ).Reverse().ToArray();
-		}
-	}
+            return b.Concat( new Byte[ num0S ] ).Reverse().ToArray();
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,49 +35,49 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Bits.cs" was last formatted by Protiguous on 2018/07/13 at 1:16 AM.
+// Project: "Librainian", "Bits.cs" was last formatted by Protiguous on 2019/08/08 at 8:16 AM.
 
 namespace Librainian.Maths {
 
-	using System;
-	using System.Linq;
-	using JetBrains.Annotations;
-	using Numbers;
+    using System;
+    using System.Linq;
+    using JetBrains.Annotations;
+    using Numbers;
 
-	public static class Bits {
+    public static class Bits {
 
-		public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
+        public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
 
-		public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
-		[NotNull]
-		public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
+        [NotNull]
+        public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
 
-		public static Byte[] Order( this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();
+        public static Byte[] Order( this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();
 
-		public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
+        public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
 
-		[NotNull]
-		public static String ToString( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
+        [NotNull]
+        public static String ToString( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
 
-		public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );
+        public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );
 
-		public static UInt256 ToUInt256( this Byte[] value ) => new UInt256( value );
+        public static UInt256 ToUInt256( this Byte[] value ) => new UInt256( value );
 
-		public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt32( Order( value ), startIndex );
+        public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt32( Order( value ), startIndex );
 
-		//public static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt64( Order( value ), startIndex );
-	}
+        //public static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt64( Order( value ), startIndex );
+    }
 }

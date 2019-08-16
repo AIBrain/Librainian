@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +35,42 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MutableFieldException.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
+// Project: "Librainian", "MutableFieldException.cs" was last formatted by Protiguous on 2019/08/08 at 7:18 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Reflection;
-	using System.Runtime.Serialization;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+    using System;
+    using System.Reflection;
+    using System.Runtime.Serialization;
+    using Exceptions;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-	[JsonObject]
-	[Serializable]
-	internal class MutableFieldException : ImmutableFailureException {
+    [JsonObject]
+    [Serializable]
+    internal class MutableFieldException : ImmutableFailureException {
 
-		protected MutableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-			if ( serializationInfo == null ) { throw new ArgumentNullException( paramName: nameof( serializationInfo ) ); }
-		}
+        protected MutableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+            if ( serializationInfo == null ) {
+                throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
+            }
+        }
 
-		internal MutableFieldException( [NotNull] FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
-			if ( fieldInfo == null ) { throw new ArgumentNullException( paramName: nameof( fieldInfo ) ); }
-		}
+        internal MutableFieldException( [NotNull] FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
+            if ( fieldInfo == null ) {
+                throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
+            }
+        }
 
-		[NotNull]
-		private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
-			if ( fieldInfo == null ) { throw new ArgumentNullException( paramName: nameof( fieldInfo ) ); }
+        [NotNull]
+        private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
+            if ( fieldInfo == null ) {
+                throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
+            }
 
-			return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
-		}
-	}
+            return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
+        }
+    }
 }

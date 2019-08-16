@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ElectronVolts.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "ElectronVolts.cs" was last formatted by Protiguous on 2019/08/08 at 8:47 AM.
 
 namespace Librainian.Measurement.Physics {
 
@@ -97,9 +97,9 @@ namespace Librainian.Measurement.Physics {
 
         public readonly Rational Value;
 
-        public ElectronVolts( Decimal value ) : this() => this.Value = ( Rational )value;
+        public ElectronVolts( Decimal value ) : this() => this.Value = ( Rational ) value;
 
-        public ElectronVolts( Double value ) : this() => this.Value = ( Rational )value;
+        public ElectronVolts( Double value ) : this() => this.Value = ( Rational ) value;
 
         public ElectronVolts( Rational value ) : this() => this.Value = value;
 
@@ -115,15 +115,15 @@ namespace Librainian.Measurement.Physics {
 
         public static ElectronVolts operator *( ElectronVolts left, ElectronVolts right ) => new ElectronVolts( left.Value * right.Value );
 
-        public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value * ( Rational )right );
+        public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value * ( Rational ) right );
 
-        public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new ElectronVolts( ( Rational )left * right.Value );
+        public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new ElectronVolts( ( Rational ) left * right.Value );
 
         public static ElectronVolts operator *( Rational left, ElectronVolts right ) => new ElectronVolts( left * right.Value );
 
         public static ElectronVolts operator /( ElectronVolts left, ElectronVolts right ) => new ElectronVolts( left.Value / right.Value );
 
-        public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value / ( Rational )right );
+        public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value / ( Rational ) right );
 
         public static MegaElectronVolts operator +( ElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
@@ -147,15 +147,15 @@ namespace Librainian.Measurement.Physics {
 
         public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToElectronVolts().Value );
 
-        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational )InOneElectronVolt );
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational ) InOneElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational )InOneGigaElectronVolt );
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational ) InOneGigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational )InOneKiloElectronVolt );
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational ) InOneKiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational )InOneMegaElectronVolt );
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational ) InOneMegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational ) InOneMilliElectronVolt );
 
         /// <summary>
         ///     Returns the fully qualified type name of this instance.
@@ -163,6 +163,6 @@ namespace Librainian.Measurement.Physics {
         /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
     }
 }

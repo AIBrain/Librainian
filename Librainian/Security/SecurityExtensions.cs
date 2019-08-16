@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
-// 
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
-// 
-// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2019/03/18 at 12:01 AM.
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
 
 namespace Librainian.Security {
 
@@ -98,6 +98,10 @@ namespace Librainian.Security {
         public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Lazy { get; } =
             new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ) );
 
+        private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
+
+        private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
+
         public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
 
         public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
@@ -126,6 +130,41 @@ namespace Librainian.Security {
                     return MD5ThreadLocals.Value.ComputeHash( fs );
                 }
             } );
+
+        /// <summary>
+        ///     Decrypts the string <paramref name="value" />.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="iv">Optional input vector.</param>
+        /// <param name="key">Optional key.</param>
+        [CanBeNull]
+        public static String Decrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
+            if ( String.IsNullOrEmpty( value: value ) ) {
+                return default;
+            }
+
+            try {
+                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
+                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+                var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
+
+                using ( var des = new DESCryptoServiceProvider() ) {
+                    using ( var ms = new MemoryStream() ) {
+                        using ( var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
+                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                            cs.FlushFinalBlock();
+                        }
+
+                        return Encoding.UTF8.GetString( ms.ToArray() );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return default;
+        }
 
         /// <summary>
         ///     To encrypt use <seealso cref="EncryptDES" />.
@@ -242,6 +281,35 @@ namespace Librainian.Security {
             }
 
             return decryptedValue;
+        }
+
+        [CanBeNull]
+        public static String Encrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
+            if ( String.IsNullOrEmpty( value: value ) ) {
+                return default;
+            }
+
+            try {
+                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
+                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+                var inputbyteArray = Encoding.UTF8.GetBytes( value );
+
+                using ( var des = new DESCryptoServiceProvider() ) {
+                    using ( var ms = new MemoryStream() ) {
+                        using ( var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
+                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                            cs.FlushFinalBlock();
+                        }
+
+                        return Convert.ToBase64String( ms.ToArray() );
+                    }
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return default;
         }
 
         /// <summary>
@@ -852,74 +920,5 @@ namespace Librainian.Security {
                 return false;
             }
         }
-
-        /// <summary>
-        ///     Decrypts the string <paramref name="value" />.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="iv">Optional input vector.</param>
-        /// <param name="key">Optional key.</param>
-        [CanBeNull]
-        public static String Decrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
-            if ( String.IsNullOrEmpty( value: value ) ) {
-                return default;
-            }
-
-            try {
-                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
-                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
-                var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
-
-                using ( var des = new DESCryptoServiceProvider() ) {
-                    using ( var ms = new MemoryStream() ) {
-                        using ( var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
-                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
-                            cs.FlushFinalBlock();
-                        }
-
-                        return Encoding.UTF8.GetString( ms.ToArray() );
-                    }
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
-
-        private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
-
-        private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
-
-        [CanBeNull]
-        public static String Encrypt( [CanBeNull] this String value, [CanBeNull] String iv = null, [CanBeNull] String key = null ) {
-            if ( String.IsNullOrEmpty( value: value ) ) {
-                return default;
-            }
-
-            try {
-                var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
-                var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
-                var inputbyteArray = Encoding.UTF8.GetBytes( value );
-
-                using ( var des = new DESCryptoServiceProvider() ) {
-                    using ( var ms = new MemoryStream() ) {
-                        using ( var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
-                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
-                            cs.FlushFinalBlock();
-                        }
-
-                        return Convert.ToBase64String( ms.ToArray() );
-                    }
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
     }
-
 }

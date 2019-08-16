@@ -18,7 +18,7 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
+//     PayPal:Protiguous@Protiguous.com
 //     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
@@ -42,7 +42,6 @@
 namespace LibrainianTests {
 
     using System;
-    using System.Diagnostics;
     using System.Threading.Tasks;
     using Librainian.Maths;
     using Librainian.Maths.Numbers;
@@ -76,7 +75,7 @@ namespace LibrainianTests {
             } ) ) );
 
             TimeSpan timeTaken = bob.TimeStatement();
-            Debug.WriteLine( timeTaken.Simpler() );
+            Console.WriteLine( timeTaken.Simpler() );
         }
 
         [Test]
@@ -93,7 +92,7 @@ namespace LibrainianTests {
             } ) ) );
 
             TimeSpan timeTaken = bob.TimeStatement();
-            Debug.WriteLine( timeTaken.Simpler() );
+            Console.WriteLine( timeTaken.Simpler() );
         }
     }
 }

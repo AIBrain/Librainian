@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,34 +35,34 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
+// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
 
 namespace Librainian.Security {
 
-	using System;
-	using System.Security;
-	using System.Security.Principal;
+    using System;
+    using System.Security;
+    using System.Security.Principal;
 
-	public static class Windows {
+    public static class Windows {
 
-		/// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
-		/// <param name="role"></param>
-		/// <returns></returns>
-		public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
-			try {
-				using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
-					var windowsPrincipal = new WindowsPrincipal( ntIdentity: windowsIdentity );
+        /// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
+            try {
+                using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
+                    var windowsPrincipal = new WindowsPrincipal( ntIdentity: windowsIdentity );
 
-					return windowsPrincipal.IsInRole( role: role );
-				}
-			}
-			catch ( SecurityException ) { }
-			catch ( ArgumentNullException ) { }
-			catch ( ArgumentException ) { }
+                    return windowsPrincipal.IsInRole( role: role );
+                }
+            }
+            catch ( SecurityException ) { }
+            catch ( ArgumentNullException ) { }
+            catch ( ArgumentException ) { }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 }

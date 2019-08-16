@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,27 +35,27 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Singleton.cs" was last formatted by Protiguous on 2018/07/13 at 1:41 AM.
+// Project: "Librainian", "Singleton.cs" was last formatted by Protiguous on 2019/08/08 at 9:38 AM.
 
 namespace Librainian.Threading {
 
-	/// <summary>
-	///     Singleton Pattern. Judith Bishop Nov 2007
-	/// </summary>
-	/// <remarks>Untested.</remarks>
-	public class Singleton<T> where T : class, new() {
+    /// <summary>
+    ///     Singleton Pattern. Judith Bishop Nov 2007
+    /// </summary>
+    /// <remarks>Untested.</remarks>
+    public class Singleton<T> where T : class, new() {
 
-		public static T Instance => SingletonCreator.SingleInstance;
+        public static T Instance => SingletonCreator.SingleInstance;
 
-		private Singleton() { }
+        private Singleton() { }
 
-		public static class SingletonCreator {
+        public static class SingletonCreator {
 
-			internal static T SingleInstance { get; } = new T();
+            internal static T SingleInstance { get; } = new T();
 
-			static SingletonCreator() { }
-		}
-	}
+            static SingletonCreator() { }
+        }
+    }
 }

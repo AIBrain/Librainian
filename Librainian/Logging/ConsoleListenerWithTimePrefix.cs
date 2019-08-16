@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConsoleListenerWithTimePrefix.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
+// Project: "Librainian", "ConsoleListenerWithTimePrefix.cs" was last formatted by Protiguous on 2019/08/08 at 8:12 AM.
 
 namespace Librainian.Logging {
 
@@ -46,58 +46,58 @@ namespace Librainian.Logging {
 
     public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
 
-		/// <summary>
-		///     Gets a value indicating whether the trace listener is thread safe.
-		/// </summary>
-		/// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
-		public override Boolean IsThreadSafe => true;
+        /// <summary>
+        ///     Gets a value indicating whether the trace listener is thread safe.
+        /// </summary>
+        /// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
+        public override Boolean IsThreadSafe => true;
 
-		public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) { }
+        public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) { }
 
-		//TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
-		/// <summary>
-		///     Emits an error message and a detailed error message to the listener you create when you implement the
-		///     <see cref="T:System.Diagnostics.TraceListener" /> class.
-		/// </summary>
-		/// <param name="message">      A message to emit.</param>
-		/// <param name="detailMessage">A detailed message to emit.</param>
-		public override void Fail( String message, String detailMessage ) {
-			base.Fail( message, detailMessage );
-			this.Flush();
-		}
+        //TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
+        /// <summary>
+        ///     Emits an error message and a detailed error message to the listener you create when you implement the
+        ///     <see cref="T:System.Diagnostics.TraceListener" /> class.
+        /// </summary>
+        /// <param name="message">      A message to emit.</param>
+        /// <param name="detailMessage">A detailed message to emit.</param>
+        public override void Fail( String message, String detailMessage ) {
+            base.Fail( message, detailMessage );
+            this.Flush();
+        }
 
-		/// <summary>
-		///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.
-		/// </summary>
-		/// <param name="message">A message to write.</param>
-		/// <PermissionSet>
-		///     <IPermission
-		///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-		///         version="1" Unrestricted="true" />
-		/// </PermissionSet>
-		[DebuggerStepThrough]
-		public override void Write( String message ) {
-			Console.Write( message );
-			this.Flush();
-		}
+        /// <summary>
+        ///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.
+        /// </summary>
+        /// <param name="message">A message to write.</param>
+        /// <PermissionSet>
+        ///     <IPermission
+        ///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        ///         version="1" Unrestricted="true" />
+        /// </PermissionSet>
+        [DebuggerStepThrough]
+        public override void Write( String message ) {
+            Console.Write( message );
+            this.Flush();
+        }
 
-		/// <summary>
-		///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" /> followed by
-		///     a line terminator. The default line terminator is a carriage return followed by a line feed (\r\n).
-		/// </summary>
-		/// <param name="message">A message to write.</param>
-		/// <filterpriority>1</filterpriority>
-		/// <PermissionSet>
-		///     <IPermission
-		///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-		///         version="1" Unrestricted="true" />
-		/// </PermissionSet>
-		[DebuggerStepThrough]
-		public override void WriteLine( String message ) {
-			Console.WriteLine( message );
-			this.Flush();
-		}
+        /// <summary>
+        ///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" /> followed by
+        ///     a line terminator. The default line terminator is a carriage return followed by a line feed (\r\n).
+        /// </summary>
+        /// <param name="message">A message to write.</param>
+        /// <filterpriority>1</filterpriority>
+        /// <PermissionSet>
+        ///     <IPermission
+        ///         class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        ///         version="1" Unrestricted="true" />
+        /// </PermissionSet>
+        [DebuggerStepThrough]
+        public override void WriteLine( String message ) {
+            Console.WriteLine( message );
+            this.Flush();
+        }
 
-		//private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Thread.CurrentThread.ManagedThreadId})] ";
-	}
+        //private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Thread.CurrentThread.ManagedThreadId})] ";
+    }
 }

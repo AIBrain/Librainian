@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,14 +35,14 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MagicExtensions.cs" was last formatted by Protiguous on 2018/08/23 at 7:47 PM.
+// Project: "Librainian", "MagicExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:16 AM.
 
 namespace Librainian.Magic {
 
-    using JetBrains.Annotations;
     using System;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Any sufficiently advanced technology is indistinguishable from magic.</para>
@@ -52,53 +52,53 @@ namespace Librainian.Magic {
 
         /*
 
-		/// <summary></summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="observable"></param>
-		/// <returns></returns>
-		/// <see cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
-		[NotNull]
-		public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) =>
-			Observable.Create<Unit>( observer => observable.Subscribe( _ => { }, onError: observer.OnError, onCompleted: () => {
-				observer.OnNext( Unit.Default );
-				observer.OnCompleted();
-			} ) );
+        /// <summary></summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="observable"></param>
+        /// <returns></returns>
+        /// <see cref="http://haacked.com/archive/2012/10/08/writing-a-continueafter-method-for-rx.aspx/" />
+        [NotNull]
+        public static IObservable<Unit> AsCompletion<T>( this IObservable<T> observable ) =>
+            Observable.Create<Unit>( observer => observable.Subscribe( _ => { }, onError: observer.OnError, onCompleted: () => {
+                observer.OnNext( Unit.Default );
+                observer.OnCompleted();
+            } ) );
         */
 
         //[NotNull]public static IObservable<TRet> ContinueAfter<T, TRet>( this IObservable<T> observable, Func<IObservable<TRet>> selector ) => observable.AsCompletion().SelectMany( _ => selector() );
 
         /*
 
-		/// <summary>
-		///     http://stackoverflow.com/a/7642198
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="source"></param>
-		/// <param name="pauser"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static IObservable<T> Pausable<T>( this IObservable<T> source, IObservable<Boolean> pauser ) =>
-			Observable.Create<T>( o => {
-				var paused = new SerialDisposable();
+        /// <summary>
+        ///     http://stackoverflow.com/a/7642198
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="pauser"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static IObservable<T> Pausable<T>( this IObservable<T> source, IObservable<Boolean> pauser ) =>
+            Observable.Create<T>( o => {
+                var paused = new SerialDisposable();
 
-				var subscription = source.Publish( ps => {
-					var values = new ReplaySubject<T>();
+                var subscription = source.Publish( ps => {
+                    var values = new ReplaySubject<T>();
 
-					IObservable<T> Switcher( Boolean b ) {
-						if ( !b ) { return values.Concat( second: ps ); }
+                    IObservable<T> Switcher( Boolean b ) {
+                        if ( !b ) { return values.Concat( second: ps ); }
 
-						values.Dispose();
-						values = new ReplaySubject<T>();
-						paused.Disposable = ps.Subscribe( observer: values );
+                        values.Dispose();
+                        values = new ReplaySubject<T>();
+                        paused.Disposable = ps.Subscribe( observer: values );
 
-						return Observable.Empty<T>();
-					}
+                        return Observable.Empty<T>();
+                    }
 
-					return pauser.StartWith( false ).DistinctUntilChanged().Select( selector: Switcher ).Switch();
-				} ).Subscribe( observer: o );
+                    return pauser.StartWith( false ).DistinctUntilChanged().Select( selector: Switcher ).Switch();
+                } ).Subscribe( observer: o );
 
-				return new CompositeDisposable( subscription, paused );
-			} );
+                return new CompositeDisposable( subscription, paused );
+            } );
         */
 
         /// <summary>
@@ -106,10 +106,14 @@ namespace Librainian.Magic {
         /// </summary>
         /// <param name="b"></param>
         /// <param name="action"></param>
-        public static void Then(this Boolean b, [NotNull] Action action) {
-            if (action == null) { throw new ArgumentNullException(paramName: nameof(action)); }
+        public static void Then( this Boolean b, [NotNull] Action action ) {
+            if ( action == null ) {
+                throw new ArgumentNullException( paramName: nameof( action ) );
+            }
 
-            if (b) { action.Invoke(); }
+            if ( b ) {
+                action.Invoke();
+            }
         }
 
         /// <summary></summary>
@@ -117,8 +121,10 @@ namespace Librainian.Magic {
         /// <param name="obj"></param>
 
         // ReSharper disable once UnusedParameter.Local
-        public static void ThrowIfNull<TKey>([CanBeNull] this TKey obj) {
-            if (null == obj) { throw new ArgumentNullException(); }
+        public static void ThrowIfNull<TKey>( [CanBeNull] this TKey obj ) {
+            if ( null == obj ) {
+                throw new ArgumentNullException();
+            }
         }
     }
 }

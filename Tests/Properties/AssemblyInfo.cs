@@ -18,7 +18,7 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
+//     PayPal:Protiguous@Protiguous.com
 //     (We're still looking into other solutions! Any ideas?)
 //
 // =========================================================
@@ -72,5 +72,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion( "2019.4.10.6" )]
-[assembly: AssemblyFileVersion( "2019.4.10.6" )]
+[assembly: AssemblyVersion( "2019.8.10.2" )]
+[assembly: AssemblyFileVersion( "2019.8.10.2" )]

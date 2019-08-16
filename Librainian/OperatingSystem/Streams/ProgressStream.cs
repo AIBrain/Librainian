@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,50 +35,50 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ProgressStream.cs" was last formatted by Protiguous on 2018/07/13 at 1:33 AM.
+// Project: "Librainian", "ProgressStream.cs" was last formatted by Protiguous on 2019/08/08 at 9:21 AM.
 
-namespace Librainian.OperatingSystem.Streams
-{
+namespace Librainian.OperatingSystem.Streams {
 
-    using JetBrains.Annotations;
-    using Measurement.Frequency;
     using System;
     using System.ComponentModel;
     using System.IO;
+    using JetBrains.Annotations;
     using Logging;
+    using Measurement.Frequency;
 
-    public sealed class ProgressStream : ContainerStream
-    {
+    public sealed class ProgressStream : ContainerStream {
 
         private Int32 _lastProgress;
 
-        private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds(-1);
+        private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( -1 );
 
         public ProgressChangedEventHandler ProgressChanged { get; set; }
 
-        public ProgressStream([NotNull] Stream stream) : base(stream: stream)
-        {
-            if (stream.CanRead && stream.CanSeek && stream.Length > 0) { return; }
+        public ProgressStream( [NotNull] Stream stream ) : base( stream: stream ) {
+            if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) {
+                return;
+            }
 
             stream.Break();
 
-            throw new ArgumentException("stream");
+            throw new ArgumentException( "stream" );
         }
 
-        public override Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
-        {
-            var amountRead = this.Stream.Read(buffer, offset, count);
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
+            var amountRead = this.Stream.Read( buffer, offset, count );
 
-            var newProgress = (Int32)(1024.0 * (this.Position / (Double)this.Length));
+            var newProgress = ( Int32 ) ( 1024.0 * ( this.Position / ( Double ) this.Length ) );
 
-            if (newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty) { return amountRead; }
+            if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) {
+                return amountRead;
+            }
 
             this._lastProgressUpdate = DateTime.UtcNow;
             this._lastProgress = newProgress;
             var progressChanged = this.ProgressChanged;
-            progressChanged?.Invoke(this, new ProgressChangedEventArgs(this._lastProgress, null));
+            progressChanged?.Invoke( this, new ProgressChangedEventArgs( this._lastProgress, null ) );
 
             return amountRead;
         }
@@ -99,7 +99,7 @@ namespace Librainian.OperatingSystem.Streams
         /// </exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override Int64 Seek(Int64 offset, SeekOrigin origin) => this.Stream.Seek(offset: offset, origin: origin);
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
 
         /// <summary>
         ///     When overridden in a derived class, sets the length of the current stream.
@@ -112,7 +112,7 @@ namespace Librainian.OperatingSystem.Streams
         /// </exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>2</filterpriority>
-        public override void SetLength(Int64 value) => this.Stream.SetLength(value);
+        public override void SetLength( Int64 value ) => this.Stream.SetLength( value );
 
         /// <summary>
         ///     When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current
@@ -140,6 +140,6 @@ namespace Librainian.OperatingSystem.Streams
         /// <exception cref="T:System.NotSupportedException">The stream does not support writing.</exception>
         /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override void Write(Byte[] buffer, Int32 offset, Int32 count) => this.Stream.Write(buffer: buffer, offset: offset, count: count);
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
     }
 }

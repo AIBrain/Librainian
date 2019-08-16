@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,73 +35,73 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Microsecond.cs" was last formatted by Protiguous on 2018/11/03 at 7:37 PM.
+// Project: "Librainian", "Microsecond.cs" was last formatted by Protiguous on 2019/08/08 at 8:56 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="Microsecond" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public struct Microsecond : IClockPart {
+    /// <summary>A simple struct for a <see cref="Microsecond" />.</summary>
+    [JsonObject]
+    [Immutable]
+    public struct Microsecond : IClockPart {
 
-		public const Int32 MaxValue = 999;
+        public const Int32 MaxValue = 999;
 
-		public const Int32 MinValue = 0;
+        public const Int32 MinValue = 0;
 
-		[JsonProperty]
-		public readonly Int16 Value;
+        [JsonProperty]
+        public readonly Int16 Value;
 
-		public static Microsecond Maximum { get; } = new Microsecond( MaxValue );
+        public static Microsecond Maximum { get; } = new Microsecond( MaxValue );
 
-		public static Microsecond Minimum { get; } = new Microsecond( MinValue );
+        public static Microsecond Minimum { get; } = new Microsecond( MinValue );
 
-		public Microsecond( Int16 value ) {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {Maximum}." );
-			}
+        public Microsecond( Int16 value ) {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {Maximum}." );
+            }
 
-			this.Value = value;
-		}
+            this.Value = value;
+        }
 
-		public static explicit operator UInt16( Microsecond value ) => ( UInt16 )value.Value;
+        public static explicit operator UInt16( Microsecond value ) => ( UInt16 ) value.Value;
 
-		/// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static implicit operator Int16( Microsecond value ) => value.Value;
+        /// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static implicit operator Int16( Microsecond value ) => value.Value;
 
-		public static implicit operator Microsecond( UInt16 value ) => new Microsecond( ( Int16 )value );
+        public static implicit operator Microsecond( UInt16 value ) => new Microsecond( ( Int16 ) value );
 
-		/// <summary>Provide the next <see cref="Microsecond" />.</summary>
-		public Microsecond Next( out Boolean ticked ) {
-			ticked = false;
-			var next = this.Value + 1;
+        /// <summary>Provide the next <see cref="Microsecond" />.</summary>
+        public Microsecond Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				ticked = true;
-			}
+            if ( next > Maximum ) {
+                next = Minimum;
+                ticked = true;
+            }
 
-			return ( UInt16 )next;
-		}
+            return ( UInt16 ) next;
+        }
 
-		/// <summary>Provide the previous <see cref="Microsecond" />.</summary>
-		public Microsecond Previous( out Boolean ticked ) {
-			ticked = false;
-			var next = this.Value - 1;
+        /// <summary>Provide the previous <see cref="Microsecond" />.</summary>
+        public Microsecond Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				ticked = true;
-			}
+            if ( next < Minimum ) {
+                next = Maximum;
+                ticked = true;
+            }
 
-			return ( UInt16 )next;
-		}
-	}
+            return ( UInt16 ) next;
+        }
+    }
 }

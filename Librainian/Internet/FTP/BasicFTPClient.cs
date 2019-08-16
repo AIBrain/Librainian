@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,119 +35,121 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BasicFTPClient.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "BasicFTPClient.cs" was last formatted by Protiguous on 2019/08/08 at 7:53 AM.
 
 namespace Librainian.Internet.FTP {
 
-	using System;
-	using System.IO;
-	using System.Net;
-	using JetBrains.Annotations;
+    using System;
+    using System.IO;
+    using System.Net;
+    using JetBrains.Annotations;
 
-	public class BasicFtpClient {
+    public class BasicFtpClient {
 
-		public String Host { get; set; }
+        public String Host { get; set; }
 
-		public String Password { get; set; }
+        public String Password { get; set; }
 
-		public Int32 Port { get; set; }
+        public Int32 Port { get; set; }
 
-		public String Username { get; set; }
+        public String Username { get; set; }
 
-		public BasicFtpClient() {
-			this.Username = "anonymous";
-			this.Password = "anonymous@internet.com";
-			this.Port = 21;
-			this.Host = "";
-		}
+        public BasicFtpClient() {
+            this.Username = "anonymous";
+            this.Password = "anonymous@internet.com";
+            this.Port = 21;
+            this.Host = "";
+        }
 
-		public BasicFtpClient( String theUser, String thePassword, String theHost ) {
-			this.Username = theUser;
-			this.Password = thePassword;
-			this.Host = theHost;
-			this.Port = 21;
-		}
+        public BasicFtpClient( String theUser, String thePassword, String theHost ) {
+            this.Username = theUser;
+            this.Password = thePassword;
+            this.Host = theHost;
+            this.Port = 21;
+        }
 
-		[NotNull]
-		private Uri BuildServerUri( String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
+        [NotNull]
+        private Uri BuildServerUri( String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
 
-		/// <summary>
-		///     This method downloads the given file name from the FTP Server and returns a byte array
-		///     containing its contents. Throws a WebException on encountering a network error.
-		/// </summary>
-		public Byte[] DownloadData( String path ) {
+        /// <summary>
+        ///     This method downloads the given file name from the FTP Server and returns a byte array
+        ///     containing its contents. Throws a WebException on encountering a network error.
+        /// </summary>
+        public Byte[] DownloadData( String path ) {
 
-			// Get the object used to communicate with the Server.
-			var request = new WebClient {
-				Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
-			};
+            // Get the object used to communicate with the Server.
+            var request = new WebClient {
+                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+            };
 
-			// Logon to the Server using username + password
-			return request.DownloadData( this.BuildServerUri( path ) );
-		}
+            // Logon to the Server using username + password
+            return request.DownloadData( this.BuildServerUri( path ) );
+        }
 
-		/// <summary>
-		///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile".
-		///     Throws a WebException on encountering a network error.
-		/// </summary>
-		public void DownloadFile( String ftppath, [NotNull] String destfile ) {
+        /// <summary>
+        ///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile".
+        ///     Throws a WebException on encountering a network error.
+        /// </summary>
+        public void DownloadFile( String ftppath, [NotNull] String destfile ) {
 
-			// Download the data
-			var data = this.DownloadData( ftppath );
+            // Download the data
+            var data = this.DownloadData( ftppath );
 
-			// Save the data to disk
-			var fs = new FileStream( destfile, FileMode.Create );
-			fs.Write( data, 0, data.Length );
-			fs.Close();
-		}
+            // Save the data to disk
+            var fs = new FileStream( destfile, FileMode.Create );
+            fs.Write( data, 0, data.Length );
+            fs.Close();
+        }
 
-		/// <summary>Upload a byte[] to the FTP Server</summary>
-		/// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
-		/// <param name="data">A byte[] containing the data to upload</param>
-		/// <returns>The Server response in a byte[]</returns>
-		public Byte[] UploadData( String path, [NotNull] Byte[] data ) {
+        /// <summary>Upload a byte[] to the FTP Server</summary>
+        /// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
+        /// <param name="data">A byte[] containing the data to upload</param>
+        /// <returns>The Server response in a byte[]</returns>
+        public Byte[] UploadData( String path, [NotNull] Byte[] data ) {
 
-			// Get the object used to communicate with the Server.
-			var request = new WebClient {
-				Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
-			};
+            // Get the object used to communicate with the Server.
+            var request = new WebClient {
+                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+            };
 
-			// Logon to the Server using username + password
-			return request.UploadData( this.BuildServerUri( path ), data );
-		}
+            // Logon to the Server using username + password
+            return request.UploadData( this.BuildServerUri( path ), data );
+        }
 
-		/// <summary>Load a file from disk and upload it to the FTP Server</summary>
-		/// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
-		/// <param name="srcfile">File on the local harddisk to upload</param>
-		/// <returns>The Server response in a byte[]</returns>
-		public Byte[] UploadFile( String ftppath, [NotNull] String srcfile ) {
+        /// <summary>Load a file from disk and upload it to the FTP Server</summary>
+        /// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
+        /// <param name="srcfile">File on the local harddisk to upload</param>
+        /// <returns>The Server response in a byte[]</returns>
+        public Byte[] UploadFile( String ftppath, [NotNull] String srcfile ) {
 
-			// Read the data from disk
-			var fs = new FileStream( srcfile, FileMode.Open );
-			var fileData = new Byte[ fs.Length ];
+            // Read the data from disk
+            var fs = new FileStream( srcfile, FileMode.Open );
+            var fileData = new Byte[ fs.Length ];
 
-			var numBytesToRead = ( Int32 ) fs.Length;
-			var numBytesRead = 0;
+            var numBytesToRead = ( Int32 ) fs.Length;
+            var numBytesRead = 0;
 
-			while ( numBytesToRead > 0 ) {
+            while ( numBytesToRead > 0 ) {
 
-				// Read may return anything from 0 to numBytesToRead.
-				var n = fs.Read( fileData, numBytesRead, numBytesToRead );
+                // Read may return anything from 0 to numBytesToRead.
+                var n = fs.Read( fileData, numBytesRead, numBytesToRead );
 
-				// Break when the end of the file is reached.
-				if ( n == 0 ) { break; }
+                // Break when the end of the file is reached.
+                if ( n == 0 ) {
+                    break;
+                }
 
-				numBytesRead += n;
-				numBytesToRead -= n;
-			}
+                numBytesRead += n;
+                numBytesToRead -= n;
+            }
 
-			//numBytesToRead = FileData.Length;
-			fs.Close();
+            //numBytesToRead = FileData.Length;
+            fs.Close();
 
-			// Upload the data from the buffer
-			return this.UploadData( ftppath, fileData );
-		}
-	}
+            // Upload the data from the buffer
+            return this.UploadData( ftppath, fileData );
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,43 +35,43 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DeviceCapabilities.cs" was last formatted by Protiguous on 2018/07/10 at 8:53 PM.
+// Project: "Librainian", "DeviceCapabilities.cs" was last formatted by Protiguous on 2019/08/08 at 6:41 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
-	using System;
+    using System;
 
-	/// <summary>
-	///     Contains constants for determining devices capabilities.
-	///     This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
-	/// </summary>
-	[Flags]
-	public enum DeviceCapabilities {
+    /// <summary>
+    ///     Contains constants for determining devices capabilities.
+    ///     This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
+    /// </summary>
+    [Flags]
+    public enum DeviceCapabilities {
 
-		Unknown = 0x00000000,
+        Unknown = 0x00000000,
 
-		// matches cfmgr32.h CM_DEVCAP_* definitions
+        // matches cfmgr32.h CM_DEVCAP_* definitions
 
-		LockSupported = 0x00000001,
+        LockSupported = 0x00000001,
 
-		EjectSupported = 0x00000002,
+        EjectSupported = 0x00000002,
 
-		Removable = 0x00000004,
+        Removable = 0x00000004,
 
-		DockDevice = 0x00000008,
+        DockDevice = 0x00000008,
 
-		UniqueId = 0x00000010,
+        UniqueId = 0x00000010,
 
-		SilentInstall = 0x00000020,
+        SilentInstall = 0x00000020,
 
-		RawDeviceOk = 0x00000040,
+        RawDeviceOk = 0x00000040,
 
-		SurpriseRemovalOk = 0x00000080,
+        SurpriseRemovalOk = 0x00000080,
 
-		HardwareDisabled = 0x00000100,
+        HardwareDisabled = 0x00000100,
 
-		NonDynamic = 0x00000200
-	}
+        NonDynamic = 0x00000200
+    }
 }

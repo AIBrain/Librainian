@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DriveExtensions.cs" was last formatted by Protiguous on 2018/10/05 at 6:03 PM.
+// Project: "Librainian", "DriveExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 6:42 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -48,56 +48,52 @@ namespace Librainian.ComputerSystem.Devices {
 
     public static class DriveExtensions {
 
-        public static List<DriveType> FixedDriveTypes {
-            get;
-        } = new List<DriveType>(new[] {
+        public static List<DriveType> FixedDriveTypes { get; } = new List<DriveType>( new[] {
             DriveType.Fixed
-        });
+        } );
 
         /// <summary>
         ///     Drives that have "disks" able to be "removed".
         /// </summary>
-        public static List<DriveType> FleetingDriveTypes {
-            get;
-        } = new List<DriveType>(new[] {
+        public static List<DriveType> FleetingDriveTypes { get; } = new List<DriveType>( new[] {
             DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable
-        });
+        } );
 
         static DriveExtensions() {
             FleetingDriveTypes.TrimExcess();
             FixedDriveTypes.TrimExcess();
         }
 
-        public static Boolean IsFixed([NotNull] this Disk disk) {
-            if (disk == null) {
-                throw new ArgumentNullException(paramName: nameof(disk));
+        public static Boolean IsFixed( [NotNull] this Disk disk ) {
+            if ( disk == null ) {
+                throw new ArgumentNullException( paramName: nameof( disk ) );
             }
 
-            return FixedDriveTypes.Contains(disk.Info.DriveType);
+            return FixedDriveTypes.Contains( disk.Info.DriveType );
         }
 
-        public static Boolean IsFixed([NotNull] this DriveInfo drive) {
-            if (drive == null) {
-                throw new ArgumentNullException(paramName: nameof(drive));
+        public static Boolean IsFixed( [NotNull] this DriveInfo drive ) {
+            if ( drive == null ) {
+                throw new ArgumentNullException( paramName: nameof( drive ) );
             }
 
-            return FixedDriveTypes.Contains(drive.DriveType);
+            return FixedDriveTypes.Contains( drive.DriveType );
         }
 
-        public static Boolean IsFleeting([NotNull] this Disk disk) {
-            if (disk == null) {
-                throw new ArgumentNullException(paramName: nameof(disk));
+        public static Boolean IsFleeting( [NotNull] this Disk disk ) {
+            if ( disk == null ) {
+                throw new ArgumentNullException( paramName: nameof( disk ) );
             }
 
-            return FleetingDriveTypes.Contains(disk.Info.DriveType);
+            return FleetingDriveTypes.Contains( disk.Info.DriveType );
         }
 
-        public static Boolean IsFleeting([NotNull] this DriveInfo drive) {
-            if (drive == null) {
-                throw new ArgumentNullException(paramName: nameof(drive));
+        public static Boolean IsFleeting( [NotNull] this DriveInfo drive ) {
+            if ( drive == null ) {
+                throw new ArgumentNullException( paramName: nameof( drive ) );
             }
 
-            return FleetingDriveTypes.Contains(drive.DriveType);
+            return FleetingDriveTypes.Contains( drive.DriveType );
         }
     }
 }

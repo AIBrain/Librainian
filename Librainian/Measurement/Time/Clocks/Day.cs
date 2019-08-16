@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,74 +35,74 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Day.cs" was last formatted by Protiguous on 2018/11/03 at 8:01 PM.
+// Project: "Librainian", "Day.cs" was last formatted by Protiguous on 2019/08/08 at 8:54 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a Day of the month.</summary>
-	[JsonObject]
-	[Immutable]
-	public struct Day : IClockPart {
+    /// <summary>A simple struct for a Day of the month.</summary>
+    [JsonObject]
+    [Immutable]
+    public struct Day : IClockPart {
 
-		public const SByte MaxValue = 31;
+        public const SByte MaxValue = 31;
 
-		public const SByte MinValue = 1;
+        public const SByte MinValue = 1;
 
-		/// <summary>
-		///     31
-		/// </summary>
-		public static Day Maximum { get; } = new Day( MaxValue );
+        /// <summary>
+        ///     31
+        /// </summary>
+        public static Day Maximum { get; } = new Day( MaxValue );
 
-		/// <summary>
-		///     1
-		/// </summary>
-		public static Day Minimum { get; } = new Day( MinValue );
+        /// <summary>
+        ///     1
+        /// </summary>
+        public static Day Minimum { get; } = new Day( MinValue );
 
-		[JsonProperty]
-		public SByte Value { get; }
+        [JsonProperty]
+        public SByte Value { get; }
 
-		public Day( SByte value ) : this() {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
-			}
+        public Day( SByte value ) : this() {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+            }
 
-			this.Value = value;
-		}
+            this.Value = value;
+        }
 
-		public static explicit operator Byte( Day value ) => ( Byte )value.Value;
+        public static explicit operator Byte( Day value ) => ( Byte ) value.Value;
 
-		public static implicit operator SByte( Day value ) => value.Value;
+        public static implicit operator SByte( Day value ) => value.Value;
 
-		/// <summary>Provide the next <see cref="Day" />.</summary>
-		public Day Next( out Boolean tocked ) {
-			tocked = false;
-			var next = ( SByte )( this.Value + 1 );
+        /// <summary>Provide the next <see cref="Day" />.</summary>
+        public Day Next( out Boolean tocked ) {
+            tocked = false;
+            var next = ( SByte ) ( this.Value + 1 );
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				tocked = true;
-			}
+            if ( next > Maximum ) {
+                next = Minimum;
+                tocked = true;
+            }
 
-			return new Day( next );
-		}
+            return new Day( next );
+        }
 
-		/// <summary>Provide the previous <see cref="Day" />.</summary>
-		public Day Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = ( SByte )( this.Value - 1 );
+        /// <summary>Provide the previous <see cref="Day" />.</summary>
+        public Day Previous( out Boolean tocked ) {
+            tocked = false;
+            var next = ( SByte ) ( this.Value - 1 );
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				tocked = true;
-			}
+            if ( next < Minimum ) {
+                next = Maximum;
+                tocked = true;
+            }
 
-			return new Day( next );
-		}
-	}
+            return new Day( next );
+        }
+    }
 }

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,82 +35,79 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Blocks.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
+// Project: "Librainian", "Blocks.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
 
 namespace Librainian.Threading {
 
-	using System;
-	using System.Threading.Tasks;
-	using System.Threading.Tasks.Dataflow;
-	using JetBrains.Annotations;
-	using Measurement.Time;
+    using System;
+    using System.Threading.Tasks;
+    using System.Threading.Tasks.Dataflow;
+    using JetBrains.Annotations;
+    using Measurement.Time;
 
-	public static class Blocks {
+    public static class Blocks {
 
-		[NotNull]
-		public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
-			var lastItem = DateTime.MinValue;
+        [NotNull]
+        public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
+            var lastItem = DateTime.MinValue;
 
-			return new TransformBlock<T, T>( async x => {
-				var waitTime = lastItem + delay - DateTime.UtcNow;
+            return new TransformBlock<T, T>( async x => {
+                var waitTime = lastItem + delay - DateTime.UtcNow;
 
-				if ( waitTime > TimeSpan.Zero ) { await Task.Delay( waitTime ); }
+                if ( waitTime > TimeSpan.Zero ) {
+                    await Task.Delay( waitTime );
+                }
 
-				lastItem = DateTime.UtcNow;
+                lastItem = DateTime.UtcNow;
 
-				return x;
-			}, new ExecutionDataflowBlockOptions {
-				BoundedCapacity = 1
-			} );
-		}
+                return x;
+            }, new ExecutionDataflowBlockOptions {
+                BoundedCapacity = 1
+            } );
+        }
 
-		public static class ManyProducers {
+        public static class ManyProducers {
 
-			/// <summary>
-			///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
-			///     <see cref="Environment.ProcessorCount" /> ).
-			/// </summary>
-			public static readonly ExecutionDataflowBlockOptions ConsumeEverything = new ExecutionDataflowBlockOptions {
-				SingleProducerConstrained = false,
-				MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount
-			};
+            /// <summary>
+            ///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
+            ///     <see cref="Environment.ProcessorCount" /> ).
+            /// </summary>
+            public static readonly ExecutionDataflowBlockOptions ConsumeEverything = new ExecutionDataflowBlockOptions {
+                SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount
+            };
 
-			/// <summary>
-			///     Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).
-			/// </summary>
-			public static readonly ExecutionDataflowBlockOptions ConsumeSensible = new ExecutionDataflowBlockOptions {
-				SingleProducerConstrained = false,
-				MaxDegreeOfParallelism = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1
-			};
+            /// <summary>
+            ///     Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).
+            /// </summary>
+            public static readonly ExecutionDataflowBlockOptions ConsumeSensible = new ExecutionDataflowBlockOptions {
+                SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1
+            };
 
-			/// <summary>
-			///     Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).
-			/// </summary>
-			public static readonly ExecutionDataflowBlockOptions ConsumeSerial = new ExecutionDataflowBlockOptions {
-				SingleProducerConstrained = false,
-				MaxDegreeOfParallelism = 1
-			};
-		}
+            /// <summary>
+            ///     Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).
+            /// </summary>
+            public static readonly ExecutionDataflowBlockOptions ConsumeSerial = new ExecutionDataflowBlockOptions {
+                SingleProducerConstrained = false, MaxDegreeOfParallelism = 1
+            };
+        }
 
-		public static class SingleProducer {
+        public static class SingleProducer {
 
-			/// <summary>
-			///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
-			/// </summary>
-			public static readonly ExecutionDataflowBlockOptions ConsumeSensible = new ExecutionDataflowBlockOptions {
-				SingleProducerConstrained = false,
-				MaxDegreeOfParallelism = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1
-			};
+            /// <summary>
+            ///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
+            /// </summary>
+            public static readonly ExecutionDataflowBlockOptions ConsumeSensible = new ExecutionDataflowBlockOptions {
+                SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1
+            };
 
-			/// <summary>
-			///     <para>Single producer consumed in serial (one at a time).</para>
-			/// </summary>
-			public static readonly ExecutionDataflowBlockOptions ConsumeSerial = new ExecutionDataflowBlockOptions {
-				SingleProducerConstrained = true,
-				MaxDegreeOfParallelism = 1
-			};
-		}
-	}
+            /// <summary>
+            ///     <para>Single producer consumed in serial (one at a time).</para>
+            /// </summary>
+            public static readonly ExecutionDataflowBlockOptions ConsumeSerial = new ExecutionDataflowBlockOptions {
+                SingleProducerConstrained = true, MaxDegreeOfParallelism = 1
+            };
+        }
+    }
 }

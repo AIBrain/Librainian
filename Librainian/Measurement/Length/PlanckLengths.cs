@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,77 +35,75 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PlanckLengths.cs" was last formatted by Protiguous on 2018/07/13 at 1:23 AM.
+// Project: "Librainian", "PlanckLengths.cs" was last formatted by Protiguous on 2019/08/08 at 8:47 AM.
 
 namespace Librainian.Measurement.Length {
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Newtonsoft.Json;
+    using System;
+    using System.Diagnostics;
+    using System.Numerics;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	/// </summary>
-	/// <see cref="http://en.wikipedia.org/wiki/Plank_length" />
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public struct PlanckLengths : IComparable<PlanckLengths> {
+    /// <summary>
+    /// </summary>
+    /// <see cref="http://en.wikipedia.org/wiki/Plank_length" />
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [JsonObject]
+    public struct PlanckLengths : IComparable<PlanckLengths> {
 
-		/// <summary>
-		///     One <see cref="PlanckLengths" />.
-		/// </summary>
-		public static readonly PlanckLengths One = new PlanckLengths( planckLengths: 1 );
+        /// <summary>
+        ///     One <see cref="PlanckLengths" />.
+        /// </summary>
+        public static readonly PlanckLengths One = new PlanckLengths( planckLengths: 1 );
 
-		/// <summary>
-		///     One <see cref="PlanckLengths" />.
-		/// </summary>
-		public static readonly PlanckLengths Two = new PlanckLengths( planckLengths: 2 );
+        /// <summary>
+        ///     One <see cref="PlanckLengths" />.
+        /// </summary>
+        public static readonly PlanckLengths Two = new PlanckLengths( planckLengths: 2 );
 
-		/// <summary>
-		///     Zero <see cref="PlanckLengths" />.
-		/// </summary>
-		public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
+        /// <summary>
+        ///     Zero <see cref="PlanckLengths" />.
+        /// </summary>
+        public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
 
-		[JsonProperty]
-		public readonly BigInteger Value;
+        [JsonProperty]
+        public readonly BigInteger Value;
 
-		public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
+        public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
 
-		public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-		//public static Boolean operator >( PlanckUnits left, Minutes rhs ) {
-		//    return left.Comparison( rhs ) > 0;
-		//}
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        //public static Boolean operator >( PlanckUnits left, Minutes rhs ) {
+        //    return left.Comparison( rhs ) > 0;
+        //}
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public override String ToString() => $"{this.Value}";
+        public override String ToString() => $"{this.Value}";
 
-		//public static implicit operator Span( PlanckUnits milliseconds ) {
-		//    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
-		//}
+        //public static implicit operator Span( PlanckUnits milliseconds ) {
+        //    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
+        //}
 
-		//public static Boolean operator <( PlanckUnits left, PlanckUnits rhs ) {
-		//    return left.Value.CompareTo( rhs.Value ) < 0;
-		//}
+        //public static Boolean operator <( PlanckUnits left, PlanckUnits rhs ) {
+        //    return left.Value.CompareTo( rhs.Value ) < 0;
+        //}
 
-		//public static Boolean operator <( PlanckUnits left, Seconds rhs ) {
-		//    return left.Comparison( rhs ) < 0;
-		//}
+        //public static Boolean operator <( PlanckUnits left, Seconds rhs ) {
+        //    return left.Comparison( rhs ) < 0;
+        //}
 
-		//public static Boolean operator <( PlanckUnits left, Minutes rhs ) {
-		//    return left.Comparison( rhs ) < 0;
-		//}
+        //public static Boolean operator <( PlanckUnits left, Minutes rhs ) {
+        //    return left.Comparison( rhs ) < 0;
+        //}
 
-		//public static Boolean operator >( PlanckUnits left, PlanckUnits rhs ) {
-		//    return left.Value.CompareTo( rhs.Value ) > 0;
-		//}
+        //public static Boolean operator >( PlanckUnits left, PlanckUnits rhs ) {
+        //    return left.Value.CompareTo( rhs.Value ) > 0;
+        //}
 
-		//public static Boolean operator >( PlanckUnits left, Seconds rhs ) {
-		//    return left.Comparison( rhs ) > 0;
-		//}
-	}
-
-	
+        //public static Boolean operator >( PlanckUnits left, Seconds rhs ) {
+        //    return left.Comparison( rhs ) > 0;
+        //}
+    }
 }

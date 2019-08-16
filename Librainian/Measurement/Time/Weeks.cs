@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Weeks.cs" was last formatted by Protiguous on 2018/07/13 at 1:31 AM.
+// Project: "Librainian", "Weeks.cs" was last formatted by Protiguous on 2019/08/08 at 9:11 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -85,7 +85,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Weeks( Decimal weeks ) => this.Value = ( Rational )weeks;
+        public Weeks( Decimal weeks ) => this.Value = ( Rational ) weeks;
 
         public Weeks( Rational weeks ) => this.Value = weeks;
 
@@ -126,21 +126,21 @@ namespace Librainian.Measurement.Time {
 
         public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
 
-        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational )weeks );
+        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational ) weeks );
 
         public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
 
         public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
+        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks ) right;
 
-        public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
+        public static Boolean operator <( Weeks left, Months right ) => ( Months ) left < right;
 
         public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-        public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
+        public static Boolean operator >( Weeks left, Months right ) => ( Months ) left > right;
 
-        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
+        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks ) right;
 
         public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
@@ -149,7 +149,9 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Weeks other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) { return false; }
+            if ( obj == null ) {
+                return false;
+            }
 
             return obj is Weeks weeks && this.Equals( weeks );
         }
@@ -158,9 +160,9 @@ namespace Librainian.Measurement.Time {
 
         public Days ToDays() => new Days( this.Value * Days.InOneWeek );
 
-        public Months ToMonths() => new Months( this.Value / ( Rational )InOneMonth );
+        public Months ToMonths() => new Months( this.Value / ( Rational ) InOneMonth );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneWeek );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneWeek );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneWeek );
@@ -172,7 +174,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "week" )}";
             }
 
-            var dec = ( Decimal )this.Value;
+            var dec = ( Decimal ) this.Value;
 
             return $"{dec} {dec.PluralOf( "week" )}";
         }

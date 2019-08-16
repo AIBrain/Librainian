@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,47 +35,59 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HashSetLinqAccess.cs" was last formatted by Protiguous on 2018/07/10 at 9:02 PM.
+// Project: "Librainian", "HashSetLinqAccess.cs" was last formatted by Protiguous on 2019/08/08 at 7:15 AM.
 
 namespace Librainian.Extensions {
 
-	using System;
-	using System.Collections.Generic;
-	using JetBrains.Annotations;
+    using System;
+    using System.Collections.Generic;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
-	///     provided by the others: ToList(), ToArray(), ToDictionary().. Now ToHashSet() is available.
-	///     UPDATE: These might be available in the newer Libraries.
-	/// </summary>
-	/// <seealso
-	///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
-	public static class HashSetLinqAccess {
+    /// <summary>
+    ///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
+    ///     provided by the others: ToList(), ToArray(), ToDictionary().. Now ToHashSet() is available.
+    ///     UPDATE: These might be available in the newer Libraries.
+    /// </summary>
+    /// <seealso
+    ///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
+    public static class HashSetLinqAccess {
 
-		[NotNull]
-		public static HashSet<T> AddRange<T>( [NotNull] this HashSet<T> hashSet, [NotNull] IEnumerable<T> range ) {
-			if ( Equals( hashSet, null ) ) { throw new ArgumentNullException( nameof( hashSet ) ); }
+        [NotNull]
+        public static HashSet<T> AddRange<T>( [NotNull] this HashSet<T> hashSet, [NotNull] IEnumerable<T> range ) {
+            if ( Equals( hashSet, null ) ) {
+                throw new ArgumentNullException( nameof( hashSet ) );
+            }
 
-			if ( Equals( range, null ) ) { throw new ArgumentNullException( nameof( range ) ); }
+            if ( Equals( range, null ) ) {
+                throw new ArgumentNullException( nameof( range ) );
+            }
 
-			foreach ( var item in range ) { hashSet.Add( item: item ); }
+            foreach ( var item in range ) {
+                hashSet.Add( item: item );
+            }
 
-			return hashSet;
-		}
+            return hashSet;
+        }
 
-		[NotNull]
-		public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
-			if ( null == fromEnumerable ) { throw new ArgumentNullException( nameof( fromEnumerable ) ); }
+        [NotNull]
+        public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
+            if ( null == fromEnumerable ) {
+                throw new ArgumentNullException( nameof( fromEnumerable ) );
+            }
 
-			if ( null == comparer ) { comparer = EqualityComparer<T>.Default; }
+            if ( null == comparer ) {
+                comparer = EqualityComparer<T>.Default;
+            }
 
-			if ( fromEnumerable is HashSet<T> set ) { return set; }
+            if ( fromEnumerable is HashSet<T> set ) {
+                return set;
+            }
 
-			return new HashSet<T>( fromEnumerable, comparer );
-		}
+            return new HashSet<T>( fromEnumerable, comparer );
+        }
 
-		//public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
-	}
+        //public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
+    }
 }

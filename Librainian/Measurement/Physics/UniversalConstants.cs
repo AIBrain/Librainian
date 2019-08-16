@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,51 +35,51 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UniversalConstants.cs" was last formatted by Protiguous on 2018/07/13 at 1:24 AM.
+// Project: "Librainian", "UniversalConstants.cs" was last formatted by Protiguous on 2019/08/08 at 8:50 AM.
 
 namespace Librainian.Measurement.Physics {
 
-	using System;
-	using Maths;
+    using System;
+    using Maths;
 
-	public static class UniversalConstants {
+    public static class UniversalConstants {
 
-		/// <summary>
-		/// </summary>
-		/// <see cref="http://wikipedia.org/wiki/Elementary_charge" />
-		public static ElectronVolts ElementaryCharge { get; } = new ElectronVolts( 0.0000000000000000001602176565m );
+        /// <summary>
+        /// </summary>
+        /// <see cref="http://wikipedia.org/wiki/Elementary_charge" />
+        public static ElectronVolts ElementaryCharge { get; } = new ElectronVolts( 0.0000000000000000001602176565m );
 
-		public static Decimal HalfSpin { get; } = ( Decimal ) MathConstants.OneOverTwo;
+        public static Decimal HalfSpin { get; } = ( Decimal ) MathConstants.OneOverTwo;
 
-		/// <summary>
-		///     Precalculated -1/3 of <see cref="ElementaryCharge" />.
-		/// </summary>
-		public static ElectronVolts NegativeOneThirdElementaryCharge { get; } = -1m * ElementaryCharge / 3m;
+        /// <summary>
+        ///     Precalculated -1/3 of <see cref="ElementaryCharge" />.
+        /// </summary>
+        public static ElectronVolts NegativeOneThirdElementaryCharge { get; } = -1m * ElementaryCharge / 3m;
 
-		/// <summary>
-		///     Precalculated -2/3 of <see cref="ElementaryCharge" />.
-		/// </summary>
-		public static ElectronVolts NegativeTwoThirdsElementaryCharge { get; } = -2m * ElementaryCharge / 3m;
+        /// <summary>
+        ///     Precalculated -2/3 of <see cref="ElementaryCharge" />.
+        /// </summary>
+        public static ElectronVolts NegativeTwoThirdsElementaryCharge { get; } = -2m * ElementaryCharge / 3m;
 
-		public static ElectronVolts PositiveOneElementaryCharge { get; } = 1m * ElementaryCharge;
+        public static ElectronVolts PositiveOneElementaryCharge { get; } = 1m * ElementaryCharge;
 
-		/// <summary>
-		///     Precalculated 1/3 of <see cref="ElementaryCharge" />.
-		/// </summary>
-		public static ElectronVolts PositiveOneThirdElementaryCharge { get; } = 1m * ElementaryCharge / 3m;
+        /// <summary>
+        ///     Precalculated 1/3 of <see cref="ElementaryCharge" />.
+        /// </summary>
+        public static ElectronVolts PositiveOneThirdElementaryCharge { get; } = 1m * ElementaryCharge / 3m;
 
-		public static ElectronVolts PositiveTwoElementaryCharge { get; } = 2m * ElementaryCharge;
+        public static ElectronVolts PositiveTwoElementaryCharge { get; } = 2m * ElementaryCharge;
 
-		/// <summary>
-		///     Precalculated +2/3 of <see cref="ElementaryCharge" />.
-		/// </summary>
-		public static ElectronVolts PositiveTwoThirdsElementaryCharge { get; } = 2m * ElementaryCharge / 3m;
+        /// <summary>
+        ///     Precalculated +2/3 of <see cref="ElementaryCharge" />.
+        /// </summary>
+        public static ElectronVolts PositiveTwoThirdsElementaryCharge { get; } = 2m * ElementaryCharge / 3m;
 
-		/// <summary>
-		///     Precalculated +0 of <see cref="ElementaryCharge" />.
-		/// </summary>
-		public static ElectronVolts ZeroElementaryCharge { get; } = 0.0M * ElementaryCharge;
-	}
+        /// <summary>
+        ///     Precalculated +0 of <see cref="ElementaryCharge" />.
+        /// </summary>
+        public static ElectronVolts ZeroElementaryCharge { get; } = 0.0M * ElementaryCharge;
+    }
 }

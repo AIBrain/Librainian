@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,26 +35,24 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Radians.cs" was last formatted by Protiguous on 2018/07/13 at 1:25 AM.
+// Project: "Librainian", "Radians.cs" was last formatted by Protiguous on 2019/08/08 at 8:52 AM.
 
-namespace Librainian.Measurement.Spatial
-{
+namespace Librainian.Measurement.Spatial {
 
+    using System;
+    using System.Diagnostics;
     using Extensions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
-    using System;
-    using System.Diagnostics;
 
     /// <summary>The radian is the standard unit of angular measure.</summary>
     /// <see cref="http://wikipedia.org/wiki/Radian" />
-    [DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public struct Radians : IComparable<Radians>
-    {
+    public struct Radians : IComparable<Radians> {
 
         [JsonProperty]
         private Single _value;
@@ -65,26 +63,30 @@ namespace Librainian.Measurement.Spatial
 
         //TODO is this correct?
         /// <summary>180 / Math.PI</summary>
-        public const Single RadiansToDegreesFactor = (Single)(180 / Math.PI);
+        public const Single RadiansToDegreesFactor = ( Single ) ( 180 / Math.PI );
 
         /// <summary>One <see cref="Radians" />.</summary>
-        public static readonly Radians One = new Radians(1);
+        public static readonly Radians One = new Radians( 1 );
 
         public Single Value {
             get => this._value;
 
             set {
-                while (value < MinimumValue) { value += MaximumValue; }
+                while ( value < MinimumValue ) {
+                    value += MaximumValue;
+                }
 
-                while (value >= MaximumValue) { value -= MaximumValue; }
+                while ( value >= MaximumValue ) {
+                    value -= MaximumValue;
+                }
 
                 this._value = value;
             }
         }
 
-        public Radians(Single value) : this() => this.Value = value;
+        public Radians( Single value ) : this() => this.Value = value;
 
-        public static Radians Combine(Radians left, Single radians) => new Radians(left.Value + radians);
+        public static Radians Combine( Radians left, Single radians ) => new Radians( left.Value + radians );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -92,49 +94,50 @@ namespace Librainian.Measurement.Spatial
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals(Radians left, Radians right) => Math.Abs(left.Value - right.Value) < Double.Epsilon;
+        public static Boolean Equals( Radians left, Radians right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
-        public static implicit operator Decimal(Radians radians) => (Decimal)radians.Value;
+        public static implicit operator Decimal( Radians radians ) => ( Decimal ) radians.Value;
 
-        public static implicit operator Degrees(Radians radians) => ToDegrees(radians);
+        public static implicit operator Degrees( Radians radians ) => ToDegrees( radians );
 
-        public static implicit operator Double(Radians radians) => radians.Value;
+        public static implicit operator Double( Radians radians ) => radians.Value;
 
-        public static implicit operator Single(Radians radians) => radians.Value;
+        public static implicit operator Single( Radians radians ) => radians.Value;
 
-        public static Radians operator -(Radians radians) => new Radians(radians.Value * -1);
+        public static Radians operator -( Radians radians ) => new Radians( radians.Value * -1 );
 
-        public static Radians operator -(Radians left, Radians right) => Combine(left, -right.Value);
+        public static Radians operator -( Radians left, Radians right ) => Combine( left, -right.Value );
 
-        public static Radians operator -(Radians left, Single radians) => Combine(left, -radians);
+        public static Radians operator -( Radians left, Single radians ) => Combine( left, -radians );
 
-        public static Boolean operator !=(Radians left, Radians right) => !Equals(left, right);
+        public static Boolean operator !=( Radians left, Radians right ) => !Equals( left, right );
 
-        public static Radians operator +(Radians left, Radians right) => Combine(left, right.Value);
+        public static Radians operator +( Radians left, Radians right ) => Combine( left, right.Value );
 
-        public static Radians operator +(Radians left, Single radians) => Combine(left, radians);
+        public static Radians operator +( Radians left, Single radians ) => Combine( left, radians );
 
-        public static Boolean operator <(Radians left, Radians right) => left.Value < right.Value;
+        public static Boolean operator <( Radians left, Radians right ) => left.Value < right.Value;
 
-        public static Boolean operator ==(Radians left, Radians right) => Equals(left, right);
+        public static Boolean operator ==( Radians left, Radians right ) => Equals( left, right );
 
-        public static Boolean operator >(Radians left, Radians right) => left.Value > right.Value;
+        public static Boolean operator >( Radians left, Radians right ) => left.Value > right.Value;
 
-        public static Degrees ToDegrees(Single radians) => new Degrees(radians * RadiansToDegreesFactor);
+        public static Degrees ToDegrees( Single radians ) => new Degrees( radians * RadiansToDegreesFactor );
 
-        public static Degrees ToDegrees(Double radians) => new Degrees((Single)(radians * RadiansToDegreesFactor));
+        public static Degrees ToDegrees( Double radians ) => new Degrees( ( Single ) ( radians * RadiansToDegreesFactor ) );
 
-        public static Degrees ToDegrees(Radians radians) => new Degrees(radians.Value * RadiansToDegreesFactor);
+        public static Degrees ToDegrees( Radians radians ) => new Degrees( radians.Value * RadiansToDegreesFactor );
 
-        public Int32 CompareTo(Radians other) => this.Value.CompareTo(other.Value);
+        public Int32 CompareTo( Radians other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals(Radians other) => Equals(this, other);
+        public Boolean Equals( Radians other ) => Equals( this, other );
 
-        public override Boolean Equals(Object obj)
-        {
-            if (obj == null) { return false; }
+        public override Boolean Equals( Object obj ) {
+            if ( obj == null ) {
+                return false;
+            }
 
-            return obj is Radians radians && Equals(this, radians);
+            return obj is Radians radians && Equals( this, radians );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();

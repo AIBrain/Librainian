@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DetectSSD.cs" was last formatted by Protiguous on 2019/03/17 at 12:33 PM.
+// Project: "Librainian", "DetectSSD.cs" was last formatted by Protiguous on 2019/08/08 at 9:21 AM.
 
 namespace Librainian.OperatingSystem.Storage {
 
@@ -47,7 +47,7 @@ namespace Librainian.OperatingSystem.Storage {
     public static class DetectSSD {
 
         private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
-            (deviceType << 16) | (access << 14) | (function << 2) | method;
+            ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
 
         /// <summary>
         ///     Returns true if the disk/drive has seek penalty.
@@ -70,14 +70,13 @@ namespace Librainian.OperatingSystem.Storage {
                 CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_ANY_ACCESS ); // From winioctl.h
 
             var querySeekPenalty = new NativeMethods.STORAGE_PROPERTY_QUERY {
-                PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty,
-                QueryType = NativeMethods.PropertyStandardQuery
+                PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty, QueryType = NativeMethods.PropertyStandardQuery
             };
 
             var querySeekPenaltyDesc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
-            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 )Marshal.SizeOf( querySeekPenalty ),
-                ref querySeekPenaltyDesc, ( UInt32 )Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
+            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 ) Marshal.SizeOf( querySeekPenalty ),
+                ref querySeekPenaltyDesc, ( UInt32 ) Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
 
             hDrive.Close();
 
@@ -132,17 +131,17 @@ namespace Librainian.OperatingSystem.Storage {
                 data = new UInt16[ 256 ]
             };
 
-            idQuery.header.Length = ( UInt16 )Marshal.SizeOf( idQuery.header );
-            idQuery.header.AtaFlags = ( UInt16 )NativeMethods.ATA_FLAGS_DATA_IN;
-            idQuery.header.DataTransferLength = ( UInt32 )( idQuery.data.Length * 2 ); // Size of "data" in bytes
+            idQuery.header.Length = ( UInt16 ) Marshal.SizeOf( idQuery.header );
+            idQuery.header.AtaFlags = ( UInt16 ) NativeMethods.ATA_FLAGS_DATA_IN;
+            idQuery.header.DataTransferLength = ( UInt32 ) ( idQuery.data.Length * 2 ); // Size of "data" in bytes
             idQuery.header.TimeOutValue = 3; // Sec
             idQuery.header.DataBufferOffset = Marshal.OffsetOf( typeof( NativeMethods.ATAIdentifyDeviceQuery ), "data" );
             idQuery.header.PreviousTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile[ 6 ] = 0xec; // ATA IDENTIFY DEVICE
 
-            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery,
-                ( UInt32 )Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
+            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 ) Marshal.SizeOf( idQuery ), ref idQuery,
+                ( UInt32 ) Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
 
             hDrive.Close();
 

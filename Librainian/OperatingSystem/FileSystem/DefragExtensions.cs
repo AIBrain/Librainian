@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,22 +35,19 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DefragExtensions.cs" was last formatted by Protiguous on 2018/07/10 at 8:53 PM.
+// Project: "Librainian", "DefragExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:14 AM.
 
-namespace Librainian.OperatingSystem.FileSystem
-{
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Diagnostics;
     using System.IO;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
-    using OperatingSystem;
 
-    public static class DefragExtensions
-    {
+    public static class DefragExtensions {
 
         /// <summary>
         ///     The function starts the Defrag.Exe and waits for it to finish. It ensures the process is
@@ -58,22 +55,22 @@ namespace Librainian.OperatingSystem.FileSystem
         /// </summary>
         /// <param name="disk">Drive to defrag - format is "c:" for example</param>
         [NotNull]
-        private static String Defrag(Disk disk)
-        {
-            var path = Path.Combine(Windows.WindowsSystem32Folder.Value.FullName, "defrag.exe");
+        private static String Defrag( Disk disk ) {
+            var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "defrag.exe" );
 
-            var info = new ProcessStartInfo
-            {
+            var info = new ProcessStartInfo {
                 FileName = path,
-                Arguments = String.Format("{{{0}}} /O /V /M " + Environment.ProcessorCount, disk),
+                Arguments = String.Format( "{{{0}}} /O /V /M " + Environment.ProcessorCount, disk ),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true
             };
 
-            var defrag = Process.Start(info);
+            var defrag = Process.Start( info );
 
-            if (defrag == null) { return String.Empty; }
+            if ( defrag == null ) {
+                return String.Empty;
+            }
 
             defrag.PriorityClass = ProcessPriorityClass.Idle;
             defrag.WaitForExit();

@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,72 +35,73 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Millisecond.cs" was last formatted by Protiguous on 2018/10/24 at 10:17 PM.
+// Project: "Librainian", "Millisecond.cs" was last formatted by Protiguous on 2019/08/08 at 8:56 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="Millisecond" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public struct Millisecond : IClockPart {
+    /// <summary>A simple struct for a <see cref="Millisecond" />.</summary>
+    [JsonObject]
+    [Immutable]
+    public struct Millisecond : IClockPart {
 
-		public const Int32 MaxValue = 999;
-		public const Int32 MinValue = 0;
+        public const Int32 MaxValue = 999;
 
-		[JsonProperty]
-		public readonly Int16 Value;
+        public const Int32 MinValue = 0;
 
-		public static Millisecond Maximum { get; } = new Millisecond( MaxValue );
+        [JsonProperty]
+        public readonly Int16 Value;
 
-		public static Millisecond Minimum { get; } = new Millisecond( MinValue );
+        public static Millisecond Maximum { get; } = new Millisecond( MaxValue );
 
-		public Millisecond( Int16 value ) {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
-			}
+        public static Millisecond Minimum { get; } = new Millisecond( MinValue );
 
-			this.Value = value;
-		}
+        public Millisecond( Int16 value ) {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+            }
 
-		public static explicit operator UInt16( Millisecond value ) => ( UInt16 )value.Value;
+            this.Value = value;
+        }
 
-		/// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static implicit operator Int16( Millisecond value ) => value.Value;
+        public static explicit operator UInt16( Millisecond value ) => ( UInt16 ) value.Value;
 
-		public static implicit operator Millisecond( Int16 value ) => new Millisecond( value );
+        /// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static implicit operator Int16( Millisecond value ) => value.Value;
 
-		/// <summary>Provide the next <see cref="Millisecond" />.</summary>
-		public Millisecond Next( out Boolean ticked ) {
-			ticked = false;
-			var next = this.Value + 1;
+        public static implicit operator Millisecond( Int16 value ) => new Millisecond( value );
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				ticked = true;
-			}
+        /// <summary>Provide the next <see cref="Millisecond" />.</summary>
+        public Millisecond Next( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value + 1;
 
-			return ( Int16 )next;
-		}
+            if ( next > Maximum ) {
+                next = Minimum;
+                ticked = true;
+            }
 
-		/// <summary>Provide the previous <see cref="Millisecond" />.</summary>
-		public Millisecond Previous( out Boolean ticked ) {
-			ticked = false;
-			var next = this.Value - 1;
+            return ( Int16 ) next;
+        }
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				ticked = true;
-			}
+        /// <summary>Provide the previous <see cref="Millisecond" />.</summary>
+        public Millisecond Previous( out Boolean ticked ) {
+            ticked = false;
+            var next = this.Value - 1;
 
-			return ( Int16 )next;
-		}
-	}
+            if ( next < Minimum ) {
+                next = Maximum;
+                ticked = true;
+            }
+
+            return ( Int16 ) next;
+        }
+    }
 }

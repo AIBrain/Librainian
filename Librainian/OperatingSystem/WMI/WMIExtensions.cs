@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,74 +35,82 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WMIExtensions.cs" was last formatted by Protiguous on 2018/07/13 at 1:34 AM.
+// Project: "Librainian", "WMIExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:22 AM.
 
 namespace Librainian.OperatingSystem.WMI {
 
-	using System;
-	using System.Management;
-	using JetBrains.Annotations;
+    using System;
+    using System.Management;
+    using JetBrains.Annotations;
 
-	public static class WMIExtensions {
+    public static class WMIExtensions {
 
-		[NotNull]
-		public static String Identifier( String wmiClass, String wmiProperty, String wmiMustBeTrue ) {
-			using ( var managementClass = new ManagementClass( wmiClass ) ) {
-				var instances = managementClass.GetInstances();
+        [NotNull]
+        public static String Identifier( String wmiClass, String wmiProperty, String wmiMustBeTrue ) {
+            using ( var managementClass = new ManagementClass( wmiClass ) ) {
+                var instances = managementClass.GetInstances();
 
-				foreach ( var baseObject in instances ) {
-					if ( !( baseObject is ManagementObject managementObject ) || managementObject[ wmiMustBeTrue ].ToString() != "True" ) { continue; }
+                foreach ( var baseObject in instances ) {
+                    if ( !( baseObject is ManagementObject managementObject ) || managementObject[ wmiMustBeTrue ].ToString() != "True" ) {
+                        continue;
+                    }
 
-					try { return managementObject[ wmiProperty ].ToString(); }
-					catch {
+                    try {
+                        return managementObject[ wmiProperty ].ToString();
+                    }
+                    catch {
 
-						// ignored
-					}
-				}
-			}
+                        // ignored
+                    }
+                }
+            }
 
-			return String.Empty;
-		}
+            return String.Empty;
+        }
 
-		[NotNull]
-		public static String Identifier( String wmiClass, String wmiProperty ) {
-			using ( var managementClass = new ManagementClass( wmiClass ) ) {
-				var instances = managementClass.GetInstances();
+        [NotNull]
+        public static String Identifier( String wmiClass, String wmiProperty ) {
+            using ( var managementClass = new ManagementClass( wmiClass ) ) {
+                var instances = managementClass.GetInstances();
 
-				foreach ( var baseObject in instances ) {
-					try {
-						if ( baseObject is ManagementObject managementObject ) { return managementObject[ wmiProperty ].ToString(); }
-					}
-					catch {
+                foreach ( var baseObject in instances ) {
+                    try {
+                        if ( baseObject is ManagementObject managementObject ) {
+                            return managementObject[ wmiProperty ].ToString();
+                        }
+                    }
+                    catch {
 
-						// ignored
-					}
-				}
-			}
+                        // ignored
+                    }
+                }
+            }
 
-			return String.Empty;
-		}
+            return String.Empty;
+        }
 
-		[NotNull]
-		public static ManagementObjectCollection QueryWMI( String machineName, String scope, [NotNull] String query ) {
-			var conn = new ConnectionOptions();
-			var nameSpace = @"\\";
-			nameSpace += machineName != String.Empty ? machineName : ".";
-			nameSpace += @"\root\" + scope;
-			var managementScope = new ManagementScope( nameSpace, conn );
-			var wmiQuery = new ObjectQuery( query );
-			var moSearcher = new ManagementObjectSearcher( managementScope, wmiQuery );
+        [NotNull]
+        public static ManagementObjectCollection QueryWMI( String machineName, String scope, [NotNull] String query ) {
+            var conn = new ConnectionOptions();
+            var nameSpace = @"\\";
+            nameSpace += machineName != String.Empty ? machineName : ".";
+            nameSpace += @"\root\" + scope;
+            var managementScope = new ManagementScope( nameSpace, conn );
+            var wmiQuery = new ObjectQuery( query );
+            var moSearcher = new ManagementObjectSearcher( managementScope, wmiQuery );
 
-			return moSearcher.Get();
-		}
+            return moSearcher.Get();
+        }
 
-		[NotNull]
-		public static ManagementObjectCollection WmiQuery( [NotNull] String query ) {
-			var oQuery = new ObjectQuery( query );
+        [NotNull]
+        public static ManagementObjectCollection WmiQuery( [NotNull] String query ) {
+            var oQuery = new ObjectQuery( query );
 
-			using ( var oSearcher = new ManagementObjectSearcher( oQuery ) ) { return oSearcher.Get(); }
-		}
-	}
+            using ( var oSearcher = new ManagementObjectSearcher( oQuery ) ) {
+                return oSearcher.Get();
+            }
+        }
+    }
 }

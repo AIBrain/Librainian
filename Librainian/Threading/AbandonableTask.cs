@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,23 +35,21 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AbandonableTask.cs" was last formatted by Protiguous on 2018/07/13 at 1:39 AM.
+// Project: "Librainian", "AbandonableTask.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
 
-namespace Librainian.Threading
-{
+namespace Librainian.Threading {
 
-    using JetBrains.Annotations;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// </summary>
     /// <see cref="http://stackoverflow.com/a/4749401/956364" />
-    public sealed class AbandonableTask
-    {
+    public sealed class AbandonableTask {
 
         private readonly Action<Task> _afterComplete;
 
@@ -61,33 +59,35 @@ namespace Librainian.Threading
 
         private readonly CancellationToken _cancellationToken;
 
-        private AbandonableTask(CancellationToken cancellationToken, Action beginWork, [NotNull] Action blockingWork, Action<Task> afterComplete)
-        {
+        private AbandonableTask( CancellationToken cancellationToken, Action beginWork, [NotNull] Action blockingWork, Action<Task> afterComplete ) {
             this._cancellationToken = cancellationToken;
             this._beginWork = beginWork;
-            this._blockingWork = blockingWork ?? throw new ArgumentNullException(nameof(blockingWork));
+            this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
             this._afterComplete = afterComplete;
         }
 
-        private void RunTask()
-        {
+        private void RunTask() {
             this._beginWork?.Invoke();
 
-            var innerTask = new Task(this._blockingWork, this._cancellationToken, TaskCreationOptions.LongRunning);
+            var innerTask = new Task( this._blockingWork, this._cancellationToken, TaskCreationOptions.LongRunning );
             innerTask.Start();
 
-            innerTask.Wait(this._cancellationToken);
+            innerTask.Wait( this._cancellationToken );
 
-            if (innerTask.IsCompleted) { this._afterComplete?.Invoke(innerTask); }
+            if ( innerTask.IsCompleted ) {
+                this._afterComplete?.Invoke( innerTask );
+            }
         }
 
         [NotNull]
-        public static Task Start(CancellationToken cancellationToken, [NotNull] Action blockingWork, [CanBeNull] Action beginWork = null, [CanBeNull] Action<Task> afterComplete = null)
-        {
-            if (blockingWork == null) { throw new ArgumentNullException(nameof(blockingWork)); }
+        public static Task Start( CancellationToken cancellationToken, [NotNull] Action blockingWork, [CanBeNull] Action beginWork = null,
+            [CanBeNull] Action<Task> afterComplete = null ) {
+            if ( blockingWork == null ) {
+                throw new ArgumentNullException( nameof( blockingWork ) );
+            }
 
-            var worker = new AbandonableTask(cancellationToken, beginWork, blockingWork, afterComplete);
-            var outerTask = new Task(worker.RunTask, cancellationToken);
+            var worker = new AbandonableTask( cancellationToken, beginWork, blockingWork, afterComplete );
+            var outerTask = new Task( worker.RunTask, cancellationToken );
             outerTask.Start();
 
             return outerTask;

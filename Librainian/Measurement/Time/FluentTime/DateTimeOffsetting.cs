@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,28 +35,28 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DateTimeOffsetting.cs" was last formatted by Protiguous on 2018/07/13 at 1:28 AM.
+// Project: "Librainian", "DateTimeOffsetting.cs" was last formatted by Protiguous on 2019/08/08 at 9:02 AM.
 
 namespace Librainian.Measurement.Time.FluentTime {
 
-	using System;
-	using JetBrains.Annotations;
+    using System;
+    using JetBrains.Annotations;
 
-	/// <summary>
-	///     Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.
-	/// </summary>
-	public static class DateTimeOffsetting {
+    /// <summary>
+    ///     Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.
+    /// </summary>
+    public static class DateTimeOffsetting {
 
-		public static DateTimeOffset Offset( this DateTime d, TimeSpan offset ) => new DateTimeOffset( d, offset );
+        public static DateTimeOffset Offset( this DateTime d, TimeSpan offset ) => new DateTimeOffset( d, offset );
 
-		public static DateTimeOffset Offset( this DateTime d, Int32 hours ) => d.Offset( TimeSpan.FromHours( hours ) );
+        public static DateTimeOffset Offset( this DateTime d, Int32 hours ) => d.Offset( TimeSpan.FromHours( hours ) );
 
-		public static DateTimeOffset OffsetFor( this DateTime d, [NotNull] TimeZoneInfo zone ) => d.Offset( zone.GetUtcOffset( d ) );
+        public static DateTimeOffset OffsetFor( this DateTime d, [NotNull] TimeZoneInfo zone ) => d.Offset( zone.GetUtcOffset( d ) );
 
-		public static DateTimeOffset OffsetFor( this DateTime d, [NotNull] String timeZoneId ) => d.OffsetFor( TimeZoneInfo.FindSystemTimeZoneById( timeZoneId ) );
+        public static DateTimeOffset OffsetFor( this DateTime d, [NotNull] String timeZoneId ) => d.OffsetFor( TimeZoneInfo.FindSystemTimeZoneById( timeZoneId ) );
 
-		public static DateTimeOffset OffsetForLocal( this DateTime d ) => d.OffsetFor( TimeZoneInfo.Local );
-	}
+        public static DateTimeOffset OffsetForLocal( this DateTime d ) => d.OffsetFor( TimeZoneInfo.Local );
+    }
 }

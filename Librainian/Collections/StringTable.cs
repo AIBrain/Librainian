@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StringTable.cs" was last formatted by Protiguous on 2018/07/10 at 8:52 PM.
+// Project: "Librainian", "StringTable.cs" was last formatted by Protiguous on 2019/08/08 at 6:38 AM.
 
 namespace Librainian.Collections {
 
@@ -66,7 +66,9 @@ namespace Librainian.Collections {
             get => this.Words.TryGetValue( key, out var result ) ? result : default;
 
             set {
-                if ( String.IsNullOrEmpty( key ) ) { return; }
+                if ( String.IsNullOrEmpty( key ) ) {
+                    return;
+                }
 
                 this.Words[ key ] = value;
                 this.Ints[ value ] = key;
@@ -86,12 +88,15 @@ namespace Librainian.Collections {
                 if ( value != null ) {
                     this.Words[ value ] = key;
                 }
+
                 this.Ints[ key ] = value;
             }
         }
 
         public StringTable( [NotNull] Folder commonName ) {
-            if ( commonName == null ) { throw new ArgumentNullException( paramName: nameof( commonName ) ); }
+            if ( commonName == null ) {
+                throw new ArgumentNullException( paramName: nameof( commonName ) );
+            }
 
             this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
             this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
@@ -108,7 +113,9 @@ namespace Librainian.Collections {
         /// <param name="word"></param>
         /// <returns></returns>
         public Boolean Contains( [CanBeNull] String word ) {
-            if ( String.IsNullOrEmpty( word ) ) { return false; }
+            if ( String.IsNullOrEmpty( word ) ) {
+                return false;
+            }
 
             return this.Words.TryGetValue( word, out _ );
         }

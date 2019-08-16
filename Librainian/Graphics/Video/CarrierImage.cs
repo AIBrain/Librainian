@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,66 +35,66 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CarrierImage.cs" was last formatted by Protiguous on 2018/07/10 at 9:09 PM.
+// Project: "Librainian", "CarrierImage.cs" was last formatted by Protiguous on 2019/08/08 at 7:51 AM.
 
 namespace Librainian.Graphics.Video {
 
-	using System;
+    using System;
 
-	public struct CarrierImage {
+    public struct CarrierImage {
 
-		//count of frames in the video stream, or 0
-		public Int32 AviCountFrames;
+        //count of frames in the video stream, or 0
+        public Int32 AviCountFrames;
 
-		public Int64[] AviMessageBytesToHide;
+        public Int64[] AviMessageBytesToHide;
 
-		//width * height
-		public Int64 CountPixels;
+        //width * height
+        public Int64 CountPixels;
 
-		//how many bytes will be hidden in this image - this field is set by CryptUtility.HideOrExtract()
-		public Int64 MessageBytesToHide;
+        //how many bytes will be hidden in this image - this field is set by CryptUtility.HideOrExtract()
+        public Int64 MessageBytesToHide;
 
-		//file name to save the new image
-		public String ResultFileName;
+        //file name to save the new image
+        public String ResultFileName;
 
-		//file name of the clean image
-		public String SourceFileName;
+        //file name of the clean image
+        public String SourceFileName;
 
-		//produce colorful (false) or grayscale noise (true) for this picture
-		public Boolean UseGrayscale;
+        //produce colorful (false) or grayscale noise (true) for this picture
+        public Boolean UseGrayscale;
 
-		public CarrierImage( String sourceFileName, String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
-			this.SourceFileName = sourceFileName;
-			this.ResultFileName = resultFileName;
-			this.CountPixels = countPixels;
-			this.AviCountFrames = aviCountFrames;
-			this.UseGrayscale = useGrayscale;
-			this.MessageBytesToHide = 0;
-			this.AviMessageBytesToHide = null;
-		}
+        public CarrierImage( String sourceFileName, String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
+            this.SourceFileName = sourceFileName;
+            this.ResultFileName = resultFileName;
+            this.CountPixels = countPixels;
+            this.AviCountFrames = aviCountFrames;
+            this.UseGrayscale = useGrayscale;
+            this.MessageBytesToHide = 0;
+            this.AviMessageBytesToHide = null;
+        }
 
-		public void SetCountBytesToHide( Int64 messageBytesToHide ) {
-			this.MessageBytesToHide = messageBytesToHide;
+        public void SetCountBytesToHide( Int64 messageBytesToHide ) {
+            this.MessageBytesToHide = messageBytesToHide;
 
-			if ( this.SourceFileName.ToLower().EndsWith( ".avi" ) ) {
-				this.AviMessageBytesToHide = new Int64[ this.AviCountFrames ];
+            if ( this.SourceFileName.ToLower().EndsWith( ".avi" ) ) {
+                this.AviMessageBytesToHide = new Int64[ this.AviCountFrames ];
 
-				//calculate count of message-bytes to hide in (or extract from) each image
-				Int64 sumBytes = 0;
+                //calculate count of message-bytes to hide in (or extract from) each image
+                Int64 sumBytes = 0;
 
-				for ( var n = 0; n < this.AviCountFrames; n++ ) {
-					this.AviMessageBytesToHide[ n ] = ( Int64 ) Math.Ceiling( messageBytesToHide / ( Single ) this.AviCountFrames );
-					sumBytes += this.AviMessageBytesToHide[ n ];
-				}
+                for ( var n = 0; n < this.AviCountFrames; n++ ) {
+                    this.AviMessageBytesToHide[ n ] = ( Int64 ) Math.Ceiling( messageBytesToHide / ( Single ) this.AviCountFrames );
+                    sumBytes += this.AviMessageBytesToHide[ n ];
+                }
 
-				if ( sumBytes > messageBytesToHide ) {
+                if ( sumBytes > messageBytesToHide ) {
 
-					//correct Math.Ceiling effects
-					this.AviMessageBytesToHide[ this.AviCountFrames - 1 ] -= sumBytes - messageBytesToHide;
-				}
-			}
-		}
-	}
+                    //correct Math.Ceiling effects
+                    this.AviMessageBytesToHide[ this.AviCountFrames - 1 ] -= sumBytes - messageBytesToHide;
+                }
+            }
+        }
+    }
 }

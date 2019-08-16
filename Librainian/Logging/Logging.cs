@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +35,9 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/03/02 at 6:07 AM.
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/08/08 at 8:13 AM.
 
 namespace Librainian.Logging {
 
@@ -146,40 +146,48 @@ namespace Librainian.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                        return (Color.Blue, Color.Aqua);
-                    }
+                    return ( Color.Blue, Color.Aqua );
+                }
+
                 case LoggingLevel.SubspaceTear: {
-                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
-                    }
+                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
+                }
+
                 case LoggingLevel.Fatal: {
 
-                        return (Color.DarkRed, Color.Aqua);
-                    }
+                    return ( Color.DarkRed, Color.Aqua );
+                }
+
                 case LoggingLevel.Critical: {
 
-                        return (Color.Red, Color.Aqua);
-                    }
+                    return ( Color.Red, Color.Aqua );
+                }
+
                 case LoggingLevel.Error: {
 
-                        return (Color.Red, Color.White);
-                    }
+                    return ( Color.Red, Color.White );
+                }
+
                 case LoggingLevel.Warning: {
 
-                        return (Color.Goldenrod, Color.White);
-                    }
+                    return ( Color.Goldenrod, Color.White );
+                }
+
                 case LoggingLevel.Diagnostic: {
 
-                        return (Color.Green, Color.White);
-                    }
+                    return ( Color.Green, Color.White );
+                }
 
                 case LoggingLevel.Debug: {
 
-                        return (Color.DarkSeaGreen, Color.White);
-                    }
+                    return ( Color.DarkSeaGreen, Color.White );
+                }
+
                 case LoggingLevel.Exception: {
 
-                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
-                    }
+                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
+                }
+
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
         }
@@ -251,8 +259,10 @@ namespace Librainian.Logging {
         }
 
         /// <summary>
-        /// Write <param name="object"></param> as JSON to the <see cref="Logger"/>.
-        /// <para>Append <paramref name="more"/> if it has text.</para>
+        ///     Write
+        ///     <param name="object"></param>
+        ///     as JSON to the <see cref="Logger" />.
+        ///     <para>Append <paramref name="more" /> if it has text.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="M"></typeparam>
@@ -260,7 +270,7 @@ namespace Librainian.Logging {
         /// <param name="more"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static T Log<T,M>( this T @object, [CanBeNull] M more ) {
+        public static T Log<T, M>( this T @object, [CanBeNull] M more ) {
             if ( more == null ) {
                 Logger.Debug( $"{@object.ToJSON()}" );
             }

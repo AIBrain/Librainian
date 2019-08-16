@@ -18,8 +18,8 @@
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     paypal@AIBrain.Org
-//     (We're still looking into other solutions! Any ideas?)
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,84 +35,87 @@
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
+// Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Month.cs" was last formatted by Protiguous on 2018/08/23 at 7:09 PM.
+// Project: "Librainian", "Month.cs" was last formatted by Protiguous on 2019/08/08 at 8:57 AM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+    using System;
+    using Extensions;
+    using Newtonsoft.Json;
 
-	/// <summary>
-	///     A simple struct for a <see cref="Month" />.
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public struct Month : IComparable<Month>, IClockPart {
+    /// <summary>
+    ///     A simple struct for a <see cref="Month" />.
+    /// </summary>
+    [JsonObject]
+    [Immutable]
+    public struct Month : IComparable<Month>, IClockPart {
 
-		public const SByte MaxValue = 12;
-		public const SByte MinValue = 1;
+        public const SByte MaxValue = 12;
 
-		/// <summary>
-		/// 12
-		/// </summary>
-		public static Month Maximum { get; } = new Month( MaxValue );
+        public const SByte MinValue = 1;
 
-		/// <summary>
-		/// 1
-		/// </summary>
-		public static Month Minimum { get; } = new Month( MinValue );
+        /// <summary>
+        ///     12
+        /// </summary>
+        public static Month Maximum { get; } = new Month( MaxValue );
 
-		[JsonProperty]
-		public SByte Value { get; }
+        /// <summary>
+        ///     1
+        /// </summary>
+        public static Month Minimum { get; } = new Month( MinValue );
 
-		public Month( SByte value ) {
-			if ( value < MinValue || value > MaxValue ) { throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." ); }
+        [JsonProperty]
+        public SByte Value { get; }
 
-			this.Value = value;
-		}
+        public Month( SByte value ) {
+            if ( value < MinValue || value > MaxValue ) {
+                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+            }
 
-		/// <summary>Allow this class to be read as a <see cref="Byte" />.</summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static explicit operator Byte( Month value ) => ( Byte )value.Value;
+            this.Value = value;
+        }
 
-		public static implicit operator Month( SByte value ) => new Month( value );
+        /// <summary>Allow this class to be read as a <see cref="Byte" />.</summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static explicit operator Byte( Month value ) => ( Byte ) value.Value;
 
-		public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
+        public static implicit operator Month( SByte value ) => new Month( value );
 
-		/// <summary>
-		///     Provide the next <see cref="Month" />.
-		/// </summary>
-		/// <param name="tocked"></param>
-		/// <returns></returns>
-		public Month Next( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value + 1;
+        public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 
-			if ( next > Maximum.Value ) {
-				next = Minimum.Value;
-				tocked = true;
-			}
+        /// <summary>
+        ///     Provide the next <see cref="Month" />.
+        /// </summary>
+        /// <param name="tocked"></param>
+        /// <returns></returns>
+        public Month Next( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value + 1;
 
-			return ( Month )next;
-		}
+            if ( next > Maximum.Value ) {
+                next = Minimum.Value;
+                tocked = true;
+            }
 
-		/// <summary>
-		///     Provide the previous <see cref="Month" />.
-		/// </summary>
-		public Month Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value - 1;
+            return ( Month ) next;
+        }
 
-			if ( next < Minimum.Value ) {
-				next = Maximum.Value;
-				tocked = true;
-			}
+        /// <summary>
+        ///     Provide the previous <see cref="Month" />.
+        /// </summary>
+        public Month Previous( out Boolean tocked ) {
+            tocked = false;
+            var next = this.Value - 1;
 
-			return ( Month )next;
-		}
-	}
+            if ( next < Minimum.Value ) {
+                next = Maximum.Value;
+                tocked = true;
+            }
+
+            return ( Month ) next;
+        }
+    }
 }
