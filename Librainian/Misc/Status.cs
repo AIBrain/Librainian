@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "CollectionDebugView.cs" belongs to Protiguous@Protiguous.com and
+// 
+// This source code contained in "FlowStatus.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,45 +28,44 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "CollectionDebugView.cs" was last formatted by Protiguous on 2019/08/08 at 6:30 AM.
+// 
+// Project: "Librainian", "FlowStatus.cs" was last formatted by Protiguous on 2019/08/19 at 11:08 AM.
 
-namespace Librainian.Collections.Extensions {
+namespace Librainian.Misc {
 
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     "Make the debugger show the contents of your custom IList class"
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <remarks>http://www.codeproject.com/Articles/28405/Make-the-debugger-show-the-contents-of-your-custom</remarks>
-    /// <remarks>var list = new List&lt;T&gt;(collection);</remarks>
-    public class CollectionDebugView<T> {
+    [Flags]
+    public enum Status : SByte {
 
-        private ICollection<T> Collection { get; }
+        NoGo = Failure,
 
-        [NotNull]
-        [DebuggerBrowsable( state: DebuggerBrowsableState.RootHidden )]
-        public T[] Items {
-            get {
-                var array = new T[ this.Collection.Count ];
-                this.Collection.CopyTo( array: array, arrayIndex: 0 );
+        Failure = default,
 
-                return array;
-            }
-        }
+        Success = 0b1,
 
-        public CollectionDebugView( [NotNull] ICollection<T> collection ) => this.Collection = collection ?? throw new ArgumentNullException( nameof( collection ) );
+        Proceed = Success,
+
+        Go = Success
+
     }
+
+    public static class FlowStatusExtensions {
+
+        public static Boolean IsBad( this Status status ) => status <= Status.Failure;
+
+        public static Boolean IsGood( this Status status ) => status >= Status.Success;
+
+        public static Boolean IsUnknown( this Status status ) => status != Status.Success && status != Status.Failure;
+
+    }
+
 }

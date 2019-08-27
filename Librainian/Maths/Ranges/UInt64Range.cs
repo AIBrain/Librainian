@@ -46,7 +46,7 @@ namespace Librainian.Maths.Ranges {
 
 #pragma warning disable IDE0015 // Use framework type
 
-    /// <summary>Represents a <see cref="ulong" /> range with minimum and maximum values.</summary>
+    /// <summary>Represents a <see cref="UInt64" /> range with minimum and maximum values.</summary>
     /// <remarks>
     ///     <para>Modified from the AForge Library</para>
     ///     <para>Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com</para>

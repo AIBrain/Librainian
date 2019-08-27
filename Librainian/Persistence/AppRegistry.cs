@@ -42,6 +42,7 @@
 namespace Librainian.Persistence {
 
     using System;
+    using System.Diagnostics;
     using System.Windows.Forms;
     using Collections.Extensions;
     using Converters;
@@ -87,7 +88,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
             }
 
-            TheCompany = Software.CreateSubKey( Application.CompanyName.Replace( "&", String.Empty ), true );
+            TheCompany = Software.CreateSubKey( Application.CompanyName.Replace( "&", Parsing.ParsingConstants.Singlespace ).Trim(), true );
 
             if ( TheCompany is null ) {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );
@@ -431,6 +432,7 @@ namespace Librainian.Persistence {
         /// <param name="key">   </param>
         [Pure]
         [CanBeNull]
+        [DebuggerStepThrough]
         public static String GetString( String folder, String key ) {
             if ( folder.IsEmpty() ) {
                 throw new ArgumentEmptyException( nameof( folder ) );

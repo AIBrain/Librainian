@@ -144,8 +144,8 @@ namespace Librainian.Database {
             return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth, reader.RecordsAffected, reader.FieldCount, reader.IsClosed );
         }
 
-        public static async Task<(FlowStatus status, T response, TimeSpan responseTime)> AdhocCommand<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
-            [NotNull] String command ) {
+        public static async Task<(Status status, T response, TimeSpan responseTime)> AdhocCommand<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
+            [NotNull] String command, CancellationToken? token = null ) {
             if ( builderToTest == default ) {
                 throw new ArgumentNullException( paramName: nameof( builderToTest ) );
             }
@@ -157,17 +157,17 @@ namespace Librainian.Database {
             var stopwatch = Stopwatch.StartNew();
 
             try {
-                using ( var db = new Database( builderToTest.ConnectionString ) ) {
+                using ( var db = new Database( builderToTest.ConnectionString, token ) ) {
                     var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 
-                    return ( FlowStatus.Success, result, stopwatch.Elapsed );
+                    return ( result.status, result.result, stopwatch.Elapsed );
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( FlowStatus.Failure, default, stopwatch.Elapsed );
+            return ( Status.Failure, default, stopwatch.Elapsed );
         }
 
         public static void DisplayTable( [NotNull] this DataTable table ) {
@@ -236,7 +236,7 @@ namespace Librainian.Database {
                     try {
                         var response = await builder.TryConnectAndRespond().ConfigureAwait( false );
 
-                        if ( response.status == FlowStatus.Success ) {
+                        if ( response.status == Status.Success ) {
                             return builder;
                         }
                     }
@@ -584,7 +584,7 @@ namespace Librainian.Database {
         /// </summary>
         /// <param name="builderToTest"></param>
         /// <returns></returns>
-        public static async Task<(FlowStatus status, SqlConnectionStringBuilder builder, String serverVersion, DateTime? serverUTCDateTime, TimeSpan responseTime)>
+        public static async Task<(Status status, SqlConnectionStringBuilder builder, String serverVersion, DateTime? serverUTCDateTime, TimeSpan responseTime)>
             TryConnectAndRespond( [NotNull] this SqlConnectionStringBuilder builderToTest ) {
             if ( builderToTest == default ) {
                 throw new ArgumentNullException( paramName: nameof( builderToTest ) );
@@ -596,7 +596,7 @@ namespace Librainian.Database {
                 var version = await builderToTest.AdhocCommand<String>( "select @@VERSION;" ).ConfigureAwait( false );
                 var getdate = await builderToTest.AdhocCommand<DateTime>( "select SYSUTCDATETIME();" ).ConfigureAwait( false );
 
-                if ( version.status == FlowStatus.Success && getdate.status == FlowStatus.Success ) {
+                if ( version.status == Status.Success && getdate.status == Status.Success ) {
                     if ( !String.IsNullOrWhiteSpace( version.response ) ) {
                         var serverDateTime = getdate.response.ToUniversalTime();
                         var now = DateTime.UtcNow;
@@ -607,7 +607,7 @@ namespace Librainian.Database {
 
                             var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
 
-                            return ( FlowStatus.Success, builder, version.response, serverDateTime, stopwatch.Elapsed );
+                            return ( Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed );
                         }
                     }
                 }
@@ -616,7 +616,7 @@ namespace Librainian.Database {
                 exception.Log();
             }
 
-            return ( FlowStatus.Failure, default, default, default, stopwatch.Elapsed );
+            return ( Status.Failure, default, default, default, stopwatch.Elapsed );
         }
 
         public static void TryPlayFile( this String fileName ) {

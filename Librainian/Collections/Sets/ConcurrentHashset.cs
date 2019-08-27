@@ -45,6 +45,7 @@ namespace Librainian.Collections.Sets {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
@@ -87,6 +88,7 @@ namespace Librainian.Collections.Sets {
             }
         }
 
+        [DebuggerStepThrough]
         public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) {
             if ( list == null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
@@ -95,10 +97,13 @@ namespace Librainian.Collections.Sets {
             this.AddRange( list );
         }
 
+        [DebuggerStepThrough]
         public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, capacity );
 
+        [DebuggerStepThrough]
         public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object>();
 
+        [DebuggerStepThrough]
         public void Add( [CanBeNull] T item ) {
             if ( item == null ) {
                 return;
@@ -107,6 +112,7 @@ namespace Librainian.Collections.Sets {
             this.Set[ item ] = null;
         }
 
+        [DebuggerStepThrough]
         public void AddRange( [NotNull] IEnumerable<T> items ) {
             if ( items == null ) {
                 throw new ArgumentNullException( paramName: nameof( items ) );
@@ -115,8 +121,10 @@ namespace Librainian.Collections.Sets {
             Parallel.ForEach( items.AsParallel(), this.Add );
         }
 
+        [DebuggerStepThrough]
         public void Clear() => this.Set.Clear();
 
+        [DebuggerStepThrough]
         public Boolean Contains( [NotNull] T item ) {
             if ( item == null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );
@@ -125,6 +133,7 @@ namespace Librainian.Collections.Sets {
             return this.Set.ContainsKey( item );
         }
 
+        [DebuggerStepThrough]
         public Boolean Remove( [NotNull] T item ) {
             if ( item == null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );

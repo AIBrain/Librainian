@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "StressTest.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "NicerSystemTimer.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,68 +37,66 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2019/08/25 at 6:17 AM.
+// Project: "Librainian", "NicerSystemTimer.cs" was last formatted by Protiguous on 2019/08/20 at 3:08 PM.
 
-namespace Librainian.Database {
+namespace Librainian.Threading {
 
     using System;
-    using System.Data;
     using System.Diagnostics;
+    using System.Threading;
     using JetBrains.Annotations;
-    using Measurement.Time;
-    using Misc;
+    using Timer = System.Timers.Timer;
 
-    public static class StressTest {
+    /// <summary>
+    ///     Updated the code.
+    /// </summary>
+    public class NicerSystemTimer : IDisposable {
 
-        /// <summary>
-        ///     How high can this computer count in one second?
-        /// </summary>
-        /// <returns></returns>
-        public static UInt64 PerformBaselineCounting() {
-            TimeSpan forHowLong = Seconds.One;
-            var stopwatch = Stopwatch.StartNew();
-            var counter = 0UL;
-
-            do {
-                counter++;
-
-                if ( stopwatch.Elapsed >= forHowLong ) {
-                    break;
-                }
-            } while ( true );
-
-            return counter;
+        public void Dispose() {
+            using ( this.Timer ) { }
         }
 
+        [CanBeNull]
+        private ReaderWriterLockSlim access { get; }
+
+        [CanBeNull]
+        private Timer Timer { get; }
+
         /// <summary>
-        ///     How high can this database count in one second?
+        ///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
         /// </summary>
-        /// <param name="database">   </param>
-        /// <param name="forHowLong"> </param>
-        /// <param name="multithread"></param>
-        /// <returns></returns>
-        public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
-            if ( database == null ) {
-                throw new ArgumentNullException( nameof( database ) );
+        /// <param name="action"></param>
+        /// <param name="repeat">Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
+        /// <param name="milliseconds"></param>
+        public NicerSystemTimer( [CanBeNull] Action action, Boolean repeat, Double? milliseconds = null ) {
+            if ( action == null ) {
+                return;
             }
 
-            if ( multithread ) {
-                throw new NotImplementedException( "yet" );
-            }
+            this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-            forHowLong = Seconds.One;
-            var stopwatch = Stopwatch.StartNew();
-            (Status status, UInt64 result) counter = ( default, 0UL );
+            this.Timer = new Timer {
+                AutoReset = false, Interval = milliseconds.GetValueOrDefault( 1 )
+            };
 
-            do {
-                counter = database.ExecuteScalar<UInt64>( $"select {counter.result} + cast(1 as bigint)  as [Result];", CommandType.Text );
+            this.Timer.Elapsed += ( sender, args ) => {
 
-                if ( stopwatch.Elapsed >= forHowLong ) {
-                    break;
+                try {
+                    if ( this.access.TryEnterReadLock( 0 ) ) {
+                        this.Timer.Stop();
+                        action.Invoke();
+                    }
+
+                    if ( repeat ) {
+                        this.Timer.Start();
+                    }
                 }
-            } while ( true );
+                catch ( Exception exception ) {
+                    Debug.WriteLine( exception );
+                }
+            };
 
-            return counter.result;
+            this.Timer.Start();
         }
 
     }

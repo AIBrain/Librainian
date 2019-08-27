@@ -47,11 +47,12 @@ namespace Librainian.Extensions {
 
     public static class MemoizeClass {
 
-        private static Func<T, TR> CastByExample<T, TR>( Func<T, TR> f, T t ) => f;
+        private static Func<T, TR> CastByExample<T, TR>( Func<T, TR> f, T _ ) => f;
 
         //static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
         //    return f.Tuplify().Memoize().Detuplify();
         //}
+
         [NotNull]
         private static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR> f ) {
             var example = new {

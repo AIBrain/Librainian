@@ -72,11 +72,11 @@ namespace Librainian.Linguistics {
         private String value { get; }
 
         [NotNull]
-        public static Word Empty { get; } = new Word();
+        public static Word Empty { get; } = new Word( String.Empty );
 
         private Word() => this.value = Empty;
 
-        public Word( [NotNull] String word ) => this.value = String.IsNullOrEmpty( value: word ) ? Empty : word;
+        public Word( [NotNull] String word ) => this.value = String.IsNullOrEmpty( value: word ) ? String.Empty : word;
 
         public static Boolean Equals( [CanBeNull] Word left, [CanBeNull] Word right ) {
             if ( ReferenceEquals( left, right ) ) {

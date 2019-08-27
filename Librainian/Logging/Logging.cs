@@ -78,7 +78,7 @@ namespace Librainian.Logging {
                 InternalLogger.Trace( $"{nameof( Start )} created a new {nameof( LoggingConfiguration )}." );
             }
 
-            return Setup( LogLevel.Trace, LogLevel.Fatal, Librainian.Logging.Targets.TraceTarget.Value );
+            return Setup( LogLevel.Trace, LogLevel.Fatal, Librainian.Logging.SomeTargets.TraceTarget.Value );
         }
 
         /// <summary>

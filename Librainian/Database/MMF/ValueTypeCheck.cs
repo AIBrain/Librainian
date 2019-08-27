@@ -90,6 +90,6 @@ namespace Librainian.Database.MMF {
             return true;
         }
 
-        internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
+        internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || (this.PropertySizesAreDefined() && this.FieldSizesAreDefined());
     }
 }

@@ -49,7 +49,7 @@ namespace Librainian.Logging {
 
     /// <summary>
     /// </summary>
-    public static class Targets {
+    public static class SomeTargets {
 
         [NotNull]
         public static readonly Lazy<ColoredConsoleTarget> ColoredConsoleTarget = new Lazy<ColoredConsoleTarget>( () => new ColoredConsoleTarget {

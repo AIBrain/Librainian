@@ -630,6 +630,7 @@ namespace Librainian.Collections.Extensions {
         /// <param name="source">The IEnumerable to check if empty.</param>
         /// <returns>True if the <paramref name="source" /> == null or empty; otherwise false.</returns>
         [Pure]
+        [DebuggerStepThrough]
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]

@@ -321,7 +321,7 @@ namespace Librainian.Internet {
 
             normalizedUrl = $"{url.Scheme}://{url.Host}";
 
-            if ( !( url.Scheme == "http" && url.Port == 80 || url.Scheme == "https" && url.Port == 443 ) ) {
+            if ( !( (url.Scheme == "http" && url.Port == 80) || (url.Scheme == "https" && url.Port == 443) ) ) {
                 normalizedUrl += $":{url.Port}";
             }
 

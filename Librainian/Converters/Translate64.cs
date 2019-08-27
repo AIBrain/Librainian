@@ -45,8 +45,8 @@ namespace Librainian.Converters {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    ///     Struct for combining two <see cref="int" /> (or <see cref="uint" />) to and from a <see cref="ulong" /> (or
-    ///     <see cref="long" />) as easily as possible. Fast? No idea yet..
+    ///     Struct for combining two <see cref="Int32" /> (or <see cref="UInt32" />) to and from a <see cref="UInt64" /> (or
+    ///     <see cref="Int64" />) as easily as possible. Fast? No idea yet..
     /// </summary>
     [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct Translate64 {

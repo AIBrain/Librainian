@@ -81,29 +81,29 @@ namespace Librainian.ComputerSystem.Devices {
 
     public enum ResourceDisplayType {
 
-        RESOURCEDISPLAYTYPE_GENERIC,
+        GENERIC,
 
-        RESOURCEDISPLAYTYPE_DOMAIN,
+        DOMAIN,
 
-        RESOURCEDISPLAYTYPE_SERVER,
+        SERVER,
 
-        RESOURCEDISPLAYTYPE_SHARE,
+        SHARE,
 
-        RESOURCEDISPLAYTYPE_FILE,
+        FILE,
 
-        RESOURCEDISPLAYTYPE_GROUP,
+        GROUP,
 
-        RESOURCEDISPLAYTYPE_NETWORK,
+        NETWORK,
 
-        RESOURCEDISPLAYTYPE_ROOT,
+        ROOT,
 
-        RESOURCEDISPLAYTYPE_SHAREADMIN,
+        SHAREADMIN,
 
-        RESOURCEDISPLAYTYPE_DIRECTORY,
+        DIRECTORY,
 
-        RESOURCEDISPLAYTYPE_TREE,
+        TREE,
 
-        RESOURCEDISPLAYTYPE_NDSCONTAINER
+        NDSCONTAINER
     }
 
     public enum ResourceScope {
@@ -132,17 +132,17 @@ namespace Librainian.ComputerSystem.Devices {
 
     public enum ResourceUsage {
 
-        RESOURCEUSAGE_CONNECTABLE = 0x00000001,
+        CONNECTABLE = 0x00000001,
 
-        RESOURCEUSAGE_CONTAINER = 0x00000002,
+        CONTAINER = 0x00000002,
 
-        RESOURCEUSAGE_NOLOCALDEVICE = 0x00000004,
+        NOLOCALDEVICE = 0x00000004,
 
-        RESOURCEUSAGE_SIBLING = 0x00000008,
+        SIBLING = 0x00000008,
 
-        RESOURCEUSAGE_ATTACHED = 0x00000010,
+        ATTACHED = 0x00000010,
 
-        RESOURCEUSAGE_ALL = RESOURCEUSAGE_CONNECTABLE | RESOURCEUSAGE_CONTAINER | RESOURCEUSAGE_ATTACHED
+        ALL = CONNECTABLE | CONTAINER | ATTACHED
     }
 
     [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]

@@ -43,6 +43,7 @@ namespace Librainian.Controls {
 
     using System;
     using System.Drawing;
+    using System.Linq;
     using System.Windows.Forms;
     using JetBrains.Annotations;
     using Logging;
@@ -74,6 +75,13 @@ namespace Librainian.Controls {
             }
         }
 
+        public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
+
+        public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
+            var desktopBounds = form.DesktopBounds;
+            return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
+        }
+
         public static void LoadLocation( [NotNull] this Form form ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
@@ -91,6 +99,7 @@ namespace Librainian.Controls {
             }
         }
 
+        [Obsolete( "Use LoadLocation() and LoadSize()" )]
         public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] PersistTable<String, String> settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
@@ -119,6 +128,7 @@ namespace Librainian.Controls {
             }
         }
 
+        [Obsolete("Use LoadLocation() and LoadSize()")]
         public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] StringKVPTable settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );

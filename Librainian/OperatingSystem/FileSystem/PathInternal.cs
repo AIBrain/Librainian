@@ -132,7 +132,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [Pure]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
-        public static Boolean IsValidDriveChar( this Char value ) => value >= 'A' && value <= 'Z' || value >= 'a' && value <= 'z';
+        public static Boolean IsValidDriveChar( this Char value ) => (value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z');
 
         /// <summary>
         ///     Returns the trimmed <paramref name="path" /> or throws <see cref="ArgumentException" /> if null, empty, or

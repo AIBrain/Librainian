@@ -47,6 +47,7 @@ namespace Librainian.Database {
     using System.Data.SqlClient;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Misc;
 
     public interface IDatabase {
 
@@ -54,9 +55,9 @@ namespace Librainian.Database {
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
         /// <returns></returns>
-        Boolean ExecuteNonQuery( String query, params SqlParameter[] parameters );
+        Int32? ExecuteNonQuery( String query, params SqlParameter[] parameters );
 
-        Boolean ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters );
+        Int32? ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters );
 
         Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
 
@@ -94,7 +95,7 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        TResult ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        (Status status, TResult result) ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>
         ///     <para>Returns the first column of the first row.</para>
@@ -103,7 +104,7 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>
         ///     Returns a <see cref="IEnumerable{T}" />

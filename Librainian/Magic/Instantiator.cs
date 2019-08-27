@@ -54,7 +54,7 @@ namespace Librainian.Magic {
     public static class Instantiator<T> {
 
         static Instantiator() =>
-            Debug.Assert( typeof( T ).IsValueType || typeof( T ).IsClass && !typeof( T ).IsAbstract,
+            Debug.Assert( typeof( T ).IsValueType || (typeof( T ).IsClass && !typeof( T ).IsAbstract),
                 String.Concat( "The type ", typeof( T ).Name, " is not constructable." ) );
 
         [NotNull]

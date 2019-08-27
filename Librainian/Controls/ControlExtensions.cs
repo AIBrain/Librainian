@@ -61,9 +61,11 @@ namespace Librainian.Controls {
 
         public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
+        [DebuggerStepThrough]
         public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
             box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
 
+        [DebuggerStepThrough]
         public static void AppendText( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
             box.InvokeAction( () => {
                 text = String.Format( text, args );
@@ -257,6 +259,7 @@ namespace Librainian.Controls {
         }
 
         [NotNull]
+        [DebuggerStepThrough]
         public static Task FlashWhileBlank( this Control input, [NotNull] Control control, CancellationToken token ) {
             if ( control == null ) {
                 throw new ArgumentNullException( nameof( control ) );
@@ -276,6 +279,7 @@ namespace Librainian.Controls {
         ///     Set <see cref="Control.Focus" /> across threads.
         /// </summary>
         /// <param name="control"></param>
+        [DebuggerStepThrough]
         public static void Fokus( [NotNull] this Control control ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
@@ -306,6 +310,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <param name="value">  </param>
+        [DebuggerStepThrough]
         public static void ForeColor( [NotNull] this Control control, Color value ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
@@ -336,6 +341,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <param name="action"> </param>
         /// <seealso />
+        [DebuggerStepThrough]
         public static void InvokeAction( [NotNull] this Control control, [NotNull] Action action ) {
             if ( control == null ) {
                 throw new ArgumentNullException( nameof( control ) );

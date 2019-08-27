@@ -43,7 +43,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
     using System;
     using System.Threading;
-    using System.Timers;
     using Frequency;
     using JetBrains.Annotations;
     using Logging;
@@ -158,7 +157,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 AutoReset = false
             };
 
-            void OnTimerOnElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+            this.Timer.Elapsed += ( sender, elapsedEventArgs ) => {
                 try {
                     this.Pause();
                     this.Counter++;
@@ -174,9 +173,7 @@ namespace Librainian.Measurement.Time.Clocks {
                     this.LastProgressReport = DateTime.UtcNow;
                     this.Resume();
                 }
-            }
-
-            this.Timer.Elapsed += OnTimerOnElapsed;
+            };
             this.Resume();
         }
 

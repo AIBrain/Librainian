@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/08/08 at 9:14 AM.
+// 
+// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/08/19 at 7:22 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -413,6 +413,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
 
         Task<Boolean> IsAll( Byte number );
+
     }
 
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
@@ -433,6 +434,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             UNC = 0b1000,
 
             DeleteAfterClose = 0b10000
+
         }
 
         /// <summary>
@@ -466,7 +468,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public Boolean Equals( IDocument other ) => Equals( left: this, right: other );
 
-        /// <summary>Represents the fully qualified path of the file.</summary>
+        /// <summary>
+        ///     Represents the fully qualified path of the file.
+        ///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
+        /// </summary>
         [JsonProperty]
         [NotNull]
         public String FullPath { get; }
@@ -1454,36 +1459,36 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        public Task<Boolean> IsAll( Byte number ) =>
-            Task.Run( () => {
-                if ( !this.Exists() ) {
-                    return false;
+        public async Task<Boolean> IsAll( Byte number ) {
+
+            if ( !this.Exists() ) {
+                return false;
+            }
+
+            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
                 }
 
-                using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                    bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+                var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                    if ( !stream.CanRead ) {
-                        throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
-                    }
+                using ( var buffered = new BufferedStream( stream: stream ) ) {
+                    Int32 bytesRead;
 
-                    var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
+                    do {
+                        bytesRead = await buffered.ReadAsync( buffer, offset: 0, count: buffer.Length ).ConfigureAwait( false );
 
-                    using ( var buffered = new BufferedStream( stream: stream ) ) {
-                        Int32 bytesRead;
-
-                        do {
-                            bytesRead = buffered.Read( array: buffer, offset: 0, count: buffer.Length );
-
-                            if ( bytesRead.Any() && buffer.Any( b => b != number ) ) {
-                                return false;
-                            }
-                        } while ( bytesRead.Any() );
-                    }
-
-                    return true;
+                        if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+                            return false;
+                        }
+                    } while ( bytesRead.Any() );
                 }
-            } );
+
+                return true;
+            }
+        }
 
         private Folder _containingFolder;
 
@@ -1679,6 +1684,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             internal Int32 nLength;
 
             internal unsafe Byte* pSecurityDescriptor = null;
+
         }
 
         /// <summary>
@@ -1818,5 +1824,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         internal static Boolean IsExtended( [NotNull] String path ) =>
             path.Length >= 4 && path[ index: 0 ] == PathInternal.Constants.Backslash && ( path[ index: 1 ] == PathInternal.Constants.Backslash || path[ index: 1 ] == '?' ) &&
             path[ index: 2 ] == '?' && path[ index: 3 ] == PathInternal.Constants.Backslash;
+
     }
+
 }

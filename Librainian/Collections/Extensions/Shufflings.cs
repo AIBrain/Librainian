@@ -242,24 +242,23 @@ namespace Librainian.Collections.Extensions {
         /// <param name="iterations">   </param>
         /// <param name="originalcount"></param>
         public static void ShuffleByBags<T>( ref List<T> list, Int32 iterations, Int64 originalcount ) {
-            var bag = new ConcurrentBag<T>();
+            var bag = new ConcurrentBag<T>( list.AsParallel() );
 
-            while ( iterations > 0 ) {
+            if ( iterations <= 1 ) {
+                list.Clear();
+                list.AddRange( bag.AsParallel() );
+
+                return;
+            }
+
+            while ( iterations.Any() ) {
                 iterations--;
 
-                bag.AddRange( items: list.AsParallel() );
-
-                //bag.Should().NotBeEmpty( because: "made an unordered copy of all items" );
-
                 list.Clear();
-
-                //list.Should().BeEmpty( because: "emptied the original list" );
-
-                list.AddRange( collection: bag );
-
-                //list.LongCount().Should().Be( expected: originalcount );
-
-                bag.RemoveAll();
+                list.AddRange( bag.AsParallel() );
+                if (iterations.Any()) {
+                    bag.RemoveAll();
+                }
             }
         }
 

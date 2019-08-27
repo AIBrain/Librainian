@@ -54,6 +54,7 @@ namespace Librainian.Database {
     using Logging;
     using Magic;
     using Maths;
+    using Misc;
     using Parsing;
 
     public class DurableDatabase : ABetterClassDispose, IDatabase {
@@ -62,7 +63,7 @@ namespace Librainian.Database {
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
         /// <returns></returns>
-        public Boolean ExecuteNonQuery( String query, [CanBeNull] params SqlParameter[] parameters ) {
+        public Int32? ExecuteNonQuery( String query, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -75,10 +76,8 @@ namespace Librainian.Database {
                         command.Parameters.AddRange( parameters );
                     }
 
-                    command.ExecuteNonQuery();
+                    return command.ExecuteNonQuery();
                 }
-
-                return true;
             }
             catch ( SqlException exception ) {
                 exception.Log();
@@ -90,11 +89,11 @@ namespace Librainian.Database {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "StoredProcedure" )]
-        public Boolean ExecuteNonQuery( String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
+        public Int32? ExecuteNonQuery( String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -109,9 +108,9 @@ namespace Librainian.Database {
                         command.Parameters.AddRange( parameters );
                     }
 
-                    command.ExecuteNonQuery();
+                    return command.ExecuteNonQuery();
 
-                    return true;
+                    
                 }
             }
             catch ( InvalidOperationException ) {
@@ -130,7 +129,7 @@ namespace Librainian.Database {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [ItemCanBeNull]
@@ -157,7 +156,7 @@ namespace Librainian.Database {
                 exception.Log();
             }
 
-            return null;
+            return default;
         }
 
         /// <summary>
@@ -289,8 +288,7 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        [CanBeNull]
-        public TResult ExecuteScalar<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public (Status status, TResult result) ExecuteScalar<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -305,19 +303,19 @@ namespace Librainian.Database {
 
                     var scalar = command.ExecuteScalar();
 
-                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
-                        return default;
+                    if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+                        return ( Status.Success, default );
                     }
 
                     if ( scalar is TResult result1 ) {
-                        return result1;
+                        return ( Status.Success, result1 );
                     }
 
                     if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return result;
+                        return (Status.Success, result);
                     }
 
-                    return ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) );
+                    return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
                 }
             }
             catch ( SqlException exception ) {
@@ -337,8 +335,7 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        [ItemCanBeNull]
-        public async Task<TResult> ExecuteScalarAsync<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public async Task<(Status status,TResult result)> ExecuteScalarAsync<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -365,19 +362,19 @@ namespace Librainian.Database {
                         throw;
                     }
 
-                    if ( null == scalar || Convert.IsDBNull( scalar ) ) {
-                        return default;
+                    if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+                        return ( Status.Success, default );
                     }
 
                     if ( scalar is TResult scalarAsync ) {
-                        return scalarAsync;
+                        return ( Status.Success, scalarAsync );
                     }
 
                     if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return result;
+                        return ( Status.Success, result );
                     }
 
-                    return ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) );
+                    return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
                 }
             }
             catch ( InvalidCastException exception ) {
@@ -430,7 +427,7 @@ namespace Librainian.Database {
                 exception.Log();
             }
 
-            return null;
+            return default;
         }
 
         private String ConnectionString { get; }

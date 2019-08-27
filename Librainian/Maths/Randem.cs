@@ -333,7 +333,7 @@ namespace Librainian.Maths {
             if ( max <= min || count < 0 ||
 
                  // max - min > 0 required to avoid overflow
-                 count > max - min && max - min > 0 ) {
+                 (count > max - min && max - min > 0) ) {
 
                 // need to use 64-bit to support big ranges (negative min, positive max)
                 throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({( Int64 ) max - min} values), or count {count} is illegal." );
@@ -644,9 +644,7 @@ namespace Librainian.Maths {
             }
         }
 
-        public static void NextBytes( ref Byte[] buffer ) {
-            Instance().NextBytes( buffer );
-        }
+        public static void NextBytes( ref Byte[] buffer ) => Instance().NextBytes( buffer );
 
         /// <summary>
         /// </summary>
