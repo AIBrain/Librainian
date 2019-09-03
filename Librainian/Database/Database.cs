@@ -54,6 +54,7 @@ namespace Librainian.Database {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Collections.Extensions;
     using Collections.Sets;
     using Extensions;
     using Internet;
@@ -63,6 +64,7 @@ namespace Librainian.Database {
     using Maths;
     using Misc;
     using Parsing;
+    using Xunit;
 
     public sealed class Database : ABetterClassDispose, IDatabase {
 
@@ -82,10 +84,12 @@ namespace Librainian.Database {
                     connection.Open();
 
                     using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = CommandType.Text, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                        CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         return command.ExecuteNonQuery();
@@ -93,13 +97,13 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( Exception exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return default;
@@ -121,7 +125,9 @@ namespace Librainian.Database {
                         CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         return command.ExecuteNonQuery();
@@ -129,21 +135,21 @@ namespace Librainian.Database {
                 }
             }
             catch ( InvalidOperationException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
 
                 if ( retries.Any() ) {
                     goto TryAgain;
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
 
                 if ( retries.Any() ) {
                     goto TryAgain;
                 }
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
 
                 if ( retries.Any() ) {
                     goto TryAgain;
@@ -174,7 +180,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         try {
@@ -190,11 +198,11 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) {
                 if ( !exception.SQLTimeout( delayFor: TimeSpan.FromSeconds( 1 ) ) ) {
-                    exception.Log( Combine( query, parameters ) );
+                    exception.Log( Rebuild( query, parameters ) );
                 }
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return default;
@@ -224,7 +232,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         table.BeginLoadData();
@@ -240,10 +250,10 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return default;
@@ -266,7 +276,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         return await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
@@ -274,10 +286,10 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return default;
@@ -306,7 +318,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         table.BeginLoadData();
@@ -320,12 +334,12 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
 
                 return null;
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
 
                 return null;
             }
@@ -353,7 +367,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         var scalar = command.ExecuteScalar();
@@ -383,10 +399,10 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return default;
@@ -420,7 +436,9 @@ namespace Librainian.Database {
                         CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         var scalar = await command.ExecuteScalarAsync( this.Token ).ConfigureAwait( false );
@@ -451,13 +469,13 @@ namespace Librainian.Database {
             catch ( InvalidCastException exception ) {
 
                 //TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return ( Status.Failure, default );
@@ -484,7 +502,9 @@ namespace Librainian.Database {
                         CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
-                            command.Parameters.AddRange( parameters.Where( parameter => parameter != null ).ToArray() );
+                            foreach ( var parameter in parameters ) {
+                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                            }
                         }
 
                         using ( var reader = command.ExecuteReader() ) {
@@ -494,10 +514,10 @@ namespace Librainian.Database {
                 }
             }
             catch ( SqlException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
             catch ( DbException exception ) {
-                exception.Log( Combine( query, parameters ) );
+                exception.Log( Rebuild( query, parameters ) );
             }
 
             return null;
@@ -507,7 +527,7 @@ namespace Librainian.Database {
 
         public static ConcurrentHashset<SqlConnectionStringBuilder> ConnectiontringBuilders { get; } = new ConcurrentHashset<SqlConnectionStringBuilder>();
 
-        public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromMinutes( 1 );
+        public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromMinutes( 2 );
 
         /// <summary>
         /// </summary>
@@ -519,7 +539,7 @@ namespace Librainian.Database {
             this._connectionString = connectionString;
         }
 
-        private static (String query, IEnumerable<SqlParameter> parameters) Combine( [NotNull] String query, [NotNull] SqlParameterCollection parameters ) {
+        private static (String query, IEnumerable<SqlParameter> parameters) Rebuild( [NotNull] String query, [NotNull] SqlParameterCollection parameters ) {
             if ( String.IsNullOrWhiteSpace( value: query ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
             }
@@ -528,12 +548,17 @@ namespace Librainian.Database {
         }
 
         [DebuggerStepThrough]
-        private static (String query, IEnumerable<SqlParameter> parameters) Combine( [NotNull] String query, [CanBeNull] IEnumerable<SqlParameter> parameters ) {
+        [NotNull]
+        private static String Rebuild( [NotNull] String query, [CanBeNull] IEnumerable<SqlParameter> parameters ) {
             if ( String.IsNullOrWhiteSpace( value: query ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
             }
 
-            return ( $"{query.SingleQuote()};", parameters );
+            if ( parameters == null ) {
+                return $"exec {query}";
+            }
+
+            return $"exec {query} {parameters.Select( parameter => $"{parameter.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings()}; ";
         }
 
         public static Boolean CreateDatabaseIfNotExist( [NotNull] String databaseName, String connectionString ) {
@@ -557,7 +582,7 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) {
                 if ( !exception.SQLTimeout() ) {
-                    exception.Log( Combine( databaseName, ( IEnumerable<SqlParameter> ) null ) );
+                    exception.Log( Rebuild( databaseName, ( IEnumerable<SqlParameter> ) null ) );
                 }
             }
 

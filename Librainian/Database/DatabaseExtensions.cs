@@ -160,14 +160,14 @@ namespace Librainian.Database {
                 using ( var db = new Database( builderToTest.ConnectionString, token ) ) {
                     var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 
-                    return ( result.status, result.result, stopwatch.Elapsed );
+                    return (result.status, result.result, stopwatch.Elapsed);
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( Status.Failure, default, stopwatch.Elapsed );
+            return (Status.Failure, default, stopwatch.Elapsed);
         }
 
         public static void DisplayTable( [NotNull] this DataTable table ) {
@@ -217,7 +217,11 @@ namespace Librainian.Database {
                     var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
 
                     yield return new SqlServerInstance {
-                        InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName
+                        InstanceName = instanceName,
+                        ServiceName = serviceName,
+                        Version = version,
+                        Edition = edition,
+                        MachineName = Environment.MachineName
                     };
                 }
             }
@@ -467,6 +471,42 @@ namespace Librainian.Database {
             return result;
         }
 
+        /// <summary>
+        /// Converts a DataTable to a list with generic objects
+        /// </summary>
+        /// <typeparam name="T">Generic object</typeparam>
+        /// <param name="table">DataTable</param>
+        /// <returns>List with generic objects</returns>
+        [NotNull]
+        public static List<T> DataTableToList<T>( this DataTable table ) where T : class, new() {
+            try {
+                var list = new List<T>( table.Rows.Count );
+
+                foreach ( var row in table.AsEnumerable() ) {
+                    var obj = new T();
+
+                    foreach ( var prop in obj.GetType().GetProperties() ) {
+                        try {
+                            var propertyInfo = obj.GetType().GetProperty( prop.Name );
+                            propertyInfo?.SetValue( obj, Convert.ChangeType( row[ prop.Name ], propertyInfo.PropertyType ), null );
+                        }
+                        catch {
+                            continue;
+                        }
+                    }
+
+                    list.Add( obj );
+                }
+
+                list.TrimExcess();
+
+                return list;
+            }
+            catch {
+                return null;
+            }
+        }
+
         [NotNull]
         public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) =>
             new SqlParameter( parameterName, value ) {
@@ -596,27 +636,29 @@ namespace Librainian.Database {
                 var version = await builderToTest.AdhocCommand<String>( "select @@VERSION;" ).ConfigureAwait( false );
                 var getdate = await builderToTest.AdhocCommand<DateTime>( "select SYSUTCDATETIME();" ).ConfigureAwait( false );
 
-                if ( version.status == Status.Success && getdate.status == Status.Success ) {
-                    if ( !String.IsNullOrWhiteSpace( version.response ) ) {
-                        var serverDateTime = getdate.response.ToUniversalTime();
-                        var now = DateTime.UtcNow;
+                if ( version.status != Status.Success || getdate.status != Status.Success ) {
+                    $"Failed connecting to server.".Break();
+                    return (Status.Failure, default, default, default, stopwatch.Elapsed);
+                }
 
-                        if ( serverDateTime.Date == now.Date && serverDateTime.Minute == now.Minute ) {
-                            ( $"Opened a connection to {builderToTest.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
-                              $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
+                var serverDateTime = getdate.response;  //should already be utc.
+                var now = DateTime.UtcNow;              //get this computer's utc
 
-                            var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
+                if ( serverDateTime.Date == now.Date ) {
+                    ( $"Opened a connection to {builderToTest.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
+                      $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
 
-                            return ( Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed );
-                        }
-                    }
+                    var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
+
+                    return (Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed);
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( Status.Failure, default, default, default, stopwatch.Elapsed );
+            $"Failed connecting to server.".Break();
+            return (Status.Failure, default, default, default, stopwatch.Elapsed);
         }
 
         public static void TryPlayFile( this String fileName ) {

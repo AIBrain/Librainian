@@ -159,7 +159,7 @@ namespace Librainian.Persistence {
         }
 
         [NotNull]
-        public static Task<Int32> CalcHashInt32Async( [NotNull] Document document, CancellationToken token ) => Task.Run( () => document.CalcHashInt32(), token );
+        public static Task<Int32> CalcHarkerHashInt32Async( [NotNull] Document document, CancellationToken token ) => Task.Run( () => document.CalcHashInt32(), token );
 
         /// <summary>
         ///     <para>Static comparison test. Compares file lengths and hashes.</para>
@@ -269,7 +269,9 @@ namespace Librainian.Persistence {
             try {
                 var needScanned = false;
 
-                if ( MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] is DocumentInfo record ) {
+                var record = MasterDocumentTable.DocumentInfos[ this.AbsolutePath ];
+
+                if ( record != null ) {
                     if ( AreEitherDifferent( this, record ) == true ) {
                         needScanned = true;
                     }

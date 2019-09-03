@@ -351,10 +351,12 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( action ) );
             }
 
+            if ( control.IsDisposed ) {
+                return;
+            }
+
             if ( control.InvokeRequired ) {
-                if ( !control.IsDisposed ) {
-                    control.Invoke( action );
-                }
+                control.Invoke( action );
             }
             else {
                 action();

@@ -271,15 +271,23 @@ namespace Librainian.Logging {
         /// <returns></returns>
         [DebuggerStepThrough]
         public static T Log<T, M>( this T @object, [CanBeNull] M more ) {
+            Console.Beep( 14000, 100 );
+            var o = $"{@object.ToJSON()}";
+
             if ( more == null ) {
-                Logger.Debug( $"{@object.ToJSON()}" );
+                Logger.Debug( o );
+                if ( Debugger.IsAttached ) {
+                    System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"" );
+                    Debugger.Break();
+                }
             }
             else {
-                Logger.Debug( $"{@object.ToJSON()}; {more.ToJSON()}" );
-            }
-
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
+                var m = more.ToJSON();
+                Logger.Debug( $"{o}; {m}" );
+                if ( Debugger.IsAttached ) {
+                    System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"; {m}" );
+                    Debugger.Break();
+                }
             }
 
             return @object;

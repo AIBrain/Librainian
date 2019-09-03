@@ -55,13 +55,12 @@ namespace Librainian.OperatingSystem.FileSystem {
     /// </summary>
     public static class MasterDocumentTable {
 
-        public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        public static CancellationTokenSource CTS { get; } = new CancellationTokenSource();
 
         /// <summary>
         ///     DocumentInfos[StringPath]=DocumentInfo
         /// </summary>
-        public static PersistTable<String, DocumentInfo> DocumentInfos { get; } =
-            new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
+        public static PersistTable<String, DocumentInfo> DocumentInfos { get; } = new PersistTable<String, DocumentInfo>( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
 
         /// <summary>
         ///     Documents[StringPath]=Document
@@ -77,47 +76,36 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="folders"></param>
-        /// <param name="documents"></param>
+        /// <param name="ReportDocument"></param>
         /// <returns></returns>
         [NotNull]
-        public static Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> documents = null ) {
-            var task = Task.Run( async () => {
-                if ( CancellationTokenSource.IsCancellationRequested ) {
-                    return Task.FromResult( default( IFolder ) ); //TODO
+        public static async Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> ReportDocument = null ) {
+
+            if ( CTS.IsCancellationRequested ) {
+                return;
+            }
+
+            //Update the MFT
+            foreach ( var document in folder.GetDocuments( "*.*" ) ) {
+                if ( CTS.IsCancellationRequested ) {
+                    return;
                 }
+                ReportDocument?.Report( document );
+                Documents[ document.FullPath ] = document;
+                DocumentInfos[ document.FullPath ] = new DocumentInfo( document );
+                await DocumentInfos[ document.FullPath ].ScanAsync( CTS.Token ).ConfigureAwait( false );
+            }
 
-                //Find all documents in this folder...
-                var files = folder.GetDocuments( "*.*" );
+            if ( CTS.IsCancellationRequested ) {
+                return;
+            }
 
-                //And update the MFT
-                Parallel.ForEach( files.AsParallel(), document => {
-                    if ( CancellationTokenSource.IsCancellationRequested ) {
-                        return;
-                    }
+            //And then scan down into any subfolders.
+            foreach ( var subFolder in folder.BetterGetFolders( "*.*" ).TakeWhile( _ => !CTS.IsCancellationRequested ) ) {
+                folders?.Report( subFolder );
+                await SearchAsync( subFolder, folders, ReportDocument ).ConfigureAwait( false );
+            }
 
-                    Documents[ document.FullPath ] = document;
-                    documents?.Report( document );
-                } );
-
-                if ( CancellationTokenSource.IsCancellationRequested ) {
-                    return Task.FromResult( default( IFolder ) ); //TODO
-                }
-
-                //And then scan down into any subfolders.
-                foreach ( var subFolder in folder.BetterGetFolders( "*.*" ) ) {
-                    if ( CancellationTokenSource.IsCancellationRequested ) {
-                        return Task.FromResult( default( IFolder ) );
-                    }
-
-                    await SearchAsync( subFolder, folders, documents ).ConfigureAwait( false );
-
-                    folders?.Report( subFolder ); //best before or after await?
-                }
-
-                return Task.FromResult( default( IFolder ) ); //TODO
-            } );
-
-            return task;
         }
     }
 }

@@ -51,7 +51,6 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Net;
     using System.Numerics;
-    using System.Runtime.Serialization;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -850,8 +849,7 @@ namespace Librainian.Parsing {
         public static String MakeInitialLowerCase( [NotNull] this String word ) => String.Concat( word.Substring( 0, 1 ).ToLowerInvariant(), word.Substring( 1 ) );
 
         /// <summary>
-        ///     Gets a <b>horrible</b> ROUGH guesstimate of the memory consumed by an object by using
-        ///     <see cref="NetDataContractSerializer" /> .
+        ///     Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using <see cref="JsonConvert" /> .
         /// </summary>
         /// <param name="bob"></param>
         /// <returns></returns>
@@ -861,15 +859,7 @@ namespace Librainian.Parsing {
             }
 
             try {
-                var me = JsonConvert.SerializeObject( bob, Formatting.None );
-
-                return me.LongCount();
-            }
-            catch ( InvalidDataContractException exception ) {
-                exception.Log();
-            }
-            catch ( SerializationException exception ) {
-                exception.Log();
+                return JsonConvert.SerializeObject( bob, Formatting.None ).LongCount();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1535,9 +1525,9 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1.
+        ///     Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator"/>.
         /// </summary>
-        /// <param name="this">        The extended string.</param>
+        /// <param name="self">        The extended string.</param>
         /// <param name="separator">   The delimiter that splits substrings in the given string. Must not be null.</param>
         /// <param name="splitOptions">
         ///     RemoveEmptyEntries to omit empty array elements from the array returned; or None to include
@@ -1545,20 +1535,30 @@ namespace Librainian.Parsing {
         /// </param>
         /// <returns>See: <see cref="String.Split(String[], StringSplitOptions)" />.</returns>
         [NotNull]
-        public static String[] Split( [NotNull] this String @this, [NotNull] String separator, StringSplitOptions splitOptions = StringSplitOptions.None ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "Split called on a null String." );
+        public static IEnumerable<String> Split( [NotNull] this String self, [NotNull] String separator, StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "Split called on a null String." );
             }
 
             if ( separator == null ) {
                 throw new ArgumentNullException( nameof( separator ) );
             }
 
-            return @this.Split( new[] {
-                separator
-            }, splitOptions );
+            if ( !Separators.TryGetValue( separator, out var sep) ) {
+                sep = new[] { separator };
+                Separators[ separator ] = sep;
+            }
+
+            return self.Split( sep, splitOptions );
         }
 
+        /// <summary>
+        /// Store the little array allocation for parsing so we don't have millions of GC on them.
+        /// </summary>
+        [NotNull]
+        private static ConcurrentDictionary<String, String[]> Separators { get; } = new ConcurrentDictionary<String, String[]>();
+            
+            
         [NotNull]
         public static IEnumerable<String> SplitToChunks( [NotNull] this String s, Int32 chunks ) {
             if ( s == null ) {

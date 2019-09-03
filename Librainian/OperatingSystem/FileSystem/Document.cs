@@ -629,12 +629,26 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     "poor mans hash" heh
+        ///     "poor mans Int32 hash"
         /// </summary>
         /// <returns></returns>
         public Int32 CalculateHarkerHashInt32() =>
             this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
                 .Aggregate( seed: 0, func: ( current, i ) => unchecked( current + i ) );
+
+        [NotNull]
+        public Task<Int32> CalculateHarkerHashInt32Async() => Task.Run( this.CalculateHarkerHashInt32 );
+
+        /// <summary>
+        ///     "poor mans Int64 hash"
+        /// </summary>
+        /// <returns></returns>
+        public Int64 CalculateHarkerHashInt64() =>
+            this.AsInt64().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
+                .Aggregate( seed: 0L, func: ( current, i ) => unchecked( current + i ) );
+
+        [NotNull]
+        public Task<Int64> CalculateHarkerHashInt64Async() => Task.Run( this.CalculateHarkerHashInt64 );
 
         /// <summary>
         ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
