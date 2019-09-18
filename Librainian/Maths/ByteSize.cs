@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ByteSize.cs" was last formatted by Protiguous on 2019/08/08 at 8:17 AM.
+// Project: "Librainian", "ByteSize.cs" was last formatted by Protiguous on 2019/09/05 at 3:35 PM.
 
 namespace Librainian.Maths {
 
@@ -48,7 +48,7 @@ namespace Librainian.Maths {
     /// <summary>
     ///     Represents a byte size value.
     /// </summary>
-    /// <remarks>Found at https://raw.githubusercontent.com/omar/ByteSize/master/src/ByteSizeLib/cs </remarks>
+    /// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs </remarks>
     public struct ByteSize : IComparable<ByteSize>, IEquatable<ByteSize> {
 
         public const Int64 BitsInByte = 8;
@@ -65,20 +65,16 @@ namespace Librainian.Maths {
 
         public const Int64 BytesInTeraByte = BytesInGigaByte * BytesInKiloByte;
 
-        //1125899906842624;
         public const String ByteSymbol = "B";
 
         public const String GigaByteSymbol = "GB";
 
-        //1099511627776;
         public const String KiloByteSymbol = "KB";
 
-        //1073741824;
         public const String MegaByteSymbol = "MB";
 
         public const String PetaByteSymbol = "PB";
 
-        //1048576;
         public const String TeraByteSymbol = "TB";
 
         public static readonly ByteSize MaxValue = FromBits( Int64.MaxValue );
@@ -167,12 +163,14 @@ namespace Librainian.Maths {
         public ByteSize( Double byteSize ) : this() {
 
             // Get ceiling because bits are whole units
-            this.Bits = ( Int64 ) Math.Ceiling( byteSize * BitsInByte );
+            this.Bits = ( Int64 )Math.Ceiling( byteSize * BitsInByte );
 
             this.Bytes = byteSize;
         }
 
-        public static ByteSize FromBits( Int64 value ) => new ByteSize( value / ( Double ) BitsInByte );
+        public static Boolean Equals( ByteSize left, ByteSize right ) => left.Bits == right.Bits;
+
+        public static ByteSize FromBits( Int64 value ) => new ByteSize( value / ( Double )BitsInByte );
 
         public static ByteSize FromBytes( Double value ) => new ByteSize( value );
 
@@ -212,7 +210,7 @@ namespace Librainian.Maths {
 
             // Arg checking
             if ( String.IsNullOrWhiteSpace( s ) ) {
-                throw new ArgumentNullException( nameof( s ), "String == null or whitespace" );
+                throw new ArgumentNullException( nameof( s ), "String is null or whitespace" );
             }
 
             // Get the index of the first non-digit character
@@ -252,12 +250,12 @@ namespace Librainian.Maths {
             switch ( sizePart ) {
                 case "b":
 
-                    if ( number % 1 != 0 ) // Can't have partial bits
-                    {
+                    // Can't have partial bits
+                    if ( number % 1 != 0 ) {
                         throw new FormatException( $"Can't have partial bits for value '{s}'." );
                     }
 
-                    return FromBits( ( Int64 ) number );
+                    return FromBits( ( Int64 )number );
 
                 case "B": return FromBytes( number );
 
@@ -321,34 +319,19 @@ namespace Librainian.Maths {
 
         public Int32 CompareTo( ByteSize other ) => this.Bits.CompareTo( other.Bits );
 
-        public override Boolean Equals( Object value ) {
-            if ( value == null ) {
-                return false;
-            }
+        public override Boolean Equals( Object value ) => Equals( this, value is ByteSize size ? size : default );
 
-            ByteSize other;
-
-            if ( value is ByteSize size ) {
-                other = size;
-            }
-            else {
-                return false;
-            }
-
-            return this.Equals( other );
-        }
-
-        public Boolean Equals( ByteSize value ) => this.Bits == value.Bits;
+        public Boolean Equals( ByteSize value ) => Equals( this, value );
 
         public override Int32 GetHashCode() => this.Bits.GetHashCode();
 
         public ByteSize Subtract( ByteSize bs ) => new ByteSize( this.Bytes - bs.Bytes );
 
-        //  than or equal to one.
         /// <summary>
         ///     Converts the value of the current ByteSize object to a string.
         ///     The metric prefix symbol (bit, byte, kilo, mega, giga, tera) used is
         ///     the largest metric prefix such that the corresponding value is greater
+        ///     than or equal to one.
         /// </summary>
         public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
@@ -362,10 +345,6 @@ namespace Librainian.Maths {
             if ( provider == null ) {
                 provider = CultureInfo.CurrentCulture;
             }
-
-            Boolean Has( String s ) => format.IndexOf( s, StringComparison.CurrentCultureIgnoreCase ) != -1;
-
-            String Output( Double n ) => n.ToString( format, provider );
 
             if ( Has( "PB" ) ) {
                 return Output( this.PetaBytes );
@@ -388,15 +367,19 @@ namespace Librainian.Maths {
             }
 
             // Byte and Bit symbol must be case-sensitive
-            if ( format.IndexOf( ByteSymbol ) != -1 ) {
+            if ( format.IndexOf( ByteSymbol, StringComparison.Ordinal ) != -1 ) {
                 return Output( this.Bytes );
             }
 
-            if ( format.IndexOf( BitSymbol ) != -1 ) {
+            if ( format.IndexOf( BitSymbol, StringComparison.Ordinal ) != -1 ) {
                 return Output( this.Bits );
             }
 
             return $"{this.LargestWholeNumberValue.ToString( format, provider )} {this.LargestWholeNumberSymbol}";
+
+            Boolean Has( String s ) => format.IndexOf( s, StringComparison.CurrentCultureIgnoreCase ) != -1;
+
+            String Output( Double n ) => n.ToString( format, provider );
         }
     }
 }

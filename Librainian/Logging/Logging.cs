@@ -42,10 +42,15 @@
 namespace Librainian.Logging {
 
     using System;
+    using System.Collections;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
+    using System.Runtime;
+    using System.Threading;
     using System.Windows.Forms;
+    using CommandLine;
     using Extensions;
     using JetBrains.Annotations;
     using NLog;
@@ -63,23 +68,6 @@ namespace Librainian.Logging {
 
         [NotNull]
         public static ConcurrentDictionary<Control, Target> Targets { get; } = new ConcurrentDictionary<Control, Target>();
-
-        [DebuggerStepThrough]
-        public static Boolean Start() {
-
-            InternalLogger.Reset();
-#if DEBUG
-            LogManager.ThrowConfigExceptions = true;
-            LogManager.ThrowExceptions = true;
-#endif
-            if ( LogManager.Configuration is null ) {
-                InternalLogger.Trace( $"{nameof( Start )} creating a new {nameof( LoggingConfiguration )}..." );
-                LogManager.Configuration = new LoggingConfiguration();
-                InternalLogger.Trace( $"{nameof( Start )} created a new {nameof( LoggingConfiguration )}." );
-            }
-
-            return Setup( LogLevel.Trace, LogLevel.Fatal, Librainian.Logging.SomeTargets.TraceTarget.Value );
-        }
 
         /// <summary>
         ///     Add a <see cref="Target" /> or a <see cref="RichTextBox" />.
@@ -227,13 +215,21 @@ namespace Librainian.Logging {
             }
         }
 
+        [Conditional("DEBUG")]
+        [Conditional("TRACE")]
         [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
-            System.Diagnostics.Debug.WriteLine( $"[{DateTime.Now:t}] {message}" );
-            Logger.Debug( message );
+            if ( Logger.IsDebugEnabled ) {
+                System.Diagnostics.Debug.WriteLine( $"[{DateTime.Now:t}] {message}" );
+                Logger.Debug( message );
 
-            if ( breakinto && Debugger.IsAttached ) {
-                Debugger.Break();
+                if ( breakinto && Debugger.IsAttached ) {
+                    Debugger.Break();
+                }
+            }
+
+            if ( Logger.IsTraceEnabled ) {
+                Logger.Trace( message );
             }
         }
 
@@ -366,5 +362,95 @@ namespace Librainian.Logging {
 
             return target;
         }
+
+        /// <summary>
+        /// <para>Adds program-wide exception handlers.</para>
+        /// <para>Optimizes program startup.</para>
+        /// <para>Starts logging, Debug and Trace.</para>
+        /// <para>Performs a garbage cleanup.</para>
+        /// <para>And start the form thread-loop.</para>
+        /// </summary>
+        public static void Run<TOpts>( [NotNull] Action<TOpts> run, [NotNull] IEnumerable<String> arguments ) {
+
+            if ( run == null ) {
+                throw new ArgumentNullException( paramName: nameof( run ) );
+            }
+
+            if ( arguments == null ) {
+                throw new ArgumentNullException( paramName: nameof( arguments ) );
+            }
+
+            try {
+                RunInternalCommon();
+
+                Parser.Default.ParseArguments<TOpts>( arguments ).WithParsed( run ).WithNotParsed( HandleErrors );
+
+            }
+            catch ( Exception exception ) {
+                exception.Log( breakinto: true );
+            }
+
+            void HandleErrors( IEnumerable<CommandLine.Error> errors ) {
+                try {
+                    if ( errors != null ) {
+                        foreach ( var error in errors ) {
+                            error.ToString().Log( breakinto: true );
+                        }
+                    }
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            }
+        }
+
+        private static void RunInternalCommon() {
+            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception ).Log( breakinto: true );
+            Application.ThreadException += ( sender, e ) => e?.Exception.Log( breakinto: true );
+
+            ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
+            ProfileOptimization.StartProfile( Application.ExecutablePath );
+
+            System.Diagnostics.Debug.AutoFlush = true;
+            System.Diagnostics.Trace.AutoFlush = true;
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault( defaultValue: false );
+
+            Thread.CurrentThread.Name = "UI";
+
+            InternalLogger.Reset();
+
+            if ( LogManager.Configuration is null ) {
+                InternalLogger.Trace( $"{nameof( Run )} creating a new {nameof( LoggingConfiguration )}..." );
+                LogManager.Configuration = new LoggingConfiguration();
+                InternalLogger.Trace( $"{nameof( Run )} created a new {nameof( LoggingConfiguration )}." );
+            }
+
+            Setup( LogLevel.Trace, LogLevel.Fatal, SomeTargets.TraceTarget.Value );
+
+#if DEBUG
+            LogManager.ThrowConfigExceptions = true;
+            LogManager.ThrowExceptions = true;
+#endif
+
+            Compact();
+            Thread.Yield();
+            Compact();
+
+            void Compact() {
+                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+                GC.Collect( 2, GCCollectionMode.Forced, true, true );
+            }
+        }
+
+        public static void Run<T>() where T : Form, new() {
+            RunInternalCommon();
+
+            using ( var form = new T() ) {
+                Application.Run( form );
+            }
+        }
+
     }
 }

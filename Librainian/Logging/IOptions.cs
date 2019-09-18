@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "SomeTargets.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IOptions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,48 +37,13 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SomeTargets.cs" was last formatted by Protiguous on 2019/09/12 at 4:23 PM.
+// Project: "Librainian", "IOptions.cs" was last formatted by Protiguous on 2019/09/13 at 10:01 PM.
 
 namespace Librainian.Logging {
 
-    using System;
-    using System.Data;
-    using JetBrains.Annotations;
-    using NLog.Layouts;
-    using NLog.Targets;
-
     /// <summary>
+    ///     Just a common interface for parsing command line options.
     /// </summary>
-    public static class SomeTargets {
-
-        [NotNull]
-        public static readonly Lazy<ColoredConsoleTarget> ColoredConsoleTarget = new Lazy<ColoredConsoleTarget>( () => new ColoredConsoleTarget {
-            Name = nameof( ColoredConsoleTarget ),
-            Layout = new CsvLayout {
-                WithHeader = false,
-                Delimiter = CsvColumnDelimiterMode.Space,
-                Columns = {
-                    new CsvColumn( "Time", layout: "${longdate}" ), new CsvColumn( "Message", layout: "${message}" )
-                }
-            },
-            UseDefaultRowHighlightingRules = true
-        } );
-
-        [NotNull]
-
-        //TODO Add in the connection string somehow?
-        public static readonly Lazy<DatabaseTarget> DataBaseTarget = new Lazy<DatabaseTarget>( () => new DatabaseTarget {
-            Name = nameof( DataBaseTarget ), CommandType = CommandType.StoredProcedure, ConnectionString = "", CommandText = ""
-        } );
-
-        [NotNull]
-        public static readonly Lazy<TraceTarget> TraceTarget = new Lazy<TraceTarget>( () => new TraceTarget {
-            Name = nameof( TraceTarget ),
-            Layout = new CsvLayout {
-                Delimiter = CsvColumnDelimiterMode.Space
-            }
-        } );
-
-    }
+    public interface IOptions { }
 
 }

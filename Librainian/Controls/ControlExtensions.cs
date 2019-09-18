@@ -694,6 +694,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static String Text( [NotNull] this Control control ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
@@ -728,7 +729,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        public static void Text( [NotNull] this Control control, [NotNull] String value ) {
+        public static void Text( [NotNull] this Control control, [CanBeNull] String value ) {
             if ( control == null ) {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }

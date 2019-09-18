@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Time {
     using Collections.Extensions;
     using Extensions;
     using JetBrains.Annotations;
-    using JM.LinqFaster.SIMD.Parallel;
+    using JM.LinqFaster.SIMD;
     using Maths;
     using Maths.Hashings;
     using Newtonsoft.Json;
@@ -560,7 +560,7 @@ namespace Librainian.Measurement.Time {
                 this.Femtoseconds.ToPlanckTimes(), this.Picoseconds.ToPlanckTimes(), this.Nanoseconds.ToPlanckTimes(), this.Microseconds.ToPlanckTimes(),
                 this.Milliseconds.ToPlanckTimes(), this.Seconds.ToPlanckTimes(), this.Minutes.ToPlanckTimes(), this.Hours.ToPlanckTimes(), this.Days.ToPlanckTimes(),
                 this.Weeks.ToPlanckTimes(), this.Months.ToPlanckTimes(), this.Years.ToPlanckTimes()
-            }.SumSP();
+            }.SumS();
 
             return sum;
         }

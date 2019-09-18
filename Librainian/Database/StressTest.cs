@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2019/08/25 at 6:17 AM.
+// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2019/09/12 at 10:37 AM.
 
 namespace Librainian.Database {
 
@@ -46,7 +46,6 @@ namespace Librainian.Database {
     using System.Diagnostics;
     using JetBrains.Annotations;
     using Measurement.Time;
-    using Misc;
 
     public static class StressTest {
 

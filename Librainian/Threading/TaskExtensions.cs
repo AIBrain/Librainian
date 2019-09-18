@@ -73,7 +73,7 @@ namespace Librainian.Threading {
         /// <param name="completedTask">   </param>
         /// <param name="completionSource"></param>
         /// <exception cref="ArgumentEmptyException"></exception>
-        private static void PropagateResult<T>( [NotNull] Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
+        public static void PropagateResult<T>( [NotNull] this Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
 
             switch ( completedTask.Status ) {
                 case TaskStatus.Canceled:
@@ -113,11 +113,7 @@ namespace Librainian.Threading {
 
             var bgWorker = new BackgroundWorker();
 
-            bgWorker.DoWork += ( sender, args ) => {
-                /*do nothing*/
-            };
-
-            bgWorker.RunWorkerCompleted += async ( sender, args ) => {
+            bgWorker.DoWork += async ( sender, args ) => {
                 try {
                     await task.ConfigureAwait( false );
                 }
@@ -127,6 +123,10 @@ namespace Librainian.Threading {
                 catch ( Exception exception ) {
                     exception.Log();
                 }
+            };
+
+            bgWorker.RunWorkerCompleted += ( sender, args ) => {
+                
             };
 
             bgWorker.RunWorkerAsync( anything );
@@ -226,21 +226,6 @@ namespace Librainian.Threading {
             }
         }
 
-        [NotNull]
-        [DebuggerStepThrough]
-        [Pure]
-        public static String FormattedNice( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToShortTimeString().Replace( ':', ';' )}";
-
-        /// <summary>
-        ///     YearMonthDay HH;MM;ss
-        /// </summary>
-        /// <param name="now"></param>
-        /// <returns></returns>
-        [NotNull]
-        [DebuggerStepThrough]
-        [Pure]
-        public static String FormattedNiceLong( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToLongTimeString().Replace( ':', ';' )}";
-
         /// <summary>
         ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
         /// </summary>
@@ -260,7 +245,7 @@ namespace Librainian.Threading {
             foreach ( var task in inputs ) {
                 task.ContinueWith( completed => {
                     var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
-                    PropagateResult( completedTask: completed, completionSource: nextBox );
+                    completed.PropagateResult( completionSource: nextBox );
                 }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
             }
 
@@ -770,6 +755,10 @@ namespace Librainian.Threading {
             var whichTaskFinished = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
             var didOurTaskFinish = whichTaskFinished == task;
+
+            if ( !didOurTaskFinish ) {
+                //do we want to cancel? how to cancel the task?
+            }
 
             return didOurTaskFinish;
         }

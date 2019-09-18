@@ -2097,5 +2097,21 @@ namespace Librainian.Parsing {
 
             return Regex.Match( source, $"{left}(.*){right}" ).Groups[ 1 ].Value;
         }
+
+        [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
+        public static String FormattedNice( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToShortTimeString().Replace( ':', ';' )}";
+
+        /// <summary>
+        ///     YearMonthDay HH;MM;ss
+        /// </summary>
+        /// <param name="now"></param>
+        /// <returns></returns>
+        [NotNull]
+        [DebuggerStepThrough]
+        [Pure]
+        public static String FormattedNiceLong( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToLongTimeString().Replace( ':', ';' )}";
+
     }
 }

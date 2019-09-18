@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Database.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Database.cs" was last formatted by Protiguous on 2019/08/08 at 6:52 AM.
+// 
+// Project: "Librainian", "Database.cs" was last formatted by Protiguous on 2019/09/12 at 10:38 AM.
 
 namespace Librainian.Database {
 
@@ -62,13 +62,10 @@ namespace Librainian.Database {
     using Logging;
     using Magic;
     using Maths;
-    using Misc;
     using Parsing;
     using Xunit;
 
     public sealed class Database : ABetterClassDispose, IDatabase {
-
-        public CancellationToken Token { get; }
 
         /// <summary>
         ///     Opens and then closes a <see cref="SqlConnection" />.
@@ -302,8 +299,8 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        [ItemCanBeNull]
-        public async Task<DataTable> ExecuteReaderAsyncDataTable( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        [ItemNotNull]
+        public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -335,13 +332,11 @@ namespace Librainian.Database {
             }
             catch ( SqlException exception ) {
                 exception.Log( Rebuild( query, parameters ) );
-
-                return null;
+                table.Clear();
             }
             catch ( DbException exception ) {
                 exception.Log( Rebuild( query, parameters ) );
-
-                return null;
+                table.Clear();
             }
 
             return table;
@@ -375,7 +370,7 @@ namespace Librainian.Database {
                         var scalar = command.ExecuteScalar();
 
                         if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
-                            return (default,default);
+                            return ( default, default );
                         }
 
                         if ( scalar is T executeScalar ) {
@@ -383,16 +378,24 @@ namespace Librainian.Database {
                         }
 
                         if ( scalar.TryCast<T>( out var result ) ) {
-                            return (Status.Success, result);
+                            return ( Status.Success, result );
                         }
 
                         try {
-                            result = ( T )Convert.ChangeType( scalar, typeof( T ) );
+                            result = ( T ) Convert.ChangeType( scalar, typeof( T ) );
                         }
-                        catch ( InvalidCastException ) {return default;}
-                        catch ( FormatException ) {return default;}
-                        catch ( OverflowException ) {return default;}
-                        catch ( ArgumentNullException ) {return default;}
+                        catch ( InvalidCastException ) {
+                            return default;
+                        }
+                        catch ( FormatException ) {
+                            return default;
+                        }
+                        catch ( OverflowException ) {
+                            return default;
+                        }
+                        catch ( ArgumentNullException ) {
+                            return default;
+                        }
 
                         return ( Status.Success, result );
                     }
@@ -415,7 +418,7 @@ namespace Librainian.Database {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        public async Task<(Status status,T result)> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public async Task<(Status status, T result)> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -426,10 +429,10 @@ namespace Librainian.Database {
                         await connection.OpenAsync( this.Token ).ConfigureAwait( false );
                     }
                     catch ( SqlException ) {
-                        return (Status.Failure, default);   //login most likely failed.
+                        return ( Status.Failure, default ); //login most likely failed.
                     }
                     catch ( Exception ) {
-                        return (Status.Failure, default);
+                        return ( Status.Failure, default );
                     }
 
                     using ( var command = new SqlCommand( query, connection ) {
@@ -448,21 +451,28 @@ namespace Librainian.Database {
                         }
 
                         if ( scalar is T executeScalar ) {
-                            return (Status.Success, executeScalar);
+                            return ( Status.Success, executeScalar );
                         }
 
                         if ( scalar.TryCast<T>( out var result ) ) {
-                            return (Status.Success, result);
+                            return ( Status.Success, result );
                         }
 
                         try {
                             return ( Status.Success, ( T ) Convert.ChangeType( scalar, typeof( T ) ) );
                         }
-                        catch ( InvalidCastException ) { return default; }
-                        catch ( FormatException ) { return default; }
-                        catch ( OverflowException ) { return default; }
-                        catch ( ArgumentNullException ) { return default; }
-
+                        catch ( InvalidCastException ) {
+                            return default;
+                        }
+                        catch ( FormatException ) {
+                            return default;
+                        }
+                        catch ( OverflowException ) {
+                            return default;
+                        }
+                        catch ( ArgumentNullException ) {
+                            return default;
+                        }
                     }
                 }
             }
@@ -528,6 +538,8 @@ namespace Librainian.Database {
         public static ConcurrentHashset<SqlConnectionStringBuilder> ConnectiontringBuilders { get; } = new ConcurrentHashset<SqlConnectionStringBuilder>();
 
         public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromMinutes( 2 );
+
+        public CancellationToken Token { get; }
 
         /// <summary>
         /// </summary>
@@ -688,5 +700,7 @@ namespace Librainian.Database {
             await FindAndStartSqlBrowserServices( new[] {
                 "TheServer" //TheServer is my development server's name. Feel free to remove or add your own.
             }, searchTimeout ).ConfigureAwait( false );
+
     }
+
 }

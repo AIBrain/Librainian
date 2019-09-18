@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "FlowStatus.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Status.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,34 +37,66 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "FlowStatus.cs" was last formatted by Protiguous on 2019/08/19 at 11:08 AM.
+// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/09/12 at 10:32 AM.
 
-namespace Librainian.Misc {
+namespace Librainian {
 
     using System;
 
     [Flags]
     public enum Status : SByte {
 
+        Failure = -1,
+
+        No = Failure,
+
         NoGo = Failure,
 
-        Failure = default,
+        Stop = Failure,
 
-        Success = 0b1,
+        Halt = Failure,
+
+        Negative = Failure,
+
+        Unknown = 0,
+
+        Success = 1,
+
+        Go = Success,
+
+        Yes = Success,
 
         Proceed = Success,
 
-        Go = Success
+        Continue = Success,
+
+        Advance = Success,
+
+        Positive = Success
 
     }
 
-    public static class FlowStatusExtensions {
+    
+
+    public static class StatusExtensions {
+
+        public static class Symbol {
+
+            public static String Fail { get; } = "❌";
+            public static String Unknown { get; } = "⁉";
+            public static String Success { get; } = "✔";
+
+        }
+
+        public static Boolean Failed( this Status status ) => status <= Status.Failure;
 
         public static Boolean IsBad( this Status status ) => status <= Status.Failure;
 
         public static Boolean IsGood( this Status status ) => status >= Status.Success;
 
-        public static Boolean IsUnknown( this Status status ) => status != Status.Success && status != Status.Failure;
+        public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || status != Status.Success && status != Status.Failure;
+
+        public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 
     }
 

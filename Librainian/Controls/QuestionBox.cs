@@ -44,6 +44,7 @@ namespace Librainian.Controls {
     using System;
     using System.Windows.Forms;
     using JetBrains.Annotations;
+    using Parsing;
 
     /// <summary>
     ///     Better than a messagebox?
@@ -65,7 +66,7 @@ namespace Librainian.Controls {
 
             this.InitializeComponent();
             this.Visible( false );
-            this.richTextBoxQuestion.Text( question.Trim() );
+            this.richTextBoxQuestion.Text( question.Limit( this.richTextBoxQuestion.MaxLength ) );
         }
 
         private void buttonCancel_Click( Object sender, EventArgs e ) {
@@ -75,7 +76,7 @@ namespace Librainian.Controls {
         }
 
         private void buttonOkay_Click( Object sender, EventArgs e ) {
-            this.Response = this.textBoxInput.Text;
+            this.Response = this.textBoxInput.Text()?.Trim();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
