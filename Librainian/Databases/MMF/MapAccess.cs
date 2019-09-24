@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "MapAccess.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     /// <summary>
     ///     Specifies access for the mapped file. These correspond to the FILE_MAP_XXX constants used by MapViewOfFile[Ex]()

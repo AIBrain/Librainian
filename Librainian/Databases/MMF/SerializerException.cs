@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DatabaseErrors.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "SerializerException.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,14 +37,21 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DatabaseErrors.cs" was last formatted by Protiguous on 2019/08/08 at 6:53 AM.
+// Project: "Librainian", "SerializerException.cs" was last formatted by Protiguous on 2019/08/08 at 6:59 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases.MMF {
 
     using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.Serialization;
+    using JetBrains.Annotations;
 
-    public static class DatabaseErrors {
+    [SuppressMessage( "Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable" )]
+    [Serializable]
+    public class SerializerException : Exception {
 
-        public const Int32 Deadlock = 1205;
+        protected SerializerException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+
+        public SerializerException( String message ) : base( message ) { }
     }
 }

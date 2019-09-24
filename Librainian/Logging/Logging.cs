@@ -1,26 +1,22 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Rick@AIBrain.org and Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
+// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and/or
+// Rick@AIBrain.org unless otherwise specified or the original license has been overwritten by
+// formatting. (We try to avoid that from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+// 
+// Donation information can be found at https://Protiguous.com/Donations
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,34 +24,27 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
+// 
+// Our website/blog can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/08/08 at 8:13 AM.
+// Feel free to browse!
+// 
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/09/23 at 7:53 AM.
 
 namespace Librainian.Logging {
 
     using System;
-    using System.Collections;
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Drawing;
-    using System.Runtime;
-    using System.Threading;
     using System.Windows.Forms;
-    using CommandLine;
     using Extensions;
     using JetBrains.Annotations;
     using NLog;
-    using NLog.Common;
-    using NLog.Config;
     using NLog.Layouts;
     using NLog.Targets;
     using NLog.Windows.Forms;
@@ -215,8 +204,8 @@ namespace Librainian.Logging {
             }
         }
 
-        [Conditional("DEBUG")]
-        [Conditional("TRACE")]
+        [Conditional( "DEBUG" )]
+        [Conditional( "TRACE" )]
         [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
             if ( Logger.IsDebugEnabled ) {
@@ -272,6 +261,7 @@ namespace Librainian.Logging {
 
             if ( more == null ) {
                 Logger.Debug( o );
+
                 if ( Debugger.IsAttached ) {
                     System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"" );
                     Debugger.Break();
@@ -280,6 +270,7 @@ namespace Librainian.Logging {
             else {
                 var m = more.ToJSON();
                 Logger.Debug( $"{o}; {m}" );
+
                 if ( Debugger.IsAttached ) {
                     System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"; {m}" );
                     Debugger.Break();
@@ -363,94 +354,6 @@ namespace Librainian.Logging {
             return target;
         }
 
-        /// <summary>
-        /// <para>Adds program-wide exception handlers.</para>
-        /// <para>Optimizes program startup.</para>
-        /// <para>Starts logging, Debug and Trace.</para>
-        /// <para>Performs a garbage cleanup.</para>
-        /// <para>And start the form thread-loop.</para>
-        /// </summary>
-        public static void Run<TOpts>( [NotNull] Action<TOpts> run, [NotNull] IEnumerable<String> arguments ) {
-
-            if ( run == null ) {
-                throw new ArgumentNullException( paramName: nameof( run ) );
-            }
-
-            if ( arguments == null ) {
-                throw new ArgumentNullException( paramName: nameof( arguments ) );
-            }
-
-            try {
-                RunInternalCommon();
-
-                Parser.Default.ParseArguments<TOpts>( arguments ).WithParsed( run ).WithNotParsed( HandleErrors );
-
-            }
-            catch ( Exception exception ) {
-                exception.Log( breakinto: true );
-            }
-
-            void HandleErrors( IEnumerable<CommandLine.Error> errors ) {
-                try {
-                    if ( errors != null ) {
-                        foreach ( var error in errors ) {
-                            error.ToString().Log( breakinto: true );
-                        }
-                    }
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
-            }
-        }
-
-        private static void RunInternalCommon() {
-            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception ).Log( breakinto: true );
-            Application.ThreadException += ( sender, e ) => e?.Exception.Log( breakinto: true );
-
-            ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
-            ProfileOptimization.StartProfile( Application.ExecutablePath );
-
-            System.Diagnostics.Debug.AutoFlush = true;
-            System.Diagnostics.Trace.AutoFlush = true;
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault( defaultValue: false );
-
-            Thread.CurrentThread.Name = "UI";
-
-            InternalLogger.Reset();
-
-            if ( LogManager.Configuration is null ) {
-                InternalLogger.Trace( $"{nameof( Run )} creating a new {nameof( LoggingConfiguration )}..." );
-                LogManager.Configuration = new LoggingConfiguration();
-                InternalLogger.Trace( $"{nameof( Run )} created a new {nameof( LoggingConfiguration )}." );
-            }
-
-            Setup( LogLevel.Trace, LogLevel.Fatal, SomeTargets.TraceTarget.Value );
-
-#if DEBUG
-            LogManager.ThrowConfigExceptions = true;
-            LogManager.ThrowExceptions = true;
-#endif
-
-            Compact();
-            Thread.Yield();
-            Compact();
-
-            void Compact() {
-                GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-                GC.Collect( 2, GCCollectionMode.Forced, true, true );
-            }
-        }
-
-        public static void Run<T>() where T : Form, new() {
-            RunInternalCommon();
-
-            using ( var form = new T() ) {
-                Application.Run( form );
-            }
-        }
-
     }
+
 }

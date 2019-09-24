@@ -54,14 +54,6 @@ namespace Librainian.Internet {
 
     public static class Internet {
 
-        public enum ResponseCode {
-
-            Error = -1,
-
-            Unknown = 0,
-
-            Success = 1
-        }
 
         private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
 
@@ -348,17 +340,17 @@ namespace Librainian.Internet {
                 this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
             }
 
-            public (ResponseCode responseCode, Int64 fileLength) GetContentLength() {
+            public (Status responseCode, Int64 fileLength) GetContentLength() {
 
                 if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
                     request.Method = "HEAD";
 
                     using ( var response = request.GetResponse() ) {
-                        return ( ResponseCode.Success, response.ContentLength );
+                        return (Status.Success, response.ContentLength );
                     }
                 }
 
-                return ( ResponseCode.Error, default );
+                return (Status.Error, default );
             }
         }
 

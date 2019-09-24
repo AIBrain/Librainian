@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "MemMapCache.cs" was last formatted by Protiguous on 2019/08/08 at 6:59 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
     using System.Collections.Generic;
@@ -54,6 +54,7 @@ namespace Librainian.Database.MMF {
 
     public class MemMapCache<T> : ABetterClassDispose {
 
+        private const String Delim = "[!@#]";
         private BinaryFormatter _formatter;
 
         private NetworkStream _networkStream;
@@ -75,8 +76,6 @@ namespace Librainian.Database.MMF {
         public Int32 Port { get; }
 
         public String Server { get; }
-
-        private const String Delim = "[!@#]";
 
         public MemMapCache() {
             this.Encoding = Encoding.Unicode;
@@ -127,7 +126,7 @@ namespace Librainian.Database.MMF {
 
                     var o = this._formatter.Deserialize( serializationStream: viewStream );
 
-                    return ( T ) o;
+                    return ( T )o;
                 }
             }
             catch ( SerializationException ) {

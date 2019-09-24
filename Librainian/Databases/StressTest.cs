@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FileMapIOException.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "StressTest.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,46 +37,67 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FileMapIOException.cs" was last formatted by Protiguous on 2019/08/08 at 6:57 AM.
+// Project: "Librainian", "StressTest.cs" was last formatted by Protiguous on 2019/09/12 at 10:37 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases {
 
     using System;
-    using System.IO;
-    using System.Runtime.Serialization;
+    using System.Data;
+    using System.Diagnostics;
     using JetBrains.Annotations;
-    using Newtonsoft.Json;
+    using Measurement.Time;
 
-    /// <summary>
-    ///     An exception occured as a result of an invalid IO operation on any of the File mapping classes. It wraps the error
-    ///     message and the underlying Win32 error code that caused the error.
-    /// </summary>
-    [JsonObject]
-    [Serializable]
-    public class FileMapIOException : IOException {
+    public static class StressTest {
 
-        public override String Message {
-            get {
-                if ( this.Win32ErrorCode == 0 ) {
-                    return base.Message;
+        /// <summary>
+        ///     How high can this computer count in one second?
+        /// </summary>
+        /// <returns></returns>
+        public static UInt64 PerformBaselineCounting() {
+            TimeSpan forHowLong = Seconds.One;
+            var stopwatch = Stopwatch.StartNew();
+            var counter = 0UL;
+
+            do {
+                counter++;
+
+                if ( stopwatch.Elapsed >= forHowLong ) {
+                    break;
                 }
+            } while ( true );
 
-                //if ( this.Win32ErrorCode == 0x80070008 ) {
-                //    return base.Message + " Not enough address space available (" + this.Win32ErrorCode + ")";
-                //}
-                return base.Message + " (" + this.Win32ErrorCode.ToString( "X" ) + ")";
-            }
+            return counter;
         }
 
-        public Int32 Win32ErrorCode { get; }
+        /// <summary>
+        ///     How high can this database count in one second?
+        /// </summary>
+        /// <param name="database">   </param>
+        /// <param name="forHowLong"> </param>
+        /// <param name="multithread"></param>
+        /// <returns></returns>
+        public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
+            if ( database == null ) {
+                throw new ArgumentNullException( nameof( database ) );
+            }
 
-        protected FileMapIOException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+            if ( multithread ) {
+                throw new NotImplementedException( "yet" );
+            }
 
-        // construction
-        public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
+            forHowLong = Seconds.One;
+            var stopwatch = Stopwatch.StartNew();
+            (Status status, UInt64 result) counter = (default, 0UL);
 
-        public FileMapIOException( String message ) : base( message ) { }
+            do {
+                counter = database.ExecuteScalar<UInt64>( $"select {counter.result} + cast(1 as bigint)  as [Result];", CommandType.Text );
 
-        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
+                if ( stopwatch.Elapsed >= forHowLong ) {
+                    break;
+                }
+            } while ( true );
+
+            return counter.result;
+        }
     }
 }

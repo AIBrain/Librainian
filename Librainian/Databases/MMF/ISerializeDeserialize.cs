@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MapProtection.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "ISerializeDeserialize.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,35 +37,18 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MapProtection.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
+// Project: "Librainian", "ISerializeDeserialize.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
 
-    /// <summary>
-    ///     Specifies page protection for the mapped file These correspond to the PAGE_XXX set of flags passed to
-    ///     CreateFileMapping()
-    /// </summary>
-    [Flags]
-    public enum MapProtection {
+    public interface ISerializeDeserialize<T> {
 
-        PageNone = 0x00000000,
+        T BytesToObject( Byte[] bytes );
 
-        // protection - mutually exclusive, do not or
-        PageReadOnly = 0x00000002,
+        Boolean CanSerializeType();
 
-        PageReadWrite = 0x00000004,
-
-        PageWriteCopy = 0x00000008,
-
-        // attributes - or-able with protection
-        SecImage = 0x01000000,
-
-        SecReserve = 0x04000000,
-
-        SecCommit = 0x08000000,
-
-        SecNoCache = 0x10000000
+        Byte[] ObjectToBytes( T data );
     }
 }

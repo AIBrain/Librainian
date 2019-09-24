@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "LocalDB.cs" was last formatted by Protiguous on 2019/08/08 at 6:56 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Data;

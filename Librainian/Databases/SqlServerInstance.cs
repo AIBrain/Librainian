@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Class1.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "SqlServerInstance.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,43 +37,34 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Class1.cs" was last formatted by Protiguous on 2019/08/08 at 6:56 AM.
+// Project: "Librainian", "SqlServerInstance.cs" was last formatted by Protiguous on 2019/08/08 at 7:01 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases {
 
     using System;
-    using System.IO.MemoryMappedFiles;
-    using System.Text;
+    using System.Diagnostics;
+    using Extensions;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-    internal class Class1 {
-
-        //private var localFilePath = "complete_path_to_large_file";
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [JsonObject]
+    [Immutable]
+    public class SqlServerInstance {
 
         [NotNull]
-        public String GetContent( [NotNull] MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
-            String content;
+        public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
-            using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {
-                var contentArray = new Byte[ bytesToReadIn ];
-                memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
-                content = Encoding.UTF8.GetString( contentArray );
-            }
+        public String Edition { get; set; }
 
-            return content;
-        }
+        public String InstanceName { get; set; }
 
-        public void Test() {
-            const Int64 size32 = sizeof( UInt32 );
-            const Int64 multiplier = UInt32.MaxValue;
-            const Int64 biteSize = size32 * multiplier; //that's a 17.18 GB !!
+        public String MachineName { get; set; }
 
-            using ( var bob = MemoryMappedFile.CreateOrOpen( "test.$$$", biteSize, MemoryMappedFileAccess.ReadWrite ) ) {
+        public String ServiceName { get; set; }
 
-                //bob.CreateViewAccessor
-            }
-        }
+        public String Version { get; set; }
 
-        //using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
+        public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
     }
 }

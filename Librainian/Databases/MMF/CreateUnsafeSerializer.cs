@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2019/08/08 at 6:56 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
     using System.CodeDom.Compiler;
@@ -141,7 +141,11 @@ namespace Librainian.Database.MMF {
         [NotNull]
         private CompilerParameters GetCompilerParameters() {
             var cParameters = new CompilerParameters {
-                GenerateInMemory = true, GenerateExecutable = false, TreatWarningsAsErrors = false, IncludeDebugInformation = false, CompilerOptions = "/optimize /unsafe"
+                GenerateInMemory = true,
+                GenerateExecutable = false,
+                TreatWarningsAsErrors = false,
+                IncludeDebugInformation = false,
+                CompilerOptions = "/optimize /unsafe"
             };
 
             cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
@@ -216,7 +220,7 @@ namespace Librainian.Database.MMF {
                 throw new SerializerException( res.Errors[ 0 ].ErrorText );
             }
 
-            return ( ISerializeDeserialize<T> ) res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
+            return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
         }
     }
 }

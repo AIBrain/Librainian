@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MMF.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "FileMapIOException.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,43 +37,46 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MMF.cs" was last formatted by Protiguous on 2019/08/08 at 6:59 AM.
+// Project: "Librainian", "FileMapIOException.cs" was last formatted by Protiguous on 2019/08/08 at 6:57 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
-    using System.IO.MemoryMappedFiles;
-    using System.Text;
+    using System.IO;
+    using System.Runtime.Serialization;
     using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
-    internal class MMF {
+    /// <summary>
+    ///     An exception occured as a result of an invalid IO operation on any of the File mapping classes. It wraps the error
+    ///     message and the underlying Win32 error code that caused the error.
+    /// </summary>
+    [JsonObject]
+    [Serializable]
+    public class FileMapIOException : IOException {
 
-        //private var localFilePath = "complete_path_to_large_file";
+        public override String Message {
+            get {
+                if ( this.Win32ErrorCode == 0 ) {
+                    return base.Message;
+                }
 
-        [NotNull]
-        public String GetContent( [NotNull] MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
-            String content;
-
-            using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {
-                var contentArray = new Byte[ bytesToReadIn ];
-                memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
-                content = Encoding.Unicode.GetString( contentArray );
-            }
-
-            return content;
-        }
-
-        public void Test() {
-            const Int64 size32 = sizeof( UInt32 );
-            const Int64 multiplier = UInt32.MaxValue;
-            const Int64 biteSize = size32 * multiplier; //that's a 17.18 GB !!
-
-            using ( var _ = MemoryMappedFile.CreateOrOpen( "test.$$$", biteSize, MemoryMappedFileAccess.ReadWrite ) ) {
-
-                //bob.CreateViewAccessor
+                //if ( this.Win32ErrorCode == 0x80070008 ) {
+                //    return base.Message + " Not enough address space available (" + this.Win32ErrorCode + ")";
+                //}
+                return base.Message + " (" + this.Win32ErrorCode.ToString( "X" ) + ")";
             }
         }
 
-        //using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
+        public Int32 Win32ErrorCode { get; }
+
+        protected FileMapIOException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+
+        // construction
+        public FileMapIOException( Int32 error ) => this.Win32ErrorCode = error;
+
+        public FileMapIOException( String message ) : base( message ) { }
+
+        public FileMapIOException( String message, Exception innerException ) : base( message, innerException ) { }
     }
 }

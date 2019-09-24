@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "DatabaseAsync.cs" was last formatted by Protiguous on 2019/08/08 at 6:53 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Data;
@@ -136,7 +136,7 @@ namespace Librainian.Database {
                 await this.ConnectAsync().ConfigureAwait( false );
 
                 using ( var dataAdapter = new SqlDataAdapter( sproc, this.Connection ) ) {
-                    dataAdapter.SelectCommand.CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds;
+                    dataAdapter.SelectCommand.CommandTimeout = ( Int32 )this.Timeout.TotalSeconds;
                     dataAdapter.SelectCommand.CommandType = CommandType.StoredProcedure;
                     dataAdapter.SelectCommand.Parameters.AddRange( this.ParameterSet.ToArray() );
 
@@ -180,7 +180,10 @@ namespace Librainian.Database {
                     connection.Open();
 
                     var command = new SqlCommand {
-                        Connection = connection, CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandText = sproc
+                        Connection = connection,
+                        CommandType = CommandType.StoredProcedure,
+                        CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                        CommandText = sproc
                     };
 
                     command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -211,7 +214,10 @@ namespace Librainian.Database {
                 connection.Open();
 
                 var command = new SqlCommand {
-                    Connection = connection, CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandText = sproc
+                    Connection = connection,
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                    CommandText = sproc
                 };
 
                 command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -235,7 +241,10 @@ namespace Librainian.Database {
                 connection.Open();
 
                 var command = new SqlCommand {
-                    Connection = connection, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+                    Connection = connection,
+                    CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                    CommandType = CommandType.Text,
+                    CommandText = sql
                 };
 
                 command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -262,7 +271,10 @@ namespace Librainian.Database {
             await this.ConnectAsync().ConfigureAwait( false );
 
             var command = new SqlCommand {
-                Connection = this.Connection, CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandText = sproc
+                Connection = this.Connection,
+                CommandType = CommandType.StoredProcedure,
+                CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                CommandText = sproc
             };
 
             command.Parameters.AddRange( this.ParameterSet.ToArray() );

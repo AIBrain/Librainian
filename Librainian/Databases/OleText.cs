@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Text.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "OleText.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,18 +37,17 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Text.cs" was last formatted by Protiguous on 2019/08/08 at 7:01 AM.
+// Project: "Librainian", "OleText.cs" was last formatted by Protiguous on 2019/08/08 at 7:00 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Data;
     using System.Data.OleDb;
-    using System.Diagnostics.CodeAnalysis;
     using JetBrains.Annotations;
     using Logging;
 
-    public class Text {
+    public class OleText {
 
         private String ConnectionString { get; }
 
@@ -56,12 +55,13 @@ namespace Librainian.Database {
 
         private String Path { get; }
 
-        public Text( String path, Boolean hasHeaders, Char delimiter ) {
+        public OleText( String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
 
             var connectionStringBuilder = new OleDbConnectionStringBuilder {
-                Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path
+                Provider = "Microsoft.Jet.OLEDB.4.0",
+                DataSource = path
             };
 
             connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
@@ -85,7 +85,7 @@ namespace Librainian.Database {
                 columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                    columns[ i ] = ( String )tableColumns.Rows[ i ][ "COLUMN_NAME" ];
                 }
             }
             catch ( Exception exception ) {
@@ -108,7 +108,6 @@ namespace Librainian.Database {
             }
         }
 
-        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [NotNull]
         public DataTable GetWorksheet( String worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
@@ -137,7 +136,7 @@ namespace Librainian.Database {
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
                 for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = ( String )tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
                     worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
                 }
             }

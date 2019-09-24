@@ -46,6 +46,8 @@ namespace Librainian {
     [Flags]
     public enum Status : SByte {
 
+        Error = Failure-1,
+
         Failure = -1,
 
         No = Failure,

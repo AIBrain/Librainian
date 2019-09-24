@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,18 +28,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2019/09/12 at 10:38 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Collections.Generic;
@@ -159,14 +159,14 @@ namespace Librainian.Database {
                 using ( var db = new Database( builderToTest.ConnectionString, token ) ) {
                     var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 
-                    return ( result.status, result.result, stopwatch.Elapsed );
+                    return (result.status, result.result, stopwatch.Elapsed);
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( Status.Failure, default, stopwatch.Elapsed );
+            return (Status.Failure, default, stopwatch.Elapsed);
         }
 
         /// <summary>
@@ -250,7 +250,11 @@ namespace Librainian.Database {
                     var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
 
                     yield return new SqlServerInstance {
-                        InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName
+                        InstanceName = instanceName,
+                        ServiceName = serviceName,
+                        Version = version,
+                        Edition = edition,
+                        MachineName = Environment.MachineName
                     };
                 }
             }
@@ -632,7 +636,7 @@ namespace Librainian.Database {
                 if ( version.status != Status.Success || getdate.status != Status.Success ) {
                     "Failed connecting to server.".Break();
 
-                    return ( Status.Failure, default, default, default, stopwatch.Elapsed );
+                    return (Status.Failure, default, default, default, stopwatch.Elapsed);
                 }
 
                 var serverDateTime = getdate.response; //should already be utc.
@@ -644,7 +648,7 @@ namespace Librainian.Database {
 
                     var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
 
-                    return ( Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed );
+                    return (Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed);
                 }
             }
             catch ( Exception exception ) {
@@ -653,7 +657,7 @@ namespace Librainian.Database {
 
             "Failed connecting to server.".Break();
 
-            return ( Status.Failure, default, default, default, stopwatch.Elapsed );
+            return (Status.Failure, default, default, default, stopwatch.Elapsed);
         }
 
         public static void TryPlayFile( this String fileName ) {
@@ -719,7 +723,5 @@ namespace Librainian.Database {
                     return stopwatch.Elapsed;
                 }
         */
-
     }
-
 }

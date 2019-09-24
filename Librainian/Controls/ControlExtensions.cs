@@ -62,8 +62,12 @@ namespace Librainian.Controls {
         public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
         [DebuggerStepThrough]
+        public static void Append( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
+            box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
+
+        [DebuggerStepThrough]
         public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
-            box.AppendText( $"\n{text}", color == Color.Empty ? box.ForeColor : color, args );
+            box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
 
         [DebuggerStepThrough]
         public static void AppendText( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>

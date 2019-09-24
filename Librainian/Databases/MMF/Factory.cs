@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "Factory.cs" was last formatted by Protiguous on 2019/08/08 at 6:57 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
     using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace Librainian.Database.MMF {
             }
 
             try {
-                var classInstance = ( T ) Activator.CreateInstance( typeof( T ), args );
+                var classInstance = ( T )Activator.CreateInstance( typeof( T ), args );
                 var sw = Stopwatch.StartNew();
                 var count = 0;
 
@@ -157,7 +157,7 @@ namespace Librainian.Database.MMF {
         private static ISerializeDeserialize<T> InstantiateSerializer( [NotNull] Type type ) {
             var instType = type.IsGenericTypeDefinition ? type.MakeGenericType( typeof( T ) ) : type;
 
-            return ( ISerializeDeserialize<T> ) Activator.CreateInstance( instType );
+            return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
         }
 
         private static ISerializeDeserialize<T> PickOptimalSerializer() {

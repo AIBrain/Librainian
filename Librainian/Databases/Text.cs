@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Excel.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "Text.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,31 +37,36 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Excel.cs" was last formatted by Protiguous on 2019/08/08 at 6:55 AM.
+// Project: "Librainian", "Text.cs" was last formatted by Protiguous on 2019/08/08 at 7:01 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Data;
     using System.Data.OleDb;
+    using System.Diagnostics.CodeAnalysis;
     using JetBrains.Annotations;
     using Logging;
 
-    public class Excel {
+    public class Text {
 
         private String ConnectionString { get; }
 
+        private Char Delimiter { get; }
+
         private String Path { get; }
 
-        public Excel( String path, Boolean hasHeaders, Boolean hasMixedData ) {
+        public Text( String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
+            this.Delimiter = delimiter;
 
-            var strBuilder = new OleDbConnectionStringBuilder {
-                Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path
+            var connectionStringBuilder = new OleDbConnectionStringBuilder {
+                Provider = "Microsoft.Jet.OLEDB.4.0",
+                DataSource = path
             };
 
-            strBuilder.Add( "Extended Properties", String.Format( "Excel 8.0;HDR={0}{1}Imex={2}{1}", hasHeaders ? "Yes" : "No", ';', hasMixedData ? "2" : "0" ) );
-            this.ConnectionString = strBuilder.ToString();
+            connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
+            this.ConnectionString = connectionStringBuilder.ToString();
         }
 
         [NotNull]
@@ -69,70 +74,53 @@ namespace Librainian.Database {
             String[] columns = { };
 
             try {
-                DataTable tableColumns;
+                var connection = new OleDbConnection( this.ConnectionString );
+                connection.Open();
 
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    connection.Open();
+                var tableColumns = connection.GetSchema( "Columns", new[] {
+                    null, null, worksheet + '$', null
+                } );
 
-                    tableColumns = connection.GetSchema( "Columns", new[] {
-                        null, null, worksheet + '$', null
-                    } );
-                }
+                connection.Close();
 
                 columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                    columns[ i ] = ( String )tableColumns.Rows[ i ][ "COLUMN_NAME" ];
                 }
             }
-            catch ( OleDbException exception ) {
+            catch ( Exception exception ) {
                 exception.Log();
             }
 
             return columns;
         }
 
-        [CanBeNull]
+        [NotNull]
         public DataSet GetWorkplace() {
-            try {
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
-                        var workplace = new DataSet();
-                        adaptor.FillSchema( workplace, SchemaType.Source );
-                        adaptor.Fill( workplace );
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
+                    var workplace = new DataSet();
+                    adaptor.FillSchema( workplace, SchemaType.Source );
+                    adaptor.Fill( workplace );
 
-                        return workplace;
-                    }
+                    return workplace;
                 }
             }
-            catch ( OleDbException exception ) {
-                exception.Log();
-            }
-
-            return null;
         }
 
-        [CanBeNull]
+        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
+        [NotNull]
         public DataTable GetWorksheet( String worksheet ) {
-            try {
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) {
-                        SelectCommand = new OleDbCommand( worksheet )
-                    } ) {
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
+                    var ws = new DataTable( worksheet );
+                    adaptor.FillSchema( ws, SchemaType.Source );
+                    adaptor.Fill( ws );
 
-                        var ws = new DataTable( worksheet );
-                        adaptor.FillSchema( ws, SchemaType.Source );
-                        adaptor.Fill( ws );
-
-                        return ws;
-                    }
+                    return ws;
                 }
             }
-            catch ( OleDbException exception ) {
-                exception.Log();
-            }
-
-            return null;
         }
 
         [NotNull]
@@ -150,13 +138,8 @@ namespace Librainian.Database {
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
                 for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = ( String )tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
                     worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
-
-                    // removes the trailing $ and other characters appended in the table name
-                    while ( worksheets[ i ].EndsWith( "$" ) ) {
-                        worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
-                    }
                 }
             }
             catch ( OleDbException exception ) {

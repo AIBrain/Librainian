@@ -50,7 +50,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
     <NoWarn>IDE0015,IDE0044;IDE1006</NoWarn>
-    <FileAlignment>8192</FileAlignment>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>embedded</DebugType>
@@ -59,12 +59,12 @@
     <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>7.3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <FileAlignment>4096</FileAlignment>
+    <FileAlignment>512</FileAlignment>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Single Image|AnyCPU'">
@@ -162,10 +162,10 @@
     <Compile Include="ComputerSystem\ConsoleWindow.cs" />
     <Compile Include="Controls\ConsoleWindow.cs" />
     <Compile Include="Controls\FormExtensions.cs" />
-    <Compile Include="Database\ScriptDBObjects.cs" />
-    <Compile Include="Database\DatabaseAsync.cs" />
-    <Compile Include="Database\MMF\Class1.cs" />
-    <Compile Include="Database\Text.cs" />
+    <Compile Include="Databases\ScriptDBObjects.cs" />
+    <Compile Include="Databases\DatabaseAsync.cs" />
+    <Compile Include="Databases\MMF\Class1.cs" />
+    <Compile Include="Databases\Text.cs" />
     <Compile Include="Extensions\Class1.cs" />
     <Compile Include="Extensions\DisposableBase.cs" />
     <Compile Include="Extensions\JunctionPoint.cs" />
@@ -174,6 +174,7 @@
     <Compile Include="Financial\Containers\Shopping\TaxableShoppingItem.cs" />
     <Compile Include="Financial\Containers\Shopping\TaxTable.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="Logging\IOptions.cs" />
     <Compile Include="Logging\Error.cs" />
     <Compile Include="Maths\Numbers\BiggerRational.cs" />
@@ -219,16 +220,16 @@
     <Compile Include="Converters\TranslateDecimalGuid.cs" />
     <Compile Include="Converters\TranslateGuidUInt64.cs" />
     <Compile Include="Converters\UInt64ToDouble.cs" />
-    <Compile Include="Database\DatabaseErrors.cs" />
-    <Compile Include="Database\DurableDatabase.cs" />
-    <Compile Include="Database\Excel.cs" />
-    <Compile Include="Database\IDatabase.cs" />
-    <Compile Include="Database\MMF\CreateUnsafeSerializer.cs" />
-    <Compile Include="Database\SqlServerInstance.cs" />
-    <Compile Include="Database\StressTest.cs" />
-    <Compile Include="Database\OleText.cs" />
-    <Compile Include="Database\ReflectionPopulator.cs" />
-    <Compile Include="Database\GenericPopulator.cs" />
+    <Compile Include="Databases\DatabaseErrors.cs" />
+    <Compile Include="Databases\DurableDatabase.cs" />
+    <Compile Include="Databases\Excel.cs" />
+    <Compile Include="Databases\IDatabase.cs" />
+    <Compile Include="Databases\MMF\CreateUnsafeSerializer.cs" />
+    <Compile Include="Databases\SqlServerInstance.cs" />
+    <Compile Include="Databases\StressTest.cs" />
+    <Compile Include="Databases\OleText.cs" />
+    <Compile Include="Databases\ReflectionPopulator.cs" />
+    <Compile Include="Databases\GenericPopulator.cs" />
     <Compile Include="Exceptions\ArgumentEmptyException.cs" />
     <Compile Include="Exceptions\InvalidParameterException.cs" />
     <Compile Include="Exceptions\MissingTextException.cs" />
@@ -505,19 +506,19 @@
     </Compile>
     <Compile Include="Controls\Win32.cs" />
     <Compile Include="Controls\WindowWrapper.cs" />
-    <Compile Include="Database\LocalDB.cs" />
-    <Compile Include="Database\MMF\MMF.cs" />
-    <Compile Include="Database\MMF\Factory.cs" />
-    <Compile Include="Database\MMF\FileMapIOException.cs" />
-    <Compile Include="Database\MMF\ISerializeDeserialize.cs" />
-    <Compile Include="Database\MMF\IViewManager.cs" />
-    <Compile Include="Database\MMF\MapAccess.cs" />
-    <Compile Include="Database\MMF\MapProtection.cs" />
-    <Compile Include="Database\MMF\MemMapCache.cs" />
-    <Compile Include="Database\MMF\SerializerException.cs" />
-    <Compile Include="Database\MMF\ValueTypeCheck.cs" />
-    <Compile Include="Database\DatabaseExtensions.cs" />
-    <Compile Include="Database\Database.cs" />
+    <Compile Include="Databases\LocalDB.cs" />
+    <Compile Include="Databases\MMF\MMF.cs" />
+    <Compile Include="Databases\MMF\Factory.cs" />
+    <Compile Include="Databases\MMF\FileMapIOException.cs" />
+    <Compile Include="Databases\MMF\ISerializeDeserialize.cs" />
+    <Compile Include="Databases\MMF\IViewManager.cs" />
+    <Compile Include="Databases\MMF\MapAccess.cs" />
+    <Compile Include="Databases\MMF\MapProtection.cs" />
+    <Compile Include="Databases\MMF\MemMapCache.cs" />
+    <Compile Include="Databases\MMF\SerializerException.cs" />
+    <Compile Include="Databases\MMF\ValueTypeCheck.cs" />
+    <Compile Include="Databases\DatabaseExtensions.cs" />
+    <Compile Include="Databases\Database.cs" />
     <Compile Include="Extensions\BigNullStream.cs" />
     <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
     <Compile Include="Extensions\ReflectionHelper.cs" />
@@ -912,7 +913,7 @@
       <Version>4.5.3</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Dataflow">
-      <Version>4.9.0</Version>
+      <Version>4.10.0</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.3</Version>
@@ -935,7 +936,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

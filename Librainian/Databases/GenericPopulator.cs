@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "GenericPopulator.cs" was last formatted by Protiguous on 2019/08/08 at 6:55 AM.
 
-namespace Librainian.Database {
+namespace Librainian.Databases {
 
     using System;
     using System.Collections.Generic;
@@ -106,7 +106,7 @@ namespace Librainian.Database {
             var lambda = Expression.Lambda<Func<SqlDataReader, T>>( memberInit, readerParam );
             Delegate resDelegate = lambda.Compile();
 
-            return ( Func<SqlDataReader, T> ) resDelegate;
+            return ( Func<SqlDataReader, T> )resDelegate;
         }
 
         [NotNull]

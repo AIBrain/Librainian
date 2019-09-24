@@ -54,7 +54,7 @@ namespace Librainian.Converters {
     using System.Windows.Forms;
     using Collections.Extensions;
     using Controls;
-    using Database;
+    using Databases;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
@@ -321,13 +321,13 @@ namespace Librainian.Converters {
                 var year = BitConverter.ToInt32( bytes, startIndex: 0 );
                 var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
                 var millisecond = BitConverter.ToUInt16( bytes, startIndex: 6 );
-                var dayofweek = ( DayOfWeek ) bytes[ 8 ]; //not used in constructing the datetime
+                var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
                 var day = bytes[ 9 ];
                 var hour = bytes[ 10 ];
                 var minute = bytes[ 11 ];
                 var second = bytes[ 12 ];
                 var month = bytes[ 13 ];
-                var kind = ( DateTimeKind ) bytes[ 15 ];
+                var kind = ( DateTimeKind )bytes[ 15 ];
                 var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
 
                 return result;
@@ -460,17 +460,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
-                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
-                        , c: ( UInt16 ) dateTime.Millisecond //6,7
-                        , d: ( Byte ) dateTime.DayOfWeek //8
-                        , e: ( Byte ) dateTime.Day //9
-                        , f: ( Byte ) dateTime.Hour //10
-                        , g: ( Byte ) dateTime.Minute //11
-                        , h: ( Byte ) dateTime.Second //12
-                        , i: ( Byte ) dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
+                        , b: ( UInt16 )dateTime.DayOfYear //4,5
+                        , c: ( UInt16 )dateTime.Millisecond //6,7
+                        , d: ( Byte )dateTime.DayOfWeek //8
+                        , e: ( Byte )dateTime.Day //9
+                        , f: ( Byte )dateTime.Hour //10
+                        , g: ( Byte )dateTime.Minute //11
+                        , h: ( Byte )dateTime.Second //12
+                        , i: ( Byte )dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte ) dateTime.Kind ); //15
+                        , k: ( Byte )dateTime.Kind ); //15
 
                     return guid;
                 }

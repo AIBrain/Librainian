@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ISerializeDeserialize.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IViewManager.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,18 +37,57 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ISerializeDeserialize.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
+// Project: "Librainian", "IViewManager.cs" was last formatted by Protiguous on 2019/08/08 at 6:58 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
+    using System.IO;
 
-    public interface ISerializeDeserialize<T> {
+    public interface IViewManager {
 
-        T BytesToObject( Byte[] bytes );
+        /// <summary>
+        ///     Keep file on exit
+        /// </summary>
+        Boolean KeepFile { get; set; }
 
-        Boolean CanSerializeType();
+        /// <summary>
+        ///     Number of items in the file
+        /// </summary>
+        Int64 Length { get; }
 
-        Byte[] ObjectToBytes( T data );
+        /// <summary>
+        ///     Remove the backing file
+        /// </summary>
+        void CleanUp();
+
+        /// <summary>
+        ///     Verify that the persisting file is large enough for the data written
+        /// </summary>
+        /// <param name="position">   Position to start writing</param>
+        /// <param name="writeLength">Number of bytes to write</param>
+        /// <returns></returns>
+        Boolean EnoughBackingCapacity( Int64 position, Int64 writeLength );
+
+        /// <summary>
+        ///     Get a working view for the current thread
+        /// </summary>
+        /// <param name="threadId"></param>
+        /// <returns></returns>
+        Stream GetView( Int32 threadId );
+
+        /// <summary>
+        ///     Grow file
+        /// </summary>
+        /// <param name="sizeToGrowFrom">Size to grow from. Could be max size or an offset larger than the file</param>
+        void Grow( Int64 sizeToGrowFrom );
+
+        /// <summary>
+        ///     Initialize the backing file
+        /// </summary>
+        /// <param name="fileName">Filename to store the data</param>
+        /// <param name="capacity">Number of items to allocate</param>
+        /// <param name="dataSize">Size of datastructure</param>
+        void Initialize( String fileName, Int64 capacity, Int32 dataSize );
     }
 }

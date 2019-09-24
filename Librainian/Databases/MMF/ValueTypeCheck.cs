@@ -39,7 +39,7 @@
 //
 // Project: "Librainian", "ValueTypeCheck.cs" was last formatted by Protiguous on 2019/08/08 at 7:00 AM.
 
-namespace Librainian.Database.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
     using System.Linq;
@@ -63,7 +63,7 @@ namespace Librainian.Database.MMF {
                 return false;
             }
 
-            var attribute = ( MarshalAsAttribute ) customAttributes[ 0 ];
+            var attribute = ( MarshalAsAttribute )customAttributes[ 0 ];
 
             if ( attribute.Value == UnmanagedType.Currency ) {
                 return true;
@@ -90,6 +90,6 @@ namespace Librainian.Database.MMF {
             return true;
         }
 
-        internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || (this.PropertySizesAreDefined() && this.FieldSizesAreDefined());
+        internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || ( this.PropertySizesAreDefined() && this.FieldSizesAreDefined() );
     }
 }
