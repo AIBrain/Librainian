@@ -111,7 +111,7 @@ namespace Librainian.Linguistics {
 
         public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-        public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
+        public override String ToString() => this.Words.ToStrings( Symbols.Singlespace );
 
         //[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
     }

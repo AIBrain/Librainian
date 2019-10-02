@@ -42,6 +42,7 @@
 namespace Librainian.Persistence {
 
     using System;
+    using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Linq;
@@ -123,7 +124,7 @@ namespace Librainian.Persistence {
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
-                if ( o is ConcurrentHashset<SqlParameter> collection ) {
+                if ( o is IEnumerable<SqlParameter> collection ) {
                     var kvp = collection.Select( parameter => new {
                         parameter.ParameterName, parameter.Value, parameter
                     } );

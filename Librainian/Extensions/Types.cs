@@ -49,6 +49,8 @@ namespace Librainian.Extensions {
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Reflection.Emit;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using JetBrains.Annotations;
     using Logging;
@@ -65,7 +67,7 @@ namespace Librainian.Extensions {
             value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
 
         [NotNull]
-        public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T ) item.Clone() ).ToList();
+        public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( field == null ) {
@@ -250,7 +252,7 @@ namespace Librainian.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -407,6 +409,46 @@ namespace Librainian.Extensions {
             return Expression.Lambda<Func<Object>>( Expression.New( type ) ).Compile();
         }
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
+        /// <summary>
+        /// Alternate method of creating an object of type.
+        /// Not proven to be faster than new().
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [NotNull]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static T Newbie<T>() where T : class => typeof( T ).Newbie<T>();
+
+        /// <summary>
+        /// Alternate method of creating an object of type.
+        /// Not proven to be faster than new().
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static T Newbie<T>( this Type type ) where T : class {
+
+            if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
+                var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
+
+                var ilGenerator = dynamicMethod.GetILGenerator();   //can this be optimized any further?
+                ilGenerator.Emit( OpCodes.Nop );    //why nop here? alignment?
+                ilGenerator.Emit( OpCodes.Newobj,
+                    type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
+                ilGenerator.Emit( OpCodes.Ret );
+
+                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                ObjectActivators.Add( type, activator );
+            }
+
+            return ( T )activator.Invoke();
+        }
+
+        private delegate Object ObjectActivator();
+
         /// <summary>
         ///     Get the <see cref="Type" /> associated with the subject <see cref="TypeCode" />.
         /// </summary>
@@ -480,12 +522,12 @@ namespace Librainian.Extensions {
                         value = new Guid( bytes );
                     }
 
-                    result = ( T ) Convert.ChangeType( value, underlyingType );
+                    result = ( T )Convert.ChangeType( value, underlyingType );
 
                     return true;
                 }
 
-                result = ( T ) Convert.ChangeType( value, underlyingType );
+                result = ( T )Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -512,7 +554,7 @@ namespace Librainian.Extensions {
                     return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile();
                 }
 
-                return () => ( T ) FormatterServices.GetUninitializedObject( t );
+                return () => ( T )FormatterServices.GetUninitializedObject( t );
             }
         }
 
@@ -586,5 +628,6 @@ namespace Librainian.Extensions {
         //            }
         //    }
         //}
+
     }
 }

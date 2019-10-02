@@ -95,7 +95,7 @@ namespace Librainian.Parsing {
         public static Regex RegexJustDigits { get; } = new Regex( @"\D+", RegexOptions.Compiled );
 
         public static Char[] SplitBySpace { get; } = {
-            ParsingConstants.Singlespace[ 0 ]
+            Symbols.Singlespace[ 0 ]
         };
 
         /*
@@ -208,7 +208,7 @@ namespace Librainian.Parsing {
 
             foreach ( var c in word ) {
                 if ( Char.IsUpper( c ) ) {
-                    sb.Append( ParsingConstants.Singlespace );
+                    sb.Append( Symbols.Singlespace );
                 }
 
                 sb.Append( c );
@@ -1752,7 +1752,7 @@ namespace Librainian.Parsing {
         /// <param name="when"></param>
         /// <returns></returns>
         [NotNull]
-        public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + ParsingConstants.Singlespace + when.ToLongTimeString();
+        public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + Symbols.Singlespace + when.ToLongTimeString();
 
         /// <summary>
         ///     Converts a String to camel case
@@ -1823,10 +1823,10 @@ namespace Librainian.Parsing {
             }
 
             //clean it up some
-            paragraph = paragraph.Replace( "\t", ParsingConstants.Singlespace );
+            paragraph = paragraph.Replace( "\t", Symbols.Singlespace );
 
             do {
-                paragraph = paragraph.Replace( ParsingConstants.Doublespace, ParsingConstants.Singlespace );
+                paragraph = paragraph.Replace( ParsingConstants.Doublespace, Symbols.Singlespace );
             } while ( paragraph.Contains( ParsingConstants.Doublespace ) );
 
             paragraph = paragraph.Replace( "\n\n", Environment.NewLine );
@@ -1837,7 +1837,7 @@ namespace Librainian.Parsing {
             //paragraph = paragraph.Replace( Environment.NewLine, Singlespace );
 
             while ( paragraph.Contains( ParsingConstants.Doublespace ) ) {
-                paragraph = paragraph.Replace( oldValue: ParsingConstants.Doublespace, newValue: ParsingConstants.Singlespace );
+                paragraph = paragraph.Replace( oldValue: ParsingConstants.Doublespace, newValue: Symbols.Singlespace );
             }
 
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() )

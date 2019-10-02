@@ -153,24 +153,24 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>
         ///     Gets the device's class name.
         /// </summary>
-        public String GetClass() => this._class ?? ( this._class = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null ) );
+        public String GetClass() => this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null );
 
         /// <summary>
         ///     Gets the device's class Guid as a string.
         /// </summary>
-        public String GetClassGuid() => this._classGuid ?? ( this._classGuid = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null ) );
+        public String GetClassGuid() => this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null );
 
         /// <summary>
         ///     Gets the device's description.
         /// </summary>
         public String GetDescription() =>
-            this._description ?? ( this._description = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null ) );
+            this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null );
 
         /// <summary>
         ///     Gets the device's friendly name.
         /// </summary>
         public String GetFriendlyName() =>
-            this._friendlyName ?? ( this._friendlyName = this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null ) );
+            this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null );
 
         /// <summary>
         ///     Gets the device's instance handle.

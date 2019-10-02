@@ -88,7 +88,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
             }
 
-            TheCompany = Software.CreateSubKey( Application.CompanyName.Replace( "&", Parsing.ParsingConstants.Singlespace ).Trim(), true );
+            TheCompany = Software.CreateSubKey( Application.CompanyName.Replace( "&", Parsing.Symbols.Singlespace ).Trim(), true );
 
             if ( TheCompany is null ) {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );

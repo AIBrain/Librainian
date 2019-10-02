@@ -37,58 +37,84 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/09/12 at 10:32 AM.
+// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/10/02 at 9:46 AM.
 
 namespace Librainian {
 
     using System;
+    using System.ComponentModel;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Parsing;
 
+    /// <summary>
+    ///     Returns:
+    ///     <para>-3 = <see cref="Exception" /></para>
+    ///     <para>-2 = <see cref="Error" /></para>
+    ///     <para>
+    ///         -1 = <see cref="Failure" />, <see cref="No" />, <see cref="NoGo" />, <see cref="Stop" />, <see cref="Halt" />
+    ///         , <see cref="Negative" />.
+    ///     </para>
+    ///     <para>0 = <see cref="Unknown" /></para>
+    ///     <para>
+    ///         1 = <see cref="Success" />, <see cref="Go" />, <see cref="Yes" />, <see cref="Proceed" />,
+    ///         <see cref="Continue" />, <see cref="Advance" />, <see cref="Positive" />.
+    ///     </para>
+    /// </summary>
     [Flags]
     public enum Status : SByte {
 
-        Error = Failure-1,
+        [Description( Symbols.Exception )]
+        Exception = Error - 1,
 
+        [Description( Symbols.Error )]
+        Error = Failure - 1,
+
+        [Description( Symbols.Fail )]
         Failure = -1,
 
+        [Description( Symbols.Fail )]
         No = Failure,
 
+        [Description( Symbols.Fail )]
         NoGo = Failure,
 
+        [Description( Symbols.Fail )]
         Stop = Failure,
 
+        [Description( Symbols.Fail )]
         Halt = Failure,
 
+        [Description( Symbols.Fail )]
         Negative = Failure,
 
+        [Description( Symbols.Unknown )]
         Unknown = 0,
 
+        [Description( Symbols.CheckMark )]
         Success = 1,
 
+        [Description( Symbols.CheckMark )]
         Go = Success,
 
+        [Description( Symbols.CheckMark )]
         Yes = Success,
 
+        [Description( Symbols.CheckMark )]
         Proceed = Success,
 
+        [Description( Symbols.CheckMark )]
         Continue = Success,
 
+        [Description( Symbols.CheckMark )]
         Advance = Success,
 
+        [Description( Symbols.CheckMark )]
         Positive = Success
 
     }
 
-    
-
     public static class StatusExtensions {
-
-        public static class Symbol {
-
-            public static String Fail { get; } = "❌";
-            public static String Unknown { get; } = "⁉";
-            public static String Success { get; } = "✔";
-
-        }
 
         public static Boolean Failed( this Status status ) => status <= Status.Failure;
 
@@ -99,6 +125,9 @@ namespace Librainian {
         public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || status != Status.Success && status != Status.Failure;
 
         public static Boolean Succeeded( this Status status ) => status >= Status.Success;
+
+        [NotNull]
+        public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
 
     }
 

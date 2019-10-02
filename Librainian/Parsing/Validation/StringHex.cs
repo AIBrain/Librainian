@@ -45,18 +45,14 @@ namespace Librainian.Parsing.Validation {
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// be a hexadecimal number
+    /// </summary>
     [Serializable]
     [JsonObject]
     public class StringHex : RegexString {
 
-        protected override Boolean AllowNull => true;
-
-        [NotNull]
-        protected override String RegexValidation => "^[0-9a-fA-F]*$";
-
-        public override String Requirements => "be a hexadecimal number";
-
-        public StringHex( String value ) : base( value ) { }
+        public StringHex( String value ) : base( value, "^[0-9a-fA-F]*$" ) { }
 
         [NotNull]
         public static explicit operator StringHex( String str ) => new StringHex( str );

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AESThenHMAC.cs" was last formatted by Protiguous on 2019/08/08 at 9:31 AM.
+// Project: "Librainian", "AESThenHMAC.cs" was last formatted by Protiguous on 2019/10/01 at 9:02 AM.
 
 namespace Librainian.Security {
 
@@ -132,7 +132,10 @@ namespace Librainian.Security {
                 }
 
                 using ( var aes = new AesManaged {
-                    KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+                    KeySize = KeyBitSize,
+                    BlockSize = BlockBitSize,
+                    Mode = CipherMode.CBC,
+                    Padding = PaddingMode.PKCS7
                 } ) {
 
                     //Grab IV from message
@@ -283,13 +286,16 @@ namespace Librainian.Security {
             }
 
             //non-secret payload optional
-            nonSecretPayload = nonSecretPayload ?? new Byte[] { };
+            nonSecretPayload ??= new Byte[] { };
 
             Byte[] cipherText;
             Byte[] iv;
 
             using ( var aes = new AesManaged {
-                KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+                KeySize = KeyBitSize,
+                BlockSize = BlockBitSize,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7
             } ) {
 
                 //Use random IV
@@ -397,7 +403,7 @@ namespace Librainian.Security {
         /// </remarks>
         [NotNull]
         public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[] nonSecretPayload = null ) {
-            nonSecretPayload = nonSecretPayload ?? new Byte[] { };
+            nonSecretPayload ??= new Byte[] { };
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
@@ -408,7 +414,10 @@ namespace Librainian.Security {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
-            var payload = new Byte[ (SaltBitSize / 8 * 2) + nonSecretPayload.Length ];
+            const Int32 saltsize = SaltBitSize / 8;
+            const Int32 saltier = saltsize * 2;
+
+            var payload = new Byte[ saltier + nonSecretPayload.Length ];
 
             Array.Copy( sourceArray: nonSecretPayload, destinationArray: payload, nonSecretPayload.Length );
             var payloadIndex = nonSecretPayload.Length;
@@ -417,7 +426,7 @@ namespace Librainian.Security {
             Byte[] authKey;
 
             //Use Random Salt to prevent pre-generated weak password attacks.
-            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: SaltBitSize / 8, iterations: Iterations ) ) {
+            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: saltsize, iterations: Iterations ) ) {
                 var salt = generator.Salt;
 
                 //Generate Keys
@@ -430,7 +439,7 @@ namespace Librainian.Security {
 
             //Deriving separate key, might be less efficient than using HKDF,
             //but now compatible with RNEncryptor which had a very similar wireformat and requires less code than HKDF.
-            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: SaltBitSize / 8, iterations: Iterations ) ) {
+            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: saltsize, iterations: Iterations ) ) {
                 var salt = generator.Salt;
 
                 //Generate Keys

@@ -51,6 +51,7 @@ namespace Librainian.Databases {
     using System.Management;
     using System.Media;
     using System.Reflection;
+    using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
     using Collections.Extensions;
@@ -77,7 +78,9 @@ namespace Librainian.Databases {
             }
 
             //T item = new T();
-            var item = Activator.CreateInstance<T>(); //TODO use the faster creation function
+            //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function
+            //var t = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
+            var item = ( T ) FormatterServices.GetUninitializedObject( typeof( T ) );
 
             foreach ( var property in properties ) {
                 property.SetValue( item, row[ property.Name ], null );

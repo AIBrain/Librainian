@@ -37,9 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Wallet.cs" was last formatted by Protiguous on 2019/08/08 at 7:27 AM.
-
-#pragma warning disable RCS1138 // Add summary to documentation comment.
+// Project: "Librainian", "Wallet.cs" was last formatted by Protiguous on 2019/09/30 at 4:27 PM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -62,15 +60,12 @@ namespace Librainian.Financial.Containers.Wallets {
     ///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
     ///     production.. Use at your own risk. Any tips or ideas? Any dos or don'ts? Email me!
     /// </summary>
+    /// <remarks>A database with proper locking would be better than this, although not as fun to create.</remarks>
     /// <see cref="SimpleWallet" />
     /// <see cref="Measurement.Currency.BTC.SimpleBitcoinWallet" />
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class Wallet : ABetterClassDispose, IEnumerable<KeyValuePair<IDenomination, UInt64>> {
-
-        public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         ///     Count of each <see cref="IBankNote" />.
@@ -102,7 +97,7 @@ namespace Librainian.Financial.Containers.Wallets {
             try {
                 lock ( this.BankNotes ) {
                     if ( this.BankNotes.ContainsKey( bankNote ) ) {
-                        this.BankNotes[ bankNote ] += quantity;
+                        this.BankNotes[ bankNote ] += quantity; //todo AddOrUpdate to avoid a race condition
                     }
                     else {
                         if ( this.BankNotes.TryAdd( bankNote, quantity ) ) { }
@@ -113,14 +108,6 @@ namespace Librainian.Financial.Containers.Wallets {
             }
             finally {
                 this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
-            }
-        }
-
-        public void Deposit( Decimal amount, out Decimal leftOver ) {
-            var money = amount.ToOptimal( out leftOver );
-
-            foreach ( var kvp in money ) {
-                this.Deposit( kvp.Key, kvp.Value );
             }
         }
 
@@ -194,6 +181,14 @@ namespace Librainian.Financial.Containers.Wallets {
             return this.Coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
         }
 
+        public void Deposit( Decimal amount, out Decimal leftOver ) {
+            var money = amount.ToOptimal( out leftOver );
+
+            foreach ( var kvp in money ) {
+                this.Deposit( kvp.Key, kvp.Value );
+            }
+        }
+
         /// <summary>
         ///     Deposit one or more <paramref name="denomination" /> into this <see cref="Wallet" />.
         /// </summary>
@@ -212,7 +207,11 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             var message = new TransactionMessage {
-                Date = DateTime.Now, Denomination = denomination, ID = id ?? Guid.NewGuid(), Quantity = quantity, TransactionType = TransactionType.Deposit
+                Date = DateTime.Now,
+                Denomination = denomination,
+                ID = id ?? Guid.NewGuid(),
+                Quantity = quantity,
+                TransactionType = TransactionType.Deposit
             };
 
             this.Deposit( message );
@@ -284,6 +283,8 @@ namespace Librainian.Financial.Containers.Wallets {
         [NotNull]
         public IEnumerable<KeyValuePair<ICoin, UInt64>> GetCoinsGrouped() => this.Coins;
 
+        public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
+
         /// <summary>
         ///     Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.
         /// </summary>
@@ -325,7 +326,7 @@ namespace Librainian.Financial.Containers.Wallets {
         ///     Return the total amount of banknotes contained in this <see cref="Wallet" />.
         /// </summary>
         public Decimal TotalBankNotes() {
-            var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
+            var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + ( pair.Key.FaceValue * pair.Value ) );
 
             return total;
         }
@@ -334,7 +335,7 @@ namespace Librainian.Financial.Containers.Wallets {
         ///     Return the total amount of coins contained in this <see cref="Wallet" />.
         /// </summary>
         public Decimal TotalCoins() {
-            var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + (pair.Key.FaceValue * pair.Value) );
+            var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + ( pair.Key.FaceValue * pair.Value ) );
 
             return total;
         }
@@ -423,5 +424,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
             throw new WalletException( $"Unknown denomination {message.Denomination}" );
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

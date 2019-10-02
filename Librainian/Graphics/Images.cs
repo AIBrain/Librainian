@@ -1103,7 +1103,7 @@ namespace Librainian.Graphics {
                         mostlyDigits.Append( c );
                     }
                     else {
-                        mostlyDigits.Append( ParsingConstants.Singlespace );
+                        mostlyDigits.Append( Symbols.Singlespace );
                     }
                 }
 

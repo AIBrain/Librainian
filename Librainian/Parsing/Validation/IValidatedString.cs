@@ -46,12 +46,11 @@ namespace Librainian.Parsing.Validation {
     using Newtonsoft.Json;
 
     [JsonObject]
-    public interface IValidatedString : IComparable, IEnumerable<Char>, IComparable<String>, IComparable<IValidatedString>, IEquatable<String>, IEquatable<IValidatedString> {
+    public interface IValidatedString : IValidator<String>, IComparable, IEnumerable<Char>, IComparable<String>, IComparable<IValidatedString>, IEquatable<String>, IEquatable<IValidatedString> {
 
-        Int32 Length { get; }
+        //Int32 Length { get; }
 
         String Value { get; }
 
-        String Validate( String value );
     }
 }

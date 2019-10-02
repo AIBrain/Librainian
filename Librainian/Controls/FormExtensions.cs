@@ -53,6 +53,13 @@ namespace Librainian.Controls {
 
     public static class FormExtensions {
 
+        public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
+            var desktopBounds = form.DesktopBounds;
+            return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
+        }
+
+        public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
+
         public static void LoadLocation( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
@@ -73,13 +80,6 @@ namespace Librainian.Controls {
                     form.ResumeLayout();
                 } );
             }
-        }
-
-        public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
-
-        public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
-            var desktopBounds = form.DesktopBounds;
-            return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
         }
 
         public static void LoadLocation( [NotNull] this Form form ) {
@@ -128,7 +128,7 @@ namespace Librainian.Controls {
             }
         }
 
-        [Obsolete("Use LoadLocation() and LoadSize()")]
+        [Obsolete( "Use LoadLocation() and LoadSize()" )]
         public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] StringKVPTable settings ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
@@ -232,7 +232,7 @@ namespace Librainian.Controls {
                 throw new InvalidOperationException( "Application registry not set up." );
             }
 
-            $"Saving form {form.Name} position to registry.".Log();
+            $"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Trace();
 
             AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.X ),
                 form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.Location.X, RegistryValueKind.DWord );
@@ -317,7 +317,7 @@ namespace Librainian.Controls {
                 throw new InvalidOperationException( "Application registry not set up." );
             }
 
-            $"Saving form {form.Name} position to registry.".Log();
+            $"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Log();
 
             AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
                 form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
@@ -401,7 +401,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
-            return form.InvokeRequired ? ( Size ) form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+            return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
         }
 
         /// <summary>
