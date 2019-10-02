@@ -381,7 +381,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Open the file for writing and return a <see cref="IDocument.StreamWriter" />.
         /// </summary>
         /// <returns></returns>
-        StreamWriter StreamWriter();
+        StreamWriter StreamWriter( [CanBeNull] Encoding encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
 
         /// <summary>
         ///     Return this <see cref="IDocument" /> as a JSON string.
@@ -1046,8 +1046,18 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( function: this.CRC64Hex, cancellationToken: token );
 
         public void Dispose() {
+            this.ReleaseWriterStream();
+
+            this.ReleaseWriter();
+
             if ( this.DeleteAfterClose ) {
                 this.Delete();
+            }
+        }
+
+        private void ReleaseWriterStream() {
+            using ( this.WriterStream ) {
+                this.WriterStream = default;
             }
         }
 
@@ -1376,6 +1386,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public FileStream OpenWriter() {
             try {
+                this.ReleaseWriter();
+
                 if ( this.Exists() ) {
                     this.SetReadOnly( false );
                 }
@@ -1385,10 +1397,16 @@ namespace Librainian.OperatingSystem.FileSystem {
             catch ( Exception exception ) {
                 exception.Log();
             }
-            using ( this.Writer ) {
-                this.Writer = null;
+            this.ReleaseWriter();
 
-                return default;
+            return default;
+        }
+
+        private void ReleaseWriter() {
+            if ( this.Writer != default ) {
+                using ( this.Writer ) {
+                    this.Writer = default;
+                }
             }
         }
 
@@ -1405,16 +1423,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [CanBeNull]
-        public StreamWriter StreamWriter( Boolean append, [CanBeNull] Encoding encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte ) {
+        public StreamWriter StreamWriter( [CanBeNull] Encoding encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte ) {
+            this.ReleaseWriterStream();
+
             this.OpenWriter();
 
-            if ( this.Writer != default ) {
-                if ( append ) {
-                    return this.WriterStream = new StreamWriter( stream: this.Writer, append: append );
-                }
-
-                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 ) bufferSize, leaveOpen: false );
+            if ( this.Writer == default ) {
+                return default;
             }
+
+            try {
+                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 )bufferSize, leaveOpen: false );
+            }
+            catch ( Exception exception) {
+                exception.Log();
+            }
+
+            this.ReleaseWriterStream();
 
             return default;
         }
