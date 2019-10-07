@@ -648,7 +648,7 @@ namespace Librainian.Collections.Extensions {
         public static IEnumerable<T> OrderBy<T>( [NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> guide ) {
             var toBeSorted = new HashSet<T>( collection: list );
 
-            return guide.Where( member => toBeSorted.Contains( item: member ) );
+            return guide.Where( member => toBeSorted.Contains( member ) );
         }
 
         [ItemNotNull]
