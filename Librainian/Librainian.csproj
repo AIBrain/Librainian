@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}</ProjectGuid>
@@ -73,7 +76,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -108,7 +111,7 @@
     <Optimize>true</Optimize>
     <DebugType>embedded</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -120,7 +123,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>8.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -164,7 +167,9 @@
     <Compile Include="Databases\ScriptDBObjects.cs" />
     <Compile Include="Databases\DatabaseAsync.cs" />
     <Compile Include="Databases\MMF\Class1.cs" />
+    <Compile Include="Databases\SqlServer.cs" />
     <Compile Include="Databases\Text.cs" />
+    <Compile Include="Exceptions\NotInitializedException.cs" />
     <Compile Include="Extensions\Class1.cs" />
     <Compile Include="Extensions\DisposableBase.cs" />
     <Compile Include="Extensions\RegistryServer.cs" />
@@ -373,6 +378,7 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\SemaphoreSlimExtensions.cs" />
     <Compile Include="Threading\NicerFormTimer.cs" />
     <Compile Include="Threading\NicerSystemTimer.cs" />
     <Compile Include="Threading\ThreadSafeEnumerable.cs" />
@@ -827,6 +833,7 @@
     <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="Threading\ThreadingExtensions.cs" />
     <Compile Include="Threading\FluentTimer.cs" />
+    <Compile Include="Words.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -857,6 +864,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Ben.Demystifier">
+      <Version>0.1.4</Version>
+    </PackageReference>
     <PackageReference Include="CommandLineParser">
       <Version>2.6.0</Version>
     </PackageReference>
@@ -876,6 +886,12 @@
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD">
       <Version>1.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+      <Version>3.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <Version>3.3.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>
@@ -919,7 +935,10 @@
     <PackageReference Include="Unicode.net">
       <Version>0.1.2</Version>
     </PackageReference>
-    <PackageReference Include="xunit">
+    <PackageReference Include="xunit.assert">
+      <Version>2.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="xunit.extensibility.core">
       <Version>2.4.1</Version>
     </PackageReference>
   </ItemGroup>

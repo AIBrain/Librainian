@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:24 AM.
+// 
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/06 at 4:24 AM.
 
 namespace Librainian.Parsing {
 
@@ -53,10 +53,8 @@ namespace Librainian.Parsing {
     using System.Numerics;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using System.Xml;
     using Collections.Extensions;
-    using Exceptions;
     using Extensions;
     using JetBrains.Annotations;
     using Linguistics;
@@ -73,7 +71,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static Lazy<PluralizationService> LazyPluralizationService { get; } =
-            new Lazy<PluralizationService>( () => PluralizationService.CreateService( Thread.CurrentThread.CurrentCulture ) );
+            new Lazy<PluralizationService>( () => PluralizationService.CreateService( CultureInfo.CurrentCulture ) );
 
         public static String[] OrdinalSuffixes { get; } = {
             "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
@@ -97,6 +95,12 @@ namespace Librainian.Parsing {
         public static Char[] SplitBySpace { get; } = {
             Symbols.Singlespace[ 0 ]
         };
+
+        /// <summary>
+        ///     Store the little array allocation for parsing so we don't have millions of GC on them.
+        /// </summary>
+        [NotNull]
+        private static ConcurrentDictionary<String, String[]> Separators { get; } = new ConcurrentDictionary<String, String[]>();
 
         /*
 		[NotNull]
@@ -148,17 +152,16 @@ namespace Librainian.Parsing {
         public static String LimitAndTrim( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) ).TrimEnd();
 
         [NotNull]
-        public static String Quote( [CanBeNull] this String self ) => $"'{self}'";
+        public static String Quote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
 
         [NotNull]
-        public static String SingleQuote( [CanBeNull] this String self ) => $"'{self}'";
+        public static String SingleQuote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
 
         [NotNull]
-        public static String Bracket( [CanBeNull] this String identifier ) =>
-            $"[{identifier.Trimmed() ?? throw new ArgumentEmptyException( $"Empty {nameof( identifier )}" )}]";
+        public static String Bracket( [CanBeNull] this String identifier ) => $"[{identifier.Trimmed()}]";
 
         /// <summary>
-        ///     Trim the ToString(), possibly returning null if all null, empty, or whitespace.
+        ///     Trim the ToString() of the object; returning null if null, empty, or whitespace.
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
@@ -172,7 +175,7 @@ namespace Librainian.Parsing {
                 return s.Trim().NullIfEmpty();
             }
 
-            return self.ToString().Trim();
+            return self.ToString().NullIfEmpty();
         }
 
         [NotNull]
@@ -250,6 +253,8 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) => $"{result ?? String.Empty}{appendThis ?? String.Empty}";
 
+        /*
+
         /// <summary>
         ///     Return the <see cref="tuple" /> formatted with the index.
         /// </summary>
@@ -272,6 +277,7 @@ namespace Librainian.Parsing {
 
             return $"{word}.[{index}]";
         }
+        */
 
         /// <summary>
         ///     Return an integer formatted as 1st, 2nd, 3rd, etc...
@@ -317,6 +323,14 @@ namespace Librainian.Parsing {
             return s.Substring( 0, s.IndexOf( splitter, StringComparison.Ordinal ) ).TrimEnd();
         }
 
+        /// <summary>
+        ///     Adds 1 <paramref name="element" /> after <paramref name="sequence" /> and returns the new result (IEnumerable&lt;T
+        ///     &gt;).
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sequence"></param>
+        /// <param name="element"></param>
+        /// <returns></returns>
         public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
             if ( sequence == null ) {
                 throw new ArgumentNullException( nameof( sequence ) );
@@ -329,6 +343,11 @@ namespace Librainian.Parsing {
             yield return element;
         }
 
+        /// <summary>
+        ///     Returns the count of each letter in <paramref name="text" />.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         [NotNull]
         public static IDictionary<Char, UInt64> Count( [NotNull] this String text ) {
             var dict = new ConcurrentDictionary<Char, UInt64>();
@@ -337,7 +356,13 @@ namespace Librainian.Parsing {
             return dict;
         }
 
-        public static UInt64 Count( [NotNull] this String text, Char character ) => ( UInt64 ) text.Where( c => c == character ).LongCount();
+        /// <summary>
+        ///     Returns the count of char <paramref name="character" /> in <paramref name="text" />.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="character"></param>
+        /// <returns></returns>
+        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
 
         /// <summary>
         ///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -586,19 +611,35 @@ namespace Librainian.Parsing {
         ///     Returns the decoded string, or <paramref name="text" /> if unable to convert.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="encoding"></param>
+        /// <param name="encoding">Defaults to <see cref="Encoding.Unicode"/> and then <see cref="Encoding.UTF8"/></param>
         /// <seealso cref="ToBase64" />
         /// <returns></returns>
         [NotNull]
         public static String FromBase64( [NotNull] this String text, Encoding encoding = null ) {
+            Byte[] from64;
+
+            try {
+                from64 = Convert.FromBase64String( text );
+            }
+            catch ( Exception ) {
+                return text;
+            }
+
             try {
                 if ( encoding == null ) {
                     encoding = Encoding.Unicode;
                 }
 
-                return encoding.GetString( Convert.FromBase64String( text ) );
+                return encoding.GetString( from64 );
             }
-            catch ( FormatException ) {
+            catch ( Exception ) {
+                if ( Equals( Encoding.Unicode, encoding )  ) {
+                    try {
+                        return Encoding.UTF8.GetString( Convert.FromBase64String( text ) );
+                    }
+                    catch ( Exception ) { }
+                }
+
                 return text; //couldn't convert
             }
         }
@@ -609,11 +650,6 @@ namespace Librainian.Parsing {
             // the encoding information
             //const String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const String codes = "0123012D02245501262301D202";
-
-            // some helpful regexes
-            var hwBeginString = new Regex( "^D+" );
-            var simplify = new Regex( @"(\d)\1*D?\1+" );
-            var cleanup = new Regex( "[D0]" );
 
             // i need a capitalized String
             s = s.ToUpper();
@@ -630,14 +666,14 @@ namespace Librainian.Parsing {
 
             // then i remove repeating characters
             //result = repeating.Replace(result, "$1");
-            var result = simplify.Replace( coded.ToString(), "$1" ).Substring( 1 );
+            var result = new Regex( @"(\d)\1*D?\1+" ).Replace( coded.ToString(), "$1" ).Substring( 1 );
 
             // now i need to remove any characters coded as D from the front of the String because they're not really valid as the first code because they don't have an actual soundex code value
-            result = hwBeginString.Replace( result, String.Empty );
+            result = new Regex( "^D+" ).Replace( result, String.Empty );
 
             // i used the char D to indicate that an h or w existed so that if to similar sounds were separated by an h or a w that I could remove one of them. if the h or w does not separate two similar sounds, then i
             // need to remove it now
-            result = cleanup.Replace( result, String.Empty );
+            result = new Regex( "[D0]" ).Replace( result, String.Empty );
 
             // return the first character followed by the coded String
             return $"{s[ 0 ]}{result}";
@@ -650,7 +686,11 @@ namespace Librainian.Parsing {
         /// <param name="culture">The culture to use for conversion</param>
         /// <returns>IEnumerable&lt;String&gt;</returns>
         [ItemNotNull]
-        public static IEnumerable<String> GetNameVariants( [CanBeNull] this String input, CultureInfo culture ) {
+        public static IEnumerable<String> GetNameVariants( [CanBeNull] this String input, [CanBeNull] CultureInfo culture = null ) {
+            if ( culture == null ) {
+                culture = CultureInfo.CurrentCulture;
+            }
+
             if ( String.IsNullOrEmpty( input ) ) {
                 yield break;
             }
@@ -697,34 +737,18 @@ namespace Librainian.Parsing {
             return word.AddSpacesBeforeUppercase().ToLower( CultureInfo.CurrentUICulture );
         }
 
+        [Obsolete]
         [NotNull]
         public static String InOutputFormat( this String indexed ) => $"{indexed}-|";
 
         // .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
         public static Boolean IsDigit( this Char c ) => c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
 
-        public static Boolean IsJustNumbers( [CanBeNull] this String text ) {
-            if ( null == text ) {
-                return false;
-            }
-
-            if ( text.All( Char.IsNumber ) ) {
-                return true;
-            }
-
-            if ( Double.TryParse( text, out _ ) ) {
-                return true;
-            }
-
-            if ( Decimal.TryParse( text, out _ ) ) {
-                return true;
-            }
-
-            return false;
-        }
+        public static Boolean IsJustNumbers( [CanBeNull] this String text ) =>
+            !( text is null ) && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out _ ) || Double.TryParse( text, out _ ) );
 
         [DebuggerStepThrough]
-        public static Boolean IsJustNumbers( [CanBeNull] this String text, out Decimal result ) => Decimal.TryParse( text ?? String.Empty, out result );
+        public static Boolean TryGetDecimal( [CanBeNull] this String text, out Decimal result ) => Decimal.TryParse( text ?? String.Empty, out result );
 
         [DebuggerStepThrough]
         public static Boolean IsNullOrEmpty( [CanBeNull] this String value ) => String.IsNullOrEmpty( value );
@@ -1221,7 +1245,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( (@this.Length * repetitions) + (separator.Length * ( repetitions - 1 )) );
+            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1502,7 +1526,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
+            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -1525,7 +1549,8 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator"/>.
+        ///     Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per
+        ///     <paramref name="separator" />.
         /// </summary>
         /// <param name="self">        The extended string.</param>
         /// <param name="separator">   The delimiter that splits substrings in the given string. Must not be null.</param>
@@ -1535,7 +1560,8 @@ namespace Librainian.Parsing {
         /// </param>
         /// <returns>See: <see cref="String.Split(String[], StringSplitOptions)" />.</returns>
         [NotNull]
-        public static IEnumerable<String> Split( [NotNull] this String self, [NotNull] String separator, StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries ) {
+        public static IEnumerable<String> Split( [NotNull] this String self, [NotNull] String separator,
+            StringSplitOptions splitOptions = StringSplitOptions.RemoveEmptyEntries ) {
             if ( self == null ) {
                 throw new ArgumentNullException( nameof( self ), "Split called on a null String." );
             }
@@ -1544,21 +1570,17 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( nameof( separator ) );
             }
 
-            if ( !Separators.TryGetValue( separator, out var sep) ) {
-                sep = new[] { separator };
+            if ( !Separators.TryGetValue( separator, out var sep ) ) {
+                sep = new[] {
+                    separator
+                };
+
                 Separators[ separator ] = sep;
             }
 
             return self.Split( sep, splitOptions );
         }
 
-        /// <summary>
-        /// Store the little array allocation for parsing so we don't have millions of GC on them.
-        /// </summary>
-        [NotNull]
-        private static ConcurrentDictionary<String, String[]> Separators { get; } = new ConcurrentDictionary<String, String[]>();
-            
-            
         [NotNull]
         public static IEnumerable<String> SplitToChunks( [NotNull] this String s, Int32 chunks ) {
             if ( s == null ) {
@@ -2113,5 +2135,35 @@ namespace Librainian.Parsing {
         [Pure]
         public static String FormattedNiceLong( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToLongTimeString().Replace( ':', ';' )}";
 
+        /// <summary>
+        ///     Modifies the <paramref name="memory" /> and makes the first letter capitalized.
+        /// </summary>
+        /// <param name="memory"></param>
+        [DebuggerStepThrough]
+        public static void Capitialize( this Memory<Char> memory ) {
+            if ( memory.IsEmpty ) {
+                return;
+            }
+
+            ref var first = ref memory.Span[ 0 ];
+            first = Char.ToUpper( first );
+        }
+
+        /// <summary>
+        ///     Returns the <paramref name="text" /> with the first letter capitalized.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        [DebuggerStepThrough]
+        [CanBeNull]
+        public static String Capitialize( [CanBeNull] this String text ) {
+            if ( String.IsNullOrEmpty( text ) ) {
+                return default;
+            }
+
+            return Char.ToUpper( text[ 0 ] ) + text.Substring( 1 );
+        }
+
     }
+
 }

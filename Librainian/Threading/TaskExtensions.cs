@@ -435,7 +435,7 @@ namespace Librainian.Threading {
             await Task.Run( job, token ).ConfigureAwait( false );
         }
 
-        public static Task Then( [NotNull] this Task first, [NotNull] Action next ) {
+        public static Task Then( [NotNull] this Task first, [NotNull] Action next, CancellationToken? token ) {
             if ( first == null ) {
                 throw new ArgumentNullException( paramName: nameof( first ) );
             }
@@ -447,24 +447,24 @@ namespace Librainian.Threading {
             var tcs = new TaskCompletionSource<Object>();
 
             first.ContinueWith( task => {
-                if ( first.IsFaulted ) {
-                    if ( first.Exception != null ) {
-                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    if ( first.IsFaulted ) {
+                        if ( first.Exception != null ) {
+                            tcs.TrySetException( first.Exception.InnerExceptions );
+                        }
                     }
-                }
-                else if ( first.IsCanceled ) {
-                    tcs.TrySetCanceled();
-                }
-                else {
-                    try {
-                        next();
-                        tcs.TrySetResult( null );
+                    else if ( first.IsCanceled ) {
+                        tcs.TrySetCanceled();
                     }
-                    catch ( Exception ex ) {
-                        tcs.TrySetException( ex );
+                    else {
+                        try {
+                            next();
+                            tcs.TrySetResult( null );
+                        }
+                        catch ( Exception exception ) {
+                            tcs.TrySetException( exception );
+                        }
                     }
-                }
-            } );
+                }, token ?? CancellationToken.None );
 
             return tcs.Task;
         }

@@ -58,7 +58,7 @@ namespace Librainian.Parsing {
             var words = new Sentence( FakeLatin.Split( ' ' ).OrderBy( s => Randem.Next() ).Take( wordCount ).ToStrings( " " ) );
             var sentence = words.ToString();
 
-            return $"{Char.ToUpperInvariant( sentence[ 0 ] )}{sentence.Substring( 1 ).TrimEnd()}.";
+            return $"{ sentence.Capitialize()?.TrimEnd()}.";
         }
 
         //TODO
@@ -79,7 +79,7 @@ namespace Librainian.Parsing {
         //TODO
         //    var title = helper.FakeLatinSentence( wordCount );
 
-        //    title = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase( title );
+        //    title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase( title );
         //    title = title.Substring( 0, title.Length - 1 ); // kill period from paragraph
         //    return title;
         //}

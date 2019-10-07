@@ -147,33 +147,36 @@ namespace Librainian.Databases {
 
             var status = new ConcurrentDictionary<String, ServiceControllerStatus>();
 
-            await Task.Run( () => {
-                Parallel.ForEach( machines.AsParallel(), machine => {
+            var tasks = new List<Task>( machines.Count );
+
+            tasks.AddRange( machines.Select( machine => Task.Run( () => {
+                try {
+                    $"Searching for database server on {machine}...".Log();
+
                     try {
-                        $"Searching for database server on {machine}...".Log();
+                        var service = new ServiceController {
+                            ServiceName = "SQLBrowser", MachineName = machine
+                        };
 
-                        try {
-                            var service = new ServiceController {
-                                ServiceName = "SQLBrowser",
-                                MachineName = machine
-                            };
-
-                            if ( service.Status != ServiceControllerStatus.Running ) {
-                                service.Start();
-                            }
-
-                            service.WaitForStatus( ServiceControllerStatus.Running, timeout );
-                            status[ machine ] = service.Status;
+                        if ( service.Status != ServiceControllerStatus.Running ) {
+                            service.Start();
                         }
-                        catch ( InvalidOperationException exception ) {
-                            exception.Log();
-                        }
+
+                        service.WaitForStatus( ServiceControllerStatus.Running, timeout );
+                        status[ machine ] = service.Status;
                     }
-                    catch ( Exception exception ) {
+                    catch ( InvalidOperationException exception ) {
                         exception.Log();
+                        status.TryRemove( machine, out _ );
                     }
-                } );
-            } ).ConfigureAwait( false );
+
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            }, new CancellationTokenSource( timeout ).Token ) ) );
+
+            await Task.WhenAny(tasks).ConfigureAwait( false );
 
             return status;
         }
@@ -223,10 +226,12 @@ namespace Librainian.Databases {
             return builder;
         }
 
+
+
         public static async Task StartAnySQLBrowsers( TimeSpan searchTimeout ) =>
-                    await FindAndStartSqlBrowserServices( new[] {
-                "TheServer" //TheServer is my development server's name. Feel free to remove or add your own.
-                    }, searchTimeout ).ConfigureAwait( false );
+            await FindAndStartSqlBrowserServices( new[] {
+                "Thor" //my development server's name. Feel free to remove or add your own.
+            }, searchTimeout ).ConfigureAwait( false );
 
         /// <summary>
         ///     Opens and then closes a <see cref="SqlConnection" />.
@@ -355,7 +360,7 @@ namespace Librainian.Databases {
                 }
             }
             catch ( SqlException exception ) {
-                if ( !exception.SQLTimeout( delayFor: TimeSpan.FromSeconds( 1 ) ) ) {
+                if ( !exception.SQLTimeout() ) {
                     exception.Log( Rebuild( query, parameters ) );
                 }
             }
@@ -709,5 +714,6 @@ namespace Librainian.Databases {
             return ( $"{query.SingleQuote()};", parameters.Cast<SqlParameter>() );
         }
         */
+
     }
 }

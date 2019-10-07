@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/10/02 at 9:46 AM.
+// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/10/06 at 9:58 AM.
 
 namespace Librainian {
 
@@ -47,31 +47,20 @@ namespace Librainian {
     using JetBrains.Annotations;
     using Parsing;
 
-    /// <summary>
-    ///     Returns:
-    ///     <para>-3 = <see cref="Exception" /></para>
-    ///     <para>-2 = <see cref="Error" /></para>
-    ///     <para>
-    ///         -1 = <see cref="Failure" />, <see cref="No" />, <see cref="NoGo" />, <see cref="Stop" />, <see cref="Halt" />
-    ///         , <see cref="Negative" />.
-    ///     </para>
-    ///     <para>0 = <see cref="Unknown" /></para>
-    ///     <para>
-    ///         1 = <see cref="Success" />, <see cref="Go" />, <see cref="Yes" />, <see cref="Proceed" />,
-    ///         <see cref="Continue" />, <see cref="Advance" />, <see cref="Positive" />.
-    ///     </para>
-    /// </summary>
     [Flags]
     public enum Status : SByte {
+
+        [Description( Symbols.SkullAndCrossbones )]
+        Fatal = Exception - 1,
 
         [Description( Symbols.Exception )]
         Exception = Error - 1,
 
         [Description( Symbols.Error )]
-        Error = Failure - 1,
+        Error = Timeout - 1,
 
         [Description( Symbols.Fail )]
-        Failure = -1,
+        Timeout = Failure - 1,
 
         [Description( Symbols.Fail )]
         No = Failure,
@@ -88,10 +77,13 @@ namespace Librainian {
         [Description( Symbols.Fail )]
         Negative = Failure,
 
+        [Description( Symbols.Fail )]
+        Failure = -1,
+
         [Description( Symbols.Unknown )]
         Unknown = 0,
 
-        [Description( Symbols.CheckMark )]
+        [Description( Symbols.WhiteStar )]
         Success = 1,
 
         [Description( Symbols.CheckMark )]
@@ -122,7 +114,7 @@ namespace Librainian {
 
         public static Boolean IsGood( this Status status ) => status >= Status.Success;
 
-        public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || status != Status.Success && status != Status.Failure;
+        public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
 
         public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 

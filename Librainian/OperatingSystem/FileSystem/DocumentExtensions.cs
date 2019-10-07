@@ -44,7 +44,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System;
     using System.Diagnostics;
     using System.IO;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Maths;
@@ -65,21 +64,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
         */
-
-        [NotNull]
-        public static String InvalidFileNameCharacters { get; } = new String( Path.GetInvalidFileNameChars() );
-
-        /// <summary>
-        ///     String of invalid characters in a path or filename.
-        /// </summary>
-        [NotNull]
-        public static String InvalidPathCharacters { get; } = new String( Path.GetInvalidPathChars() );
-
-        [NotNull]
-        public static Regex RegexForInvalidFileNameCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]" );
-
-        [NotNull]
-        public static Regex RegexForInvalidPathCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]" );
 
         private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
             [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, Stopwatch begin ) {
@@ -217,27 +201,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
 
-        /// <summary>
-        ///     Returns the path with any invalid filename characters replaced with <paramref name="replacement" />. (Defaults to
-        ///     <see cref="String.Empty" />.)
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="replacement"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String CleanFileName( [NotNull] this String filename, [CanBeNull] String replacement = "" ) =>
-            RegexForInvalidFileNameCharacters.Replace( filename, replacement ?? String.Empty ).Trim();
-
-        /// <summary>
-        ///     Returns the path with any invalid characters replaced with <paramref name="replacement" /> and then trimmed.
-        ///     (Defaults to <see cref="String.Empty" />.)
-        /// </summary>
-        /// <param name="fullpath"></param>
-        /// <param name="replacement"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String CleanPath( [NotNull] this String fullpath, [CanBeNull] String replacement = "" ) =>
-            RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
     }
 
     /*

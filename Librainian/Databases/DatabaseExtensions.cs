@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2019/09/12 at 10:38 AM.
+// 
+// Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2019/10/06 at 9:32 AM.
 
 namespace Librainian.Databases {
 
@@ -59,7 +59,10 @@ namespace Librainian.Databases {
     using JetBrains.Annotations;
     using Logging;
     using Maths;
+    using Measurement.Time;
     using Parsing;
+    using Persistence;
+    using Threading;
     using static Persistence.Cache;
     using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
@@ -148,6 +151,7 @@ namespace Librainian.Databases {
 
         public static async Task<(Status status, T response, TimeSpan responseTime)> AdhocCommand<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
             [NotNull] String command, CancellationToken? token = null ) {
+
             if ( builderToTest == default ) {
                 throw new ArgumentNullException( paramName: nameof( builderToTest ) );
             }
@@ -162,14 +166,14 @@ namespace Librainian.Databases {
                 using ( var db = new Database( builderToTest.ConnectionString, token ) ) {
                     var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 
-                    return (result.status, result.result, stopwatch.Elapsed);
+                    return ( result.status, result.result, stopwatch.Elapsed );
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return (Status.Failure, default, stopwatch.Elapsed);
+            return ( Status.Failure, default, stopwatch.Elapsed );
         }
 
         /// <summary>
@@ -253,11 +257,7 @@ namespace Librainian.Databases {
                     var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
 
                     yield return new SqlServerInstance {
-                        InstanceName = instanceName,
-                        ServiceName = serviceName,
-                        Version = version,
-                        Edition = edition,
-                        MachineName = Environment.MachineName
+                        InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName
                     };
                 }
             }
@@ -266,27 +266,55 @@ namespace Librainian.Databases {
         /// <summary>
         ///     //TODO Make this better later on.. just return any working connection for now..
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="timeout"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
         [ItemCanBeNull]
-        public static async Task<SqlConnectionStringBuilder> FindUsableServer( this CancellationToken token, params Credentials[] credentials ) {
-            try {
-                foreach ( var builder in credentials.SelectMany( credential => credential.LookForAnyDatabases( TimeSpan.FromSeconds( 10 ) ) ) ) {
-                    try {
-                        var response = await builder.TryConnectAndRespond().ConfigureAwait( false );
+        public static async Task<IEnumerable<SqlServer>> FindUsableServers( this TimeSpan timeout, [NotNull] params Credentials[] credentials ) {
+            if ( credentials == null ) {
+                throw new ArgumentNullException( paramName: nameof( credentials ) );
+            }
 
-                        if ( response.status == Status.Success ) {
-                            return builder;
-                        }
-                    }
-                    catch ( SqlException exception ) {
-                        exception.Log();
-                    }
-                }
+            if ( credentials.Any( c => c == default ) ) {
+                throw new ArgumentNullException( paramName: nameof( credentials ) );
+            }
+
+            try {
+                var token = new CancellationTokenSource( timeout ).Token;
+
+                var list = credentials.Where( c => c != default ).SelectMany( credential => credential.LookForAnyDatabases( timeout ) )
+                    .Select( builder => builder.TryGetResponse( token ) ).ToList();
+
+                await Task.WhenAny( list ).ConfigureAwait( false );
+
+                return list.Where( builder => builder.IsDone() && builder.Result.Status == Status.Success ).Select( task => task.Result );
             }
             catch ( Exception exception ) {
                 exception.Log();
+            }
+
+            return default;
+        }
+
+        [CanBeNull]
+        public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
+            Boolean throwIfNotFound = false ) {
+            if ( file == null ) {
+                throw new ArgumentNullException( paramName: nameof( file ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            if ( file.TryGetValue( key, out var connection ) ) {
+                if ( !String.IsNullOrWhiteSpace( connection ) ) {
+                    return connection;
+                }
+            }
+
+            if ( throwIfNotFound ) {
+                throw new InvalidOperationException( "No usable connection string." );
             }
 
             return default;
@@ -377,18 +405,60 @@ namespace Librainian.Databases {
             return String.Empty;
         }
 
-        [NotNull]
-        public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( [CanBeNull] this Credentials credentials, TimeSpan connectTimeout ) {
+        public static async Task<Status> InitializeDatabaseConnection( [NotNull] this ConcurrentDictionaryFile<String, String> file, Credentials credentials,
+            CancellationToken token ) {
+            if ( file == null ) {
+                throw new ArgumentNullException( paramName: nameof( file ) );
+            }
 
-            foreach ( DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows ) {
-                var serverName = row[ "ServerName" ].Trimmed();
-                var instanceName = row[ "InstanceName" ].Trimmed();
+            try {
 
-                if ( serverName != null && instanceName != null ) {
-                    yield return Database.OurConnectionStringBuilder( serverName, instanceName, connectTimeout: connectTimeout, credentials );
+                var timeout = ( TimeSpan ) Seconds.Thirty;
+
+                TryAgain:
+                var startSQLBrowsersTask = Database.StartAnySQLBrowsers( timeout );
+
+                var connectionString = file.Get();
+
+                if ( !String.IsNullOrWhiteSpace( connectionString ) ) {
+                    var builder = new SqlConnectionStringBuilder( connectionString );
+
+                    var sqlServer = await builder.TryGetResponse( token ).ConfigureAwait( false );
+
+                    if ( sqlServer != null && sqlServer.Status == Status.Success && sqlServer.ConnectionStringBuilder != default ) {
+
+                        file.Set( sqlServer.ConnectionStringBuilder.ToString() );
+
+                        return sqlServer.Status;
+                    }
+                }
+
+                await startSQLBrowsersTask.ConfigureAwait( false );
+
+                var servers = await timeout.FindUsableServers( credentials ).ConfigureAwait( false );
+
+                if ( servers != null ) {
+                    if ( servers.Any( sqlServer => file.Set( sqlServer ) ) ) {
+                        return Status.Success;
+                    }
+
+                    goto TryAgain;
                 }
             }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return Status.Failure;
         }
+
+        [NotNull]
+        public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabases( [CanBeNull] this Credentials credentials, TimeSpan connectTimeout ) =>
+            from DataRow row in SqlDataSourceEnumerator.Instance.GetDataSources().Rows
+            let serverName = row[ "ServerName" ].Trimmed()
+            let instanceName = row[ "InstanceName" ].Trimmed()
+            where serverName != null && instanceName != null
+            select Database.OurConnectionStringBuilder( serverName, instanceName, connectTimeout, credentials );
 
         /// <summary>
         ///     Returns the ordinal or null.
@@ -414,7 +484,66 @@ namespace Librainian.Databases {
             return default;
         }
 
-        public static Boolean SQLTimeout( this SqlException exception, TimeSpan? delayFor = null ) {
+        /// <summary>
+        ///     Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given
+        ///     <paramref name="key" />.
+        ///     <para>Returns the key.</para>
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String connectionString,
+            [NotNull] String key = Words.PrimeConnectionString ) {
+            if ( file == null ) {
+                throw new ArgumentNullException( paramName: nameof( file ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( connectionString ) );
+            }
+
+            file[ key ] = connectionString;
+            file.Flush();
+
+            Debug.Assert( file[ key ].Like( connectionString ) );
+
+            return key;
+        }
+
+        public static Boolean Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] SqlServer sqlServer,
+            [NotNull] String key = Words.PrimeConnectionString ) {
+            if ( file == null ) {
+                throw new ArgumentNullException( paramName: nameof( file ) );
+            }
+
+            if ( sqlServer == null ) {
+                throw new ArgumentNullException( paramName: nameof( sqlServer ) );
+            }
+
+            if ( sqlServer.Status != Status.Success ) {
+                return false;
+            }
+
+            var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
+
+            if ( connectionStringBuilder == default ) {
+                return false;
+            }
+
+            var connectionString = connectionStringBuilder.ConnectionString;
+
+            file.Set( connectionString, key );
+
+            return file.Get( key ).Like( connectionString );
+        }
+
+        public static Boolean SQLTimeout( this SqlException exception ) {
             var message = exception.Message;
 
             if ( message.Contains( "The server was not found or was not accessible" ) ) {
@@ -622,36 +751,50 @@ namespace Librainian.Databases {
         ///     Performs two selects on the database.
         ///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
         /// </summary>
-        /// <param name="builderToTest"></param>
+        /// <param name="test"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<(Status status, SqlConnectionStringBuilder builder, String serverVersion, DateTime? serverUTCDateTime, TimeSpan responseTime)>
-            TryConnectAndRespond( [NotNull] this SqlConnectionStringBuilder builderToTest ) {
-            if ( builderToTest == default ) {
-                throw new ArgumentNullException( paramName: nameof( builderToTest ) );
+        [ItemCanBeNull]
+        public static async Task<SqlServer> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
+
+            if ( test == default ) {
+                throw new ArgumentNullException( paramName: nameof( test ) );
             }
 
-            var stopwatch = Stopwatch.StartNew();
-
             try {
-                var version = await builderToTest.AdhocCommand<String>( "select @@VERSION;" ).ConfigureAwait( false );
-                var getdate = await builderToTest.AdhocCommand<DateTime>( "select SYSUTCDATETIME();" ).ConfigureAwait( false );
 
-                if ( version.status != Status.Success || getdate.status != Status.Success ) {
-                    "Failed connecting to server.".Break();
+                var version = await test.AdhocCommand<String>( "select @@VERSION;", token ).ConfigureAwait( false );
 
-                    return (Status.Failure, default, default, default, stopwatch.Elapsed);
+                if ( version.status != Status.Success ) {
+                    $"Failed connecting to server {test.DataSource}.".Break();
+
+                    return default;
+                }
+
+                var getdate = await test.AdhocCommand<DateTime>( "select SYSUTCDATETIME();", token ).ConfigureAwait( false );
+
+                if ( getdate.status != Status.Success ) {
+                    $"Failed connecting to server {test.DataSource}.".Break();
+
+                    return default;
                 }
 
                 var serverDateTime = getdate.response; //should already be utc.
                 var now = DateTime.UtcNow; //get this computer's utc
 
                 if ( serverDateTime.Date == now.Date ) {
-                    ( $"Opened a connection to {builderToTest.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
+                    ( $"Opened a connection to {test.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
                       $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
 
-                    var builder = new SqlConnectionStringBuilder( builderToTest.ConnectionString );
+                    var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
-                    return (Status.Success, builder, version.response, serverDateTime, stopwatch.Elapsed);
+                    return new SqlServer {
+                        Status = Status.Success,
+                        ConnectionStringBuilder = connectionStringBuilder,
+                        Version = version.response,
+                        UTCDateTime = serverDateTime,
+                        ResponseTime = TimeSpan.FromTicks( ( version.responseTime.Ticks + getdate.responseTime.Ticks ) / 2 ) /*avg*/
+                    };
                 }
             }
             catch ( Exception exception ) {
@@ -660,7 +803,7 @@ namespace Librainian.Databases {
 
             "Failed connecting to server.".Break();
 
-            return (Status.Failure, default, default, default, stopwatch.Elapsed);
+            return default;
         }
 
         public static void TryPlayFile( this String fileName ) {
@@ -726,5 +869,7 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
+
     }
+
 }

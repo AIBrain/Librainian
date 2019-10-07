@@ -47,6 +47,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Runtime.InteropServices;
     using System.Text;
     using JetBrains.Annotations;
+    using Parsing;
 
     public static class PathInternal {
 
@@ -148,7 +149,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
-            path = path.Trim();
+            path = path.Trimmed();
 
             if ( String.IsNullOrEmpty( value: path ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );

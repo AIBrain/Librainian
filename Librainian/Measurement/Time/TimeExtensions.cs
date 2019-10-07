@@ -268,7 +268,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>A DateTime instance adjusted to the beginning of the current week</returns>
         /// <remarks>the beginning of the week is controlled by the current Culture</remarks>
         public static DateTime FirstDayOfWeek( this DateTime dateTime ) {
-            var currentCulture = Thread.CurrentThread.CurrentCulture;
+            var currentCulture = CultureInfo.CurrentCulture;
             var firstDayOfWeek = currentCulture.DateTimeFormat.FirstDayOfWeek;
             var offset = dateTime.DayOfWeek - firstDayOfWeek < 0 ? 7 : 0;
             var numberOfDaysSinceBeginningOfTheWeek = dateTime.DayOfWeek + offset - firstDayOfWeek;

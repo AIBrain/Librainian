@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "App.cs" was last formatted by Protiguous on 2019/10/02 at 11:43 AM.
+// Project: "Librainian", "App.cs" was last formatted by Protiguous on 2019/10/07 at 6:03 AM.
 
 namespace Librainian {
 
@@ -48,6 +48,7 @@ namespace Librainian {
     using System.Runtime;
     using System.Threading;
     using System.Windows.Forms;
+    using Collections.Extensions;
     using CommandLine;
     using Controls;
     using JetBrains.Annotations;
@@ -87,9 +88,21 @@ namespace Librainian {
 
             void HandleErrors( IEnumerable<Error> errors ) {
                 try {
-                    if ( errors != null ) {
-                        foreach ( var error in errors ) {
-                            error.ToString().Log( breakinto: true );
+                    if ( errors == null ) {
+                        if ( Debugger.IsAttached ) {
+                            Debug.WriteLine( "Unknown error." );
+                            Debugger.Break();
+                        }
+                    }
+                    else {
+                        var message = errors.Select( error => error.ToString() ).ToStrings( Environment.NewLine );
+
+                        if ( Debugger.IsAttached ) {
+                            Debug.WriteLine( message );
+                            Debugger.Break();
+                        }
+                        else {
+                            Console.WriteLine( $"Error parsing command line options.{Environment.NewLine}{message}" );
                         }
                     }
                 }
@@ -157,9 +170,13 @@ namespace Librainian {
                     form.Tag = arguments.Where( s => !String.IsNullOrWhiteSpace( s ) );
                 }
 
-                LoadFormPosition( form );
-                Application.Run( form );
-                SaveFormPosition( form );
+                try {
+                    LoadFormPosition( form );
+                    Application.Run( form );
+                }
+                finally {
+                    SaveFormPosition( form );
+                }
             }
 
             void LoadFormPosition( Form form ) {

@@ -56,6 +56,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Security;
     using System.Security.Permissions;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using Internet;
@@ -72,6 +73,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Persistence;
     using Security;
     using Threading;
+    using Xunit;
 
     public interface IDocument : IDisposable, IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
@@ -413,6 +415,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<Boolean> IsAll( Byte number );
     }
 
+    //TODO Document class is getting too large. abstract some more, and make extensions.
+
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class Document : IDocument {
@@ -549,7 +553,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public PathTypeAttributes PathTypeAttributes { get; set; } = PathTypeAttributes.Unknown;
 
         /// <summary>
-        ///     Returns the length of the file (if it exists).
+        ///     Returns the length of the file (default if it doesn't exists).
         /// </summary>
         [JsonIgnore]
         public UInt64? Length {
@@ -573,9 +577,11 @@ namespace Librainian.OperatingSystem.FileSystem {
             set {
                 if ( value ) {
                     this.PathTypeAttributes |= PathTypeAttributes.DeleteAfterClose;
+                    Assert.True( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
                 }
                 else {
                     this.PathTypeAttributes &= ~PathTypeAttributes.DeleteAfterClose;
+                    Assert.False( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
                 }
             }
         }
@@ -612,23 +618,62 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     "poor mans Int32 hash"
         /// </summary>
         /// <returns></returns>
-        public Int32 CalculateHarkerHashInt32() =>
-            this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
+        public Int32 CalculateHarkerHashInt32() {
+            this.ThrowIfNotExists();
+            return this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
                 .Aggregate( seed: 0, func: ( current, i ) => unchecked(current + i) );
+        }
 
         [NotNull]
-        public Task<Int32> CalculateHarkerHashInt32Async() => Task.Run( this.CalculateHarkerHashInt32 );
+        public Task<Int32> CalculateHarkerHashInt32Async() {
+            this.ThrowIfNotExists();
+            return Task.Run( this.CalculateHarkerHashInt32 );
+        }
 
         /// <summary>
         ///     "poor mans Int64 hash"
         /// </summary>
         /// <returns></returns>
-        public Int64 CalculateHarkerHashInt64() =>
-            this.AsInt64().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
+        public Int64 CalculateHarkerHashInt64() {
+            this.ThrowIfNotExists();
+
+            return this.AsInt64()
+                //.AsParallel()
+                //.WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
                 .Aggregate( seed: 0L, func: ( current, i ) => unchecked(current + i) );
+        }
+
+        /// <summary>
+        ///     "poor mans Int64 hash"
+        /// </summary>
+        /// <returns></returns>
+        public Decimal CalculateHarkerHashDecimal() {
+            this.ThrowIfNotExists();
+
+            return this.AsDecimal()
+                //.AsParallel()
+                //.WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
+                .Aggregate( seed: 0M, func: ( current, i ) => current + i );
+        }
+
+        private void ThrowIfNotExists() {
+            if ( !this.Exists() ) {
+                throw new FileNotFoundException( $"Could find document {this.FullPath.DoubleQuote()}." );
+            }
+        }
 
         [NotNull]
-        public Task<Int64> CalculateHarkerHashInt64Async() => Task.Run( this.CalculateHarkerHashInt64 );
+        public Task<Int64> CalculateHarkerHashInt64Async() {
+            this.ThrowIfNotExists();
+            return Task.Run( this.CalculateHarkerHashInt64 );
+        }
+
+        [NotNull]
+        public Task<Decimal> CalculateHarkerHashDecimalAsync() {
+            this.ThrowIfNotExists();
+
+            return new Task<Decimal>( this.CalculateHarkerHashDecimal, TaskCreationOptions.LongRunning );
+        }
 
         /// <summary>
         ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
@@ -659,13 +704,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.
         /// </summary>
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
         /// <returns></returns>
         public IEnumerable<Int64> AsInt64( FileOptions options = FileOptions.SequentialScan ) {
-            if ( this.Exists() == false ) {
+            if ( !this.Exists() ) {
                 yield break;
             }
 
@@ -677,10 +722,63 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 var buffer = new Byte[ sizeof( Int64 ) ];
+                var length = buffer.Length;
 
-                using ( var buffered = new BufferedStream( stream: stream, sizeof( Int64 ) ) ) {
-                    while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
+                using ( var buffered = new BufferedStream( stream: stream, MathConstants.Sizes.OneGigaByte ) ) {
+                    while ( buffered.Read( array: buffer, offset: 0, count: length ).Any() ) {
                         yield return BitConverter.ToInt64( value: buffer, startIndex: 0 );
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.
+        /// </summary>
+        /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+        /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+        /// <returns></returns>
+        public IEnumerable<Decimal> AsDecimal( FileOptions options = FileOptions.SequentialScan ) {
+            var fileLength = this.Length;
+
+            if ( !fileLength.HasValue ) {
+                yield break;
+            }
+
+            //Span<Byte> inBuffer = stackalloc Byte[ MathConstants.Sizes.OneGigaByte / sizeof( Byte ) ];
+            //var inLength = inBuffer.Length;
+
+            //Span<Decimal> outBuffer = stackalloc Decimal[ MathConstants.Sizes.OneGigaByte / sizeof( Decimal ) ];
+            //var outLength = outBuffer.Length;
+
+            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
+                }
+
+                using ( var buffered = new BufferedStream( stream: stream, MathConstants.Sizes.OneGigaByte ) ) {
+
+                    using ( var br = new BinaryReader( buffered ) ) {
+
+                        while ( true ) {
+
+                            Decimal d;
+
+                            try {
+                                d = br.ReadDecimal();
+                            }
+                            catch ( EndOfStreamException ) {
+                                yield break;
+                            }
+                            catch ( IOException ) {
+                                yield break;
+                            }
+
+                            yield return d;
+                        }
                     }
                 }
             }
@@ -1435,7 +1533,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             try {
                 return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 )bufferSize, leaveOpen: false );
             }
-            catch ( Exception exception) {
+            catch ( Exception exception ) {
                 exception.Log();
             }
 
@@ -1588,7 +1686,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException"></exception>
         public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
-            this.FullPath = fullPath.TrimAndThrowIfBlank();
+            this.FullPath = CleanFileName( fullPath ).TrimAndThrowIfBlank();
 
             if ( Uri.TryCreate( uriString: fullPath, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 if ( uri.IsFile ) {
@@ -1640,12 +1738,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         // ReSharper disable once NotNullMemberIsNotInitialized
         private Document() => throw new NotImplementedException( message: "Private contructor is not allowed." );
 
-        public Document( [NotNull] String fullPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( path1: fullPath, path2: filename ), deleteAfterClose: deleteAfterClose ) { }
+        public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
+            fullPath: Path.Combine( path1: justPath, path2: filename ), deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPath: info.FullName, deleteAfterClose: deleteAfterClose ) { }
 
-        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( fullPath: folder.FullName, filename: filename,
+        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( justPath: folder.FullName, filename: filename,
             deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
@@ -1918,6 +2016,24 @@ namespace Librainian.OperatingSystem.FileSystem {
         internal static Boolean IsExtended( [NotNull] String path ) =>
             path.Length >= 4 && path[ index: 0 ] == PathInternal.Constants.Backslash && ( path[ index: 1 ] == PathInternal.Constants.Backslash || path[ index: 1 ] == '?' ) &&
             path[ index: 2 ] == '?' && path[ index: 3 ] == PathInternal.Constants.Backslash;
+
+        [NotNull]
+        public static String InvalidFileNameCharacters { get; } = new String( Path.GetInvalidFileNameChars() );
+
+        [NotNull]
+        public static Regex RegexForInvalidFileNameCharacters { get; } = new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled );
+
+        /// <summary>
+        ///     Returns the path with any invalid filename characters replaced with <paramref name="replacement" />. (Defaults to
+        ///     <see cref="String.Empty" />.)
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String CleanFileName( [NotNull] String filename, [CanBeNull] String replacement = null ) =>
+            RegexForInvalidFileNameCharacters.Replace( filename, replacement ?? String.Empty ).Trim();
+
     }
 
 }

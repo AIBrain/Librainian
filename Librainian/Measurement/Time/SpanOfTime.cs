@@ -508,14 +508,14 @@ namespace Librainian.Measurement.Time {
                     return new SpanOfTime( result ); //cheat and use the existing TimeSpan parsing code...
                 }
 
-                if ( text.IsJustNumbers( out var units ) ) {
+                if ( text.TryGetDecimal( out var units ) ) {
                     return new SpanOfTime( seconds: ( Rational ) units ); //assume seconds given
                 }
 
                 if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "milliseconds" );
 
-                    if ( text.IsJustNumbers( out units ) ) {
+                    if ( text.TryGetDecimal( out units ) ) {
                         return new SpanOfTime( milliseconds: new Milliseconds( units ) );
                     }
                 }
@@ -523,7 +523,7 @@ namespace Librainian.Measurement.Time {
                 if ( text.EndsWith( "millisecond", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "millisecond" );
 
-                    if ( text.IsJustNumbers( out units ) ) {
+                    if ( text.TryGetDecimal( out units ) ) {
                         return new SpanOfTime( milliseconds: new Milliseconds( units ) );
                     }
                 }
@@ -531,7 +531,7 @@ namespace Librainian.Measurement.Time {
                 if ( text.EndsWith( "seconds", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "seconds" );
 
-                    if ( text.IsJustNumbers( out units ) ) {
+                    if ( text.TryGetDecimal( out units ) ) {
                         return new SpanOfTime( seconds: ( Rational ) units );
                     }
                 }
@@ -539,7 +539,7 @@ namespace Librainian.Measurement.Time {
                 if ( text.EndsWith( "second", StringComparison.InvariantCultureIgnoreCase ) ) {
                     text = text.Before( "second" );
 
-                    if ( text.IsJustNumbers( out units ) ) {
+                    if ( text.TryGetDecimal( out units ) ) {
                         return new SpanOfTime( seconds: ( Rational ) units );
                     }
                 }

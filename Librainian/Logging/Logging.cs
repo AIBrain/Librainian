@@ -48,6 +48,7 @@ namespace Librainian.Logging {
     using NLog.Layouts;
     using NLog.Targets;
     using NLog.Windows.Forms;
+    using Parsing;
     using Persistence;
 
     public static class Logging {
@@ -123,56 +124,62 @@ namespace Librainian.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                    return ( Color.Blue, Color.Aqua );
-                }
+                        return (Color.Blue, Color.Aqua);
+                    }
 
                 case LoggingLevel.SubspaceTear: {
-                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
-                }
+                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
+                    }
 
                 case LoggingLevel.Fatal: {
 
-                    return ( Color.DarkRed, Color.Aqua );
-                }
+                        return (Color.DarkRed, Color.Aqua);
+                    }
 
                 case LoggingLevel.Critical: {
 
-                    return ( Color.Red, Color.Aqua );
-                }
+                        return (Color.Red, Color.Aqua);
+                    }
 
                 case LoggingLevel.Error: {
 
-                    return ( Color.Red, Color.White );
-                }
+                        return (Color.Red, Color.White);
+                    }
 
                 case LoggingLevel.Warning: {
 
-                    return ( Color.Goldenrod, Color.White );
-                }
+                        return (Color.Goldenrod, Color.White);
+                    }
 
                 case LoggingLevel.Diagnostic: {
 
-                    return ( Color.Green, Color.White );
-                }
+                        return (Color.Green, Color.White);
+                    }
 
                 case LoggingLevel.Debug: {
 
-                    return ( Color.DarkSeaGreen, Color.White );
-                }
+                        return (Color.DarkSeaGreen, Color.White);
+                    }
 
                 case LoggingLevel.Exception: {
 
-                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
-                }
+                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
+                    }
 
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
         }
 
+        /// <summary>
+        /// Write <paramref name="obj"/> to the <see cref="Logger"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
         [DebuggerStepThrough]
         public static void Debug<T>( this T obj ) => Logger.Debug( obj );
 
-        //[DebuggerStepThrough]public static void Info<T>( this T obj ) => Logger.Info( obj );
+        [DebuggerStepThrough]
+        public static void Info<T>( this T obj ) => Logger.Info( obj );
 
         [DebuggerStepThrough]
         public static void Error<T>( this T obj ) => Logger.Error( obj );
@@ -208,36 +215,43 @@ namespace Librainian.Logging {
         [Conditional( "TRACE" )]
         [DebuggerStepThrough]
         public static void Log( this String message, Boolean breakinto = false ) {
+            message = $"[{DateTime.Now:t}] {message ?? Symbols.Null}";
+
+            if ( Logger.IsTraceEnabled ) {
+                if ( !Debugger.IsAttached ) {
+                    Logger.Trace( message );    //no sense in writing out the message twice. (Debug below also writes)
+                }
+            }
+
             if ( Logger.IsDebugEnabled ) {
-                System.Diagnostics.Debug.WriteLine( $"[{DateTime.Now:t}] {message}" );
-                Logger.Debug( message );
+                if ( Debugger.IsAttached ) {
+                    System.Diagnostics.Debug.WriteLine( message );
+                }
+                else {
+                    Logger.Debug( message );
+                }
 
                 if ( breakinto && Debugger.IsAttached ) {
                     Debugger.Break();
                 }
             }
-
-            if ( Logger.IsTraceEnabled ) {
-                Logger.Trace( message );
-            }
         }
 
+        [Conditional( "DEBUG" )]
+        [Conditional( "TRACE" )]
         [DebuggerStepThrough]
-        public static void Log( this Exception exception, Boolean breakinto = false ) {
-            System.Diagnostics.Debug.WriteLine( exception );
-            Logger.Debug( exception );
+        public static void Log( this Exception exception, Boolean breakinto = false ) => exception.ToString().Log( breakinto: breakinto );
 
-            if ( breakinto && Debugger.IsAttached ) {
-                Debugger.Break();
+        [DebuggerStepThrough]
+        [CanBeNull]
+        public static T Log<T>( [CanBeNull] this T message, Boolean breakinto ) {
+            if ( message is null ) {
+                if ( breakinto && Debugger.IsAttached ) {
+                    Debugger.Break();
+                }
             }
-        }
-
-        [DebuggerStepThrough]
-        public static T Log<T>( this T message, Boolean breakinto ) {
-            Logger.Debug( message );
-
-            if ( breakinto && Debugger.IsAttached ) {
-                Debugger.Break();
+            else {
+                message.ToString().Log( breakinto: breakinto );
             }
 
             return message;

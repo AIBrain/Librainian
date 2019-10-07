@@ -1238,15 +1238,15 @@ namespace Librainian.Persistence {
         */
 
         /// <summary>
-        ///     Persist the <paramref name="object" /> to a JSON text file.
+        ///     Persist the <paramref name="self" /> to a JSON text file.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
-        /// <param name="object">    </param>
+        /// <param name="self">    </param>
         /// <param name="document">  </param>
         /// <param name="overwrite"> </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean TrySave<TKey>( this TKey @object, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
+        public static Boolean TrySave<TKey>( this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
             if ( document == null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
@@ -1269,7 +1269,7 @@ namespace Librainian.Persistence {
                             ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
                         };
 
-                        serializer.Serialize( jw, @object );
+                        serializer.Serialize( jw, self );
                     }
                 }
             }
