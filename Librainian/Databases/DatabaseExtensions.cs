@@ -233,7 +233,7 @@ namespace Librainian.Databases {
 
             foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
 
-                var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
+                using var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
 
                 try {
                     if ( !getSqlEngine.Get().Count.Any() ) {
@@ -280,10 +280,10 @@ namespace Librainian.Databases {
             }
 
             try {
-                var token = new CancellationTokenSource( timeout ).Token;
+                using var cts = new CancellationTokenSource( timeout );
 
                 var list = credentials.Where( c => c != default ).SelectMany( credential => credential.LookForAnyDatabases( timeout ) )
-                    .Select( builder => builder.TryGetResponse( token ) ).ToList();
+                    .Select( builder => builder.TryGetResponse( cts.Token ) ).ToList();
 
                 await Task.WhenAny( list ).ConfigureAwait( false );
 
@@ -332,7 +332,7 @@ namespace Librainian.Databases {
             try {
 
                 // Enumerate all WMI instances of __namespace WMI class.
-                var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
+                using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
                 namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ].ToString() ) );
             }
             catch ( ManagementException exception ) {
@@ -394,7 +394,7 @@ namespace Librainian.Databases {
             }
 
             var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
-            var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
+            using var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
 
             foreach ( var o in propertySearcher.Get() ) {
                 if ( o is ManagementObject managementObject ) {
@@ -763,7 +763,7 @@ namespace Librainian.Databases {
 
             try {
 
-                var version = await test.AdhocCommand<String>( "select @@VERSION;", token ).ConfigureAwait( false );
+                var version = await test.AdhocCommand<String>( "select @@version;", token ).ConfigureAwait( false );
 
                 if ( version.status != Status.Success ) {
                     $"Failed connecting to server {test.DataSource}.".Break();
@@ -771,7 +771,7 @@ namespace Librainian.Databases {
                     return default;
                 }
 
-                var getdate = await test.AdhocCommand<DateTime>( "select SYSUTCDATETIME();", token ).ConfigureAwait( false );
+                var getdate = await test.AdhocCommand<DateTime>( "select sysutcdatetime();", token ).ConfigureAwait( false );
 
                 if ( getdate.status != Status.Success ) {
                     $"Failed connecting to server {test.DataSource}.".Break();
