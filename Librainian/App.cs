@@ -86,7 +86,7 @@ namespace Librainian {
                 exception.Log( breakinto: true );
             }
 
-            void HandleErrors( IEnumerable<Error> errors ) {
+            static void HandleErrors( IEnumerable<Error> errors ) {
                 try {
                     if ( errors == null ) {
                         if ( Debugger.IsAttached ) {
@@ -156,7 +156,7 @@ namespace Librainian {
             Thread.Yield();
             Compact();
 
-            void Compact() {
+            static void Compact() {
                 GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
                 GC.Collect( 2, GCCollectionMode.Forced, true, true );
             }
@@ -179,7 +179,7 @@ namespace Librainian {
                 }
             }
 
-            void LoadFormPosition( Form form ) {
+            static void LoadFormPosition( Form form ) {
                 form.SuspendLayout();
                 form.WindowState = FormWindowState.Normal;
                 form.StartPosition = FormStartPosition.WindowsDefaultBounds;
@@ -194,7 +194,7 @@ namespace Librainian {
                 form.ResumeLayout( true );
             }
 
-            void SaveFormPosition( Form form ) {
+            static void SaveFormPosition( Form form ) {
                 form.SaveLocation();
                 form.SaveSize();
             }

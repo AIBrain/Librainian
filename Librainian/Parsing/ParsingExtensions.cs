@@ -253,32 +253,6 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) => $"{result ?? String.Empty}{appendThis ?? String.Empty}";
 
-        /*
-
-        /// <summary>
-        ///     Return the <see cref="tuple" /> formatted with the index.
-        /// </summary>
-        /// <param name="tuple"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String AsIndexed( [NotNull] this Tuple<String, Int32> tuple ) => $"{tuple.Item1}.[{tuple.Item2}]";
-
-        /// <summary>
-        ///     Return the <see cref="word" /> formatted with the <see cref="index" />.
-        /// </summary>
-        /// <param name="word"> </param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String AsIndexed( [NotNull] this String word, Int32 index ) {
-            if ( word == null ) {
-                throw new ArgumentNullException( nameof( word ) );
-            }
-
-            return $"{word}.[{index}]";
-        }
-        */
-
         /// <summary>
         ///     Return an integer formatted as 1st, 2nd, 3rd, etc...
         /// </summary>
@@ -293,7 +267,9 @@ namespace Librainian.Parsing {
                     return $"{number}th";
             }
 
+#pragma warning disable IDE0066 // Convert switch statement to expression
             switch ( number % 10 ) {
+#pragma warning restore IDE0066 // Convert switch statement to expression
                 case 1: return $"{number}st";
 
                 case 2: return $"{number}nd";
@@ -698,7 +674,7 @@ namespace Librainian.Parsing {
             yield return input;
 
             // try camel cased name
-            yield return input.ToCamelCase( culture );
+            yield return input.ToCamelCase();
 
             // try lower cased name
             yield return input.ToLower( culture );
@@ -719,7 +695,7 @@ namespace Librainian.Parsing {
             yield return input.AddUnderscorePrefix();
 
             // try name with underscore prefix, using camel case
-            yield return input.ToCamelCase( culture ).AddUnderscorePrefix();
+            yield return input.ToCamelCase().AddUnderscorePrefix();
         }
 
         /// <summary>
@@ -1245,7 +1221,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( @this.Length * repetitions + separator.Length * ( repetitions - 1 ) );
+            var builder = new StringBuilder( ( @this.Length * repetitions ) + ( separator.Length * ( repetitions - 1 ) ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1526,7 +1502,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
+            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -1598,7 +1574,13 @@ namespace Librainian.Parsing {
         public static String StringFromResponse( [CanBeNull] this WebResponse response ) {
             var restream = response?.GetResponseStream();
 
-            return restream != null ? new StreamReader( restream ).ReadToEnd() : String.Empty;
+            if ( restream != null ) {
+                using var reader = new StreamReader( restream );
+
+                return reader.ReadToEnd();
+            }
+
+            return String.Empty;
         }
 
         [NotNull]
@@ -1666,11 +1648,11 @@ namespace Librainian.Parsing {
             var output = input.StripTags( allowedTags );
 
             /* Lambda functions */
-            String HrefMatch( Match m ) => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
+            static String HrefMatch( Match m ) => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
 
-            String ClassMatch( Match m ) => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
+            static String ClassMatch( Match m ) => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
 
-            String UnsafeMatch( Match m ) => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
+            static String UnsafeMatch( Match m ) => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
 
             /* Allow the "href" attribute */
             output = new Regex( "(<a.*)href=(.*>)" ).Replace( output, HrefMatch );
@@ -1780,10 +1762,9 @@ namespace Librainian.Parsing {
         ///     Converts a String to camel case
         /// </summary>
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
-        /// <param name="culture">                    </param>
         /// <returns>String</returns>
         [NotNull]
-        public static String ToCamelCase( this String lowercaseAndUnderscoredWord, CultureInfo culture ) =>
+        public static String ToCamelCase( this String lowercaseAndUnderscoredWord ) =>
             MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
 
         /// <summary>

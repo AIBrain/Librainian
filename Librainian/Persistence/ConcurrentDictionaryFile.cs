@@ -66,7 +66,7 @@ namespace Librainian.Persistence {
 
         private volatile Boolean _isLoading;
 
-        private Boolean IsLoading {
+        public Boolean IsLoading {
             get => this._isLoading;
             set => this._isLoading = value;
         }

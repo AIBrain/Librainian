@@ -384,7 +384,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
-        public void OpenWithExplorer() => Windows.OpenWithExplorer( value: this.FullName );
+        public void OpenWithExplorer() {
+            using var _ = Windows.OpenWithExplorer( value: this.FullName );
+        }
 
         public void Refresh() => this.Info.Refresh();
 

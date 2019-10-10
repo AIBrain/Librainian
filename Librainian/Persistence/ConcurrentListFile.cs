@@ -78,7 +78,7 @@ namespace Librainian.Persistence {
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
-            this.Read().Wait(); //TODO I don't like this here.
+            this.Read().Wait(); //TODO I don't like this Wait being here.
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Librainian.Persistence {
             this.Read().Wait();
         }
 
-        public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
+        public async Task<Boolean> Read( CancellationToken token = default ) {
             if ( this.Document.Exists() == false ) {
                 return false;
             }
@@ -110,7 +110,7 @@ namespace Librainian.Persistence {
                 var data = this.Document.LoadJSON<IEnumerable<TValue>>();
 
                 if ( data != null ) {
-                    await this.AddRangeAsync( data ).ConfigureAwait( false );
+                    await this.AddRangeAsync( data, token ).ConfigureAwait( false );
 
                     return true;
                 }

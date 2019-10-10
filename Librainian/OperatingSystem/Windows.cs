@@ -370,7 +370,7 @@ namespace Librainian.OperatingSystem {
                 exception.Log();
             }
 
-            return null;
+            return default;
         }
 
         public static async Task<Boolean> RestartServiceAsync( String serviceName, TimeSpan timeout ) =>

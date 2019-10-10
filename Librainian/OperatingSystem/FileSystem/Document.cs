@@ -802,7 +802,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
                 }
 
-                var buffer = new Byte[ sizeof( Decimal ) ];
+                var buffer = new Byte[ sizeof( Decimal ) ]; //sizeof( Decimal ) == sizeof( Guid ) right?
 
                 using ( var buffered = new BufferedStream( stream: stream, sizeof( Decimal ) ) ) {
                     while ( buffered.Read( array: buffer, offset: 0, count: buffer.Length ).Any() ) {
@@ -985,7 +985,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 if ( size?.Any() == true ) {
                     using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
-                        var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
+                        using var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
 
                         var result = crc32.ComputeHash( inputStream: fileStream );
 
@@ -1030,7 +1030,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return null;
                     }
 
-                    var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
+                    using var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
 
                     return crc32.ComputeHash( inputStream: fileStream )
                         .Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
@@ -1075,7 +1075,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return null;
                     }
 
-                    var crc64 = new CRC64( polynomial: size.Value, seed: size.Value );
+                    using var crc64 = new CRC64( polynomial: size.Value, seed: size.Value );
 
                     return BitConverter.ToInt64( value: crc64.ComputeHash( inputStream: fileStream ), startIndex: 0 );
                 }
@@ -1119,7 +1119,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return null;
                 }
 
-                var crc64 = new CRC64( polynomial: size.Value, seed: size.Value );
+                using var crc64 = new CRC64( polynomial: size.Value, seed: size.Value );
 
                 using ( var fileStream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
                     bufferSize: MathConstants.Sizes.OneMegaByte ) ) {
@@ -1780,7 +1780,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            var webClient = new WebClient();
+            using var webClient = new WebClient();
             webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
             webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, (this, destination) );
             await webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath ).ConfigureAwait( false );
