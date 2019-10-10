@@ -239,7 +239,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }, token );
 
         /// <summary>
-        ///     Returns a copy of the folder instance.
+        ///     Returns a copy of this folder instance.
         /// </summary>
         /// <returns></returns>
         [NotNull]
