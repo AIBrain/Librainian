@@ -232,7 +232,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 folders.RemoveAll( folder => folder == null ); //just in case. probably will never happen, unless BetterEnumerateDirectories() gets goofed up.
 
                 if ( randomize ) {
-                    Shufflings.ShuffleByHarker( folders, 1, null, null, token );
+                    Shufflings.ShuffleByHarker( folders, 1, null, token );
                 }
 
                 return folders;

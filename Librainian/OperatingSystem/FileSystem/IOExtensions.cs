@@ -70,9 +70,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public const Int32 FsctlSetCompression = 0x9C040;
 
-        private static FileInfo InternalSearchFoundFile( this FileInfo info, [CanBeNull] Action<FileInfo> onFindFile, [CanBeNull] SimpleCancel cancellation ) {
+        private static FileInfo InternalSearchFoundFile( this FileInfo info, [CanBeNull] Action<FileInfo> onFindFile, CancellationToken token ) {
             try {
-                if ( cancellation?.HaveAnyCancellationsBeenRequested() == false ) {
+                if ( !token.IsCancellationRequested ) {
                     onFindFile?.Invoke( info );
                 }
             }
@@ -516,11 +516,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="startingFolder">    The folder to start the search.</param>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
-        /// <param name="cancellation">      </param>
+        /// <param name="token">      </param>
         /// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle">       </param>
-        public static void FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation,
+        public static void FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken token,
             [CanBeNull] Action<FileInfo> onFindFile = null, [CanBeNull] Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( nameof( fileSearchPatterns ) );
@@ -534,7 +534,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
 
                 searchPatterns.AsParallel().ForAll( searchPattern => {
-                    if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                    if ( token.IsCancellationRequested ) {
                         return;
                     }
 
@@ -542,7 +542,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         var folders = startingFolder.BetterEnumerateDirectories( "*" /*, SearchOption.TopDirectoryOnly*/ );
 
                         folders.AsParallel().ForAll( folder => {
-                            if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                            if ( token.IsCancellationRequested ) {
                                 return;
                             }
 
@@ -554,13 +554,13 @@ namespace Librainian.OperatingSystem.FileSystem {
                             }
 
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
+                                folder.FindFiles( fileSearchPatterns: searchPatterns, token: token, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
                                     searchStyle: SearchStyle.FoldersFirst ); //recurse
                             }
 
                             try {
                                 foreach ( var file in folder.BetterEnumerateFiles( searchPattern /*, SearchOption.TopDirectoryOnly*/ ) ) {
-                                    file.InternalSearchFoundFile( onFindFile, cancellation );
+                                    file.InternalSearchFoundFile( onFindFile, token );
                                 }
                             }
                             catch ( UnauthorizedAccessException ) { }
@@ -583,7 +583,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                                 } );
                             }
 
-                            folder.FindFiles( fileSearchPatterns: searchPatterns, cancellation: cancellation, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
+                            folder.FindFiles( fileSearchPatterns: searchPatterns, token: token, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
                                 searchStyle: searchStyle ); //recurse
                         } );
                     }
@@ -659,9 +659,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="info"></param>
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
-        public static UInt32? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
+        public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
             var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory?.Root.FullName, lpSectorsPerCluster: out var sectorsPerCluster,
-                lpBytesPerSector: out var bytesPerSector, lpNumberOfFreeClusters: out var dummy, lpTotalNumberOfClusters: out _ );
+                lpBytesPerSector: out var bytesPerSector, lpNumberOfFreeClusters: out _, lpTotalNumberOfClusters: out _ );
 
             if ( result == 0 ) {
                 throw new Win32Exception();
@@ -669,9 +669,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out var sizeHigh );
-            var size = ( sizeHigh << 32 ) | losize;
+            var size = ( ( Int64 ) sizeHigh << 32 ) | losize;
 
-            return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
+            return ( UInt64 ) ( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
         }
 
         [CanBeNull]
@@ -715,7 +715,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
         /// <param name="cancellation">  </param>
         /// <returns></returns>
-        public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound, SimpleCancel cancellation ) {
+        public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound, CancellationToken token ) {
             if ( startingFolder == null ) {
                 throw new ArgumentNullException( nameof( startingFolder ) );
             }
@@ -725,7 +725,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             try {
-                if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+                if ( token.IsCancellationRequested ) {
                     return false;
                 }
 
@@ -1225,7 +1225,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle">       </param>
-        public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, SimpleCancel cancellation, [CanBeNull] Action<FileInfo> onFindFile = null,
+        public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, CancellationToken token, [CanBeNull] Action<FileInfo> onFindFile = null,
             [CanBeNull] Action<DirectoryInfo> onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
             if ( fileSearchPatterns == null ) {
                 throw new ArgumentNullException( nameof( fileSearchPatterns ) );
@@ -1239,7 +1239,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     $"Scanning [{drive.VolumeLabel}]".Info();
 
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, cancellation: cancellation, onFindFile: onFindFile,
+                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, token: token, onFindFile: onFindFile,
                         onEachDirectory: onEachDirectory, searchStyle: searchStyle );
                 } );
             }

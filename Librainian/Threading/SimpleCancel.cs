@@ -49,10 +49,11 @@ namespace Librainian.Threading {
     using Maths;
 
     /// <summary>
-    ///     <para>A threadsafe way to cancel anything.</para>
+    ///     <para>A threadsafe way to mark anything as cancelled.</para>
     /// </summary>
     /// <remarks>Not superior to <see cref="CancellationTokenSource" />, just different. And a class.</remarks>
     [Experimental( "Somewhat untested. Should work though." )]
+    [Obsolete("Just use CancellationTokenSource...")]
     public sealed class SimpleCancel : ABetterClassDispose {
 
         /// <summary>

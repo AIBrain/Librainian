@@ -99,15 +99,9 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <see cref="AllowModifications" />
         public Boolean IsReadOnly {
-            get => Interlocked.Read( ref this._isReadOnlyReference ).Any();
+            get => this._isReadOnly;
 
-            private set {
-                var before = this._isReadOnlyCount;
-
-                this._isReadOnlyCount = value ? Interlocked.Increment( ref this._isReadOnlyReference ) : Interlocked.Decrement( ref this._isReadOnlyReference );
-
-                //this.RaiseAndSetIfChanged( ref this._isReadOnlyCount, before );
-            }
+            private set => this._isReadOnly = value;
         }
 
         /// <summary>
@@ -324,25 +318,7 @@ namespace Librainian.Collections.Lists {
         [NotNull]
         IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
-        private Int64 _isReadOnlyCount;
-
-        private Int64 _isReadOnlyReference;
-
-        /// <summary>
-        ///     A thread-local (threadsafe) <see cref="Random" />.
-        /// </summary>
-        [NotNull]
-        private static Random Randem => ThreadSafeRandom.Value.Value;
-
-        /// <summary>
-        ///     Provide to each thread its own <see cref="Random" /> with a random seed.
-        /// </summary>
-        [NotNull]
-
-        // ReSharper disable once StaticMemberInGenericType
-        private static ThreadLocal<Lazy<Random>> ThreadSafeRandom { get; } =
-            new ThreadLocal<Lazy<Random>>( () => new Lazy<Random>( () => new Random( DateTime.Now.Ticks.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() ) ),
-                true );
+        private volatile Boolean _isReadOnly;
 
         [NotNull]
         private ConcurrentQueue<T> InputBuffer { get; set; } = new ConcurrentQueue<T>();
@@ -693,6 +669,7 @@ namespace Librainian.Collections.Lists {
             } );
         }
 
+        /*
         /// <summary>
         ///     <para>Harker Shuffle Algorithm</para>
         ///     <para>
@@ -785,6 +762,7 @@ namespace Librainian.Collections.Lists {
 
                 return true;
             } );
+        */
 
         /// <summary>
         ///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.

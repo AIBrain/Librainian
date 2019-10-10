@@ -1668,7 +1668,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         private static ThreadLocal<Lazy<WebClient>> WebClients =
             new ThreadLocal<Lazy<WebClient>>( valueFactory: () => new Lazy<WebClient>( valueFactory: () => new WebClient(), isThreadSafe: false ), trackAllValues: true );
 
-        protected Document( [NotNull] SerializationInfo info, StreamingContext context ) {
+        protected Document( [NotNull] SerializationInfo info ) {
             if ( info == null ) {
                 throw new ArgumentNullException( paramName: nameof( info ) );
             }

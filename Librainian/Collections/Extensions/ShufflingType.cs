@@ -70,6 +70,6 @@ namespace Librainian.Collections.Extensions {
         /// <summary>
         ///     Let the algorithm choose the optimal.
         /// </summary>
-        AutoChoice
+        BestChoice
     }
 }
