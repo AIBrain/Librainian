@@ -601,18 +601,19 @@ namespace Librainian.Collections.Lists {
         ///     Returns a hot task that needs to be awaited.
         /// </summary>
         /// <param name="items"></param>
+        /// <param name="token"></param>
         /// <param name="afterEachAdd"></param>
         /// <param name="afterRangeAdded"></param>
         /// <param name="useParallelism"></param>
         /// <returns></returns>
         [NotNull]
-        public Task AddRangeAsync( [CanBeNull] IEnumerable<T> items, [CanBeNull] Action afterEachAdd = null, [CanBeNull] Action afterRangeAdded = null,
-            Byte useParallelism = 0 ) =>
+        public Task AddRangeAsync( [CanBeNull] IEnumerable<T> items, CancellationToken token, [CanBeNull] Action afterEachAdd = null,
+            [CanBeNull] Action afterRangeAdded = null, Byte useParallelism = 0 ) =>
             Task.Run( () => {
                 if ( items != null ) {
                     this.AddRange( items: items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded, useParallelism: useParallelism );
                 }
-            } );
+            }, token );
 
         /// <summary>
         ///     Returns true if this <see cref="ConcurrentList{TType}" /> has not been marked as <see cref="Complete" />.
