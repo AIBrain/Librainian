@@ -609,6 +609,11 @@ namespace Librainian.Databases {
             return t;
         }
 
+        /// <summary>
+        /// To allow disconnecting the <see cref="SqlDataReader"/> as soon as possible.
+        /// </summary>
+        /// <param name="dataReader"></param>
+        /// <returns></returns>
         [NotNull]
         public static DataTable ToDataTable( [CanBeNull] this SqlDataReader dataReader ) {
             var table = new DataTable();

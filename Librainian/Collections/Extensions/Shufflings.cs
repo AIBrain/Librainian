@@ -50,7 +50,6 @@ namespace Librainian.Collections.Extensions {
     using JetBrains.Annotations;
     using Logging;
     using Maths;
-    using Threading;
 
     public static class Shufflings {
 

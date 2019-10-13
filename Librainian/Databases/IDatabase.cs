@@ -76,7 +76,7 @@ namespace Librainian.Databases {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        Task<SqlDataReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters );
+        Task<DataTableReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>
         ///     Returns a <see cref="DataTable" />

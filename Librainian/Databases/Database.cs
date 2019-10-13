@@ -427,12 +427,14 @@ namespace Librainian.Databases {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         [ItemCanBeNull]
-        public async Task<SqlDataReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public async Task<DataTableReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
 
             try {
+                DataTable table;
+
                 using ( var connection = new SqlConnection( this._connectionString ) ) {
                     await connection.OpenAsync( this.Token ).ConfigureAwait( false );
 
@@ -446,9 +448,13 @@ namespace Librainian.Databases {
                             }
                         }
 
-                        return await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
+                        var readerAsync = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
+
+                        table = readerAsync.ToDataTable();
                     }
                 }
+                
+                return table.CreateDataReader();
             }
             catch ( SqlException exception ) {
                 exception.Log( Rebuild( query, parameters ) );

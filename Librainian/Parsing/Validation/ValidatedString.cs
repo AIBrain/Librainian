@@ -58,7 +58,7 @@ namespace Librainian.Parsing.Validation {
     public class ValidatedString : IValidatedString {
 
         /// <inheritdoc />
-        public Func<String, Boolean> Validate { get; set; }
+        public Func<String, Boolean> ValidateFunc { get; set; }
 
         /// <inheritdoc />
         public Boolean? Validated { get; }
@@ -86,8 +86,8 @@ namespace Librainian.Parsing.Validation {
 
         public ValidatedString( [NotNull] String value, [NotNull] Func<String, Boolean> validationFunc ) {
             this.Value = value ?? throw new ArgumentNullException( nameof( value ) );
-            this.Validate = validationFunc ?? throw new ArgumentNullException( nameof( validationFunc ) );
-            this.Validated = this.Validate( this.Value );
+            this.ValidateFunc = validationFunc ?? throw new ArgumentNullException( nameof( validationFunc ) );
+            this.Validated = this.ValidateFunc( this.Value );
         }
 
         [SecuritySafeCritical]

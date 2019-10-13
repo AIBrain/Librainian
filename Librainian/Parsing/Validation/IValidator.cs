@@ -49,10 +49,10 @@ namespace Librainian.Parsing.Validation {
         ///     <para>Function to run to validate.</para>
         ///     <para>Should be manually set in the derived ctor.</para>
         /// </summary>
-        Func<T, Boolean> Validate { get; set; }
+        Func<T, Boolean> ValidateFunc { get; set; }
 
         /// <summary>
-        ///     Cached value of <see cref="Validate" />.
+        ///     Cached value of <see cref="ValidateFunc" />.
         ///     <para>Should be manually set in the derived ctor.</para>
         ///     <para>Example: <code>this.Validated = this.Validate( this.Value );</code></para>
         /// </summary>

@@ -205,7 +205,7 @@ namespace Librainian.Converters {
         [Pure]
         public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
             if ( value == null ) {
-                return null;
+                return default;
             }
 
             if ( value is Boolean b ) {
@@ -225,7 +225,11 @@ namespace Librainian.Converters {
                     return null;
                 }
 
-                s = s.Trim();
+                s = s.Trimmed();
+
+                if ( s is null ) {
+                    return default;
+                }
 
                 if ( s.In( ParsingConstants.TrueStrings ) ) {
                     return true;
@@ -243,7 +247,7 @@ namespace Librainian.Converters {
             var t = value.ToString();
 
             if ( String.IsNullOrWhiteSpace( t ) ) {
-                return null;
+                return default;
             }
 
             t = t.Trim();
@@ -260,7 +264,7 @@ namespace Librainian.Converters {
                 return rest;
             }
 
-            return null; //don't know.
+            return default;
         }
 
         public static Boolean ToBooleanOrThrow<T>( this T value ) =>

@@ -713,7 +713,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="startingFolder"></param>
         /// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
-        /// <param name="cancellation">  </param>
+        /// <param name="token">  </param>
         /// <returns></returns>
         public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound, CancellationToken token ) {
             if ( startingFolder == null ) {
@@ -1221,7 +1221,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Search all possible drives for any files matching the <paramref name="fileSearchPatterns" /> .
         /// </summary>
         /// <param name="fileSearchPatterns">List of patterns to search for.</param>
-        /// <param name="cancellation">      </param>
+        /// <param name="token">      </param>
         /// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
         /// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
         /// <param name="searchStyle">       </param>

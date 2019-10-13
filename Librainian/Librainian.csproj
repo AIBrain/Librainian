@@ -352,13 +352,12 @@
     <Compile Include="Parsing\Validation\RegexString.cs" />
     <Compile Include="Parsing\Validation\StringAlpha.cs" />
     <Compile Include="Parsing\Validation\StringAlphaNumeric.cs" />
-    <Compile Include="Parsing\Validation\StringEmail.cs" />
+    <Compile Include="Parsing\Validation\Email.cs" />
     <Compile Include="Parsing\Validation\StringHex.cs" />
     <Compile Include="Parsing\Validation\StringHexPrefix.cs" />
     <Compile Include="Parsing\Validation\ValidatedString.cs" />
     <Compile Include="Parsing\Validation\ValidatedStringJsonNetConverter.cs" />
     <Compile Include="Persistence\Cache.cs" />
-    <Compile Include="Persistence\CommonResultCode.cs" />
     <Compile Include="Persistence\InIFiles\IniLine.cs" />
     <Compile Include="Persistence\InIFiles\IniSection.cs" />
     <Compile Include="Persistence\ResourceScanner.cs" />

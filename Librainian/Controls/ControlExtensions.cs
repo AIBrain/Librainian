@@ -50,6 +50,7 @@ namespace Librainian.Controls {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
+    using Collections.Extensions;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
@@ -957,5 +958,9 @@ namespace Librainian.Controls {
                 control.Refresh();
             }
         }
+
+        public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
+        public static Boolean Nope( this DialogResult result ) => result.In( DialogResult.Abort, DialogResult.Cancel );
+
     }
 }
