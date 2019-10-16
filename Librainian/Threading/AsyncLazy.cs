@@ -44,6 +44,10 @@ namespace Librainian.Threading {
     using System;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// TODO This class needs tested.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class AsyncLazy<T> : Lazy<Task<T>> {
 
         public AsyncLazy( Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }

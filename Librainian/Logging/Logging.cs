@@ -240,7 +240,7 @@ namespace Librainian.Logging {
         [Conditional( "DEBUG" )]
         [Conditional( "TRACE" )]
         [DebuggerStepThrough]
-        public static void Log( this Exception exception, Boolean breakinto = false ) => exception.ToString().Log( breakinto: breakinto );
+        public static void Log( this Exception exception, Boolean breakinto = false ) => exception.ToStringDemystified().Log( breakinto: breakinto );
 
         [DebuggerStepThrough]
         [CanBeNull]

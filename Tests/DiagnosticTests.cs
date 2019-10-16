@@ -47,7 +47,6 @@ namespace LibrainianTests {
     using System.Threading.Tasks;
     using FluentAssertions;
     using JetBrains.Annotations;
-    using Librainian.Collections;
     using Librainian.Logging;
     using Librainian.Maths;
     using Librainian.Measurement.Time;
@@ -132,17 +131,19 @@ namespace LibrainianTests {
 
         [Test]
         public static void TestRoman() {
-            const Int16 a = 0;
-            const Int16 b = 1;
-            const Int16 c = 1234;
-            const Int16 d = 3999;
-            const Int16 e = 4000;
+            const UInt32 a = 0;
+            const UInt32 b = 1;
+            const UInt32 c = 1234;
+            const UInt32 d = 3999;
+            const UInt32 e = 4000;
+            const UInt32 f = 5000;
 
-            $"{a} {a.ToRoman().Should()}".Log();
-            $"{b} {b.ToRoman()}".Log();
+            $"{a} {a.ToRoman().Should().Be(String.Empty)}".Log();
+            $"{b} {b.ToRoman().Should().Be("I")}".Log();
             $"{c} {c.ToRoman()}".Log();
             $"{d} {d.ToRoman()}".Log();
             $"{e} {e.ToRoman()}".Log();
+            $"{f} {f.ToRoman()}".Log();
         }
 
         [Test]
@@ -156,14 +157,6 @@ namespace LibrainianTests {
             var reasons = new ConcurrentQueue<String>();
             var test1 = "hi".Similarity( "hello", reasons );
             $"test1 was {test1}".Log();
-        }
-
-        [Test]
-        public static void TestWordVsGuid() {
-            var wordToGuidAndGuidToWord = new WordToGuidAndGuidToWord( "test", "$$$" );
-            var g = new Guid( @"bddc4fac-20b9-4365-97bf-c98e84697012" );
-            wordToGuidAndGuidToWord[ "AIBrain" ] = g;
-            wordToGuidAndGuidToWord[ g ].Is( "AIBrain" ).BreakIfFalse();
         }
 
         //[Test]

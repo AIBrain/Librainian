@@ -252,7 +252,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -288,7 +289,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -344,7 +346,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var actual = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, actual );
                             }
                         }
 
@@ -397,7 +400,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -444,11 +448,12 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
-                        var readerAsync = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
+                        using var readerAsync = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
 
                         table = readerAsync.ToDataTable();
                     }
@@ -491,7 +496,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -539,7 +545,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -617,7 +624,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 
@@ -691,7 +699,8 @@ namespace Librainian.Databases {
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
-                                Assert.StrictEqual( parameter, command.Parameters.Add( parameter ) );
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Assert.StrictEqual( parameter, sqlParameter );
                             }
                         }
 

@@ -476,7 +476,6 @@
     <Compile Include="Collections\Lists\ParallelList.cs" />
     <Compile Include="Collections\Queues\QueueWaiting.cs" />
     <Compile Include="Collections\Trees\SingleLinkNode.cs" />
-    <Compile Include="Collections\StringVersusGuid.cs" />
     <Compile Include="Collections\Lists\ThreadSafeList.cs" />
     <Compile Include="Collections\Queues\TimeStampQueue.cs" />
     <Compile Include="Collections\Queues\TrainingQueue.cs" />
@@ -485,7 +484,6 @@
     <Compile Include="Collections\Trees\TreeTask.cs" />
     <Compile Include="Collections\Lists\VirtualList.cs" />
     <Compile Include="Collections\Queues\WithTime.cs" />
-    <Compile Include="Collections\WordToGuidAndGuidToWord.cs" />
     <Compile Include="Controls\AutoLayoutWindow.cs">
       <SubType>form</SubType>
     </Compile>
@@ -777,7 +775,7 @@
     <Compile Include="Persistence\DeserializeReportStats.cs" />
     <Compile Include="Persistence\PersistenceExtensions.cs" />
     <Compile Include="Security\Windows.cs" />
-    <Compile Include="Threading\ArrayExtensions.cs" />
+    <Compile Include="Collections\Extensions\ArrayExtensions.cs" />
     <Compile Include="Threading\AsyncLazy.cs" />
     <Compile Include="Threading\AsyncLock.cs" />
     <Compile Include="Threading\AsyncReaderWriterLock.cs" />
@@ -786,7 +784,7 @@
     <Compile Include="Collections\Extensions\CollectionExtensions.cs" />
     <Compile Include="Threading\AbandonableTask.cs" />
     <Compile Include="Security\MersenneTwister.cs" />
-    <Compile Include="Threading\ArrayTraverse.cs" />
+    <Compile Include="Collections\Arrays\ArrayTraverse.cs" />
     <Compile Include="Logging\ConsoleListenerWithTimePrefix.cs" />
     <Compile Include="Threading\ObjectExtensions.cs" />
     <Compile Include="Threading\ReferenceEqualityComparer.cs" />
@@ -948,7 +946,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

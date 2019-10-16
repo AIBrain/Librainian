@@ -460,7 +460,7 @@ namespace Librainian.Databases {
                         command.Parameters.AddRange( parameters );
                     }
 
-                    var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+                    using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
                     table = reader.ToDataTable();
                 }
 

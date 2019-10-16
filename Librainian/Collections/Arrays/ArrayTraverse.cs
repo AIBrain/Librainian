@@ -1,10 +1,10 @@
-// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ArrayExtensions.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "ArrayTraverse.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,25 +37,45 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ArrayExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
+// Project: "Librainian", "ArrayTraverse.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Collections.Arrays {
 
     using System;
     using JetBrains.Annotations;
 
-    public static class ArrayExtensions {
+    public class ArrayTraverse {
 
-        public static void ForEach( [NotNull] this Array array, Action<Array, Int32[]> action ) {
-            if ( array.LongLength == 0 ) {
-                return;
+        private Int32[] MaxLengths { get; }
+
+        public Int32[] Position { get; }
+
+        public ArrayTraverse( [NotNull] Array array ) {
+            this.MaxLengths = new Int32[ array.Rank ];
+
+            for ( var i = 0; i < array.Rank; ++i ) {
+                this.MaxLengths[ i ] = array.GetLength( i ) - 1;
             }
 
-            var walker = new ArrayTraverse( array );
+            this.Position = new Int32[ array.Rank ];
+        }
 
-            do {
-                action( array, walker.Position );
-            } while ( walker.Step() );
+        public Boolean Step() {
+            for ( var i = 0; i < this.Position.Length; ++i ) {
+                if ( this.Position[ i ] >= this.MaxLengths[ i ] ) {
+                    continue;
+                }
+
+                this.Position[ i ]++;
+
+                for ( var j = 0; j < i; j++ ) {
+                    this.Position[ j ] = 0;
+                }
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

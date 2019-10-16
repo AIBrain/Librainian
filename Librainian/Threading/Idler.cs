@@ -51,7 +51,6 @@ namespace Librainian.Threading {
     using JetBrains.Annotations;
     using Logging;
     using Magic;
-    using Measurement.Time;
     using Error = System.Error;
 
     public enum JobStatus {
@@ -79,8 +78,7 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Run any remaining jobs.
         ///     <para>
-        ///         Will exit while loop if <see cref="Librainian.Threading.Idler.CancellationTokenSource" /> is signaled to
-        ///         cancel.
+        ///         Will exit while loop if <see cref="CancellationToken" /> is signaled to cancel.
         ///     </para>
         /// </summary>
         void Finish();
@@ -109,16 +107,15 @@ namespace Librainian.Threading {
 
         /// <summary>
         ///     Run any remaining jobs.
-        ///     <para>Will exit prematurely if <see cref="CancellationTokenSource" /> is signaled to cancel.</para>
+        ///     <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
         /// </summary>
         public void Finish() {
-            while ( this.Any() && !this.CancellationTokenSource.Token.IsCancellationRequested ) {
+            while ( this.Any() && !this.Token.IsCancellationRequested ) {
                 this.NextJob();
             }
         }
 
-        [NotNull]
-        private CancellationTokenSource CancellationTokenSource { get; }
+        private CancellationToken Token { get; }
 
         [NotNull]
         private ConcurrentDictionary<String, Action> Jobs { get; } = new ConcurrentDictionary<String, Action>();
@@ -126,8 +123,8 @@ namespace Librainian.Threading {
         [NotNull]
         private ConcurrentHashset<Task> Runners { get; } = new ConcurrentHashset<Task>();
 
-        public Idler( [NotNull] CancellationTokenSource cancelSource ) {
-            this.CancellationTokenSource = cancelSource ?? throw new ArgumentNullException( nameof( cancelSource ) );
+        public Idler( CancellationToken token ) {
+            this.Token = token;
 
             //this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
             this.AddHandler();
@@ -139,7 +136,7 @@ namespace Librainian.Threading {
         ///     Pull next <see cref="Action" /> to run from the queue and execute it.
         /// </summary>
         private void NextJob() {
-            if ( !this.Any() ) {
+            if ( !this.Any() || this.Token.IsCancellationRequested ) {
                 return;
             }
 
@@ -168,7 +165,6 @@ namespace Librainian.Threading {
         public override void DisposeManaged() {
             if ( !this.IsDisposed() ) {
                 this.RemoveHandler();
-                this.CancellationTokenSource.CancelAfter( Seconds.One );
             }
         }
     }
