@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Database.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Database.cs" was last formatted by Protiguous on 2019/09/12 at 10:38 AM.
+// 
+// Project: "Librainian", "Database.cs" was last formatted by Protiguous on 2019/10/21 at 4:46 PM.
 
 namespace Librainian.Databases {
 
@@ -65,6 +65,484 @@ namespace Librainian.Databases {
     using Parsing;
 
     public sealed class Database : ABetterClassDispose, IDatabase {
+
+        /// <summary>
+        ///     Opens and then closes a <see cref="SqlConnection" />.
+        /// </summary>
+        /// <returns></returns>
+        public Int32? ExecuteNonQuery( String query, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    connection.Open();
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        return command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return default;
+        }
+
+        public Int32? ExecuteNonQuery( String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            TryAgain:
+            --retries;
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    connection.Open();
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        return command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch ( InvalidOperationException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+
+                if ( retries.Any() ) {
+                    goto TryAgain;
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+
+                if ( retries.Any() ) {
+                    goto TryAgain;
+                }
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+
+                if ( retries.Any() ) {
+                    goto TryAgain;
+                }
+            }
+
+            return default;
+        }
+
+        [ItemCanBeNull]
+        public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    try {
+                        await connection.OpenAsync( this.Token ).ConfigureAwait( false );
+                    }
+                    catch ( SqlException exception ) {
+                        exception.Log();
+
+                        return default;
+                    }
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var actual = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == actual );
+                            }
+                        }
+
+                        try {
+                            return await command.ExecuteNonQueryAsync( this.Token ).ConfigureAwait( false );
+                        }
+                        catch ( SqlException exception ) {
+                            exception.Log();
+
+                            return default;
+                        }
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                if ( !exception.SQLTimeout() ) {
+                    exception.Log( Rebuild( query, parameters ) );
+                }
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        ///     Returns a <see cref="DataTable" />
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="table">      </param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        public Boolean ExecuteReader( String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            table = new DataTable();
+
+            try {
+
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    connection.Open();
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        table.BeginLoadData();
+
+                        using ( var reader = command.ExecuteReader() ) {
+                            table.Load( reader );
+                        }
+
+                        table.EndLoadData();
+
+                        return true;
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return default;
+        }
+
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        [ItemCanBeNull]
+        public async Task<DataTableReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                DataTable table;
+
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    await connection.OpenAsync( this.Token ).ConfigureAwait( false );
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        using var readerAsync = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
+
+                        table = readerAsync.ToDataTable();
+                    }
+                }
+
+                return table.CreateDataReader();
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        ///     Returns a <see cref="DataTable" />
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        [ItemNotNull]
+        public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            var table = new DataTable();
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    await connection.OpenAsync( this.Token ).ConfigureAwait( false );
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        table.BeginLoadData();
+
+                        using ( var reader = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false ) ) {
+                            table.Load( reader );
+                        }
+
+                        table.EndLoadData();
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+                table.Clear();
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+                table.Clear();
+            }
+
+            return table;
+        }
+
+        /// <summary>
+        ///     <para>Returns the first column of the first row.</para>
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        public (Status status, T result) ExecuteScalar<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    connection.Open();
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        var scalar = command.ExecuteScalar();
+
+                        if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
+                            return ( default, default );
+                        }
+
+                        if ( scalar is T executeScalar ) {
+                            return ( Status.Success, executeScalar );
+                        }
+
+                        if ( scalar.TryCast<T>( out var result ) ) {
+                            return ( Status.Success, result );
+                        }
+
+                        try {
+                            result = ( T ) Convert.ChangeType( scalar, typeof( T ) );
+                        }
+                        catch ( InvalidCastException ) {
+                            return default;
+                        }
+                        catch ( FormatException ) {
+                            return default;
+                        }
+                        catch ( OverflowException ) {
+                            return default;
+                        }
+                        catch ( ArgumentNullException ) {
+                            return default;
+                        }
+
+                        return ( Status.Success, result );
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return default;
+        }
+
+        /// <summary>
+        ///     <para>Returns the first column of the first row.</para>
+        /// </summary>
+        /// <param name="query">      </param>
+        /// <param name="commandType"></param>
+        /// <param name="parameters"> </param>
+        /// <returns></returns>
+        public async Task<(Status status, T result)> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    try {
+                        await connection.OpenAsync( this.Token ).ConfigureAwait( false );
+                    }
+                    catch ( SqlException ) {
+                        return ( Status.Failure, default ); //login most likely failed.
+                    }
+                    catch ( Exception ) {
+                        return ( Status.Failure, default );
+                    }
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        var scalar = await command.ExecuteScalarAsync( this.Token ).ConfigureAwait( false );
+
+                        if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+                            return ( Status.Success, default );
+                        }
+
+                        if ( scalar is T executeScalar ) {
+                            return ( Status.Success, executeScalar );
+                        }
+
+                        if ( scalar.TryCast<T>( out var result ) ) {
+                            return ( Status.Success, result );
+                        }
+
+                        try {
+                            return ( Status.Success, ( T ) Convert.ChangeType( scalar, typeof( T ) ) );
+                        }
+                        catch ( InvalidCastException ) {
+                            return default;
+                        }
+                        catch ( FormatException ) {
+                            return default;
+                        }
+                        catch ( OverflowException ) {
+                            return default;
+                        }
+                        catch ( ArgumentNullException ) {
+                            return default;
+                        }
+                    }
+                }
+            }
+            catch ( InvalidCastException exception ) {
+
+                //TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return ( Status.Failure, default );
+        }
+
+        /// <summary>
+        ///     Returns a <see cref="DataTable" />
+        /// </summary>
+        /// <param name="query">     </param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        [CanBeNull]
+        [ItemCanBeNull]
+        public IEnumerable<TResult> QueryList<TResult>( String query, [CanBeNull] params SqlParameter[] parameters ) {
+            if ( query.IsNullOrWhiteSpace() ) {
+                throw new ArgumentNullException( nameof( query ) );
+            }
+
+            try {
+                using ( var connection = new SqlConnection( this._connectionString ) ) {
+                    connection.Open();
+
+                    using ( var command = new SqlCommand( query, connection ) {
+                        CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    } ) {
+                        if ( null != parameters ) {
+                            foreach ( var parameter in parameters ) {
+                                var sqlParameter = command.Parameters.Add( parameter );
+                                Debug.Assert( parameter == sqlParameter );
+                            }
+                        }
+
+                        using ( var reader = command.ExecuteReader() ) {
+                            return GenericPopulator<TResult>.CreateList( reader );
+                        }
+                    }
+                }
+            }
+            catch ( SqlException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+            catch ( DbException exception ) {
+                exception.Log( Rebuild( query, parameters ) );
+            }
+
+            return null;
+        }
 
         private readonly String _connectionString;
 
@@ -130,7 +608,7 @@ namespace Librainian.Databases {
         [ItemNotNull]
         [DebuggerStepThrough]
         public static async Task<ConcurrentDictionary<String, ServiceControllerStatus>> FindAndStartSqlBrowserServices( [NotNull] IEnumerable<String> activeMachines,
-                    TimeSpan timeout ) {
+            TimeSpan timeout ) {
 
             "Searching for any database servers...".Log();
 
@@ -168,21 +646,20 @@ namespace Librainian.Databases {
                         exception.Log();
                         status.TryRemove( machine, out _ );
                     }
-
                 }
                 catch ( Exception exception ) {
                     exception.Log();
                 }
             }, new CancellationTokenSource( timeout ).Token ) ) );
 
-            await Task.WhenAny(tasks).ConfigureAwait( false );
+            await Task.WhenAny( tasks ).ConfigureAwait( false );
 
             return status;
         }
 
         [NotNull]
         public static SqlConnectionStringBuilder OurConnectionStringBuilder( [NotNull] String serverName, [NotNull] String instanceName, TimeSpan connectTimeout,
-                    [CanBeNull] Credentials credentials = default ) {
+            [CanBeNull] Credentials credentials = default ) {
             if ( String.IsNullOrWhiteSpace( value: serverName ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serverName ) );
             }
@@ -197,7 +674,7 @@ namespace Librainian.Databases {
                 ApplicationIntent = ApplicationIntent.ReadWrite,
                 ApplicationName = Application.ProductName,
                 ConnectRetryCount = 3,
-                ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
+                ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
                 ConnectRetryInterval = 1,
                 PacketSize = 8060,
                 Pooling = true
@@ -225,499 +702,10 @@ namespace Librainian.Databases {
             return builder;
         }
 
-
-
         public static async Task StartAnySQLBrowsers( TimeSpan searchTimeout ) =>
             await FindAndStartSqlBrowserServices( new[] {
                 "Thor" //my development server's name. Feel free to remove or add your own.
             }, searchTimeout ).ConfigureAwait( false );
-
-        /// <summary>
-        ///     Opens and then closes a <see cref="SqlConnection" />.
-        /// </summary>
-        /// <returns></returns>
-        public Int32? ExecuteNonQuery( String query, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    connection.Open();
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = CommandType.StoredProcedure,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        return command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return default;
-        }
-
-        public Int32? ExecuteNonQuery( String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            TryAgain:
-            --retries;
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    connection.Open();
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = CommandType.StoredProcedure,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        return command.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-
-                if ( retries.Any() ) {
-                    goto TryAgain;
-                }
-            }
-
-            return default;
-        }
-
-        [ItemCanBeNull]
-        public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    try {
-                        await connection.OpenAsync( this.Token ).ConfigureAwait( false );
-                    }
-                    catch ( SqlException exception ) {
-                        exception.Log();
-
-                        return default;
-                    }
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var actual = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, actual );
-                            }
-                        }
-
-                        try {
-                            return await command.ExecuteNonQueryAsync( this.Token ).ConfigureAwait( false );
-                        }
-                        catch ( SqlException exception ) {
-                            exception.Log();
-
-                            return default;
-                        }
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                if ( !exception.SQLTimeout() ) {
-                    exception.Log( Rebuild( query, parameters ) );
-                }
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
-        /// <param name="query">      </param>
-        /// <param name="commandType"></param>
-        /// <param name="table">      </param>
-        /// <param name="parameters"> </param>
-        /// <returns></returns>
-        public Boolean ExecuteReader( String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            table = new DataTable();
-
-            try {
-
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    connection.Open();
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        table.BeginLoadData();
-
-                        using ( var reader = command.ExecuteReader() ) {
-                            table.Load( reader );
-                        }
-
-                        table.EndLoadData();
-
-                        return true;
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return default;
-        }
-
-        /// <param name="query">      </param>
-        /// <param name="commandType"></param>
-        /// <param name="parameters"> </param>
-        [ItemCanBeNull]
-        public async Task<DataTableReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                DataTable table;
-
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    await connection.OpenAsync( this.Token ).ConfigureAwait( false );
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        using var readerAsync = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false );
-
-                        table = readerAsync.ToDataTable();
-                    }
-                }
-                
-                return table.CreateDataReader();
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
-        /// <param name="query">      </param>
-        /// <param name="commandType"></param>
-        /// <param name="parameters"> </param>
-        /// <returns></returns>
-        [ItemNotNull]
-        public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            var table = new DataTable();
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    await connection.OpenAsync( this.Token ).ConfigureAwait( false );
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        table.BeginLoadData();
-
-                        using ( var reader = await command.ExecuteReaderAsync( this.Token ).ConfigureAwait( false ) ) {
-                            table.Load( reader );
-                        }
-
-                        table.EndLoadData();
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-                table.Clear();
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-                table.Clear();
-            }
-
-            return table;
-        }
-
-        /// <summary>
-        ///     <para>Returns the first column of the first row.</para>
-        /// </summary>
-        /// <param name="query">      </param>
-        /// <param name="commandType"></param>
-        /// <param name="parameters"> </param>
-        /// <returns></returns>
-        public (Status status, T result) ExecuteScalar<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    connection.Open();
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        var scalar = command.ExecuteScalar();
-
-                        if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
-                            return (default, default);
-                        }
-
-                        if ( scalar is T executeScalar ) {
-                            return (Status.Success, executeScalar);
-                        }
-
-                        if ( scalar.TryCast<T>( out var result ) ) {
-                            return (Status.Success, result);
-                        }
-
-                        try {
-                            result = ( T )Convert.ChangeType( scalar, typeof( T ) );
-                        }
-                        catch ( InvalidCastException ) {
-                            return default;
-                        }
-                        catch ( FormatException ) {
-                            return default;
-                        }
-                        catch ( OverflowException ) {
-                            return default;
-                        }
-                        catch ( ArgumentNullException ) {
-                            return default;
-                        }
-
-                        return (Status.Success, result);
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        ///     <para>Returns the first column of the first row.</para>
-        /// </summary>
-        /// <param name="query">      </param>
-        /// <param name="commandType"></param>
-        /// <param name="parameters"> </param>
-        /// <returns></returns>
-        public async Task<(Status status, T result)> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    try {
-                        await connection.OpenAsync( this.Token ).ConfigureAwait( false );
-                    }
-                    catch ( SqlException ) {
-                        return (Status.Failure, default); //login most likely failed.
-                    }
-                    catch ( Exception ) {
-                        return (Status.Failure, default);
-                    }
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        var scalar = await command.ExecuteScalarAsync( this.Token ).ConfigureAwait( false );
-
-                        if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-                            return (Status.Success, default);
-                        }
-
-                        if ( scalar is T executeScalar ) {
-                            return (Status.Success, executeScalar);
-                        }
-
-                        if ( scalar.TryCast<T>( out var result ) ) {
-                            return (Status.Success, result);
-                        }
-
-                        try {
-                            return (Status.Success, ( T )Convert.ChangeType( scalar, typeof( T ) ));
-                        }
-                        catch ( InvalidCastException ) {
-                            return default;
-                        }
-                        catch ( FormatException ) {
-                            return default;
-                        }
-                        catch ( OverflowException ) {
-                            return default;
-                        }
-                        catch ( ArgumentNullException ) {
-                            return default;
-                        }
-                    }
-                }
-            }
-            catch ( InvalidCastException exception ) {
-
-                //TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return (Status.Failure, default);
-        }
-
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
-        /// <param name="query">     </param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        [ItemCanBeNull]
-        public IEnumerable<TResult> QueryList<TResult>( String query, [CanBeNull] params SqlParameter[] parameters ) {
-            if ( query.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( query ) );
-            }
-
-            try {
-                using ( var connection = new SqlConnection( this._connectionString ) ) {
-                    connection.Open();
-
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = CommandType.StoredProcedure,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        if ( null != parameters ) {
-                            foreach ( var parameter in parameters ) {
-                                var sqlParameter = command.Parameters.Add( parameter );
-                                Assert.StrictEqual( parameter, sqlParameter );
-                            }
-                        }
-
-                        using ( var reader = command.ExecuteReader() ) {
-                            return GenericPopulator<TResult>.CreateList( reader );
-                        }
-                    }
-                }
-            }
-            catch ( SqlException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-            catch ( DbException exception ) {
-                exception.Log( Rebuild( query, parameters ) );
-            }
-
-            return null;
-        }
 
         /*
         private static (String query, IEnumerable<SqlParameter> parameters) Rebuild( [NotNull] String query, [NotNull] SqlParameterCollection parameters ) {
@@ -730,4 +718,5 @@ namespace Librainian.Databases {
         */
 
     }
+
 }
