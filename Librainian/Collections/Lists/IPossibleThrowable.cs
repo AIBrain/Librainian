@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "SentenceTests.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IThrowable.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,42 +37,18 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "LibrainianTests", "SentenceTests.cs" was last formatted by Protiguous on 2019/10/21 at 2:54 PM.
+// Project: "Librainian", "IThrowable.cs" was last formatted by Protiguous on 2019/10/21 at 3:12 PM.
 
-namespace LibrainianTests.Linguistics {
+namespace Librainian.Collections.Lists {
 
     using System;
-    using System.Linq;
-    using FluentAssertions;
-    using JetBrains.Annotations;
-    using Librainian.Extensions;
-    using Librainian.Linguistics;
-    using NUnit.Framework;
 
-    [TestFixture]
-    public static class SentenceTests {
+    public interface IPossibleThrowable {
 
-        public const String Sample = "the quick brown fox jumped over the lazy dog";
-
-        [NotNull]
-        public static Sentence SampleLengthTest() {
-            var sentence = Sentence.Parse( Sample );
-
-            sentence.Count().Should()?.Be( 9 );
-
-            return sentence;
-        }
-
-        [Test]
-        public static void CombinationsTest() {
-            var sentence = SampleLengthTest();
-
-            var seq = sentence.ToArray();
-
-            var bob = seq.FastPowerSet();
-
-            bob.SelectMany( words => words ).Count().Should()?.Be( 2304 ); //is 2304 correct?
-        }
+        /// <summary>
+        ///     If set to false, anything that would normally throw an <see cref="Exception" /> is ignored.
+        /// </summary>
+        ThrowSetting ThrowExceptions { get; set; }
 
     }
 

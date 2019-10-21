@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ImmutableList.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ImmutableList.cs" was last formatted by Protiguous on 2019/08/08 at 6:33 AM.
+// 
+// Project: "Librainian", "ImmutableList.cs" was last formatted by Protiguous on 2019/10/21 at 3:20 PM.
 
 namespace Librainian.Collections.Lists {
 
@@ -49,13 +49,13 @@ namespace Librainian.Collections.Lists {
     using Librainian.Extensions;
 
     /// <summary>
-    ///     A list that has been written to be observationally immutable. A mutable array is used as the backing store for the
-    ///     list, but no mutable operations are offered.
+    ///     <para>A list that has been written to be observationally immutable.</para>
+    ///     <para>A mutable array is used as the backing store for the list, but no mutable operations are offered.</para>
     /// </summary>
     /// <typeparam name="T">The type of elements contained in the list.</typeparam>
     /// <remarks>http://joeduffyblog.com/2007/11/11/immutable-types-for-c/</remarks>
     [Immutable]
-    public sealed class ImmutableList<T> : IList<T> {
+    public sealed class ImmutableList<T> : IList<T>, IPossibleThrowable {
 
         /// <summary>
         ///     Retrieves the immutable count of the list.
@@ -73,10 +73,12 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <param name="index">The index to access.</param>
         /// <returns>The element at the specified index.</returns>
+        [CanBeNull]
         public T this[ Int32 index ] {
             get => this.Array[ index ];
 
-            set => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndSet’" );
+            // ReSharper disable once ValueParameterNotUsed
+            set => this.ThrowNotMutable();
         }
 
         /// <summary>
@@ -109,12 +111,12 @@ namespace Librainian.Collections.Lists {
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void ICollection<T>.Add( T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndAdd’" );
+        void ICollection<T>.Add( T item ) => this.ThrowNotMutable();
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void ICollection<T>.Clear() => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndClear’" );
+        void ICollection<T>.Clear() => this.ThrowNotMutable();
 
         /// <summary>
         ///     Retrieves an enumerator for the list’s collections.
@@ -125,18 +127,28 @@ namespace Librainian.Collections.Lists {
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void IList<T>.Insert( Int32 index, T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndInsert’" );
+        void IList<T>.Insert( Int32 index, T item ) => this.ThrowNotMutable();
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        Boolean ICollection<T>.Remove( T item ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndRemove’" );
+        Boolean ICollection<T>.Remove( T item ) {
+            this.ThrowNotMutable();
+
+            return false;
+        }
 
         /// <summary>
         ///     This method is unsupported on this type, because it is immutable.
         /// </summary>
-        void IList<T>.RemoveAt( Int32 index ) => throw new InvalidOperationException( "Cannot mutate an immutable list; see copying method ‘CopyAndRemoveAt’" );
+        void IList<T>.RemoveAt( Int32 index ) => this.ThrowNotMutable();
 
+        /// <summary>
+        ///     If set to false, anything that would normally try to mutate this, the <see cref="Exception" /> is ignored.
+        /// </summary>
+        public ThrowSetting ThrowExceptions { get; set; }
+
+        [NotNull]
         private T[] Array { get; }
 
         /// <summary>
@@ -162,6 +174,12 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
         public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
+
+        private void ThrowNotMutable() {
+            if ( this.ThrowExceptions == ThrowSetting.ThrowExceptions ) {
+                throw new InvalidOperationException( "Cannot mutate an immutable list." );
+            }
+        }
 
         /// <summary>
         ///     Copies the list and adds a new value at the end.
@@ -206,7 +224,7 @@ namespace Librainian.Collections.Lists {
         /// <param name="item">The element to remove.</param>
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
-        public ImmutableList<T> CopyAndRemove( T item ) {
+        public ImmutableList<T> CopyAndRemove( [CanBeNull] T item ) {
             var index = this.IndexOf( item: item );
 
             if ( index == -1 ) {
@@ -244,5 +262,7 @@ namespace Librainian.Collections.Lists {
 
             return new ImmutableList<T>( arrayToCopy: newArray );
         }
+
     }
+
 }

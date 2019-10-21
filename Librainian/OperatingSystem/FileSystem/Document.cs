@@ -73,7 +73,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Persistence;
     using Security;
     using Threading;
-    using Xunit;
 
     public interface IDocument : IDisposable, IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
@@ -577,11 +576,11 @@ namespace Librainian.OperatingSystem.FileSystem {
             set {
                 if ( value ) {
                     this.PathTypeAttributes |= PathTypeAttributes.DeleteAfterClose;
-                    Assert.True( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
+                    Debug.Assert( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
                 }
                 else {
                     this.PathTypeAttributes &= ~PathTypeAttributes.DeleteAfterClose;
-                    Assert.False( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
+                    Debug.Assert( this.PathTypeAttributes.HasFlag( PathTypeAttributes.DeleteAfterClose ) );
                 }
             }
         }

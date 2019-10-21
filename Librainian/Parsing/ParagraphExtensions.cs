@@ -55,7 +55,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static String FakeLatinSentence( UInt16 wordCount ) {
-            var words = new Sentence( FakeLatin.Split( ' ' ).OrderBy( s => Randem.Next() ).Take( wordCount ).ToStrings( " " ) );
+            var words = Sentence.Parse( FakeLatin.Split( ' ' ).OrderBy( s => Randem.Next() ).Take( wordCount ).ToStrings( " " ) );
             var sentence = words.ToString();
 
             return $"{ sentence.Capitialize()?.TrimEnd()}.";

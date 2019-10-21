@@ -492,7 +492,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
+            return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
         }
 
         public static Boolean HasDuplicates<T>( [NotNull] this IEnumerable<T> sequence ) {
@@ -634,7 +634,7 @@ namespace Librainian.Collections.Extensions {
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]
-        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 ) u );
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
 
         public static LinkedListNode<TType> NextOrFirst<TType>( [NotNull] this LinkedListNode<TType> current ) {
             if ( current == null ) {
@@ -790,7 +790,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
+            return ( T )( ValueType )( ( Int32 )( ValueType )type & ~( Int32 )( ValueType )value );
         }
 
         /// <summary>
@@ -1078,7 +1078,7 @@ namespace Librainian.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( count: ( Int32 ) ( x * sources.Count ) );
+            return sources.Take( count: ( Int32 )( x * sources.Count ) );
         }
 
         [NotNull]
@@ -1106,14 +1106,13 @@ namespace Librainian.Collections.Extensions {
         /// <param name="atTheEnd">  </param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [NotNull] String separator = ", ", [CanBeNull] String atTheEnd = null ) {
+        [NotNull]
+        public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [CanBeNull] String separator = ", ", [CanBeNull] String atTheEnd = null ) {
             if ( enumerable == null ) {
                 throw new ArgumentNullException( nameof( enumerable ) );
             }
 
-            if ( separator == null ) {
-                throw new ArgumentNullException( nameof( separator ) );
-            }
+            if ( separator == null ) { separator = String.Empty; }
 
             String result;
             var list = enumerable as IList<T> ?? enumerable.ToList();
@@ -1158,7 +1157,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
 
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         /// <summary>
@@ -1196,7 +1195,7 @@ namespace Librainian.Collections.Extensions {
         }
 
         [Pure]
-        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 ) u );
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0UL, func: ( current, u ) => current + ( UInt64 )u );
 
         /*
 		        public static T Append<T>( [NotNull] this Enum type, T value ) where T : struct {

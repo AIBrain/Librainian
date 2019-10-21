@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/06 at 4:24 AM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/21 at 2:40 PM.
 
 namespace Librainian.Parsing {
 
@@ -59,12 +59,12 @@ namespace Librainian.Parsing {
     using JetBrains.Annotations;
     using Linguistics;
     using Logging;
-    using Maths;
     using Maths.Numbers;
     using Measurement.Time;
     using Newtonsoft.Json;
     using Rationals;
     using Threading;
+    using static Persistence.Cache;
     using Formatting = Newtonsoft.Json.Formatting;
 
     public static class ParsingExtensions {
@@ -73,25 +73,29 @@ namespace Librainian.Parsing {
         public static Lazy<PluralizationService> LazyPluralizationService { get; } =
             new Lazy<PluralizationService>( () => PluralizationService.CreateService( CultureInfo.CurrentCulture ) );
 
+        [NotNull]
         public static String[] OrdinalSuffixes { get; } = {
             "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
         };
 
-        public static ConcurrentDictionary<String, String> PluralCache { get; } = new ConcurrentDictionary<String, String>();
-
         /// <summary>
         ///     this doesn't handle apostrophe well
         /// </summary>
+        [NotNull]
         public static Regex RegexBySentenceNotworking { get; } =
             new Regex( pattern: @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", options: RegexOptions.Compiled | RegexOptions.Multiline );
 
+        [NotNull]
         public static Regex RegexBySentenceStackoverflow { get; } = new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
             RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled );
 
+        [NotNull]
         public static Regex RegexByWordBreak { get; } = new Regex( pattern: @"(?=\S*(?<=\w))\b", options: RegexOptions.Compiled | RegexOptions.Singleline );
 
+        [NotNull]
         public static Regex RegexJustDigits { get; } = new Regex( @"\D+", RegexOptions.Compiled );
 
+        [NotNull]
         public static Char[] SplitBySpace { get; } = {
             Symbols.Singlespace[ 0 ]
         };
@@ -102,15 +106,22 @@ namespace Librainian.Parsing {
         [NotNull]
         private static ConcurrentDictionary<String, String[]> Separators { get; } = new ConcurrentDictionary<String, String[]>();
 
-        /*
-		[NotNull]
-		public static Lazy<String> AllLowercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
+        /// <summary>
+        ///     WHY?? For fun?
+        /// </summary>
+        [NotNull]
+        public static Lazy<String> AllLowercaseLetters { get; } = new Lazy<String>( () =>
+            new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
 
-		[NotNull]
-		public static Lazy<String> AllUppercaseLetters { get; } = new Lazy<String>( () =>
-			new String( Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ).Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
-		*/
+        /// <summary>
+        ///     WHY?? For fun?
+        /// </summary>
+        [NotNull]
+        public static Lazy<String> AllUppercaseLetters { get; } = new Lazy<String>( () =>
+            new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
+
+        [NotNull]
+        public static IEnumerable<Char> AllLetters() => Enumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter );
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
@@ -179,7 +190,7 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static String DoubleQuote( [CanBeNull] this String self ) => $"\"{self}\"";
+        public static String DoubleQuote<T>( [CanBeNull] this T self ) => $"\"{self}\"";
 
         /// <summary>
         ///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
@@ -587,7 +598,7 @@ namespace Librainian.Parsing {
         ///     Returns the decoded string, or <paramref name="text" /> if unable to convert.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="encoding">Defaults to <see cref="Encoding.Unicode"/> and then <see cref="Encoding.UTF8"/></param>
+        /// <param name="encoding">Defaults to <see cref="Encoding.Unicode" /> and then <see cref="Encoding.UTF8" /></param>
         /// <seealso cref="ToBase64" />
         /// <returns></returns>
         [NotNull]
@@ -609,7 +620,7 @@ namespace Librainian.Parsing {
                 return encoding.GetString( from64 );
             }
             catch ( Exception ) {
-                if ( Equals( Encoding.Unicode, encoding )  ) {
+                if ( Equals( Encoding.Unicode, encoding ) ) {
                     try {
                         return Encoding.UTF8.GetString( Convert.FromBase64String( text ) );
                     }
@@ -891,7 +902,7 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? default : self;
+        public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? null : self;
 
         /// <summary>
         ///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.
@@ -906,250 +917,104 @@ namespace Librainian.Parsing {
 
         public static Int32 NumberOfDigits( this BigInteger number ) => ( number * number.Sign ).ToString().Length;
 
+        /// <summary>
+        ///     Repeats <paramref name="c" /> <paramref name="count" /> times.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         [NotNull]
-        public static String PadMiddle( Int32 totalLength, String partA, String partB, Char paddingChar ) {
-            var result = partA + partB;
+        public static String Repeat( this Char c, Int32 count ) => new String( c, count );
 
-            while ( result.Length < totalLength ) {
-                result = result.Insert( partA.Length, paddingChar.ToString() );
-            }
-
-            while ( result.Length > totalLength ) {
-                result = result.Remove( partA.Length, 1 );
-            }
-
-            return result;
-        }
+        /// <summary>
+        ///     Repeats the first char of the string <paramref name="self" /> <paramref name="count" /> times.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String Repeat( [CanBeNull] this String self, Int32 count ) => Enumerable.Repeat( self, count ).ToStrings( separator: null );
 
         [NotNull]
-        public static String PadMiddle( Int32 totalLength, [NotNull] String partA, [NotNull] String partB, [NotNull] String partC, Char paddingChar = '_' ) {
-            var padding = String.Empty.PadRight( ( totalLength - ( partA.Length + partB.Length + partC.Length ) ) / 2, paddingChar );
+        public static String RepeatFirstChar( [NotNull] this String self, Int32 count ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
 
-            return partA + padding + partB + String.Empty.PadRight( totalLength - ( partA.Length + padding.Length + partB.Length + partC.Length ), paddingChar ) + partC;
+            return new String( self[ 0 ], count );
         }
 
         /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
+        ///     Combine <paramref name="left" />, <paramref name="middlePadding" /> <paramref name="count" /> times, and the
+        ///     <paramref name="right" /> strings.
         /// </summary>
-        /// <param name="number">  </param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="middlePadding"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String PadMiddle( [NotNull] this String left, [CanBeNull] String right, Char middlePadding, Int32 count = 1 ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return $"{left}{new String( middlePadding, count )}{right}";
+        }
+
+        /// <summary>
+        ///     Attempt at pluralizing <paramref name="self" />.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="self"></param>
         /// <param name="singular"></param>
         /// <returns></returns>
-        public static String PluralOf( this UInt64 number, [NotNull] String singular ) {
+        [NotNull]
+        public static String PluralOf<T>( [NotNull] this T self, [NotNull] String singular ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
+
             if ( singular == null ) {
                 throw new ArgumentNullException( nameof( singular ) );
             }
 
-            if ( 1 == number ) {
-                return singular;
+            var key = BuildKey( self.ToString().Trim(), nameof( PluralOf ) );
+
+            if ( Recall( key ) is String result ) {
+                return result;
             }
 
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
+            var service = LazyPluralizationService.Value;
+
+            if ( service is null ) {
+                throw new NullReferenceException( $"{nameof( LazyPluralizationService )} is null." );
             }
 
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this Double number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            if ( number.Near( 1 ) ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
+            if ( service.IsPlural( singular ) ) {
+                Remember( key, singular, Sliding.Hours( 24 ) );
 
                 return singular;
             }
 
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
+            var pluralized = service.Pluralize( singular );
 
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this Single number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
+            if ( pluralized != null ) {
+                Remember( key, pluralized, Sliding.Hours( 24 ) );
             }
 
-            if ( number.Near( 1 ) ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this Decimal number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            if ( Decimal.One == number ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this Int32 number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            if ( 1 == number ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this Rational number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            if ( number == Rational.One ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
-        }
-
-        /// <summary>
-        ///     Crude attempt at pluralizing a <paramref name="number" />.
-        /// </summary>
-        /// <param name="number">  </param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        public static String PluralOf( this BigInteger number, [NotNull] String singular ) {
-            if ( singular == null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            if ( BigInteger.One == number ) {
-                return singular;
-            }
-
-            if ( PluralCache.TryGetValue( singular, out var plural ) ) {
-                return plural;
-            }
-
-            if ( LazyPluralizationService.Value.IsPlural( singular ) ) {
-                PluralCache[ singular ] = singular;
-
-                return singular;
-            }
-
-            var pluralized = LazyPluralizationService.Value.Pluralize( singular );
-            PluralCache[ singular ] = pluralized;
-
-            return pluralized;
+            return pluralized ?? singular;
         }
 
         [NotNull]
-        public static String Prepend( [CanBeNull] this String @this, [CanBeNull] String prependThis ) => $"{prependThis}{@this}";
+        public static String Prepend( [CanBeNull] this String self, [CanBeNull] String prependThis ) => $"{prependThis}{self}";
 
         [NotNull]
-        public static String Quoted( [CanBeNull] this String @this ) => $"\"{@this}\"";
+        public static String Quoted( [CanBeNull] this String self ) => $"\"{self}\"";
 
         [NotNull]
         public static String ReadToEnd( [NotNull] this MemoryStream ms ) {
@@ -1196,7 +1061,7 @@ namespace Librainian.Parsing {
         /// <summary>
         ///     Repeats the supplied string the specified number of times, putting the separator string between each repetition.
         /// </summary>
-        /// <param name="this">       The extended string.</param>
+        /// <param name="self">       The extended string.</param>
         /// <param name="repetitions">The number of repetitions of the string to make. Must not be negative.</param>
         /// <param name="separator">  The separator string to place between each repetition. Must not be null.</param>
         /// <returns>
@@ -1204,9 +1069,9 @@ namespace Librainian.Parsing {
         ///     string. If n is 0, this method will return String.Empty.
         /// </returns>
         [NotNull]
-        public static String Repeat( [NotNull] this String @this, Int32 repetitions, [NotNull] String separator = "" ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "Repeat called on a null string." );
+        public static String Repeat( [NotNull] this String self, Int32 repetitions, [NotNull] String separator = "" ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "Repeat called on a null string." );
             }
 
             if ( separator == null ) {
@@ -1221,14 +1086,14 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( ( @this.Length * repetitions ) + ( separator.Length * ( repetitions - 1 ) ) );
+            var builder = new StringBuilder( self.Length * repetitions + separator.Length * ( repetitions - 1 ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
                     builder.Append( separator );
                 }
 
-                builder.Append( @this );
+                builder.Append( self );
             }
 
             return builder.ToString();
@@ -1502,7 +1367,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - (actualDamerauLevenshteinDistance / threshold) );
+            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -1686,7 +1551,7 @@ namespace Librainian.Parsing {
         ///     Performs the same action as <see cref="String.Substring(Int32)" /> but counting from the end of the string (instead
         ///     of the start).
         /// </summary>
-        /// <param name="this">    The extended string.</param>
+        /// <param name="self">    The extended string.</param>
         /// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
         /// <returns>Returns the original string with <paramref name="endIndex" /> characters removed from the end.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -1694,23 +1559,23 @@ namespace Librainian.Parsing {
         ///     negative).
         /// </exception>
         [NotNull]
-        public static String SubstringFromEnd( [NotNull] this String @this, Int32 endIndex ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "SubstringFromEnd called on a null string." );
+        public static String SubstringFromEnd( [NotNull] this String self, Int32 endIndex ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "SubstringFromEnd called on a null string." );
             }
 
-            if ( endIndex < 0 || endIndex > @this.Length ) {
+            if ( endIndex < 0 || endIndex > self.Length ) {
                 throw new ArgumentOutOfRangeException( nameof( endIndex ) );
             }
 
-            return @this.Substring( 0, @this.Length - endIndex );
+            return self.Substring( 0, self.Length - endIndex );
         }
 
         /// <summary>
         ///     Performs the same action as <see cref="String.Substring(Int32, Int32)" /> but counting from the end of the string
         ///     (instead of the start).
         /// </summary>
-        /// <param name="this">    The extended string.</param>
+        /// <param name="self">    The extended string.</param>
         /// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
         /// <param name="length">  The number of characters in the substring.</param>
         /// <returns>
@@ -1722,16 +1587,16 @@ namespace Librainian.Parsing {
         ///     negative).
         /// </exception>
         [NotNull]
-        public static String SubstringFromEnd( [NotNull] this String @this, Int32 endIndex, Int32 length ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "SubstringFromEnd called on a null string." );
+        public static String SubstringFromEnd( [NotNull] this String self, Int32 endIndex, Int32 length ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "SubstringFromEnd called on a null string." );
             }
 
-            if ( endIndex < 0 || endIndex > @this.Length ) {
+            if ( endIndex < 0 || endIndex > self.Length ) {
                 throw new ArgumentOutOfRangeException( nameof( endIndex ) );
             }
 
-            return @this.Substring( @this.Length - endIndex - length, @this.Length - endIndex );
+            return self.Substring( self.Length - endIndex - length, self.Length - endIndex );
         }
 
         /// <summary>
@@ -1764,8 +1629,7 @@ namespace Librainian.Parsing {
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <returns>String</returns>
         [NotNull]
-        public static String ToCamelCase( this String lowercaseAndUnderscoredWord ) =>
-            MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
+        public static String ToCamelCase( this String lowercaseAndUnderscoredWord ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
 
         /// <summary>
         ///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
@@ -1846,7 +1710,7 @@ namespace Librainian.Parsing {
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() )
                 .Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
 
-            return results.Select( s => new Sentence( s ) );
+            return results.Select( Sentence.Parse );
         }
 
         /// <summary>
@@ -2013,18 +1877,18 @@ namespace Librainian.Parsing {
         public static String Utf8ByteArrayToString( [NotNull] this Byte[] characters ) => new UTF8Encoding().GetString( characters );
 
         /// <summary>
-        ///     Returns <paramref name="this" /> but culled to a maximum length of <paramref name="maxLength" /> characters.
+        ///     Returns <paramref name="self" /> but culled to a maximum length of <paramref name="maxLength" /> characters.
         /// </summary>
-        /// <param name="this">     The extended string.</param>
+        /// <param name="self">     The extended string.</param>
         /// <param name="maxLength">The maximum desired length of the string.</param>
         /// <returns>A string containing the first <c>Min(this.Length, maxLength)</c> characters from the extended string.</returns>
         [NotNull]
-        public static String WithMaxLength( [NotNull] this String @this, Int32 maxLength ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "WithMaxLength called on a null string." );
+        public static String WithMaxLength( [NotNull] this String self, Int32 maxLength ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "WithMaxLength called on a null string." );
             }
 
-            return @this.Substring( 0, Math.Min( @this.Length, maxLength ) );
+            return self.Substring( 0, Math.Min( self.Length, maxLength ) );
         }
 
         /// <summary>

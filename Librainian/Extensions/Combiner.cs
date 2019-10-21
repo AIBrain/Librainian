@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Combiner.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,32 +28,38 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2019/08/08 at 7:09 AM.
+// 
+// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2019/10/21 at 3:08 PM.
 
 namespace Librainian.Extensions {
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using JetBrains.Annotations;
 
     public static class Combiner {
 
-        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, IEnumerable<T> b ) {
-            foreach ( var item in a ) {
-                yield return item;
+        [ItemCanBeNull]
+        public static IEnumerable<T> Append<T>( [CanBeNull] this IEnumerable<T> a, [CanBeNull] IEnumerable<T> b ) {
+            if ( a != null ) {
+                foreach ( var item in a ) {
+                    yield return item;
+                }
             }
 
-            foreach ( var item in b ) {
-                yield return item;
+            if ( b != null ) {
+                foreach ( var item in b ) {
+                    yield return item;
+                }
             }
         }
 
@@ -64,11 +70,14 @@ namespace Librainian.Extensions {
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Append<T>( this T a, IEnumerable<T> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> Append<T>( [CanBeNull] this T a, [ItemCanBeNull] [CanBeNull] IEnumerable<T> b ) {
             yield return a;
 
-            foreach ( var item in b ) {
-                yield return item;
+            if ( b != null ) {
+                foreach ( var item in b ) {
+                    yield return item;
+                }
             }
         }
 
@@ -79,7 +88,8 @@ namespace Librainian.Extensions {
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, T b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, [CanBeNull] T b ) {
             foreach ( var item in a ) {
                 yield return item;
             }
@@ -93,26 +103,31 @@ namespace Librainian.Extensions {
             };
 
             return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
-                var enumerable = sequence as IList<T> ?? sequence.ToList();
+                var enumerable = sequence as IList<T> ?? sequence?.ToList() ?? Enumerable.Empty<T>();
 
                 return
                     from accseq in accumulator
                     from item in enumerable
-                    where !accseq.Contains( item )
-                    select accseq.Concat( new[] {
+                    where accseq?.Contains( item ) == false
+                    select accseq?.Concat( new[] {
                         item
                     } );
             } );
         }
 
+        [CanBeNull]
         public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
+            if ( input == null ) {
+                throw new ArgumentNullException( paramName: nameof( input ) );
+            }
+
             IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
 
-            return input.Aggregate( result, ( current, item ) => current.Combine( item.Combinationss() ) );
+            return input.Aggregate( result, ( current, item ) => item != null ? current?.Combine( item.Combinations() ) : default );
         }
 
         [NotNull]
-        public static IEnumerable<IEnumerable<T>> Combinationss<T>( [NotNull] this IEnumerable<T> input ) =>
+        public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] this IEnumerable<T> input ) =>
             input.Select( item => new[] {
                 item
             } );
@@ -210,13 +225,20 @@ namespace Librainian.Extensions {
 
                 for ( var j = 0; j < count; j++ ) {
                     var source = powerSet[ j ];
-                    var destination = powerSet[ count + j ] = new T[ source.Length + 1 ];
 
-                    for ( var q = 0; q < source.Length; q++ ) {
+                    if ( source == null ) {
+                        continue;
+                    }
+
+                    var sourceLength = source.Length;
+
+                    var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+
+                    for ( var q = 0; q < sourceLength; q++ ) {
                         destination[ q ] = source[ q ];
                     }
 
-                    destination[ source.Length ] = cur;
+                    destination[ sourceLength ] = cur;
                 }
             }
 
@@ -227,5 +249,7 @@ namespace Librainian.Extensions {
             yield return a;
             yield return b;
         }
+
     }
+
 }

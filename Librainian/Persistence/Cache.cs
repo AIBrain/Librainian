@@ -48,7 +48,6 @@ namespace Librainian.Persistence {
     using System.Linq;
     using System.Runtime.Caching;
     using Collections.Extensions;
-    using Collections.Sets;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
@@ -88,8 +87,8 @@ namespace Librainian.Persistence {
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
-                if ( o is ConcurrentHashset<SqlParameter> collection ) {
-                    var kvp = collection.Select( parameter => new {
+                if ( o is IEnumerable<SqlParameter> parameters ) {
+                    var kvp = parameters.Where(parameter => parameter != default).Select( parameter => new {
                         parameter.ParameterName, parameter.Value
                     } );
 
@@ -213,7 +212,8 @@ namespace Librainian.Persistence {
         /// <param name="key">   A unique string, or built using <see cref="BuildKey{T}" />.</param>
         /// <param name="value"> </param>
         /// <param name="policy"></param>
-        public static void Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
+        [CanBeNull]
+        public static T Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
                 throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
             }
@@ -221,10 +221,11 @@ namespace Librainian.Persistence {
             if ( value == null ) {
                 Forget( key: key );
 
-                return;
+                return default;
             }
 
             Memory.Set( key, value, policy ?? Sliding.Minutes( 1 ) );
+            return value;
         }
 
         /// <summary>

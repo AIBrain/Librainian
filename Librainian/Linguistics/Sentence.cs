@@ -83,7 +83,10 @@ namespace Librainian.Linguistics {
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="sentence"></param>
-        public Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
+        private Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
+
+        [NotNull]
+        public static Sentence Parse( String sentence ) => new Sentence( sentence );
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>

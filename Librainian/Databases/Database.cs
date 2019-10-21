@@ -63,7 +63,6 @@ namespace Librainian.Databases {
     using Magic;
     using Maths;
     using Parsing;
-    using Xunit;
 
     public sealed class Database : ABetterClassDispose, IDatabase {
 

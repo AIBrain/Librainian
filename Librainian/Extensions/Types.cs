@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2019/08/08 at 7:21 AM.
+// 
+// Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2019/10/21 at 3:09 PM.
 
 namespace Librainian.Extensions {
 
@@ -63,13 +63,32 @@ namespace Librainian.Extensions {
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
+        private delegate Object ObjectActivator();
+
         public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) =>
             value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
 
+        /// <summary>
+        ///     Creates a new <see cref="IList{T}" /> with a clone of each item.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
         [NotNull]
-        public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> listToClone ) where T : ICloneable => listToClone.Select( item => ( T )item.Clone() ).ToList();
+        public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
+            list.Where( item => item != null ).Select( item => ( T ) item.Clone() ).ToList();
 
-        public static void CopyField<TSource>( this TSource source, TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
+        public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( paramName: nameof( source ) );
+            }
+
+            if ( destination == null ) {
+                throw new ArgumentNullException( paramName: nameof( destination ) );
+            }
+
             if ( field == null ) {
                 throw new ArgumentNullException( nameof( field ) );
             }
@@ -252,7 +271,7 @@ namespace Librainian.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -304,16 +323,15 @@ namespace Librainian.Extensions {
         ///         cref="String" />
         ///     s). This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
         /// </summary>
-        /// <param name="this">The extended Type.</param>
         /// <returns>True if the type can be copied (blitted), or false if not.</returns>
-        public static Boolean IsBlittable( [NotNull] this Type @this ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "IsBlittable called on a null Type." );
+        public static Boolean IsBlittable( [NotNull] this Type self ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "IsBlittable called on a null Type." );
             }
 
-            return @this.IsValueType &&
-                   @this.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )
-                       .All( fieldInfo => fieldInfo.FieldType.IsValueType || fieldInfo.FieldType.IsPointer ) && ( @this.IsExplicitLayout || @this.IsLayoutSequential );
+            return self.IsValueType &&
+                   self.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic )
+                       .All( fieldInfo => fieldInfo.FieldType.IsValueType || fieldInfo.FieldType.IsPointer ) && ( self.IsExplicitLayout || self.IsLayoutSequential );
         }
 
         public static Boolean IsNullable( [NotNull] this PropertyInfo p ) => p.PropertyType.IsNullable();
@@ -323,16 +341,15 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).
         /// </summary>
-        /// <param name="this">The extended Type.</param>
         /// <returns>True if the type represents a numeric type, false if not.</returns>
-        public static Boolean IsNumeric( [NotNull] this Type @this ) {
-            if ( @this == null ) {
-                throw new ArgumentNullException( nameof( @this ), "IsNumeric called on a null Type." );
+        public static Boolean IsNumeric( [NotNull] this Type self ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( nameof( self ), "IsNumeric called on a null Type." );
             }
 
-            return @this == typeof( Double ) || @this == typeof( Single ) || @this == typeof( Int64 ) || @this == typeof( Int16 ) || @this == typeof( Byte ) ||
-                   @this == typeof( SByte ) || @this == typeof( UInt32 ) || @this == typeof( UInt64 ) || @this == typeof( UInt16 ) || @this == typeof( Decimal ) ||
-                   @this == typeof( Int32 );
+            return self == typeof( Double ) || self == typeof( Single ) || self == typeof( Int64 ) || self == typeof( Int16 ) || self == typeof( Byte ) ||
+                   self == typeof( SByte ) || self == typeof( UInt32 ) || self == typeof( UInt64 ) || self == typeof( UInt16 ) || self == typeof( Decimal ) ||
+                   self == typeof( Int32 );
         }
 
         /// <summary>
@@ -387,6 +404,44 @@ namespace Librainian.Extensions {
             return memberExpression?.Member.Name ?? String.Empty;
         }
 
+        /// <summary>
+        ///     Alternate method of creating an object of type.
+        ///     Not proven to be faster than new().
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [NotNull]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static T Newbie<T>() where T : class => typeof( T ).Newbie<T>();
+
+        /// <summary>
+        ///     Alternate method of creating an object of type.
+        ///     Not proven to be faster than new().
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static T Newbie<T>( this Type type ) where T : class {
+
+            if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
+                var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
+
+                var ilGenerator = dynamicMethod.GetILGenerator(); //can this be optimized any further?
+                ilGenerator.Emit( OpCodes.Nop ); //why nop here? alignment?
+
+                ilGenerator.Emit( OpCodes.Newobj,
+                    type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
+
+                ilGenerator.Emit( OpCodes.Ret );
+
+                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                ObjectActivators.Add( type, activator );
+            }
+
+            return ( T ) activator.Invoke();
+        }
+
         [NotNull]
         public static Func<Object> NewInstanceByCreate( [NotNull] this Type type ) {
             if ( type == null ) {
@@ -409,54 +464,14 @@ namespace Librainian.Extensions {
             return Expression.Lambda<Func<Object>>( Expression.New( type ) ).Compile();
         }
 
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
-
-        /// <summary>
-        /// Alternate method of creating an object of type.
-        /// Not proven to be faster than new().
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        [NotNull]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static T Newbie<T>() where T : class => typeof( T ).Newbie<T>();
-
-        /// <summary>
-        /// Alternate method of creating an object of type.
-        /// Not proven to be faster than new().
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static T Newbie<T>( this Type type ) where T : class {
-
-            if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
-                var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
-
-                var ilGenerator = dynamicMethod.GetILGenerator();   //can this be optimized any further?
-                ilGenerator.Emit( OpCodes.Nop );    //why nop here? alignment?
-                ilGenerator.Emit( OpCodes.Newobj,
-                    type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
-                ilGenerator.Emit( OpCodes.Ret );
-
-                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
-                ObjectActivators.Add( type, activator );
-            }
-
-            return ( T )activator.Invoke();
-        }
-
-        private delegate Object ObjectActivator();
-
         /// <summary>
         ///     Get the <see cref="Type" /> associated with the subject <see cref="TypeCode" />.
         /// </summary>
-        /// <param name="this">The extended TypeCode.</param>
-        /// <returns>A <see cref="Type" /> that <paramref name="this" /> represents.</returns>
+        /// <param name="self">The extended TypeCode.</param>
+        /// <returns>A <see cref="Type" /> that <paramref name="self" /> represents.</returns>
         [NotNull]
-        public static Type ToType( this TypeCode @this ) {
-            switch ( @this ) {
+        public static Type ToType( this TypeCode self ) {
+            switch ( self ) {
                 case TypeCode.Boolean: return typeof( Boolean );
 
                 case TypeCode.Byte: return typeof( Byte );
@@ -522,12 +537,12 @@ namespace Librainian.Extensions {
                         value = new Guid( bytes );
                     }
 
-                    result = ( T )Convert.ChangeType( value, underlyingType );
+                    result = ( T ) Convert.ChangeType( value, underlyingType );
 
                     return true;
                 }
 
-                result = ( T )Convert.ChangeType( value, underlyingType );
+                result = ( T ) Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -554,8 +569,9 @@ namespace Librainian.Extensions {
                     return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile();
                 }
 
-                return () => ( T )FormatterServices.GetUninitializedObject( t );
+                return () => ( T ) FormatterServices.GetUninitializedObject( t );
             }
+
         }
 
         /*
@@ -630,4 +646,5 @@ namespace Librainian.Extensions {
         //}
 
     }
+
 }

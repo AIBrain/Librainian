@@ -1,12 +1,13 @@
-// Copyright © Rick@AIBrain.org and Copyright © Protiguous. All Rights Reserved.
+// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and/or
-// Rick@AIBrain.org unless otherwise specified or the original license has been overwritten by
-// formatting. (We try to avoid that from happening, but it does accidentally happen.)
+// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
+// Rick@AIBrain.org unless otherwise specified or the original license has
+// been overwritten by formatting.
+// (We try to avoid it from happening, but it does accidentally happen.)
 // 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
@@ -15,7 +16,10 @@
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
 // 
-// Donation information can be found at https://Protiguous.com/Donations
+// Donations are accepted (for now) via
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
+//     (We're always looking into other solutions.. Any ideas?)
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,12 +32,12 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
 // 
-// Our website/blog can be found at "https://Protiguous.com/"
+// Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse!
+// Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/09/23 at 7:53 AM.
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/10/21 at 1:12 PM.
 
 namespace Librainian.Logging {
 
@@ -54,44 +58,10 @@ namespace Librainian.Logging {
     public static class Logging {
 
         [NotNull]
-        public static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+        public static Logger Logger { get; } = LogManager.GetCurrentClassLogger() ?? throw new InvalidOperationException( $"{nameof( Logger )} is invalid!" );
 
         [NotNull]
         public static ConcurrentDictionary<Control, Target> Targets { get; } = new ConcurrentDictionary<Control, Target>();
-
-        /// <summary>
-        ///     Add a <see cref="Target" /> or a <see cref="RichTextBox" />.
-        /// </summary>
-        /// <param name="minLogLevel"></param>
-        /// <param name="maxLogLevel"></param>
-        /// <param name="target">     </param>
-        /// <param name="rtb">        </param>
-        [DebuggerStepThrough]
-        public static Boolean Setup( LogLevel minLogLevel, LogLevel maxLogLevel, Target target = null, [CanBeNull] RichTextBox rtb = null ) {
-
-            switch ( target ) {
-                case null when rtb is null:
-                    "No target or control specified to setup!".Break();
-
-                    return false;
-
-                case null:
-                    target = rtb.ToTarget();
-
-                    break;
-            }
-
-            if ( !( target is null ) ) {
-                LogManager.Configuration.AddTarget( target );
-                LogManager.Configuration.AddRule( minLevel: minLogLevel, maxLevel: maxLogLevel, target: target, loggerNamePattern: "*" );
-
-                return LogManager.Configuration.AllTargets.Contains( target );
-            }
-
-            $"Unable to set up target for {minLogLevel} to {maxLogLevel}".Break();
-
-            return false;
-        }
 
         /// <summary>
         ///     <para>Prints the <paramref name="message" /></para>
@@ -102,7 +72,7 @@ namespace Librainian.Logging {
         /// <param name="message"></param>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String Break<T>( this T _, [CanBeNull] String message = null ) {
+        public static String Break<T>( [CanBeNull] this T _, [CanBeNull] String message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
@@ -124,68 +94,68 @@ namespace Librainian.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                        return (Color.Blue, Color.Aqua);
-                    }
+                    return ( Color.Blue, Color.Aqua );
+                }
 
                 case LoggingLevel.SubspaceTear: {
-                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
-                    }
+                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
+                }
 
                 case LoggingLevel.Fatal: {
 
-                        return (Color.DarkRed, Color.Aqua);
-                    }
+                    return ( Color.DarkRed, Color.Aqua );
+                }
 
                 case LoggingLevel.Critical: {
 
-                        return (Color.Red, Color.Aqua);
-                    }
+                    return ( Color.Red, Color.Aqua );
+                }
 
                 case LoggingLevel.Error: {
 
-                        return (Color.Red, Color.White);
-                    }
+                    return ( Color.Red, Color.White );
+                }
 
                 case LoggingLevel.Warning: {
 
-                        return (Color.Goldenrod, Color.White);
-                    }
+                    return ( Color.Goldenrod, Color.White );
+                }
 
                 case LoggingLevel.Diagnostic: {
 
-                        return (Color.Green, Color.White);
-                    }
+                    return ( Color.Green, Color.White );
+                }
 
                 case LoggingLevel.Debug: {
 
-                        return (Color.DarkSeaGreen, Color.White);
-                    }
+                    return ( Color.DarkSeaGreen, Color.White );
+                }
 
                 case LoggingLevel.Exception: {
 
-                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
-                    }
+                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
+                }
 
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
         }
 
         /// <summary>
-        /// Write <paramref name="obj"/> to the <see cref="Logger"/>.
+        ///     Write <paramref name="self" /> to the <see cref="Logger" />.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
+        /// <param name="self"></param>
         [DebuggerStepThrough]
-        public static void Debug<T>( this T obj ) => Logger.Debug( obj );
+        public static void Debug<T>( [CanBeNull] this T self ) => Logger.Debug( self );
 
         [DebuggerStepThrough]
-        public static void Info<T>( this T obj ) => Logger.Info( obj );
+        public static void Error<T>( [CanBeNull] this T self ) => Logger.Error( self );
 
         [DebuggerStepThrough]
-        public static void Error<T>( this T obj ) => Logger.Error( obj );
+        public static void Fatal<T>( [CanBeNull] this T self ) => Logger.Fatal( self );
 
         [DebuggerStepThrough]
-        public static void Fatal<T>( this T obj ) => Logger.Fatal( obj );
+        public static void Info<T>( [CanBeNull] this T self ) => Logger.Info( self );
 
         [DebuggerStepThrough]
         public static void Info( [CanBeNull] this String message ) {
@@ -211,6 +181,12 @@ namespace Librainian.Logging {
             }
         }
 
+        /// <summary>
+        ///     Prefix <paramref name="message" /> with the datetime and write out to the attached debugger and/or trace
+        ///     <see cref="Logger" />.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="breakinto"></param>
         [Conditional( "DEBUG" )]
         [Conditional( "TRACE" )]
         [DebuggerStepThrough]
@@ -219,7 +195,7 @@ namespace Librainian.Logging {
 
             if ( Logger.IsTraceEnabled ) {
                 if ( !Debugger.IsAttached ) {
-                    Logger.Trace( message );    //no sense in writing out the message twice. (Debug below also writes)
+                    Logger.Trace( message ); //Debug below also writes..
                 }
             }
 
@@ -240,7 +216,13 @@ namespace Librainian.Logging {
         [Conditional( "DEBUG" )]
         [Conditional( "TRACE" )]
         [DebuggerStepThrough]
-        public static void Log( this Exception exception, Boolean breakinto = false ) => exception.ToStringDemystified().Log( breakinto: breakinto );
+        public static void Log( [NotNull] this Exception exception, Boolean breakinto = false ) {
+            if ( exception == null ) {
+                throw new ArgumentNullException( paramName: nameof( exception ) ); //heh
+            }
+
+            exception.ToStringDemystified().Log( breakinto: breakinto );
+        }
 
         [DebuggerStepThrough]
         [CanBeNull]
@@ -259,25 +241,26 @@ namespace Librainian.Logging {
 
         /// <summary>
         ///     Write
-        ///     <param name="object"></param>
+        ///     <param name="self"></param>
         ///     as JSON to the <see cref="Logger" />.
         ///     <para>Append <paramref name="more" /> if it has text.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="M"></typeparam>
-        /// <param name="object"></param>
+        /// <param name="self"></param>
         /// <param name="more"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
-        public static T Log<T, M>( this T @object, [CanBeNull] M more ) {
+        [CanBeNull]
+        public static T Log<T, M>( [CanBeNull] this T self, [CanBeNull] M more ) {
             Console.Beep( 14000, 100 );
-            var o = $"{@object.ToJSON()}";
+            var o = $"{self.ToJSON()}";
 
             if ( more == null ) {
                 Logger.Debug( o );
 
                 if ( Debugger.IsAttached ) {
-                    System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"" );
+                    System.Diagnostics.Debug.WriteLine( $"Error={self.DoubleQuote()}" );
                     Debugger.Break();
                 }
             }
@@ -286,31 +269,54 @@ namespace Librainian.Logging {
                 Logger.Debug( $"{o}; {m}" );
 
                 if ( Debugger.IsAttached ) {
-                    System.Diagnostics.Debug.WriteLine( $"Error=\"{@object}\"; {m}" );
+                    System.Diagnostics.Debug.WriteLine( $"Error={self.DoubleQuote()}; {m}" );
                     Debugger.Break();
                 }
             }
 
-            return @object;
+            return self;
         }
 
+        /// <summary>
+        ///     Add a <see cref="Target" /> or a <see cref="RichTextBox" />.
+        /// </summary>
+        /// <param name="minLogLevel"></param>
+        /// <param name="maxLogLevel"></param>
+        /// <param name="target">     </param>
+        /// <param name="rtb">        </param>
         [DebuggerStepThrough]
-        public static void Trace( this String message ) => Logger.Trace( message );
+        public static Boolean Setup( [NotNull] LogLevel minLogLevel, [NotNull] LogLevel maxLogLevel, [CanBeNull] Target target = null, [CanBeNull] RichTextBox rtb = null ) {
+            if ( minLogLevel == null ) {
+                throw new ArgumentNullException( paramName: nameof( minLogLevel ) );
+            }
 
-        [DebuggerStepThrough]
-        public static void Trace( this Exception exception ) => Logger.Trace( exception );
+            if ( maxLogLevel == null ) {
+                throw new ArgumentNullException( paramName: nameof( maxLogLevel ) );
+            }
 
-        [DebuggerStepThrough]
-        public static void Trace<T>( this T message ) => Logger.Trace( message );
+            switch ( target ) {
+                case null when rtb is null:
+                    "No target or control specified to setup!".Break();
 
-        [DebuggerStepThrough]
-        public static void Warn( this String message ) => Logger.Warn( message );
+                    return false;
 
-        [DebuggerStepThrough]
-        public static void Warn( this Exception exception ) => Logger.Warn( exception );
+                case null:
+                    target = rtb.ToTarget();
 
-        [DebuggerStepThrough]
-        public static void Warn<T>( this T message ) => Logger.Warn( message );
+                    break;
+            }
+
+            if ( target is null ) {
+                $"Unable to set up target for {minLogLevel} to {maxLogLevel}".Break();
+
+                return false;
+            }
+
+            LogManager.Configuration?.AddTarget( target );
+            LogManager.Configuration?.AddRule( minLevel: minLogLevel, maxLevel: maxLogLevel, target: target, loggerNamePattern: "*" );
+
+            return LogManager.Configuration?.AllTargets?.Contains( target ) == true;
+        }
 
         [DebuggerStepThrough]
         [CanBeNull]
@@ -318,7 +324,7 @@ namespace Librainian.Logging {
             if ( rtb is null ) {
 
                 //throw new ArgumentNullException(nameof( rtb ),"The paramter 'rtb' was null." );
-                return null;
+                return default;
             }
 
             if ( String.IsNullOrWhiteSpace( rtb.Name ) ) {
@@ -331,7 +337,7 @@ namespace Librainian.Logging {
 
             var controlName = rtb.Name.Trim();
 
-            if ( LogManager.Configuration.FindTargetByName( controlName ) is RichTextBoxTarget target ) {
+            if ( LogManager.Configuration?.FindTargetByName( controlName ) is RichTextBoxTarget target ) {
                 Targets[ rtb ] = target;
 
                 return target;
@@ -367,6 +373,24 @@ namespace Librainian.Logging {
 
             return target;
         }
+
+        [DebuggerStepThrough]
+        public static void Trace( [CanBeNull] this String message ) => Logger.Trace( message );
+
+        [DebuggerStepThrough]
+        public static void Trace( [CanBeNull] this Exception exception ) => Logger.Trace( exception );
+
+        [DebuggerStepThrough]
+        public static void Trace<T>( [CanBeNull] this T message ) => Logger.Trace( message );
+
+        [DebuggerStepThrough]
+        public static void Warn( [CanBeNull] this String message ) => Logger.Warn( message );
+
+        [DebuggerStepThrough]
+        public static void Warn( [CanBeNull] this Exception exception ) => Logger.Warn( exception );
+
+        [DebuggerStepThrough]
+        public static void Warn<T>( [CanBeNull] this T message ) => Logger.Warn( message );
 
     }
 
