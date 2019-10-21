@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# HAA0101: Array allocation for params parameter
+dotnet_diagnostic.HAA0101.severity = suggestion

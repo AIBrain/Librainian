@@ -1,0 +1,948 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{722E3411-B605-4AF8-ADEA-D2D18BC9CD2C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Librainian</RootNamespace>
+    <AssemblyName>Librainian</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <AssemblyInfoFilePath>Properties\AssemblyInfo.cs</AssemblyInfoFilePath>
+    <UpdateAssemblyVersion>False</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
+    <AssemblyVersionSettings>
+    </AssemblyVersionSettings>
+    <AssemblyFileVersionSettings>
+    </AssemblyFileVersionSettings>
+    <AssemblyInfoVersionSettings>
+    </AssemblyInfoVersionSettings>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <ShouldCreateLogs>False</ShouldCreateLogs>
+    <AdvancedSettingsExpanded>False</AdvancedSettingsExpanded>
+    <UpdatePackageVersion>False</UpdatePackageVersion>
+    <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
+    <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>8.0</LangVersion>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <NoWarn>IDE0015,IDE0044;IDE1006</NoWarn>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>embedded</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <FileAlignment>512</FileAlignment>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Single Image|AnyCPU'">
+    <OutputPath>bin\Single Image\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Properties\Libranian.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;_DEEPDEBUG_</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>embedded</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Single Image|x64'">
+    <OutputPath>bin\x64\Single Image\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;CODE_ANALYSIS;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LangVersion>8.0</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\Lists\IPossibleThrowable.cs" />
+    <Compile Include="Collections\Lists\ThrowSetting.cs" />
+    <Compile Include="Collections\Sets\ConcurrentHashset.cs" />
+    <Compile Include="Collections\ExperimentalAttribute.cs" />
+    <Compile Include="Collections\Positionial.cs" />
+    <Compile Include="Collections\Queues\PriorityQueue.cs" />
+    <Compile Include="Collections\Extensions\Shufflings.cs" />
+    <Compile Include="Collections\StringTable.cs" />
+    <Compile Include="ComputerSystem\ConsoleWindow.cs" />
+    <Compile Include="Controls\ConsoleWindow.cs" />
+    <Compile Include="Controls\FormExtensions.cs" />
+    <Compile Include="Databases\ScriptDBObjects.cs" />
+    <Compile Include="Databases\DatabaseAsync.cs" />
+    <Compile Include="Databases\MMF\Class1.cs" />
+    <Compile Include="Databases\SqlServer.cs" />
+    <Compile Include="Databases\Text.cs" />
+    <Compile Include="Exceptions\NotInitializedException.cs" />
+    <Compile Include="Extensions\Class1.cs" />
+    <Compile Include="Extensions\DisposableBase.cs" />
+    <Compile Include="Extensions\RegistryServer.cs" />
+    <Compile Include="Financial\Containers\Shopping\ItemCategory.cs" />
+    <Compile Include="Financial\Containers\Shopping\TaxableShoppingItem.cs" />
+    <Compile Include="Financial\Containers\Shopping\TaxTable.cs" />
+    <Compile Include="Internet\InternetExtensions.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Logging\IOptions.cs" />
+    <Compile Include="Logging\Error.cs" />
+    <Compile Include="Maths\Numbers\BiggerRational.cs" />
+    <Compile Include="Maths\Numbers\PairOfDoubles.cs" />
+    <Compile Include="Measurement\Currency\USD\SimpleWallet.cs" />
+    <Compile Include="OperatingSystem\FileSystem\PathTypeAttributes.cs" />
+    <Compile Include="Status.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileAttributeData.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileWatchingEvents.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FindEveryDocument.cs" />
+    <Compile Include="OperatingSystem\FileSystem\MasterDocumentTable.cs" />
+    <Compile Include="OperatingSystem\FileSystem\PathInternal.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Unique.cs" />
+    <Compile Include="OperatingSystem\FileSystem\UniqueExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Win32DiskPartition.cs" />
+    <Compile Include="ComputerSystem\Memory.cs" />
+    <Compile Include="Controls\CheckboxWithToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\FlexibleMessageBox.cs" />
+    <Compile Include="Controls\LabelWithToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\QuestionBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\QuestionBox.Designer.cs">
+      <DependentUpon>QuestionBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\BufferedTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ControlExtensions.cs" />
+    <Compile Include="Controls\HistogramaDesenat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Converters\ConverterExtensions.cs" />
+    <Compile Include="Converters\DecimalTo.cs" />
+    <Compile Include="Converters\DoubleConverter.cs" />
+    <Compile Include="Converters\Translate128.cs" />
+    <Compile Include="Converters\Translate32.cs" />
+    <Compile Include="Converters\Translate64.cs" />
+    <Compile Include="Converters\TranslateBytesToInt32.cs" />
+    <Compile Include="Converters\TranslateDecimalGuid.cs" />
+    <Compile Include="Converters\TranslateGuidUInt64.cs" />
+    <Compile Include="Converters\UInt64ToDouble.cs" />
+    <Compile Include="Databases\DatabaseErrors.cs" />
+    <Compile Include="Databases\DurableDatabase.cs" />
+    <Compile Include="Databases\Excel.cs" />
+    <Compile Include="Databases\IDatabase.cs" />
+    <Compile Include="Databases\MMF\CreateUnsafeSerializer.cs" />
+    <Compile Include="Databases\SqlServerInstance.cs" />
+    <Compile Include="Databases\StressTest.cs" />
+    <Compile Include="Databases\OleText.cs" />
+    <Compile Include="Databases\ReflectionPopulator.cs" />
+    <Compile Include="Databases\GenericPopulator.cs" />
+    <Compile Include="Exceptions\ArgumentEmptyException.cs" />
+    <Compile Include="Exceptions\InvalidParameterException.cs" />
+    <Compile Include="Exceptions\MissingTextException.cs" />
+    <Compile Include="Exceptions\StreamException.cs" />
+    <Compile Include="Exceptions\StreamReadException.cs" />
+    <Compile Include="Exceptions\StreamWriteException.cs" />
+    <Compile Include="Exceptions\UnknownException.cs" />
+    <Compile Include="Exceptions\ValueTooHighException.cs" />
+    <Compile Include="Exceptions\Warnings\NotAllowed.cs" />
+    <Compile Include="Exceptions\NotEnoughMemoryException.cs" />
+    <Compile Include="Exceptions\OutOfRangeException.cs" />
+    <Compile Include="Exceptions\ValueTooLowException.cs" />
+    <Compile Include="Exceptions\Warnings\Warning.cs" />
+    <Compile Include="Extensions\AssemblyInformation.cs" />
+    <Compile Include="Extensions\CommonExtensions.cs" />
+    <Compile Include="Exceptions\ImmutableFailureException.cs" />
+    <Compile Include="Extensions\MarshalCache.cs" />
+    <Compile Include="Extensions\FuncExtensions.cs" />
+    <Compile Include="Extensions\EvalProvider.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Controls\ListBoxLog.cs" />
+    <Compile Include="OperatingSystem\FileSystem\AllSeeingWatcher.cs" />
+    <Compile Include="OperatingSystem\FileSystem\BufferExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderBag.Node.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Location.cs" />
+    <Compile Include="ComputerSystem\Devices\LogicalDisk.cs" />
+    <Compile Include="ComputerSystem\Devices\Device.cs" />
+    <Compile Include="ComputerSystem\Devices\DeviceCapabilities.cs" />
+    <Compile Include="ComputerSystem\Devices\DeviceClass.cs" />
+    <Compile Include="ComputerSystem\Devices\DiskDeviceClass.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Volume.cs" />
+    <Compile Include="ComputerSystem\Devices\VolumeDeviceClass.cs" />
+    <Compile Include="OperatingSystem\FileSystem\ResultCode.cs" />
+    <Compile Include="ComputerSystem\Devices\NetworkConnection.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Partitions.cs" />
+    <Compile Include="Exceptions\MutableBaseException.cs" />
+    <Compile Include="Exceptions\WritableFieldException.cs" />
+    <Compile Include="Extensions\MutableFieldException.cs" />
+    <Compile Include="Financial\Containers\Wallets\CashDrawer.cs" />
+    <Compile Include="Financial\Containers\Shopping\ShoppingItem.cs" />
+    <Compile Include="Financial\Containers\Shopping\ShoppingCart.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Fifty.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Five.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Hundred.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Ten.cs" />
+    <Compile Include="Financial\Currency\BankNotes\Twenty.cs" />
+    <Compile Include="Financial\Currency\Coins\Dime.cs" />
+    <Compile Include="Financial\Currency\BankNotes\IBankNote.cs" />
+    <Compile Include="Financial\Currency\Coins\ICoin.cs" />
+    <Compile Include="Financial\Currency\Coins\Nickel.cs" />
+    <Compile Include="Financial\Currency\BankNotes\One.cs" />
+    <Compile Include="Financial\Currency\Coins\Penny.cs" />
+    <Compile Include="Financial\Currency\Coins\Quarter.cs" />
+    <Compile Include="Financial\Store.cs" />
+    <Compile Include="Internet\Credentials.cs" />
+    <Compile Include="Internet\Internet.cs" />
+    <Compile Include="Internet\TheInternetTests.cs" />
+    <Compile Include="Logging\InformationLevel.cs" />
+    <Compile Include="Logging\Logging.cs" />
+    <Compile Include="Logging\LoggingLevel.cs" />
+    <Compile Include="Logging\SomeTargets.cs" />
+    <Compile Include="Maths\MicrosoftsRandom.cs" />
+    <Compile Include="Maths\NonRandomSequence.cs" />
+    <Compile Include="Maths\NumberExtensions.cs" />
+    <Compile Include="Maths\Numbers\BigInt.cs" />
+    <Compile Include="Misc\Go.cs" />
+    <Compile Include="Graphics\Imaging\FasterBitmap.cs" />
+    <Compile Include="Graphics\Imaging\ImagingExtensions.cs" />
+    <Compile Include="Graphics\Imaging\PropertyItem.cs" />
+    <Compile Include="Internet\AdapterInfo.cs" />
+    <Compile Include="Internet\DownloadException.cs" />
+    <Compile Include="Internet\NetworkInterfaceHelper.cs" />
+    <Compile Include="Internet\IPHelperInvoke.cs" />
+    <Compile Include="Maths\ArbitraryDecimal.cs" />
+    <Compile Include="Maths\ByteSize.cs" />
+    <Compile Include="Maths\EightBytes.cs" />
+    <Compile Include="Maths\FacebookErrorGrabber.cs" />
+    <Compile Include="Maths\Union.cs" />
+    <Compile Include="Maths\Murmur3.cs" />
+    <Compile Include="Maths\HumanCalculator.cs" />
+    <Compile Include="Maths\Numbers\Binary.cs" />
+    <Compile Include="Maths\Numbers\BinaryMatrix.cs" />
+    <Compile Include="Maths\Numbers\Hex32.cs" />
+    <Compile Include="Maths\Randem.cs" />
+    <Compile Include="Measurement\Benchmark.cs" />
+    <Compile Include="Measurement\BenchmarkResult.cs" />
+    <Compile Include="Measurement\Spatial\Compass.cs" />
+    <Compile Include="Measurement\Time\StopwatchStruct.cs" />
+    <Compile Include="Measurement\Time\DateSpan.cs" />
+    <Compile Include="Measurement\Time\CountDownWatch.cs" />
+    <Compile Include="Measurement\Time\DateInterval.cs" />
+    <Compile Include="Measurement\Time\HighResolutionDateTime.cs" />
+    <Compile Include="Measurement\Time\Clocks\WindowsClock.cs" />
+    <Compile Include="Measurement\Time\Duration.cs" />
+    <Compile Include="Measurement\Time\PlanckExtensions.cs" />
+    <Compile Include="Misc\PlaySound.cs" />
+    <Compile Include="OperatingSystem\Audio.cs" />
+    <Compile Include="OperatingSystem\ExternDll.cs" />
+    <Compile Include="OperatingSystem\OSExtensions.cs" />
+    <Compile Include="OperatingSystem\RegistryContext.cs" />
+    <Compile Include="OperatingSystem\Storage\DetectSSD.cs" />
+    <Compile Include="OperatingSystem\Info.cs" />
+    <Compile Include="OperatingSystem\SystemRestorePoints.cs" />
+    <Compile Include="OperatingSystem\WinSAT.cs" />
+    <Compile Include="Parsing\ByteSizeFormatter.cs" />
+    <Compile Include="Parsing\ParsingConstants.cs" />
+    <Compile Include="Parsing\Symbols.cs" />
+    <Compile Include="Parsing\CompositeFormatter.cs" />
+    <Compile Include="Parsing\Formatter.cs" />
+    <Compile Include="Parsing\Validation\StringNum.cs" />
+    <Compile Include="Exceptions\InvalidFormatException.cs" />
+    <Compile Include="Parsing\TrimmedString.cs" />
+    <Compile Include="Parsing\Validation\IValidator.cs" />
+    <Compile Include="Parsing\Validation\IValidatedString.cs" />
+    <Compile Include="Parsing\Validation\NonEmptyString.cs" />
+    <Compile Include="Parsing\Validation\RegexString.cs" />
+    <Compile Include="Parsing\Validation\StringAlpha.cs" />
+    <Compile Include="Parsing\Validation\StringAlphaNumeric.cs" />
+    <Compile Include="Parsing\Validation\Email.cs" />
+    <Compile Include="Parsing\Validation\StringHex.cs" />
+    <Compile Include="Parsing\Validation\StringHexPrefix.cs" />
+    <Compile Include="Parsing\Validation\ValidatedString.cs" />
+    <Compile Include="Parsing\Validation\ValidatedStringJsonNetConverter.cs" />
+    <Compile Include="Persistence\Cache.cs" />
+    <Compile Include="Persistence\InIFiles\IniLine.cs" />
+    <Compile Include="Persistence\InIFiles\IniSection.cs" />
+    <Compile Include="Persistence\ResourceScanner.cs" />
+    <Compile Include="Persistence\Settings.cs" />
+    <Compile Include="Persistence\AppRegistry.cs" />
+    <Compile Include="Persistence\CurrentUser.cs" />
+    <Compile Include="Persistence\D.cs" />
+    <Compile Include="Persistence\I.cs" />
+    <Compile Include="Persistence\ObsoletePersistenceClasses.cs" />
+    <Compile Include="Persistence\ConcurrentDictionaryFile.cs" />
+    <Compile Include="Persistence\ConcurrentListFile.cs" />
+    <Compile Include="Persistence\DocumentInfo.cs" />
+    <Compile Include="Persistence\Alpha.cs" />
+    <Compile Include="Persistence\InIFiles\Section.cs" />
+    <Compile Include="Persistence\StringKVPTable.cs" />
+    <Compile Include="Security\AES.cs" />
+    <Compile Include="Security\Document.cs" />
+    <Compile Include="Security\GpwData.cs" />
+    <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\SemaphoreSlimExtensions.cs" />
+    <Compile Include="Threading\NicerFormTimer.cs" />
+    <Compile Include="Threading\NicerSystemTimer.cs" />
+    <Compile Include="Threading\ThreadSafeEnumerable.cs" />
+    <Compile Include="Threading\CPU.cs" />
+    <Compile Include="Threading\EasierSemaphore.cs" />
+    <Compile Include="Threading\GCNotification.cs" />
+    <Compile Include="Threading\Heap.cs" />
+    <Compile Include="Threading\Idler.cs" />
+    <Compile Include="Threading\ReaderWriterFromMicrosoft.cs" />
+    <Compile Include="Threading\Job.cs" />
+    <Compile Include="Threading\UnitofWork.cs" />
+    <Compile Include="Threading\VolatileBoolean.cs" />
+    <Compile Include="Measurement\Time\Clocks\DateAndTime.cs" />
+    <Compile Include="Measurement\Time\Clocks\GameTimer.cs" />
+    <Compile Include="Measurement\Time\Clocks\PauseableClock.cs" />
+    <Compile Include="OperatingSystem\Compression\ZipStorer.cs" />
+    <Compile Include="ComputerSystem\Computer.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderBag.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DocumentCopyStatistics.cs" />
+    <Compile Include="OperatingSystem\Windows.cs" />
+    <Compile Include="Extensions\DerivedSerializableExceptionWithAdditionalCustomProperty.cs" />
+    <Compile Include="Extensions\GuidUtility.cs" />
+    <Compile Include="Extensions\SerializableExceptionWithCustomProperties.cs" />
+    <Compile Include="Extensions\SerializableExceptionWithoutCustomProperties.cs" />
+    <Compile Include="Financial\Containers\Banking\Bank.cs" />
+    <Compile Include="Financial\Containers\Banking\BankAccount.cs" />
+    <Compile Include="Financial\Containers\Banking\BankException.cs" />
+    <Compile Include="Financial\Customers\Cashier.cs" />
+    <Compile Include="Financial\Containers\Accounts\CheckingAccount.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletException.cs" />
+    <Compile Include="Financial\Customers\Customer.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletExtensions.cs" />
+    <Compile Include="Financial\Containers\Banking\IBankAccount.cs" />
+    <Compile Include="Financial\Customers\ICustomer.cs" />
+    <Compile Include="Financial\Customers\IPerson.cs" />
+    <Compile Include="Financial\Containers\Wallets\Ledger.cs" />
+    <Compile Include="Financial\Containers\Accounts\SavingsAccount.cs" />
+    <Compile Include="Financial\TransactionMessage.cs" />
+    <Compile Include="Financial\TransactionType.cs" />
+    <Compile Include="Financial\Containers\Wallets\WalletStatistics.cs" />
+    <Compile Include="Financial\Containers\Wallets\Wallet.cs" />
+    <Compile Include="Graphics\Imaging\ImageFile.cs" />
+    <Compile Include="Graphics\Line\LineExtensions.cs" />
+    <Compile Include="Graphics\Manipulation\ManipulationExtensions.cs" />
+    <Compile Include="Graphics\Point3DI.cs" />
+    <Compile Include="Graphics\Video\Avi.cs" />
+    <Compile Include="Graphics\Video\AviReader.cs" />
+    <Compile Include="Graphics\Video\AviWriter.cs" />
+    <Compile Include="Graphics\Video\BitmapInfo.cs" />
+    <Compile Include="Graphics\Video\CarrierImage.cs" />
+    <Compile Include="Internet\OAuthBase.cs" />
+    <Compile Include="Internet\TraceExtensions.cs" />
+    <Compile Include="Internet\TheNet.cs" />
+    <Compile Include="OperatingSystem\ComputerFingerPrint.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DefragExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\DocumentExtensions.cs" />
+    <Compile Include="OperatingSystem\Storage\PhysicalDisk.cs" />
+    <Compile Include="ComputerSystem\Devices\Disk.cs" />
+    <Compile Include="ComputerSystem\Devices\DriveExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileHistory\FileHistoryFile.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FolderExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FSConstants.cs" />
+    <Compile Include="OperatingSystem\FileSystem\IOWrapper.cs" />
+    <Compile Include="OperatingSystem\FileSystem\PathSplitter.cs" />
+    <Compile Include="Magic\ChainElement.cs" />
+    <Compile Include="Magic\Instantiator.cs" />
+    <Compile Include="Maths\MathConstants.cs" />
+    <Compile Include="Maths\Numbers\Countable.cs" />
+    <Compile Include="Maths\Numbers\Int256.cs" />
+    <Compile Include="Maths\Numbers\Credits.cs" />
+    <Compile Include="Maths\Ranges\DecimalRange.cs" />
+    <Compile Include="Maths\Numbers\Digit.cs" />
+    <Compile Include="Maths\Hashings\HashingExtensions.cs" />
+    <Compile Include="Maths\MathStatistics.cs" />
+    <Compile Include="Maths\Numbers\Minus1To1.cs" />
+    <Compile Include="Maths\Versus.cs" />
+    <Compile Include="Maths\Numbers\ZeroToOne.cs" />
+    <Compile Include="Measurement\Temperature.cs" />
+    <Compile Include="Measurement\Frequency\FPS.cs" />
+    <Compile Include="Measurement\Time\StopWatch.cs" />
+    <Compile Include="Measurement\Time\DurationParser.cs" />
+    <Compile Include="Parsing\ParagraphExtensions.cs" />
+    <Compile Include="Persistence\InIFiles\IniFile.cs" />
+    <Compile Include="Collections\Queues\BlockingQueue.cs" />
+    <Compile Include="Collections\Lists\ConcurrentList.cs" />
+    <Compile Include="Collections\Sets\ConcurrentSet.cs" />
+    <Compile Include="Collections\Queues\ConcurrentBlockingQueue.cs" />
+    <Compile Include="Collections\Lists\ImmutableList.cs" />
+    <Compile Include="Collections\Extensions\ShufflingType.cs" />
+    <Compile Include="Collections\Trees\TreeTraversalType.cs" />
+    <Compile Include="Collections\Stacks\ConcurrentCollection.cs" />
+    <Compile Include="Collections\Stacks\ConcurrentStackNoBlock.cs" />
+    <Compile Include="Collections\ITreeNodeAware.cs" />
+    <Compile Include="Collections\Queues\LockfreeQueue.cs" />
+    <Compile Include="Collections\MultiKeyDictionary.cs" />
+    <Compile Include="Collections\Lists\ParallelList.cs" />
+    <Compile Include="Collections\Queues\QueueWaiting.cs" />
+    <Compile Include="Collections\Trees\SingleLinkNode.cs" />
+    <Compile Include="Collections\Lists\ThreadSafeList.cs" />
+    <Compile Include="Collections\Queues\TimeStampQueue.cs" />
+    <Compile Include="Collections\Queues\TrainingQueue.cs" />
+    <Compile Include="Collections\Trees\TreeNode.cs" />
+    <Compile Include="Collections\Trees\TreeNodeList.cs" />
+    <Compile Include="Collections\Trees\TreeTask.cs" />
+    <Compile Include="Collections\Lists\VirtualList.cs" />
+    <Compile Include="Collections\Queues\WithTime.cs" />
+    <Compile Include="Controls\AutoLayoutWindow.cs">
+      <SubType>form</SubType>
+    </Compile>
+    <Compile Include="Controls\AutoLayoutWindow.Designer.cs">
+      <DependentUpon>AutoLayoutWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DoubleBufferPanel.cs">
+      <SubType>component</SubType>
+    </Compile>
+    <Compile Include="Controls\VerticalProgressBar.cs">
+      <SubType>component</SubType>
+    </Compile>
+    <Compile Include="Controls\VerticalProgressBar.Designer.cs">
+      <DependentUpon>VerticalProgressBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Win32.cs" />
+    <Compile Include="Controls\WindowWrapper.cs" />
+    <Compile Include="Databases\LocalDB.cs" />
+    <Compile Include="Databases\MMF\MMF.cs" />
+    <Compile Include="Databases\MMF\Factory.cs" />
+    <Compile Include="Databases\MMF\FileMapIOException.cs" />
+    <Compile Include="Databases\MMF\ISerializeDeserialize.cs" />
+    <Compile Include="Databases\MMF\IViewManager.cs" />
+    <Compile Include="Databases\MMF\MapAccess.cs" />
+    <Compile Include="Databases\MMF\MapProtection.cs" />
+    <Compile Include="Databases\MMF\MemMapCache.cs" />
+    <Compile Include="Databases\MMF\SerializerException.cs" />
+    <Compile Include="Databases\MMF\ValueTypeCheck.cs" />
+    <Compile Include="Databases\DatabaseExtensions.cs" />
+    <Compile Include="Databases\Database.cs" />
+    <Compile Include="Extensions\BigNullStream.cs" />
+    <Compile Include="Extensions\BooleanPredicateBuilder.cs" />
+    <Compile Include="Extensions\ReflectionHelper.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\DummyXMLResolver.cs" />
+    <Compile Include="Extensions\EventArgs.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileSizeFormatProviderExtensions.cs" />
+    <Compile Include="Extensions\FuzzyPredicateBuilder.cs" />
+    <Compile Include="Extensions\HashSetLinqAccess.cs" />
+    <Compile Include="Extensions\ImmutableAttribute.cs" />
+    <Compile Include="OperatingSystem\FileSystem\JunctionPoint.cs" />
+    <Compile Include="Extensions\LargeSizeFormatProvider.cs" />
+    <Compile Include="Extensions\LargeSizeFormatProviderExtensions.cs" />
+    <Compile Include="Extensions\Locks.cs" />
+    <Compile Include="Extensions\MemoizeClass.cs" />
+    <Compile Include="Extensions\MMFExt2.cs" />
+    <Compile Include="Extensions\NullStream.cs" />
+    <Compile Include="Extensions\ObservableDrainExtensions.cs" />
+    <Compile Include="Extensions\PopulateProgressDelegate.cs" />
+    <Compile Include="Extensions\PopulateProgressDelegateError.cs" />
+    <Compile Include="Extensions\PopulateProgressEventArgs.cs" />
+    <Compile Include="Extensions\Types.cs" />
+    <Compile Include="Extensions\Urls.cs" />
+    <Compile Include="Extensions\Utility.cs" />
+    <Compile Include="Extensions\XMLExtensions.cs" />
+    <Compile Include="Graphics\Imaging\ERG.cs" />
+    <Compile Include="Graphics\Moving\EFV.cs" />
+    <Compile Include="Graphics\GraphicsExtensions.cs" />
+    <Compile Include="Graphics\Imaging\Line.cs" />
+    <Compile Include="Graphics\Imaging\Frame.cs" />
+    <Compile Include="Graphics\Imaging\Pixel.cs" />
+    <Compile Include="Graphics\Moving\Pixelyx.cs" />
+    <Compile Include="Graphics\Matrix3X3.cs" />
+    <Compile Include="Graphics\Matrix3X2.cs" />
+    <Compile Include="Graphics\DD\GeometryEx.cs" />
+    <Compile Include="Graphics\DD\Intersection.cs" />
+    <Compile Include="Graphics\DD\Line.cs" />
+    <Compile Include="Graphics\DD\Polygon.cs" />
+    <Compile Include="Graphics\DDD\CoordinateU64.cs" />
+    <Compile Include="Graphics\Geometry\Functions.cs" />
+    <Compile Include="Graphics\Geometry\Segment.cs" />
+    <Compile Include="Graphics\Matrix.cs" />
+    <Compile Include="Graphics\Matrix3.cs" />
+    <Compile Include="Graphics\Matrix4.cs" />
+    <Compile Include="Graphics\MathUtils.cs" />
+    <Compile Include="Graphics\Images.cs" />
+    <Compile Include="Internet\Captcha.cs" />
+    <Compile Include="Internet\CaptchaSite.cs" />
+    <Compile Include="Internet\CaptchaStatus.cs" />
+    <Compile Include="Internet\HTMLExtensions.cs" />
+    <Compile Include="Internet\Servers\WebServer.cs" />
+    <Compile Include="Internet\Servers\Extensions.cs" />
+    <Compile Include="Internet\Servers\SimpleWebServer.cs" />
+    <Compile Include="Internet\Servers\Cookie.cs" />
+    <Compile Include="Internet\Servers\Cookies.cs" />
+    <Compile Include="Internet\UriLinkItem.cs" />
+    <Compile Include="Internet\WebClientExtensions.cs" />
+    <Compile Include="Internet\SmtpClientExtensions.cs" />
+    <Compile Include="Internet\EAPCommon.cs" />
+    <Compile Include="Internet\PingExtensions.cs" />
+    <Compile Include="Internet\NetworkBrowser.cs" />
+    <Compile Include="OperatingSystem\Compression\CompressExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\FileSizeFormatProvider.cs" />
+    <Compile Include="OperatingSystem\WMI\WMIExtensions.cs" />
+    <Compile Include="ComputerSystem\Devices\NetworkAdapter.cs" />
+    <Compile Include="OperatingSystem\Compression\RandomnessFeeding.cs" />
+    <Compile Include="OperatingSystem\Compression\RandomnessTest.cs" />
+    <Compile Include="OperatingSystem\Streams\StreamString.cs" />
+    <Compile Include="OperatingSystem\Streams\ContainerStream.cs" />
+    <Compile Include="OperatingSystem\FileSystem\CopyProgressCallbackReason.cs" />
+    <Compile Include="OperatingSystem\FileSystem\CopyProgressResult.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Folder.cs" />
+    <Compile Include="OperatingSystem\FileSystem\MoveFileFlags.cs" />
+    <Compile Include="OperatingSystem\Streams\ProgressStream.cs" />
+    <Compile Include="OperatingSystem\FileSystem\SearchStyle.cs" />
+    <Compile Include="Linguistics\Author.cs" />
+    <Compile Include="Linguistics\UDC.cs" />
+    <Compile Include="Magic\ABetterClassDispose.cs" />
+    <Compile Include="Magic\IIocContainer.cs" />
+    <Compile Include="Magic\IoC.cs" />
+    <Compile Include="Magic\MagicExtensions.cs" />
+    <Compile Include="Magic\NinjectIocContainer.cs" />
+    <Compile Include="Security\CRC32.cs" />
+    <Compile Include="OperatingSystem\FileSystem\IOExtensions.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Document.cs" />
+    <Compile Include="Internet\Browser\Chrome.cs" />
+    <Compile Include="Internet\Inet.cs" />
+    <Compile Include="Internet\FTP\BasicFTPClient.cs" />
+    <Compile Include="Internet\Http.cs" />
+    <Compile Include="Internet\MultiBrowserForm.cs" />
+    <Compile Include="Internet\MultiBrowserForm.Designer.cs">
+      <DependentUpon>MultiBrowserForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internet\Scraper.cs" />
+    <Compile Include="Internet\Surfer.cs" />
+    <Compile Include="Internet\TheInternet.cs" />
+    <Compile Include="Internet\WebSite.cs" />
+    <Compile Include="Internet\Wiki\WikiPedia.cs" />
+    <Compile Include="Internet\Wiki\Wiktionary.cs" />
+    <Compile Include="Internet\WWWManager.cs" />
+    <Compile Include="Internet\Wiki\YANWiki.cs" />
+    <Compile Include="Linguistics\Character.cs" />
+    <Compile Include="Linguistics\CharacterCombo.cs" />
+    <Compile Include="Linguistics\Library.cs" />
+    <Compile Include="Linguistics\PoS\iHasPartOfSpeech.cs" />
+    <Compile Include="Linguistics\PoS\ITaggedWord.cs" />
+    <Compile Include="Linguistics\PoS\Noun.cs" />
+    <Compile Include="Linguistics\PoS\PartsOfSpeech.cs" />
+    <Compile Include="Linguistics\PoS\TaggedSentence.cs" />
+    <Compile Include="Linguistics\WordCombo.cs" />
+    <Compile Include="Maths\Ranges\BigIntegerRange.cs" />
+    <Compile Include="Maths\Ranges\Int64Range.cs" />
+    <Compile Include="Maths\FourBytes.cs" />
+    <Compile Include="Maths\Numbers\UInt256.cs" />
+    <Compile Include="Maths\Bits.cs" />
+    <Compile Include="Maths\Numbers\RomanNumber.cs" />
+    <Compile Include="Maths\MovingAverageCalculator.cs" />
+    <Compile Include="Maths\RomanConverter.cs" />
+    <Compile Include="Maths\Numbers\VotallyI.cs" />
+    <Compile Include="Maths\Numbers\VotallyD.cs" />
+    <Compile Include="Measurement\Currency\AltCoinExtensions.cs" />
+    <Compile Include="Measurement\Currency\BTC\ICoin.cs" />
+    <Compile Include="Measurement\Currency\LTC\ICoin.cs" />
+    <Compile Include="Measurement\Currency\LTC\IDenomination.cs" />
+    <Compile Include="Measurement\Currency\LTC\LTC.cs" />
+    <Compile Include="Measurement\Currency\LTC\mLTC.cs" />
+    <Compile Include="Measurement\Currency\LTC\μLTC.cs" />
+    <Compile Include="Measurement\Currency\SimpleWallet.cs" />
+    <Compile Include="Measurement\Length\IQuantityOfDistance.cs" />
+    <Compile Include="Measurement\Physics\AtomicMassUnits.cs" />
+    <Compile Include="Measurement\Physics\Forces.cs" />
+    <Compile Include="Measurement\Physics\KiloElectronVolts.cs" />
+    <Compile Include="Measurement\Physics\SpeedOfLight.cs" />
+    <Compile Include="Measurement\Physics\UniversalConstants.cs" />
+    <Compile Include="Measurement\Physics\Extensions.cs" />
+    <Compile Include="Measurement\Physics\ElectronVolts.cs" />
+    <Compile Include="Measurement\Physics\GigaElectronVolts.cs" />
+    <Compile Include="Measurement\Physics\MegaElectronVolts.cs" />
+    <Compile Include="Measurement\Physics\MilliElectronVolts.cs" />
+    <Compile Include="Measurement\Physics\TeraElectronVolts.cs" />
+    <Compile Include="Measurement\Length\PlanckLengths.cs" />
+    <Compile Include="Measurement\Length\Feet.cs" />
+    <Compile Include="Measurement\Spatial\CardinalDirection.cs" />
+    <Compile Include="Measurement\Spatial\Degrees.cs" />
+    <Compile Include="Measurement\Spatial\GeoLocation.cs" />
+    <Compile Include="Measurement\Spatial\Radians.cs" />
+    <Compile Include="Measurement\Spatial\SpatialExtensions.cs" />
+    <Compile Include="Measurement\Time\Clocks\MicroStopwatch.cs" />
+    <Compile Include="Measurement\Time\Clocks\Second.cs" />
+    <Compile Include="Measurement\Time\FluentTime\AdjustableCurrentTime.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeCreation.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeOffsetting.cs" />
+    <Compile Include="Measurement\Time\FluentTime\DateTimeShortCreators.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Next.cs" />
+    <Compile Include="Measurement\Time\FluentTime\TimeSpanCreation.cs" />
+    <Compile Include="Measurement\Time\FluentTime\TimeSpanExtensions.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Today.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Tomorrow.cs" />
+    <Compile Include="Measurement\Time\FluentTime\VariableTimeSpan.cs" />
+    <Compile Include="Measurement\Time\FluentTime\Yesterday.cs" />
+    <Compile Include="Measurement\Time\IQuantityOfTime.cs" />
+    <Compile Include="Measurement\Time\Clocks\AMorPM.cs" />
+    <Compile Include="Measurement\Time\Attoseconds.cs" />
+    <Compile Include="Measurement\Time\Clocks\ClockExtensions.cs" />
+    <Compile Include="Measurement\Time\Clocks\IStandardClock.cs" />
+    <Compile Include="Measurement\Time\Clocks\IStandardClockWithSmallUnits.cs" />
+    <Compile Include="Measurement\Time\Clocks\Microsecond.cs" />
+    <Compile Include="Measurement\Time\Clocks\Millisecond.cs" />
+    <Compile Include="Measurement\Time\Clocks\MomentInTimeClock.cs" />
+    <Compile Include="Measurement\Time\Clocks\Day.cs" />
+    <Compile Include="Measurement\Time\Clocks\Hour.cs" />
+    <Compile Include="Measurement\Time\Clocks\IClockPart.cs" />
+    <Compile Include="Measurement\Time\ETACalculator.cs" />
+    <Compile Include="Measurement\Time\Clocks\Minute.cs" />
+    <Compile Include="Measurement\Time\Clocks\Month.cs" />
+    <Compile Include="Measurement\Time\RoundTo.cs" />
+    <Compile Include="Measurement\Time\Clocks\TickingClock.cs" />
+    <Compile Include="Measurement\Time\Date.cs" />
+    <Compile Include="Measurement\Time\Days.cs" />
+    <Compile Include="Measurement\Time\Epochs.cs" />
+    <Compile Include="Measurement\Time\Era.cs" />
+    <Compile Include="Measurement\Time\Femtoseconds.cs" />
+    <Compile Include="Measurement\Time\Hours.cs" />
+    <Compile Include="Measurement\Time\Microseconds.cs" />
+    <Compile Include="Measurement\Time\Months.cs" />
+    <Compile Include="Measurement\Time\Nanoseconds.cs" />
+    <Compile Include="Measurement\Time\Picoseconds.cs" />
+    <Compile Include="Measurement\Time\PlanckTimes.cs" />
+    <Compile Include="Measurement\Time\SpanRange.cs" />
+    <Compile Include="Measurement\Time\Time.cs" />
+    <Compile Include="Measurement\Constants.cs" />
+    <Compile Include="Measurement\Time\TimeProgression.cs" />
+    <Compile Include="Measurement\Time\Weeks.cs" />
+    <Compile Include="Measurement\Time\UniversalDateTime.cs" />
+    <Compile Include="Measurement\Time\WhenRange.cs" />
+    <Compile Include="Measurement\Time\Clocks\Year.cs" />
+    <Compile Include="Measurement\Time\Years.cs" />
+    <Compile Include="Measurement\Time\Yoctoseconds.cs" />
+    <Compile Include="Measurement\Time\Zeptoseconds.cs" />
+    <Compile Include="Linguistics\Book.cs" />
+    <Compile Include="Linguistics\Page.cs" />
+    <Compile Include="Misc\ProductExampleClass.cs" />
+    <Compile Include="Parsing\Base58CheckString.cs" />
+    <Compile Include="Parsing\Base58String.cs" />
+    <Compile Include="Persistence\DynamicContext.cs" />
+    <Compile Include="Persistence\PersistTable.cs" />
+    <Compile Include="Security\CryptUtility.cs" />
+    <Compile Include="Security\Crypto.cs" />
+    <Compile Include="Security\FilePasswordPair.cs" />
+    <Compile Include="Security\SteganographyHelper.cs" />
+    <Compile Include="Security\CRC64.cs" />
+    <Compile Include="Security\Crc64Iso.cs" />
+    <Compile Include="Security\Impersonator.cs" />
+    <Compile Include="Security\SecurityExtensions.cs" />
+    <Compile Include="Security\AESThenHMAC.cs" />
+    <Compile Include="Measurement\Currency\BTC\Address.cs" />
+    <Compile Include="Measurement\Currency\BTC\Bitcoins.cs" />
+    <Compile Include="Measurement\Currency\BTC\BitcoinTransactionMessage.cs" />
+    <Compile Include="Measurement\Currency\BTC\CoinWallet.cs" />
+    <Compile Include="Measurement\Currency\BTC\Extensions.cs" />
+    <Compile Include="Measurement\Currency\BTC\Hash.cs" />
+    <Compile Include="Measurement\Currency\BTC\ICoinWallet.cs" />
+    <Compile Include="Measurement\Currency\BTC\IDenomination.cs" />
+    <Compile Include="Measurement\Currency\BTC\SimpleBitcoinWallet.cs" />
+    <Compile Include="Measurement\Currency\ICurrency.cs" />
+    <Compile Include="Measurement\Currency\ISimpleWallet.cs" />
+    <Compile Include="Measurement\Currency\LTC\Litoshi.cs" />
+    <Compile Include="Measurement\Currency\LTC\ICoinWallet.cs" />
+    <Compile Include="Financial\Currency\IDenomination.cs" />
+    <Compile Include="Financial\Currency\USD.cs" />
+    <Compile Include="Measurement\Frequency\BPM.cs" />
+    <Compile Include="Measurement\Frequency\Hertz.cs" />
+    <Compile Include="Measurement\Length\Centimeters.cs" />
+    <Compile Include="Measurement\Length\Extensions.cs" />
+    <Compile Include="Measurement\Length\Inches.cs" />
+    <Compile Include="Measurement\Length\Meters.cs" />
+    <Compile Include="Measurement\Length\Millimeters.cs" />
+    <Compile Include="Measurement\Time\TimeExtensions.cs" />
+    <Compile Include="Measurement\Time\Milliseconds.cs" />
+    <Compile Include="Measurement\Time\Minutes.cs" />
+    <Compile Include="Measurement\Time\Seconds.cs" />
+    <Compile Include="Measurement\Time\SpanOfTime.cs" />
+    <Compile Include="Misc\Bitten.cs" />
+    <Compile Include="Extensions\CodeEngine.cs" />
+    <Compile Include="Parsing\ClosedMatchContext.cs" />
+    <Compile Include="Parsing\ContinuousSentence.cs" />
+    <Compile Include="Parsing\ParsingExtensions.cs" />
+    <Compile Include="Parsing\IntermediateMatchResultContext.cs" />
+    <Compile Include="Parsing\Markov\Chain.cs" />
+    <Compile Include="Parsing\Markov\MkModel.cs" />
+    <Compile Include="Parsing\Match.cs" />
+    <Compile Include="Parsing\MatchContext.cs" />
+    <Compile Include="Parsing\MatchContextExtensions.cs" />
+    <Compile Include="Parsing\OpenMatchContext.cs" />
+    <Compile Include="Linguistics\Paragraph.cs" />
+    <Compile Include="Linguistics\Sentence.cs" />
+    <Compile Include="Linguistics\Word.cs" />
+    <Compile Include="Maths\Numbers\AutoNumber.cs" />
+    <Compile Include="Persistence\DeserializeReportStats.cs" />
+    <Compile Include="Persistence\PersistenceExtensions.cs" />
+    <Compile Include="Security\Windows.cs" />
+    <Compile Include="Collections\Extensions\ArrayExtensions.cs" />
+    <Compile Include="Threading\AsyncLazy.cs" />
+    <Compile Include="Threading\AsyncLock.cs" />
+    <Compile Include="Threading\AsyncReaderWriterLock.cs" />
+    <Compile Include="Threading\Blocks.cs" />
+    <Compile Include="Security\C5Random.cs" />
+    <Compile Include="Collections\Extensions\CollectionExtensions.cs" />
+    <Compile Include="Threading\AbandonableTask.cs" />
+    <Compile Include="Security\MersenneTwister.cs" />
+    <Compile Include="Collections\Arrays\ArrayTraverse.cs" />
+    <Compile Include="Logging\ConsoleListenerWithTimePrefix.cs" />
+    <Compile Include="Threading\ObjectExtensions.cs" />
+    <Compile Include="Threading\ReferenceEqualityComparer.cs" />
+    <Compile Include="Threading\Requests.cs" />
+    <Compile Include="Threading\SimpleCancel.cs" />
+    <Compile Include="Internet\RandomOrg\Quota.cs" />
+    <Compile Include="Internet\RandomOrg\IntegerGenerator.cs" />
+    <Compile Include="Threading\Volatiles.cs" />
+    <Compile Include="Threading\ParallelAlgorithms.cs" />
+    <Compile Include="Threading\CustomAttribute.cs" />
+    <Compile Include="Extensions\Combiner.cs" />
+    <Compile Include="Extensions\GuidExtensions.cs" />
+    <Compile Include="Extensions\Enums.cs" />
+    <Compile Include="OperatingSystem\NativeMethods.cs" />
+    <Compile Include="Threading\SingleAccess.cs" />
+    <Compile Include="Graphics\DDD\CoordinateF.cs" />
+    <Compile Include="Graphics\DDD\Coordinate64.cs" />
+    <Compile Include="Maths\Numbers\AtomicDouble.cs" />
+    <Compile Include="Maths\Numbers\AtomicInt.cs" />
+    <Compile Include="Maths\MathExtensions.cs" />
+    <Compile Include="Maths\Ranges\DoubleRange.cs" />
+    <Compile Include="Maths\Numbers\PotentialF.cs" />
+    <Compile Include="Maths\Fuzzy.cs" />
+    <Compile Include="Maths\FuzzyNonTS.cs" />
+    <Compile Include="Maths\Ranges\Int32Range.cs" />
+    <Compile Include="Maths\Numbers\Minus1To1D.cs" />
+    <Compile Include="Maths\Numbers\Minus1to1TS.cs" />
+    <Compile Include="Maths\Numbers\Percentage.cs" />
+    <Compile Include="Maths\Numbers\PercentageNonTS.cs" />
+    <Compile Include="Maths\PrimeNumbers.cs" />
+    <Compile Include="Maths\Ranges\SingleRange.cs" />
+    <Compile Include="Maths\Numbers\Statistically.cs" />
+    <Compile Include="Measurement\Time\TimeSpanRange.cs" />
+    <Compile Include="Maths\Numbers\UBigInteger.cs" />
+    <Compile Include="Maths\Ranges\UInt64Range.cs" />
+    <Compile Include="Maths\WeightObsolete.cs" />
+    <Compile Include="Threading\PriorityScheduler.cs" />
+    <Compile Include="Threading\Releaser.cs" />
+    <Compile Include="Logging\LoggingOld.cs" />
+    <Compile Include="Threading\Singleton.cs" />
+    <Compile Include="Extensions\DirectoryInfos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threading\TaskExtensions.cs" />
+    <Compile Include="Threading\ThreadingExtensions.cs" />
+    <Compile Include="Threading\FluentTimer.cs" />
+    <Compile Include="Words.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="Security\md5sum.exe" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\QuestionBox.resx">
+      <DependentUpon>QuestionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AutoLayoutWindow.resx">
+      <DependentUpon>AutoLayoutWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\HistogramaDesenat.resx" />
+    <EmbeddedResource Include="Internet\MultiBrowserForm.resx">
+      <DependentUpon>MultiBrowserForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ben.Demystifier">
+      <Version>0.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="CommandLineParser">
+      <Version>2.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="Costura.Fody">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="CsvHelper">
+      <Version>12.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Fody">
+      <Version>6.0.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="JetBrains.Annotations">
+      <Version>2019.1.3</Version>
+    </PackageReference>
+    <PackageReference Include="LinqFaster.SIMD">
+      <Version>1.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
+      <Version>3.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <Version>3.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Database.Collections.Generic">
+      <Version>1.9.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SqlServer.SqlManagementObjects">
+      <Version>150.18178.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Ninject">
+      <Version>3.3.4</Version>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.6.7</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.Windows.Forms">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="RandomNameGeneratorLibrary">
+      <Version>1.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="Rationals">
+      <Version>1.3.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Dataflow">
+      <Version>4.10.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks.Extensions">
+      <Version>4.5.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XDocument">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Unicode.net">
+      <Version>0.1.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Properties\Libranian.ico" />
+    <Content Include="Misc\brain.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
