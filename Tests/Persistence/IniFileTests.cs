@@ -45,9 +45,8 @@ namespace LibrainianTests.Persistence {
     using FluentAssertions;
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.Persistence.InIFiles;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class IniFileTests {
 
         public const String ini_test_data = @"
@@ -60,7 +59,6 @@ data.4 = value4
 data5   =   !value5
 
 [ Section 2  ]
-
 ;This is also a comment for section 2
 data11=value11
 data22 = value22
@@ -69,14 +67,12 @@ data44 =value44
 data55= $55.00
 
 [ Section 2  ]
-
 ;This is also another comment for section 2
 data11=value11b
 data22 = value22b
 data33   =   value33b
 
 [ Section 3  ]
-
 ;This is also a comment for section 3
 data3.1 =  1
 data3.2 =    2
@@ -90,10 +86,10 @@ data3.3   =   3
 
         public static IniFile Ini3;
 
-        [OneTimeSetUp]
+        [Theory]
         public static void Setup() { }
 
-        [Test]
+        [Fact]
         public static void test1() {
 
             //prepare file
@@ -111,6 +107,5 @@ data3.3   =   3
                 Console.WriteLine( $"Saved to {config.FullPath}" );
             }
         }
-
     }
 }

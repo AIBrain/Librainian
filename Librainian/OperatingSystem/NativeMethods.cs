@@ -637,6 +637,7 @@ namespace Librainian.OperatingSystem {
         /// </returns>
         /// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
+        [CanBeNull]
         public static extern SafeSearchHandle FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
         /// <summary>
@@ -769,7 +770,11 @@ namespace Librainian.OperatingSystem {
         [DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern IntPtr GetWindowDC( IntPtr hwnd );
 
-        public static void HandleLastError( String fullPath ) {
+        public static void HandleLastError( [NotNull] String fullPath ) {
+            if ( fullPath == null ) {
+                throw new ArgumentNullException( paramName: nameof( fullPath ) );
+            }
+
             var lastWin32Error = Marshal.GetLastWin32Error();
 
             switch ( lastWin32Error ) {
@@ -1405,6 +1410,7 @@ namespace Librainian.OperatingSystem {
             /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
             public override Boolean Equals( Object obj ) => Equals( this, obj as HANDLE );
 
+            // ReSharper disable once NonReadonlyMemberInGetHashCode
             public override Int32 GetHashCode() => this.handle.GetHashCode();
         }
 

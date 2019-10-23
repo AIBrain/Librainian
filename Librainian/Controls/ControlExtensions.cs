@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,25 +28,25 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 6:44 AM.
+// 
+// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/10/21 at 11:25 PM.
 
 namespace Librainian.Controls {
 
     using System;
+    using System.Collections;
     using System.Collections.Concurrent;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Drawing;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -63,46 +63,61 @@ namespace Librainian.Controls {
         public static ConcurrentDictionary<Control, Int32> TurnOnOrOffReqests { get; } = new ConcurrentDictionary<Control, Int32>();
 
         [DebuggerStepThrough]
-        public static void Append( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
+        public static void Append( [NotNull] this RichTextBox box, [CanBeNull] String text, Color color, [NotNull] params Object[] args ) =>
             box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
 
         [DebuggerStepThrough]
-        public static void AppendLine( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
+        public static void AppendLine( [NotNull] this RichTextBox box, [CanBeNull] String text, Color color, [NotNull] params Object[] args ) =>
             box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
 
         [DebuggerStepThrough]
-        public static void AppendText( [NotNull] this RichTextBox box, String text, Color color, [NotNull] params Object[] args ) =>
-            box.InvokeAction( () => {
+        public static void AppendText( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [CanBeNull] params Object[] args ) {
+            if ( box == null ) {
+                throw new ArgumentNullException( paramName: nameof( box ) );
+            }
+
+            if ( String.IsNullOrEmpty( value: text ) ) {
+                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( text ) );
+            }
+
+            if ( args != null ) {
                 text = String.Format( text, args );
+            }
 
-                if ( color == Color.Empty ) {
-                    box.AppendText( text );
+            box.InvokeAction( method );
 
-                    return;
-                }
-
+            void method() {
                 box.SelectionStart = box.TextLength;
                 box.SelectionLength = 0;
 
-                box.SelectionColor = color;
+                if ( color != Color.Empty ) {
+                    box.SelectionColor = color;
+                }
+
                 box.AppendText( text );
-                box.SelectionColor = box.ForeColor;
+
+                if ( color != Color.Empty ) {
+                    box.SelectionColor = box.ForeColor;
+                }
 
                 box.SelectionStart = box.TextLength;
                 box.ScrollToCaret();
-            } );
-
-        public static void AppendTextInvoke( [NotNull] this RichTextBox box, String text, Color color, params Object[] args ) =>
-            box.Invoke( ( MethodInvoker ) ( () => box.AppendText( text, color, args ) ) );
+            }
+        }
 
         public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
-            blendToPercent = ( 1 - blendToPercent ).ForceBounds( 0, 1 );
 
-            var r = ( Byte ) ( (thisColor.R * blendToPercent) + (blendToColor.R * ( 1 - blendToPercent )) );
-            var g = ( Byte ) ( (thisColor.G * blendToPercent) + (blendToColor.G * ( 1 - blendToPercent )) );
-            var b = ( Byte ) ( (thisColor.B * blendToPercent) + (blendToColor.B * ( 1 - blendToPercent )) );
+            blendToPercent = i().ForceBounds( 0, 1 );
 
-            return Color.FromArgb( r, g, b );
+            return Color.FromArgb( red(), green(), blue() );
+
+            Byte red() => ( Byte ) ( ( thisColor.R * blendToPercent ) + ( blendToColor.R * i() ) );
+
+            Byte green() => ( Byte ) ( ( thisColor.G * blendToPercent ) + ( blendToColor.G * i() ) );
+
+            Byte blue() => ( Byte ) ( ( thisColor.B * blendToPercent ) + ( blendToColor.B * i() ) );
+
+            Double i() => 1 - blendToPercent;
         }
 
         /// <summary>
@@ -115,7 +130,11 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            control.InvokeAction( () => control.Cursor = Cursors.WaitCursor );
+            control.InvokeAction( method );
+
+            void method() {
+                control.Cursor = Cursors.WaitCursor;
+            }
         }
 
         /// <summary>
@@ -128,7 +147,12 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Boolean ) control.Invoke( new Func<Boolean>( () => control.Checked ) ) : control.Checked;
+            if ( control.InvokeRequired ) {
+                // ReSharper disable once PossibleNullReferenceException
+                return ( Boolean ) control.Invoke( new Func<Boolean>( () => control.Checked ) );
+            }
+
+            return control.Checked;
         }
 
         /// <summary>
@@ -175,9 +199,9 @@ namespace Librainian.Controls {
         public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
 
             // Counting the perceptive luminance - human eye favors green color...
-            var a = 1 - (( (0.299 * thisColor.R) + (0.587 * thisColor.G) + (0.114 * thisColor.B) ) / 255);
+            return a() < 0.5 ? darkForeColor : lightForeColor;
 
-            return a < 0.5 ? darkForeColor : lightForeColor;
+            Double a() => 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) / 255;
         }
 
         /// <summary>
@@ -265,7 +289,7 @@ namespace Librainian.Controls {
 
         [NotNull]
         [DebuggerStepThrough]
-        public static Task FlashWhileBlank( this Control input, [NotNull] Control control, CancellationToken token ) {
+        public static Task FlashWhileBlank( [CanBeNull] this Control input, [NotNull] Control control, CancellationToken token ) {
             if ( control == null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
@@ -375,7 +399,7 @@ namespace Librainian.Controls {
         /// <param name="action"> </param>
         /// <param name="thing"></param>
         /// <seealso />
-        public static void InvokeAction<T>( [NotNull] this Control control, [NotNull] Action<T> action, T thing ) {
+        public static void InvokeAction<T>( [NotNull] this Control control, [NotNull] Action<T> action, [CanBeNull] T thing ) {
             if ( control == null ) {
                 throw new ArgumentNullException( nameof( control ) );
             }
@@ -395,8 +419,9 @@ namespace Librainian.Controls {
         }
 
         [NotNull]
-        public static T InvokeFunction<T>( [NotNull] this T invokable, Func<T> function, [CanBeNull] Object[] arguments = null ) where T : class, ISynchronizeInvoke =>
-            ( T ) invokable.Invoke( function, arguments );
+        public static T InvokeFunction<T>( [NotNull] this T invokable, [CanBeNull] Func<T> function, [CanBeNull] Object[] arguments = null )
+            where T : class, ISynchronizeInvoke =>
+            invokable.Invoke( function, arguments ) as T ?? throw new InvalidOperationException();
 
         public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
             darknessPercent = darknessPercent.ForceBounds( 0, 1 );
@@ -411,9 +436,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - (transparentPercent.ForceBounds( 0, 1 ) * 255);
+            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-            return Color.FromArgb( thisColor.ToArgb() + (( Int32 ) transparentPercent * 0x1000000) );
+            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
         }
 
         [NotNull]
@@ -500,6 +525,8 @@ namespace Librainian.Controls {
             } );
         }
 
+        public static Boolean Nope( this DialogResult result ) => result.In( DialogResult.Abort, DialogResult.Cancel );
+
         /// <summary>
         ///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
         /// </summary>
@@ -547,7 +574,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static void Redraw( [NotNull] this Control control ) => control.InvokeAction( control.Refresh );
 
-        public static Boolean RemoveTags( [NotNull] this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
+        public static Boolean RemoveTags( [NotNull] this WebBrowser browser, [CanBeNull] String tagName, Int32 keepAtMost = 50 ) {
             if ( browser.Document == null ) {
                 return false;
             }
@@ -734,12 +761,9 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        public static void Text( [NotNull] this Control control, [CanBeNull] String value ) {
-            if ( control == null ) {
-                throw new ArgumentNullException( paramName: nameof( control ) );
-            }
+        public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) {
 
-            control.InvokeAction( () => {
+            control?.InvokeAction( () => {
                 if ( control.IsDisposed ) {
                     return;
                 }
@@ -758,46 +782,20 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( message ) );
             }
 
-            var method = new Action( () => {
-                if ( textBox.IsDisposed ) {
-                    return;
-                }
-
-                textBox.AppendText( message );
-
-                var lines = textBox.Lines.ToList();
-
-                if ( lines.Count > 20 ) {
-                    while ( lines.Count > 20 ) {
-                        lines.RemoveAt( 0 );
-                    }
-
-                    textBox.Lines = lines.ToArray();
-                }
-
-                //if ( textBox.Text.Length > 0 ) {textBox.SelectionStart = textBox.Text.Length - 1;}
-                //textBox.SelectionLength = message.Length;
-                //textBox.SelectionBackColor = Color.BlanchedAlmond;
-                //textBox.ShowSelectionMargin = true;
-
-                //if ( italic ) {
-                //    var style = textBox.SelectionFont.Style;
-                //    style |= FontStyle.Italic;
-                //    textBox.SelectionFont = new Font( textBox.SelectionFont, style );
-                //}
-                //textBox.ScrollToCaret();
-                textBox.Invalidate();
-            } );
-
             if ( textBox.IsDisposed ) {
                 return;
             }
 
-            if ( textBox.InvokeRequired ) {
-                textBox.BeginInvoke( method );
-            }
-            else {
-                method();
+            textBox.InvokeAction( method );
+
+            void method() {
+                textBox.AppendText( message );
+
+                while ( textBox.Lines?.Length > 20 ) {
+                    ( ( IList ) textBox.Lines ).RemoveAt( 0 );
+                }
+
+                textBox.Invalidate();
             }
         }
 
@@ -960,7 +958,7 @@ namespace Librainian.Controls {
         }
 
         public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
-        public static Boolean Nope( this DialogResult result ) => result.In( DialogResult.Abort, DialogResult.Cancel );
 
     }
+
 }

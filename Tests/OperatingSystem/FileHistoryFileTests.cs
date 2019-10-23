@@ -47,16 +47,15 @@ namespace LibrainianTests.OperatingSystem {
     using Librainian.Magic;
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.OperatingSystem.FileSystem.FileHistory;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class FileHistoryFileTests {
 
         public const String Example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
         public static void TestForNullNess() => Example.Should().ThrowIfNull();
 
-        [Test]
+        [Fact]
         public static void RunTests() {
             var example = DateTime.Parse( "2015/09/04 16:15:01" );
 

@@ -80,7 +80,7 @@ namespace Librainian {
             try {
                 RunInternalCommon();
 
-                Parser.Default.ParseArguments<TOpts>( arguments ).WithParsed( runParsedOptions ).WithNotParsed( HandleErrors );
+                Parser.Default?.ParseArguments<TOpts>( arguments ).WithParsed( runParsedOptions ).WithNotParsed( HandleErrors );
             }
             catch ( Exception exception ) {
                 exception.Log( breakinto: true );
@@ -95,7 +95,7 @@ namespace Librainian {
                         }
                     }
                     else {
-                        var message = errors.Select( error => error.ToString() ).ToStrings( Environment.NewLine );
+                        var message = errors.Select( error => error?.ToString() ).ToStrings( Environment.NewLine );
 
                         if ( Debugger.IsAttached ) {
                             Debug.WriteLine( message );
@@ -113,8 +113,8 @@ namespace Librainian {
         }
 
         private static void RunInternalCommon() {
-            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception ).Log( breakinto: true );
-            Application.ThreadException += ( sender, e ) => e?.Exception.Log( breakinto: true );
+            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( breakinto: true );
+            Application.ThreadException += ( sender, e ) => e?.Exception?.Log( breakinto: true );
 
             ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
             ProfileOptimization.StartProfile( Application.ExecutablePath );
@@ -145,6 +145,8 @@ namespace Librainian {
                 InternalLogger.Trace( $"{nameof( Run )} created a new {nameof( LoggingConfiguration )}." );
             }
 
+            Debug.Assert( LogLevel.Trace != null, "LogLevel.Trace != null" );
+            Debug.Assert( LogLevel.Fatal != null, "LogLevel.Fatal != null" );
             Logging.Logging.Setup( LogLevel.Trace, LogLevel.Fatal, SomeTargets.TraceTarget.Value );
 
 #if DEBUG
@@ -180,6 +182,10 @@ namespace Librainian {
             }
 
             static void LoadFormPosition( Form form ) {
+                if ( form == null ) {
+                    throw new ArgumentNullException( paramName: nameof( form ) );
+                }
+
                 form.SuspendLayout();
                 form.WindowState = FormWindowState.Normal;
                 form.StartPosition = FormStartPosition.WindowsDefaultBounds;
@@ -195,6 +201,10 @@ namespace Librainian {
             }
 
             static void SaveFormPosition( Form form ) {
+                if ( form == null ) {
+                    throw new ArgumentNullException( paramName: nameof( form ) );
+                }
+
                 form.SaveLocation();
                 form.SaveSize();
             }

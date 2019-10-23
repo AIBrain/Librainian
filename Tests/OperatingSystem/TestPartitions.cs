@@ -46,12 +46,11 @@ namespace LibrainianTests.OperatingSystem {
     using Librainian.Maths;
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.OperatingSystem.Storage;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class TestPartitions {
 
-        [Test]
+        [Fact]
         public static void ListAllPartitions() {
             var partitions = Partitions.GetDiskPartitions().OrderBy( partition => partition.DiskIndex ).ThenBy( partition => partition.StartingOffset ).ToList();
 
@@ -60,7 +59,7 @@ namespace LibrainianTests.OperatingSystem {
             }
         }
 
-        [Test]
+        [Fact]
         public static void Test_Search_For_SSD() {
             foreach ( var disk in Byte.MinValue.To( 10 ) ) {
                 var isp = disk.IncursSeekPenalty();

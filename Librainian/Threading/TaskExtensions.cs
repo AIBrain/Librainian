@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:38 AM.
+// 
+// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2019/10/23 at 11:41 AM.
 
 namespace Librainian.Threading {
 
@@ -45,7 +45,6 @@ namespace Librainian.Threading {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
@@ -54,6 +53,7 @@ namespace Librainian.Threading {
     using Exceptions;
     using JetBrains.Annotations;
     using Logging;
+    using Maths;
     using Measurement.Time;
     using NLog;
     using Timer = System.Timers.Timer;
@@ -61,42 +61,9 @@ namespace Librainian.Threading {
     /// <summary>
     ///     Remember: Tasks are born "hot" unless created with "var task=new Task();".
     /// </summary>
-    [SuppressMessage( "ReSharper", "AsyncConverter.AsyncMethodNamingHighlighting" )]
     public static class TaskExtensions {
 
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="completedTask">   </param>
-        /// <param name="completionSource"></param>
-        /// <exception cref="ArgumentEmptyException"></exception>
-        public static void PropagateResult<T>( [NotNull] this Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
-
-            switch ( completedTask.Status ) {
-                case TaskStatus.Canceled:
-                    completionSource.TrySetCanceled();
-
-                    break;
-
-                case TaskStatus.Faulted:
-
-                    if ( completedTask.Exception != null ) {
-                        completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
-                    }
-
-                    break;
-
-                case TaskStatus.RanToCompletion:
-                    completionSource.TrySetResult( result: completedTask.Result );
-
-                    break;
-
-                default: throw new ArgumentEmptyException( "Task was not completed." );
-            }
-        }
 
         /// <summary>
         ///     Quietly consume the <paramref name="task" /> on a background thread. Fire & forget.
@@ -125,9 +92,7 @@ namespace Librainian.Threading {
                 }
             };
 
-            bgWorker.RunWorkerCompleted += ( sender, args ) => {
-                
-            };
+            bgWorker.RunWorkerCompleted += ( sender, args ) => { };
 
             bgWorker.RunWorkerAsync( anything );
         }
@@ -136,19 +101,23 @@ namespace Librainian.Threading {
         ///     <para><see cref="Task.Delay(System.TimeSpan)" /> for <paramref name="milliseconds" />.</para>
         /// </summary>
         /// <param name="milliseconds"></param>
-        public static async Task Delay( this Int32 milliseconds ) => await TimeSpan.FromMilliseconds( milliseconds ).Delay();
+        [NotNull]
+        public static Task Delay( this Int32 milliseconds ) => TimeSpan.FromMilliseconds( milliseconds ).Delay();
 
         /// <summary>
         /// </summary>
         /// <param name="delay">How long to run the delay.</param>
-        public static async Task Delay( this TimeSpan delay ) {
-            try {
-                await Task.Delay( delay ).ConfigureAwait( false );
-            }
-            catch ( Exception exception ) {
-                exception.Break();
-            }
-        }
+        [NotNull]
+        public static Task Delay( this TimeSpan delay ) => Task.Delay( delay );
+
+        /// <summary>
+        ///     Returns true if the <paramref name="task" /> is Completed, Cancelled, or Faulted.
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        /// <remarks>Just calls <see cref="IsDone" />.</remarks>
+        [DebuggerStepThrough]
+        public static Boolean Done( [NotNull] this Task task ) => task.IsDone();
 
         /// <summary>
         ///     Invokes each <see cref="Action" /> in the given <paramref name="action" /> in a try/catch.
@@ -327,6 +296,45 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [DebuggerStepThrough]
         public static ConfiguredTaskAwaitable<T> NoUI<T>( [NotNull] this Task<T> task ) => task.ConfigureAwait( false );
+
+        /// <summary>
+        ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="completedTask">   </param>
+        /// <param name="completionSource"></param>
+        /// <exception cref="ArgumentEmptyException"></exception>
+        public static void PropagateResult<T>( [NotNull] this Task<T> completedTask, [NotNull] TaskCompletionSource<T> completionSource ) {
+            if ( completedTask == null ) {
+                throw new ArgumentNullException( paramName: nameof( completedTask ) );
+            }
+
+            if ( completionSource == null ) {
+                throw new ArgumentNullException( paramName: nameof( completionSource ) );
+            }
+
+            switch ( completedTask.Status ) {
+                case TaskStatus.Canceled:
+                    completionSource.TrySetCanceled();
+
+                    break;
+
+                case TaskStatus.Faulted:
+
+                    if ( completedTask.Exception != null ) {
+                        completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
+                    }
+
+                    break;
+
+                case TaskStatus.RanToCompletion:
+                    completionSource.TrySetResult( result: completedTask.Result );
+
+                    break;
+
+                default: throw new ArgumentEmptyException( "Task was not completed." );
+            }
+        }
 
         /// <summary>
         ///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
@@ -757,6 +765,7 @@ namespace Librainian.Threading {
             var didOurTaskFinish = whichTaskFinished == task;
 
             if ( !didOurTaskFinish ) {
+
                 //do we want to cancel? how to cancel the task?
             }
 
@@ -821,6 +830,33 @@ namespace Librainian.Threading {
                 exception.Log();
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns when at least 1 of the tasks are marked as <see cref="Done" />.
+        /// </summary>
+        /// <param name="count">How many tasks to complete before returning.</param>
+        /// <param name="token"></param>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+        public static async Task WhenCount( Int32 count, CancellationToken token, [CanBeNull] params Task[] tasks ) {
+            if ( tasks?.Length.Any() != true ) {
+                return;
+            }
+
+            if ( tasks.Length < count ) {
+                count = tasks.Length;
+            }
+
+            if ( !count.Any() ) {
+                return;
+            }
+
+            while ( tasks.Count( task => task?.IsDone() == true ) < count ) {
+                if ( !token.IsCancellationRequested ) {
+                    await Task.WhenAny( tasks ).ConfigureAwait( false );
+                }
             }
         }
 
@@ -965,6 +1001,8 @@ namespace Librainian.Threading {
         /// <param name="input">   </param>
         /// <returns></returns>
         [NotNull]
-        public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, TIn input ) => Task.Run( () => selector( input ) );
+        public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, [CanBeNull] TIn input ) => Task.Run( () => selector( input ) );
+
     }
+
 }

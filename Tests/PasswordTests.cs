@@ -45,12 +45,11 @@ namespace LibrainianTests {
     using Librainian.Maths;
     using Librainian.Parsing;
     using Librainian.Security;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class PasswordTests {
 
-        [Test]
+        [Fact]
         public static void TestAFew() {
             foreach ( var _ in 1.To( end: 25 ) ) {
                 Console.WriteLine( value: PronounceablePasswordCreator.Generate( requiredLength: 3.Next( maxValue: 15 ) ).ToPascalCase() );

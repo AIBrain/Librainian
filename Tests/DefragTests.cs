@@ -45,9 +45,8 @@ namespace LibrainianTests {
     using System.IO;
     using Librainian.OperatingSystem;
     using Librainian.OperatingSystem.FileSystem;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class DefragTests {
 
         private static IDocument SourceDocument { get; set; }
@@ -75,7 +74,7 @@ namespace LibrainianTests {
         //[OneTimeTearDown]
         public static void TearDown() => TargetDocument.Delete();
 
-        [Test]
+        [Fact]
         public static void Test_something() {
 
             //var bob = new Document( new Uri("http://www.google.com/") );

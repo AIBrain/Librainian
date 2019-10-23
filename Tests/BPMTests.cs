@@ -43,15 +43,15 @@ namespace LibrainianTests {
 
     using FluentAssertions;
     using Librainian.Measurement.Frequency;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class BPMTests {
 
-        [Test]
+        [Fact]
         public static void TestBPM() {
             Bpm.One.Should().BeLessThan( Bpm.Two );
             Bpm.Two.Should().BeGreaterThan( Bpm.One );
         }
     }
+
 }

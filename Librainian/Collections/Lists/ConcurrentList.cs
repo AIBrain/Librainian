@@ -285,7 +285,7 @@ namespace Librainian.Collections.Lists {
 
             if ( index < 0 ) {
 
-                if ( this.ThrowExceptions == ThrowSetting.ThrowExceptions  ) {
+                if ( this.ThrowExceptions == ThrowSetting.Throw  ) {
                     throw new ArgumentOutOfRangeException( nameof( index ), index, "Value must be 0 or greater." );
                 }
 
@@ -383,7 +383,7 @@ namespace Librainian.Collections.Lists {
         }
 
         private void IfDisallowedModificationsThrow() {
-            if ( this.ThrowExceptions == ThrowSetting.ThrowExceptions ) {
+            if ( this.ThrowExceptions == ThrowSetting.Throw ) {
                 throw new InvalidOperationException( "List does not allow modifications." );
             }
         }
@@ -437,7 +437,7 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <exception cref="ObjectDisposedException"></exception>
         private void ThrowIfDisposed() {
-            if ( this.IsDisposed && this.ThrowExceptions == ThrowSetting.ThrowExceptions ) {
+            if ( this.IsDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
                 throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
             }
         }
@@ -446,7 +446,7 @@ namespace Librainian.Collections.Lists {
             var message = $"The value {index} is out of range. (It must be 0 or greater).";
             message.Log();
 
-            if ( this.ThrowExceptions == ThrowSetting.ThrowExceptions) {
+            if ( this.ThrowExceptions == ThrowSetting.Throw) {
                 throw new ArgumentOutOfRangeException( nameof( index ), index, message );
             }
 

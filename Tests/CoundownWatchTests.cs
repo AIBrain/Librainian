@@ -45,12 +45,11 @@ namespace LibrainianTests {
     using FluentAssertions;
     using Librainian.Logging;
     using Librainian.Measurement.Time;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class CoundownWatchTests {
 
-        [Test]
+        [Fact]
         public static void TestCountdown() {
             var watch = new CountDownWatch( Seconds.Three, () => "Launched!".Info() );
             watch.Start();

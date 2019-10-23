@@ -239,7 +239,11 @@ namespace Librainian.Collections.Extensions {
         /// <typeparam name="T"></typeparam>
         /// <param name="list">         </param>
         /// <param name="iterations">   </param>
-        public static void ShuffleByBags<T>( ref List<T> list, UInt32 iterations ) {
+        public static void ShuffleByBags<T>( [NotNull] ref List<T> list, UInt32 iterations ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+
             var bag = new ConcurrentBag<T>( list.AsParallel() );
 
             if ( iterations <= 1 ) {
@@ -260,7 +264,11 @@ namespace Librainian.Collections.Extensions {
             }
         }
 
-        public static void ShuffleByGuid<T>( ref List<T> list, UInt32 iterations = 1 ) {
+        public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+
             var l = new List<T>( list.Count );
 
             while ( iterations.Any() ) {

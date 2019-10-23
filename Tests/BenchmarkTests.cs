@@ -45,31 +45,31 @@ namespace LibrainianTests {
     using System.Threading;
     using FluentAssertions;
     using Librainian.Measurement;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
+    
     public static class BenchmarkTests {
 
-        [Test]
+        [Fact]
         public static void TestBenchmarking() {
             Action a = () => Thread.Sleep( 11 );
             Action b = () => Thread.Sleep( 12 );
-            var result = a.WhichIsFaster( b );
+            var result = Benchmark.WhichIsFaster( a, b );
             result.Should().Be( Benchmark.AorB.MethodA );
 
             a = () => Thread.Sleep( 8 );
             b = () => Thread.Sleep( 8 );
-            result = a.WhichIsFaster( b );
+            result = Benchmark.WhichIsFaster( a, b );
             result.Should().Be( Benchmark.AorB.Same );
 
             a = () => Thread.Sleep( 2 );
             b = () => Thread.Sleep( 1 );
-            result = a.WhichIsFaster( b );
+            result = Benchmark.WhichIsFaster( a, b );
             result.Should().Be( Benchmark.AorB.MethodB );
 
             a = () => Thread.Sleep( 11 );
             b = () => Thread.Sleep( 12 );
-            result = a.WhichIsFaster( b );
+            result = Benchmark.WhichIsFaster( a, b );
             result.Should().Be( Benchmark.AorB.MethodA );
         }
     }

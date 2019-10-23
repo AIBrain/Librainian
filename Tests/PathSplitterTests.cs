@@ -44,12 +44,11 @@ namespace LibrainianTests {
     using System;
     using FluentAssertions;
     using Librainian.OperatingSystem.FileSystem;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class PathSplitterTests {
 
-        [Test]
+        [Fact]
         public static void TestTheSplittingOrder() {
             const String example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
             const String newExample = @"C:\recovered\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";

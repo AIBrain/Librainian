@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Instantiator.cs" was last formatted by Protiguous on 2019/08/08 at 8:15 AM.
+// Project: "Librainian", "Instantiator.cs" was last formatted by Protiguous on 2019/10/23 at 12:20 PM.
 
 namespace Librainian.Magic {
 
@@ -54,7 +54,7 @@ namespace Librainian.Magic {
     public static class Instantiator<T> {
 
         static Instantiator() =>
-            Debug.Assert( typeof( T ).IsValueType || (typeof( T ).IsClass && !typeof( T ).IsAbstract),
+            Debug.Assert( typeof( T ).IsValueType || ( typeof( T ).IsClass && !typeof( T ).IsAbstract ),
                 String.Concat( "The type ", typeof( T ).Name, " is not constructable." ) );
 
         [NotNull]

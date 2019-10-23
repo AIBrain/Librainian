@@ -52,9 +52,8 @@ namespace LibrainianTests {
     using Librainian.Measurement.Time;
     using Librainian.Measurement.Time.Clocks;
     using Librainian.Parsing;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class DiagnosticTests {
 
         private static void AddToList( [NotNull] this ConcurrentBag<Int32> list ) {
@@ -71,7 +70,7 @@ namespace LibrainianTests {
         //[OneTimeTearDown]
         public static void TearDown() { }
 
-        [Test]
+        [Fact]
         public static void PassProbabilityTest() {
             var lower = new List<Boolean>();
             var probability = -0.33f;
@@ -93,25 +92,25 @@ namespace LibrainianTests {
             higher.Count.Should().BeGreaterThan( lower.Count );
         }
 
-        [Test]
+        [Fact]
         public static void TestHour() {
             Hour.Minimum.Value.Should().BeLessThan( Hour.Maximum.Value );
             Hour.Maximum.Value.Should().BeGreaterThan( Hour.Minimum.Value );
         }
 
-        [Test]
+        [Fact]
         public static void TestMillisecond() {
             Millisecond.Minimum.Value.Should().BeLessThan( Millisecond.Maximum.Value );
             Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
         }
 
-        [Test]
+        [Fact]
         public static void TestMinute() {
             Minute.Minimum.Value.Should().BeLessThan( Minute.Maximum.Value );
             Minute.Maximum.Value.Should().BeGreaterThan( Minute.Minimum.Value );
         }
 
-        [Test]
+        [Fact]
         public static void TestPlanckTimes() {
             PlanckTimes.InOneYear.Should().BeGreaterThan( PlanckTimes.InOneMonth );
             PlanckTimes.InOneMonth.Should().BeGreaterThan( PlanckTimes.InOneWeek );
@@ -129,7 +128,7 @@ namespace LibrainianTests {
             PlanckTimes.InOneZeptosecond.Should().BeGreaterThan( PlanckTimes.InOneYoctosecond );
         }
 
-        [Test]
+        [Fact]
         public static void TestRoman() {
             const UInt32 a = 0;
             const UInt32 b = 1;
@@ -146,20 +145,20 @@ namespace LibrainianTests {
             $"{f} {f.ToRoman()}".Log();
         }
 
-        [Test]
+        [Fact]
         public static void TestSecond() {
             Second.Minimum.Value.Should().BeLessThan( Second.Maximum.Value );
             Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
         }
 
-        [Test]
+        [Fact]
         public static void TestSimilarities() {
             var reasons = new ConcurrentQueue<String>();
             var test1 = "hi".Similarity( "hello", reasons );
             $"test1 was {test1}".Log();
         }
 
-        //[Test]
+        //[Fact]
         //public static void TestNumberConversions() {
         //    Console.WriteLine( "Calculating..." );
 

@@ -44,6 +44,7 @@ namespace Librainian.Measurement {
     using System;
     using System.Diagnostics;
     using System.Threading;
+    using JetBrains.Annotations;
     using Logging;
     using Time;
 
@@ -71,7 +72,11 @@ namespace Librainian.Measurement {
         /// <param name="method"></param>
         /// <param name="runFor"></param>
         /// <returns>Returns how many rounds are ran in the time given.</returns>
-        public static UInt64 GetBenchmark( this Action method, TimeSpan? runFor ) {
+        public static UInt64 GetBenchmark( [NotNull] this Action method, TimeSpan? runFor ) {
+            if ( method == null ) {
+                throw new ArgumentNullException( paramName: nameof( method ) );
+            }
+
             GC.Collect();
 
             var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
@@ -116,7 +121,15 @@ namespace Librainian.Measurement {
             }
         }
 
-        public static AorB WhichIsFaster( this Action methodA, Action methodB, TimeSpan? runfor = null ) {
+        public static AorB WhichIsFaster( [NotNull] Action methodA, [NotNull] Action methodB, TimeSpan? runfor = null ) {
+            if ( methodA == null ) {
+                throw new ArgumentNullException( paramName: nameof( methodA ) );
+            }
+
+            if ( methodB == null ) {
+                throw new ArgumentNullException( paramName: nameof( methodB ) );
+            }
+
             if ( null == runfor ) {
                 runfor = Seconds.One;
             }

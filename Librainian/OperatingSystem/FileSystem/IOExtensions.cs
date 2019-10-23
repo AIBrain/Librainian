@@ -281,15 +281,24 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchPattern"></param>
         /// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
         /// <returns></returns>
-        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo target, String searchPattern = "*",
+        [NotNull]
+        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo target, [CanBeNull] String searchPattern = "*",
             SearchOption searchOption = SearchOption.AllDirectories ) {
             if ( target == null ) {
                 yield break;
             }
 
+            if ( searchPattern is null ) {
+                searchPattern = "*";
+            }
+
             var searchPath = Path.Combine( target.FullName, searchPattern );
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
+                if ( hFindFile is null ) {
+                    yield break;
+                }
+
                 do {
                     if ( hFindFile.IsInvalid ) {
                         break;
@@ -348,8 +357,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
                 do {
-                    if ( hFindFile.IsInvalid ) {
-                        break;
+                    if ( hFindFile == null || hFindFile.IsInvalid ) {
+                        continue;
                     }
 
                     if ( IsParentOrCurrent( findData ) ) {

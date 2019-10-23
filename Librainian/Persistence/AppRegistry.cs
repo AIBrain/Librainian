@@ -50,6 +50,7 @@ namespace Librainian.Persistence {
     using JetBrains.Annotations;
     using Logging;
     using Microsoft.Win32;
+    using Parsing;
 
     public static class AppRegistry {
 
@@ -75,26 +76,35 @@ namespace Librainian.Persistence {
         ///     Registry key for the current user;
         /// </summary>
         [NotNull]
-        public static RegistryKey TheUser { get; } = Registry.CurrentUser;
+        public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new InvalidOperationException();
 
         static AppRegistry() {
             if ( TheUser is null ) {
                 throw new ArgumentEmptyException( $"Registry folder {nameof( Registry.CurrentUser )} is null!" );
             }
 
-            Software = TheUser.CreateSubKey( nameof( Software ), true );
+            Software = TheUser.CreateSubKey( nameof( Software ), true ) ?? throw new InvalidOperationException();
 
             if ( Software is null ) {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
             }
 
-            TheCompany = Software.CreateSubKey( Application.CompanyName.Replace( "&", Parsing.Symbols.Singlespace ).Trim(), true );
+            var compName = Application.CompanyName.Trimmed();
+            if ( String.IsNullOrEmpty(compName ) ) {
+                throw new InvalidOperationException();
+            }
+            TheCompany = Software.CreateSubKey( compName.Replace( "&", Symbols.Singlespace ).Trim(), true ) ?? throw new InvalidOperationException();
 
             if ( TheCompany is null ) {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );
             }
 
-            TheApplication = TheCompany.CreateSubKey( Application.ProductName, true );
+            var product = Application.ProductName.Trimmed();
+
+            if ( String.IsNullOrEmpty(product) ) {
+                throw new InvalidOperationException();
+            }
+            TheApplication = TheCompany.CreateSubKey( product, true ) ?? throw new InvalidOperationException();
 
             if ( TheApplication is null ) {
                 throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.ProductName )} is null!" );

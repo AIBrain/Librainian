@@ -50,6 +50,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     public class PathSplitter {
 
         [NotNull]
+        [ItemNotNull]
         private List<String> Parts { get; }
 
         [NotNull]
@@ -82,7 +83,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( [NotNull] Folder folder ) : this( folder.FullName ) { }
+        public PathSplitter( Folder folder ) : this( folder?.FullName ) {
+        }
 
         public Boolean InsertRoot( [NotNull] String path ) {
             if ( path == null ) {
@@ -110,7 +112,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public Boolean SubstituteDrive( Char c ) {
-            if ( this.Parts[ 0 ].Length != 2 && this.Parts[ 0 ].EndsWith( ":", StringComparison.Ordinal ) ) {
+            var pz = this.Parts[ 0 ];
+
+            if ( pz?.Length != 2 || !pz.EndsWith( ":", StringComparison.Ordinal ) ) {
                 return false;
             }
 

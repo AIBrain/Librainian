@@ -66,17 +66,28 @@ namespace Librainian.Converters {
 
     public static class ConverterExtensions {
 
-        private static readonly String[] FalseStrings = {
-            "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
-        };
+        [NotNull]
+        private static readonly String[] FalseStrings;
 
-        private static readonly Char[] TrueChars = {
-            'Y', '1'
-        };
+        [NotNull]
+        private static readonly Char[] TrueChars;
 
-        private static readonly String[] TrueStrings = {
-            "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
-        };
+        [NotNull]
+        private static readonly String[] TrueStrings;
+
+        static ConverterExtensions() {
+            FalseStrings = new[] {
+                "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
+            };
+
+            TrueChars = new[] {
+                'Y', '1'
+            };
+
+            TrueStrings = new[] {
+                "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
+            };
+        }
 
         /// <summary>
         ///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
@@ -130,11 +141,11 @@ namespace Librainian.Converters {
         /// <summary>
         ///     Untested.
         /// </summary>
-        /// <param name="guid"></param>
+        /// <param name="self"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
         [Pure]
-        public static BigInteger ToBigInteger( this Guid guid ) => new BigInteger( guid.ToByteArray() );
+        public static BigInteger ToBigInteger( this Guid self ) => new BigInteger( self.ToByteArray() );
 
         /// <summary>
         ///     <para>Returns true if <paramref name="value" /> is a true, 'Y', "yes", "true", "1", or '1'.</para>
@@ -144,40 +155,26 @@ namespace Librainian.Converters {
         /// <param name="value"></param>
         [Pure]
         public static Boolean ToBoolean<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
-                return false;
-            }
+            switch ( value ) {
+                case null: return false;
+                case Boolean b: return b;
+                case Char c: return c.In( TrueChars );
+                case Int32 i: return i >= 1;
+                case String s when String.IsNullOrWhiteSpace( s ): return false;
+                case String s: {
+                    s = s.Trimmed();
 
-            if ( value is Boolean b ) {
-                return b;
-            }
+                    if ( s.In( TrueStrings ) ) {
+                        return true;
+                    }
 
-            if ( value is Char c ) {
-                return c.In( TrueChars );
-            }
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
 
-            if ( value is Int32 i ) {
-                return i >= 1;
-            }
-
-            if ( value is String s ) {
-                if ( String.IsNullOrWhiteSpace( s ) ) {
-                    return false;
+                    break;
                 }
-
-                s = s.Trim();
-
-                if ( s.In( TrueStrings ) ) {
-                    return true;
-                }
-
-                if ( Boolean.TryParse( s, out var result ) ) {
-                    return result;
-                }
-            }
-
-            if ( value is Control control ) {
-                return control.Text().ToBoolean();
+                case Control control: return control.Text().ToBoolean();
             }
 
             var t = value.ToString();
@@ -267,7 +264,7 @@ namespace Librainian.Converters {
             return default;
         }
 
-        public static Boolean ToBooleanOrThrow<T>( this T value ) =>
+        public static Boolean ToBooleanOrThrow<T>( [CanBeNull] this T value ) =>
             value.ToBooleanOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a boolean value." );
 
         [DebuggerStepThrough]
@@ -302,45 +299,33 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ToByteOrThrow<T>( this T value ) => value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
+        public static Byte ToByteOrThrow<T>( [CanBeNull] this T value ) => value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
 
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ToByteOrZero<T>( this T value ) => value.ToByteOrNull() ?? 0;
+        public static Byte ToByteOrZero<T>( [CanBeNull] this T value ) => value.ToByteOrNull() ?? 0;
 
         /// <summary>
         ///     <para>
-        ///         Converts the <paramref name="guid" /> to a <see cref="DateTime" />. Returns <see cref="DateTime.MinValue" />
+        ///         Converts the <paramref name="self" /> to a <see cref="DateTime" />. Returns <see cref="DateTime.MinValue" />
         ///         if any error occurs.
         ///     </para>
         /// </summary>
-        /// <param name="guid"></param>
+        /// <param name="self"></param>
         /// <returns></returns>
         /// <see cref="ToGuid(DateTime)" />
         [DebuggerStepThrough]
         [Pure]
-        public static DateTime ToDateTime( this Guid guid ) {
-            try {
-                var bytes = guid.ToByteArray();
-                var year = BitConverter.ToInt32( bytes, startIndex: 0 );
-                var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
-                var millisecond = BitConverter.ToUInt16( bytes, startIndex: 6 );
-                var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
-                var day = bytes[ 9 ];
-                var hour = bytes[ 10 ];
-                var minute = bytes[ 11 ];
-                var second = bytes[ 12 ];
-                var month = bytes[ 13 ];
-                var kind = ( DateTimeKind )bytes[ 15 ];
-                var result = new DateTime( year: year, month: month, day: day, hour: hour, minute: minute, second: second, millisecond: millisecond, kind: kind );
+        public static DateTime ToDateTime( this Guid self ) {
+            
+                var bytes = self.ToByteArray();
 
-                return result;
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
+                //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
+                //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-            return DateTime.MinValue;
+                return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
+                    second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
+            
         }
 
         [Pure]
@@ -360,10 +345,10 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal ToDecimal( this Guid guid ) {
+        public static Decimal ToDecimal( this Guid self ) {
             TranslateDecimalGuid converter;
             converter.Decimal = Decimal.Zero;
-            converter.Guid = guid;
+            converter.Guid = self;
 
             return converter.Decimal;
         }
@@ -376,27 +361,16 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Decimal? ToDecimalOrNull<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 return null;
             }
 
             try {
-                var s = value is Control control ? control.Text() : value.ToString();
+                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty ).Replace( ")", String.Empty ).Replace( "(", "-" ).Replace( "..", "." )
+                    .Replace( " ", String.Empty ).Trimmed();
 
-                s = s.StripLetters();
-                s = s.Replace( "$", String.Empty );
-                s = s.Replace( ")", String.Empty );
-                s = s.Replace( "(", "-" );
-                s = s.Replace( "..", "." );
-                s = s.Replace( " ", String.Empty );
-                s = s.Trim();
-
-                if ( String.IsNullOrWhiteSpace( s ) ) {
+                if ( String.IsNullOrEmpty( s ) ) {
                     return null;
-                }
-
-                if ( s.Contains( "$" ) || s.Contains( "(" ) ) {
-                    return s.MoneyToDecimal();
                 }
 
                 if ( Decimal.TryParse( s, out var result ) ) {
@@ -417,12 +391,12 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal ToDecimalOrThrow<T>( this T value ) =>
+        public static Decimal ToDecimalOrThrow<T>( [CanBeNull] this T value ) =>
             value.ToDecimalOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a decimal." );
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal ToDecimalOrZero<T>( this T value ) => value.ToDecimalOrNull() ?? Decimal.Zero;
+        public static Decimal ToDecimalOrZero<T>( [CanBeNull] this T value ) => value.ToDecimalOrNull() ?? Decimal.Zero;
 
         [NotNull]
         [DebuggerStepThrough]
@@ -578,10 +552,14 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Int32 ToIntOrZero<T>( this T value ) => value.ToIntOrNull() ?? 0;
+        public static Int32 ToIntOrZero<T>( [CanBeNull] this T value ) => value.ToIntOrNull() ?? 0;
 
         [NotNull]
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
+            if ( systemPath == null ) {
+                throw new ArgumentNullException( paramName: nameof( systemPath ) );
+            }
+
             var fullPath = systemPath.FullName;
 
             while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
@@ -614,7 +592,7 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal? ToMoneyOrNull( this SqlDataReader bob, String columnName ) {
+        public static Decimal? ToMoneyOrNull( [CanBeNull] this SqlDataReader bob, [CanBeNull] String columnName ) {
             try {
                 var ordinal = bob.Ordinal( columnName );
 
@@ -683,30 +661,22 @@ namespace Librainian.Converters {
         ///     Returns the trimmed <paramref name="obj" /> ToString() or null.
         ///     <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
         /// </summary>
+        /// <remarks>If the <paramref name="obj"/> is a <see cref="Control"/> then the <see cref="Control.Text"/> will be returned.</remarks>
         /// <param name="obj"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [CanBeNull]
         [Pure]
         public static String ToStringOrNull<T>( [CanBeNull] this T obj ) {
-            if ( obj == null ) {
-                return null;
+            switch ( obj ) {
+                case null: return default;
+                case Control control: return control.Text().Trimmed();
+                case String s: return s.Trimmed();
+                case DBNull _: return default;
             }
 
-            if ( obj is Control control ) {
-                return control.Text();
-            }
+            return Equals( obj, DBNull.Value ) ? default : obj.ToString().Trimmed();
 
-            if ( obj is String s ) {
-                return String.IsNullOrWhiteSpace( s ) ? null : s;
-            }
-
-            if ( obj is DBNull || Equals( obj, DBNull.Value ) ) {
-                return null;
-            }
-
-            var value = obj.ToString();
-
-            return value.IsEmpty() ? null : value;
         }
 
         /// <summary>
@@ -717,13 +687,9 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         [NotNull]
-        public static String ToStringOrThrow<T>( this T value ) =>
+        public static String ToStringOrThrow<T>( [CanBeNull] this T value ) =>
             value.ToStringOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a string." );
 
-        [DebuggerStepThrough]
-        [Pure]
-        [NotNull]
-        public static String ToStringTrimmed<T>( [CanBeNull] this T obj ) => obj.ToStringOrNull()?.Trim() ?? String.Empty;
 
         /// <summary>
         ///     Untested.

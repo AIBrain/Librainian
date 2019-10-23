@@ -42,11 +42,11 @@
 namespace LibrainianTests.Maths {
 
     using Librainian.Maths;
-    using NUnit.Framework;
+    using Xunit;
 
     public class ArithmeticMethods {
 
-        [Test]
+        [Fact]
         public void AddBitsMethod() {
             var size = ByteSize.FromBytes( 1 ).AddBits( 8 );
 
@@ -54,7 +54,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 16, size.Bits );
         }
 
-        [Test]
+        [Fact]
         public void AddBytesMethod() {
             var size = ByteSize.FromBytes( 1 ).AddBytes( 1 );
 
@@ -62,7 +62,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 16, size.Bits );
         }
 
-        [Test]
+        [Fact]
         public void AddGigaBytesMethod() {
             var size = ByteSize.FromGigaBytes( 2 ).AddGigaBytes( 2 );
 
@@ -73,7 +73,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 4d, size.GigaBytes );
         }
 
-        [Test]
+        [Fact]
         public void AddKiloBytesMethod() {
             var size = ByteSize.FromKiloBytes( 2 ).AddKiloBytes( 2 );
 
@@ -82,7 +82,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 4, size.KiloBytes );
         }
 
-        [Test]
+        [Fact]
         public void AddMegaBytesMethod() {
             var size = ByteSize.FromMegaBytes( 2 ).AddMegaBytes( 2 );
 
@@ -92,7 +92,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 4, size.MegaBytes );
         }
 
-        [Test]
+        [Fact]
         public void AddMethod() {
             var size1 = ByteSize.FromBytes( 1 );
             var result = size1.Add( size1 );
@@ -101,7 +101,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 16, result.Bits );
         }
 
-        [Test]
+        [Fact]
         public void AddPetaBytesMethod() {
             var size = ByteSize.FromPetaBytes( 2 ).AddPetaBytes( 2 );
 
@@ -114,7 +114,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 4d, size.PetaBytes );
         }
 
-        [Test]
+        [Fact]
         public void AddTeraBytesMethod() {
             var size = ByteSize.FromTeraBytes( 2 ).AddTeraBytes( 2 );
 
@@ -126,7 +126,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 4d, size.TeraBytes );
         }
 
-        [Test]
+        [Fact]
         public void DecrementOperator() {
             var size = ByteSize.FromBytes( 2 );
 
@@ -136,7 +136,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 1, size.Bytes );
         }
 
-        [Test]
+        [Fact]
         public void IncrementOperator() {
             var size = ByteSize.FromBytes( 2 );
 
@@ -146,7 +146,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 3, size.Bytes );
         }
 
-        [Test]
+        [Fact]
         public void MinusOperatorBinary() {
             var size = ByteSize.FromBytes( 4 ) - ByteSize.FromBytes( 2 );
 
@@ -154,7 +154,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( 2, size.Bytes );
         }
 
-        [Test]
+        [Fact]
         public void MinusOperatorUnary() {
             var size = ByteSize.FromBytes( 2 );
 
@@ -164,7 +164,7 @@ namespace LibrainianTests.Maths {
             //Assert.Equal( -2, size.Bytes );
         }
 
-        [Test]
+        [Fact]
         public void SubtractMethod() {
             var size = ByteSize.FromBytes( 4 ).Subtract( ByteSize.FromBytes( 2 ) );
 

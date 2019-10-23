@@ -43,23 +43,22 @@ namespace LibrainianTests {
 
     using System;
     using Librainian.Security;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class SecurityTests {
 
-        [Test]
+        [Fact]
         public static void TestEncryptionAndDecryption() {
             const String phraseToTest = "Hello world";
 
             var encrypted = phraseToTest.ToSecureString().EncryptString();
             var decrypted = encrypted.DecryptString().ToInsecureString();
 
-            Assert.AreEqual( expected: decrypted, actual: phraseToTest );
+            Assert.Equal( expected: decrypted, actual: phraseToTest );
         }
 
         /*
-		[Test]
+		[Fact]
 		public static void TestGenerateGenerates() {
 			var result = SecurityExtensions.GenerateKey( username: "Test" );
 			Console.WriteLine( result );

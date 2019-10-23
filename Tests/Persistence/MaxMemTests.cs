@@ -44,12 +44,11 @@ namespace LibrainianTests.Persistence {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class MaxMemTests {
 
-        [Test]
+        [Fact]
         public static void test_max_ReaderWriterLockSlim() {
             GC.Collect();
             var list = new List<ReaderWriterLockSlim>( 134_217_728 + 10240 );

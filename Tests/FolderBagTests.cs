@@ -52,9 +52,8 @@ namespace LibrainianTests {
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.Persistence;
     using Newtonsoft.Json;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class FolderBagTests {
 
         public static void OutputRamInformation() {
@@ -81,10 +80,10 @@ namespace LibrainianTests {
             }
         }
 
-        [Test]
+        [Fact]
         public static void TestRAMInfo() => OutputRamInformation();
 
-        [Test]
+        [Fact]
         public static void TestStorageAndRetrieval() {
             var counter = 0L;
             var watch = Stopwatch.StartNew();

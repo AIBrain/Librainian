@@ -43,12 +43,11 @@ namespace LibrainianTests.OperatingSystem {
 
     using System.Diagnostics;
     using Librainian.OperatingSystem;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class OSInfoTests {
 
-        [Test]
+        [Fact]
         public static void TestVersions() {
             Debug.WriteLine( $"Server: {Info.IsServer()}" );
             Debug.WriteLine( $"Version Major: {Info.VersionMajor()}" );

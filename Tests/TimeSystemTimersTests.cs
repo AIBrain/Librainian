@@ -43,9 +43,9 @@ namespace LibrainianTests {
 
     using System;
     using System.Threading;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
+    
     public static class TimeSystemTimers {
 
         private static Int64 _threadingCounter;
@@ -82,7 +82,7 @@ namespace LibrainianTests {
         }
 		*/
 
-        [Test]
+        [Fact]
         public static void RunTests() {
 
             //Console.WriteLine( RunSystemTimerTest( Milliseconds.One ) );

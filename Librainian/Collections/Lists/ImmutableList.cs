@@ -176,7 +176,7 @@ namespace Librainian.Collections.Lists {
         public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
 
         private void ThrowNotMutable() {
-            if ( this.ThrowExceptions == ThrowSetting.ThrowExceptions ) {
+            if ( this.ThrowExceptions == ThrowSetting.Throw ) {
                 throw new InvalidOperationException( "Cannot mutate an immutable list." );
             }
         }

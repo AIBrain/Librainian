@@ -44,9 +44,8 @@ namespace LibrainianTests.Persistence {
     using System;
     using Librainian.Magic;
     using Librainian.Persistence.InIFiles;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class JSONFileTests {
 
         public const String IniTestData = @"
@@ -87,14 +86,14 @@ data33   =   3
 
         public static IniFile Json;
 
-        [OneTimeSetUp]
+        [Theory]
         public static void Setup() {
             Json = IoC.Container.Get<IniFile>();
             IniFile = IoC.Container.Get<IniFile>();
         }
 
         /*
-        [Test]
+        [Fact]
         public static async Task test_load_from_string() {
             IniFile.Add( IniTestData );
 

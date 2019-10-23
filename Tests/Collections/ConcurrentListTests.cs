@@ -47,9 +47,8 @@ namespace LibrainianTests.Collections {
     using System.Threading;
     using Librainian.Collections.Lists;
     using Librainian.Maths;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class ConcurrentListTests {
 
         private const Int32 NamesToAdd = 1024;
@@ -72,7 +71,7 @@ namespace LibrainianTests.Collections {
             }
         }
 
-        [Test]
+        [Fact]
         public static void AddNameThreadSafetyTest() {
             var list = new ConcurrentList<String>();
 
@@ -86,10 +85,10 @@ namespace LibrainianTests.Collections {
                 thread.Join();
             }
 
-            Assert.AreEqual( expected: NamesToAdd * Environment.ProcessorCount * ScaleCPUUsed, actual: list.Count );
+            Assert.Equal( expected: NamesToAdd * Environment.ProcessorCount * ScaleCPUUsed, actual: list.Count );
         }
 
-        [Test]
+        [Fact]
         public static void ThreadSafetyTestAddAndRemoves() {
             var list1 = new ConcurrentList<String>();
 
@@ -103,10 +102,10 @@ namespace LibrainianTests.Collections {
                 thread.Join();
             }
 
-            Assert.AreEqual( expected: NamesToAdd / 2 * Environment.ProcessorCount * ScaleCPUUsed, actual: list1.Count );
+            Assert.Equal( expected: NamesToAdd / 2 * Environment.ProcessorCount * ScaleCPUUsed, actual: list1.Count );
         }
 
-        [Test]
+        [Fact]
         public static void ThreadSafetyTestEquals() {
             var list1 = new ConcurrentList<String>();
             var list2 = new ConcurrentList<String>();
@@ -120,10 +119,10 @@ namespace LibrainianTests.Collections {
             thread1.Join();
             thread2.Join();
 
-            Assert.AreEqual( expected: list1, actual: list2 );
+            Assert.Equal( expected: list1, actual: list2 );
         }
 
-        [Test]
+        [Fact]
         public static void ThreadSafetyTestNotEquals() {
             var list1 = new ConcurrentList<String>();
             var list2 = new ConcurrentList<String>();
@@ -140,7 +139,7 @@ namespace LibrainianTests.Collections {
             thread2.Join();
             thread3.Join();
 
-            Assert.AreNotEqual( expected: list1, actual: list2 );
+            Assert.NotEqual( expected: list1, actual: list2 );
         }
     }
 }

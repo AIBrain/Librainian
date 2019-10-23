@@ -44,11 +44,11 @@ namespace LibrainianTests.Linguistics {
     using System;
     using Librainian.Parsing;
     using Librainian.Persistence;
-    using NUnit.Framework;
+    using Xunit;
 
     public class ParsingTests {
 
-        [Test]
+        [Fact]
         public static void Test() {
             Console.WriteLine( "<p>George</p><b>W</b><i>Bush</i>".StripTags( new[] {
                 "i", "b"
@@ -69,13 +69,13 @@ namespace LibrainianTests.Linguistics {
             } ) );
         }
 
-        [Test]
+        [Fact]
         public static void TestStaticStorage() {
             const String phraseToTest = "Hello world";
 
             PersistenceExtensions.Settings( nameof( phraseToTest ), phraseToTest );
 
-            Assert.AreEqual( phraseToTest, PersistenceExtensions.Settings( nameof( phraseToTest ) ) );
+            Assert.Equal( phraseToTest, PersistenceExtensions.Settings( nameof( phraseToTest ) ) );
         }
     }
 }

@@ -53,7 +53,11 @@ namespace Librainian.Controls {
 
     public static class FormExtensions {
 
-        public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
+        public static Boolean IsFullyVisibleOnAnyScreen( [NotNull] this Form form ) {
+            if ( form == null ) {
+                throw new ArgumentNullException( paramName: nameof( form ) );
+            }
+
             var desktopBounds = form.DesktopBounds;
             return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
         }

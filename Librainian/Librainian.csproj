@@ -178,6 +178,7 @@
     <Compile Include="Financial\Containers\Shopping\ItemCategory.cs" />
     <Compile Include="Financial\Containers\Shopping\TaxableShoppingItem.cs" />
     <Compile Include="Financial\Containers\Shopping\TaxTable.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Internet\InternetExtensions.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Logging\IOptions.cs" />
@@ -379,6 +380,9 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\IThrottle.cs" />
+    <Compile Include="Threading\IUsableSemaphore.cs" />
+    <Compile Include="Threading\IUsableSemaphoreWrapper.cs" />
     <Compile Include="Threading\SemaphoreSlimExtensions.cs" />
     <Compile Include="Threading\NicerFormTimer.cs" />
     <Compile Include="Threading\NicerSystemTimer.cs" />
@@ -390,7 +394,10 @@
     <Compile Include="Threading\Idler.cs" />
     <Compile Include="Threading\ReaderWriterFromMicrosoft.cs" />
     <Compile Include="Threading\Job.cs" />
+    <Compile Include="Threading\Throttle.cs" />
     <Compile Include="Threading\UnitofWork.cs" />
+    <Compile Include="Threading\UsableSemaphoreSlim.cs" />
+    <Compile Include="Threading\UsableSemaphoreThrottle.cs" />
     <Compile Include="Threading\VolatileBoolean.cs" />
     <Compile Include="Measurement\Time\Clocks\DateAndTime.cs" />
     <Compile Include="Measurement\Time\Clocks\GameTimer.cs" />
@@ -892,6 +899,11 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
       <Version>3.3.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.9.6</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>
     </PackageReference>
@@ -942,7 +954,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

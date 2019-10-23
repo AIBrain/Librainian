@@ -47,9 +47,8 @@ namespace LibrainianTests.Linguistics {
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using Librainian.Linguistics;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class SentenceTests {
 
         public const String Sample = "the quick brown fox jumped over the lazy dog";
@@ -63,7 +62,7 @@ namespace LibrainianTests.Linguistics {
             return sentence;
         }
 
-        [Test]
+        [Fact]
         public static void CombinationsTest() {
             var sentence = SampleLengthTest();
 

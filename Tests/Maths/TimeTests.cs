@@ -47,57 +47,56 @@ namespace LibrainianTests.Maths {
     using Librainian.Measurement.Frequency;
     using Librainian.Measurement.Time;
     using Librainian.Measurement.Time.Clocks;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class TimeTests {
+
+        [Fact]
+        public static void DayTest() => Day.Maximum.Value.Should().BeGreaterThan( Day.Minimum.Value );
+
+        [Fact]
+        public static void HourTest() => Hour.Maximum.Value.Should().BeGreaterThan( Hour.Minimum.Value );
+
+        [Fact]
+        public static void MicrosecondTest() => Microsecond.Maximum.Value.Should().BeGreaterThan( Microsecond.Minimum.Value );
+
+        [Fact]
+        public static void MillisecondTest() => Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
+
+        [Fact]
+        public static void MinuteTest() => Minute.Maximum.Value.Should().BeGreaterThan( Minute.Minimum.Value );
+
+        [Fact]
+        public static void MonthTest() => Month.Maximum.Value.Should().BeGreaterThan( Month.Minimum.Value );
+
+        [Fact]
+        public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
 
         //[OneTimeSetUp]
         public static void Setup() { }
 
+        [Fact]
+        public static void ShouldReturnCorrectHomesteadDate_WhenSending_April_6_2378() {
+            var homesteadDate = new DateTime( 2378, 4, 6, 12, 0, 0 );
+            Assert.Equal( 54868.82m, homesteadDate.ToStarDate() );
+        }
+
+        [Fact]
+        public static void ShouldReturnCorrectStarDate_WhenKnownEarthDatePassedIn() {
+            var equvalentStarDate = new DateTime( 2318, 7, 5, 12, 0, 0 ).ToStarDate();
+            Assert.Equal( 0m, equvalentStarDate );
+        }
+
+        [Fact]
+        public static void ShouldReturnCorrectStarDate_WhenSendingToday_April_24_2015() {
+            var tngKnownDate = new DateTime( 2015, 4, 24, 12, 0, 0 );
+            Assert.Equal( -278404.30m, tngKnownDate.ToStarDate() );
+        }
+
         //[OneTimeTearDown]
         public static void TearDown() { }
 
-        [Test]
-        public static void DayTest() => Day.Maximum.Value.Should().BeGreaterThan( Day.Minimum.Value );
-
-        [Test]
-        public static void HourTest() => Hour.Maximum.Value.Should().BeGreaterThan( Hour.Minimum.Value );
-
-        [Test]
-        public static void MicrosecondTest() => Microsecond.Maximum.Value.Should().BeGreaterThan( Microsecond.Minimum.Value );
-
-        [Test]
-        public static void MillisecondTest() => Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
-
-        [Test]
-        public static void MinuteTest() => Minute.Maximum.Value.Should().BeGreaterThan( Minute.Minimum.Value );
-
-        [Test]
-        public static void MonthTest() => Month.Maximum.Value.Should().BeGreaterThan( Month.Minimum.Value );
-
-        [Test]
-        public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
-
-        [Test]
-        public static void ShouldReturnCorrectHomesteadDate_WhenSending_April_6_2378() {
-            var homesteadDate = new DateTime( 2378, 4, 6, 12, 0, 0 );
-            Assert.AreEqual( 54868.82m, homesteadDate.ToStarDate() );
-        }
-
-        [Test]
-        public static void ShouldReturnCorrectStarDate_WhenKnownEarthDatePassedIn() {
-            var equvalentStarDate = new DateTime( 2318, 7, 5, 12, 0, 0 ).ToStarDate();
-            Assert.AreEqual( 0m, equvalentStarDate );
-        }
-
-        [Test]
-        public static void ShouldReturnCorrectStarDate_WhenSendingToday_April_24_2015() {
-            var tngKnownDate = new DateTime( 2015, 4, 24, 12, 0, 0 );
-            Assert.AreEqual( -278404.30m, tngKnownDate.ToStarDate() );
-        }
-
-        [Test]
+        [Fact]
         public static void TestAttoseconds() {
 
             //Attoseconds.Zero.Value.Should().BeLessThan(Attoseconds.One.Value);
@@ -107,7 +106,7 @@ namespace LibrainianTests.Maths {
             //Attoseconds.One.Should().BeLessThan(Femtoseconds.One);
         }
 
-        [Test]
+        [Fact]
         public static void TestDays() {
             Days.Zero.Should().BeLessThan( Days.One );
             Days.One.Should().BeGreaterThan( Days.Zero );
@@ -116,7 +115,7 @@ namespace LibrainianTests.Maths {
             Days.One.Should().BeGreaterThan( Hours.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestDurationParser() {
 
             //var example = "10s123456789y3mon";
@@ -125,7 +124,7 @@ namespace LibrainianTests.Maths {
             //DurationParser.TryParse( example, out timeSpan, out failReason ); //TODO
         }
 
-        [Test]
+        [Fact]
         public static void TestFemtoseconds() {
             Femtoseconds.Zero.Should().BeLessThan( Femtoseconds.One );
             Femtoseconds.One.Should().BeGreaterThan( Femtoseconds.Zero );
@@ -134,13 +133,13 @@ namespace LibrainianTests.Maths {
             Femtoseconds.One.Should().BeLessThan( Picoseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestFps() {
-            Assert.That( Fps.One < Fps.Two );
-            Assert.That( Fps.Ten > Fps.One );
+            Assert.True( Fps.One < Fps.Two );
+            Assert.True( Fps.Ten > Fps.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestHours() {
             Hours.Zero.Should().BeLessThan( Hours.One );
             Hours.One.Should().BeGreaterThan( Hours.Zero );
@@ -149,7 +148,7 @@ namespace LibrainianTests.Maths {
             Hours.One.Should().BeGreaterThan( Minutes.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestMicroSeconds() {
             Microseconds.Zero.Should().BeLessThan( Microseconds.One );
             Microseconds.One.Should().BeGreaterThan( Microseconds.Zero );
@@ -158,7 +157,7 @@ namespace LibrainianTests.Maths {
             Microseconds.One.Should().BeGreaterThan( Nanoseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestMilliseconds() {
             Milliseconds.Zero.Should().BeLessThan( Milliseconds.One );
             Milliseconds.One.Should().BeGreaterThan( Milliseconds.Zero );
@@ -167,7 +166,7 @@ namespace LibrainianTests.Maths {
             Milliseconds.One.Should().BeGreaterThan( Microseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestMinutes() {
             Minutes.Zero.Should().BeLessThan( Minutes.One );
             Minutes.One.Should().BeGreaterThan( Minutes.Zero );
@@ -176,7 +175,7 @@ namespace LibrainianTests.Maths {
             Minutes.One.Should().BeGreaterThan( Seconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestMonths() {
             Months.Zero.Should().BeLessThan( Months.One );
             Months.One.Should().BeGreaterThan( Months.Zero );
@@ -184,7 +183,7 @@ namespace LibrainianTests.Maths {
             Months.One.Should().BeLessThan( Years.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestNanoseconds() {
             Nanoseconds.Zero.Should().BeLessThan( Nanoseconds.One );
             Nanoseconds.One.Should().BeGreaterThan( Nanoseconds.Zero );
@@ -193,7 +192,7 @@ namespace LibrainianTests.Maths {
             Nanoseconds.One.Should().BeGreaterThan( Picoseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestPicoseconds() {
             Picoseconds.Zero.Should().BeLessThan( Picoseconds.One );
             Picoseconds.One.Should().BeGreaterThan( Picoseconds.Zero );
@@ -202,7 +201,7 @@ namespace LibrainianTests.Maths {
             Picoseconds.One.Should().BeGreaterThan( Femtoseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestPlanckTimes() {
 
             //PlanckTimes.Zero.Should().BeLessThan(PlanckTimes.One);
@@ -217,7 +216,7 @@ namespace LibrainianTests.Maths {
             PlanckTimes.InOneMonth.Should().BeLessThan( PlanckTimes.InOneYear );
         }
 
-        [Test]
+        [Fact]
         public static void TestSeconds() {
 
             //Seconds.Zero.Should().BeLessThan(Seconds.One);
@@ -227,7 +226,7 @@ namespace LibrainianTests.Maths {
             //Seconds.One.Should().BeGreaterThan(Milliseconds.One);
         }
 
-        [Test]
+        [Fact]
         public static void TestSpanIdentity() {
             try {
                 SpanOfTime.Identity.Yoctoseconds.Value.Should().Be( 1 );
@@ -251,10 +250,10 @@ namespace LibrainianTests.Maths {
             }
         }
 
-        [Test]
+        [Fact]
         public static void TestTimes() => UniversalDateTime.Now.Should().BeGreaterThan( UniversalDateTime.Unix );
 
-        [Test]
+        [Fact]
         public static void TestWeeks() {
             Weeks.Zero.Should().BeLessThan( Weeks.One );
             Weeks.One.Should().BeGreaterThan( Weeks.Zero );
@@ -264,7 +263,7 @@ namespace LibrainianTests.Maths {
             Weeks.One.Should().BeGreaterThan( Days.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestYears() {
             Years.Zero.Should().BeLessThan( Years.One );
             Years.One.Should().BeGreaterThan( Years.Zero );
@@ -273,7 +272,7 @@ namespace LibrainianTests.Maths {
             //One.Should().BeGreaterThan( Months.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestYoctoseconds() {
             Yoctoseconds.Zero.Should().BeLessThan( Yoctoseconds.One );
             Yoctoseconds.One.Should().BeGreaterThan( Yoctoseconds.Zero );
@@ -282,7 +281,7 @@ namespace LibrainianTests.Maths {
             Yoctoseconds.One.Should().BeLessThan( Zeptoseconds.One );
         }
 
-        [Test]
+        [Fact]
         public static void TestZeptoSeconds() {
             Zeptoseconds.Zero.Should().BeLessThan( Zeptoseconds.One );
             Zeptoseconds.One.Should().BeGreaterThan( Zeptoseconds.Zero );

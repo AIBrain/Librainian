@@ -282,12 +282,19 @@ namespace Librainian.Databases {
             try {
                 using var cts = new CancellationTokenSource( timeout );
 
-                var list = credentials.Where( c => c != default ).SelectMany( credential => credential.LookForAnyDatabases( timeout ) )
-                    .Select( builder => builder.TryGetResponse( cts.Token ) ).ToList();
+                var tasks = credentials.Where( c => c != default ).SelectMany( credential => credential.LookForAnyDatabases( timeout ) )
+                    .Select( builder => builder?.TryGetResponse( cts.Token ) ).ToList();
 
-                await Task.WhenAny( list ).ConfigureAwait( false );
+                await Task.WhenAny( tasks ).ConfigureAwait( false );
 
-                return list.Where( builder => builder.IsDone() && builder.Result.Status == Status.Success ).Select( task => task.Result );
+                return tasks.Where( builder => {
+
+                    if ( !builder.IsDone() ) {
+                        return false;
+                    }
+
+                    return builder.Result.Status == Status.Success;
+                } ).Select( task => task.Result );
             }
             catch ( Exception exception ) {
                 exception.Log();

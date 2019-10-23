@@ -352,6 +352,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     .
         /// </param>
         /// <returns></returns>
+        [NotNull]
         Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean exact = true );
 
         Task<String> ReadStringAsync();
@@ -411,6 +412,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
 
+        [NotNull]
         Task<Boolean> IsAll( Byte number );
     }
 
@@ -1662,6 +1664,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         private Lazy<FileWatchingEvents> WatchEvents { get; }
 
+        [NotNull]
         public static Computer thisComputer { get; } = new Computer();
 
         private static ThreadLocal<Lazy<WebClient>> WebClients =
@@ -1672,7 +1675,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( paramName: nameof( info ) );
             }
 
-            this.FullPath = info.GetString( name: nameof( this.FullPath ) ).TrimAndThrowIfBlank();
+            this.FullPath = (info.GetString( name: nameof( this.FullPath ) ) ?? throw new InvalidOperationException()).TrimAndThrowIfBlank();
         }
 
         /// <summary>

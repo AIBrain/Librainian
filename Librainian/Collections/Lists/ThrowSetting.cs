@@ -45,7 +45,7 @@ namespace Librainian.Collections.Lists {
 
         DontThrowExceptions,
 
-        ThrowExceptions
+        Throw
 
     }
 

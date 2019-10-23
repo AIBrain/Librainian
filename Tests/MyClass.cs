@@ -47,9 +47,8 @@ namespace LibrainianTests {
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using JetBrains.Annotations;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     [Serializable]
     public class MyClass : ISerializable {
 
@@ -71,7 +70,7 @@ namespace LibrainianTests {
         [OnSerializing]
         internal void OnSerializingMethod( StreamingContext context ) => this.Trace();
 
-        [Test]
+        [Fact]
         public static void SerializeAndDeserializeTest() {
             using ( var ms = new MemoryStream() ) {
 

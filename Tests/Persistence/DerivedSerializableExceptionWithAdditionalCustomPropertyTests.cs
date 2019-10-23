@@ -33,7 +33,7 @@ namespace LibrainianTests.Persistence {
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Librainian.Extensions;
-    using NUnit.Framework;
+    using Xunit;
 
     public class DerivedSerializableExceptionWithAdditionalCustomPropertyTests {
 
@@ -54,17 +54,17 @@ namespace LibrainianTests.Persistence {
             this.ValidationErrors.Add( ValidationError2 );
         }
 
-        [Test]
+        [Fact]
         public void TestDerivedSerializableExceptionWithAdditionalCustomProperty() {
             var ex = new DerivedSerializableExceptionWithAdditionalCustomProperty( Message, Username, ResourceName, this.ValidationErrors );
 
             // Sanity check: Make sure custom properties are set before serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-            Assert.AreEqual( Username, ex.Username );
+            Assert.Equal( Message, ex.Message );
+            Assert.Equal( ResourceName, ex.ResourceName );
+            Assert.Equal( 2, ex.ValidationErrors.Count );
+            Assert.Equal( ValidationError1, ex.ValidationErrors[ 0 ] );
+            Assert.Equal( ValidationError2, ex.ValidationErrors[ 1 ] );
+            Assert.Equal( Username, ex.Username );
 
             // Save the full ToString() value, including the exception message and stack trace.
             var exceptionToString = ex.ToString();
@@ -85,27 +85,27 @@ namespace LibrainianTests.Persistence {
             }
 
             // Make sure custom properties are preserved after serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
-            Assert.AreEqual( Username, ex.Username );
+            Assert.Equal( Message, ex.Message );
+            Assert.Equal( ResourceName, ex.ResourceName );
+            Assert.Equal( 2, ex.ValidationErrors.Count );
+            Assert.Equal( ValidationError1, ex.ValidationErrors[ 0 ] );
+            Assert.Equal( ValidationError2, ex.ValidationErrors[ 1 ] );
+            Assert.Equal( Username, ex.Username );
 
             // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
+            Assert.Equal( exceptionToString, ex.ToString() );
         }
 
-        [Test]
+        [Fact]
         public void TestSerializableExceptionWithCustomProperties() {
             var ex = new SerializableExceptionWithCustomProperties( Message, ResourceName, this.ValidationErrors );
 
             // Sanity check: Make sure custom properties are set before serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
+            Assert.Equal( Message, ex.Message );
+            Assert.Equal( ResourceName, ex.ResourceName );
+            Assert.Equal( 2, ex.ValidationErrors.Count );
+            Assert.Equal( ValidationError1, ex.ValidationErrors[ 0 ] );
+            Assert.Equal( ValidationError2, ex.ValidationErrors[ 1 ] );
 
             // Save the full ToString() value, including the exception message and stack trace.
             var exceptionToString = ex.ToString();
@@ -126,17 +126,17 @@ namespace LibrainianTests.Persistence {
             }
 
             // Make sure custom properties are preserved after serialization
-            Assert.AreEqual( Message, ex.Message, "Message" );
-            Assert.AreEqual( ResourceName, ex.ResourceName, "ex.ResourceName" );
-            Assert.AreEqual( 2, ex.ValidationErrors.Count, "ex.ValidationErrors.Count" );
-            Assert.AreEqual( ValidationError1, ex.ValidationErrors[0], "ex.ValidationErrors[0]" );
-            Assert.AreEqual( ValidationError2, ex.ValidationErrors[1], "ex.ValidationErrors[1]" );
+            Assert.Equal( Message, ex.Message );
+            Assert.Equal( ResourceName, ex.ResourceName );
+            Assert.Equal( 2, ex.ValidationErrors.Count );
+            Assert.Equal( ValidationError1, ex.ValidationErrors[ 0 ] );
+            Assert.Equal( ValidationError2, ex.ValidationErrors[ 1 ] );
 
             // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
+            Assert.Equal( exceptionToString, ex.ToString() );
         }
 
-        [Test]
+        [Fact]
         public void TestSerializableExceptionWithoutCustomProperties() {
             Exception ex = new SerializableExceptionWithoutCustomProperties( "Message", new Exception( "Inner exception." ) );
 
@@ -159,7 +159,7 @@ namespace LibrainianTests.Persistence {
             }
 
             // Double-check that the exception message and stack trace (owned by the base Exception) are preserved
-            Assert.AreEqual( exceptionToString, ex.ToString(), "ex.ToString()" );
+            Assert.Equal( exceptionToString, ex.ToString() );
         }
     }
 }

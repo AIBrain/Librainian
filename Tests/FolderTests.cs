@@ -44,12 +44,11 @@ namespace LibrainianTests {
     using Librainian.OperatingSystem;
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.Persistence;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class FolderTests {
 
-        [Test]
+        [Fact]
         public static void TestSerialize() {
             var expected = Windows.WindowsSystem32Folder.Value;
 
@@ -57,7 +56,7 @@ namespace LibrainianTests {
 
             var actual = json.FromJSON<Folder>();
 
-            Assert.AreEqual( expected, actual );
+            Assert.Equal( expected, actual );
         }
     }
 }

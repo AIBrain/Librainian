@@ -44,12 +44,11 @@ namespace LibrainianTests {
     using System;
     using Librainian.Maths;
     using Librainian.OperatingSystem.Storage;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class PhysicalDiskTests {
 
-        [Test]
+        [Fact]
         public static void TestAllDisks() {
             foreach ( var diskNumber in 0.To( 26 ) ) {
                 var disk = new PhysicalDisk( diskNumber );

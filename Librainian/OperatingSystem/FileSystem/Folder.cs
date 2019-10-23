@@ -78,6 +78,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchPattern"></param>
         /// <param name="randomize">    </param>
         /// <returns></returns>
+        [NotNull]
         IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = false );
 
         /// <summary>
@@ -87,12 +88,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchPattern"></param>
         /// <param name="randomize">Return the folders in random order.</param>
         /// <returns></returns>
+        [NotNull]
         Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String searchPattern = "*", Boolean randomize = true );
 
         /// <summary>
         ///     Returns a copy of the folder instance.
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         IFolder Clone();
 
         /// <summary>
@@ -128,18 +131,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Returns an enumerable collection of <see cref="Document" /> in the current directory.</para>
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         IEnumerable<Document> GetDocuments();
 
+        [NotNull]
         IEnumerable<Document> GetDocuments( [NotNull] String searchPattern );
 
+        [NotNull]
         IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns );
 
         Disk GetDrive();
 
+        [NotNull]
         IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
 
         Int32 GetHashCode();
 
+        [CanBeNull]
         IFolder GetParent();
 
         Boolean HavePermission( FileIOPermissionAccess access );

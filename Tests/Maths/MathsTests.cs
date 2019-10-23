@@ -44,12 +44,11 @@ namespace LibrainianTests.Maths {
     using System.Numerics;
     using FluentAssertions;
     using Librainian.Maths;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class MathsTests {
 
-        [Test]
+        [Fact]
         public static void TestOperations() {
 
             var test = new[] {

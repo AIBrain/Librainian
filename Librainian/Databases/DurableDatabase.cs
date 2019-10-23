@@ -649,7 +649,7 @@ namespace Librainian.Databases {
                     }
 
                     using ( var reader = command.ExecuteReader() ) {
-                        var data = GenericPopulator<TResult>.CreateList( reader );
+                        var data = GenericPopulatorExtensions.CreateList<TResult>( reader );
 
                         return data;
                     }

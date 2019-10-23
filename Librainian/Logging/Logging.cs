@@ -193,23 +193,19 @@ namespace Librainian.Logging {
         public static void Log( this String message, Boolean breakinto = false ) {
             message = $"[{DateTime.Now:t}] {message ?? Symbols.Null}";
 
-            if ( Logger.IsTraceEnabled ) {
-                if ( !Debugger.IsAttached ) {
-                    Logger.Trace( message ); //Debug below also writes..
-                }
+            if ( Debugger.IsAttached ) {
+                System.Diagnostics.Debug.WriteLine( message );
             }
 
-            if ( Logger.IsDebugEnabled ) {
-                if ( Debugger.IsAttached ) {
-                    System.Diagnostics.Debug.WriteLine( message );
-                }
-                else {
-                    Logger.Debug( message );
-                }
+            if ( Logger.IsTraceEnabled ) {
+                Logger.Trace( message );
+            }
+            else if ( Logger.IsDebugEnabled ) {
+                Logger.Debug( message );
+            }
 
-                if ( breakinto && Debugger.IsAttached ) {
-                    Debugger.Break();
-                }
+            if ( breakinto && Debugger.IsAttached ) {
+                Debugger.Break();
             }
         }
 

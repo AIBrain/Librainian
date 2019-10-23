@@ -45,12 +45,11 @@ namespace LibrainianTests {
     using System.Diagnostics;
     using Librainian.ComputerSystem.Devices;
     using Librainian.Parsing;
-    using NUnit.Framework;
+    using Xunit;
 
-    [TestFixture]
     public static class DriveTests {
 
-        [Test]
+        [Fact]
         public static void TestAllDrives() {
             var alphabet = ParsingConstants.EnglishAlphabetUppercase;
             Debug.WriteLine( alphabet );
