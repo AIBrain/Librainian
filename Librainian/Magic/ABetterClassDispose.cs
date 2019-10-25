@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/10/11 at 9:10 AM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/10/25 at 12:10 PM.
 
 namespace Librainian.Magic {
 
@@ -60,35 +60,7 @@ namespace Librainian.Magic {
 
         [DebuggerStepThrough]
         public void Dispose() {
-            try {
-
-                //allow once
-                if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 ) {
-                    try {
-                        this.DisposeManaged();
-                    }
-                    catch ( Exception exception ) {
-                        exception.Log();
-                    }
-                }
-
-                //allow once
-                if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 ) {
-                    try {
-                        this.DisposeNative();
-                    }
-                    catch ( Exception exception ) {
-                        exception.Log();
-                    }
-                }
-            }
-            finally {
-
-                //allow once
-                if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 ) {
-                    GC.SuppressFinalize( this );
-                }
-            }
+            this.Dispose( true );
         }
 
         private Int32 _hasDisposedManaged;
@@ -101,11 +73,41 @@ namespace Librainian.Magic {
         ~ABetterClassDispose() => this.Dispose();
 
         /// <summary>
-        ///     Does nothing except call <see cref="Dispose()" />.
+        ///     If disposing, the method has been called directly or indirectly by a user's code. Managed and unmanaged resources
+        ///     can be disposed.
+        ///     If !disposing, the method has been called by the runtime from inside the finalizer and you should not reference
+        ///     other objects. Only unmanaged resources can be disposed.
         /// </summary>
-        /// <param name="_"></param>
-        public void Dispose( Boolean _ ) {
-            this.Dispose();
+        /// <param name="disposing"></param>
+        public void Dispose( Boolean disposing ) {
+            if ( disposing ) {
+                try {
+                    if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 ) {
+                        try {
+                            this.DisposeManaged(); //allow once
+                        }
+                        catch ( Exception exception ) {
+                            exception.Log();
+                        }
+                    }
+
+                    if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 ) {
+                        try {
+                            this.DisposeNative(); //allow once
+                        }
+                        catch ( Exception exception ) {
+                            exception.Log();
+                        }
+                    }
+                }
+                finally {
+                    if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 ) {
+                        GC.SuppressFinalize( this ); //allow once
+                    }
+                }
+            }
+
+            //this.IsDisposed = true;   //automatic by checking getters
         }
 
         /// <summary>

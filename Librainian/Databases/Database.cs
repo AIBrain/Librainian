@@ -98,7 +98,15 @@ namespace Librainian.Databases {
             return $"exec {query} {parameters.Select( parameter => $"{parameter.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings()}; ";
         }
 
-        public static Boolean CreateDatabaseIfNotExist( [NotNull] String databaseName, String connectionString ) {
+        public static Boolean CreateDatabaseIfNotExist( [NotNull] String databaseName, [NotNull] String connectionString ) {
+            if ( String.IsNullOrWhiteSpace( value: databaseName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( databaseName ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( connectionString ) );
+            }
+
             try {
                 databaseName = databaseName.Trim();
 

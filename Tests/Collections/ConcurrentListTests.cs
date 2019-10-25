@@ -42,12 +42,22 @@
 namespace LibrainianTests.Collections {
 
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
+    using Librainian.Collections.Extensions;
     using Librainian.Collections.Lists;
+    using Librainian.Extensions;
     using Librainian.Maths;
+    using Librainian.Measurement.Time;
+    using Librainian.Threading;
     using Xunit;
+    using Xunit.Abstractions;
+    using Xunit.Sdk;
 
     public static class ConcurrentListTests {
 
@@ -140,6 +150,38 @@ namespace LibrainianTests.Collections {
             thread3.Join();
 
             Assert.NotEqual( expected: list1, actual: list2 );
+        }
+
+        [Fact]
+        public static async Task TestAFew() {
+            var cancel = new CancellationTokenSource( Minutes.One );
+            var token = cancel.Token;
+
+            var numbers = new ConcurrentList<Int32>();
+            var create = Environment.ProcessorCount * 1024;
+            var workers = new List<Task>();
+
+
+            Debug.WriteLine( $"Creating {create} workers..." );
+
+            foreach ( var i in 1.To( create ) ) {
+                var task = Task.Run( () => {
+                    var rnd = Randem.NextTimeSpan( Milliseconds.One, Milliseconds.NinetySeven );
+                    rnd.Delay();
+                    workers.Add( numbers.AddAsync( ( Int32 ) rnd.TotalMilliseconds ) );
+                }, token );
+                workers.Add( task );
+            }
+
+            Debug.WriteLine( $"Waiting for {workers.Count} workers to complete..." );
+
+            while ( workers.Any( worker => worker?.IsDone() == false ) ) {
+                Task.Delay( 100, token ).Wait( token );
+            }
+
+            Debug.WriteLine( $"We now have {numbers.Count} numbers." );
+
+            numbers.Nop();
         }
     }
 }

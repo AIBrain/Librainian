@@ -528,7 +528,7 @@ namespace Librainian.Parsing {
         ///     </para>
         /// </remarks>
         [NotNull]
-        public static String EscapeUriDataStringRfc3986( [NotNull] String value ) {
+        public static Uri EscapeUriDataStringRfc3986( [NotNull] this String value ) {
 
             // Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior (according to the documentation). If it does, the escaping we do that follows it will be
             // a no-op since the characters we search for to replace can't possibly exist in the String.
@@ -541,7 +541,7 @@ namespace Librainian.Parsing {
 
             // Return the fully-RFC3986-escaped String.
 
-            return escaped.ToString();
+            return new Uri( escaped.ToString() );
         }
 
         public static Boolean ExactMatch( [NotNull] this String source, [NotNull] String compare ) {
@@ -553,7 +553,11 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( nameof( compare ) );
             }
 
-            if ( source.Length == 0 || compare.Length == 0 ) {
+            if ( source.Length == 0 ) {
+                return false;
+            }
+
+            if ( compare.Length == 0 ) {
                 return false;
             }
 
@@ -561,7 +565,7 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static String FirstSentence( this String text ) {
+        public static String FirstSentence( [CanBeNull] this String text ) {
             if ( text.IsNullOrWhiteSpace() ) {
                 return String.Empty;
             }
@@ -724,11 +728,11 @@ namespace Librainian.Parsing {
             return word.AddSpacesBeforeUppercase().ToLower( CultureInfo.CurrentUICulture );
         }
 
-        [Obsolete]
-        [NotNull]
-        public static String InOutputFormat( this String indexed ) => $"{indexed}-|";
-
-        // .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
+        /// <summary>
+        /// .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public static Boolean IsDigit( this Char c ) => c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
 
         public static Boolean IsJustNumbers( [CanBeNull] this String text ) =>
@@ -1800,7 +1804,8 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static IEnumerable<String> ToWords( [CanBeNull] this String sentence ) {
+        [ItemNotNull]
+        public static String[] ToWords( [CanBeNull] this String sentence ) {
 
             //TODO try parsing with different splitters?
             // ...do we mabe want the most or least words or avg ?
@@ -1823,11 +1828,11 @@ namespace Librainian.Parsing {
 
             //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
 
-            if ( String.IsNullOrWhiteSpace( sentence ) ) {
-                return Enumerable.Empty<String>();
-            }
+            //if ( String.IsNullOrWhiteSpace( sentence ) ) {return Enumerable.Empty<String>();}
+            sentence.Nop();
 
-            return RegexByWordBreak.Split( sentence ).ToStrings( " " ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+            return RegexByWordBreak.Split( $"{Symbols.Singlespace}{sentence}{Symbols.Singlespace}" ).ToStrings( Symbols.Singlespace )
+                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
             //var sb = new StringBuilder( sentence.Length );
             //foreach ( var wrod in Regex_ByWordBreak.Split( sentence ) ) {

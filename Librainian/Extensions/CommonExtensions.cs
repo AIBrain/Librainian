@@ -106,7 +106,7 @@ namespace Librainian.Extensions {
         /// </summary>
         [DebuggerStepThrough]
         [Conditional( "DEBUG" )]
-        public static void Nop<T>( this T obj ) { }
+        public static void Nop<T>( [CanBeNull] this T obj ) { }
 
         /// <summary>
         ///     <para>Works like the SQL "nullif" function.</para>

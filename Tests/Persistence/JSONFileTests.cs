@@ -86,8 +86,7 @@ data33   =   3
 
         public static IniFile Json;
 
-        [Theory]
-        public static void Setup() {
+        static JSONFileTests() {
             Json = IoC.Container.Get<IniFile>();
             IniFile = IoC.Container.Get<IniFile>();
         }

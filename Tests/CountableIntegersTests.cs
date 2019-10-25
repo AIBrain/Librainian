@@ -52,8 +52,8 @@ namespace LibrainianTests {
 
         public static Countable<String> Countable { get; } = new Countable<String>( readTimeout: Seconds.One, writeTimeout: Seconds.One );
 
-        [Theory]
-        public static void Setup() { }
+        //[Theory]
+        //public static void Setup() { }
 
         [Fact]
         public static void TestAdding() {

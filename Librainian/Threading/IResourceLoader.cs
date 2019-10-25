@@ -4,7 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "UsableSemaphoreThrottle.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "IResourceLoader.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,57 +37,25 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "UsableSemaphoreThrottle.cs" was last formatted by Protiguous on 2019/10/23 at 11:28 AM.
+// Project: "Librainian", "IResourceLoader.cs" was last formatted by Protiguous on 2019/10/25 at 6:23 AM.
 
 namespace Librainian.Threading {
 
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
-    using JetBrains.Annotations;
 
-    /// <summary>
-    /// http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html
-    /// </summary>
-    public class UsableSemaphoreThrottle : IUsableSemaphore {
+    public interface IResourceLoader<T> {
 
-        public void Dispose() => this._semaphore.Dispose();
+        Int32 Available { get; }
 
-        public async Task<IUsableSemaphoreWrapper> WaitAsync() {
-            IUsableSemaphoreWrapper wrapper = default;
+        Int32 Count { get; }
 
-            try {
-                wrapper = await this._semaphore.WaitAsync().ConfigureAwait( false );
-                await this._throttle.WaitAsync().ConfigureAwait( false );
+        Int32 MaxConcurrency { get; }
 
-                return wrapper;
-            }
-            catch ( Exception ) {
-                wrapper?.Dispose();
+        Task<T> GetAsync( CancellationToken cancelToken = default );
 
-                throw;
-            }
-        }
-
-        [NotNull]
-        private readonly IUsableSemaphore _semaphore;
-
-        [NotNull]
-        private readonly IThrottle _throttle;
-
-        public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount ) {
-            this._throttle = new Throttle( interval );
-            this._semaphore = new UsableSemaphoreSlim( initialCount );
-        }
-
-        public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount, Int32 maxCount ) {
-            this._throttle = new Throttle( interval );
-            this._semaphore = new UsableSemaphoreSlim( initialCount, maxCount );
-        }
-
-        public UsableSemaphoreThrottle( [NotNull] IThrottle throttle, [NotNull] IUsableSemaphore semaphore ) {
-            this._throttle = throttle ?? throw new ArgumentNullException( nameof( throttle ) );
-            this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
-        }
+        Boolean TryGet( out Task<T> resource, CancellationToken cancelToken = default );
 
     }
 

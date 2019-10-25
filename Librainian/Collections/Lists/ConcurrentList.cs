@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConcurrentList.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2019/08/08 at 6:32 AM.
+// 
+// Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2019/10/25 at 12:10 PM.
 
 namespace Librainian.Collections.Lists {
 
@@ -53,6 +53,7 @@ namespace Librainian.Collections.Lists {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
+    using Magic;
     using Maths;
     using Newtonsoft.Json;
 
@@ -69,32 +70,23 @@ namespace Librainian.Collections.Lists {
     /// </copyright>
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class ConcurrentList<T> : IDisposable, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
-
-        /// <summary>
-        ///     Dispose any disposable members with a using statement so we don't have to deal with nulls.
-        /// </summary>
-        public void Dispose() {
-            if ( this.IsDisposed ) {
-                return;
-            }
-
-            using ( this.ItemCounter ) {
-                /*needed??*/
-            }
-
-            using ( this.ReaderWriter ) {
-                /*needed??*/
-            }
-
-            this.IsDisposed = true;
-        }
+    public class ConcurrentList<T> : ABetterClassDispose, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         [JsonIgnore]
-        public Int32 Count => this.ItemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+        public Int32 Count {
+            get {
+                var itemCounter = this.ItemCounter;
+
+                if ( itemCounter?.Values != null ) {
+                    return itemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
+                }
+
+                return default;
+            }
+        }
 
         /// <summary>
         ///     Get or set if the list is readonly.
@@ -123,7 +115,13 @@ namespace Librainian.Collections.Lists {
         public T this[ Int32 index ] {
             [CanBeNull]
             get {
-                if ( index < 0 || index > this.TheList.Count ) {
+                if ( index < 0 ) {
+                    this.ThrowOutOfRange( index );
+
+                    return default;
+                }
+
+                if ( index > this.TheList.Count ) {
                     this.ThrowOutOfRange( index );
 
                     return default;
@@ -285,7 +283,7 @@ namespace Librainian.Collections.Lists {
 
             if ( index < 0 ) {
 
-                if ( this.ThrowExceptions == ThrowSetting.Throw  ) {
+                if ( this.ThrowExceptions == ThrowSetting.Throw ) {
                     throw new ArgumentOutOfRangeException( nameof( index ), index, "Value must be 0 or greater." );
                 }
 
@@ -294,6 +292,7 @@ namespace Librainian.Collections.Lists {
 
             if ( !this.AllowModifications() ) {
                 this.IfDisallowedModificationsThrow();
+
                 return;
             }
 
@@ -315,11 +314,16 @@ namespace Librainian.Collections.Lists {
         }
 
         /// <summary>
-        /// Returns the enumerator of this list's <see cref="Clone"/>.
+        ///     Returns the enumerator of this list's <see cref="Clone" />.
         /// </summary>
         /// <returns></returns>
         [NotNull]
         IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+
+        /// <summary>
+        ///     If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.
+        /// </summary>
+        public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
 
         private volatile Boolean _isReadOnly;
 
@@ -327,13 +331,14 @@ namespace Librainian.Collections.Lists {
         private ConcurrentQueue<T> InputBuffer { get; set; } = new ConcurrentQueue<T>();
 
         /// <summary>
-        /// Threadsafe item counter (so we don't have to enter and exit the readerwriter).
+        ///     Threadsafe item counter (so we don't have to enter and exit the readerwriter).
         /// </summary>
-        [NotNull]
+        [JsonIgnore]
+        [CanBeNull]
         private ThreadLocal<Int32> ItemCounter { get; set; } = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
 
         [JsonIgnore]
-        [NotNull]
+        [CanBeNull]
         private ReaderWriterLockSlim ReaderWriter { get; set; } = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
@@ -345,12 +350,6 @@ namespace Librainian.Collections.Lists {
 
         [JsonIgnore]
         public Boolean IsDisposed { get; private set; }
-
-
-        /// <summary>
-        ///     If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.
-        /// </summary>
-        public ThrowSetting ThrowExceptions { get; set; }
 
         [JsonProperty]
         public TimeSpan TimeoutForReads { get; set; }
@@ -375,10 +374,21 @@ namespace Librainian.Collections.Lists {
             }
         }
 
-        private void AnItemHasBeenAdded() => this.ItemCounter.Value++;
+        private void AnItemHasBeenAdded() {
+            var itemCounter = this.ItemCounter;
+
+            if ( itemCounter != null ) {
+                itemCounter.Value++;
+            }
+        }
 
         private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
-            this.ItemCounter.Value--;
+            var itemCounter = this.ItemCounter;
+
+            if ( itemCounter != null ) {
+                itemCounter.Value--;
+            }
+
             action?.Invoke();
         }
 
@@ -390,17 +400,22 @@ namespace Librainian.Collections.Lists {
 
         [OnDeserialized]
         private void OnDeserialized( StreamingContext context ) {
+
             //These need to be tested for null when deserializing.
 
             //if ( this.ReaderWriter is null ) {
             //    this.ReaderWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
             //}
 
-            //if ( this.ItemCounter == null ) {
-            //    this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
-            //}
+            if ( this.ItemCounter == null ) {
+                this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
+            }
 
-            this.ItemCounter.Value += this.TheList.Count;
+            var itemCounter = this.ItemCounter;
+
+            if ( itemCounter != null ) {
+                itemCounter.Value += this.TheList.Count;
+            }
         }
 
         /// <summary>
@@ -415,13 +430,15 @@ namespace Librainian.Collections.Lists {
                 throw new ArgumentNullException( paramName: nameof( func ) );
             }
 
+            this.ThrowIfDisposed();
+
             if ( !this.AllowModifications() ) {
                 return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
             }
 
             this.CatchUp();
 
-            if ( this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) {
+            if ( this.ReaderWriter?.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) == true ) {
                 try {
                     return func();
                 }
@@ -443,13 +460,12 @@ namespace Librainian.Collections.Lists {
         }
 
         private void ThrowOutOfRange( Int32 index ) {
-            var message = $"The value {index} is out of range. (It must be 0 or greater).";
+            var message = $"The value {index.ToString()} is out of range. (It must be 0 or greater).";
             message.Log();
 
-            if ( this.ThrowExceptions == ThrowSetting.Throw) {
-                throw new ArgumentOutOfRangeException( nameof( index ), index, message );
+            if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+                throw new ArgumentOutOfRangeException( nameof( index ), index.ToString(), message );
             }
-
         }
 
         /// <summary>
@@ -468,13 +484,13 @@ namespace Librainian.Collections.Lists {
                 throw new ArgumentNullException( paramName: nameof( func ) );
             }
 
+            this.ThrowIfDisposed();
+
             if ( !ignoreAllowModificationsCheck ) {
                 if ( !this.AllowModifications() ) {
                     return default;
                 }
             }
-
-            this.ThrowIfDisposed();
 
             if ( this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
                 try {
@@ -515,6 +531,8 @@ namespace Librainian.Collections.Lists {
         /// <param name="afterAdd"></param>
         /// <returns></returns>
         public Boolean Add( [CanBeNull] T item, [CanBeNull] Action afterAdd ) {
+            this.ThrowIfDisposed();
+
             if ( !this.AllowModifications() ) {
                 this.IfDisallowedModificationsThrow();
 
@@ -523,6 +541,7 @@ namespace Librainian.Collections.Lists {
 
             return this.Write( func: () => {
                 try {
+                    this.ThrowIfDisposed();
                     this.TheList.Add( item: item );
 
                     return true;
@@ -561,6 +580,8 @@ namespace Librainian.Collections.Lists {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
+            this.ThrowIfDisposed();
+
             if ( !this.AllowModifications() ) {
                 this.IfDisallowedModificationsThrow();
 
@@ -578,6 +599,7 @@ namespace Librainian.Collections.Lists {
                 }
             }
             finally {
+                this.ThrowIfDisposed();
                 afterRangeAdded?.Invoke();
             }
         }
@@ -595,6 +617,8 @@ namespace Librainian.Collections.Lists {
         public Task AddRangeAsync( [CanBeNull] IEnumerable<T> items, CancellationToken token, [CanBeNull] Action afterEachAdd = null,
             [CanBeNull] Action afterRangeAdded = null, Byte useParallelism = 0 ) =>
             Task.Run( () => {
+                this.ThrowIfDisposed();
+
                 if ( items != null ) {
                     this.AddRange( items: items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded, useParallelism: useParallelism );
                 }
@@ -618,9 +642,14 @@ namespace Librainian.Collections.Lists {
                 return;
             }
 
+            this.ThrowIfDisposed();
+
             if ( this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
                 try {
+                    this.ThrowIfDisposed();
+
                     while ( this.InputBuffer.TryDequeue( result: out var item ) ) {
+                        this.ThrowIfDisposed();
                         this.TheList.Add( item: item );
                         this.AnItemHasBeenAdded();
                     }
@@ -655,6 +684,26 @@ namespace Librainian.Collections.Lists {
         }
 
         /// <summary>
+        ///     Dispose any disposable managed fields or properties.
+        ///     <para>
+        ///         Providing the object inside a using construct will then call <see cref="ABetterClassDispose.Dispose()" />,
+        ///         which in turn calls
+        ///         <see cref="ABetterClassDispose.DisposeManaged" /> and <see cref="ABetterClassDispose.DisposeNative" />.
+        ///     </para>
+        /// </summary>
+        public override void DisposeManaged() {
+            using ( this.ItemCounter ) {
+                this.ItemCounter = null; /*needed???*/
+            }
+
+            using ( this.ReaderWriter ) {
+                this.ReaderWriter = null; /*needed???*/
+            }
+
+            base.DisposeManaged();
+        }
+
+        /// <summary>
         ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
         /// </summary>
         /// <param name="item">        </param>
@@ -667,6 +716,8 @@ namespace Librainian.Collections.Lists {
                 return false;
             }
 
+            this.ThrowIfDisposed();
+
             return this.Write( func: () => {
                 var result = this.TheList.Remove( item: item );
 
@@ -678,7 +729,73 @@ namespace Librainian.Collections.Lists {
             } );
         }
 
+        /// <summary>
+        ///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.
+        /// </summary>
+        public void TrimExcess() =>
+            this.Write( func: () => {
+                this.TheList.TrimExcess();
+
+                return true;
+            } );
+
+        public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
+
+        public Boolean TryCatchup( TimeSpan timeout ) {
+            if ( !this.AnyWritesPending() ) {
+                return true;
+            }
+
+            var haveLock = false;
+
+            try {
+                if ( !this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
+                    return false;
+                }
+
+                haveLock = true;
+
+                while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
+                    this.TheList.Add( item: bob );
+                    this.AnItemHasBeenAdded();
+                }
+
+                return true;
+            }
+            finally {
+                if ( haveLock ) {
+                    this.ReaderWriter.ExitWriteLock();
+                }
+            }
+        }
+
+        /// <summary>
+        ///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
+        ///     <para>Returns true if the request was posted to the internal dataflow.</para>
+        /// </summary>
+        /// <param name="index">   </param>
+        /// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
+        public Boolean TryGet( Int32 index, [CanBeNull] Action<T> afterGet ) {
+            if ( index < 0 ) {
+                return false;
+            }
+
+            return this.Read( func: () => {
+                if ( index >= this.TheList.Count ) {
+                    this.ThrowOutOfRange( index );
+
+                    return false;
+                }
+
+                var result = this.TheList[ index: index ];
+                afterGet?.Invoke( result );
+
+                return true;
+            } );
+        }
+
         /*
+
         /// <summary>
         ///     <para>Harker Shuffle Algorithm</para>
         ///     <para>
@@ -773,71 +890,6 @@ namespace Librainian.Collections.Lists {
             } );
         */
 
-        /// <summary>
-        ///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.
-        /// </summary>
-        public void TrimExcess() =>
-            this.Write( func: () => {
-                this.TheList.TrimExcess();
-
-                return true;
-            } );
-
-        public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
-
-        public Boolean TryCatchup( TimeSpan timeout ) {
-            if ( !this.AnyWritesPending() ) {
-                return true;
-            }
-
-            var haveLock = false;
-
-            try {
-                if ( !this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
-                    return false;
-                }
-
-                haveLock = true;
-
-                while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
-                    this.TheList.Add( item: bob );
-                    this.AnItemHasBeenAdded();
-                }
-
-                return true;
-            }
-            finally {
-                if ( haveLock ) {
-                    this.ReaderWriter.ExitWriteLock();
-                }
-            }
-        }
-
-        /// <summary>
-        ///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
-        ///     <para>Returns true if the request was posted to the internal dataflow.</para>
-        /// </summary>
-        /// <param name="index">   </param>
-        /// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
-        public Boolean TryGet( Int32 index, [CanBeNull] Action<T> afterGet ) {
-            if ( index < 0 ) {
-                return false;
-            }
-
-            return this.Read( func: () => {
-                if ( index >= this.TheList.Count ) {
-                    this.ThrowOutOfRange( index );
-
-                    return false;
-                }
-
-                var result = this.TheList[ index: index ];
-                afterGet?.Invoke( result );
-
-                return true;
-            } );
-        }
-
         [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
         public struct TranslateBytesToInt32 {
 
@@ -846,6 +898,9 @@ namespace Librainian.Collections.Lists {
 
             [FieldOffset( offset: 0 )]
             public readonly Int32[] Ints;
+
         }
+
     }
+
 }

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:25 AM.
+// 
+// Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 12:26 PM.
 
 namespace Librainian.Maths {
 
@@ -47,6 +47,7 @@ namespace Librainian.Maths {
     using System.Linq;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Text;
     using JetBrains.Annotations;
     using Measurement.Time;
     using Numbers;
@@ -622,6 +623,8 @@ namespace Librainian.Maths {
         /// <param name="end">  inclusive</param>
         /// <param name="step"> </param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
             if ( start < 0 ) {
                 throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
@@ -660,6 +663,8 @@ namespace Librainian.Maths {
         /// <param name="end"> </param>
         /// <param name="step"></param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
@@ -692,6 +697,8 @@ namespace Librainian.Maths {
         /// <param name="end"> </param>
         /// <param name="step"></param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<Int64> To( this Int64 from, Int64 end, Int64 step = 1 ) {
             if ( step == 0L ) {
                 step = 1L;
@@ -724,6 +731,8 @@ namespace Librainian.Maths {
         /// <param name="to">  </param>
         /// <param name="step"></param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
@@ -748,6 +757,8 @@ namespace Librainian.Maths {
         /// <param name="to">  </param>
         /// <param name="step"></param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<BigInteger> To( this Int64 from, BigInteger to, UInt64 step = 1 ) {
             if ( step == 0UL ) {
                 step = 1UL;
@@ -774,6 +785,8 @@ namespace Librainian.Maths {
         /// <param name="to">   </param>
         /// <param name="step"> </param>
         /// <returns></returns>
+        [Pure]
+        [NotNull]
         public static IEnumerable<Rational> To( this Int32 start, Rational to, Rational step ) {
             if ( step < 0 ) {
                 step = 1;
@@ -806,6 +819,8 @@ namespace Librainian.Maths {
         ///     var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes(
         ///     1 ) ); foreach ( var dateTime in minutes ) { Console.WriteLine( dateTime ); }
         /// </example>
+        [Pure]
+        [NotNull]
         public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
                 TimeSpan diff;
@@ -854,6 +869,8 @@ namespace Librainian.Maths {
             }
         }
 
+        [Pure]
+        [NotNull]
         public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
             var count = end - start + 1.0f;
 
@@ -862,6 +879,8 @@ namespace Librainian.Maths {
             }
         }
 
+        [Pure]
+        [NotNull]
         public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
             var count = end - start + 1.0;
 
@@ -870,6 +889,8 @@ namespace Librainian.Maths {
             }
         }
 
+        [Pure]
+        [NotNull]
         public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
             var count = end - start + 1;
 
@@ -878,12 +899,20 @@ namespace Librainian.Maths {
             }
         }
 
+        [Pure]
+        [NotNull]
         public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
             if ( input == null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
 
-            return input.Aggregate( "", ( current, b ) => current + b.ToString( "X2" ) );
+            var result = new StringBuilder();
+
+            foreach ( var b in input ) {
+                result.Append( $"{result}{b:X2}" );
+            }
+
+            return result.ToString();
         }
 
         public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "X2" ) );
@@ -895,5 +924,7 @@ namespace Librainian.Maths {
 
         [NotNull]
         public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
+
     }
+
 }

@@ -761,17 +761,13 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) {
-
+        public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
             control?.InvokeAction( () => {
-                if ( control.IsDisposed ) {
-                    return;
+                if ( !control.IsDisposed ) {
+                    control.Text = value;
+                    control.Invalidate();
                 }
-
-                control.Text = value;
-                control.Invalidate();
             } );
-        }
 
         public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String message ) {
             if ( textBox == null ) {

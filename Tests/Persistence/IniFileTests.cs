@@ -86,9 +86,6 @@ data3.3   =   3
 
         public static IniFile Ini3;
 
-        [Theory]
-        public static void Setup() { }
-
         [Fact]
         public static void test1() {
 

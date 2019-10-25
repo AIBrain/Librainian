@@ -380,6 +380,8 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\BalancedResourceLoader.cs" />
+    <Compile Include="Threading\IResourceLoader.cs" />
     <Compile Include="Threading\IThrottle.cs" />
     <Compile Include="Threading\IUsableSemaphore.cs" />
     <Compile Include="Threading\IUsableSemaphoreWrapper.cs" />
@@ -892,17 +894,6 @@
     </PackageReference>
     <PackageReference Include="LinqFaster.SIMD">
       <Version>1.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>3.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <Version>3.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
-      <Version>2.9.6</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Database.Collections.Generic">
       <Version>1.9.4</Version>

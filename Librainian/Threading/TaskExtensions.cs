@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2019/10/23 at 11:41 AM.
+// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 6:23 AM.
 
 namespace Librainian.Threading {
 
@@ -51,6 +51,7 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using System.Threading.Tasks.Dataflow;
     using Exceptions;
+    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
@@ -195,6 +196,44 @@ namespace Librainian.Threading {
             }
         }
 
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static void FireAndForget( [CanBeNull] this Task task ) {
+            task.Nop();
+        }
+
+        public static async Task<TResult> FromEvent<TDelegate, TResult>( [NotNull] Func<TaskCompletionSource<TResult>, TDelegate> createDelegate,
+            [NotNull] Action<TDelegate> registerDelegate, [NotNull] Action<TDelegate> unregisterDelegate, TimeSpan timeout ) {
+            if ( createDelegate == null ) {
+                throw new ArgumentNullException( paramName: nameof( createDelegate ) );
+            }
+
+            if ( registerDelegate == null ) {
+                throw new ArgumentNullException( paramName: nameof( registerDelegate ) );
+            }
+
+            if ( unregisterDelegate == null ) {
+                throw new ArgumentNullException( paramName: nameof( unregisterDelegate ) );
+            }
+
+            var tcs = new TaskCompletionSource<TResult>();
+
+            var cts = new CancellationTokenSource( timeout );
+            cts.Token.Register( () => tcs.TrySetCanceled() );
+
+            var del = createDelegate( tcs );
+
+            try {
+                registerDelegate( del );
+
+                return await tcs.Task.ConfigureAwait( false );
+            }
+            finally {
+
+                // Unsubscribe from event.
+                unregisterDelegate( del );
+            }
+        }
+
         /// <summary>
         ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
         /// </summary>
@@ -333,6 +372,31 @@ namespace Librainian.Threading {
                     break;
 
                 default: throw new ArgumentEmptyException( "Task was not completed." );
+            }
+        }
+
+        public static void SetFromTask<T>( [NotNull] this TaskCompletionSource<T> tcs, [NotNull] Task<T> task ) {
+            if ( tcs == null ) {
+                throw new ArgumentNullException( paramName: nameof( tcs ) );
+            }
+
+            if ( task == null ) {
+                throw new ArgumentNullException( paramName: nameof( task ) );
+            }
+
+            if ( !task.IsCompleted ) {
+                throw new ArgumentException( "Task must be complete" );
+            }
+
+            if ( task.IsCanceled ) {
+                tcs.TrySetCanceled();
+            }
+            else if ( task.IsFaulted ) {
+                var ex = ( Exception ) task.Exception ?? new InvalidOperationException( "Faulted Task" );
+                tcs.TrySetException( ex );
+            }
+            else {
+                tcs.TrySetResult( task.Result );
             }
         }
 
@@ -1002,6 +1066,62 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static Task<TOut> Wrap<TIn, TOut>( [NotNull] this Func<TIn, TOut> selector, [CanBeNull] TIn input ) => Task.Run( () => selector( input ) );
+
+        public class ResourceLoader<T> : IResourceLoader<T> {
+
+            public Int32 Available => this._semaphore.CurrentCount;
+
+            public Int32 Count => this._count;
+
+            public Int32 MaxConcurrency { get; }
+
+            public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
+                lock ( this._lock ) {
+                    return this.WaitAndLoadAsync( cancelToken );
+                }
+            }
+
+            public Boolean TryGet( out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+                lock ( this._lock ) {
+                    if ( this._semaphore.CurrentCount == 0 ) {
+                        resource = null;
+
+                        return false;
+                    }
+
+                    resource = this.WaitAndLoadAsync( cancelToken );
+
+                    return true;
+                }
+            }
+
+            [NotNull]
+            private readonly Func<CancellationToken, Task<T>> _loader;
+
+            [NotNull]
+            private readonly Object _lock = new Object();
+
+            [NotNull]
+            private readonly SemaphoreSlim _semaphore;
+
+            private Int32 _count;
+
+            public ResourceLoader( [NotNull] Func<CancellationToken, Task<T>> loader, Int32 maxConcurrency ) {
+                this._loader = loader ?? throw new ArgumentNullException( nameof( loader ) );
+                this._semaphore = new SemaphoreSlim( maxConcurrency, maxConcurrency );
+                this.MaxConcurrency = maxConcurrency;
+            }
+
+            [ItemNotNull]
+            private async Task<T> WaitAndLoadAsync( CancellationToken cancelToken ) {
+                Interlocked.Increment( ref this._count );
+
+                using ( await this._semaphore.UseWaitAsync( cancelToken ).ConfigureAwait( false ) ) {
+                    return await this._loader( cancelToken ).ConfigureAwait( false );
+                }
+            }
+
+        }
 
     }
 

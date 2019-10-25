@@ -52,7 +52,6 @@ namespace Librainian.Persistence {
     using Logging;
     using Newtonsoft.Json;
     using OperatingSystem.FileSystem;
-    using Parsing;
 
     /// <summary>
     ///     Persist a list to and from a JSON formatted text document.
@@ -77,6 +76,16 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
+
+            if ( !folder.Exists() ) {
+                folder.Create();
+            }
+
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
             this.Read().Wait(); //TODO I don't like this Wait being here.
         }
@@ -86,19 +95,7 @@ namespace Librainian.Persistence {
         ///     <para>Defaults to user\appdata\Local\productname\filename</para>
         /// </summary>
         /// <param name="filename"></param>
-        public ConcurrentListFile( [NotNull] String filename ) {
-            if ( filename.IsNullOrWhiteSpace() ) {
-                throw new ArgumentNullException( nameof( filename ) );
-            }
-
-            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
-
-            if ( !folder.Exists() ) {
-                folder.Create();
-            }
-
-            this.Document = new Document( folder, filename );
-            this.Read().Wait();
+        public ConcurrentListFile( [NotNull] String filename ) : this( new Document(filename) ) {
         }
 
         public async Task<Boolean> Read( CancellationToken token = default ) {
