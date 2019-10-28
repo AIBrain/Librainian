@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/21 at 2:40 PM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 8:53 PM.
 
 namespace Librainian.Parsing {
 
@@ -51,6 +51,7 @@ namespace Librainian.Parsing {
     using System.Linq;
     using System.Net;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Xml;
@@ -162,14 +163,52 @@ namespace Librainian.Parsing {
         [CanBeNull]
         public static String LimitAndTrim( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) ).TrimEnd();
 
-        [NotNull]
-        public static String Quote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
-
+        /// <summary>
+        ///     Add a single quote around <paramref name="self" /> string.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
         [NotNull]
         public static String SingleQuote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
 
+        /// <summary>
+        ///     Add [ and ] around the string.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
         [NotNull]
-        public static String Bracket( [CanBeNull] this String identifier ) => $"[{identifier.Trimmed()}]";
+        public static String Bracket( [CanBeNull] this String self ) => $"[{self.Trimmed()}]";
+
+        /// <summary>
+        /// Add the left [ and right ] bracket if they're not already in the string. Returns empty rather than a null.
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        [NotNull]
+        public static String Bracketed( [NotNull] this String self ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
+
+            self = self.Trimmed();
+
+            if ( String.IsNullOrEmpty( self ) ) {
+                return String.Empty;
+            }
+
+            var left = String.Empty;
+
+            if ( !self.StartsWith( "[" ) ) {
+                left = "[";
+            }
+
+            var right = String.Empty;
+            if ( !self.EndsWith( "]" ) ) {
+                right = "]";
+            }
+
+            return $"{left}{self.Trimmed() ?? String.Empty}{right}";
+        }
 
         /// <summary>
         ///     Trim the ToString() of the object; returning null if null, empty, or whitespace.
@@ -178,7 +217,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [CanBeNull]
         public static String Trimmed<T>( [CanBeNull] this T self ) {
-            if ( self == null ) {
+            if ( self is null ) {
                 return default;
             }
 
@@ -729,7 +768,8 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        /// .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a Latin or not.
+        ///     .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a
+        ///     Latin or not.
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -906,6 +946,7 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? null : self;
 
         /// <summary>
@@ -919,7 +960,7 @@ namespace Librainian.Parsing {
         [CanBeNull]
         public static String NullIfJustNumbers( [CanBeNull] this String self ) => self.IsJustNumbers() ? null : self;
 
-        public static Int32 NumberOfDigits( this BigInteger number ) => ( number * number.Sign ).ToString().Length;
+        public static Int32 NumberOfDigits( this BigInteger number ) => number.ToString().Length;
 
         /// <summary>
         ///     Repeats <paramref name="c" /> <paramref name="count" /> times.

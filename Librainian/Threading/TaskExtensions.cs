@@ -110,6 +110,15 @@ namespace Librainian.Threading {
         /// <param name="delay">How long to run the delay.</param>
         [NotNull]
         public static Task Delay( this TimeSpan delay ) => Task.Delay( delay );
+        
+        [NotNull]
+        public static Task Delay( [NotNull] this IQuantityOfTime delay ) {
+            if ( delay == null ) {
+                throw new ArgumentNullException( paramName: nameof( delay ) );
+            }
+
+            return Task.Delay( delay.ToTimeSpan() );
+        }
 
         /// <summary>
         ///     Returns true if the <paramref name="task" /> is Completed, Cancelled, or Faulted.

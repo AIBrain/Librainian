@@ -42,7 +42,9 @@
 namespace LibrainianTests.Persistence {
 
     using System;
+    using System.Threading.Tasks;
     using Librainian.Magic;
+    using Librainian.OperatingSystem.FileSystem;
     using Librainian.Persistence.InIFiles;
     using Xunit;
 
@@ -82,30 +84,23 @@ data33   =   3
 
 ";
 
-        public static IniFile IniFile;
 
-        public static IniFile Json;
-
-        static JSONFileTests() {
-            Json = IoC.Container.Get<IniFile>();
-            IniFile = IoC.Container.Get<IniFile>();
-        }
-
-        /*
+        
         [Fact]
         public static async Task test_load_from_string() {
-            IniFile.Add( IniTestData );
 
-            Json.Add( IniFile );
-            Json.Add( IniFile );
-            Json.Add( IniFile );
+            var Json = IoC.Container.Get<IniFile>();
+            Assert.NotNull( Json );
 
-            Json.Document = Document.GetTempDocument( "config" );
-
-            if ( await Json.WriteAsync() ) {
-                Json.Document?.Delete();
+            //var IniFile = IoC.Container.Get<IniFile>();
+            //IniFile.Add( IniTestData );
+            //Json.Add( IniFile );
+            //Json.Add( IniFile );
+            //Json.Merge( IniFile );
+            var doc = Document.GetTempDocument( "config" );
+            if ( await Json.SaveAsync( doc ).ConfigureAwait( false ) ) {
+                doc.Delete();
             }
         }
-        */
     }
 }

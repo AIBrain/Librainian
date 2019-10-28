@@ -139,7 +139,7 @@ namespace Librainian.Linguistics {
         static Sentence() {
             StartOfSentence = new String( Char.MinValue, 2 );
             EndOfSentence = new String( Char.MaxValue, 2 );
-            Empty = Sentence.Parse( $"{StartOfSentence}{EndOfSentence}" );
+            Empty = Parse( $"{StartOfSentence}{EndOfSentence}" );
         }
 
         public static Boolean Equals( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) {
