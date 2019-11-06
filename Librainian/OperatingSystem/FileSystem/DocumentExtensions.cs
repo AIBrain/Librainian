@@ -44,8 +44,10 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Media;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Logging;
     using Maths;
     using Measurement.Time;
 
@@ -200,6 +202,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
+
+        public static void TryPlayFile( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            try {
+                using ( var player = new SoundPlayer() ) {
+                    player.SoundLocation = document.FullPath;
+                    player.Load();
+                    player.Play();
+                }
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+        }
 
     }
 

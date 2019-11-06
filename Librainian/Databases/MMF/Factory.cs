@@ -134,7 +134,9 @@ namespace Librainian.Databases.MMF {
             var serializers =
                 from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from genericType in assembly.GetTypes()
-                from interfaceType in genericType.GetInterfaces().Where( iType => iType.Name == interfaceGenricType.Name && genericType.IsGenericTypeDefinition )
+                where genericType != default
+                where genericType != null
+                from interfaceType in genericType?.GetInterfaces().Where( iType => iType.Name == interfaceGenricType.Name && genericType?.IsGenericTypeDefinition == true )
                 select genericType;
 
             return serializers; //.ToList();

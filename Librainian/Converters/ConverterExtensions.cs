@@ -162,18 +162,18 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return false;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s.In( TrueStrings ) ) {
-                        return true;
+                        if ( s.In( TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
                 case Control control: return control.Text().ToBoolean();
             }
 
@@ -317,15 +317,14 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static DateTime ToDateTime( this Guid self ) {
-            
-                var bytes = self.ToByteArray();
 
-                //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
-                //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
+            var bytes = self.ToByteArray();
 
-                return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                    second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
-            
+            //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
+            //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
+
+            return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
+                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -542,7 +541,7 @@ namespace Librainian.Converters {
         /// <exception cref="FormatException"></exception>
         [DebuggerStepThrough]
         [Pure]
-        public static Int32 ToIntOrThrow<T>( [NotNull] this T value ) {
+        public static Int32 ToIntOrThrow<T>( [CanBeNull] this T value ) {
             if ( value == null ) {
                 throw new ArgumentNullException( nameof( value ), "Cannot convert null value to Int32." );
             }
@@ -676,7 +675,6 @@ namespace Librainian.Converters {
             }
 
             return Equals( obj, DBNull.Value ) ? default : obj.ToString().Trimmed();
-
         }
 
         /// <summary>
@@ -689,7 +687,6 @@ namespace Librainian.Converters {
         [NotNull]
         public static String ToStringOrThrow<T>( [CanBeNull] this T value ) =>
             value.ToStringOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a string." );
-
 
         /// <summary>
         ///     Untested.

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Credentials.cs" was last formatted by Protiguous on 2019/10/06 at 4:06 AM.
+// Project: "Librainian", "Credentials.cs" was last formatted by Protiguous on 2019/11/04 at 4:55 AM.
 
 namespace Librainian.Internet {
 
@@ -189,14 +189,9 @@ namespace Librainian.Internet {
         }
 
         /// <summary>
-        /// Creates an empty <see cref="Credentials"/> object.
-        /// <para>Call <see cref="Validate"/> to confirm <see cref="Username"/> and <see cref="Password"/> are set.</para>
-        /// </summary>
-        public Credentials() { }
-
-        /// <summary>
-        /// Populates a <see cref="Credentials"/> object with the given <paramref name="username"/> and <paramref name="password"/>.
-        /// <para>Call <see cref="Validate"/> to confirm <see cref="Username"/> and <see cref="Password"/> are set.</para>
+        ///     Populates a <see cref="Credentials" /> object with the given <paramref name="username" /> and
+        ///     <paramref name="password" />.
+        ///     <para>Call <see cref="Validate" /> to confirm <see cref="Username" /> and <see cref="Password" /> are set.</para>
         /// </summary>
         /// <param name="username">Accepts Base64 encoded strings.</param>
         /// <param name="password">Accepts Base64 encoded strings.</param>

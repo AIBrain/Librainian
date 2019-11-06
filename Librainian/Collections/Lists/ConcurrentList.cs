@@ -348,9 +348,6 @@ namespace Librainian.Collections.Lists {
         [JsonProperty]
         private List<T> TheList { get; set; } = new List<T>();
 
-        [JsonIgnore]
-        public Boolean IsDisposed { get; private set; }
-
         [JsonProperty]
         public TimeSpan TimeoutForReads { get; set; }
 
@@ -454,7 +451,7 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <exception cref="ObjectDisposedException"></exception>
         private void ThrowIfDisposed() {
-            if ( this.IsDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
+            if ( this.IsDisposed() && this.ThrowExceptions == ThrowSetting.Throw ) {
                 throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
             }
         }

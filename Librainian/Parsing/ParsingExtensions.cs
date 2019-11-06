@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 8:53 PM.
+// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2019/11/01 at 9:28 AM.
 
 namespace Librainian.Parsing {
 
@@ -172,20 +172,12 @@ namespace Librainian.Parsing {
         public static String SingleQuote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
 
         /// <summary>
-        ///     Add [ and ] around the string.
+        ///     Add the left [ and right ] brackets if they're not already on the string.
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
         [NotNull]
-        public static String Bracket( [CanBeNull] this String self ) => $"[{self.Trimmed()}]";
-
-        /// <summary>
-        /// Add the left [ and right ] bracket if they're not already in the string. Returns empty rather than a null.
-        /// </summary>
-        /// <param name="self"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String Bracketed( [NotNull] this String self ) {
+        public static String Bracket( [NotNull] this String self ) {
             if ( self == null ) {
                 throw new ArgumentNullException( paramName: nameof( self ) );
             }
@@ -203,11 +195,12 @@ namespace Librainian.Parsing {
             }
 
             var right = String.Empty;
+
             if ( !self.EndsWith( "]" ) ) {
                 right = "]";
             }
 
-            return $"{left}{self.Trimmed() ?? String.Empty}{right}";
+            return $"{left}{self}{right}";
         }
 
         /// <summary>

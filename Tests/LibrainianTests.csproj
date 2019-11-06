@@ -71,6 +71,7 @@
     <Compile Include="Maths\DateSpanTests.cs" />
     <Compile Include="Maths\MathsTests.cs" />
     <Compile Include="Maths\TimeTests.cs" />
+    <Compile Include="MMF\MemoryMappedTests.cs" />
     <Compile Include="MyClass.cs" />
     <Compile Include="OperatingSystem\TestPartitions.cs" />
     <Compile Include="OperatingSystem\FileHistoryFileTests.cs" />
@@ -115,6 +116,7 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

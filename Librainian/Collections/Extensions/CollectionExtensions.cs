@@ -45,11 +45,9 @@ namespace Librainian.Collections.Extensions {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Data;
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
-    using System.Reflection;
     using System.Threading.Tasks;
     using Exceptions;
     using JetBrains.Annotations;
@@ -1011,51 +1009,7 @@ namespace Librainian.Collections.Extensions {
             return item;
         }
 
-        /// <summary>
-        ///     Untested.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static DataTable ToDataTable<T>( [CanBeNull] this IEnumerable<T> list ) {
-            var dt = new DataTable();
-
-            if ( list != null ) {
-                PropertyInfo[] columns = null;
-
-                foreach ( var record in list ) {
-                    if ( columns == null ) {
-                        columns = record.GetType().GetProperties();
-
-                        foreach ( var getProperty in columns ) {
-                            var icolType = getProperty.PropertyType;
-
-                            if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
-                                icolType = icolType.GetGenericArguments()[ 0 ];
-                            }
-
-                            dt.Columns.Add( column: new DataColumn( columnName: getProperty.Name, dataType: icolType ) );
-                        }
-                    }
-
-                    var dr = dt.NewRow();
-
-                    foreach ( var p in columns ) {
-                        if ( p.GetValue( record, index: null ) == null ) {
-                            dr[ columnName: p.Name ] = DBNull.Value;
-                        }
-                        else {
-                            dr[ columnName: p.Name ] = p.GetValue( record, index: null );
-                        }
-                    }
-
-                    dt.Rows.Add( row: dr );
-                }
-            }
-
-            return dt;
-        }
+       
 
         /// <summary>
         ///     Optimally create a list from the <paramref name="source" />.

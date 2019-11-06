@@ -412,7 +412,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static T Newbie<T>() where T : class => typeof( T ).Newbie<T>();
+        public static T Newby<T>() where T : class => typeof( T ).Newby<T>();
 
         /// <summary>
         ///     Alternate method of creating an object of type.
@@ -422,7 +422,7 @@ namespace Librainian.Extensions {
         /// <param name="type"></param>
         /// <returns></returns>
         [NotNull]
-        public static T Newbie<T>( this Type type ) where T : class {
+        public static T Newby<T>( this Type type ) where T : class {
 
             if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
                 var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
@@ -529,17 +529,18 @@ namespace Librainian.Extensions {
 
                 // Just one edge case you might want to handle.
                 if ( underlyingType == typeof( Guid ) ) {
-                    if ( value is String s ) {
-                        value = new Guid( s );
+                    switch ( value ) {
+                        case String s: {
+                            value = new Guid( s );
+
+                            break;
+                        }
+                        case Byte[] bytes: {
+                            value = new Guid( bytes );
+
+                            break;
+                        }
                     }
-
-                    if ( value is Byte[] bytes ) {
-                        value = new Guid( bytes );
-                    }
-
-                    result = ( T ) Convert.ChangeType( value, underlyingType );
-
-                    return true;
                 }
 
                 result = ( T ) Convert.ChangeType( value, underlyingType );

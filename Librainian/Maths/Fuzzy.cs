@@ -59,7 +59,7 @@ namespace Librainian.Maths {
     ///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
     /// </summary>
     [JsonObject]
-    public struct Fuzzy : ICloneable {
+    public class Fuzzy : ICloneable {
 
         /// <summary>
         ///     ONLY used in the getter and setter.
@@ -105,10 +105,11 @@ namespace Librainian.Maths {
         //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
         //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
         //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
+
         /// <summary>
-        ///     Initializes a random number between 0 and 1
+        ///    If <paramref name="value"/> is null, then Initializes to a random number between 0 and 1.
         /// </summary>
-        public Fuzzy( Double? value = null ) : this() {
+        public Fuzzy( Double? value = null ) {
             if ( value.HasValue ) {
                 this.Value = value.Value;
             }
@@ -129,6 +130,7 @@ namespace Librainian.Maths {
             return ( left + rhs ) / 2D;
         }
 
+        [CanBeNull]
         public static Fuzzy Parse( [CanBeNull] String value ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
                 throw new ArgumentNullException( nameof( value ) );
@@ -138,7 +140,17 @@ namespace Librainian.Maths {
                 return new Fuzzy( result );
             }
 
-            return Empty;
+            return default;
+        }
+
+        public static Boolean TryParse( [CanBeNull] String value, [CanBeNull] out Fuzzy result ) {
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                throw new ArgumentNullException( nameof( value ) );
+            }
+
+            result = Double.TryParse( value, out var d ) ? new Fuzzy( d ) : null;
+
+            return result != null;
         }
 
         public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;

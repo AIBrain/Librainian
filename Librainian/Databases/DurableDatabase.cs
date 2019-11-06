@@ -56,15 +56,18 @@ namespace Librainian.Databases {
     using Maths;
     using Parsing;
 
-    public class DurableDatabase : ABetterClassDispose, IDatabase {
+    public class DurableDatabase : ABetterClassDispose {
 
+        [NotNull]
         private String ConnectionString { get; }
 
         private UInt16 Retries { get; }
 
+        [NotNull]
         private ThreadLocal<SqlConnection> SqlConnections { get; }
 
         public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
+
 
         /// <summary>
         ///     A database connection attempts to stay connected in the event of an unwanted disconnect.
@@ -72,7 +75,11 @@ namespace Librainian.Databases {
         /// <param name="connectionString"></param>
         /// <param name="retries">         </param>
         /// <exception cref="InvalidOperationException"></exception>
-        public DurableDatabase( String connectionString, UInt16 retries ) {
+        public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
+            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( connectionString ) );
+            }
+
             this.Retries = retries;
             this.ConnectionString = connectionString;
 
@@ -228,15 +235,16 @@ namespace Librainian.Databases {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                using var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = CommandType.Text
-                } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                };
 
-                    return command.ExecuteNonQuery();
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
                 }
+
+                return command.ExecuteNonQuery();
+
             }
             catch ( SqlException exception ) {
                 exception.Log();
@@ -260,15 +268,16 @@ namespace Librainian.Databases {
             TryAgain:
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                using var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = CommandType.StoredProcedure
-                } ) {
-                    if ( null != parameters ) {
-                        command.Parameters.AddRange( parameters );
-                    }
+                };
 
-                    return command.ExecuteNonQuery();
+                if ( null != parameters ) {
+                    command.Parameters.AddRange( parameters );
                 }
+
+                return command.ExecuteNonQuery();
+
             }
             catch ( InvalidOperationException ) {
 
