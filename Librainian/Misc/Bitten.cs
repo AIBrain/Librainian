@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Bitten.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2019/08/08 at 9:12 AM.
+// 
+// Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2019/11/07 at 2:04 PM.
 
 namespace Librainian.Misc {
 
@@ -131,6 +131,7 @@ namespace Librainian.Misc {
             ParenthesisFormat = RequireParenthesis | RequireDashes, /* P */
 
             Any = AllowParenthesis | AllowBraces | AllowDashes | AllowHexPrefix
+
         }
 
         // Creates a new guid based on the value in the String. The value is made up of hex digits
@@ -146,7 +147,13 @@ namespace Librainian.Misc {
             this = Parse( g );
         }
 
-        public static Bitten Parse( String input ) => Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
+        public static Bitten Parse( [NotNull] String input ) {
+            if ( String.IsNullOrWhiteSpace( value: input ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
+            }
+
+            return Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
+        }
 
         // Returns an unsigned byte array containing the GUID.
         [NotNull]
@@ -165,79 +172,15 @@ namespace Librainian.Misc {
             return g;
         }
 
-        public Boolean Equals( Bitten g ) {
+        public Boolean Equals( Bitten g ) => this == g;
 
-            // Now compare each of the elements
-            if ( g._d != this._d ) {
-                return false;
-            }
-
-            if ( g._e != this._e ) {
-                return false;
-            }
-
-            if ( g._f != this._f ) {
-                return false;
-            }
-
-            if ( g._g != this._g ) {
-                return false;
-            }
-
-            if ( g._h != this._h ) {
-                return false;
-            }
-
-            if ( g._i != this._i ) {
-                return false;
-            }
-
-            if ( g._j != this._j ) {
-                return false;
-            }
-
-            return g._k == this._k;
-        }
-
-        public static Boolean operator ==( Bitten a, Bitten b ) {
-
-            // Now compare each of the elements
-
-            if ( a._d != b._d ) {
-                return false;
-            }
-
-            if ( a._e != b._e ) {
-                return false;
-            }
-
-            if ( a._f != b._f ) {
-                return false;
-            }
-
-            if ( a._g != b._g ) {
-                return false;
-            }
-
-            if ( a._h != b._h ) {
-                return false;
-            }
-
-            if ( a._i != b._i ) {
-                return false;
-            }
-
-            if ( a._j != b._j ) {
-                return false;
-            }
-
-            return a._k == b._k;
-        }
+        public static Boolean operator ==( Bitten a, Bitten b ) =>
+            a._d == b._d && a._e == b._e && a._f == b._f && a._g == b._g && a._h == b._h && a._i == b._i && a._j == b._j && a._k == b._k;
 
         public static Boolean operator !=( Bitten a, Bitten b ) => !( a == b );
 
         private static Char HexToChar( Int32 a ) {
-            a = a & 0xf;
+            a &= 0xf;
 
             return ( Char ) ( a > 9 ? a - 10 + 0x61 : a + 0x30 );
         }
@@ -285,10 +228,6 @@ namespace Librainian.Misc {
             return new String( guidChars, startIndex: 0, strLength );
         }
 
-        //public Boolean Equals( Bitten other ) {
-        //    return other._d == this._d && other._e == this._e && other._f == this._f && other._g == this._g && other._h == this._h && other._i == this._i && other._j == this._j && other._k == this._k;
-        //}
-
         public override Boolean Equals( Object obj ) {
             if ( obj == null ) {
                 return false;
@@ -303,8 +242,6 @@ namespace Librainian.Misc {
 
         public override Int32 GetHashCode() {
             unchecked {
-
-                // ReSharper disable NonReadonlyFieldInGetHashCode
                 var result = this._d.GetHashCode();
                 result = ( result * 397 ) ^ this._e.GetHashCode();
                 result = ( result * 397 ) ^ this._f.GetHashCode();
@@ -314,10 +251,10 @@ namespace Librainian.Misc {
                 result = ( result * 397 ) ^ this._j.GetHashCode();
                 result = ( result * 397 ) ^ this._k.GetHashCode();
 
-                // ReSharper restore NonReadonlyFieldInGetHashCode
-
                 return result;
             }
         }
+
     }
+
 }

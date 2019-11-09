@@ -83,7 +83,7 @@ namespace Librainian.Databases {
             var item = ( T ) FormatterServices.GetUninitializedObject( typeof( T ) );
 
             foreach ( var property in properties ) {
-                property.SetValue( item, row[ property.Name ], null );
+                property?.SetValue( item, row[ property.Name ], null );
             }
 
             return item;
@@ -125,7 +125,7 @@ namespace Librainian.Databases {
 
             if ( !reader.IsClosed ) {
                 for ( var i = 0; i < reader.FieldCount; i++ ) {
-                    dictionary.Add( reader.GetName( i ), i );
+                    dictionary.Add( reader.GetName( i ) ?? throw new InvalidOperationException(), i );
                 }
             }
 
@@ -177,7 +177,8 @@ namespace Librainian.Databases {
             }
         }
 
-        public static (Status status, T response, TimeSpan responseTime) Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
+        [CanBeNull]
+        public static T Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
             [NotNull] String command, CancellationToken? token = null ) {
 
             if ( builderToTest == default ) {
@@ -188,23 +189,20 @@ namespace Librainian.Databases {
                 throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
             }
 
-            var stopwatch = Stopwatch.StartNew();
-
             try {
                 using ( var db = new AsyncDatabaseServer( builderToTest.ConnectionString, token: token ) ) {
-                    var result = db.ExecuteScalar<T>( command, CommandType.Text );
 
-                    return ( result.status, result.result, stopwatch.Elapsed );
+                    return db.ExecuteScalar<T>( command, CommandType.Text );
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( Status.Failure, default, stopwatch.Elapsed );
+            return default;
         }
 
-        public static async Task<(Status status, T response, TimeSpan responseTime)> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
+        public static async Task<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
             [NotNull] String command, CancellationToken? token = null ) {
 
             if ( builderToTest == default ) {
@@ -215,39 +213,36 @@ namespace Librainian.Databases {
                 throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
             }
 
-            var stopwatch = Stopwatch.StartNew();
+            
 
             try {
                 using ( var db = new AsyncDatabaseServer( builderToTest.ConnectionString, token: token ) ) {
-                    var result = await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 
-                    return ( result.status, result.result, stopwatch.Elapsed );
+                    return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
                 }
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return ( Status.Failure, default, stopwatch.Elapsed );
+            return default;
         }
 
-        public static (Status status, T result) ConvertScalar<T>( [CanBeNull] this Object scalar ) {
+        public static T ConvertTo<T>( [CanBeNull] this Object scalar ) {
             if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
-                return ( default, default );
+                return default;
             }
 
             if ( scalar is T executeScalar ) {
-                return ( Status.Success, executeScalar );
+                return executeScalar;
             }
 
             if ( scalar.TryCast<T>( out var result ) ) {
-                return ( Status.Success, result );
+                return result;
             }
 
             try {
-                result = ( T ) Convert.ChangeType( scalar, typeof( T ) );
-
-                return ( Status.Success, result );
+                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -264,7 +259,11 @@ namespace Librainian.Databases {
         /// <param name="table">DataTable</param>
         /// <returns>List with generic objects</returns>
         [NotNull]
-        public static List<T> DataTableToList<T>( this DataTable table ) where T : class, new() {
+        public static List<T> DataTableToList<T>( [NotNull] this DataTable table ) where T : class, new() {
+            if ( table == null ) {
+                throw new ArgumentNullException( paramName: nameof( table ) );
+            }
+
             try {
                 var list = new List<T>( table.Rows.Count );
 
@@ -453,18 +452,21 @@ namespace Librainian.Databases {
             return String.Empty;
         }
 
-        public static Status InitializeDatabaseConnection( [NotNull] this ConcurrentDictionaryFile<String, String> file, Credentials credentials,
+        public static async Task<Status> InitializeDatabaseConnection( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials,
             CancellationToken token ) {
             if ( file == null ) {
                 throw new ArgumentNullException( paramName: nameof( file ) );
             }
 
+            if ( credentials == null ) {
+                throw new ArgumentNullException( paramName: nameof( credentials ) );
+            }
+
             try {
+                var primeConnectionString = file.Get();
 
-                var connectionString = file.Get();
-
-                if ( !String.IsNullOrWhiteSpace( connectionString ) ) {
-                    var builder = new SqlConnectionStringBuilder( connectionString );
+                if ( !String.IsNullOrWhiteSpace( primeConnectionString ) ) {
+                    var builder = new SqlConnectionStringBuilder( primeConnectionString );
 
                     var sqlServer = builder.TryGetResponse( token );
 
@@ -476,22 +478,32 @@ namespace Librainian.Databases {
                     }
                 }
 
-                var timeout = ( TimeSpan ) Seconds.Thirty;
+                return await StartBrowsersAndSeekServerStatus( file: file, credentials: credentials ).ConfigureAwait( false );
 
-                foreach ( var browser in AsyncDatabaseServer.StartAnySQLBrowsers( timeout ) ) { }
-
-                foreach ( var server in AsyncDatabaseServer.FindUsableServers( timeout, credentials ) ) {
-                    if ( server.Status.IsGood() && file.Set( server ) ) {
-                        return server.Status;
-                    }
-                }
-               
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
             return Status.Failure;
+        }
+
+        private static async Task<Status> StartBrowsersAndSeekServerStatus( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials ) {
+            if ( file == null ) {
+                throw new ArgumentNullException( paramName: nameof( file ) );
+            }
+
+            if ( credentials == null ) {
+                throw new ArgumentNullException( paramName: nameof( credentials ) );
+            }
+
+            var timeout = ( TimeSpan ) Seconds.Thirty;
+
+            await AsyncDatabaseServer.StartAnySQLBrowsers( timeout ).ConfigureAwait( false );
+
+            return AsyncDatabaseServer.FindUsableServers( timeout, credentials ).Where( server => server?.Status.IsGood() == true && file.Set( server ) )
+                .Select( server => server.Status ).FirstOrDefault();
+
         }
 
         /// <summary>
@@ -637,6 +649,9 @@ namespace Librainian.Databases {
         /// </copyright>
         [NotNull]
         public static DataTable ToDataTable2<T>( [NotNull] this IEnumerable<T> list ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
 
             var table = new DataTable();
 
@@ -739,15 +754,17 @@ namespace Librainian.Databases {
 
         [NotNull]
         public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
-            var properties = GetPropertiesForType<T>();
-            IList<T> result = new List<T>();
-
-            foreach ( var row in table.Rows ) {
-                var item = CreateItemFromRow<T>( row as DataRow, properties );
-                result.Add( item );
+            if ( table == null ) {
+                throw new ArgumentNullException( paramName: nameof( table ) );
             }
 
-            return result;
+            var properties = GetPropertiesForType<T>();
+
+            if ( properties is null ) {
+                return Enumerable.Empty<T>();
+            }
+
+            return from Object row in table.Rows select CreateItemFromRow<T>( row as DataRow, properties );
         }
 
         [NotNull]
@@ -879,21 +896,21 @@ namespace Librainian.Databases {
 
                 var version = test.Adhoc<String>( "select @@version;", token );
 
-                if ( version.status != Status.Success ) {
+                if ( String.IsNullOrWhiteSpace( version) ) {
                     $"Failed connecting to server {test.DataSource}.".Break();
 
                     return default;
                 }
 
-                var getdate = test.Adhoc<DateTime>( "select sysutcdatetime();", token );
+                var getdate = test.Adhoc<DateTime?>( "select sysutcdatetime();", token );
 
-                if ( getdate.status != Status.Success ) {
+                if ( !getdate.HasValue ) {
                     $"Failed connecting to server {test.DataSource}.".Break();
 
                     return default;
                 }
 
-                var serverDateTime = getdate.response; //should already be utc.
+                var serverDateTime = getdate.Value; //should already be utc.
                 var now = DateTime.UtcNow; //get this computer's utc
 
                 if ( serverDateTime.Date == now.Date ) {
@@ -903,11 +920,7 @@ namespace Librainian.Databases {
                     var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
                     return new SqlServer {
-                        Status = Status.Success,
-                        ConnectionStringBuilder = connectionStringBuilder,
-                        Version = version.response,
-                        UTCDateTime = serverDateTime,
-                        ResponseTime = TimeSpan.FromTicks( ( version.responseTime.Ticks + getdate.responseTime.Ticks ) / 2 ) /*avg*/
+                        Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
                     };
                 }
             }

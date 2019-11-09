@@ -62,7 +62,10 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
 
-        public void Dispose() => this.Dispose( releaseManaged: true );
+        public void Dispose() {
+            this.Dispose( releaseManaged: true );
+            GC.SuppressFinalize( this );
+        }
 
         private volatile Boolean _isLoading;
 

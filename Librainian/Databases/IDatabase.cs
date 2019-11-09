@@ -102,7 +102,7 @@ namespace Librainian.Databases {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        (Status status, TResult result) ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        TResult ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>
         ///     <para>Returns the first column of the first row.</para>
@@ -111,7 +111,7 @@ namespace Librainian.Databases {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+        Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>
         ///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="sproc" />.

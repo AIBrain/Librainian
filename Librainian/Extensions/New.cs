@@ -1,10 +1,10 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright � Rick@AIBrain.org and Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "SqlServer.cs" belongs to Protiguous@Protiguous.com and
+// This source code contained in "New.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
@@ -37,26 +37,33 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SqlServer.cs" was last formatted by Protiguous on 2019/10/06 at 8:37 AM.
+// Project: "Librainian", "New.cs" was last formatted by Protiguous on 2019/11/08 at 12:58 PM.
 
-namespace Librainian.Databases {
+namespace Librainian.Extensions {
 
     using System;
-    using System.Data.SqlClient;
+    using System.Linq.Expressions;
+    using System.Runtime.Serialization;
     using JetBrains.Annotations;
 
-    public class SqlServer {
+    public static class New<T> {
 
-        public Status Status { get; set; }
+        public static readonly Func<T> Instance = Creator();
 
-        [CanBeNull]
-        public SqlConnectionStringBuilder ConnectionStringBuilder { get; set; }
+        [NotNull]
+        private static Func<T> Creator() {
+            var t = typeof( T );
 
-        [CanBeNull]
-        public String Version { get; set; }
+            if ( t == typeof( String ) ) {
+                return Expression.Lambda<Func<T>>( Expression.Constant( String.Empty ) ).Compile();
+            }
 
-        [CanBeNull]
-        public DateTime? UTCDateTime { get; set; }
+            if ( t.HasDefaultConstructor() ) {
+                return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile();
+            }
+
+            return () => ( T ) FormatterServices.GetUninitializedObject( t );
+        }
 
     }
 

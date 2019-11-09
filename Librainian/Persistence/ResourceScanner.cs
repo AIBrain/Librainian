@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ResourceScanner.cs" was last formatted by Protiguous on 2019/10/11 at 9:16 AM.
+// Project: "Librainian", "ResourceScanner.cs" was last formatted by Protiguous on 2019/11/07 at 2:06 PM.
 
 namespace Librainian.Persistence {
 
@@ -136,7 +136,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public async Task WaitAsync() {
             this.Waiting = true;
-            await this.Completion;
+            await this.Completion.ConfigureAwait( false );
         }
 
     }

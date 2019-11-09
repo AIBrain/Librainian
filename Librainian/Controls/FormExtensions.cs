@@ -49,7 +49,6 @@ namespace Librainian.Controls {
     using Logging;
     using Microsoft.Win32;
     using Persistence;
-    using Persistence.InIFiles;
 
     public static class FormExtensions {
 
@@ -64,100 +63,17 @@ namespace Librainian.Controls {
 
         public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
-        public static void LoadLocation( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( Int32.TryParse( settings[ name, nameof( Point.X ) ], out var x ) && Int32.TryParse( settings[ name, nameof( Point.Y ) ], out var y ) ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Location( new Point( x, y ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
-
+        
         public static void LoadLocation( [NotNull] this Form form ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
-            var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
-            var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
+            var x = AppRegistry.GetInt32( nameof( form.DesktopLocation.X ), form.Name, nameof( form.DesktopLocation.X ) );
+            var y = AppRegistry.GetInt32( nameof( form.DesktopLocation.Y ), form.Name, nameof( form.DesktopLocation.Y ) );
 
             if ( x.HasValue && y.HasValue ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Location( new Point( x.Value, y.Value ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
-
-        [Obsolete( "Use LoadLocation() and LoadSize()" )]
-        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var key = Cache.BuildKey( name, nameof( form.Location ) );
-            var point = settings[ key ].Deserialize<Point>();
-
-            if ( point.X != 0 || point.Y != 0 ) {
-                form.Location( point );
-            }
-
-            key = Cache.BuildKey( name, nameof( form.Size ) );
-            var size = settings[ key ].Deserialize<Size>();
-
-            if ( size.Height != 0 || size.Width != 0 ) {
-                form.Size( size );
-            }
-        }
-
-        [Obsolete( "Use LoadLocation() and LoadSize()" )]
-        public static void LoadPosition( [NotNull] this Form form, [NotNull] String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var key = Cache.BuildKey( name, nameof( form.Location ) );
-            var point = settings[ key ].Deserialize<Point>();
-
-            if ( point.X != 0 || point.Y != 0 ) {
-                form.Location( point );
-            }
-
-            key = Cache.BuildKey( name, nameof( form.Size ) );
-            var size = settings[ key ].Deserialize<Size>();
-
-            if ( size.Height != 0 || size.Width != 0 ) {
-                form.Size( size );
+                form.InvokeAction( () => form.SetDesktopLocation( x.Value, y.Value ) );
             }
         }
 
@@ -180,36 +96,10 @@ namespace Librainian.Controls {
             var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
 
             if ( width.HasValue && height.HasValue ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Size( new Size( width.Value, height.Value ) );
-                    form.ResumeLayout();
-                } );
+                form.Size( new Size( width.Value, height.Value ) );
             }
         }
 
-        public static void LoadSize( [NotNull] this Form form, [NotNull] String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            if ( String.IsNullOrEmpty( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( name ) );
-            }
-
-            if ( Int32.TryParse( settings[ name, nameof( form.Size.Width ) ], out var width ) &&
-                 Int32.TryParse( settings[ name, nameof( form.Size.Height ) ], out var height ) ) {
-                form.InvokeAction( () => {
-                    form.SuspendLayout();
-                    form.Size( new Size( width, height ) );
-                    form.ResumeLayout();
-                } );
-            }
-        }
 
         /// <summary>
         ///     Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.
@@ -220,11 +110,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
-            form.InvokeAction( () => {
-                form.SuspendLayout();
-                form.Location = location;
-                form.ResumeLayout();
-            } );
+            form.InvokeAction( () => form.SetDesktopLocation( location.X, location.Y ) );
         }
 
         public static void SaveLocation( [NotNull] this Form form ) {
@@ -238,75 +124,14 @@ namespace Librainian.Controls {
 
             $"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Trace();
 
-            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.X ),
-                form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.Location.X, RegistryValueKind.DWord );
+            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.X ),
+                form.WindowState == FormWindowState.Normal ? form.DesktopLocation.X : form.RestoreBounds.X, RegistryValueKind.DWord );
 
-            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
-                form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Location.Y, RegistryValueKind.DWord );
+            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.Y ),
+                form.WindowState == FormWindowState.Normal ? form.DesktopLocation.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
         }
 
-        public static void SaveLocation( [NotNull] this Form form, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            settings[ name, nameof( form.Location.X ) ] = form.WindowState == FormWindowState.Normal ? form.Location.X.ToString() : form.RestoreBounds.Location.X.ToString();
-            settings[ name, nameof( form.Location.Y ) ] = form.WindowState == FormWindowState.Normal ? form.Location.Y.ToString() : form.RestoreBounds.Location.Y.ToString();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
-
-        public static void SaveLocation( [NotNull] this Form form, String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ nameof( form.Location ), Cache.BuildKey( name, nameof( form.Location ) ) ] = form.Location.ToJSON();
-        }
+        
 
         /// <summary>
         ///     <seealso cref="LoadSize(Form)" />
@@ -324,76 +149,12 @@ namespace Librainian.Controls {
             $"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Log();
 
             AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
-                form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
+                form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
 
             AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
-                form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
+                form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
         }
 
-        public static void SaveSize( [NotNull] this Form form, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            var name = form.Name ?? "UnknownForm";
-
-            settings[ name, nameof( form.Size.Width ) ] = form.WindowState == FormWindowState.Normal ? form.Size.Width.ToString() : form.RestoreBounds.Size.Width.ToString();
-
-            settings[ name, nameof( form.Size.Height ) ] =
-                form.WindowState == FormWindowState.Normal ? form.Size.Height.ToString() : form.RestoreBounds.Size.Height.ToString();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] PersistTable<String, String> settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] StringKVPTable settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
-
-        public static void SaveSize( [NotNull] this Form form, String name, [NotNull] IniFile settings ) {
-            if ( form == null ) {
-                throw new ArgumentNullException( nameof( form ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( paramName: nameof( settings ) );
-            }
-
-            if ( settings == null ) {
-                throw new ArgumentNullException( nameof( settings ) );
-            }
-
-            settings[ nameof( form.Size ), Cache.BuildKey( name, nameof( form.Size ) ) ] = form.Size.ToJSON();
-        }
 
         /// <summary>
         ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
@@ -417,15 +178,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
-            form.InvokeAction( () => {
-                if ( form.IsDisposed ) {
-                    return;
-                }
-
-                form.SuspendLayout();
-                form.Size = size;
-                form.ResumeLayout();
-            } );
+            form.InvokeAction( () => form.Size = size );
         }
     }
 }

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:17 AM.
+// 
+// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2019/11/07 at 2:06 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -344,6 +344,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
+        [NotNull]
+        [ItemNotNull]
         public static IEnumerable<FileInfo> BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [NotNull] String searchPattern = "*" ) {
             if ( target == null ) {
                 throw new ArgumentNullException( nameof( target ) );
@@ -400,6 +402,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="source">The source stream to copy from.</param>
         /// <param name="target">The destination stream to copy to.</param>
         public static void CopyStream( [NotNull] this Stream source, [NotNull] Stream target ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( paramName: nameof( source ) );
+            }
+
+            if ( target == null ) {
+                throw new ArgumentNullException( paramName: nameof( target ) );
+            }
+
             if ( !source.CanRead ) {
                 throw new Exception( $"Cannot read from {nameof( source )}" );
             }
@@ -520,6 +530,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             return now;
         }
 
+        //TODO This needs rewritten as a whole drive file searcher using tasks.
+
         /// <summary>
         ///     Search the <paramref name="startingFolder" /> for any files matching the <paramref name="fileSearchPatterns" /> .
         /// </summary>
@@ -547,10 +559,18 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return;
                     }
 
+                    if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
+                        return;
+                    }
+
                     try {
                         var folders = startingFolder.BetterEnumerateDirectories( "*" /*, SearchOption.TopDirectoryOnly*/ );
 
                         folders.AsParallel().ForAll( folder => {
+                            if ( folder is null ) {
+                                return;
+                            }
+
                             if ( token.IsCancellationRequested ) {
                                 return;
                             }
@@ -568,7 +588,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             }
 
                             try {
-                                foreach ( var file in folder.BetterEnumerateFiles( searchPattern /*, SearchOption.TopDirectoryOnly*/ ) ) {
+                                foreach ( var file in folder.BetterEnumerateFiles( searchPattern ) ) {
                                     file.InternalSearchFoundFile( onFindFile, token );
                                 }
                             }
@@ -586,7 +606,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                                             return true;
                                     }
 
-                                    ex.Log();
+                                    ex?.Log();
 
                                     return false;
                                 } );
@@ -610,7 +630,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                                     return true;
                             }
 
-                            ex.Log();
+                            ex?.Log();
 
                             return false;
                         } );
@@ -631,14 +651,20 @@ namespace Librainian.OperatingSystem.FileSystem {
                             return true;
                     }
 
-                    ex.Log();
+                    ex?.Log();
 
                     return false;
                 } );
             }
         }
 
-        public static UInt32? GetFileSizeOnDisk( [NotNull] this Document document ) => GetFileSizeOnDisk( new FileInfo( document.FullPath ) );
+        public static UInt32? GetFileSizeOnDisk( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            return GetFileSizeOnDisk( new FileInfo( document.FullPath ) );
+        }
 
         /// <summary>
         /// </summary>
@@ -987,7 +1013,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     break;
                 }
 
-                await Task.Delay( retryDelay ?? Seconds.One );
+                await Task.Delay( retryDelay ?? Seconds.One ).ConfigureAwait( false );
                 fileMissingRetries--;
             }
 
@@ -999,7 +1025,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         var buffer = new Byte[ bufferSize.Value ];
                         Int32 numRead;
 
-                        while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ) ) != 0 ) {
+                        while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ) != 0 ) {
                             var text = Encoding.Unicode.GetString( buffer, 0, numRead );
                             sb.Append( text );
                         }
@@ -1248,8 +1274,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     $"Scanning [{drive.VolumeLabel}]".Info();
 
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, token: token, onFindFile: onFindFile,
-                        onEachDirectory: onEachDirectory, searchStyle: searchStyle );
+                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, token: token, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
+                        searchStyle: searchStyle );
                 } );
             }
             catch ( UnauthorizedAccessException ) { }
@@ -1702,5 +1728,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         //}
         ///// </summary>
+
     }
+
 }

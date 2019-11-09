@@ -201,7 +201,7 @@ namespace Librainian.Controls {
             // Counting the perceptive luminance - human eye favors green color...
             return a() < 0.5 ? darkForeColor : lightForeColor;
 
-            Double a() => 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) / 255;
+            Double a() => (1 - ( ( 0.299 * thisColor.R ) + ( 0.587 * thisColor.G ) + ( 0.114 * thisColor.B ) ) )/ 255;
         }
 
         /// <summary>
@@ -436,9 +436,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
+            transparentPercent = 255 - (transparentPercent.ForceBounds( 0, 1 ) * 255);
 
-            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
+            return Color.FromArgb( thisColor.ToArgb() + (( Int32 ) transparentPercent * 0x1000000) );
         }
 
         [NotNull]

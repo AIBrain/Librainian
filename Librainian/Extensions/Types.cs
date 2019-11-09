@@ -51,7 +51,6 @@ namespace Librainian.Extensions {
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
-    using System.Runtime.Serialization;
     using JetBrains.Annotations;
     using Logging;
 
@@ -552,27 +551,6 @@ namespace Librainian.Extensions {
 
                 return false;
             }
-        }
-
-        public static class New<T> {
-
-            public static readonly Func<T> Instance = Creator();
-
-            [NotNull]
-            private static Func<T> Creator() {
-                var t = typeof( T );
-
-                if ( t == typeof( String ) ) {
-                    return Expression.Lambda<Func<T>>( Expression.Constant( String.Empty ) ).Compile();
-                }
-
-                if ( t.HasDefaultConstructor() ) {
-                    return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile();
-                }
-
-                return () => ( T ) FormatterServices.GetUninitializedObject( t );
-            }
-
         }
 
         /*

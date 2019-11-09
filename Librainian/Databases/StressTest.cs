@@ -87,17 +87,17 @@ namespace Librainian.Databases {
 
             forHowLong = Seconds.One;
             var stopwatch = Stopwatch.StartNew();
-            (Status status, UInt64 result) counter = (default, 0UL);
+            var counter = 0UL;
 
             do {
-                counter = database.ExecuteScalar<UInt64>( $"select {counter.result} + cast(1 as bigint)  as [Result];", CommandType.Text );
+                counter = database.ExecuteScalar<UInt64>( $"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text );
 
                 if ( stopwatch.Elapsed >= forHowLong ) {
                     break;
                 }
             } while ( true );
 
-            return counter.result;
+            return counter;
         }
     }
 }

@@ -45,6 +45,7 @@ namespace Librainian.Extensions {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using JetBrains.Annotations;
 
     public static class CommonExtensions {
@@ -93,7 +94,8 @@ namespace Librainian.Extensions {
             return self.CompareTo( other: max ) > 0 ? max : self;
         }
 
-        public static IEnumerable<T> Concat<T>( [NotNull] this IEnumerable<T> first, T second ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> Concat<T>( [NotNull] this IEnumerable<T> first, [CanBeNull] T second ) {
             foreach ( var item in first ) {
                 yield return item;
             }
@@ -104,6 +106,7 @@ namespace Librainian.Extensions {
         /// <summary>
         ///     Just a no-op for setting a breakpoint on.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [DebuggerStepThrough]
         [Conditional( "DEBUG" )]
         public static void Nop<T>( [CanBeNull] this T obj ) { }

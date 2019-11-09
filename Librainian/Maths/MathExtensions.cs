@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2019/10/28 at 8:51 AM.
+// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2019/11/07 at 1:57 PM.
 
 namespace Librainian.Maths {
 
@@ -531,10 +531,10 @@ namespace Librainian.Maths {
         public static Int32 GCD2( Int32 x, Int32 y ) {
             while ( x != y ) {
                 if ( x > y ) {
-                    x = x - y;
+                    x -= y;
                 }
                 else {
-                    y = y - x;
+                    y -= x;
                 }
             }
 
@@ -551,10 +551,10 @@ namespace Librainian.Maths {
         public static Int64 GCD2( Int64 x, Int64 y ) {
             while ( x != y ) {
                 if ( x > y ) {
-                    x = x - y;
+                    x -= y;
                 }
                 else {
-                    y = y - x;
+                    y -= x;
                 }
             }
 
@@ -1206,8 +1206,8 @@ namespace Librainian.Maths {
                     largest = 1;
                 }
 
-                aggregate = aggregate * ( Rational ) smallest;
-                aggregate = aggregate * ( Rational ) largest;
+                aggregate *= ( Rational ) smallest;
+                aggregate *= ( Rational ) largest;
 
                 //aggregate.Should().NotBe( Double.NaN );
                 //aggregate.Should().NotBe( Double.NegativeInfinity );

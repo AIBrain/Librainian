@@ -62,6 +62,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Internet;
     using JetBrains.Annotations;
     using Logging;
+    using Magic;
     using Maths;
     using Maths.Numbers;
     using Measurement.Time;
@@ -74,7 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Security;
     using Threading;
 
-    public interface IDocument : IDisposable, IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
+    public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
         String FullPath { get; }
 
@@ -422,7 +423,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    public class Document : IDocument {
+    public class Document : ABetterClassDispose, IDocument {
 
         /// <summary>
         ///     Compares this. <see cref="FullPath" /> against other <see cref="FullPath" />.

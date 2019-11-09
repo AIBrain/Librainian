@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/10/25 at 12:10 PM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/11/08 at 12:44 PM.
 
 namespace Librainian.Magic {
 
@@ -46,6 +46,25 @@ namespace Librainian.Magic {
     using System.Runtime.CompilerServices;
     using System.Threading;
     using Logging;
+
+    //public class ABC : IDisposable {
+
+    //    private void ReleaseUnmanagedResources() {
+    //        // TODO release unmanaged resources here
+    //    }
+
+    //    /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+    //    public void Dispose() {
+    //        ReleaseUnmanagedResources();
+    //        GC.SuppressFinalize( this );
+    //    }
+
+    //    /// <summary>Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.</summary>
+    //    ~ABC() {
+    //        ReleaseUnmanagedResources();
+    //    }
+
+    //}
 
     /// <summary>
     ///     <para>A better class for implementing the <see cref="IDisposable" /> pattern.</para>
@@ -70,44 +89,42 @@ namespace Librainian.Magic {
         private Int32 _hasSuppressedFinalize;
 
         [DebuggerStepThrough]
-        ~ABetterClassDispose() => this.Dispose();
+        ~ABetterClassDispose() {
+            this.Dispose( false );
+        }
 
         /// <summary>
-        ///     If disposing, the method has been called directly or indirectly by a user's code. Managed and unmanaged resources
+        ///     If cleanupManaged, the method has been called directly or indirectly by a user's code. Managed and unmanaged
+        ///     resources
         ///     can be disposed.
         ///     If !disposing, the method has been called by the runtime from inside the finalizer and you should not reference
         ///     other objects. Only unmanaged resources can be disposed.
         /// </summary>
-        /// <param name="disposing"></param>
-        public void Dispose( Boolean disposing ) {
-            if ( disposing ) {
-                try {
-                    if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 ) {
-                        try {
-                            this.DisposeManaged(); //allow once
-                        }
-                        catch ( Exception exception ) {
-                            exception.Log();
-                        }
+        /// <param name="cleanupManaged"></param>
+        protected virtual void Dispose( Boolean cleanupManaged ) {
+            if ( cleanupManaged ) {
+                if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 ) {
+                    try {
+                        this.DisposeManaged(); //allow once
                     }
-
-                    if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 ) {
-                        try {
-                            this.DisposeNative(); //allow once
-                        }
-                        catch ( Exception exception ) {
-                            exception.Log();
-                        }
-                    }
-                }
-                finally {
-                    if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 ) {
-                        GC.SuppressFinalize( this ); //allow once
+                    catch ( Exception exception ) {
+                        exception.Log();
                     }
                 }
             }
 
-            //this.IsDisposed = true;   //automatic by checking getters
+            if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 ) {
+                try {
+                    this.DisposeNative(); //allow once
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            }
+
+            if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 ) {
+                GC.SuppressFinalize( this ); //allow once
+            }
         }
 
         /// <summary>
