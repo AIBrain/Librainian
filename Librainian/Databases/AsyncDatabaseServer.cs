@@ -95,11 +95,9 @@ namespace Librainian.Databases {
             try {
                 using var connection = new SqlConnection( this.ConnectionString );
 
-                using var command = new SqlCommand( );
-                command.Connection = connection;
-                command.CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds;
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = query;
+                using var command = new SqlCommand {
+                    Connection = connection, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.StoredProcedure, CommandText = query
+                };
 
                 if ( null != parameters ) {
                     foreach ( var parameter in parameters ) {
