@@ -113,7 +113,7 @@ namespace Librainian.Controls {
             form.InvokeAction( () => form.SetDesktopLocation( location.X, location.Y ) );
         }
 
-        public static void SaveLocation( [NotNull] this Form form ) {
+        public static void SaveLocation( [CanBeNull] this Form form ) {
             if ( form == null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
@@ -124,7 +124,7 @@ namespace Librainian.Controls {
 
             $"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Trace();
 
-            AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.X ),
+            AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.DesktopLocation.X ),
                 form.WindowState == FormWindowState.Normal ? form.DesktopLocation.X : form.RestoreBounds.X, RegistryValueKind.DWord );
 
             AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.Y ),

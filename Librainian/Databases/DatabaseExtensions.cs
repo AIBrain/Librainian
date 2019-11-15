@@ -52,7 +52,6 @@ namespace Librainian.Databases {
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
-    using Extensions;
     using Internet;
     using JetBrains.Annotations;
     using Logging;
@@ -190,7 +189,7 @@ namespace Librainian.Databases {
             }
 
             try {
-                using ( var db = new AsyncDatabaseServer( builderToTest.ConnectionString, token: token ) ) {
+                using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
 
                     return db.ExecuteScalar<T>( command, CommandType.Text );
                 }
@@ -202,6 +201,7 @@ namespace Librainian.Databases {
             return default;
         }
 
+        [ItemCanBeNull]
         public static async Task<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest,
             [NotNull] String command, CancellationToken? token = null ) {
 
@@ -212,11 +212,9 @@ namespace Librainian.Databases {
             if ( String.IsNullOrWhiteSpace( value: command ) ) {
                 throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
             }
-
             
-
             try {
-                using ( var db = new AsyncDatabaseServer( builderToTest.ConnectionString, token: token ) ) {
+                using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
 
                     return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
                 }
@@ -224,30 +222,6 @@ namespace Librainian.Databases {
             catch ( Exception exception ) {
                 exception.Log();
             }
-
-            return default;
-        }
-
-        public static T ConvertTo<T>( [CanBeNull] this Object scalar ) {
-            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
-                return default;
-            }
-
-            if ( scalar is T executeScalar ) {
-                return executeScalar;
-            }
-
-            if ( scalar.TryCast<T>( out var result ) ) {
-                return result;
-            }
-
-            try {
-                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
-            }
-            catch ( InvalidCastException ) { }
-            catch ( FormatException ) { }
-            catch ( OverflowException ) { }
-            catch ( ArgumentNullException ) { }
 
             return default;
         }
@@ -308,10 +282,17 @@ namespace Librainian.Databases {
         ///     Enumerates all SQL Server instances on the machine.
         /// </summary>
         /// <returns></returns>
+        [ItemNotNull]
         public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
             const String query = "select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = \'instanceID\'";
 
-            foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
+            var wmiNameSpaces = GetCorrectWmiNameSpaces();
+
+            if ( wmiNameSpaces == null ) {
+                yield break;
+            }
+
+            foreach ( var correctNamespace in wmiNameSpaces ) {
 
                 using var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
 
@@ -324,20 +305,19 @@ namespace Librainian.Databases {
                     yield break;
                 }
 
-                //Console.WriteLine( "SQL Server database instances discovered :" );
-                //Console.WriteLine( "Instance Name \t ServiceName \t Edition \t Version \t" );
-                foreach ( var o in getSqlEngine.Get() ) {
-                    if ( !( o is ManagementObject sqlEngine ) ) {
-                        continue;
-                    }
-
-                    var serviceName = sqlEngine[ "ServiceName" ].ToString();
-                    var instanceName = GetInstanceNameFromServiceName( serviceName );
-                    var version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" );
-                    var edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" );
+                foreach ( var serviceName in 
+                    getSqlEngine
+                        .Get()
+                        .Cast<ManagementObject>()
+                        .Select( sqlEngine => sqlEngine?[ "ServiceName" ]?.ToString() )
+                        .Where( serviceName => !String.IsNullOrWhiteSpace( serviceName ) ) ) {
 
                     yield return new SqlServerInstance {
-                        InstanceName = instanceName, ServiceName = serviceName, Version = version, Edition = edition, MachineName = Environment.MachineName
+                        InstanceName = GetInstanceNameFromServiceName( serviceName ),
+                        ServiceName = serviceName,
+                        Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
+                        Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ),
+                        MachineName = Environment.MachineName
                     };
                 }
             }
@@ -499,9 +479,9 @@ namespace Librainian.Databases {
 
             var timeout = ( TimeSpan ) Seconds.Thirty;
 
-            await AsyncDatabaseServer.StartAnySQLBrowsers( timeout ).ConfigureAwait( false );
+            await DatabaseServer.StartAnySQLBrowsers( timeout ).ConfigureAwait( false );
 
-            return AsyncDatabaseServer.FindUsableServers( timeout, credentials ).Where( server => server?.Status.IsGood() == true && file.Set( server ) )
+            return DatabaseServer.FindUsableServers( timeout, credentials ).Where( server => server?.Status.IsGood() == true && file.Set( server ) )
                 .Select( server => server.Status ).FirstOrDefault();
 
         }

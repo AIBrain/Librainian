@@ -164,26 +164,12 @@ namespace Librainian {
             }
         }
 
-        public static void Run<T>( [CanBeNull] IEnumerable<String> arguments ) where T : Form, new() {
+        public static void Run<TForm>( [CanBeNull] IEnumerable<String> arguments ) where TForm : Form, new() {
             RunInternalCommon();
 
-            using ( var form = new T() ) {
+            using ( var form = new TForm() ) {
                 if ( arguments != null ) {
                     form.Tag = arguments.Where( s => !String.IsNullOrWhiteSpace( s ) );
-                }
-
-                try {
-                    LoadFormPosition( form );
-                    Application.Run( form );
-                }
-                finally {
-                    SaveFormPosition( form );
-                }
-            }
-
-            static void LoadFormPosition( Form form ) {
-                if ( form == null ) {
-                    throw new ArgumentNullException( paramName: nameof( form ) );
                 }
 
                 form.SuspendLayout();
@@ -198,16 +184,12 @@ namespace Librainian {
                 }
 
                 form.ResumeLayout( true );
+                form.LocationChanged += ( sender, args ) => form.SaveLocation();
+                form.SizeChanged += ( sender, args ) => form.SaveSize();
+
+                Application.Run( form );
             }
 
-            static void SaveFormPosition( Form form ) {
-                if ( form == null ) {
-                    throw new ArgumentNullException( paramName: nameof( form ) );
-                }
-
-                form.SaveLocation();
-                form.SaveSize();
-            }
         }
 
     }

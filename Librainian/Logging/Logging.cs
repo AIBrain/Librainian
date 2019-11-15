@@ -209,15 +209,25 @@ namespace Librainian.Logging {
             }
         }
 
-        [Conditional( "DEBUG" )]
-        [Conditional( "TRACE" )]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <param name="breakinto"></param>
+        /// <returns></returns>
+        //[Conditional( "DEBUG" )]
+        //[Conditional( "TRACE" )]
         [DebuggerStepThrough]
-        public static void Log( [NotNull] this Exception exception, Boolean breakinto = false ) {
+        [NotNull]
+        public static Exception Log( [CanBeNull] this Exception exception, Boolean breakinto = false ) {
             if ( exception == null ) {
-                throw new ArgumentNullException( paramName: nameof( exception ) ); //heh
+                $"Null {nameof( Exception )}".Log( breakinto: true );
+
             }
 
             exception.ToStringDemystified().Log( breakinto: breakinto );
+
+            return exception ?? new NullReferenceException( $"Null {nameof( Exception )}" );
         }
 
         [DebuggerStepThrough]

@@ -87,7 +87,12 @@ namespace System {
         public static Boolean Trap( [InstantHandle] [CanBeNull] params Action[] actions ) {
             try {
                 if ( actions == null ) {
-                    throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
+                    
+                    if (Debugger.IsAttached) {
+                        throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
+                    }
+
+                    return default;
                 }
 
                 foreach ( var action in actions ) {
@@ -111,19 +116,27 @@ namespace System {
         /// <returns></returns>
         [DebuggerStepThrough]
         [CanBeNull]
-        public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func, [InstantHandle] [CanBeNull] Action final = default ) {
-            try {
-                return func == default ? default : func();
+        public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func ,[InstantHandle] [CanBeNull] Action final = default ) {
+            if ( func == null ) {
+                if (Debugger.IsAttached) {
+                    throw new ArgumentNullException( paramName: nameof( func ) );
+                }
+
+                return default;
             }
-            catch ( Exception exception ) {
-                exception.Log();
+
+            try {
+                return func();
+            }
+            catch ( Exception e ) {
+                e.Log();
             }
             finally {
                 try {
                     final?.Invoke();
                 }
-                catch ( Exception exception ) {
-                    exception.Log();
+                catch ( Exception e ) {
+                    e.Log();
                 }
             }
 
@@ -135,18 +148,31 @@ namespace System {
         /// </summary>
         /// <param name="func">    </param>
         /// <param name="argument"></param>
+        /// <param name="exception"></param>
         /// <param name="final">   </param>
         /// <param name="actions"></param>
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static R Trap<T, R>( [InstantHandle] [CanBeNull] this Func<T, R> func, [CanBeNull] T argument, [InstantHandle] [CanBeNull] Action final = default,
+        public static R Trap<T, R>( [InstantHandle] [CanBeNull] this Func<T, R> func, [CanBeNull] T argument, [CanBeNull] out Exception exception ,[InstantHandle] [CanBeNull] Action final = default,
             [CanBeNull] params Action[] actions ) {
-            try {
-                return func == default ? default : func( argument );
+            if ( func == null ) {
+                if (Debugger.IsAttached) {
+                    throw new ArgumentNullException( paramName: nameof( func ) );
+                }
+
+                exception = new ArgumentNullException( paramName: nameof( func ) );
+
+                return default;
             }
-            catch ( Exception exception ) {
-                exception.Log();
+
+            try {
+                exception = default;
+
+                return func( argument );
+            }
+            catch ( Exception e ) {
+                exception = e.Log();
             }
             finally {
                 try {
@@ -154,15 +180,15 @@ namespace System {
                         Trap( actions );
                     }
                 }
-                catch ( Exception exception ) {
-                    exception.Log();
+                catch ( Exception e) {
+                    exception = e.Log();
                 }
 
                 try {
                     final?.Invoke();
                 }
-                catch ( Exception exception ) {
-                    exception.Log();
+                catch ( Exception e ) {
+                    exception = e.Log();
                 }
             }
 

@@ -56,9 +56,11 @@ namespace Librainian.Collections.Lists {
     using Magic;
     using Maths;
     using Newtonsoft.Json;
+    using Threading;
 
     /// <summary>
     ///     <para>A thread safe generic list.</para>
+    /// <para>Use at your own risk.</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <remarks>
@@ -76,17 +78,7 @@ namespace Librainian.Collections.Lists {
         ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         [JsonIgnore]
-        public Int32 Count {
-            get {
-                var itemCounter = this.ItemCounter;
-
-                if ( itemCounter?.Values != null ) {
-                    return itemCounter.Values.Aggregate( seed: 0, func: ( current, variable ) => current + variable );
-                }
-
-                return default;
-            }
-        }
+        public Int32 Count => ( Int32 ) Interlocked.Read( ref this.ItemCount );
 
         /// <summary>
         ///     Get or set if the list is readonly.
@@ -180,13 +172,13 @@ namespace Librainian.Collections.Lists {
 
             this.Write( func: () => {
                 this.TheList.Clear();
-
-                //Is this 'new' wrong to do? How else do we reset all the counters? (This is blocked by using "this.Write" at least..)
-                this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
+                this.ResetCount();
 
                 return true;
             } );
         }
+
+        private void ResetCount() => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) );
 
         /// <summary>
         ///     <para>
@@ -277,7 +269,7 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: null );
+        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: default );
 
         public void RemoveAt( Int32 index ) {
 
@@ -334,12 +326,11 @@ namespace Librainian.Collections.Lists {
         ///     Threadsafe item counter (so we don't have to enter and exit the readerwriter).
         /// </summary>
         [JsonIgnore]
-        [CanBeNull]
-        private ThreadLocal<Int32> ItemCounter { get; set; } = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
+        private Int64 ItemCount;
 
         [JsonIgnore]
         [CanBeNull]
-        private ReaderWriterLockSlim ReaderWriter { get; set; } = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
+        private ReaderWriterLockSlim ReaderWriter { get; } = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
         /// <summary>
         ///     <para>The internal list actually used.</para>
@@ -366,27 +357,18 @@ namespace Librainian.Collections.Lists {
 
             this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
 
-            if ( null != enumerable ) {
+            if ( !(enumerable is null) ) {
                 this.AddRange( items: enumerable );
             }
         }
 
-        private void AnItemHasBeenAdded() {
-            var itemCounter = this.ItemCounter;
+        public ConcurrentList( Int32 initialCapacity ) : this() => this.TheList.Capacity = initialCapacity;
 
-            if ( itemCounter != null ) {
-                itemCounter.Value++;
-            }
-        }
+        private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
 
         private void AnItemHasBeenRemoved( [CanBeNull] Action action = null ) {
-            var itemCounter = this.ItemCounter;
-
-            if ( itemCounter != null ) {
-                itemCounter.Value--;
-            }
-
-            action?.Invoke();
+            Interlocked.Decrement( ref this.ItemCount );
+            action?.Execute();
         }
 
         private void IfDisallowedModificationsThrow() {
@@ -404,15 +386,8 @@ namespace Librainian.Collections.Lists {
             //    this.ReaderWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
             //}
 
-            if ( this.ItemCounter == null ) {
-                this.ItemCounter = new ThreadLocal<Int32>( valueFactory: () => 0, trackAllValues: true );
-            }
-
-            var itemCounter = this.ItemCounter;
-
-            if ( itemCounter != null ) {
-                itemCounter.Value += this.TheList.Count;
-            }
+            this.ResetCount();
+            Interlocked.Add( ref this.ItemCount, this.TheList.Count );
         }
 
         /// <summary>
@@ -689,15 +664,6 @@ namespace Librainian.Collections.Lists {
         ///     </para>
         /// </summary>
         public override void DisposeManaged() {
-            using ( this.ItemCounter ) {
-                this.ItemCounter = null; /*needed???*/
-            }
-
-            using ( this.ReaderWriter ) {
-                this.ReaderWriter = null; /*needed???*/
-            }
-
-            base.DisposeManaged();
         }
 
         /// <summary>

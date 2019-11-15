@@ -130,13 +130,13 @@ namespace Librainian.Databases {
         Task NonQueryAsync( [NotNull] String sproc );
 
         /// <summary>
-        ///     Make sure to include any parameters ( <see cref="AsyncDatabaseServer.Add{T}" />) to avoid sql injection attacks.
+        ///     Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.
         /// </summary>
         /// <param name="sql"></param>
         DataTableReader QueryAdHoc( [NotNull] String sql );
 
         /// <summary>
-        ///     Make sure to include any parameters ( <see cref="AsyncDatabaseServer.Add{T}" />) to avoid sql injection attacks.
+        ///     Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.
         /// </summary>
         /// <param name="sql"></param>
         Task<DataTableReader> QueryAdHocAsync( [NotNull] String sql );

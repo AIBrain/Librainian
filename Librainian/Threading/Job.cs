@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Job.cs" was last formatted by Protiguous on 2019/10/03 at 5:08 PM.
+// Project: "Librainian", "Job.cs" was last formatted by Protiguous on 2019/11/10 at 1:11 PM.
 
 namespace Librainian.Threading {
 
@@ -46,17 +46,25 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
+    using Maths;
 
     /// <summary>
-    ///     A task with an active progress, and a timer to complete or cancel.
+    ///     A task with a maximum time to run.
     /// </summary>
     public class Job<T> {
 
-        public CancellationTokenSource CTS { get; }
+        /// <summary>
+        ///     Set to cancel this job with the <see cref="MaxRunningTime" />.
+        /// </summary>
+        [NotNull]
+        public CancellationTokenSource CTS { get; private set; }
 
-        public TimeSpan EstimatedLengthOfJob { get; set; }
+        /// <summary>
+        ///     Query the <see cref="ETR" />.
+        /// </summary>
+        public TimeSpan EstimatedTimeRemaining => this.MaxRunningTime - this.Elapsed();
 
-        public TimeSpan EstimatedTimeRemaining { get; set; }
+        public TimeSpan MaxRunningTime { get; private set; }
 
         [CanBeNull]
         public T Result { get; private set; }
@@ -71,59 +79,68 @@ namespace Librainian.Threading {
         [NotNull]
         public Task TheTask { get; }
 
-        private Job() => this.Started = DateTime.UtcNow;
+        private Job( TimeSpan maxRuntime ) {
+            this.MaxRunningTime = maxRuntime;
+            this.Started = DateTime.UtcNow;
+            this.CTS = new CancellationTokenSource( this.MaxRunningTime );
+        }
 
-        public Job( [NotNull] Func<T> func, TimeSpan maxRuntime ) : this() {
+        public Job( [NotNull] Func<T> func, TimeSpan maxRuntime ) : this( maxRuntime ) {
             if ( func == null ) {
                 throw new ArgumentNullException( paramName: nameof( func ) );
             }
 
-            this.CTS = new CancellationTokenSource( maxRuntime );
+            T result = default;
 
-            this.TheTask = new Task( () => {
-                var result = func.Trap();
-                this.Done( result );
-            }, this.CTS.Token );
+            this.TheTask = new Task( () => result = func.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( task => this.Done( result ),
+                TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
         }
 
-        public Job( [NotNull] Action action, TimeSpan maxRuntime ) : this() {
+        public Job( [NotNull] Action action, TimeSpan maxRuntime ) : this( maxRuntime ) {
             if ( action == null ) {
                 throw new ArgumentNullException( paramName: nameof( action ) );
             }
 
-            this.CTS = new CancellationTokenSource( maxRuntime );
-
-            this.TheTask = new Task( () => {
-                action.Trap();
-                this.Done();
-            }, this.CTS.Token );
+            this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( task => this.Done( default ),
+                TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
         }
 
-        private void Done() {
+        private void Done( [CanBeNull] T result ) {
             this.Stopped = DateTime.UtcNow;
-            $"Job (Task.Id={this.TheTask.Id}) is done.".Log();
-            this.Result = default; //action doesn't have a "result"
-        }
-
-        private void Done( T ante ) {
-            this.Stopped = DateTime.UtcNow;
-            $"Job (Task.Id={this.TheTask.Id}) is done.".Log();
-            this.Result = ante;
+            $"Job (Task.Id={this.TheTask.Id}) is done.".Trace();
+            this.Result = result;
         }
 
         [NotNull]
-        public static implicit operator Task( Job<T> job ) => job.TheTask;
+        public static implicit operator Task( [NotNull] Job<T> job ) {
+            if ( job == null ) {
+                throw new ArgumentNullException( paramName: nameof( job ) );
+            }
+
+            return job.TheTask;
+        }
 
         /// <summary>
-        ///     aka Run()
+        ///     Increase the <see cref="MaxRunningTime" /> by a <paramref name="timeSpan" />.
+        ///     Has no effect if the task is done.
         /// </summary>
-        /// <returns></returns>
-        public async Task AwaitTask() {
-            try {
-                await this.TheTask.ConfigureAwait( false );
+        /// <param name="timeSpan"></param>
+        public void AddRunningTime( TimeSpan timeSpan ) {
+            if ( !this.IsDone() ) {
+                this.MaxRunningTime += timeSpan;
+                this.CTS = new CancellationTokenSource( this.MaxRunningTime - this.Elapsed() );
             }
-            catch ( TaskCanceledException ) {
-                this.Result = default;
+        }
+
+        /// <summary>
+        ///     Move the <see cref="EstimatedTimeRemaining" />
+        ///     TODO Needs tested..am I thinking right about this?
+        ///     Has no effect if the task is done.
+        /// </summary>
+        /// <param name="timeSpan"></param>
+        public void AdjustETR( TimeSpan timeSpan ) {
+            if ( !this.IsDone() ) {
+                this.MaxRunningTime = ( this.Elapsed() + timeSpan ).Half();
             }
         }
 
@@ -131,12 +148,33 @@ namespace Librainian.Threading {
         ///     Returns the time spent running the task so far, or total time if the task is done.
         /// </summary>
         /// <returns></returns>
-        public TimeSpan TimeTaken() {
+        public TimeSpan Elapsed() {
             if ( this.TheTask.IsDone() ) {
                 return this.Stopped - this.Started;
             }
 
             return DateTime.UtcNow - this.Started;
+        }
+
+        /// <summary>
+        ///     Query the <see cref="EstimatedTimeRemaining" />.
+        /// </summary>
+        /// <returns></returns>
+        public TimeSpan ETR() => this.EstimatedTimeRemaining;
+
+        public Boolean IsDone() => this.TheTask.IsDone();
+
+        /// <summary>
+        ///     aka Run()
+        /// </summary>
+        /// <returns></returns>
+        public async Task Task() {
+            try {
+                await this.TheTask.ConfigureAwait( false );
+            }
+            catch ( TaskCanceledException ) {
+                this.Result = default;
+            }
         }
 
     }

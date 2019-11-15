@@ -708,5 +708,31 @@ namespace Librainian.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
+
+        [CanBeNull]
+        public static T ConvertTo<T>( [CanBeNull] this Object scalar ) {
+            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
+                return default;
+            }
+
+            if ( scalar is T executeScalar ) {
+                return executeScalar;
+            }
+
+            if ( scalar.TryCast<T>( out var result ) ) {
+                return result;
+            }
+
+            try {
+                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
+            }
+            catch ( InvalidCastException ) { }
+            catch ( FormatException ) { }
+            catch ( OverflowException ) { }
+            catch ( ArgumentNullException ) { }
+
+            return default;
+        }
+
     }
 }

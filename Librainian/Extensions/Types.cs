@@ -66,8 +66,13 @@ namespace Librainian.Extensions {
 
         private delegate Object ObjectActivator();
 
-        public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) =>
-            value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
+        public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) {
+            if ( p == null ) {
+                throw new ArgumentNullException( paramName: nameof( p ) );
+            }
+
+            return value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
+        }
 
         /// <summary>
         ///     Creates a new <see cref="IList{T}" /> with a clone of each item.
@@ -313,7 +318,13 @@ namespace Librainian.Extensions {
                 .Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
 
-        public static Boolean HasDefaultConstructor( [NotNull] this Type t ) => t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;
+        public static Boolean HasDefaultConstructor( [NotNull] this Type t ) {
+            if ( t == null ) {
+                throw new ArgumentNullException( paramName: nameof( t ) );
+            }
+
+            return t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;
+        }
 
         /// <summary>
         ///     Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory
@@ -511,7 +522,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static Boolean TryCast<T>( this Object value, out T result ) {
+        public static Boolean TryCast<T>( this Object value, [CanBeNull] out T result ) {
             var type = typeof( T );
 
             // If the type is nullable and the result should be null, set a null value.
