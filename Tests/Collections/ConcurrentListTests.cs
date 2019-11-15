@@ -43,30 +43,35 @@ namespace LibrainianTests.Collections {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Librainian.Collections.Lists;
-    using Librainian.Extensions;
     using Librainian.Maths;
-    using Librainian.Measurement.Time;
-    using Librainian.Threading;
     using Xunit;
 
     public static class ConcurrentListTests {
 
         private const Int32 NamesToAdd = 1024;
 
-        private const Int32 ScaleCPUUsed = 1;
+        private static readonly Int32 ScaleCPUUsed = Environment.ProcessorCount;
 
-        private static void AddManyProducts( ICollection<String> list ) {
+        private static void AddManyProducts( [NotNull] ICollection<String> list ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+
             for ( var x = 0; x < NamesToAdd; x++ ) {
                 list.Add( item: $"name {x}" );
             }
         }
 
-        private static void AddManyProductsRemoveOdds( ICollection<String> list ) {
+        private static void AddManyProductsRemoveOdds( [NotNull] ICollection<String> list ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+
             AddManyProducts( list: list );
 
             for ( var x = 0; x < NamesToAdd; x++ ) {
@@ -80,35 +85,50 @@ namespace LibrainianTests.Collections {
         public static void AddNameThreadSafetyTest() {
             var list = new ConcurrentList<String>();
 
-            //var threads = new List<Thread>();
+            var threads = new List<Thread>( Environment.ProcessorCount * ScaleCPUUsed );
 
             foreach ( var thread in 1.To( end: Environment.ProcessorCount * ScaleCPUUsed )
                 .Select( selector: i => new Thread( start: () => AddManyProducts( list: list ) ) ) ) {
 
-                //threads.Add( thread );
+                threads.Add( thread );
                 thread.Start();
-                thread.Join();
             }
+
+            Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
 
             Assert.Equal( expected: NamesToAdd * Environment.ProcessorCount * ScaleCPUUsed, actual: list.Count );
         }
 
+        /*
         [Fact]
         public static async Task TestAFew() {
             var cancel = new CancellationTokenSource( Minutes.One );
             var token = cancel.Token;
 
             var numbers = new ConcurrentList<Int32>();
-            var create = Environment.ProcessorCount * 1024;
-            var workers = new List<Task>();
+            var create = Environment.ProcessorCount * 10240;
+            var workers = new List<Task>( create );
 
             Debug.WriteLine( $"Creating {create} workers..." );
 
             foreach ( var i in 1.To( create ) ) {
-                var task = Task.Run( () => {
+                var task = Task.Run( async () => {
                     var rnd = Randem.NextTimeSpan( Milliseconds.One, Milliseconds.NinetySeven );
-                    rnd.Delay();
-                    workers.Add( numbers.AddAsync( ( Int32 ) rnd.TotalMilliseconds ) );
+
+
+                    if ( i % 2 == 1 ) {
+                        workers.Add( numbers.AddAsync( ( Int32 ) rnd.TotalMilliseconds ) );
+                    }
+                    else {
+                        var total = workers.Count;
+                        var b = Randem.Next( total );
+
+                        if ( numbers.Remove( b ) ) {
+                            workers.Add( b );
+                        }
+                    }
+
+                    await rnd.Delay().ConfigureAwait( false );
                 }, token );
 
                 workers.Add( task );
@@ -117,27 +137,24 @@ namespace LibrainianTests.Collections {
             Debug.WriteLine( $"Waiting for {workers.Count} workers to complete..." );
 
             while ( workers.Any( worker => worker?.IsDone() == false ) ) {
-                Task.Delay( 100, token ).Wait( token );
+                await Task.Delay( 100, token ).ConfigureAwait( false );
             }
 
             Debug.WriteLine( $"We now have {numbers.Count} numbers." );
 
             numbers.Nop();
         }
+        */
 
         [Fact]
         public static void ThreadSafetyTestAddAndRemoves() {
             var list1 = new ConcurrentList<String>();
 
-            //var threads = new List<Thread>();
+            var threads = new ConcurrentList<Thread>(Environment.ProcessorCount * ScaleCPUUsed);
 
-            foreach ( var thread in 1.To( end: Environment.ProcessorCount * ScaleCPUUsed )
-                .Select( selector: i => new Thread( start: () => AddManyProductsRemoveOdds( list: list1 ) ) ) ) {
-
-                //threads.Add( thread );
-                thread.Start();
-                thread.Join();
-            }
+            Parallel.ForEach( 1.To( Environment.ProcessorCount * ScaleCPUUsed ), i => threads.Add( new Thread( start: () => AddManyProductsRemoveOdds( list: list1 ) ) ) );
+            Parallel.ForEach( threads.AsParallel(), thread => thread?.Start() );
+            Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
 
             Assert.Equal( expected: NamesToAdd / 2 * Environment.ProcessorCount * ScaleCPUUsed, actual: list1.Count );
         }
