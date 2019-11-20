@@ -51,13 +51,13 @@ namespace Librainian.Financial.Customers {
     public class Customer : ABetterClassDispose, ICustomer {
 
         [JsonProperty]
-        public Wallet Wallet { get; }
-
-        [JsonProperty]
         public CheckingAccount CheckingAccount { get; }
 
         [JsonProperty]
         public SavingsAccount SavingsAccount { get; }
+
+        [JsonProperty]
+        public Wallet Wallet { get; }
 
         public Customer( Guid customerID ) {
             this.Wallet = new Wallet( customerID );
@@ -72,6 +72,10 @@ namespace Librainian.Financial.Customers {
             this.Wallet.Dispose();
             this.CheckingAccount.Dispose();
             this.SavingsAccount.Dispose();
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
     }
 }

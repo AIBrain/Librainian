@@ -66,6 +66,10 @@ namespace Librainian.Collections.Queues {
         /// </summary>
         public override void DisposeManaged() => this.Bob.Dispose();
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public void Enqueue( TrainingQueueItem train ) {
             this.Items.Add( item: train );
             this.Bob.Set();

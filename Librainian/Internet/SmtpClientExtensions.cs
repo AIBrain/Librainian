@@ -65,12 +65,12 @@ namespace Librainian.Internet {
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
             // happen in the call to sendAsync.
-            if ( smtpClient == null ) {
+            if ( smtpClient is null ) {
                 throw new ArgumentNullException( nameof( smtpClient ) );
             }
 
             // Create a TaskCompletionSource to represent the operation
-            var tcs = new TaskCompletionSource<Object>( userToken );
+            var tcs = new TaskCompletionSource<Object>( userToken, TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Register a handler that will transfer completion results to the TCS Task
             void Handler( Object sender, AsyncCompletedEventArgs e ) => tcs.HandleCompletion( e, () => null, () => smtpClient.SendCompleted -= Handler );

@@ -51,8 +51,6 @@ namespace Librainian.ComputerSystem {
 
     public class ConsoleWindow {
 
-        public static Boolean IsConsoleVisible { get; set; }
-
         private const Int32 MY_CODE_PAGE = 437;
 
         private const Int32 STD_ERROR_HANDLE = -12;
@@ -60,6 +58,8 @@ namespace Librainian.ComputerSystem {
         private const Int32 STD_OUTPUT_HANDLE = -11;
 
         private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
+
+        public static Boolean IsConsoleVisible { get; set; }
 
         [Flags]
         private enum DesiredAccess : UInt32 {
@@ -162,7 +162,7 @@ namespace Librainian.ComputerSystem {
             catch ( Exception ) { }
 
             if ( bufferWidth == -1 ) {
-                if ( screen == null ) {
+                if ( screen is null ) {
                     bufferWidth = 180;
                 }
                 else {
@@ -185,7 +185,8 @@ namespace Librainian.ComputerSystem {
 
                 if ( breakRedirection ) {
                     var coord = new COORD {
-                        X = ( Int16 ) bufferWidth, Y = ( Int16 ) bufferHeight
+                        X = ( Int16 )bufferWidth,
+                        Y = ( Int16 )bufferHeight
                     };
 
                     SetConsoleScreenBufferSize( stdOut, coord );

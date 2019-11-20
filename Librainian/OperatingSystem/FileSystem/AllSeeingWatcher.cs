@@ -83,6 +83,10 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.Stop();
         }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public void Start() {
             var drives = DriveInfo.GetDrives();
 

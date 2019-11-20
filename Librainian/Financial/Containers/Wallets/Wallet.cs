@@ -145,7 +145,7 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public Boolean Contains( [NotNull] IBankNote bankNote ) {
-            if ( bankNote == null ) {
+            if ( bankNote is null ) {
                 throw new ArgumentNullException( nameof( bankNote ) );
             }
 
@@ -153,7 +153,7 @@ namespace Librainian.Financial.Containers.Wallets {
         }
 
         public Boolean Contains( [NotNull] ICoin coin ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
 
@@ -162,7 +162,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
         // await this.Messages.Completion;
         public UInt64 Count( [NotNull] IBankNote bankNote ) {
-            if ( bankNote == null ) {
+            if ( bankNote is null ) {
                 throw new ArgumentNullException( nameof( bankNote ) );
             }
 
@@ -174,7 +174,7 @@ namespace Librainian.Financial.Containers.Wallets {
         ///// </summary>
         //public async Task CatchUp() {
         public UInt64 Count( [NotNull] ICoin coin ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
 
@@ -198,7 +198,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <returns></returns>
         /// <remarks>Locks the wallet.</remarks>
         public Boolean Deposit( [NotNull] IDenomination denomination, UInt64 quantity, Guid? id = null ) {
-            if ( denomination == null ) {
+            if ( denomination is null ) {
                 throw new ArgumentNullException( nameof( denomination ) );
             }
 
@@ -273,6 +273,10 @@ namespace Librainian.Financial.Containers.Wallets {
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() => this.Statistics.Dispose();
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
 
         /// <summary>
         ///     Return each <see cref="ICoin" /> in this <see cref="Wallet" />.
@@ -349,7 +353,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <returns></returns>
         /// <remarks>Locks the wallet.</remarks>
         public Boolean TryWithdraw( [CanBeNull] IBankNote bankNote, UInt64 quantity ) {
-            if ( bankNote == null ) {
+            if ( bankNote is null ) {
                 return false;
             }
 
@@ -377,7 +381,7 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <returns></returns>
         /// <remarks>Locks the wallet.</remarks>
         public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
-            if ( coin == null ) {
+            if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
 

@@ -101,6 +101,10 @@ namespace Librainian.Databases.MMF {
         /// </summary>
         public override void DisposeManaged() => this._tcpClient?.Dispose();
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         //32 bytes for datetime String... it's an overkill i know
         [CanBeNull]
         public T Get( String key ) {
@@ -230,7 +234,7 @@ namespace Librainian.Databases.MMF {
         public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
             var obj = this.Get( key );
 
-            if ( obj == null ) {
+            if ( obj is null ) {
                 obj = cacheMiss.Invoke();
                 this.Set( key, obj, size: size, expire: expire );
             }

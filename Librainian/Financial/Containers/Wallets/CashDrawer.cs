@@ -53,6 +53,10 @@ namespace Librainian.Financial.Containers.Wallets {
 
         public CashDrawer( Guid id ) : base( id ) { }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {
             if ( null == bankNotes ) {
                 throw new ArgumentNullException( nameof( bankNotes ) );

@@ -62,6 +62,10 @@ namespace Librainian.Persistence.InIFiles {
     [JsonObject]
     public class IniFile {
 
+        public const String SectionBegin = "[";
+
+        public const String SectionEnd = "]";
+
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<String, IniSection> Data { [DebuggerStepThrough] get; } = new ConcurrentDictionary<String, IniSection>();
@@ -140,13 +144,9 @@ namespace Librainian.Persistence.InIFiles {
             }
         }
 
-        public const String SectionBegin = "[";
-
-        public const String SectionEnd = "]";
-
         [DebuggerStepThrough]
         public IniFile( [NotNull] IDocument document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -172,12 +172,93 @@ namespace Librainian.Persistence.InIFiles {
 
         public IniFile() { }
 
+        [NotNull]
+        [DebuggerStepThrough]
+        private static String Encode( [NotNull] IniLine line ) => $"{line ?? throw new ArgumentNullException( paramName: nameof( line ) )}";
+
+        [NotNull]
+        [DebuggerStepThrough]
+        private static String Encode( [NotNull] String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
+
+        [CanBeNull]
+        private IniSection EnsureDataSection( [NotNull] String section ) {
+            if ( String.IsNullOrEmpty( value: section ) ) {
+                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
+            }
+
+            lock ( this.Data ) {
+                if ( !this.Data.ContainsKey( section ) ) {
+                    this.Data[ section ] = new IniSection();
+                }
+                return this.Data[ section ];
+            }
+        }
+
+        private Boolean FindComment( [NotNull] String line, [NotNull] String section, ref Int32 counter ) {
+            if ( String.IsNullOrWhiteSpace( value: line ) ) {
+                return false;
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: section ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+            }
+
+            if ( line.StartsWith( IniLine.CommentHeader ) && this.Add( section, new KeyValuePair<String, String>( line, default ) ) ) {
+                counter++;
+                return true;
+            }
+
+            return false;
+        }
+
+        private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
+            if ( line is null ) {
+                throw new ArgumentNullException( paramName: nameof( line ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: section ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+            }
+
+            if ( line.Contains( IniLine.PairSeparator ) ) {
+                var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.Ordinal );
+                var key = line.Substring( 0, pos ).Trimmed();
+
+                if ( !String.IsNullOrEmpty( key ) ) {
+                    var value = line.Substring( pos + IniLine.PairSeparator.Length ).Trimmed();
+                    if ( this.Add( section, key, value ) ) {
+                        counter++;
+                    }
+                }
+            }
+
+            return counter;
+        }
+
+        private Boolean FindSection( [NotNull] String line, [CanBeNull] out String section ) {
+            line = line.Trimmed();
+            if ( String.IsNullOrWhiteSpace( value: line ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( line ) );
+            }
+
+            if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
+                section = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trimmed();
+
+                if ( !String.IsNullOrEmpty( section ) ) {
+                    return true;
+                }
+            }
+
+            section = default;
+            return false;
+        }
+
         private Boolean WriteSection( [NotNull] IDocument document, [NotNull] String section ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
@@ -206,11 +287,11 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
@@ -235,14 +316,6 @@ namespace Librainian.Persistence.InIFiles {
 
             return false;
         }
-
-        [NotNull]
-        [DebuggerStepThrough]
-        private static String Encode( [NotNull] IniLine line ) => $"{line ?? throw new ArgumentNullException( paramName: nameof( line ) )}";
-
-        [NotNull]
-        [DebuggerStepThrough]
-        private static String Encode( [NotNull] String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
 
         public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String value ) {
             section = section.Trimmed();
@@ -287,20 +360,6 @@ namespace Librainian.Persistence.InIFiles {
             return false;
         }
 
-        [CanBeNull]
-        private IniSection EnsureDataSection( [NotNull] String section ) {
-            if ( String.IsNullOrEmpty( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
-            }
-
-            lock ( this.Data ) {
-                if ( !this.Data.ContainsKey( section ) ) {
-                    this.Data[ section ] = new IniSection();
-                }
-                return this.Data[ section ];
-            }
-        }
-
         public Boolean Add( [NotNull] String section, (String key, String value) tuple ) => this.Add( section, tuple.key, tuple.value );
 
         public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
@@ -317,7 +376,7 @@ namespace Librainian.Persistence.InIFiles {
 
         [DebuggerStepThrough]
         public Boolean Add( [NotNull] IDocument document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -347,7 +406,7 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         public Boolean Add( [NotNull] String text ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( paramName: nameof( text ) );
             }
 
@@ -361,7 +420,7 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         public Boolean Add( [NotNull] IEnumerable<String> lines ) {
-            if ( lines == null ) {
+            if ( lines is null ) {
                 throw new ArgumentNullException( nameof( lines ) );
             }
 
@@ -370,7 +429,7 @@ namespace Librainian.Persistence.InIFiles {
             foreach ( var line in lines.Select( s => s?.Trimmed() ).Where( line => !line.IsNullOrEmpty() ) ) {
 
                 if ( this.FindSection( line: line, section: out var section ) ) {
-                    if (section != default) {
+                    if ( section != default ) {
                         continue;
                     }
                 }
@@ -385,66 +444,6 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             return counter.Any();
-
-        }
-
-        private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
-            if ( line == null ) {
-                throw new ArgumentNullException( paramName: nameof( line ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
-            }
-
-            if ( line.Contains( IniLine.PairSeparator ) ) {
-                var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.Ordinal );
-                var key = line.Substring( 0, pos ).Trimmed();
-
-                if ( !String.IsNullOrEmpty( key ) ) {
-                    var value = line.Substring( pos + IniLine.PairSeparator.Length ).Trimmed();
-                    if ( this.Add( section, key, value ) ) {
-                        counter++;
-                    }
-                }
-            }
-
-            return counter;
-        }
-
-        private Boolean FindComment( [NotNull] String line, [NotNull] String section, ref Int32 counter ) {
-            if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                return false;
-            }
-
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
-            }
-
-            if ( line.StartsWith( IniLine.CommentHeader ) && this.Add( section, new KeyValuePair<String, String>( line, default ) ) ) {
-                counter++;
-                return true;
-            }
-
-            return false;
-        }
-
-        private Boolean FindSection( [NotNull] String line, [CanBeNull] out String section ) {
-            line = line.Trimmed();
-            if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( line ) );
-            }
-
-            if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
-                section = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trimmed();
-
-                if ( !String.IsNullOrEmpty( section ) ) {
-                    return true;
-                }
-            }
-
-            section = default;
-            return false;
         }
 
         /// <summary>
@@ -485,7 +484,7 @@ namespace Librainian.Persistence.InIFiles {
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public Boolean Save( [NotNull] IDocument document, Boolean overwrite = true ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -512,7 +511,7 @@ namespace Librainian.Persistence.InIFiles {
         /// <param name="overwrite"></param>
         /// <returns></returns>
         public async Task<Boolean> SaveAsync( [NotNull] IDocument document, Boolean overwrite = true ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -534,7 +533,7 @@ namespace Librainian.Persistence.InIFiles {
 
         [DebuggerStepThrough]
         public Boolean TryRemove( [NotNull] String section ) {
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
@@ -543,7 +542,7 @@ namespace Librainian.Persistence.InIFiles {
 
         [DebuggerStepThrough]
         public Boolean TryRemove( [NotNull] String section, String key ) {
-            if ( section == null ) {
+            if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }
 

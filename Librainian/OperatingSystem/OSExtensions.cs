@@ -57,7 +57,10 @@ namespace Librainian.OperatingSystem {
         [CanBeNull]
         public static String CmdExecute( this String command ) {
             using ( var process = Process.Start( startInfo: new ProcessStartInfo( fileName: "cmd.exe", arguments: $"/c {command}" ) {
-                RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                CreateNoWindow = true
             } ) ) {
                 using ( var standardOutput = process?.StandardOutput ) {
                     return standardOutput?.ReadToEnd().Trim();
@@ -73,7 +76,7 @@ namespace Librainian.OperatingSystem {
         /// <param name="format"></param>
         public static void CopyToClipboard<T>( [CanBeNull] this T value, TextDataFormat format = TextDataFormat.UnicodeText ) {
             try {
-                if ( value == null ) {
+                if ( value is null ) {
                     return;
                 }
 

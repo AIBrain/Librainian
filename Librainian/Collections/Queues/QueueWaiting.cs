@@ -53,23 +53,6 @@ namespace Librainian.Collections.Queues {
 
     public class QueueWaiting<T> : ABetterClassDispose, IEnumerable<T> where T : class {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
-        ///     collection.
-        /// </returns>
-        /// <filterpriority>1</filterpriority>
-        public IEnumerator<T> GetEnumerator() => this.Queue.GetEnumerator();
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
 
         private AutoResetEvent Wait { get; } = new AutoResetEvent( initialState: false );
@@ -102,6 +85,20 @@ namespace Librainian.Collections.Queues {
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() => this.Wait.Dispose();
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
+        ///     collection.
+        /// </returns>
+        /// <filterpriority>1</filterpriority>
+        public IEnumerator<T> GetEnumerator() => this.Queue.GetEnumerator();
 
         /// <summary>
         ///     Pulls out the next <see cref="T" /> in the <see cref="Queue" /> or null.
@@ -141,5 +138,12 @@ namespace Librainian.Collections.Queues {
 
             this.Wait.WaitOne( timeout: timeToStall ?? Seconds.One );
         }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <filterpriority>2</filterpriority>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

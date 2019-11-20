@@ -90,7 +90,7 @@ namespace Librainian.Extensions {
         /// </summary>
         [NotNull]
         public static String UrlEncode( [NotNull] this String input ) {
-            if ( input == null ) {
+            if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
 

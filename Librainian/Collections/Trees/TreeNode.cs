@@ -82,7 +82,7 @@ namespace Librainian.Collections.Trees {
         public TreeNode<T> Root {
             get {
 
-                //return (Parent == null) ? this : Parent.Root;
+                //return (Parent is null) ? this : Parent.Root;
 
                 var node = this;
 
@@ -139,6 +139,10 @@ namespace Librainian.Collections.Trees {
                     }
                 }
             }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
     }
 }

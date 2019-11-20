@@ -62,16 +62,27 @@ namespace Librainian.Internet {
         /// </param>
         /// <returns></returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, Object userToken, Action<TaskCompletionSource<PingReply>> sendAsync ) {
+        private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, [NotNull] Object userToken, [NotNull] Action<TaskCompletionSource<PingReply>> sendAsync ) {
+            if ( ping is null ) {
+                throw new ArgumentNullException( paramName: nameof( ping ) );
+            }
+
+            if ( userToken is null ) {
+                throw new ArgumentNullException( paramName: nameof( userToken ) );
+            }
+
+            if ( sendAsync is null ) {
+                throw new ArgumentNullException( paramName: nameof( sendAsync ) );
+            }
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
             // happen in the call to sendAsync.
-            if ( ping == null ) {
+            if ( ping is null ) {
                 throw new ArgumentNullException( nameof( ping ) );
             }
 
             // Create a TaskCompletionSource to represent the operation
-            var tcs = new TaskCompletionSource<PingReply>( userToken );
+            var tcs = new TaskCompletionSource<PingReply>( userToken, TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Register a handler that will transfer completion results to the TCS Task
             void Handler( Object sender, PingCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Reply, () => ping.PingCompleted -= Handler );

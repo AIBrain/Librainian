@@ -68,7 +68,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var defrag = Process.Start( info );
 
-            if ( defrag == null ) {
+            if ( defrag is null ) {
                 return String.Empty;
             }
 

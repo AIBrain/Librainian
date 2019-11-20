@@ -43,6 +43,7 @@ namespace Librainian.Threading {
 
     using System;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// TODO This class needs tested.
@@ -50,8 +51,8 @@ namespace Librainian.Threading {
     /// <typeparam name="T"></typeparam>
     public class AsyncLazy<T> : Lazy<Task<T>> {
 
-        public AsyncLazy( Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
+        public AsyncLazy( [CanBeNull] Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
 
-        public AsyncLazy( Func<Task<T>> taskFactory ) : base( () => Task.Factory.StartNew( taskFactory ).Unwrap() ) { }
+        public AsyncLazy( [CanBeNull] Func<Task<T>> taskFactory ) : base( () => Task.Factory.StartNew( taskFactory ).Unwrap() ) { }
     }
 }

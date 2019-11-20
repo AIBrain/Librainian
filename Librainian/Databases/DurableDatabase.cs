@@ -68,7 +68,6 @@ namespace Librainian.Databases {
 
         public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
 
-
         /// <summary>
         ///     A database connection attempts to stay connected in the event of an unwanted disconnect.
         /// </summary>
@@ -225,6 +224,10 @@ namespace Librainian.Databases {
             }
         }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         /// <summary>
         ///     Opens and then closes a <see cref="SqlConnection" />.
         /// </summary>
@@ -244,7 +247,6 @@ namespace Librainian.Databases {
                 }
 
                 return command.ExecuteNonQuery();
-
             }
             catch ( SqlException exception ) {
                 exception.Log();
@@ -277,7 +279,6 @@ namespace Librainian.Databases {
                 }
 
                 return command.ExecuteNonQuery();
-
             }
             catch ( InvalidOperationException ) {
 

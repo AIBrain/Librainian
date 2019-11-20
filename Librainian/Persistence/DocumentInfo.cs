@@ -58,8 +58,6 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class DocumentInfo : IEquatable<DocumentInfo> {
 
-        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
-
         [JsonIgnore]
         private UInt64? _length;
 
@@ -107,7 +105,7 @@ namespace Librainian.Persistence {
         }
 
         public DocumentInfo( [NotNull] Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -123,11 +121,11 @@ namespace Librainian.Persistence {
         }
 
         public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
@@ -177,11 +175,11 @@ namespace Librainian.Persistence {
                 return true; //this is true for null==null, right?
             }
 
-            if ( left == null || right == null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 
-            if ( left.LastScanned == null || right.LastScanned == null ) {
+            if ( left.LastScanned is null || right.LastScanned is null ) {
                 return false; //the files need to be ran through Update() before we can compare them.
             }
 
@@ -206,6 +204,8 @@ namespace Librainian.Persistence {
 
         public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
+        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
+
         public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
         // ReSharper disable once NonReadonlyMemberInGetHashCode
@@ -218,7 +218,7 @@ namespace Librainian.Persistence {
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -289,7 +289,10 @@ namespace Librainian.Persistence {
                     this.LastScanned = DateTime.UtcNow;
 
                     var copy = new DocumentInfo( document ) {
-                        LastScanned = this.LastScanned, CRC32 = this.CRC32, CRC64 = this.CRC64, AddHash = this.AddHash
+                        LastScanned = this.LastScanned,
+                        CRC32 = this.CRC32,
+                        CRC64 = this.CRC64,
+                        AddHash = this.AddHash
                     };
 
                     MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] = copy;

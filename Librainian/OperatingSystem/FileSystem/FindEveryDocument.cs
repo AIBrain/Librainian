@@ -77,6 +77,14 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
         }
 
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         [NotNull]
         public Task StartScanning() =>
             Task.Run( () => {

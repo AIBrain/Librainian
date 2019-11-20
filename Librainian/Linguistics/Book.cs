@@ -59,20 +59,6 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Pages ).GetEnumerator();
-
-        public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
-
         [NotNull]
         [JsonProperty]
         private HashSet<Author> Authors { get; } = new HashSet<Author>();
@@ -86,7 +72,7 @@ namespace Librainian.Linguistics {
         private Book() { }
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
-            if ( pages == null ) {
+            if ( pages is null ) {
                 throw new ArgumentNullException( nameof( pages ) );
             }
 
@@ -113,19 +99,27 @@ namespace Librainian.Linguistics {
                 return true;
             }
 
-            if ( left == null ) {
+            if ( left is null ) {
                 return false;
             }
 
-            if ( rhs == null ) {
+            if ( rhs is null ) {
                 return false;
             }
 
             return left.SequenceEqual( rhs ); //no authors??
         }
 
+        public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
+
         [NotNull]
         public IEnumerable<Author> GetAuthors() => this.Authors;
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
 
         /// <summary>
         ///     Serves as the default hash function.
@@ -135,5 +129,11 @@ namespace Librainian.Linguistics {
 
         [NotNull]
         public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
     }
 }

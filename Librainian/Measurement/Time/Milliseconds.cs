@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Milliseconds.cs" was last formatted by Protiguous on 2019/08/08 at 9:05 AM.
+// Project: "Librainian", "Milliseconds.cs" was last formatted by Protiguous on 2019/11/20 at 5:43 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -54,104 +54,87 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public struct Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
+    public class Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
 
-        /// <summary>
-        ///     1000
-        /// </summary>
+        /// <summary>1000</summary>
         public const UInt16 InOneSecond = 1000;
 
-        /// <summary>
-        ///     Ten <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds Fifteen = new Milliseconds( 15 );
+        [NotNull]
+        public static Milliseconds Default { get; } = new Milliseconds( default );
 
-        /// <summary>
-        ///     Five <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds Five = new Milliseconds( 5 );
+        /// <summary>Ten <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds Fifteen { get; } = new Milliseconds( 15 );
 
-        /// <summary>
-        ///     Five Hundred <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds FiveHundred = new Milliseconds( 500 );
+        /// <summary>Five <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds Five { get; } = new Milliseconds( 5 );
 
-        /// <summary>
-        ///     111. 1 Hertz (9 <see cref="Milliseconds" />).
-        /// </summary>
-        public static readonly Milliseconds Hertz111 = new Milliseconds( 9 );
+        /// <summary>Five Hundred <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds FiveHundred { get; } = new Milliseconds( 500 );
 
-        /// <summary>
-        ///     97 <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds NinetySeven = new Milliseconds( 97 );
+        /// <summary>111. 1 Hertz (9 <see cref="Milliseconds" />).</summary>
+        [NotNull]
+        public static Milliseconds Hertz111 { get; } = new Milliseconds( 9 );
 
-        /// <summary>
-        ///     One <see cref="Milliseconds" />.
-        /// </summary>
-        public static readonly Milliseconds One = new Milliseconds( 1 );
+        /// <summary>97 <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds NinetySeven { get; } = new Milliseconds( 97 );
 
-        /// <summary>
-        ///     One <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds OneHundred = new Milliseconds( 100 );
+        /// <summary>One <see cref="Milliseconds" />.</summary>
+        [NotNull]
+        public static Milliseconds One { get; } = new Milliseconds( 1 );
 
-        /// <summary>
-        ///     One Thousand Nine <see cref="Milliseconds" /> (Prime).
-        /// </summary>
-        public static readonly Milliseconds OneThousandNine = new Milliseconds( 1009 );
+        /// <summary>One <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds OneHundred { get; } = new Milliseconds( 100 );
 
-        /// <summary>
-        ///     Sixteen <see cref="Milliseconds" />.
-        /// </summary>
-        public static readonly Milliseconds Sixteen = new Milliseconds( 16 );
+        /// <summary>One Thousand Nine <see cref="Milliseconds" /> (Prime).</summary>
+        [NotNull]
+        public static Milliseconds OneThousandNine { get; } = new Milliseconds( 1009 );
 
-        /// <summary>
-        ///     Ten <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds Ten = new Milliseconds( 10 );
+        /// <summary>Sixteen <see cref="Milliseconds" />.</summary>
+        [NotNull]
+        public static Milliseconds Sixteen { get; } = new Milliseconds( 16 );
 
-        /// <summary>
-        ///     Three <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds Three = new Milliseconds( 3 );
+        /// <summary>Ten <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds Ten { get; } = new Milliseconds( 10 );
 
-        /// <summary>
-        ///     Two <see cref="Milliseconds" /> s.
-        /// </summary>
-        public static readonly Milliseconds Two = new Milliseconds( 2 );
+        /// <summary>Three <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds Three { get; } = new Milliseconds( 3 );
 
-        /// <summary>
-        ///     Two Hundred <see cref="Milliseconds" />.
-        /// </summary>
-        public static readonly Milliseconds TwoHundred = new Milliseconds( 200 );
+        /// <summary>Three Three Three <see cref="Milliseconds" />.</summary>
+        public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
 
-        /// <summary>
-        ///     Two Hundred Eleven <see cref="Milliseconds" /> (Prime).
-        /// </summary>
-        public static readonly Milliseconds TwoHundredEleven = new Milliseconds( 211 );
+        /// <summary>Two <see cref="Milliseconds" /> s.</summary>
+        [NotNull]
+        public static Milliseconds Two { get; } = new Milliseconds( 2 );
 
-        /// <summary>
-        ///     Two Thousand Three <see cref="Milliseconds" /> (Prime).
-        /// </summary>
-        public static readonly Milliseconds TwoThousandThree = new Milliseconds( 2003 );
+        /// <summary>Two Hundred <see cref="Milliseconds" />.</summary>
+        [NotNull]
+        public static Milliseconds TwoHundred { get; } = new Milliseconds( 200 );
+
+        /// <summary>Two Hundred Eleven <see cref="Milliseconds" /> (Prime).</summary>
+        [NotNull]
+        public static Milliseconds TwoHundredEleven { get; } = new Milliseconds( 211 );
+
+        /// <summary>Two Thousand Three <see cref="Milliseconds" /> (Prime).</summary>
+        [NotNull]
+        public static Milliseconds TwoThousandThree { get; } = new Milliseconds( 2003 );
 
         //faster WPM than a female (~240wpm)
-        /// <summary>
-        ///     Zero <see cref="Milliseconds" />.
-        /// </summary>
-        public static readonly Milliseconds Zero = new Milliseconds( 0 );
-
-        /// <summary>
-        ///     Three Three Three <see cref="Milliseconds" />.
-        /// </summary>
-        public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
+        /// <summary>Zero <see cref="Milliseconds" />.</summary>
+        [NotNull]
+        public static Milliseconds Zero { get; } = new Milliseconds( 0 );
 
         [JsonProperty]
         public Rational Value { get; }
 
         //faster WPM than a female (~240wpm)
-        public Milliseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Milliseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Milliseconds( Rational value ) => this.Value = value;
 
@@ -159,11 +142,25 @@ namespace Librainian.Measurement.Time {
 
         public Milliseconds( BigInteger value ) => this.Value = value;
 
-        public Milliseconds( Double value ) => this.Value = ( Rational ) value;
+        public Milliseconds( Double value ) => this.Value = ( Rational )value;
 
-        public static Milliseconds Combine( Milliseconds left, Rational milliseconds ) => new Milliseconds( left.Value + milliseconds );
+        [NotNull]
+        public static Milliseconds Combine( [NotNull] Milliseconds left, Rational milliseconds ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( left.Value + milliseconds );
+            return new Milliseconds( left.Value + milliseconds );
+        }
+
+        [NotNull]
+        public static Milliseconds Combine( [NotNull] Milliseconds left, BigInteger milliseconds ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return new Milliseconds( left.Value + milliseconds );
+        }
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -171,61 +168,216 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Milliseconds left, Milliseconds right ) => left.Value == right.Value;
+        public static Boolean Equals( [CanBeNull] Milliseconds left, [CanBeNull] Milliseconds right ) {
+            if ( left is null && right is null ) {
+                return true;
+            }
 
-        public static explicit operator Double( Milliseconds milliseconds ) => ( Double ) milliseconds.Value;
+            if ( left is null || right is null ) {
+                return false;
+            }
 
-        /// <summary>
-        ///     Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.
-        /// </summary>
+            return left.Value == right.Value;
+        }
+
+        public static explicit operator Double( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
+
+            return ( Double )milliseconds.Value;
+        }
+
+        /// <summary>Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.</summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static implicit operator Microseconds( Milliseconds milliseconds ) => milliseconds.ToMicroseconds();
+        [CanBeNull]
+        public static implicit operator Microseconds( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
 
-        public static implicit operator Rational( Milliseconds milliseconds ) => milliseconds.Value;
+            return milliseconds.ToMicroseconds();
+        }
+
+        public static implicit operator Rational( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
+
+            return milliseconds.Value;
+        }
 
         [NotNull]
-        public static implicit operator Seconds( Milliseconds milliseconds ) => milliseconds.ToSeconds();
+        public static implicit operator Seconds( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
 
-        public static implicit operator SpanOfTime( Milliseconds milliseconds ) => new SpanOfTime( milliseconds: milliseconds );
+            return milliseconds.ToSeconds();
+        }
 
-        public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( ( Double ) milliseconds.Value );
+        [NotNull]
+        public static implicit operator SpanOfTime( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
 
-        public static Milliseconds operator -( Milliseconds milliseconds ) => new Milliseconds( milliseconds.Value * -1 );
+            return new SpanOfTime( milliseconds: milliseconds );
+        }
 
-        public static Milliseconds operator -( Milliseconds left, Milliseconds right ) => Combine( left, -right.Value );
+        public static implicit operator TimeSpan( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
 
-        public static Milliseconds operator -( Milliseconds left, Decimal milliseconds ) => Combine( left, ( Rational ) ( -milliseconds ) );
+            return TimeSpan.FromMilliseconds( ( Double )milliseconds.Value );
+        }
 
-        public static Boolean operator !=( Milliseconds left, Milliseconds right ) => !Equals( left, right );
+        [NotNull]
+        public static Milliseconds operator -( [NotNull] Milliseconds milliseconds ) {
+            if ( milliseconds is null ) {
+                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+            }
 
-        public static Milliseconds operator +( Milliseconds left, Milliseconds right ) => Combine( left, right.Value );
+            return new Milliseconds( milliseconds.Value * -1 );
+        }
 
-        public static Milliseconds operator +( Milliseconds left, Decimal milliseconds ) => Combine( left, ( Rational ) milliseconds );
+        [NotNull]
+        public static Milliseconds operator -( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public static Milliseconds operator +( Milliseconds left, BigInteger milliseconds ) => Combine( left, milliseconds );
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
 
-        public static Boolean operator <( Milliseconds left, Milliseconds right ) => left.Value < right.Value;
+            return Combine( left, -right.Value );
+        }
 
-        public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds ) left < right;
+        [NotNull]
+        public static Milliseconds operator -( [NotNull] Milliseconds left, Decimal milliseconds ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public static Boolean operator ==( Milliseconds left, Milliseconds right ) => Equals( left, right );
+            return Combine( left, ( Rational )( -milliseconds ) );
+        }
 
-        public static Boolean operator >( Milliseconds left, Milliseconds right ) => left.Value > right.Value;
+        public static Boolean operator !=( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds ) left > right;
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
 
-        public Int32 CompareTo( Milliseconds other ) => this.Value.CompareTo( other.Value );
+            return !Equals( left, right );
+        }
 
-        public Boolean Equals( Milliseconds other ) => Equals( this, other );
+        [NotNull]
+        public static Milliseconds operator +( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public override Boolean Equals( Object obj ) => obj is Milliseconds milliseconds && this.Equals( milliseconds );
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return Combine( left, right.Value );
+        }
+
+        [NotNull]
+        public static Milliseconds operator +( [NotNull] Milliseconds left, Decimal milliseconds ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return Combine( left, ( Rational )milliseconds );
+        }
+
+        [NotNull]
+        public static Milliseconds operator +( [NotNull] Milliseconds left, BigInteger milliseconds ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return Combine( left, milliseconds );
+        }
+
+        public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return left.Value < right.Value;
+        }
+
+        public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Seconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return ( Seconds )left < right;
+        }
+
+        public static Boolean operator ==( [CanBeNull] Milliseconds left, [CanBeNull] Milliseconds right ) => Equals( left, right );
+
+        public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return left.Value > right.Value;
+        }
+
+        [Pure]
+        public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Seconds right ) {
+            if ( left is null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return ( Seconds )left > right;
+        }
+
+        public Int32 CompareTo( [NotNull] Milliseconds other ) {
+            if ( other is null ) {
+                throw new ArgumentNullException( paramName: nameof( other ) );
+            }
+
+            return this.Value.CompareTo( other.Value );
+        }
+
+        public Boolean Equals( [CanBeNull] Milliseconds other ) => Equals( this, other );
+
+        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this, obj as Milliseconds );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneMillisecond * this.Value );
+        [NotNull]
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMillisecond * this.Value );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
@@ -237,7 +389,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "millisecond" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "millisecond" )}";
         }

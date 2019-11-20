@@ -117,7 +117,7 @@ namespace Librainian.Extensions {
         /// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
         /// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
         public static Boolean IsGuid( [NotNull] this String s ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
 
@@ -140,7 +140,7 @@ namespace Librainian.Extensions {
 
             for ( var i = 0; i < bytecount; i++ ) {
                 unchecked {
-                    destByte[ i ] = ( Byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                    destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
                 }
             }
 

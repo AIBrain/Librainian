@@ -84,7 +84,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static T Get<T>( [NotNull] this String key ) {
 
-            if ( App == null ) {
+            if ( App is null ) {
                 throw new ArgumentNullException( paramName: nameof( App ) );
             }
 
@@ -110,7 +110,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Set<T>( [NotNull] this String key, T value ) {
 
-            if ( App == null ) {
+            if ( App is null ) {
                 throw new ArgumentNullException( paramName: nameof( App ) );
             }
 
@@ -121,10 +121,10 @@ namespace Librainian.Persistence {
             try {
                 switch ( value ) {
                     case String[] _: {
-                        App.SetValue( key, value, RegistryValueKind.MultiString );
+                            App.SetValue( key, value, RegistryValueKind.MultiString );
 
-                        return true;
-                    }
+                            return true;
+                        }
 
                     case String _:
                         App.SetValue( key, value, RegistryValueKind.String );
@@ -153,10 +153,10 @@ namespace Librainian.Persistence {
                         return true;
 
                     default: {
-                        App.SetValue( key, value, RegistryValueKind.Unknown );
+                            App.SetValue( key, value, RegistryValueKind.Unknown );
 
-                        return true;
-                    }
+                            return true;
+                        }
                 }
             }
             catch ( Exception exception ) {

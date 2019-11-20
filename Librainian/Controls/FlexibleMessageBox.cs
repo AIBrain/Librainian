@@ -238,6 +238,15 @@ namespace Librainian.Controls {
         /// </summary>
         private class FlexibleMessageBoxForm : Form {
 
+            //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
+            private const String STANDARD_MESSAGEBOX_SEPARATOR_LINES = "---------------------------\n";
+
+            private const String STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
+
+            private static readonly String[] BUTTON_TEXTS_ENGLISH_EN = {
+                "&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
+            };
+
             private Button _button1;
 
             private Button _button2;
@@ -270,15 +279,6 @@ namespace Librainian.Controls {
             ///     The text that is been used in the FlexibleMessageBoxForm.
             /// </summary>
             public String MessageText { get; set; }
-
-            //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
-            private const String STANDARD_MESSAGEBOX_SEPARATOR_LINES = "---------------------------\n";
-
-            private const String STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
-
-            private static readonly String[] BUTTON_TEXTS_ENGLISH_EN = {
-                "&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
-            };
 
             //Note: This is also the fallback language
 
@@ -556,7 +556,7 @@ namespace Librainian.Controls {
                 //Get rows. Exit if there are no rows to render...
                 var stringRows = GetStringRows( text );
 
-                if ( stringRows == null ) {
+                if ( stringRows is null ) {
                     return;
                 }
 
@@ -585,11 +585,11 @@ namespace Librainian.Controls {
             private static void SetDialogStartPosition( FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] IWin32Window owner ) {
 
                 //If no owner given: Center on current screen
-                if ( owner == null ) {
+                if ( owner is null ) {
                     var screen = Screen.FromPoint( Cursor.Position );
                     flexibleMessageBoxForm.StartPosition = FormStartPosition.Manual;
-                    flexibleMessageBoxForm.Left = screen.Bounds.Left + (screen.Bounds.Width / 2) - (flexibleMessageBoxForm.Width / 2);
-                    flexibleMessageBoxForm.Top = screen.Bounds.Top + (screen.Bounds.Height / 2) - (flexibleMessageBoxForm.Height / 2);
+                    flexibleMessageBoxForm.Left = screen.Bounds.Left + ( screen.Bounds.Width / 2 ) - ( flexibleMessageBoxForm.Width / 2 );
+                    flexibleMessageBoxForm.Top = screen.Bounds.Top + ( screen.Bounds.Height / 2 ) - ( flexibleMessageBoxForm.Height / 2 );
                 }
             }
 
@@ -654,22 +654,22 @@ namespace Librainian.Controls {
 
                 switch ( buttonIndexToFocus ) {
                     case 3: {
-                        buttonToFocus = this._button3;
+                            buttonToFocus = this._button3;
 
-                        break;
-                    }
+                            break;
+                        }
 
                     case 2: {
-                        buttonToFocus = this._button2;
+                            buttonToFocus = this._button2;
 
-                        break;
-                    }
+                            break;
+                        }
 
                     default: {
-                        buttonToFocus = this._button1;
+                            buttonToFocus = this._button1;
 
-                        break;
-                    }
+                            break;
+                        }
                 }
 
                 buttonToFocus.Focus();
@@ -688,9 +688,9 @@ namespace Librainian.Controls {
                 this._pictureBoxForIcon = new PictureBox();
                 this._button2 = new Button();
                 this._button3 = new Button();
-                ( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).BeginInit();
+                ( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).BeginInit();
                 this._panel1.SuspendLayout();
-                ( ( ISupportInitialize ) this._pictureBoxForIcon ).BeginInit();
+                ( ( ISupportInitialize )this._pictureBoxForIcon ).BeginInit();
                 this.SuspendLayout();
 
                 // button1
@@ -787,9 +787,9 @@ namespace Librainian.Controls {
                 this.StartPosition = FormStartPosition.CenterParent;
                 this.Text = "<Caption>";
                 this.Shown += this.FlexibleMessageBoxForm_Shown;
-                ( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).EndInit();
+                ( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).EndInit();
                 this._panel1.ResumeLayout( false );
-                ( ( ISupportInitialize ) this._pictureBoxForIcon ).EndInit();
+                ( ( ISupportInitialize )this._pictureBoxForIcon ).EndInit();
                 this.ResumeLayout( false );
                 this.PerformLayout();
             }
@@ -822,7 +822,9 @@ namespace Librainian.Controls {
 
                     //Create a new instance of the FlexibleMessageBox form
                     var flexibleMessageBoxForm = new FlexibleMessageBoxForm {
-                        ShowInTaskbar = false, CaptionText = caption, MessageText = text
+                        ShowInTaskbar = false,
+                        CaptionText = caption,
+                        MessageText = text
                     };
 
                     flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
@@ -848,7 +850,7 @@ namespace Librainian.Controls {
                 } );
 
                 if ( owner is Control control && control.InvokeRequired ) {
-                    return ( DialogResult ) control.Invoke( func );
+                    return ( DialogResult )control.Invoke( func );
                 }
 
                 return func();

@@ -77,7 +77,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Years( Decimal value ) => this.Value = ( Rational ) value;
+        public Years( Decimal value ) => this.Value = ( Rational )value;
 
         public Years( Rational value ) => this.Value = value;
 
@@ -87,7 +87,7 @@ namespace Librainian.Measurement.Time {
 
         public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
 
-        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational ) years );
+        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational )years );
 
         public static Years Combine( Years left, Rational years ) => new Years( left.Value + years );
 
@@ -101,6 +101,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Months( Years years ) => years.ToMonths();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years );
 
         public static Years operator -( Years days ) => new Years( days.Value * -1 );
@@ -128,7 +129,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Years other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -141,7 +142,7 @@ namespace Librainian.Measurement.Time {
 
         public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYear );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYear );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
@@ -153,13 +154,13 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "year" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "year" )}";
         }
 
         public TimeSpan ToTimeSpan() => throw new NotImplementedException();
 
-        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational ) Weeks.InOneCommonYear );
+        public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneCommonYear );
     }
 }

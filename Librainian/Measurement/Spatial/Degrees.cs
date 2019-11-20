@@ -60,12 +60,12 @@ namespace Librainian.Measurement.Spatial {
         private volatile Single _value;
 
         /// <summary>Math.PI / 180</summary>
-        public const Single DegreesToRadiansFactor = ( Single ) ( Math.PI / 180.0f );
+        public const Single DegreesToRadiansFactor = ( Single )( Math.PI / 180.0f );
 
         /// <summary>
         ///     360
         /// </summary>
-        public const Single MaximumValue = ( Single ) CardinalDirection.FullNorth;
+        public const Single MaximumValue = ( Single )CardinalDirection.FullNorth;
 
         /// <summary>
         ///     Just above Zero. Not Zero. Zero is <see cref="CardinalDirection.FullNorth" />.
@@ -107,7 +107,7 @@ namespace Librainian.Measurement.Spatial {
         /// <returns></returns>
         public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
-        public static implicit operator Decimal( Degrees degrees ) => ( Decimal ) degrees.Value;
+        public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;
 
         public static implicit operator Double( Degrees degrees ) => degrees.Value;
 
@@ -142,7 +142,7 @@ namespace Librainian.Measurement.Spatial {
         public Boolean Equals( Degrees other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 

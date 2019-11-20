@@ -102,7 +102,7 @@ namespace Librainian.Parsing.Markov {
         /// <param name="word"></param>
         /// <returns></returns>
         public IEnumerable<String> Nexts( [CanBeNull] String word ) {
-            if ( word == null ) {
+            if ( word is null ) {
                 return Enumerable.Empty<String>();
             }
 

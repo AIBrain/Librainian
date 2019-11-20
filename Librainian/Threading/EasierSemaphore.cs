@@ -62,7 +62,7 @@ namespace Librainian.Threading {
         ///     <see cref="T:System.Threading.WaitHandle" /> in another application domain.
         /// </exception>
         public static Token WaitOneThenRelease( [NotNull] this Semaphore semaphore, TimeSpan? timeout = null ) {
-            if ( semaphore == null ) {
+            if ( semaphore is null ) {
                 throw new ArgumentNullException( paramName: nameof( semaphore ) );
             }
 

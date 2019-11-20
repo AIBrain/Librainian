@@ -52,9 +52,9 @@ namespace Librainian.Threading {
     /// </summary>
     public static class ObjectExtensions {
 
-        private static readonly MethodInfo CloneMethod = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
+        private static MethodInfo CloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
-        private static void CopyFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject, [NotNull] Type typeToReflect,
+        private static void CopyFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited, [CanBeNull] Object cloneObject, [NotNull] Type typeToReflect,
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
             [CanBeNull] Func<FieldInfo, Boolean> filter = null ) {
             foreach ( var fieldInfo in typeToReflect.GetFields( bindingFlags ) ) {
@@ -72,8 +72,9 @@ namespace Librainian.Threading {
             }
         }
 
-        private static Object InternalCopy( [CanBeNull] Object originalObject, IDictionary<Object, Object> visited ) {
-            if ( originalObject == null ) {
+        [CanBeNull]
+        private static Object InternalCopy( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited ) {
+            if ( originalObject is null ) {
                 return null;
             }
 
@@ -97,7 +98,7 @@ namespace Librainian.Threading {
                 var arrayType = typeToReflect.GetElementType();
 
                 if ( arrayType != null && IsPrimitive( arrayType ) == false ) {
-                    var clonedArray = ( Array ) cloneObject;
+                    var clonedArray = ( Array )cloneObject;
                     clonedArray.ForEach( ( array, indices ) => array.SetValue( InternalCopy( clonedArray.GetValue( indices ), visited ), indices ) );
                 }
             }
@@ -109,7 +110,7 @@ namespace Librainian.Threading {
             return cloneObject;
         }
 
-        private static void RecursiveCopyBaseTypePrivateFields( Object originalObject, IDictionary<Object, Object> visited, Object cloneObject,
+        private static void RecursiveCopyBaseTypePrivateFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited, [CanBeNull] Object cloneObject,
             [NotNull] Type typeToReflect ) {
             if ( null == typeToReflect.BaseType ) {
                 return;
@@ -124,13 +125,15 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="originalObject"></param>
         /// <returns></returns>
-        public static Object Copy( this Object originalObject ) => InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+        [CanBeNull]
+        public static Object Copy( [CanBeNull] this Object originalObject ) => InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
-        public static T Copy<T>( this T original ) => ( T ) Copy( ( Object ) original );
+        [CanBeNull]
+        public static T Copy<T>( [CanBeNull] this T original ) => ( T )Copy( ( Object )original );
 
         [CanBeNull]
         public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
-            if ( instance == null ) {
+            if ( instance is null ) {
                 throw new ArgumentNullException( paramName: nameof( instance ) );
             }
 
@@ -141,7 +144,7 @@ namespace Librainian.Threading {
             var type = instance.GetType();
             var info = type.GetField( fieldName, BindingFlags.NonPublic | BindingFlags.Instance );
 
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentException( $"{type.FullName} does not contain the private field '{fieldName}'." );
             }
 

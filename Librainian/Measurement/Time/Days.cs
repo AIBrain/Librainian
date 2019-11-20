@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Days( Decimal value ) => this.Value = ( Rational ) value;
+        public Days( Decimal value ) => this.Value = ( Rational )value;
 
         public Days( Rational value ) => this.Value = value;
 
@@ -123,9 +123,10 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static implicit operator Hours( Days days ) => days.ToHours();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days );
 
-        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double ) days.Value );
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>
         ///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
@@ -138,23 +139,23 @@ namespace Librainian.Measurement.Time {
 
         public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
 
-        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational ) ( -days ) );
+        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
 
         public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
         public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational ) days );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
 
         public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Days left, Hours right ) => left < ( Days ) right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
         public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( Days left, Hours right ) => left > ( Days ) right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
@@ -173,7 +174,7 @@ namespace Librainian.Measurement.Time {
         ///     instance follows <paramref name="other" /> in the sort order.
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
-            if ( other == null ) {
+            if ( other is null ) {
                 throw new ArgumentNullException( paramName: nameof( other ) );
             }
 
@@ -206,7 +207,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -217,10 +218,10 @@ namespace Librainian.Measurement.Time {
 
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneDay * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
 
         [NotNull]
-        public Seconds ToSeconds() => new Seconds( ( Rational ) TimeSpan.FromDays( ( Double ) this.Value ).TotalSeconds );
+        public Seconds ToSeconds() => new Seconds( ( Rational )TimeSpan.FromDays( ( Double )this.Value ).TotalSeconds );
 
         public override String ToString() {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
@@ -229,7 +230,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "day" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "day" )}";
         }

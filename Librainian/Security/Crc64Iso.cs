@@ -51,9 +51,8 @@ namespace Librainian.Security {
     /// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
     public class Crc64Iso : CRC64 {
 
-        public const UInt64 Iso3309Polynomial = 0xD800000000000000;
-
         internal static UInt64[] Table;
+        public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
         public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }
 
@@ -62,7 +61,7 @@ namespace Librainian.Security {
         public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
 
         public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
-            if ( Table == null ) {
+            if ( Table is null ) {
                 Table = CreateTable( polynomial: Iso3309Polynomial );
             }
 

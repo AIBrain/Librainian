@@ -74,7 +74,7 @@ namespace Librainian.Financial.Containers.Shopping {
         }
 
         public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 return 0;
             }
 
@@ -96,6 +96,10 @@ namespace Librainian.Financial.Containers.Shopping {
         /// </summary>
         public override void DisposeManaged() {
             using ( this.Items ) { }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
 
         /// <summary>

@@ -85,7 +85,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Weeks( Decimal weeks ) => this.Value = ( Rational ) weeks;
+        public Weeks( Decimal weeks ) => this.Value = ( Rational )weeks;
 
         public Weeks( Rational weeks ) => this.Value = weeks;
 
@@ -116,6 +116,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Weeks weeks ) => new SpanOfTime( weeks: weeks );
 
         public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
@@ -126,21 +127,21 @@ namespace Librainian.Measurement.Time {
 
         public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
 
-        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational ) weeks );
+        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational )weeks );
 
         public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
 
         public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks ) right;
+        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
 
-        public static Boolean operator <( Weeks left, Months right ) => ( Months ) left < right;
+        public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
         public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-        public static Boolean operator >( Weeks left, Months right ) => ( Months ) left > right;
+        public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
 
-        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks ) right;
+        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
 
         public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
@@ -149,7 +150,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Weeks other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -160,9 +161,9 @@ namespace Librainian.Measurement.Time {
 
         public Days ToDays() => new Days( this.Value * Days.InOneWeek );
 
-        public Months ToMonths() => new Months( this.Value / ( Rational ) InOneMonth );
+        public Months ToMonths() => new Months( this.Value / ( Rational )InOneMonth );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneWeek );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneWeek );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneWeek );
@@ -174,7 +175,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "week" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "week" )}";
         }

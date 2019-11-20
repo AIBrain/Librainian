@@ -54,7 +54,7 @@ namespace Librainian.Internet.Servers {
         /// <summary>
         ///     Returns a Cookies instance populated by parsing the specified String. The String should
         ///     be the value of the "Cookie" header that was received from the remote client. If the
-        ///     String == null or empty, an empty cookies collection is returned.
+        ///     String is null or empty, an empty cookies collection is returned.
         /// </summary>
         /// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
         /// <returns></returns>
@@ -62,7 +62,7 @@ namespace Librainian.Internet.Servers {
         public static Cookies FromString( String str ) {
             var cookies = new Cookies();
 
-            if ( str == null ) {
+            if ( str is null ) {
                 return cookies;
             }
 
@@ -97,7 +97,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="value">The cookie's value.</param>
         /// <param name="expireTime">The amount of time before the cookie should expire.</param>
         public void Add( String name, String value, TimeSpan expireTime ) {
-            if ( name == null ) {
+            if ( name is null ) {
                 return;
             }
 
@@ -122,7 +122,7 @@ namespace Librainian.Internet.Servers {
         public String GetValue( [NotNull] String name ) {
             var cookie = this.Get( name );
 
-            if ( cookie == null ) {
+            if ( cookie is null ) {
                 return "";
             }
 
@@ -139,7 +139,7 @@ namespace Librainian.Internet.Servers {
         /// </returns>
         public override String ToString() {
             var cookiesStr = this._cookieCollection.Values.Select( cookie =>
-                $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 ) cookie.Expire.TotalSeconds )}; Path=/" );
+                $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 )cookie.Expire.TotalSeconds )}; Path=/" );
 
             return String.Join( "\r\n", cookiesStr );
         }

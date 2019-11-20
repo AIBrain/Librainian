@@ -50,19 +50,19 @@ namespace Librainian.Internet {
 
         public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult,
             [NotNull] Action unregisterHandler ) {
-            if ( taskCompletionSource == null ) {
+            if ( taskCompletionSource is null ) {
                 throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) );
             }
 
-            if ( e == null ) {
+            if ( e is null ) {
                 throw new ArgumentNullException( paramName: nameof( e ) );
             }
 
-            if ( getResult == null ) {
+            if ( getResult is null ) {
                 throw new ArgumentNullException( paramName: nameof( getResult ) );
             }
 
-            if ( unregisterHandler == null ) {
+            if ( unregisterHandler is null ) {
                 throw new ArgumentNullException( paramName: nameof( unregisterHandler ) );
             }
 

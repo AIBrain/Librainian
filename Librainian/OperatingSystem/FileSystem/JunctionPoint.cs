@@ -53,6 +53,56 @@ namespace Librainian.OperatingSystem.FileSystem {
     /// </summary>
     public static class JunctionPoint {
 
+        /// <summary>
+        ///     The data present in the reparse point buffer is invalid.
+        /// </summary>
+        private const Int32 ErrorInvalidReparseData = 4392;
+
+        /// <summary>
+        ///     The file or directory is not a reparse point.
+        /// </summary>
+        private const Int32 ErrorNotAReparsePoint = 4390;
+
+        /// <summary>
+        ///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
+        /// </summary>
+        private const Int32 ErrorReparseAttributeConflict = 4391;
+
+        /// <summary>
+        ///     The tag present in the reparse point buffer is invalid.
+        /// </summary>
+        private const Int32 ErrorReparseTagInvalid = 4393;
+
+        /// <summary>
+        ///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
+        /// </summary>
+        private const Int32 ErrorReparseTagMismatch = 4394;
+
+        /// <summary>
+        ///     Command to delete the reparse point data base.
+        /// </summary>
+        private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
+
+        /// <summary>
+        ///     Command to get the reparse point data block.
+        /// </summary>
+        private const Int32 FsctlGetReparsePoint = 0x000900A8;
+
+        /// <summary>
+        ///     Command to set the reparse point data block.
+        /// </summary>
+        private const Int32 FsctlSetReparsePoint = 0x000900A4;
+
+        /// <summary>
+        ///     Reparse point tag used to identify mount points and junction points.
+        /// </summary>
+        private const UInt32 IOReparseTagMountPoint = 0xA0000003;
+
+        /// <summary>
+        ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
+        /// </summary>
+        private const String NonInterpretedPathPrefix = @"\??\";
+
         public enum ECreationDisposition : UInt32 {
 
             New = 1,
@@ -144,56 +194,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             Delete = 0x00000004
         }
 
-        /// <summary>
-        ///     The data present in the reparse point buffer is invalid.
-        /// </summary>
-        private const Int32 ErrorInvalidReparseData = 4392;
-
-        /// <summary>
-        ///     The file or directory is not a reparse point.
-        /// </summary>
-        private const Int32 ErrorNotAReparsePoint = 4390;
-
-        /// <summary>
-        ///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
-        /// </summary>
-        private const Int32 ErrorReparseAttributeConflict = 4391;
-
-        /// <summary>
-        ///     The tag present in the reparse point buffer is invalid.
-        /// </summary>
-        private const Int32 ErrorReparseTagInvalid = 4393;
-
-        /// <summary>
-        ///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
-        /// </summary>
-        private const Int32 ErrorReparseTagMismatch = 4394;
-
-        /// <summary>
-        ///     Command to delete the reparse point data base.
-        /// </summary>
-        private const Int32 FsctlDeleteReparsePoint = 0x000900AC;
-
-        /// <summary>
-        ///     Command to get the reparse point data block.
-        /// </summary>
-        private const Int32 FsctlGetReparsePoint = 0x000900A8;
-
-        /// <summary>
-        ///     Command to set the reparse point data block.
-        /// </summary>
-        private const Int32 FsctlSetReparsePoint = 0x000900A4;
-
-        /// <summary>
-        ///     Reparse point tag used to identify mount points and junction points.
-        /// </summary>
-        private const UInt32 IOReparseTagMountPoint = 0xA0000003;
-
-        /// <summary>
-        ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.
-        /// </summary>
-        private const String NonInterpretedPathPrefix = @"\??\";
-
         private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
@@ -212,7 +212,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     ThrowLastWin32Error( "Unable to get information about junction point." );
                 }
 
-                var reparseDataBuffer = ( ReparseDataBuffer ) Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
+                var reparseDataBuffer = ( ReparseDataBuffer )Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
 
                 if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
                     return null;
@@ -279,10 +279,10 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var reparseDataBuffer = new ReparseDataBuffer {
                     ReparseTag = IOReparseTagMountPoint,
-                    ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
+                    ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ),
                     SubstituteNameOffset = 0,
-                    SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
-                    PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
+                    SubstituteNameLength = ( UInt16 )targetDirBytes.Length,
+                    PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ),
                     PrintNameLength = 0,
                     PathBuffer = new Byte[ 0x3ff0 ]
                 };
@@ -325,7 +325,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Write ) ) {
                 var reparseDataBuffer = new ReparseDataBuffer {
-                    ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ]
+                    ReparseTag = IOReparseTagMountPoint,
+                    ReparseDataLength = 0,
+                    PathBuffer = new Byte[ 0x3ff0 ]
                 };
 
                 var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
@@ -387,7 +389,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
 
-                if ( target == null ) {
+                if ( target is null ) {
                     throw new IOException( "Path is not a junction point." );
                 }
 
@@ -420,7 +422,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             public UInt16 SubstituteNameOffset;
 
             /// <summary>
-            ///     Length, in bytes, of the substitute name String. If this String == null-terminated, SubstituteNameLength does not
+            ///     Length, in bytes, of the substitute name String. If this String is null-terminated, SubstituteNameLength does not
             ///     include space for the null character.
             /// </summary>
             public UInt16 SubstituteNameLength;
@@ -431,7 +433,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             public UInt16 PrintNameOffset;
 
             /// <summary>
-            ///     Length, in bytes, of the print name String. If this String == null-terminated, PrintNameLength does not include
+            ///     Length, in bytes, of the print name String. If this String is null-terminated, PrintNameLength does not include
             ///     space for the null character.
             /// </summary>
             public UInt16 PrintNameLength;

@@ -87,7 +87,7 @@ namespace Librainian.Maths.Numbers {
         public UBigInteger( [NotNull] Byte[] bytes ) {
 
             // http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
-            if ( bytes == null ) {
+            if ( bytes is null ) {
                 throw new ArgumentNullException( nameof( bytes ) );
             }
 
@@ -116,13 +116,13 @@ namespace Librainian.Maths.Numbers {
 
         public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Add( left: left._internalValue, right: right._internalValue ) );
 
-        public static explicit operator Decimal( UBigInteger number ) => ( Decimal ) number._internalValue;
+        public static explicit operator Decimal( UBigInteger number ) => ( Decimal )number._internalValue;
 
-        public static explicit operator Int32( UBigInteger number ) => ( Int32 ) number._internalValue;
+        public static explicit operator Int32( UBigInteger number ) => ( Int32 )number._internalValue;
 
-        public static explicit operator Int64( UBigInteger number ) => ( Int64 ) number._internalValue;
+        public static explicit operator Int64( UBigInteger number ) => ( Int64 )number._internalValue;
 
-        public static explicit operator UInt64( UBigInteger number ) => ( UInt64 ) number._internalValue;
+        public static explicit operator UInt64( UBigInteger number ) => ( UInt64 )number._internalValue;
 
         public static implicit operator BigInteger( UBigInteger number ) => number._internalValue;
 
@@ -148,7 +148,7 @@ namespace Librainian.Maths.Numbers {
             //right.Should().BeGreaterThan(expected: Zero);
             var rational = new Rational( numerator: new BigInteger( left ), denominator: right._internalValue );
 
-            return ( Double ) rational;
+            return ( Double )rational;
         }
 
         public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue + right._internalValue );
@@ -180,7 +180,7 @@ namespace Librainian.Maths.Numbers {
         public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left._internalValue >= right._internalValue;
 
         public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
-            if ( number == null ) {
+            if ( number is null ) {
                 throw new ArgumentNullException( nameof( number ) );
             }
 
@@ -191,7 +191,7 @@ namespace Librainian.Maths.Numbers {
 
         [Pure]
         public Int32 CompareTo( [NotNull] Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( nameof( obj ) );
             }
 
@@ -199,7 +199,7 @@ namespace Librainian.Maths.Numbers {
                 throw new InvalidCastException();
             }
 
-            return this._internalValue.CompareTo( other: ( UBigInteger ) obj );
+            return this._internalValue.CompareTo( other: ( UBigInteger )obj );
         }
 
         public Int32 CompareTo( UBigInteger number ) => this._internalValue.CompareTo( other: number._internalValue );

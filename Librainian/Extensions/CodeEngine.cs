@@ -131,7 +131,8 @@ namespace Coding
         private Boolean Compile() {
             try {
                 this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters {
-                    GenerateInMemory = true, GenerateExecutable = false
+                    GenerateInMemory = true,
+                    GenerateExecutable = false
                 }, this.SourceCode );
 
                 if ( this._compilerResults.Errors.HasErrors ) {
@@ -194,7 +195,7 @@ namespace Coding
                 var loAssembly = this._compilerResults.CompiledAssembly;
                 var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
 
-                if ( loObject == null ) {
+                if ( loObject is null ) {
                     "".Break();
 
                     return null;

@@ -64,8 +64,6 @@ namespace Librainian.Persistence.InIFiles {
     [JsonObject]
     public class Section : IEquatable<Section> {
 
-        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
-
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
@@ -77,18 +75,18 @@ namespace Librainian.Persistence.InIFiles {
 
         [JsonIgnore]
         [NotNull]
-        public IReadOnlyList<String> Keys => ( IReadOnlyList<String> ) this.Data.Keys;
+        public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
 
         [JsonIgnore]
         [NotNull]
-        public IReadOnlyList<String> Values => ( IReadOnlyList<String> ) this.Data.Values;
+        public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
 
         [JsonIgnore]
         [CanBeNull]
         public String this[ [CanBeNull] String key ] {
             [CanBeNull]
             get {
-                if ( key == null ) {
+                if ( key is null ) {
                     return null;
                 }
 
@@ -96,11 +94,11 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             set {
-                if ( key == null ) {
+                if ( key is null ) {
                     return;
                 }
 
-                if ( value == null && this.AutoCleanup ) {
+                if ( value is null && this.AutoCleanup ) {
                     this.Data.TryRemove( key, out _ ); //a little cleanup
                 }
                 else {
@@ -120,7 +118,7 @@ namespace Librainian.Persistence.InIFiles {
                 return true;
             }
 
-            if ( left == null || right == null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 
@@ -149,6 +147,8 @@ namespace Librainian.Persistence.InIFiles {
                 }
             } );
 
+        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
+
         public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this, right: obj as Section );
 
         public override Int32 GetHashCode() => this.Data.GetHashCode();
@@ -160,7 +160,7 @@ namespace Librainian.Persistence.InIFiles {
         /// <returns></returns>
         [NotNull]
         public Task<Boolean> ReadAsync( [NotNull] TextReader reader ) {
-            if ( reader == null ) {
+            if ( reader is null ) {
                 throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
@@ -192,7 +192,7 @@ namespace Librainian.Persistence.InIFiles {
         /// <param name="writer"></param>
         /// <returns></returns>
         public Task Write( [NotNull] TextWriter writer ) {
-            if ( writer == null ) {
+            if ( writer is null ) {
                 throw new ArgumentNullException( paramName: nameof( writer ) );
             }
 

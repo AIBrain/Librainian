@@ -65,18 +65,6 @@ namespace Librainian.Maths.Numbers {
     [JsonObject]
     public class Countable<TKey> : ABetterClassDispose, IEnumerable<Tuple<TKey, BigInteger>> {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> ) this.GetEnumerator();
-
         private volatile Boolean _isReadOnly;
 
         /// <summary>
@@ -109,7 +97,7 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         public BigInteger? this[ [NotNull] TKey key ] {
             get {
-                if ( key == null ) {
+                if ( key is null ) {
                     throw new ArgumentNullException( nameof( key ) );
                 }
 
@@ -130,7 +118,7 @@ namespace Librainian.Maths.Numbers {
             }
 
             set {
-                if ( key == null ) {
+                if ( key is null ) {
                     throw new ArgumentNullException( nameof( key ) );
                 }
 
@@ -244,6 +232,16 @@ namespace Librainian.Maths.Numbers {
 
         public override void DisposeManaged() => this.Trim();
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
+
         public Boolean Subtract( TKey key, BigInteger amount ) {
             if ( this.IsReadOnly ) {
                 return false;
@@ -278,8 +276,8 @@ namespace Librainian.Maths.Numbers {
         public BigInteger Sum() => this.Dictionary.Aggregate( seed: BigInteger.Zero, func: ( current, pair ) => current + pair.Value );
 
         public void Trim() =>
-            Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ),
-                parallelOptions: CPU.AllCPUExceptOne, body: pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
+                    Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ),
+                        parallelOptions: CPU.AllCPUExceptOne, body: pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
 
         /// <summary>
         ///     Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.
@@ -291,5 +289,11 @@ namespace Librainian.Maths.Numbers {
 
             return !this.IsReadOnly;
         }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+        IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> )this.GetEnumerator();
     }
 }

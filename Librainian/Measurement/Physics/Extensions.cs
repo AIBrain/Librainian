@@ -117,7 +117,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static MegaElectronVolts Sum( [NotNull] this IEnumerable<ElectronVolts> volts ) {
-            if ( volts == null ) {
+            if ( volts is null ) {
                 throw new ArgumentNullException( nameof( volts ) );
             }
 
@@ -127,7 +127,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static GigaElectronVolts Sum( [NotNull] this IEnumerable<MegaElectronVolts> volts ) {
-            if ( volts == null ) {
+            if ( volts is null ) {
                 throw new ArgumentNullException( nameof( volts ) );
             }
 
@@ -135,7 +135,7 @@ namespace Librainian.Measurement.Physics {
         }
 
         public static TeraElectronVolts Sum( [NotNull] this IEnumerable<GigaElectronVolts> volts ) {
-            if ( volts == null ) {
+            if ( volts is null ) {
                 throw new ArgumentNullException( nameof( volts ) );
             }
 

@@ -54,6 +54,11 @@ namespace Librainian.Graphics.Video {
     /// </summary>
     public class AviWriter : ABetterClassDispose {
 
+        private const UInt32 _fccHandler = 1668707181;
+
+        //"Microsoft Video 1" - Use CVID for default codec: (UInt32)Avi.mmioStringToFOURCC("CVID", 0);
+        private const UInt32 _fccType = Avi.StreamtypeVideo;
+
         private Int32 _aviFile;
 
         private IntPtr _aviStream = IntPtr.Zero;
@@ -69,11 +74,6 @@ namespace Librainian.Graphics.Video {
 
         private Int32 _width;
 
-        private const UInt32 _fccHandler = 1668707181;
-
-        //"Microsoft Video 1" - Use CVID for default codec: (UInt32)Avi.mmioStringToFOURCC("CVID", 0);
-        private const UInt32 _fccType = Avi.StreamtypeVideo;
-
         /// <summary>
         ///     Creates a new video stream in the AVI file
         /// </summary>
@@ -83,7 +83,7 @@ namespace Librainian.Graphics.Video {
                 fccHandler = _fccHandler,
                 dwScale = 1,
                 dwRate = this._frameRate,
-                dwSuggestedBufferSize = ( UInt32 ) ( this._height * this._stride ),
+                dwSuggestedBufferSize = ( UInt32 )( this._height * this._stride ),
                 dwQuality = 10000,
                 rcFrame = {
                     bottom = ( UInt32 ) this._height, right = ( UInt32 ) this._width
@@ -102,12 +102,12 @@ namespace Librainian.Graphics.Video {
             //define the image format
 
             var bi = new Avi.Bitmapinfoheader();
-            bi.biSize = ( UInt32 ) Marshal.SizeOf( bi );
+            bi.biSize = ( UInt32 )Marshal.SizeOf( bi );
             bi.biWidth = this._width;
             bi.biHeight = this._height;
             bi.biPlanes = 1;
             bi.biBitCount = 24;
-            bi.biSizeImage = ( UInt32 ) ( this._stride * this._height );
+            bi.biSizeImage = ( UInt32 )( this._stride * this._height );
 
             result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
 
@@ -128,14 +128,14 @@ namespace Librainian.Graphics.Video {
             if ( this._countFrames == 0 ) {
 
                 //this is the first frame - get size and create a new stream
-                this._stride = ( UInt32 ) bmpDat.Stride;
+                this._stride = ( UInt32 )bmpDat.Stride;
                 this._width = bmp.Width;
                 this._height = bmp.Height;
                 this.CreateStream();
             }
 
             var result = NativeMethods.AVIStreamWrite( this._aviStream, this._countFrames, 1, bmpDat.Scan0, //pointer to the beginning of the image data
-                ( Int32 ) ( this._stride * this._height ), 0, 0, 0 );
+                ( Int32 )( this._stride * this._height ), 0, 0, 0 );
 
             if ( result != 0 ) {
                 throw new Exception( "Error in AVIStreamWrite: " + result );
@@ -166,6 +166,10 @@ namespace Librainian.Graphics.Video {
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() { }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
 
         /// <summary>
         ///     Creates a new AVI file

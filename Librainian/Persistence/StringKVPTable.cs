@@ -71,13 +71,23 @@ namespace Librainian.Persistence {
     [JsonObject]
     public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, String> {
 
+        [JsonProperty]
+        [NotNull]
+        private PersistentDictionary<String, String> Dictionary { get; }
+
+        /// <summary>
+        ///     No path given?
+        /// </summary>
+        [NotNull]
+        public Folder Folder { get; }
+
         public Int32 Count => this.Dictionary.Count;
 
         public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
 
         public ICollection<String> Keys => this.Dictionary.Keys;
 
-        public ICollection<String> Values => ( ICollection<String> ) this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
+        public ICollection<String> Values => ( ICollection<String> )this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
 
         /// <summary>
         /// </summary>
@@ -87,7 +97,7 @@ namespace Librainian.Persistence {
         public String this[ [NotNull] String key ] {
             [CanBeNull]
             get {
-                if ( key == null ) {
+                if ( key is null ) {
                     throw new ArgumentNullException( paramName: nameof( key ) );
                 }
 
@@ -95,7 +105,7 @@ namespace Librainian.Persistence {
             }
 
             set {
-                if ( key == null ) {
+                if ( key is null ) {
                     throw new ArgumentNullException( paramName: nameof( key ) );
                 }
 
@@ -109,112 +119,11 @@ namespace Librainian.Persistence {
             }
         }
 
-        public void Add( String key, String value ) => this[ key ] = value;
-
-        public void Add( KeyValuePair<String, String> item ) => this[ item.Key ] = item.Value;
-
-        public void Clear() => this.Dictionary.Clear();
-
-        public Boolean Contains( KeyValuePair<String, String> item ) {
-            var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<String, String>( item.Key, value );
-
-            return this.Dictionary.Contains( asItem );
-        }
-
-        public Boolean ContainsKey( String key ) => this.Dictionary.ContainsKey( key );
-
-        public void CopyTo( KeyValuePair<String, String>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
-
-        public IEnumerator<KeyValuePair<String, String>> GetEnumerator() => this.Items().GetEnumerator();
-
-        /// <summary>
-        ///     Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
-        /// </summary>
-        /// <returns>
-        ///     true if the element is successfully removed; otherwise, false. This method also returns false if
-        ///     <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" /> .
-        /// </returns>
-        /// <param name="key">The key of the element to remove.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> == null.</exception>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is
-        ///     read-only.
-        /// </exception>
-        public Boolean Remove( String key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
-
-        /// <summary>
-        ///     Removes the first occurrence of a specific object from the
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> .
-        /// </summary>
-        /// <returns>
-        ///     true if <paramref name="item" /> was successfully removed from the
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> ; otherwise, false. This method also returns false if
-        ///     <paramref name="item" /> is not
-        ///     found in the original <see cref="T:System.Collections.Generic.ICollection`1" /> .
-        /// </returns>
-        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" /> .</param>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
-        ///     read-only.
-        /// </exception>
-        public Boolean Remove( KeyValuePair<String, String> item ) {
-            var value = item.Value.ToJSON().ToCompressedBase64();
-            var asItem = new KeyValuePair<String, String>( item.Key, value );
-
-            return this.Dictionary.Remove( item: asItem );
-        }
-
-        /// <summary>
-        ///     Gets the value associated with the specified key.
-        /// </summary>
-        /// <returns>
-        ///     true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an
-        ///     element with the specified key; otherwise, false.
-        /// </returns>
-        /// <param name="key">  The key whose value to get.</param>
-        /// <param name="value">
-        ///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
-        ///     value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.
-        /// </param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> == null.</exception>
-        public Boolean TryGetValue( [NotNull] String key, out String value ) {
-            if ( key == null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
-            }
-
-            value = default;
-
-            if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
-                value = storedValue.FromCompressedBase64();
-
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        [JsonProperty]
-        [NotNull]
-        private PersistentDictionary<String, String> Dictionary { get; }
-
-        /// <summary>
-        ///     No path given?
-        /// </summary>
-        [NotNull]
-        public Folder Folder { get; }
-
         [CanBeNull]
         public String this[ [NotNull] params String[] keys ] {
             [CanBeNull]
             get {
-                if ( keys == null ) {
+                if ( keys is null ) {
                     throw new ArgumentNullException( paramName: nameof( keys ) );
                 }
 
@@ -224,7 +133,7 @@ namespace Librainian.Persistence {
             }
 
             set {
-                if ( keys == null ) {
+                if ( keys is null ) {
                     throw new ArgumentNullException( paramName: nameof( keys ) );
                 }
 
@@ -248,7 +157,7 @@ namespace Librainian.Persistence {
         public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
             tableName ) ) { }
 
-        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder ) specialFolder,
+        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder )specialFolder,
             subFolder, tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
@@ -257,7 +166,7 @@ namespace Librainian.Persistence {
             tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
-            if ( folder == null ) {
+            if ( folder is null ) {
                 throw new ArgumentNullException( paramName: nameof( folder ) );
             }
 
@@ -269,7 +178,9 @@ namespace Librainian.Persistence {
                 }
 
                 var customConfig = new DatabaseConfig {
-                    CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
+                    CreatePathIfNotExist = true,
+                    EnableShrinkDatabase = ShrinkDatabaseGrbit.On,
+                    DefragmentSequentialBTrees = true
                 };
 
                 this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullName, customConfig: customConfig );
@@ -304,7 +215,24 @@ namespace Librainian.Persistence {
             return false;
         }
 
+        public void Add( String key, String value ) => this[ key ] = value;
+
+        public void Add( KeyValuePair<String, String> item ) => this[ item.Key ] = item.Value;
+
         public void Add( (String key, String value) kvp ) => this[ kvp.key ] = kvp.value;
+
+        public void Clear() => this.Dictionary.Clear();
+
+        public Boolean Contains( KeyValuePair<String, String> item ) {
+            var value = item.Value.ToJSON().ToCompressedBase64();
+            var asItem = new KeyValuePair<String, String>( item.Key, value );
+
+            return this.Dictionary.Contains( asItem );
+        }
+
+        public Boolean ContainsKey( String key ) => this.Dictionary.ContainsKey( key );
+
+        public void CopyTo( KeyValuePair<String, String>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
         /// <summary>
         ///     Dispose any disposable managed fields or properties.
@@ -317,10 +245,16 @@ namespace Librainian.Persistence {
             Trace.WriteLine( "done." );
         }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         /// <summary>
         ///     Force all changes to be written to disk.
         /// </summary>
         public void Flush() => this.Dictionary.Flush();
+
+        public IEnumerator<KeyValuePair<String, String>> GetEnumerator() => this.Items().GetEnumerator();
 
         public void Initialize() {
 
@@ -337,6 +271,43 @@ namespace Librainian.Persistence {
         public IEnumerable<KeyValuePair<String, String>> Items() =>
             this.Dictionary.Select( selector: pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
 
+        /// <summary>
+        ///     Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" /> .
+        /// </summary>
+        /// <returns>
+        ///     true if the element is successfully removed; otherwise, false. This method also returns false if
+        ///     <paramref name="key" /> was not found in the original <see cref="T:System.Collections.Generic.IDictionary`2" /> .
+        /// </returns>
+        /// <param name="key">The key of the element to remove.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
+        /// <exception cref="T:System.NotSupportedException">
+        ///     The <see cref="T:System.Collections.Generic.IDictionary`2" /> is
+        ///     read-only.
+        /// </exception>
+        public Boolean Remove( String key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+
+        /// <summary>
+        ///     Removes the first occurrence of a specific object from the
+        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> .
+        /// </summary>
+        /// <returns>
+        ///     true if <paramref name="item" /> was successfully removed from the
+        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> ; otherwise, false. This method also returns false if
+        ///     <paramref name="item" /> is not
+        ///     found in the original <see cref="T:System.Collections.Generic.ICollection`1" /> .
+        /// </returns>
+        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" /> .</param>
+        /// <exception cref="T:System.NotSupportedException">
+        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
+        ///     read-only.
+        /// </exception>
+        public Boolean Remove( KeyValuePair<String, String> item ) {
+            var value = item.Value.ToJSON().ToCompressedBase64();
+            var asItem = new KeyValuePair<String, String>( item.Key, value );
+
+            return this.Dictionary.Remove( item: asItem );
+        }
+
         public void Save() => this.Flush();
 
         /// <summary>
@@ -347,7 +318,7 @@ namespace Librainian.Persistence {
 
         //should be all that's needed..
         public void TryAdd( [NotNull] String key, String value ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
@@ -356,12 +327,47 @@ namespace Librainian.Persistence {
             }
         }
 
+        /// <summary>
+        ///     Gets the value associated with the specified key.
+        /// </summary>
+        /// <returns>
+        ///     true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an
+        ///     element with the specified key; otherwise, false.
+        /// </returns>
+        /// <param name="key">  The key whose value to get.</param>
+        /// <param name="value">
+        ///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
+        ///     value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.
+        /// </param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
+        public Boolean TryGetValue( [NotNull] String key, out String value ) {
+            if ( key is null ) {
+                throw new ArgumentNullException( paramName: nameof( key ) );
+            }
+
+            value = default;
+
+            if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+                value = storedValue.FromCompressedBase64();
+
+                return true;
+            }
+
+            return false;
+        }
+
         public Boolean TryRemove( [NotNull] String key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
             return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

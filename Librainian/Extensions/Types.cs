@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2019/10/21 at 3:09 PM.
 
 namespace Librainian.Extensions {
@@ -58,20 +58,20 @@ namespace Librainian.Extensions {
 
     public static class Types {
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
         public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
 
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
-
         private delegate Object ObjectActivator();
 
         public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) {
-            if ( p == null ) {
+            if ( p is null ) {
                 throw new ArgumentNullException( paramName: nameof( p ) );
             }
 
-            return value == null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
+            return value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
         }
 
         /// <summary>
@@ -82,18 +82,18 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => item != null ).Select( item => ( T ) item.Clone() ).ToList();
+            list.Where( item => item != null ).Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( paramName: nameof( source ) );
             }
 
-            if ( destination == null ) {
+            if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
-            if ( field == null ) {
+            if ( field is null ) {
                 throw new ArgumentNullException( nameof( field ) );
             }
 
@@ -171,7 +171,7 @@ namespace Librainian.Extensions {
         }
 
         public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
-            if ( prop == null ) {
+            if ( prop is null ) {
                 throw new ArgumentNullException( nameof( prop ) );
             }
 
@@ -275,7 +275,7 @@ namespace Librainian.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -295,7 +295,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<Type> GetSealedClassesDerivedFrom( [CanBeNull] this Type baseType ) {
-            if ( baseType == null ) {
+            if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
 
@@ -310,7 +310,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<Type> GetTypesDerivedFrom( [NotNull] this Type baseType ) {
-            if ( baseType == null ) {
+            if ( baseType is null ) {
                 throw new ArgumentNullException( nameof( baseType ) );
             }
 
@@ -319,7 +319,7 @@ namespace Librainian.Extensions {
         }
 
         public static Boolean HasDefaultConstructor( [NotNull] this Type t ) {
-            if ( t == null ) {
+            if ( t is null ) {
                 throw new ArgumentNullException( paramName: nameof( t ) );
             }
 
@@ -335,7 +335,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <returns>True if the type can be copied (blitted), or false if not.</returns>
         public static Boolean IsBlittable( [NotNull] this Type self ) {
-            if ( self == null ) {
+            if ( self is null ) {
                 throw new ArgumentNullException( nameof( self ), "IsBlittable called on a null Type." );
             }
 
@@ -353,7 +353,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <returns>True if the type represents a numeric type, false if not.</returns>
         public static Boolean IsNumeric( [NotNull] this Type self ) {
-            if ( self == null ) {
+            if ( self is null ) {
                 throw new ArgumentNullException( nameof( self ), "IsNumeric called on a null Type." );
             }
 
@@ -405,7 +405,7 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static String Name<T>( [NotNull] this Expression<Func<T>> propertyExpression ) {
-            if ( propertyExpression == null ) {
+            if ( propertyExpression is null ) {
                 throw new ArgumentNullException( nameof( propertyExpression ) );
             }
 
@@ -445,16 +445,16 @@ namespace Librainian.Extensions {
 
                 ilGenerator.Emit( OpCodes.Ret );
 
-                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
                 ObjectActivators.Add( type, activator );
             }
 
-            return ( T ) activator.Invoke();
+            return ( T )activator.Invoke();
         }
 
         [NotNull]
         public static Func<Object> NewInstanceByCreate( [NotNull] this Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
@@ -467,7 +467,7 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static Func<Object> NewInstanceByLambda( [NotNull] this Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
@@ -526,7 +526,7 @@ namespace Librainian.Extensions {
             var type = typeof( T );
 
             // If the type is nullable and the result should be null, set a null value.
-            if ( type.IsNullable() && ( value == null || value == DBNull.Value ) ) {
+            if ( type.IsNullable() && ( value is null || value == DBNull.Value ) ) {
                 result = default;
 
                 return true;
@@ -541,19 +541,19 @@ namespace Librainian.Extensions {
                 if ( underlyingType == typeof( Guid ) ) {
                     switch ( value ) {
                         case String s: {
-                            value = new Guid( s );
+                                value = new Guid( s );
 
-                            break;
-                        }
+                                break;
+                            }
                         case Byte[] bytes: {
-                            value = new Guid( bytes );
+                                value = new Guid( bytes );
 
-                            break;
-                        }
+                                break;
+                            }
                     }
                 }
 
-                result = ( T ) Convert.ChangeType( value, underlyingType );
+                result = ( T )Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -582,7 +582,7 @@ namespace Librainian.Extensions {
         ///// <param name="item"></param>
         ///// <returns></returns>
         //public static string Name<T>( this T item ) where T : class {
-        //    if ( item == null ) {
+        //    if ( item is null ) {
         //        return string.Empty;
         //    }
         //    else {
@@ -634,7 +634,5 @@ namespace Librainian.Extensions {
         //            }
         //    }
         //}
-
     }
-
 }

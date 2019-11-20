@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2019/11/01 at 11:54 PM.
 
 namespace Librainian.Databases {
@@ -68,18 +68,18 @@ namespace Librainian.Databases {
 
         [CanBeNull]
         private static T CreateItemFromRow<T>( [CanBeNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
-            if ( row == null ) {
+            if ( row is null ) {
                 return default;
             }
 
-            if ( properties == null ) {
+            if ( properties is null ) {
                 throw new ArgumentNullException( paramName: nameof( properties ) );
             }
 
             //T item = new T();
             //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function
             //var t = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
-            var item = ( T ) FormatterServices.GetUninitializedObject( typeof( T ) );
+            var item = ( T )FormatterServices.GetUninitializedObject( typeof( T ) );
 
             foreach ( var property in properties ) {
                 property?.SetValue( item, row[ property.Name ], null );
@@ -95,7 +95,7 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [NotNull]
         private static Fields GetDict( [NotNull] this IDataReader reader ) {
-            if ( reader == null ) {
+            if ( reader is null ) {
                 throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
@@ -116,7 +116,7 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [NotNull]
         private static Fields GetFieldNames( [NotNull] this IDataReader reader ) {
-            if ( reader == null ) {
+            if ( reader is null ) {
                 throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
@@ -138,7 +138,7 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [NotNull]
         private static String Key( [NotNull] this IDataReader reader ) {
-            if ( reader == null ) {
+            if ( reader is null ) {
                 throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
@@ -146,11 +146,11 @@ namespace Librainian.Databases {
         }
 
         public static Boolean Add<T>( [NotNull] this DataSet dataSet, [NotNull] IEnumerable<T> list ) {
-            if ( dataSet == null ) {
+            if ( dataSet is null ) {
                 throw new ArgumentNullException( paramName: nameof( dataSet ) );
             }
 
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
             }
 
@@ -212,7 +212,7 @@ namespace Librainian.Databases {
             if ( String.IsNullOrWhiteSpace( value: command ) ) {
                 throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
             }
-            
+
             try {
                 using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
 
@@ -234,7 +234,7 @@ namespace Librainian.Databases {
         /// <returns>List with generic objects</returns>
         [NotNull]
         public static List<T> DataTableToList<T>( [NotNull] this DataTable table ) where T : class, new() {
-            if ( table == null ) {
+            if ( table is null ) {
                 throw new ArgumentNullException( paramName: nameof( table ) );
             }
 
@@ -265,7 +265,7 @@ namespace Librainian.Databases {
         }
 
         public static void DisplayTable( [NotNull] this DataTable table ) {
-            if ( table == null ) {
+            if ( table is null ) {
                 throw new ArgumentNullException( paramName: nameof( table ) );
             }
 
@@ -288,7 +288,7 @@ namespace Librainian.Databases {
 
             var wmiNameSpaces = GetCorrectWmiNameSpaces();
 
-            if ( wmiNameSpaces == null ) {
+            if ( wmiNameSpaces is null ) {
                 yield break;
             }
 
@@ -305,7 +305,7 @@ namespace Librainian.Databases {
                     yield break;
                 }
 
-                foreach ( var serviceName in 
+                foreach ( var serviceName in
                     getSqlEngine
                         .Get()
                         .Cast<ManagementObject>()
@@ -325,8 +325,8 @@ namespace Librainian.Databases {
 
         [CanBeNull]
         public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
-            Boolean throwIfNotFound = false ) {
-            if ( file == null ) {
+            Boolean throwIfNotFound = true ) {
+            if ( file is null ) {
                 throw new ArgumentNullException( paramName: nameof( file ) );
             }
 
@@ -408,15 +408,15 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [NotNull]
         public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
-            if ( serviceName == null ) {
+            if ( serviceName is null ) {
                 throw new ArgumentNullException( nameof( serviceName ) );
             }
 
-            if ( wmiNamespace == null ) {
+            if ( wmiNamespace is null ) {
                 throw new ArgumentNullException( nameof( wmiNamespace ) );
             }
 
-            if ( propertyName == null ) {
+            if ( propertyName is null ) {
                 throw new ArgumentNullException( nameof( propertyName ) );
             }
 
@@ -432,13 +432,13 @@ namespace Librainian.Databases {
             return String.Empty;
         }
 
-        public static async Task<Status> InitializeDatabaseConnection( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials,
+        public static Status InitializeDatabaseConnection( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials,
             CancellationToken token ) {
-            if ( file == null ) {
+            if ( file is null ) {
                 throw new ArgumentNullException( paramName: nameof( file ) );
             }
 
-            if ( credentials == null ) {
+            if ( credentials is null ) {
                 throw new ArgumentNullException( paramName: nameof( credentials ) );
             }
 
@@ -458,32 +458,24 @@ namespace Librainian.Databases {
                     }
                 }
 
-                return await StartBrowsersAndSeekServerStatus( file: file, credentials: credentials ).ConfigureAwait( false );
+                return DatabaseServer.FindUsableServers( Seconds.Thirty, credentials ).Where( server => {
+                    if ( server?.Status.IsGood() != true ) {
+                        return false;
+                    }
 
+                    if ( file.Set( server ) ) {
+                        return true;
+                    }
+
+                    return false;
+                } )
+                    .Select( server => server.Status ).FirstOrDefault();
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
             return Status.Failure;
-        }
-
-        private static async Task<Status> StartBrowsersAndSeekServerStatus( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials ) {
-            if ( file == null ) {
-                throw new ArgumentNullException( paramName: nameof( file ) );
-            }
-
-            if ( credentials == null ) {
-                throw new ArgumentNullException( paramName: nameof( credentials ) );
-            }
-
-            var timeout = ( TimeSpan ) Seconds.Thirty;
-
-            await DatabaseServer.StartAnySQLBrowsers( timeout ).ConfigureAwait( false );
-
-            return DatabaseServer.FindUsableServers( timeout, credentials ).Where( server => server?.Status.IsGood() == true && file.Set( server ) )
-                .Select( server => server.Status ).FirstOrDefault();
-
         }
 
         /// <summary>
@@ -522,7 +514,7 @@ namespace Librainian.Databases {
         [NotNull]
         public static String Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String connectionString,
             [NotNull] String key = Words.PrimeConnectionString ) {
-            if ( file == null ) {
+            if ( file is null ) {
                 throw new ArgumentNullException( paramName: nameof( file ) );
             }
 
@@ -544,11 +536,11 @@ namespace Librainian.Databases {
 
         public static Boolean Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] SqlServer sqlServer,
             [NotNull] String key = Words.PrimeConnectionString ) {
-            if ( file == null ) {
+            if ( file is null ) {
                 throw new ArgumentNullException( paramName: nameof( file ) );
             }
 
-            if ( sqlServer == null ) {
+            if ( sqlServer is null ) {
                 throw new ArgumentNullException( paramName: nameof( sqlServer ) );
             }
 
@@ -570,7 +562,7 @@ namespace Librainian.Databases {
         }
 
         public static Boolean SQLTimeout( [NotNull] this SqlException exception ) {
-            if ( exception == null ) {
+            if ( exception is null ) {
                 throw new ArgumentNullException( paramName: nameof( exception ) );
             }
 
@@ -588,7 +580,7 @@ namespace Librainian.Databases {
         /// </copyright>
         [NotNull]
         public static DataSet ToDataSet<T>( [NotNull] this IEnumerable<T> list ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
             }
 
@@ -629,7 +621,7 @@ namespace Librainian.Databases {
         /// </copyright>
         [NotNull]
         public static DataTable ToDataTable2<T>( [NotNull] this IEnumerable<T> list ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
             }
 
@@ -667,7 +659,7 @@ namespace Librainian.Databases {
             "Untested".Break();
             var table = new DataTable();
 
-            if ( list == null ) {
+            if ( list is null ) {
                 "Null list".Break();
 
                 return table;
@@ -734,7 +726,7 @@ namespace Librainian.Databases {
 
         [NotNull]
         public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
-            if ( table == null ) {
+            if ( table is null ) {
                 throw new ArgumentNullException( paramName: nameof( table ) );
             }
 
@@ -876,7 +868,7 @@ namespace Librainian.Databases {
 
                 var version = test.Adhoc<String>( "select @@version;", token );
 
-                if ( String.IsNullOrWhiteSpace( version) ) {
+                if ( String.IsNullOrWhiteSpace( version ) ) {
                     $"Failed connecting to server {test.DataSource}.".Break();
 
                     return default;
@@ -900,7 +892,10 @@ namespace Librainian.Databases {
                     var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
                     return new SqlServer {
-                        Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
+                        Status = Status.Success,
+                        ConnectionStringBuilder = connectionStringBuilder,
+                        Version = version,
+                        UTCDateTime = serverDateTime
                     };
                 }
             }
@@ -963,7 +958,5 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
-
     }
-
 }

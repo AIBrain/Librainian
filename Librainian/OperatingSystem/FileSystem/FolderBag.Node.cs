@@ -54,10 +54,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
         public class Node : IEquatable<Node>, IComparable<Node> {
 
-            public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
-
-            public Boolean Equals( Node other ) => Equals( this, other );
-
             [JsonProperty]
             public String Data { get; }
 
@@ -87,12 +83,16 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return true;
                 }
 
-                if ( left == null || rhs == null ) {
+                if ( left is null || rhs is null ) {
                     return false;
                 }
 
                 return String.Equals( left.Data, rhs.Data, StringComparison.Ordinal );
             }
+
+            public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
+
+            public Boolean Equals( Node other ) => Equals( this, other );
 
             //public override Boolean Equals( Object obj ) {
             //    var bob = obj as Node;

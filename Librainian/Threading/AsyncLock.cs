@@ -45,18 +45,21 @@ namespace Librainian.Threading {
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Magic;
     using Maths;
     using Measurement.Time;
 
     /// <summary>
-    ///     Usage: private readonly AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
+    ///     Usage: private  AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
     ///     /*...*/ }
     /// </summary>
     public sealed class AsyncLock : ABetterClassDispose {
 
-        private readonly Task<IDisposable> _releaser;
+        [NotNull]
+        private Task<IDisposable> _releaser { get; }
 
+        [NotNull]
         private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
 
         public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
@@ -66,20 +69,25 @@ namespace Librainian.Threading {
         /// </summary>
         public override void DisposeManaged() => this.Semaphore.Dispose();
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
+        [CanBeNull]
         public Task<IDisposable> LockAsync() {
             var wait = this.Semaphore.WaitAsync( Minutes.Ten );
 
             return wait.IsCompleted ?
                 this._releaser :
-                wait.ContinueWith( ( _, state ) => ( IDisposable ) state, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously,
+                wait.ContinueWith( ( _, state ) => ( IDisposable )state, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously,
                     TaskScheduler.Default );
         }
 
         private sealed class Releaser : ABetterClassDispose {
 
-            private readonly AsyncLock _mToRelease;
+            private AsyncLock _mToRelease { get; }
 
-            internal Releaser( AsyncLock toRelease ) => this._mToRelease = toRelease;
+            internal Releaser( [CanBeNull] AsyncLock toRelease ) => this._mToRelease = toRelease;
 
             public override void DisposeManaged() {
                 if ( !this._mToRelease.Semaphore.CurrentCount.Any() ) {

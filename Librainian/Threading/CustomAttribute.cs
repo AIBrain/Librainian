@@ -46,6 +46,7 @@ namespace Librainian.Threading {
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
+    using JetBrains.Annotations;
 
     public class CustomAttribute : Attribute {
 
@@ -65,10 +66,10 @@ namespace Librainian.Threading {
                 public Boolean someThing;
         */
 
-        public CustomAttribute( [CallerMemberName] String membername = "" ) {
+        public CustomAttribute( [CallerMemberName] [CanBeNull] String membername = "" ) {
             var method = MethodsList.FirstOrDefault( m => m.Name == membername );
 
-            if ( method?.DeclaringType == null ) {
+            if ( method?.DeclaringType is null ) {
                 return; //Not suppose to happen, but safety comes first
             }
 

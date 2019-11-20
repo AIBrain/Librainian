@@ -95,7 +95,7 @@ namespace Librainian.Maths.Hashings {
         /// <param name="fileInfo"></param>
         /// <returns></returns>
         public static Int32 CalcHashCode( [NotNull] this FileInfo fileInfo ) {
-            if ( fileInfo == null ) {
+            if ( fileInfo is null ) {
                 throw new ArgumentNullException( nameof( fileInfo ) );
             }
 
@@ -108,13 +108,13 @@ namespace Librainian.Maths.Hashings {
         /// <param name="document"></param>
         /// <returns></returns>
         public static Int32 CalcHashCode( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
             var fileInfo = new FileInfo( document.FullPath );
 
-            if ( fileInfo == null ) {
+            if ( fileInfo is null ) {
                 throw new NullReferenceException( "fileInfo" );
             }
 
@@ -165,7 +165,7 @@ namespace Librainian.Maths.Hashings {
         /// <returns></returns>
         /// <remarks>A faster Randem.Reseed would be nice here.</remarks>
         public static Int32 Deterministic( this Int32 index ) {
-            if ( RandomInstance == null ) {
+            if ( RandomInstance is null ) {
                 RandomInstance = new Random( index );
             }
 
@@ -200,9 +200,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( Byte ) objectA.GetHashCode();
+                var hashA = ( Byte )objectA.GetHashCode();
 
-                return ( Byte ) ( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
+                return ( Byte )( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
             }
         }
 
@@ -214,7 +214,7 @@ namespace Librainian.Maths.Hashings {
         [Pure]
         public static Int32 GetHashCodes<T>( [CanBeNull] params T[] objects ) {
             unchecked {
-                if ( objects == null ) {
+                if ( objects is null ) {
                     return 0;
                 }
 
@@ -237,7 +237,7 @@ namespace Librainian.Maths.Hashings {
         [Pure]
         public static Int32 GetHashCodes( [CanBeNull] params Object[] objects ) {
             unchecked {
-                if ( objects == null ) {
+                if ( objects is null ) {
                     return 0;
                 }
 
@@ -281,9 +281,9 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt16 ) objectA.GetHashCode();
+                var hashA = ( UInt16 )objectA.GetHashCode();
 
-                return ( UInt16 ) ( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
+                return ( UInt16 )( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
             }
         }
 
@@ -293,7 +293,7 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt32 ) objectA.GetHashCode();
+                var hashA = ( UInt32 )objectA.GetHashCode();
 
                 return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
             }
@@ -305,7 +305,7 @@ namespace Librainian.Maths.Hashings {
             }
 
             unchecked {
-                var hashA = ( UInt64 ) objectA.GetHashCode();
+                var hashA = ( UInt64 )objectA.GetHashCode();
 
                 return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
             }

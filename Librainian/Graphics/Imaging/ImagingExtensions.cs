@@ -48,7 +48,7 @@ namespace Librainian.Graphics.Imaging {
     public static class ImagingExtensions {
 
         public static Color GetAverageColor( [NotNull] this Bitmap bitmap ) {
-            if ( bitmap == null ) {
+            if ( bitmap is null ) {
                 throw new ArgumentNullException( nameof( bitmap ) );
             }
 

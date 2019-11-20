@@ -94,7 +94,7 @@ namespace Librainian.Threading {
         /// </example>
         /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
         [NotNull]
-        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, T1 parameter, Int64? callsAllowed = null ) {
+        public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, [CanBeNull] T1 parameter, Int64? callsAllowed = null ) {
             var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
             return () => {
@@ -125,7 +125,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static UInt64 CalcSizeInBytes<T>( this T obj ) {
+        public static UInt64 CalcSizeInBytes<T>( [CanBeNull] this T obj ) {
             if ( Equals( obj, default ) ) {
                 return 0;
             }
@@ -262,9 +262,9 @@ namespace Librainian.Threading {
             return maxPortThreads;
         }
 
-        public static Boolean GetSizeOfPrimitives<T>( this T obj, out UInt64 total ) {
+        public static Boolean GetSizeOfPrimitives<T>( [CanBeNull] this T obj, out UInt64 total ) {
             if ( obj is String s1 ) {
-                total = ( UInt64 ) s1.Length;
+                total = ( UInt64 )s1.Length;
 
                 return true;
             }
@@ -358,7 +358,7 @@ namespace Librainian.Threading {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( nameof( obj ) );
             }
 
@@ -370,7 +370,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static Int32 MarshalSizeOf<T>( this T obj ) => Marshal.SizeOf( obj );
+        public static Int32 MarshalSizeOf<T>( [CanBeNull] this T obj ) => Marshal.SizeOf( obj );
 
         /// <summary>
         ///     Repeat the <paramref name="action" /><paramref name="times" /> .
@@ -378,7 +378,7 @@ namespace Librainian.Threading {
         /// <param name="times"> </param>
         /// <param name="action"></param>
         public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
-            if ( action == null ) {
+            if ( action is null ) {
                 return;
             }
 
@@ -388,7 +388,7 @@ namespace Librainian.Threading {
         }
 
         public static void Repeat( [CanBeNull] this Action action, Int32 times ) {
-            if ( action == null ) {
+            if ( action is null ) {
                 return;
             }
 
@@ -416,7 +416,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
-            if ( actions == null ) {
+            if ( actions is null ) {
                 throw new ArgumentNullException( paramName: nameof( actions ) );
             }
 
@@ -447,7 +447,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
-            if ( functions == null ) {
+            if ( functions is null ) {
                 throw new ArgumentNullException( paramName: nameof( functions ) );
             }
 
@@ -512,7 +512,7 @@ namespace Librainian.Threading {
                 /// <param name="next">  </param>
                 /// <returns></returns>
                 public static void Then( this Action action, Action next ) {
-                    if ( action == null ) {
+                    if ( action is null ) {
                         throw new ArgumentNullException( "action" );
                     }
                     action.Spawn(); //does this even make sense?

@@ -714,7 +714,7 @@ namespace Librainian.Threading {
             ///     Create a new <see cref="Reference{T}" /> with the given initial value.
             /// </summary>
             /// <param name="value">Initial value</param>
-            public Reference( T value ) => this._value = value;
+            public Reference( [CanBeNull] T value ) => this._value = value;
 
             /// <summary>
             ///     Atomically set the value to the given updated value if the current value equals the comparand
@@ -722,7 +722,7 @@ namespace Librainian.Threading {
             /// <param name="newValue"> The new value</param>
             /// <param name="comparand">The comparand (expected value)</param>
             /// <returns></returns>
-            public Boolean AtomicCompareExchange( T newValue, [CanBeNull] T comparand ) =>
+            public Boolean AtomicCompareExchange( [CanBeNull] T newValue, [CanBeNull] T comparand ) =>
                 Interlocked.CompareExchange( location1: ref this._value, newValue, comparand: comparand ) == comparand;
 
             /// <summary>
@@ -730,12 +730,14 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="newValue">The new value</param>
             /// <returns>The original value</returns>
-            public T AtomicExchange( T newValue ) => Interlocked.Exchange( location1: ref this._value, newValue );
+            [CanBeNull]
+            public T AtomicExchange( [CanBeNull] T newValue ) => Interlocked.Exchange( location1: ref this._value, newValue );
 
             /// <summary>
             ///     Read the value applying acquire fence semantic
             /// </summary>
             /// <returns>The current value</returns>
+            [CanBeNull]
             public T ReadAcquireFence() {
                 var value = this._value;
                 Thread.MemoryBarrier();
@@ -748,12 +750,14 @@ namespace Librainian.Threading {
             /// </summary>
             /// <returns>The current value</returns>
             [MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization )]
+            [CanBeNull]
             public T ReadCompilerOnlyFence() => this._value;
 
             /// <summary>
             ///     Read the value applying full fence semantic
             /// </summary>
             /// <returns>The current value</returns>
+            [CanBeNull]
             public T ReadFullFence() {
                 var value = this._value;
                 Thread.MemoryBarrier();
@@ -765,6 +769,7 @@ namespace Librainian.Threading {
             ///     Read the value without applying any fence
             /// </summary>
             /// <returns>The current value</returns>
+            [CanBeNull]
             public T ReadUnfenced() => this._value;
 
             /// <summary>
@@ -782,13 +787,13 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="newValue">The new value</param>
             [MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( T newValue ) => this._value = newValue;
+            public void WriteCompilerOnlyFence( [CanBeNull] T newValue ) => this._value = newValue;
 
             /// <summary>
             ///     Write the value applying full fence semantic
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteFullFence( T newValue ) {
+            public void WriteFullFence( [CanBeNull] T newValue ) {
                 Thread.MemoryBarrier();
                 this._value = newValue;
             }
@@ -797,7 +802,7 @@ namespace Librainian.Threading {
             ///     Write the value applying release fence semantic
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteReleaseFence( T newValue ) {
+            public void WriteReleaseFence( [CanBeNull] T newValue ) {
                 Thread.MemoryBarrier();
                 this._value = newValue;
             }
@@ -806,7 +811,7 @@ namespace Librainian.Threading {
             ///     Write without applying any fence
             /// </summary>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( T newValue ) => this._value = newValue;
+            public void WriteUnfenced( [CanBeNull] T newValue ) => this._value = newValue;
         }
 
         ///// <summary>
@@ -927,23 +932,24 @@ namespace Librainian.Threading {
         /// </summary>
         public class BooleanArray {
 
-            private readonly Int32[] _array;
+            private const Int32 False = 0;
+
+            private const Int32 True = 1;
+
+            [NotNull]
+            private Int32[] _array { get; }
 
             /// <summary>
             ///     Length of the array
             /// </summary>
             public Int32 Length => this._array.Length;
 
-            private const Int32 False = 0;
-
-            private const Int32 True = 1;
-
             /// <summary>
             ///     Create a new <see cref="BooleanArray" /> of a given length
             /// </summary>
             /// <param name="length">Length of the array</param>
             public BooleanArray( Int32 length ) {
-                if ( length <= 0 ) {
+                if ( length < 1 ) {
                     throw new ArgumentOutOfRangeException( nameof( length ) );
                 }
 
@@ -1072,7 +1078,8 @@ namespace Librainian.Threading {
         /// </summary>
         public class IntegerArray {
 
-            private readonly Int32[] _array;
+            [NotNull]
+            private Int32[] _array { get; }
 
             /// <summary>
             ///     Length of the array
@@ -1096,7 +1103,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="array"></param>
             public IntegerArray( [NotNull] Int32[] array ) {
-                if ( array == null ) {
+                if ( array is null ) {
                     throw new ArgumentNullException( nameof( array ) );
                 }
 
@@ -1224,7 +1231,8 @@ namespace Librainian.Threading {
         /// </summary>
         public class LongArray {
 
-            private readonly Int64[] _array;
+            [NotNull]
+            private Int64[] _array { get; }
 
             /// <summary>
             ///     Length of the array
@@ -1248,7 +1256,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="array"></param>
             public LongArray( [NotNull] Int64[] array ) {
-                if ( array == null ) {
+                if ( array is null ) {
                     throw new ArgumentNullException( nameof( array ) );
                 }
 
@@ -1376,7 +1384,8 @@ namespace Librainian.Threading {
         /// </summary>
         public class ReferenceArray<T> where T : class {
 
-            private readonly T[] _array;
+            [NotNull]
+            private T[] _array { get; }
 
             /// <summary>
             ///     Length of the array
@@ -1409,7 +1418,7 @@ namespace Librainian.Threading {
             /// <param name="comparand">The comparand (expected value)</param>
             /// <param name="index">    The index.</param>
             /// <returns>The original value</returns>
-            public Boolean AtomicCompareExchange( Int32 index, T newValue, [CanBeNull] T comparand ) =>
+            public Boolean AtomicCompareExchange( Int32 index, [CanBeNull] T newValue, [CanBeNull] T comparand ) =>
                 Interlocked.CompareExchange( location1: ref this._array[ index ], newValue, comparand: comparand ) == comparand;
 
             /// <summary>
@@ -1418,7 +1427,8 @@ namespace Librainian.Threading {
             /// <param name="newValue">The new value</param>
             /// <param name="index">   The index.</param>
             /// <returns>The original value</returns>
-            public T AtomicExchange( Int32 index, T newValue ) {
+            [CanBeNull]
+            public T AtomicExchange( Int32 index, [CanBeNull] T newValue ) {
                 var result = Interlocked.Exchange( location1: ref this._array[ index ], newValue );
 
                 return result;
@@ -1429,6 +1439,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
+            [CanBeNull]
             public T ReadAcquireFence( Int32 index ) {
                 var value = this._array[ index ];
                 Thread.MemoryBarrier();
@@ -1442,6 +1453,7 @@ namespace Librainian.Threading {
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
             [MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization )]
+            [CanBeNull]
             public T ReadCompilerOnlyFence( Int32 index ) => this._array[ index ];
 
             /// <summary>
@@ -1449,6 +1461,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The element index</param>
             /// <returns>The current value</returns>
+            [CanBeNull]
             public T ReadFullFence( Int32 index ) {
                 var value = this._array[ index ];
                 Thread.MemoryBarrier();
@@ -1461,6 +1474,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">The index of the element.</param>
             /// <returns>The current value.</returns>
+            [CanBeNull]
             public T ReadUnfenced( Int32 index ) => this._array[ index ];
 
             /// <summary>
@@ -1469,14 +1483,14 @@ namespace Librainian.Threading {
             /// <param name="index">   The element index</param>
             /// <param name="newValue">The new value</param>
             [MethodImpl( methodImplOptions: MethodImplOptions.NoOptimization )]
-            public void WriteCompilerOnlyFence( Int32 index, T newValue ) => this._array[ index ] = newValue;
+            public void WriteCompilerOnlyFence( Int32 index, [CanBeNull] T newValue ) => this._array[ index ] = newValue;
 
             /// <summary>
             ///     Write the value applying full fence semantic
             /// </summary>
             /// <param name="index">   The element index</param>
             /// <param name="newValue">The new value</param>
-            public void WriteFullFence( Int32 index, T newValue ) {
+            public void WriteFullFence( Int32 index, [CanBeNull] T newValue ) {
                 this._array[ index ] = newValue;
                 Thread.MemoryBarrier();
             }
@@ -1486,7 +1500,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">   The element index</param>
             /// <param name="newValue">The new value</param>
-            public void WriteReleaseFence( Int32 index, T newValue ) {
+            public void WriteReleaseFence( Int32 index, [CanBeNull] T newValue ) {
                 this._array[ index ] = newValue;
                 Thread.MemoryBarrier();
             }
@@ -1496,7 +1510,7 @@ namespace Librainian.Threading {
             /// </summary>
             /// <param name="index">   The index.</param>
             /// <param name="newValue">The new value</param>
-            public void WriteUnfenced( Int32 index, T newValue ) => this._array[ index ] = newValue;
+            public void WriteUnfenced( Int32 index, [CanBeNull] T newValue ) => this._array[ index ] = newValue;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Librainian.Controls {
     public static class FormExtensions {
 
         public static Boolean IsFullyVisibleOnAnyScreen( [NotNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
@@ -63,9 +63,8 @@ namespace Librainian.Controls {
 
         public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
-        
         public static void LoadLocation( [NotNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
@@ -82,11 +81,11 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="form"></param>
         public static void LoadSize( [NotNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
-            if ( AppRegistry.TheApplication == null ) {
+            if ( AppRegistry.TheApplication is null ) {
                 throw new InvalidOperationException( "Application registry not set up." );
             }
 
@@ -100,13 +99,12 @@ namespace Librainian.Controls {
             }
         }
 
-
         /// <summary>
         ///     Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.
         /// </summary>
         /// <remarks></remarks>
         public static void Location( [NotNull] this Form form, Point location ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
@@ -114,11 +112,11 @@ namespace Librainian.Controls {
         }
 
         public static void SaveLocation( [CanBeNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
-            if ( AppRegistry.TheApplication == null ) {
+            if ( AppRegistry.TheApplication is null ) {
                 throw new InvalidOperationException( "Application registry not set up." );
             }
 
@@ -131,18 +129,16 @@ namespace Librainian.Controls {
                 form.WindowState == FormWindowState.Normal ? form.DesktopLocation.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
         }
 
-        
-
         /// <summary>
         ///     <seealso cref="LoadSize(Form)" />
         /// </summary>
         /// <param name="form"></param>
         public static void SaveSize( [NotNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
-            if ( AppRegistry.TheApplication == null ) {
+            if ( AppRegistry.TheApplication is null ) {
                 throw new InvalidOperationException( "Application registry not set up." );
             }
 
@@ -155,14 +151,13 @@ namespace Librainian.Controls {
                 form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
         }
 
-
         /// <summary>
         ///     Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.
         /// </summary>
         /// <param name="form"></param>
         /// <returns></returns>
         public static Size Size( [NotNull] this Form form ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 
@@ -174,7 +169,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <remarks></remarks>
         public static void Size( [NotNull] this Form form, Size size ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( paramName: nameof( form ) );
             }
 

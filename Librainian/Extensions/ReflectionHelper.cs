@@ -55,7 +55,7 @@ namespace Librainian.Extensions {
         /// <owner>jayBaz</owner>
         [NotNull]
         public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( [NotNull] this Assembly assembly ) {
-            if ( assembly == null ) {
+            if ( assembly is null ) {
                 throw new ArgumentNullException( paramName: nameof( assembly ) );
             }
 
@@ -64,7 +64,7 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( [NotNull] this Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
@@ -77,7 +77,7 @@ namespace Librainian.Extensions {
         /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
         [CanBeNull]
         public static TAttribute GetCustomAttribute<TAttribute>( [NotNull] this MemberInfo element ) where TAttribute : Attribute {
-            if ( element == null ) {
+            if ( element is null ) {
                 throw new ArgumentNullException( paramName: nameof( element ) );
             }
 
@@ -89,7 +89,7 @@ namespace Librainian.Extensions {
         /// </summary>
         [NotNull]
         public static IEnumerable<Type> GetTypes( [NotNull] this IEnumerable<Assembly> assemblies ) {
-            if ( assemblies == null ) {
+            if ( assemblies is null ) {
                 throw new ArgumentNullException( paramName: nameof( assemblies ) );
             }
 
@@ -101,7 +101,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <owner>jayBaz</owner>
         public static Boolean TypeHasAttribute<TAttribute>( [NotNull] this Type type ) where TAttribute : Attribute {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 

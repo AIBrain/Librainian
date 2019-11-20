@@ -77,8 +77,12 @@ namespace Librainian.OperatingSystem.Compression {
             using ( this.NullStream ) { }
         }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public void FeedItData( [NotNull] Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
@@ -98,7 +102,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// </summary>
         /// <returns></returns>
         public Double GetCurrentCompressionRatio() {
-            var d = ( Double ) new Rational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
+            var d = ( Double )new Rational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
 
             return 1 - d; // BUG ?
         }

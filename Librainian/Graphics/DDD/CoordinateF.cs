@@ -117,7 +117,7 @@ namespace Librainian.Graphics.DDD {
             this.X = Math.Max( Single.Epsilon, Math.Min( 1, x ) );
             this.Y = Math.Max( Single.Epsilon, Math.Min( 1, y ) );
             this.Z = Math.Max( Single.Epsilon, Math.Min( 1, z ) );
-            this.SquareLength = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z);
+            this.SquareLength = ( this.X * this.X ) + ( this.Y * this.Y ) + ( this.Z * this.Z );
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Librainian.Graphics.DDD {
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
 
-            return ( Single ) Math.Sqrt( (num1 * num1) + (num2 * num2) + (num3 * num3) );
+            return ( Single )Math.Sqrt( ( num1 * num1 ) + ( num2 * num2 ) + ( num3 * num3 ) );
         }
 
         /// <summary>
@@ -142,11 +142,11 @@ namespace Librainian.Graphics.DDD {
                 return true;
             }
 
-            if ( left == null ) {
+            if ( left is null ) {
                 return false;
             }
 
-            if ( rhs == null ) {
+            if ( rhs is null ) {
                 return false;
             }
 
@@ -173,7 +173,7 @@ namespace Librainian.Graphics.DDD {
             return !( left.Z > rhs.Z );
         }
 
-        public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new Point( ( Int32 ) coordinate.X, ( Int32 ) coordinate.Y );
+        public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new Point( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
 
         public static implicit operator PointF( [NotNull] CoordinateF coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
@@ -204,11 +204,11 @@ namespace Librainian.Graphics.DDD {
             var dy = this.Y - to.Y;
             var dz = this.Z - to.Z;
 
-            return Math.Sqrt( (dx * dx) + (dy * dy) + (dz * dz) );
+            return Math.Sqrt( ( dx * dx ) + ( dy * dy ) + ( dz * dz ) );
         }
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 

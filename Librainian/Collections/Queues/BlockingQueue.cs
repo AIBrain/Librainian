@@ -59,7 +59,7 @@ namespace Librainian.Collections.Queues {
 
         public T Dequeue() {
             lock ( this.LockObj ) {
-                while ( this.Head.Next == null ) {
+                while ( this.Head.Next is null ) {
                     Monitor.Wait( this.LockObj );
                 }
 

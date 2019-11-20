@@ -89,7 +89,7 @@ namespace Librainian.Logging {
 
         [DebuggerStepThrough]
         public static void Break( [NotNull] this Exception exception ) {
-            if ( exception == null ) {
+            if ( exception is null ) {
                 throw new ArgumentNullException( paramName: nameof( exception ) );
             }
 

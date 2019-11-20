@@ -90,7 +90,7 @@ namespace Librainian.Persistence {
             }
 
             var compName = Application.CompanyName.Trimmed();
-            if ( String.IsNullOrEmpty(compName ) ) {
+            if ( String.IsNullOrEmpty( compName ) ) {
                 throw new InvalidOperationException();
             }
             TheCompany = Software.CreateSubKey( compName.Replace( "&", Symbols.Singlespace ).Trim(), true ) ?? throw new InvalidOperationException();
@@ -101,7 +101,7 @@ namespace Librainian.Persistence {
 
             var product = Application.ProductName.Trimmed();
 
-            if ( String.IsNullOrEmpty(product) ) {
+            if ( String.IsNullOrEmpty( product ) ) {
                 throw new InvalidOperationException();
             }
             TheApplication = TheCompany.CreateSubKey( product, true ) ?? throw new InvalidOperationException();
@@ -518,14 +518,14 @@ namespace Librainian.Persistence {
             }
 
             using ( var regFolder = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree ) ) {
-                if ( regFolder == null ) {
+                if ( regFolder is null ) {
                     $"Error creating subkey {folder}".Break();
 
                     return false;
                 }
 
                 try {
-                    if ( value == null ) {
+                    if ( value is null ) {
                         regFolder.DeleteValue( key );
                     }
                     else {
@@ -566,19 +566,19 @@ namespace Librainian.Persistence {
             }
 
             using ( var registryKey = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree ) ) {
-                if ( registryKey == null ) {
+                if ( registryKey is null ) {
                     return false;
                 }
 
                 using ( var subKey = registryKey.CreateSubKey( subkey, RegistryKeyPermissionCheck.ReadWriteSubTree ) ) {
-                    if ( subKey == null ) {
+                    if ( subKey is null ) {
                         $"Error creating subkey {folder}".Break();
 
                         return false;
                     }
 
                     try {
-                        if ( value == null ) {
+                        if ( value is null ) {
                             subKey.DeleteValue( key );
                         }
                         else {

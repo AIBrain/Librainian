@@ -190,7 +190,7 @@ namespace Librainian.Persistence {
             }
 
             public static String BuildKey<T>( [NotNull] params T[] keys ) {
-                if ( keys == null ) {
+                if ( keys is null ) {
                     throw new ArgumentNullException( paramName: nameof( keys ) );
                 }
 

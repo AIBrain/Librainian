@@ -86,9 +86,9 @@ namespace System {
         [DebuggerStepThrough]
         public static Boolean Trap( [InstantHandle] [CanBeNull] params Action[] actions ) {
             try {
-                if ( actions == null ) {
-                    
-                    if (Debugger.IsAttached) {
+                if ( actions is null ) {
+
+                    if ( Debugger.IsAttached ) {
                         throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
                     }
 
@@ -116,9 +116,9 @@ namespace System {
         /// <returns></returns>
         [DebuggerStepThrough]
         [CanBeNull]
-        public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func ,[InstantHandle] [CanBeNull] Action final = default ) {
-            if ( func == null ) {
-                if (Debugger.IsAttached) {
+        public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func, [InstantHandle] [CanBeNull] Action final = default ) {
+            if ( func is null ) {
+                if ( Debugger.IsAttached ) {
                     throw new ArgumentNullException( paramName: nameof( func ) );
                 }
 
@@ -154,10 +154,10 @@ namespace System {
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static R Trap<T, R>( [InstantHandle] [CanBeNull] this Func<T, R> func, [CanBeNull] T argument, [CanBeNull] out Exception exception ,[InstantHandle] [CanBeNull] Action final = default,
+        public static R Trap<T, R>( [InstantHandle] [CanBeNull] this Func<T, R> func, [CanBeNull] T argument, [CanBeNull] out Exception exception, [InstantHandle] [CanBeNull] Action final = default,
             [CanBeNull] params Action[] actions ) {
-            if ( func == null ) {
-                if (Debugger.IsAttached) {
+            if ( func is null ) {
+                if ( Debugger.IsAttached ) {
                     throw new ArgumentNullException( paramName: nameof( func ) );
                 }
 
@@ -180,7 +180,7 @@ namespace System {
                         Trap( actions );
                     }
                 }
-                catch ( Exception e) {
+                catch ( Exception e ) {
                     exception = e.Log();
                 }
 

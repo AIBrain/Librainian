@@ -60,18 +60,6 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
-        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        public Boolean Equals( [CanBeNull] Page other ) {
-            if ( other == null ) {
-                return false;
-            }
-
-            return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
-        }
-
         [NotNull]
         [JsonProperty]
         private List<Paragraph> Paragraphs { get; } = new List<Paragraph>();
@@ -81,15 +69,27 @@ namespace Librainian.Linguistics {
         private Page() { }
 
         public Page( [NotNull] IEnumerable<Paragraph> paragraphs ) {
-            if ( paragraphs == null ) {
+            if ( paragraphs is null ) {
                 throw new ArgumentNullException( nameof( paragraphs ) );
             }
 
             this.Paragraphs.AddRange( paragraphs.Where( paragraph => paragraph != null ) );
         }
 
+        public Boolean Equals( [CanBeNull] Page other ) {
+            if ( other is null ) {
+                return false;
+            }
+
+            return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
+        }
+
+        public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
+
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

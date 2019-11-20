@@ -63,7 +63,7 @@ namespace Librainian.Persistence {
         [Obsolete]
         public static Boolean Load<TSource>( [CanBeNull] out TSource obj, [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null )
             where TSource : class {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 

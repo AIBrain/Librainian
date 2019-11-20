@@ -56,8 +56,29 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
+        private volatile Boolean _isPaused;
+
+        /// <summary>
+        /// </summary>
+        [NotNull]
+        private Timer Timer { get; } = new Timer( interval: ( Double )Milliseconds.One.Value ) {
+            AutoReset = false
+        };
+
+        [JsonProperty]
+        public Day Day { get; private set; }
+
+        /// <summary>
+        /// </summary>
         [JsonProperty]
         public Hour Hour { get; private set; }
+
+        [JsonProperty]
+        public Boolean IsPaused {
+            get => this._isPaused;
+
+            private set => this._isPaused = value;
+        }
 
         /// <summary>
         /// </summary>
@@ -68,38 +89,6 @@ namespace Librainian.Measurement.Time.Clocks {
         /// </summary>
         [JsonProperty]
         public Minute Minute { get; private set; }
-
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Second Second { get; private set; }
-
-        public Boolean IsAm() => !this.IsPm();
-
-        public Boolean IsPm() => this.Hour >= 12;
-
-        public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
-
-        /// <summary>
-        /// </summary>
-        private volatile Boolean _isPaused;
-
-        /// <summary>
-        /// </summary>
-        [NotNull]
-        private Timer Timer { get; } = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
-            AutoReset = false
-        };
-
-        [JsonProperty]
-        public Day Day { get; private set; }
-
-        [JsonProperty]
-        public Boolean IsPaused {
-            get => this._isPaused;
-
-            private set => this._isPaused = value;
-        }
 
         [JsonProperty]
         public Month Month { get; private set; }
@@ -117,6 +106,11 @@ namespace Librainian.Measurement.Time.Clocks {
         public Action<DateAndTime> OnSecond { get; set; }
 
         public Action<DateAndTime> OnYear { get; set; }
+
+        /// <summary>
+        /// </summary>
+        [JsonProperty]
+        public Second Second { get; private set; }
 
         [JsonProperty]
         public Year Year { get; private set; }
@@ -233,7 +227,7 @@ namespace Librainian.Measurement.Time.Clocks {
             return true;
         }
 
-        private void OnTimerElapsed( Object sender, ElapsedEventArgs elapsedEventArgs ) {
+        private void OnTimerElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs elapsedEventArgs ) {
             this.Pause();
 
             try {
@@ -334,6 +328,10 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public DateAndTime DateAndTime() => new DateAndTime( this.Date(), this.Time() );
 
+        public Boolean IsAm() => !this.IsPm();
+
+        public Boolean IsPm() => this.Hour >= 12;
+
         public Boolean Pause() {
             this.Timer.Stop();
             this.IsPaused = true;
@@ -367,5 +365,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 this.Resume();
             }
         }
+
+        public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
     }
 }

@@ -71,6 +71,13 @@ namespace Librainian.Graphics.Imaging {
     [JsonObject]
     public class Erg {
 
+        public static readonly String Extension = ".erg";
+
+        /// <summary>
+        ///     Human readable file header.
+        /// </summary>
+        public static readonly String Header = "ERG0.1";
+
         /// <summary>
         ///     EXIF metadata
         /// </summary>
@@ -96,20 +103,13 @@ namespace Librainian.Graphics.Imaging {
 
         public UInt32 Width { get; private set; }
 
-        public static readonly String Extension = ".erg";
-
-        /// <summary>
-        ///     Human readable file header.
-        /// </summary>
-        public static readonly String Header = "ERG0.1";
-
         public Erg() => this.Checksum = UInt64.MaxValue;
 
         [NotNull]
         public Task<UInt64> CalculateChecksumAsync() =>
             Task.Run( () => {
                 unchecked {
-                    return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels );
+                    return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
                 }
             } );
 
@@ -125,7 +125,7 @@ namespace Librainian.Graphics.Imaging {
         }
 
         public async Task<Boolean> TryAddAsync( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-            if ( bitmap == null ) {
+            if ( bitmap is null ) {
                 return false;
             }
 
@@ -147,11 +147,14 @@ namespace Librainian.Graphics.Imaging {
                 this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
 
                 this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem {
-                    Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value
+                    Id = item.Id,
+                    Len = item.Len,
+                    Type = item.Type,
+                    Value = item.Value
                 } ) );
 
-                this.Width = ( UInt32 ) bitmap.Width;
-                this.Height = ( UInt32 ) bitmap.Height;
+                this.Width = ( UInt32 )bitmap.Width;
+                this.Height = ( UInt32 )bitmap.Height;
 
                 var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
 
@@ -167,8 +170,8 @@ namespace Librainian.Graphics.Imaging {
                     }
 
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( ( Int32 ) x, ( Int32 ) y );
-                        var pixel = new Pixel( color, x, ( UInt32 ) y );
+                        var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
+                        var pixel = new Pixel( color, x, ( UInt32 )y );
                         this.Pixels.TryAdd( pixel );
                     }
                 } );

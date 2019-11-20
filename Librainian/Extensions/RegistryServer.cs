@@ -57,32 +57,11 @@ namespace Librainian.Extensions {
     /// </summary>
     public class RegistryServer : IEqualityComparer<RegistryKey> /*, IInitializable*/, IEnumerable<RegistryKey> {
 
-        public IEnumerator<RegistryKey> GetEnumerator() {
-            if ( !this._isInitialized ) {
-                throw new InvalidOperationException( "Please initialize the backing store first" );
-            }
+        private static readonly RegistryServer Instance;
 
-            return this._allKeys.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>
-        ///     If either contains a null, the result is false (actually it is null be we do not have
-        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
-        ///     'known to be empty' where null is 'could be anything we have no idea'.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
-
-        /// <summary>
-        ///     For null names here we will calculate a funky random number as null != null
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+        // IInitializable is from Castle.Core Contractually saying we need a call on our
+        // Initialize() method before we can be given out as a service to others
+        private static Int32 _iCounter;
 
         private HashSet<RegistryKey> _allKeys;
 
@@ -115,16 +94,9 @@ namespace Librainian.Extensions {
             }
         }
 
-        // IInitializable is from Castle.Core Contractually saying we need a call on our
-        // Initialize() method before we can be given out as a service to others
-
-        private static readonly RegistryServer Instance;
-
-        private static Int32 _iCounter;
+        private RegistryServer() { }
 
         static RegistryServer() => Instance = new RegistryServer();
-
-        private RegistryServer() { }
 
         public static event PopulateProgressDelegate PopulateProgress {
             add => Instance._populateEventOk += value;
@@ -148,7 +120,7 @@ namespace Librainian.Extensions {
         private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, String nodeKey ) {
             Instance.InvokePopulateProgress();
 
-            if ( startkeyIn == null ) {
+            if ( startkeyIn is null ) {
                 yield break;
             }
 
@@ -198,7 +170,7 @@ namespace Librainian.Extensions {
         private void InvokePopulateProgress() {
             var populateProgressDelegate = Instance._populateEventOk;
 
-            if ( populateProgressDelegate == null ) {
+            if ( populateProgressDelegate is null ) {
                 return;
             }
 
@@ -207,5 +179,32 @@ namespace Librainian.Extensions {
         }
 
         public static void Initialize() => Initialize( Registry.LocalMachine );
+
+        /// <summary>
+        ///     If either contains a null, the result is false (actually it is null be we do not have
+        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
+        ///     'known to be empty' where null is 'could be anything we have no idea'.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
+
+        public IEnumerator<RegistryKey> GetEnumerator() {
+            if ( !this._isInitialized ) {
+                throw new InvalidOperationException( "Please initialize the backing store first" );
+            }
+
+            return this._allKeys.GetEnumerator();
+        }
+
+        /// <summary>
+        ///     For null names here we will calculate a funky random number as null != null
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

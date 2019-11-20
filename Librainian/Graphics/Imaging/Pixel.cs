@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Pixel.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Pixel.cs" was last formatted by Protiguous on 2019/11/07 at 2:06 PM.
 
 namespace Librainian.Graphics.Imaging {
@@ -98,9 +98,9 @@ namespace Librainian.Graphics.Imaging {
         //[FieldOffset( sizeof( Byte ) + 3 * sizeof( Byte ) )]
         public readonly Byte Blue;
 
-        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) => ( Byte ) HashingExtensions.GetHashCodes( alpha, red, green, blue, x, y );
+        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) => ( Byte )HashingExtensions.GetHashCodes( alpha, red, green, blue, x, y );
 
-        public static Byte Hash( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) => ( Byte ) HashingExtensions.GetHashCodes( x, y, alpha, red, green, blue );
+        public static Byte Hash( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) => ( Byte )HashingExtensions.GetHashCodes( x, y, alpha, red, green, blue );
 
         public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
             this.Alpha = alpha;
@@ -172,7 +172,7 @@ namespace Librainian.Graphics.Imaging {
         public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
-            if ( streamWriter == null ) {
+            if ( streamWriter is null ) {
                 throw new ArgumentNullException( nameof( streamWriter ) );
             }
 
@@ -180,11 +180,11 @@ namespace Librainian.Graphics.Imaging {
         }
 
         public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [NotNull] StreamWriter errors ) {
-            if ( reader == null ) {
+            if ( reader is null ) {
                 throw new ArgumentNullException( nameof( reader ) );
             }
 
-            if ( errors == null ) {
+            if ( errors is null ) {
                 throw new ArgumentNullException( nameof( errors ) );
             }
 
@@ -291,7 +291,5 @@ namespace Librainian.Graphics.Imaging {
 
             return pixel;
         }
-
     }
-
 }

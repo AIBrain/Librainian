@@ -106,7 +106,7 @@ namespace Librainian.Controls {
         }
 
         public static void SetIcon( [NotNull] this Icon icon ) {
-            if ( icon == null ) {
+            if ( icon is null ) {
                 throw new ArgumentNullException( paramName: nameof( icon ) );
             }
 

@@ -45,6 +45,7 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using Collections;
+    using JetBrains.Annotations;
     using Magic;
     using Maths;
 
@@ -53,7 +54,7 @@ namespace Librainian.Threading {
     /// </summary>
     /// <remarks>Not superior to <see cref="CancellationTokenSource" />, just different. And a class.</remarks>
     [Experimental( "Somewhat untested. Should work though." )]
-    [Obsolete("Just use CancellationTokenSource...")]
+    [Obsolete( "Just use CancellationTokenSource..." )]
     public sealed class SimpleCancel : ABetterClassDispose {
 
         /// <summary>
@@ -73,10 +74,14 @@ namespace Librainian.Threading {
         /// <param name="throwMessage">           </param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) =>
+        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String throwMessage = "" ) =>
             this.RequestCancel( throwIfAlreadyRequested: throwIfAlreadyRequested, throwMessage: throwMessage );
 
         public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
 
         /// <summary>
         /// </summary>
@@ -94,7 +99,7 @@ namespace Librainian.Threading {
         /// <param name="throwMessage">           </param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, String throwMessage = "" ) {
+        public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String throwMessage = "" ) {
             if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) {
                 throw new TaskCanceledException( throwMessage );
             }

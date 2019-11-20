@@ -64,6 +64,136 @@ namespace Librainian.OperatingSystem {
     [SuppressMessage( "ReSharper", "InconsistentNaming" )]
     public static class NativeMethods {
 
+        internal const Int32 CREATE_ALWAYS = 2;
+
+        internal const Int32 CREATE_NEW = 1;
+
+        internal const Int32 FILE_APPEND_DATA = 0x0004;
+
+        internal const Int32 FILE_ATTRIBUTE_ARCHIVE = 0x20;
+
+        internal const Int32 FILE_ATTRIBUTE_DIRECTORY = 0x10;
+
+        internal const Int64 FILE_GENERIC_READ = STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE;
+
+        internal const Int64 FILE_GENERIC_WRITE = STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | SYNCHRONIZE;
+
+        internal const Int32 FILE_READ_ATTRIBUTES = 0x0080;
+
+        internal const Int32 FILE_READ_DATA = 0x0001;
+
+        internal const Int32 FILE_READ_EA = 0x0008;
+
+        internal const Int32 FILE_SHARE_NONE = 0x00000000;
+
+        internal const Int32 FILE_WRITE_ATTRIBUTES = 0x0100;
+
+        internal const Int32 FILE_WRITE_DATA = 0x0002;
+
+        internal const Int32 FILE_WRITE_EA = 0x0010;
+
+        internal const Int32 INVALID_FILE_ATTRIBUTES = -1;
+
+        internal const Int32 MAX_ALTERNATE = 14;
+
+        internal const Int32 MAX_PATH = 260;
+
+        internal const Int64 READ_CONTROL = 0x00020000L;
+
+        internal const Int64 STANDARD_RIGHTS_READ = READ_CONTROL;
+
+        internal const Int64 STANDARD_RIGHTS_WRITE = READ_CONTROL;
+
+        internal const Int64 SYNCHRONIZE = 0x00100000L;
+
+        public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
+
+        public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
+
+        public const Int32 DIGCF_PRESENT = 0x00000002;
+
+        public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
+
+        public const Int32 ERROR_INVALID_DATA = 13;
+
+        public const Int32 ERROR_NO_MORE_ITEMS = 259;
+
+        public const UInt32 ErrorMoreData = 234;
+
+        public const UInt32 ErrorSuccess = 0;
+
+        public const UInt32 FILE_ANY_ACCESS = 0;
+
+        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
+
+        public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
+
+        public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
+
+        public const UInt32 FILE_READ_ACCESS = 0x00000001;
+
+        public const UInt32 FILE_SHARE_READ = 0x00000001;
+
+        public const UInt32 FILE_SHARE_WRITE = 0x00000002;
+
+        public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
+
+        public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
+        public const UInt32 GENERIC_READ = 0x80000000;
+
+        public const UInt32 GENERIC_WRITE = 0x40000000;
+
+        public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+
+        public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
+
+        public const Int32 ICON_BIG = 1;
+
+        public const Int32 ICON_SMALL = 0;
+
+        public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
+
+        public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
+
+        public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
+
+        public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
+
+        public const Int32 MaxPath = 260;
+
+        public const UInt32 METHOD_BUFFERED = 0;
+
+        public const UInt32 OPEN_EXISTING = 3;
+
+        public const UInt32 PropertyStandardQuery = 0;
+
+        public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
+
+        public const Int32 SPDRP_CLASS = 0x00000007;
+
+        public const Int32 SPDRP_CLASSGUID = 0x00000008;
+
+        public const Int32 SPDRP_DEVICEDESC = 0x00000000;
+
+        public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
+
+        public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
+
+        public const Int32 WM_DEVICECHANGE = 0x0219;
+
+        public const Int32 WM_SETICON = 0x80;
+
+        // DWORD CALLBACK CopyProgressRoutine( _In_ LARGE_INTEGER TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER
+        // StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred, _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE
+        // hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID lpData);typedef DWORD (WINAPI *LPPROGRESS_ROUTINE)( _In_ LARGE_INTEGER
+        // TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred,
+        // _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID
+        // lpData); https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
+        [UnmanagedFunctionPointer( CallingConvention.Winapi )]
+        public delegate UInt32 CopyProgressRoutine( Int64 TotalFileSize, Int64 TotalBytesTransferred, Int64 StreamSize, Int64 StreamBytesTransferred, UInt32 dwStreamNumber,
+            COPY_CALLBACK_REASON dwCallbackReason, [In] IntPtr hSourceFile, [In] IntPtr hDestinationFile, [In] IntPtr lpData );
+
         [Flags]
         public enum AllocationType : UInt32 {
 
@@ -305,136 +435,6 @@ namespace Librainian.OperatingSystem {
 
             SvTypeAll = 0xFFFFFFFF
         }
-
-        // DWORD CALLBACK CopyProgressRoutine( _In_ LARGE_INTEGER TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER
-        // StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred, _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE
-        // hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID lpData);typedef DWORD (WINAPI *LPPROGRESS_ROUTINE)( _In_ LARGE_INTEGER
-        // TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred,
-        // _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID
-        // lpData); https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
-        [UnmanagedFunctionPointer( CallingConvention.Winapi )]
-        public delegate UInt32 CopyProgressRoutine( Int64 TotalFileSize, Int64 TotalBytesTransferred, Int64 StreamSize, Int64 StreamBytesTransferred, UInt32 dwStreamNumber,
-            COPY_CALLBACK_REASON dwCallbackReason, [In] IntPtr hSourceFile, [In] IntPtr hDestinationFile, [In] IntPtr lpData );
-
-        internal const Int32 CREATE_ALWAYS = 2;
-
-        internal const Int32 CREATE_NEW = 1;
-
-        internal const Int32 FILE_APPEND_DATA = 0x0004;
-
-        internal const Int32 FILE_ATTRIBUTE_ARCHIVE = 0x20;
-
-        internal const Int32 FILE_ATTRIBUTE_DIRECTORY = 0x10;
-
-        internal const Int64 FILE_GENERIC_READ = STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE;
-
-        internal const Int64 FILE_GENERIC_WRITE = STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | SYNCHRONIZE;
-
-        internal const Int32 FILE_READ_ATTRIBUTES = 0x0080;
-
-        internal const Int32 FILE_READ_DATA = 0x0001;
-
-        internal const Int32 FILE_READ_EA = 0x0008;
-
-        internal const Int32 FILE_SHARE_NONE = 0x00000000;
-
-        internal const Int32 FILE_WRITE_ATTRIBUTES = 0x0100;
-
-        internal const Int32 FILE_WRITE_DATA = 0x0002;
-
-        internal const Int32 FILE_WRITE_EA = 0x0010;
-
-        internal const Int32 INVALID_FILE_ATTRIBUTES = -1;
-
-        internal const Int32 MAX_ALTERNATE = 14;
-
-        internal const Int32 MAX_PATH = 260;
-
-        internal const Int64 READ_CONTROL = 0x00020000L;
-
-        internal const Int64 STANDARD_RIGHTS_READ = READ_CONTROL;
-
-        internal const Int64 STANDARD_RIGHTS_WRITE = READ_CONTROL;
-
-        internal const Int64 SYNCHRONIZE = 0x00100000L;
-
-        public const UInt32 ATA_FLAGS_DATA_IN = 0x02;
-
-        public const Int32 DIGCF_DEVICEINTERFACE = 0x00000010;
-
-        public const Int32 DIGCF_PRESENT = 0x00000002;
-
-        public const Int32 ERROR_INSUFFICIENT_BUFFER = 122;
-
-        public const Int32 ERROR_INVALID_DATA = 13;
-
-        public const Int32 ERROR_NO_MORE_ITEMS = 259;
-
-        public const UInt32 ErrorMoreData = 234;
-
-        public const UInt32 ErrorSuccess = 0;
-
-        public const UInt32 FILE_ANY_ACCESS = 0;
-
-        public const UInt32 FILE_ATTRIBUTE_NORMAL = 0x00000080;
-
-        public const UInt32 FILE_DEVICE_CONTROLLER = 0x00000004;
-
-        public const UInt32 FILE_DEVICE_MASS_STORAGE = 0x0000002d;
-
-        public const UInt32 FILE_READ_ACCESS = 0x00000001;
-
-        public const UInt32 FILE_SHARE_READ = 0x00000001;
-
-        public const UInt32 FILE_SHARE_WRITE = 0x00000002;
-
-        public const UInt32 FILE_WRITE_ACCESS = 0x00000002;
-
-        public const UInt32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
-
-        public const UInt32 GENERIC_READ = 0x80000000;
-
-        public const UInt32 GENERIC_WRITE = 0x40000000;
-
-        public const String GUID_DEVINTERFACE_DISK = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-
-        public const String GUID_DEVINTERFACE_VOLUME = "53f5630d-b6bf-11d0-94f2-00a0c91efb8b";
-
-        public const Int32 ICON_BIG = 1;
-
-        public const Int32 ICON_SMALL = 0;
-
-        public const UInt32 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER;
-
-        public const UInt32 IOCTL_STORAGE_BASE = FILE_DEVICE_MASS_STORAGE;
-
-        public const Int32 IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x002d1080;
-
-        public const Int32 IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS = 0x00560000;
-
-        public const Int32 MaxPath = 260;
-
-        public const UInt32 METHOD_BUFFERED = 0;
-
-        public const UInt32 OPEN_EXISTING = 3;
-
-        public const UInt32 PropertyStandardQuery = 0;
-
-        public const Int32 SPDRP_CAPABILITIES = 0x0000000F;
-
-        public const Int32 SPDRP_CLASS = 0x00000007;
-
-        public const Int32 SPDRP_CLASSGUID = 0x00000008;
-
-        public const Int32 SPDRP_DEVICEDESC = 0x00000000;
-
-        public const Int32 SPDRP_FRIENDLYNAME = 0x0000000C;
-
-        public const UInt32 StorageDeviceSeekPenaltyProperty = 7;
-
-        public const Int32 WM_DEVICECHANGE = 0x0219;
-
-        public const Int32 WM_SETICON = 0x80;
 
         public interface IHandle {
 
@@ -771,36 +771,36 @@ namespace Librainian.OperatingSystem {
         public static extern IntPtr GetWindowDC( IntPtr hwnd );
 
         public static void HandleLastError( [NotNull] String fullPath ) {
-            if ( fullPath == null ) {
+            if ( fullPath is null ) {
                 throw new ArgumentNullException( paramName: nameof( fullPath ) );
             }
 
             var lastWin32Error = Marshal.GetLastWin32Error();
 
             switch ( lastWin32Error ) {
-                case ( Int32 ) ErrorCodes.ERROR_FILE_NOT_FOUND: {
-                    ThrowFileNotFound( fullPath );
+                case ( Int32 )ErrorCodes.ERROR_FILE_NOT_FOUND: {
+                        ThrowFileNotFound( fullPath );
 
-                    break;
-                }
+                        break;
+                    }
 
-                case ( Int32 ) ErrorCodes.ERROR_PATH_NOT_FOUND: {
-                    ThrowPathNotFound( fullPath );
+                case ( Int32 )ErrorCodes.ERROR_PATH_NOT_FOUND: {
+                        ThrowPathNotFound( fullPath );
 
-                    break;
-                }
+                        break;
+                    }
 
-                case ( Int32 ) ErrorCodes.ERROR_ACCESS_DENIED: {
-                    ThrowAccessDenied( fullPath );
+                case ( Int32 )ErrorCodes.ERROR_ACCESS_DENIED: {
+                        ThrowAccessDenied( fullPath );
 
-                    break;
-                }
+                        break;
+                    }
 
                 default: {
-                    ThrowExceptionForHR( lastWin32Error );
+                        ThrowExceptionForHR( lastWin32Error );
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -959,7 +959,7 @@ namespace Librainian.OperatingSystem {
             Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
 
         public static Boolean SetWindowIcon( this IntPtr window, [NotNull] Icon icon ) {
-            if ( icon == null ) {
+            if ( icon is null ) {
                 throw new ArgumentNullException( paramName: nameof( icon ) );
             }
 
@@ -1001,9 +1001,9 @@ namespace Librainian.OperatingSystem {
         [DebuggerStepThrough]
         public static DateTime ToDateTime( this Filetime time ) {
             try {
-                var high = ( UInt64 ) time.dwHighDateTime;
+                var high = ( UInt64 )time.dwHighDateTime;
                 var low = time.dwLowDateTime;
-                var fileTime = ( Int64 ) ( ( high << 32 ) + low );
+                var fileTime = ( Int64 )( ( high << 32 ) + low );
 
                 return DateTime.FromFileTimeUtc( fileTime );
             }
@@ -1015,9 +1015,9 @@ namespace Librainian.OperatingSystem {
         [DebuggerStepThrough]
         public static DateTime ToDateTime( this FILETIME time ) {
             try {
-                var high = ( UInt64 ) time.dwHighDateTime;
-                var low = ( UInt32 ) time.dwLowDateTime;
-                var fileTime = ( Int64 ) ( ( high << 32 ) + low );
+                var high = ( UInt64 )time.dwHighDateTime;
+                var low = ( UInt32 )time.dwLowDateTime;
+                var fileTime = ( Int64 )( ( high << 32 ) + low );
 
                 return DateTime.FromFileTimeUtc( fileTime );
             }
@@ -1182,12 +1182,13 @@ namespace Librainian.OperatingSystem {
             ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
-            public Int64 ToInt64() => ( ( Int64 ) this.High << 32 ) | ( UInt32 ) this.Low;
+            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
 
             // just for demonstration
             public static LargeInteger FromInt64( Int64 value ) =>
                 new LargeInteger {
-                    Low = ( Int32 ) value, High = ( Int32 ) ( value >> 32 )
+                    Low = ( Int32 )value,
+                    High = ( Int32 )( value >> 32 )
                 };
         }
 
@@ -1329,11 +1330,6 @@ namespace Librainian.OperatingSystem {
         /// <seealso cref="IHandle" />
         public class HANDLE : SafeHandleZeroOrMinusOneIsInvalid, IEquatable<HANDLE>, IHandle {
 
-            /// <summary>Determines whether the specified <see cref="HANDLE" />, is equal to this instance.</summary>
-            /// <param name="other">The <see cref="HANDLE" /> to compare with this instance.</param>
-            /// <returns><c>true</c> if the specified <see cref="HANDLE" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-            public Boolean Equals( HANDLE other ) => Equals( this, other );
-
             /// <summary>Gets a value indicating whether this instance is null.</summary>
             /// <value><c>true</c> if this instance is null; otherwise, <c>false</c>.</value>
             public Boolean IsNull => this.handle == IntPtr.Zero;
@@ -1404,6 +1400,11 @@ namespace Librainian.OperatingSystem {
             /// <param name="h2">The second handle.</param>
             /// <returns>The result of the operator.</returns>
             public static Boolean operator ==( [CanBeNull] HANDLE h1, [CanBeNull] HANDLE h2 ) => !( h1 is null ) && !( h2 is null ) && h1.Equals( h2 );
+
+            /// <summary>Determines whether the specified <see cref="HANDLE" />, is equal to this instance.</summary>
+            /// <param name="other">The <see cref="HANDLE" /> to compare with this instance.</param>
+            /// <returns><c>true</c> if the specified <see cref="HANDLE" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+            public Boolean Equals( HANDLE other ) => Equals( this, other );
 
             /// <summary>Determines whether the specified <see cref="System.Object" />, is equal to this instance.</summary>
             /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>

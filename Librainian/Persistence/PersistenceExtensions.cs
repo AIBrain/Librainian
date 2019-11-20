@@ -73,16 +73,6 @@ namespace Librainian.Persistence {
 
     public static class PersistenceExtensions {
 
-        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
-
-            //ContractResolver = new MyContractResolver(),
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
-        }, true );
-
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
             var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
 
@@ -111,7 +101,8 @@ namespace Librainian.Persistence {
 
         [NotNull]
         public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.All
         }, true );
 
         ///// <summary>
@@ -122,10 +113,10 @@ namespace Librainian.Persistence {
         ///// <param name = "fileName"></param>
         ///// <returns></returns>
         //public static Boolean LoadCollection< T >( this IProducerConsumerCollection< T > collection, String fileName ) {
-        //    if ( collection == null ) {
+        //    if ( collection is null ) {
         //        throw new ArgumentNullException( "collection" );
         //    }
-        //    if ( fileName == null ) {
+        //    if ( fileName is null ) {
         //        throw new ArgumentNullException( "fileName" );
         //    }
         //    IProducerConsumerCollection< T > temp;
@@ -144,6 +135,16 @@ namespace Librainian.Persistence {
 
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
+
+        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
+
+            //ContractResolver = new MyContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
+        }, true );
 
         /// <summary>
         ///     Can the file be read from at this moment in time ?
@@ -324,7 +325,7 @@ namespace Librainian.Persistence {
             using ( var memoryStream = new MemoryStream( bytes ) ) {
                 var binaryFormatter = new BinaryFormatter();
 
-                return ( T ) binaryFormatter.Deserialize( memoryStream );
+                return ( T )binaryFormatter.Deserialize( memoryStream );
             }
         }
 
@@ -435,7 +436,7 @@ namespace Librainian.Persistence {
         //[Obsolete( "Use JSON methods" )]
         public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null,
             [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
-            if ( fullPathAndFileName == null ) {
+            if ( fullPathAndFileName is null ) {
                 throw new ArgumentNullException( nameof( fullPathAndFileName ) );
             }
 
@@ -509,11 +510,11 @@ namespace Librainian.Persistence {
         [Obsolete( "Use JSON serializers" )]
         public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters )
             where TSource : class, new() {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
-            if ( parameters == null ) {
+            if ( parameters is null ) {
                 throw new ArgumentNullException( nameof( parameters ) );
             }
 
@@ -630,11 +631,11 @@ namespace Librainian.Persistence {
 
                         if ( useCompression ) {
                             using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                obj = ( T ) serializer.ReadObject( stream: decompress );
+                                obj = ( T )serializer.ReadObject( stream: decompress );
                             }
                         }
                         else {
-                            obj = ( T ) serializer.ReadObject( stream: isfs );
+                            obj = ( T )serializer.ReadObject( stream: isfs );
                         }
 
                         return !Equals( obj, default );
@@ -678,7 +679,7 @@ namespace Librainian.Persistence {
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] String fileName ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
@@ -699,7 +700,7 @@ namespace Librainian.Persistence {
         /// <returns>Returns True if the object was saved.</returns>
         [Obsolete( "Not in use yet." )]
         public static Boolean SaveCollection<T>( [NotNull] this ConcurrentList<T> collection, [NotNull] String fileName ) where T : class {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
@@ -720,7 +721,7 @@ namespace Librainian.Persistence {
                 return false;
             }
 
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
@@ -817,7 +818,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName"></param>
         /// <returns>Returns True if the object was saved.</returns>
         public static Boolean SaveValue<TSource>( this TSource obj, [NotNull] String fileName ) where TSource : struct {
-            if ( fileName == null ) {
+            if ( fileName is null ) {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
@@ -988,7 +989,7 @@ namespace Librainian.Persistence {
                     throw new DirectoryNotFoundException( folder.FullName );
                 }
 
-                var itemCount = ( UInt64 ) dictionary.LongCount();
+                var itemCount = ( UInt64 )dictionary.LongCount();
 
                 String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ).Info();
 
@@ -1129,7 +1130,7 @@ namespace Librainian.Persistence {
                 var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
                 var settings = configFile.AppSettings.Settings;
 
-                if ( settings[ key ] == null ) {
+                if ( settings[ key ] is null ) {
                     settings.Add( key, value );
                 }
                 else {
@@ -1155,7 +1156,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         public static String Settings( [NotNull] String key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
@@ -1170,7 +1171,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         public static String Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
-            if ( key == null ) {
+            if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }
 
@@ -1210,7 +1211,7 @@ namespace Librainian.Persistence {
         /// <see cref="TrySave{TKey}" />
         /// <returns></returns>
         public static Boolean TryLoad<TSource>([NotNull] this String attribute, out TSource value, String location = null) {
-            if (attribute == null) { throw new ArgumentNullException(nameof(attribute)); }
+            if (attribute is null) { throw new ArgumentNullException(nameof(attribute)); }
 
             value = default;
 
@@ -1247,7 +1248,7 @@ namespace Librainian.Persistence {
         /// <param name="formatting"></param>
         /// <returns></returns>
         public static Boolean TrySave<TKey>( this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -1266,7 +1267,8 @@ namespace Librainian.Persistence {
 
                         //see also http://stackoverflow.com/a/8711702/956364
                         var serializer = new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         };
 
                         serializer.Serialize( jw, self );

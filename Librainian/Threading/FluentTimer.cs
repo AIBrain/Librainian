@@ -56,7 +56,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static Timer AutoReset( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
 
@@ -66,7 +66,7 @@ namespace Librainian.Threading {
         }
 
         [NotNull]
-        public static Timer Create( this Hertz frequency, Action onTick ) => Create( ( TimeSpan ) frequency, onTick );
+        public static Timer Create( [CanBeNull] this Hertz frequency, [CanBeNull] Action onTick ) => Create( ( TimeSpan )frequency, onTick );
 
         /// <summary>
         ///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
@@ -82,7 +82,7 @@ namespace Librainian.Threading {
                 interval = Milliseconds.One;
             }
 
-            if ( onTick == null ) {
+            if ( onTick is null ) {
                 onTick = () => { };
             }
 
@@ -118,7 +118,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static Timer Once( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
 
@@ -135,7 +135,7 @@ namespace Librainian.Threading {
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         [NotNull]
         public static Timer Start( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( paramName: nameof( timer ) );
             }
 
@@ -146,7 +146,7 @@ namespace Librainian.Threading {
 
         [NotNull]
         public static Timer Stop( [NotNull] this Timer timer ) {
-            if ( timer == null ) {
+            if ( timer is null ) {
                 throw new ArgumentNullException( nameof( timer ) );
             }
 

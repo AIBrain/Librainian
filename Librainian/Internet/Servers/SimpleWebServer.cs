@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/11/07 at 2:05 PM.
+// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/11/20 at 6:36 AM.
 
 namespace Librainian.Internet.Servers {
 
@@ -53,27 +53,21 @@ namespace Librainian.Internet.Servers {
     using Logging;
     using Magic;
 
-    /// <summary>
-    /// </summary>
+    /// <summary></summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
     /// <example>
-    ///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A
-    ///     simple webserver. Press a key to quit."); Console.ReadKey(); ws.Stop();
+    /// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey();
+    /// ws.Stop();
     /// </example>
-    /// <example>
-    ///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page",
-    ///     DateTime.Now); }
-    /// </example>
+    /// <example>public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }</example>
     [UsedImplicitly]
     public class SimpleWebServer : ABetterClassDispose {
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [NotNull]
         private readonly HttpListener _httpListener = new HttpListener();
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [CanBeNull]
         private readonly Func<HttpListenerRequest, String> _responderMethod;
 
@@ -81,8 +75,7 @@ namespace Librainian.Internet.Servers {
 
         public String NotReadyBecause { get; private set; }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <param name="prefixes"></param>
         /// <param name="method">  </param>
         /// <exception cref="HttpListenerException"></exception>
@@ -102,7 +95,7 @@ namespace Librainian.Internet.Servers {
                 return;
             }
 
-            if ( method == null ) {
+            if ( method is null ) {
                 this.ImNotReady( because: "A responder method is required" );
 
                 return;
@@ -130,14 +123,13 @@ namespace Librainian.Internet.Servers {
             this.NotReadyBecause = because;
         }
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() => this.Stop();
 
-        /// <summary>
-        ///     Start the http listener.
-        /// </summary>
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() { }
+
+        /// <summary>Start the http listener.</summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <see cref="Stop" />
@@ -154,13 +146,13 @@ namespace Librainian.Internet.Servers {
                             var listenerContext =
                                 await this._httpListener.GetContextAsync().ConfigureAwait( false ); // Waits for an incoming request as an asynchronous operation.
 
-                            if ( listenerContext == null ) {
+                            if ( listenerContext is null ) {
                                 return;
                             }
 
                             var responderMethod = this._responderMethod;
 
-                            if ( responderMethod == null ) {
+                            if ( responderMethod is null ) {
 
                                 //no responderMethod?!?
                                 return;

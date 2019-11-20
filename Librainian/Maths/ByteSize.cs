@@ -342,7 +342,7 @@ namespace Librainian.Maths {
                 format = "0.## " + format;
             }
 
-            if ( provider == null ) {
+            if ( provider is null ) {
                 provider = CultureInfo.CurrentCulture;
             }
 

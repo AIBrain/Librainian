@@ -85,7 +85,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="obj">The <see cref="T:System.Object" /> for which a hash code is to be returned.</param>
         /// <exception cref="T:System.ArgumentNullException">
         ///     The type of <paramref name="obj" /> is a reference type and
-        ///     <paramref name="obj" /> == null.
+        ///     <paramref name="obj" /> is null.
         /// </exception>
         public Int32 GetHashCode( Line obj ) => this.Pixels.GetHashCode();
 
@@ -154,7 +154,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
             this.Pixels = pixels.ToArray();
-            this.Count = ( UInt64 ) this.Pixels.LongLength;
+            this.Count = ( UInt64 )this.Pixels.LongLength;
             this.Checksum = CalculateChecksumAsync( this.Pixels ).Result;
         }
 
@@ -165,7 +165,7 @@ namespace Librainian.Graphics.Imaging {
 
                 foreach ( var pixel in pixels ) {
                     unchecked {
-                        checksum = ( checksum + ( UInt64 ) pixel.GetHashCode() ) / 2;
+                        checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
                     }
                 }
 
@@ -179,7 +179,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
-            if ( left == null || right == null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 

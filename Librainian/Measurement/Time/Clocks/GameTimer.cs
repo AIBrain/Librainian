@@ -163,7 +163,9 @@ namespace Librainian.Measurement.Time.Clocks {
                     this.Counter++;
 
                     this.Progress.Report( new ReportBack {
-                        Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow()
+                        Counter = this.Counter,
+                        Elapsed = this.Elapsed,
+                        RunningSlow = this.IsRunningSlow()
                     } );
                 }
                 catch ( Exception exception ) {
@@ -197,6 +199,7 @@ namespace Librainian.Measurement.Time.Clocks {
         ///     Total time passed since timer was started.
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         public SpanOfTime TotalElapsed() => new SpanOfTime( milliseconds: new Milliseconds( this.Counter / this.UpdateRate.TotalMilliseconds ) );
 
         [JsonObject]

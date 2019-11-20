@@ -63,7 +63,7 @@ namespace Librainian.Measurement.Spatial {
 
         //TODO is this correct?
         /// <summary>180 / Math.PI</summary>
-        public const Single RadiansToDegreesFactor = ( Single ) ( 180 / Math.PI );
+        public const Single RadiansToDegreesFactor = ( Single )( 180 / Math.PI );
 
         /// <summary>One <see cref="Radians" />.</summary>
         public static readonly Radians One = new Radians( 1 );
@@ -96,7 +96,7 @@ namespace Librainian.Measurement.Spatial {
         /// <returns></returns>
         public static Boolean Equals( Radians left, Radians right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
-        public static implicit operator Decimal( Radians radians ) => ( Decimal ) radians.Value;
+        public static implicit operator Decimal( Radians radians ) => ( Decimal )radians.Value;
 
         public static implicit operator Degrees( Radians radians ) => ToDegrees( radians );
 
@@ -124,7 +124,7 @@ namespace Librainian.Measurement.Spatial {
 
         public static Degrees ToDegrees( Single radians ) => new Degrees( radians * RadiansToDegreesFactor );
 
-        public static Degrees ToDegrees( Double radians ) => new Degrees( ( Single ) ( radians * RadiansToDegreesFactor ) );
+        public static Degrees ToDegrees( Double radians ) => new Degrees( ( Single )( radians * RadiansToDegreesFactor ) );
 
         public static Degrees ToDegrees( Radians radians ) => new Degrees( radians.Value * RadiansToDegreesFactor );
 
@@ -133,7 +133,7 @@ namespace Librainian.Measurement.Spatial {
         public Boolean Equals( Radians other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 

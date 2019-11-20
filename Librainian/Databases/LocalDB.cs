@@ -82,7 +82,7 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( databaseName ) );
             }
 
-            if ( databaseLocation == null ) {
+            if ( databaseLocation is null ) {
                 databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
             }
 
@@ -151,6 +151,10 @@ namespace Librainian.Databases {
         }
 
         public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
     }
 
     ///// <summary>

@@ -61,6 +61,7 @@ namespace Librainian.Threading {
         /// <param name="toExclusive">  The end of the range, exclusive.</param>
         /// <param name="body">         The function to execute for each element.</param>
         /// <returns>The result computed.</returns>
+        [CanBeNull]
         public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) =>
             fromInclusive.SpeculativeFor( toExclusive, CPU.AllCPUExceptOne, body );
 
@@ -76,7 +77,7 @@ namespace Librainian.Threading {
         public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] ParallelOptions options, [NotNull] Func<Int32, TResult> body ) {
 
             // Validate parameters; the Parallel.For we delegate to will validate the rest
-            if ( body == null ) {
+            if ( body is null ) {
                 throw new ArgumentNullException( nameof( body ) );
             }
 
@@ -92,7 +93,7 @@ namespace Librainian.Threading {
             } );
 
             // Return the computed result
-            return ( TResult ) result;
+            return ( TResult )result;
         }
 
         /// <summary>
@@ -103,6 +104,7 @@ namespace Librainian.Threading {
         /// <param name="source">The input elements to be processed.</param>
         /// <param name="body">  The function to execute for each element.</param>
         /// <returns>The result computed.</returns>
+        [CanBeNull]
         public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) =>
             source.SpeculativeForEach( CPU.AllCPUExceptOne, body );
 
@@ -119,7 +121,7 @@ namespace Librainian.Threading {
             [NotNull] Func<TSource, TResult> body ) {
 
             // Validate parameters; the Parallel.ForEach we delegate to will validate the rest
-            if ( body == null ) {
+            if ( body is null ) {
                 throw new ArgumentNullException( nameof( body ) );
             }
 
@@ -135,7 +137,7 @@ namespace Librainian.Threading {
             } );
 
             // Return the computed result
-            return ( TResult ) result;
+            return ( TResult )result;
         }
 
         /// <summary>
@@ -144,6 +146,7 @@ namespace Librainian.Threading {
         /// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
         /// <param name="functions">The functions to be executed.</param>
         /// <returns>A result from executing one of the functions.</returns>
+        [CanBeNull]
         public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllCPUExceptOne.SpeculativeInvoke( functions );
 
         /// <summary>
@@ -153,14 +156,15 @@ namespace Librainian.Threading {
         /// <param name="options">  The options to use for the execution.</param>
         /// <param name="functions">The functions to be executed.</param>
         /// <returns>A result from executing one of the functions.</returns>
+        [CanBeNull]
         public static T SpeculativeInvoke<T>( [NotNull] this ParallelOptions options, [NotNull] params Func<T>[] functions ) {
 
             // Validate parameters
-            if ( options == null ) {
+            if ( options is null ) {
                 throw new ArgumentNullException( nameof( options ) );
             }
 
-            if ( functions == null ) {
+            if ( functions is null ) {
                 throw new ArgumentNullException( nameof( functions ) );
             }
 
@@ -199,7 +203,7 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
             }
 
-            if ( processBlock == null ) {
+            if ( processBlock is null ) {
                 throw new ArgumentNullException( nameof( processBlock ) );
             }
 
@@ -235,7 +239,7 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numColumns ) );
             }
 
-            if ( processRowColumnCell == null ) {
+            if ( processRowColumnCell is null ) {
                 throw new ArgumentNullException( nameof( processRowColumnCell ) );
             }
 

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Attoseconds.cs" was last formatted by Protiguous on 2019/08/08 at 8:53 AM.
+// Project: "Librainian", "Attoseconds.cs" was last formatted by Protiguous on 2019/11/20 at 6:17 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -56,126 +56,81 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public struct Attoseconds : IQuantityOfTime {
 
-        /// <summary>
-        ///     1000
-        /// </summary>
+        /// <summary>1000</summary>
         /// <see cref="Femtoseconds" />
         public const UInt16 InOneFemtosecond = 1000;
 
-        /// <summary>
-        ///     Ten <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Ten <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Fifteen { get; } = new Attoseconds( 15 );
 
-        /// <summary>
-        ///     Five <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Five <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Five { get; } = new Attoseconds( 5 );
 
-        /// <summary>
-        ///     Five Hundred <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Five Hundred <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds FiveHundred { get; } = new Attoseconds( 500 );
 
-        /// <summary>
-        ///     111. 1 Hertz <see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary>111. 1 Hertz <see cref="Attoseconds" />.</summary>
         public static Attoseconds Hertz111 { get; } = new Attoseconds( 9 );
 
-        /// <summary>
-        ///     One <see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary>One <see cref="Attoseconds" />.</summary>
         /// <remarks>the time it takes for light to travel the length of three hydrogen atoms</remarks>
         public static Attoseconds One { get; } = new Attoseconds( 1 );
 
-        /// <summary>
-        ///     <see cref="OneHundred" /><see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary><see cref="OneHundred" /><see cref="Attoseconds" />.</summary>
         /// <remarks>fastest ever view of molecular motion</remarks>
         public static Attoseconds OneHundred { get; } = new Attoseconds( 100 );
 
-        /// <summary>
-        ///     One Thousand Nine <see cref="Attoseconds" /> (Prime).
-        /// </summary>
+        /// <summary>One Thousand Nine <see cref="Attoseconds" /> (Prime).</summary>
         public static Attoseconds OneThousandNine { get; } = new Attoseconds( 1009 );
 
-        /// <summary>
-        ///     Sixteen <see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary>Sixteen <see cref="Attoseconds" />.</summary>
         public static Attoseconds Sixteen { get; } = new Attoseconds( 16 );
 
-        /// <summary>
-        ///     <see cref="SixtySeven" /><see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary><see cref="SixtySeven" /><see cref="Attoseconds" />.</summary>
         /// <remarks>the shortest pulses of laser light yet created</remarks>
         public static Attoseconds SixtySeven { get; } = new Attoseconds( 67 );
 
-        /// <summary>
-        ///     Ten <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Ten <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Ten { get; } = new Attoseconds( 10 );
 
-        /// <summary>
-        ///     Three <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Three <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Three { get; } = new Attoseconds( 3 );
 
-        /// <summary>
-        ///     Three Three Three <see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary>Three Three Three <see cref="Attoseconds" />.</summary>
         public static Attoseconds ThreeHundredThirtyThree { get; } = new Attoseconds( 333 );
 
-        /// <summary>
-        ///     <see cref="ThreeHundredTwenty" /><see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary><see cref="ThreeHundredTwenty" /><see cref="Attoseconds" />.</summary>
         /// <remarks>estimated time it takes electrons to transfer between atoms</remarks>
         public static Attoseconds ThreeHundredTwenty { get; } = new Attoseconds( 320 );
 
-        /// <summary>
-        ///     <see cref="Twelve" /><see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary><see cref="Twelve" /><see cref="Attoseconds" />.</summary>
         /// <remarks>record for shortest time interval measured as of 12 May 2010</remarks>
         public static Attoseconds Twelve { get; } = new Attoseconds( 12 );
 
-        /// <summary>
-        ///     <see cref="TwentyFour" /><see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary><see cref="TwentyFour" /><see cref="Attoseconds" />.</summary>
         /// <remarks>the atomic unit of time</remarks>
         public static Attoseconds TwentyFour { get; } = new Attoseconds( 24 );
 
-        /// <summary>
-        ///     Two <see cref="Attoseconds" /> s.
-        /// </summary>
+        /// <summary>Two <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Two { get; } = new Attoseconds( 2 );
 
-        /// <summary>
-        ///     <see cref="TwoHundred" /><see cref="Attoseconds" />.
-        /// </summary>
-        /// <remarks>
-        ///     (approximately) – half-life of beryllium-8, maximum time available for the triple-alpha process for the
-        ///     synthesis of carbon and heavier elements in stars
-        /// </remarks>
+        /// <summary><see cref="TwoHundred" /><see cref="Attoseconds" />.</summary>
+        /// <remarks>(approximately) – half-life of beryllium-8, maximum time available for the triple-alpha process for the synthesis of carbon and heavier elements in stars</remarks>
         public static Attoseconds TwoHundred { get; } = new Attoseconds( 200 );
 
-        /// <summary>
-        ///     Two Hundred Eleven <see cref="Attoseconds" /> (Prime).
-        /// </summary>
+        /// <summary>Two Hundred Eleven <see cref="Attoseconds" /> (Prime).</summary>
         public static Attoseconds TwoHundredEleven { get; } = new Attoseconds( 211 );
 
-        /// <summary>
-        ///     Two Thousand Three <see cref="Attoseconds" /> (Prime).
-        /// </summary>
+        /// <summary>Two Thousand Three <see cref="Attoseconds" /> (Prime).</summary>
         public static Attoseconds TwoThousandThree { get; } = new Attoseconds( 2003 );
 
-        /// <summary>
-        ///     Zero <see cref="Attoseconds" />.
-        /// </summary>
+        /// <summary>Zero <see cref="Attoseconds" />.</summary>
         public static Attoseconds Zero { get; } = new Attoseconds( 0 );
 
         [JsonProperty]
         public Rational Value { get; }
 
-        public Attoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Attoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Attoseconds( Rational value ) => this.Value = value;
 
@@ -185,7 +140,7 @@ namespace Librainian.Measurement.Time {
 
         public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
 
-        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + ( Rational ) attoseconds );
+        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + ( Rational )attoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -197,6 +152,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Attoseconds attoseconds ) => new SpanOfTime( planckTimes: attoseconds.ToPlanckTimes().Value );
 
         public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
@@ -218,19 +174,17 @@ namespace Librainian.Measurement.Time {
         public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates
-        ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
-        ///     object.
+        /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
+        /// same position in the sort order as the other object.
         /// </summary>
         /// <param name="other">An object to compare with this instance. </param>
         /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings:
-        ///     Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order.  Zero This
-        ///     instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This
-        ///     instance follows <paramref name="other" /> in the sort order.
+        /// A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes
+        /// <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as <paramref name="other" />. Greater than zero This instance
+        /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
-            if ( other == null ) {
+            if ( other is null ) {
                 throw new ArgumentNullException( paramName: nameof( other ) );
             }
 
@@ -238,20 +192,16 @@ namespace Librainian.Measurement.Time {
         }
 
         /// <summary>
-        ///     Compares the current instance with another object of the same type and returns an integer that indicates
-        ///     whether the current instance precedes, follows, or occurs in the same position in the sort order as the other
-        ///     object.
+        /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
+        /// same position in the sort order as the other object.
         /// </summary>
         /// <param name="obj">An object to compare with this instance. </param>
         /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has these meanings:
-        ///     Value Meaning Less than zero This instance precedes <paramref name="obj" /> in the sort order. Zero This instance
-        ///     occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
-        ///     <paramref name="obj" /> in the sort order.
+        /// A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes
+        /// <paramref name="obj" /> in the sort order. Zero This instance occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
+        /// <paramref name="obj" /> in the sort order.
         /// </returns>
-        /// <exception cref="T:System.ArgumentException">
-        ///     <paramref name="obj" /> is not the same type as this instance.
-        /// </exception>
+        /// <exception cref="T:System.ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( ReferenceEquals( null, obj ) ) {
                 return 1;
@@ -264,13 +214,11 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        /// <summary>
-        ///     Convert to a larger unit.
-        /// </summary>
+        /// <summary>Convert to a larger unit.</summary>
         /// <returns></returns>
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneAttosecond * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
 
         public Seconds ToSeconds() => throw new NotImplementedException();
 
@@ -281,16 +229,14 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "as" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "as" )}";
         }
 
-        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.ToSeconds().Value );
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.ToSeconds().Value );
 
-        /// <summary>
-        ///     Convert to a smaller unit.
-        /// </summary>
+        /// <summary>Convert to a smaller unit.</summary>
         /// <returns></returns>
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
     }

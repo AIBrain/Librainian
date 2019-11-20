@@ -67,7 +67,7 @@ namespace Librainian.Graphics.Video {
         //stream and header info
         private Avi.Avistreaminfo _streamInfo;
 
-        public Size BitmapSize => new Size( ( Int32 ) this._streamInfo.rcFrame.right, ( Int32 ) this._streamInfo.rcFrame.bottom );
+        public Size BitmapSize => new Size( ( Int32 )this._streamInfo.rcFrame.right, ( Int32 )this._streamInfo.rcFrame.bottom );
 
         public Int32 CountFrames { get; private set; }
 
@@ -100,6 +100,10 @@ namespace Librainian.Graphics.Video {
         /// </summary>
         public override void DisposeManaged() { }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         /// <summary>
         ///     Exports a frame into a bitmap file
         /// </summary>
@@ -115,7 +119,7 @@ namespace Librainian.Graphics.Video {
 
             //Copy the bitmap header into a managed struct
             var bih = new Avi.Bitmapinfoheader();
-            bih = ( Avi.Bitmapinfoheader ) Marshal.PtrToStructure( new IntPtr( pDib ), bih.GetType() );
+            bih = ( Avi.Bitmapinfoheader )Marshal.PtrToStructure( new IntPtr( pDib ), bih.GetType() );
 
             /*if(bih.biBitCount < 24){
 				throw new Exception("Not enough colors! DIB color depth is less than 24 bit.");
@@ -146,7 +150,10 @@ namespace Librainian.Graphics.Video {
 
             //Create file header
             var bfh = new Avi.Bitmapfileheader {
-                bfType = Avi.BmpMagicCookie, bfSize = ( Int32 ) ( 55 + bih.biSizeImage ), bfReserved1 = 0, bfReserved2 = 0
+                bfType = Avi.BmpMagicCookie,
+                bfSize = ( Int32 )( 55 + bih.biSizeImage ),
+                bfReserved1 = 0,
+                bfReserved2 = 0
             };
 
             //size of file as written to disk
@@ -210,13 +217,13 @@ namespace Librainian.Graphics.Video {
                 biClrImportant = 0,
                 biClrUsed = 0,
                 biCompression = 0,
-                biHeight = ( Int32 ) this._streamInfo.rcFrame.bottom,
-                biWidth = ( Int32 ) this._streamInfo.rcFrame.right,
+                biHeight = ( Int32 )this._streamInfo.rcFrame.bottom,
+                biWidth = ( Int32 )this._streamInfo.rcFrame.right,
                 biPlanes = 1
             };
 
             //BI_RGB;
-            bih.biSize = ( UInt32 ) Marshal.SizeOf( bih );
+            bih.biSize = ( UInt32 )Marshal.SizeOf( bih );
             bih.biXPelsPerMeter = 0;
             bih.biYPelsPerMeter = 0;
 

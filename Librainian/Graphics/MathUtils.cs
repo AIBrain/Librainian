@@ -133,7 +133,7 @@ namespace Librainian.Graphics {
 
             var yAxis = Vector3D.CrossProduct( zAxis, xAxis );
 
-            var position = ( Vector3D ) camera.Position;
+            var position = ( Vector3D )camera.Position;
             var offsetX = -Vector3D.DotProduct( xAxis, position );
             var offsetY = -Vector3D.DotProduct( yAxis, position );
             var offsetZ = -Vector3D.DotProduct( zAxis, position );
@@ -158,7 +158,7 @@ namespace Librainian.Graphics {
                     break;
                 }
 
-                var transform = ( Transform3D ) visual.GetValue( ModelVisual3D.TransformProperty );
+                var transform = ( Transform3D )visual.GetValue( ModelVisual3D.TransformProperty );
 
                 if ( transform != null ) {
                     worldTransform.Append( transform.Value );
@@ -169,7 +169,7 @@ namespace Librainian.Graphics {
 
             viewport = visual as Viewport3DVisual;
 
-            if ( viewport == null ) {
+            if ( viewport is null ) {
                 if ( visual != null ) {
 
                     // In WPF 3D v1 the only possible configuration is a chain of ModelVisual3Ds
@@ -249,7 +249,7 @@ namespace Librainian.Graphics {
         /// <summary>Computes the center of 'box'</summary>
         /// <param name="box">The Rect3D we want the center of</param>
         /// <returns>The center point</returns>
-        public static Point3D GetCenter( Rect3D box ) => new Point3D( box.X + (box.SizeX / 2), box.Y + (box.SizeY / 2), box.Z + (box.SizeZ / 2) );
+        public static Point3D GetCenter( Rect3D box ) => new Point3D( box.X + ( box.SizeX / 2 ), box.Y + ( box.SizeY / 2 ), box.Z + ( box.SizeZ / 2 ) );
 
         public static Point3D GetCirclePoint( Double angle, Double radius, Point3D orientation = new Point3D() ) {
             var x = radius * Math.Cos( TranslateAngleToRadian( angle ) );
@@ -309,6 +309,7 @@ namespace Librainian.Graphics {
         /// <summary>Computes the effective view matrix for the given camera.</summary>
         public static Matrix3D GetViewMatrix( [NotNull] Camera camera ) {
             switch ( camera ) {
+
                 //case null: throw new ArgumentNullException( nameof( camera ) );
                 case ProjectionCamera projectionCamera: return GetViewMatrix( projectionCamera );
                 case MatrixCamera matrixCamera: return matrixCamera.ViewMatrix;
@@ -351,8 +352,8 @@ namespace Librainian.Graphics {
 
         public static Point3D RotatePoint3D( Double angle, Point3D point, Point3D center = new Point3D() ) {
             var radians = TranslateAngleToRadian( angle );
-            var x = center.X + (( point.X - center.X ) * Math.Cos( radians )) + (( center.Y - point.Y ) * Math.Sin( radians ));
-            var y = center.Y + (( point.X - center.X ) * Math.Sin( radians )) + (( point.Y - center.Y ) * Math.Cos( radians ));
+            var x = center.X + ( ( point.X - center.X ) * Math.Cos( radians ) ) + ( ( center.Y - point.Y ) * Math.Sin( radians ) );
+            var y = center.Y + ( ( point.X - center.X ) * Math.Sin( radians ) ) + ( ( point.Y - center.Y ) * Math.Cos( radians ) );
 
             return new Point3D( x, y, point.Z );
         }
@@ -474,7 +475,7 @@ namespace Librainian.Graphics {
                 var result = Matrix3D.Identity;
                 var camera = visual.Camera;
 
-                if ( camera == null ) {
+                if ( camera is null ) {
                     return ZeroMatrix;
                 }
 
@@ -523,11 +524,11 @@ namespace Librainian.Graphics {
             return result;
         }
 
-        public static Double VectorLength( Vector3D a ) => Math.Sqrt( (a.X * a.X) + (a.Y * a.Y) + (a.Z * a.Z) );
+        public static Double VectorLength( Vector3D a ) => Math.Sqrt( ( a.X * a.X ) + ( a.Y * a.Y ) + ( a.Z * a.Z ) );
 
-        public static Double VectorLength( Vector a ) => Math.Sqrt( (a.X * a.X) + (a.Y * a.Y) );
+        public static Double VectorLength( Vector a ) => Math.Sqrt( ( a.X * a.X ) + ( a.Y * a.Y ) );
 
-        public static Double VectorMultiplication( Vector3D a, Vector3D b ) => (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+        public static Double VectorMultiplication( Vector3D a, Vector3D b ) => ( a.X * b.X ) + ( a.Y * b.Y ) + ( a.Z * b.Z );
 
         public static Vector VectorOnPlaneXoYrojection( Vector3D a ) => new Vector( a.X, a.Y );
 
@@ -551,6 +552,6 @@ namespace Librainian.Graphics {
             //return new Vector();
         }
 
-        public static Double VectorProjectionOnVector( Vector3D a, Vector3D b ) => (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+        public static Double VectorProjectionOnVector( Vector3D a, Vector3D b ) => ( a.X * b.X ) + ( a.Y * b.Y ) + ( a.Z * b.Z );
     }
 }

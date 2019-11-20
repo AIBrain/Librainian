@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Hours( Decimal value ) => this.Value = ( Rational ) value;
+        public Hours( Decimal value ) => this.Value = ( Rational )value;
 
         public Hours( Rational value ) => this.Value = value;
 
@@ -131,33 +131,35 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="hours"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Hours hours ) => new SpanOfTime( hours );
 
-        public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double ) hours.Value );
+        public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double )hours.Value );
 
         public static Hours operator -( Hours hours ) => new Hours( hours.Value * -1 );
 
         public static Hours operator -( Hours left, Hours right ) => Combine( left: left, right: -right );
 
-        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, ( Rational ) ( -hours ) );
+        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, ( Rational )( -hours ) );
 
         public static Boolean operator !=( Hours left, Hours right ) => !Equals( left, right );
 
         public static Hours operator +( Hours left, Hours right ) => Combine( left, right );
 
-        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, ( Rational ) hours );
+        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, ( Rational )hours );
 
         public static Hours operator +( Hours left, BigInteger hours ) => Combine( left, hours );
 
         public static Boolean operator <( Hours left, Hours right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours ) right;
+        public static Boolean operator <( Hours left, [CanBeNull] Minutes right ) => left < ( Hours )right;
 
         public static Boolean operator ==( Hours left, Hours right ) => Equals( left, right );
 
-        public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours ) right;
+        public static Boolean operator >( Hours left, [CanBeNull] Minutes right ) => left > ( Hours )right;
 
         public static Boolean operator >( Hours left, Hours right ) => left.Value > right.Value;
 
@@ -166,7 +168,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Hours other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -177,9 +179,10 @@ namespace Librainian.Measurement.Time {
 
         public Days ToDays() => new Days( this.Value / InOneDay );
 
+        [NotNull]
         public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value.WholePart * ( BigInteger ) PlanckTimes.InOneHour );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value.WholePart * ( BigInteger )PlanckTimes.InOneHour );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value / Seconds.InOneHour );
@@ -191,7 +194,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "hour" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "hour" )}";
         }

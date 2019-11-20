@@ -89,6 +89,31 @@ namespace Librainian.Converters {
             };
         }
 
+        [CanBeNull]
+        public static T Cast<T>( [CanBeNull] this Object scalar ) {
+            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
+                return default;
+            }
+
+            if ( scalar is T executeScalar ) {
+                return executeScalar;
+            }
+
+            if ( scalar.TryCast<T>( out var result ) ) {
+                return result;
+            }
+
+            try {
+                return ( T )Convert.ChangeType( scalar, typeof( T ) );
+            }
+            catch ( InvalidCastException ) { }
+            catch ( FormatException ) { }
+            catch ( OverflowException ) { }
+            catch ( ArgumentNullException ) { }
+
+            return default;
+        }
+
         /// <summary>
         ///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
         ///     <para>Null or empty strings return <see cref="Decimal.Zero" />.</para>
@@ -98,7 +123,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Decimal MoneyToDecimal<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 return Decimal.Zero;
             }
 
@@ -131,7 +156,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static String StripLetters( [NotNull] this String s ) {
-            if ( s == null ) {
+            if ( s is null ) {
                 throw new ArgumentNullException( paramName: nameof( s ) );
             }
 
@@ -201,7 +226,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 return default;
             }
 
@@ -271,7 +296,7 @@ namespace Librainian.Converters {
         [Pure]
         public static Byte? ToByteOrNull<T>( [CanBeNull] this T value ) {
             try {
-                if ( value == null ) {
+                if ( value is null ) {
                     return null;
                 }
 
@@ -483,7 +508,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Int32? ToIntOrNull<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 return null;
             }
 
@@ -542,7 +567,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Int32 ToIntOrThrow<T>( [CanBeNull] this T value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 throw new ArgumentNullException( nameof( value ), "Cannot convert null value to Int32." );
             }
 
@@ -555,7 +580,7 @@ namespace Librainian.Converters {
 
         [NotNull]
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
-            if ( systemPath == null ) {
+            if ( systemPath is null ) {
                 throw new ArgumentNullException( paramName: nameof( systemPath ) );
             }
 
@@ -579,7 +604,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Guid ToMD5HashedGUID( this String value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 value = String.Empty;
             }
 
@@ -647,7 +672,7 @@ namespace Librainian.Converters {
         [Pure]
         [NotNull]
         public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
-            if ( directoryInfo == null ) {
+            if ( directoryInfo is null ) {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
 
@@ -708,31 +733,5 @@ namespace Librainian.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
-
-        [CanBeNull]
-        public static T ConvertTo<T>( [CanBeNull] this Object scalar ) {
-            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
-                return default;
-            }
-
-            if ( scalar is T executeScalar ) {
-                return executeScalar;
-            }
-
-            if ( scalar.TryCast<T>( out var result ) ) {
-                return result;
-            }
-
-            try {
-                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
-            }
-            catch ( InvalidCastException ) { }
-            catch ( FormatException ) { }
-            catch ( OverflowException ) { }
-            catch ( ArgumentNullException ) { }
-
-            return default;
-        }
-
     }
 }

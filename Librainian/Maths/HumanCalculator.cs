@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HumanCalculator.cs" was last formatted by Protiguous on 2019/08/08 at 8:20 AM.
+// Project: "Librainian", "HumanCalculator.cs" was last formatted by Protiguous on 2019/11/20 at 4:59 AM.
 
 namespace Librainian.Maths {
 
@@ -46,35 +46,26 @@ namespace Librainian.Maths {
     using System.Numerics;
     using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Challenge: Do math the way we were taught in school.
-    /// </summary>
+    /// <summary>Challenge: Do math the way we were taught in school.</summary>
     public static class HumanCalculator {
 
         public enum Operation {
 
-            /// <summary>
-            ///     https://en.wikipedia.org/wiki/Addition
-            /// </summary>
+            /// <summary>https://en.wikipedia.org/wiki/Addition</summary>
             /// <see cref="http://wikipedia.org/wiki/Addition" />
             Addition,
 
-            /// <summary>
-            /// </summary>
+            /// <summary></summary>
             Subtraction,
 
-            /// <summary>
-            /// </summary>
+            /// <summary></summary>
             Multiplication,
 
-            /// <summary>
-            /// </summary>
+            /// <summary></summary>
             Division
         }
 
-        /// <summary>
-        ///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
-        /// </summary>
+        /// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
         /// <param name="whom"></param>
         /// <param name="nombre"></param>
         /// <returns></returns>
@@ -86,9 +77,7 @@ namespace Librainian.Maths {
             return resultant;
         }
 
-        /// <summary>
-        ///     Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).
-        /// </summary>
+        /// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
         /// <param name="terms"></param>
         /// <returns></returns>
         public static BigInteger Add( [NotNull] params BigInteger[] terms ) {

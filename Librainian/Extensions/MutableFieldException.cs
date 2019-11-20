@@ -53,20 +53,20 @@ namespace Librainian.Extensions {
     internal class MutableFieldException : ImmutableFailureException {
 
         protected MutableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-            if ( serializationInfo == null ) {
+            if ( serializationInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
             }
         }
 
         internal MutableFieldException( [NotNull] FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
-            if ( fieldInfo == null ) {
+            if ( fieldInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
-            if ( fieldInfo == null ) {
+            if ( fieldInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
             }
 

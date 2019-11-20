@@ -62,18 +62,6 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
 
-        public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        public Boolean Equals( [CanBeNull] Paragraph other ) {
-            if ( other == null ) {
-                return false;
-            }
-
-            return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
-        }
-
         [NotNull]
         [JsonProperty]
         private List<Sentence> Sentences { get; } = new List<Sentence>();
@@ -99,6 +87,16 @@ namespace Librainian.Linguistics {
         [NotNull]
         public static implicit operator String( [NotNull] Paragraph paragraph ) => paragraph.ToString();
 
+        public Boolean Equals( [CanBeNull] Paragraph other ) {
+            if ( other is null ) {
+                return false;
+            }
+
+            return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
+        }
+
+        public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
+
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Sentences.GetHashCode();
@@ -112,5 +110,7 @@ namespace Librainian.Linguistics {
 
             return sb.ToString();
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

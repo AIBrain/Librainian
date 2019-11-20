@@ -112,13 +112,14 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public IEnumerable<TimeProgression> GetDataPoints() =>
             this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
-                MillisecondsPassed = pair.Key.TotalMilliseconds, Progress = pair.Value
+                MillisecondsPassed = pair.Key.TotalMilliseconds,
+                Progress = pair.Value
             } );
 
         public void Reset( TimeSpan samplingPeriod ) {
             using ( this._timer ) {
 
-                //TODO what happens if this == null?
+                //TODO what happens if this is null?
                 //this._timer?.Close();
             }
 
@@ -130,7 +131,8 @@ namespace Librainian.Measurement.Time {
 
             // ReSharper disable once UseObjectOrCollectionInitializer
             this._timer = new Timer {
-                Interval = samplingPeriod.TotalMilliseconds, AutoReset = true
+                Interval = samplingPeriod.TotalMilliseconds,
+                AutoReset = true
             };
 
             this._timer.Elapsed += ( sender, args ) => this.Update();

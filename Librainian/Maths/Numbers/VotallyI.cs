@@ -66,6 +66,11 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         private UInt64 _votesYes;
 
+        /// <summary>
+        ///     No vote for either.
+        /// </summary>
+        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
+
         public UInt64 No {
             get => Thread.VolatileRead( ref this._votesNo );
 
@@ -80,11 +85,6 @@ namespace Librainian.Maths.Numbers {
             private set => Thread.VolatileWrite( ref this._votesYes, value );
         }
 
-        /// <summary>
-        ///     No vote for either.
-        /// </summary>
-        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
-
         public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
             this.Yes = votesYes;
             this.No = votesNo;
@@ -92,11 +92,11 @@ namespace Librainian.Maths.Numbers {
 
         [NotNull]
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
@@ -112,7 +112,7 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         /// <param name="right"></param>
         public void Add( [NotNull] VotallyI right ) {
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
@@ -127,7 +127,7 @@ namespace Librainian.Maths.Numbers {
                 if ( !votes.Near( 0 ) ) {
                     var result = new Rational( this.No, votes );
 
-                    return ( Double ) result;
+                    return ( Double )result;
                 }
             }
             catch ( DivideByZeroException exception ) {
@@ -147,7 +147,7 @@ namespace Librainian.Maths.Numbers {
 
                 var chance = new Rational( this.Yes, votes );
 
-                return ( Double ) chance;
+                return ( Double )chance;
             }
             catch ( DivideByZeroException exception ) {
                 exception.Log();

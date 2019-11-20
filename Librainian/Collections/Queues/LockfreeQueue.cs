@@ -55,28 +55,6 @@ namespace Librainian.Collections.Queues {
     /// <remarks>Enumeration and clearing are not thread-safe.</remarks>
     public class LockfreeQueue<T> : IEnumerable<T> where T : class {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the queue.
-        /// </summary>
-        /// <returns>an enumerator for the queue</returns>
-        public IEnumerator<T> GetEnumerator() {
-            var currentNode = this._head;
-
-            do {
-                if ( currentNode.Item == null ) {
-                    yield break;
-                }
-
-                yield return currentNode.Item;
-            } while ( ( currentNode = currentNode.Next ) != null );
-        }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the queue.
-        /// </summary>
-        /// <returns>an enumerator for the queue</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         private Int32 _count;
 
         private SingleLinkNode<T> _head = new SingleLinkNode<T>();
@@ -152,8 +130,8 @@ namespace Librainian.Collections.Queues {
                     continue;
                 }
 
-                if ( oldTailNext == null ) {
-                    newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, newNode, comparand: null ) == null;
+                if ( oldTailNext is null ) {
+                    newNodeWasAdded = Interlocked.CompareExchange( location1: ref this._tail.Next, newNode, comparand: null ) is null;
                 }
                 else {
                     Interlocked.CompareExchange( location1: ref this._tail, oldTailNext, comparand: oldTail );
@@ -162,6 +140,22 @@ namespace Librainian.Collections.Queues {
 
             Interlocked.CompareExchange( location1: ref this._tail, newNode, comparand: oldTail );
             Interlocked.Increment( location: ref this._count );
+        }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the queue.
+        /// </summary>
+        /// <returns>an enumerator for the queue</returns>
+        public IEnumerator<T> GetEnumerator() {
+            var currentNode = this._head;
+
+            do {
+                if ( currentNode.Item is null ) {
+                    yield break;
+                }
+
+                yield return currentNode.Item;
+            } while ( ( currentNode = currentNode.Next ) != null );
         }
 
         public T TryDequeue() {
@@ -194,7 +188,7 @@ namespace Librainian.Collections.Queues {
                 var oldHeadNext = this._head.Next;
 
                 if ( oldHead == oldTail ) {
-                    if ( oldHeadNext == null ) {
+                    if ( oldHeadNext is null ) {
                         return false;
                     }
 
@@ -210,5 +204,11 @@ namespace Librainian.Collections.Queues {
 
             return true;
         }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the queue.
+        /// </summary>
+        /// <returns>an enumerator for the queue</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

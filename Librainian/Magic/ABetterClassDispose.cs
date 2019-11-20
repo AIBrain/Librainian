@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ABetterClassDispose.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,22 +28,23 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/11/14 at 10:24 AM.
+// 
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/11/19 at 6:28 AM.
 
 namespace Librainian.Magic {
 
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using JetBrains.Annotations;
     using Logging;
     using Parsing;
@@ -54,7 +55,7 @@ namespace Librainian.Magic {
     /// </summary>
     /// <remarks>ABCD (hehe)</remarks>
     /// <copyright>Created by Rick Harker.</copyright>
-    public class ABetterClassDispose : IDisposable {
+    public abstract class ABetterClassDispose : IDisposable {
 
         /// <summary>
         ///     <para>Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> on this object.</para>
@@ -62,16 +63,11 @@ namespace Librainian.Magic {
         [DebuggerStepThrough]
         public void Dispose() => this.Dispose( true );
 
-        private volatile Stages Stage = Stages.None;
+        private Int32 _hasDisposedManaged;
 
-        /// <summary>
-        /// Call at any time to set a debugging hint as to the creator of this disposable.
-        /// </summary>
-        /// <param name="hint"></param>
-        [Conditional("DEBUG")]
-        private void SetDisposeHint( [CanBeNull] String hint ) {
-            this.DisposeHint = hint;
-        }
+        private Int32 _hasDisposedNative;
+
+        private Int32 _hasSuppressedFinalize;
 
         private String DisposeHint { get; set; }
 
@@ -82,19 +78,6 @@ namespace Librainian.Magic {
             }
 
             this.Dispose( false );
-        }
-
-        [Flags]
-        private enum Stages : Byte {
-
-            None = 0b0,
-
-            DisposedManaged = 0b1,
-
-            DisposedNative = 0b10,
-
-            SuppressedFinalize = 0b100
-
         }
 
         /// <summary>
@@ -109,10 +92,8 @@ namespace Librainian.Magic {
         protected void Dispose( Boolean cleanupManaged ) {
             if ( cleanupManaged ) {
 
-                //if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 ) {
-                if ( !this.HasDisposedManaged() ) {
+                if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 /*allow once*/ ) {
                     try {
-                        this.Stage |= Stages.DisposedManaged;
                         this.DisposeManaged(); //allow once. Any derived class should have overloaded this method.
                     }
                     catch ( Exception exception ) {
@@ -121,47 +102,51 @@ namespace Librainian.Magic {
                 }
             }
 
-            //if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 ) {
-            if ( !this.HasDisposedNative() ) {
+            if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 /*allow once*/ ) {
+
                 try {
-                    this.Stage |= Stages.DisposedNative;
-                    this.DisposeNative(); //allow once. Any derived class should have overloaded this method.
+                    this.DisposeNative(); //Any derived class should overloaded this method.
                 }
                 catch ( Exception exception ) {
                     exception.Log();
                 }
             }
 
-            //if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 ) {
-            if ( !this.HasSuppressedFinalize() ) {
-                this.Stage |= Stages.SuppressedFinalize;
+            if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 /*allow once*/ ) {
                 GC.SuppressFinalize( this ); //allow once
             }
         }
 
-        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in the derived class in this overloaded method.</summary>
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         [DebuggerStepThrough]
-        public virtual void DisposeManaged() { }
+        public abstract void DisposeManaged();
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this overloaded method.</summary>
+        /// <summary>Dispose of COM objects, Handles, etc in this method.</summary>
         [DebuggerStepThrough]
-        public virtual void DisposeNative() { }
-
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [DebuggerStepThrough]
-        public Boolean HasDisposedManaged() => this.Stage.HasFlag( Stages.DisposedManaged );
+        public virtual void DisposeNative() {
+            /*make this virtual so it is optional*/
+        }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
-        public Boolean HasDisposedNative() => this.Stage.HasFlag( Stages.DisposedNative );
+        public Boolean HasDisposedManaged() => Interlocked.CompareExchange( ref this._hasDisposedManaged, 0, 0 ) == 1;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
-        public Boolean HasSuppressedFinalize() => this.Stage.HasFlag( Stages.SuppressedFinalize );
+        public Boolean HasDisposedNative() => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
+        public Boolean HasSuppressedFinalize() => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
         public Boolean IsDisposed() => this.HasDisposedManaged() && this.HasDisposedNative();
+
+        /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
+        /// <param name="hint"></param>
+        [Conditional( "DEBUG" )]
+        public void SetDisposeHint( [CanBeNull] String hint ) => this.DisposeHint = hint;
 
     }
 

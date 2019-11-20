@@ -42,20 +42,21 @@
 namespace Librainian.Threading {
 
     using System;
+    using JetBrains.Annotations;
 
     public struct Releaser : IDisposable {
 
-        private readonly AsyncReaderWriterLock _toRelease;
+        private AsyncReaderWriterLock _toRelease { get; }
 
-        private readonly Boolean _writer;
+        private Boolean _writer { get; }
 
-        internal Releaser( AsyncReaderWriterLock toRelease, Boolean writer ) {
+        internal Releaser( [CanBeNull] AsyncReaderWriterLock toRelease, Boolean writer ) {
             this._toRelease = toRelease;
             this._writer = writer;
         }
 
         public void Dispose() {
-            if ( this._toRelease == null ) {
+            if ( this._toRelease is null ) {
                 return;
             }
 

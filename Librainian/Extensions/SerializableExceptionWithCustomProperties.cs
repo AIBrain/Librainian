@@ -67,7 +67,7 @@ namespace Librainian.Extensions {
         // Constructor should be protected for unsealed classes, private for sealed classes. (The Serializer invokes this constructor through reflection, so it can be private)
         protected SerializableExceptionWithCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
             this.ResourceName = info.GetString( "ResourceName" );
-            this.ValidationErrors = ( IList<String> ) info.GetValue( "ValidationErrors", typeof( IList<String> ) );
+            this.ValidationErrors = ( IList<String> )info.GetValue( "ValidationErrors", typeof( IList<String> ) );
         }
 
         public SerializableExceptionWithCustomProperties() { }
@@ -89,7 +89,7 @@ namespace Librainian.Extensions {
 
         [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
         public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
 

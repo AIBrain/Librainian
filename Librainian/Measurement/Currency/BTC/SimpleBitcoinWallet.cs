@@ -63,20 +63,6 @@ namespace Librainian.Measurement.Currency.BTC {
     [SuppressMessage( "ReSharper", "InconsistentNaming" )]
     public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
 
-        public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
-            if ( otherWallet == null ) {
-                throw new ArgumentNullException( nameof( otherWallet ) );
-            }
-
-            return this.Balance.CompareTo( otherWallet.Balance );
-        }
-
-        /// <summary>
-        ///     Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.
-        /// </summary>
-        /// <param name="otherWallet">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
-
         [NonSerialized]
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
@@ -85,6 +71,46 @@ namespace Librainian.Measurement.Currency.BTC {
 
         [JsonProperty]
         private Decimal _balance;
+
+        /// <summary>
+        ///     1
+        /// </summary>
+        public const Decimal BTC = 1M;
+
+        /// <summary>
+        ///     0. 001
+        /// </summary>
+        public const Decimal mBTC = 0.001M;
+
+        /// <summary>
+        ///     1000 mBTC are in 1 BTC
+        /// </summary>
+        public const UInt16 mBTCInOneBTC = ( UInt16 )( BTC / mBTC );
+
+        /// <summary>
+        ///     0.00000001
+        /// </summary>
+        public const Decimal Satoshi = 0.00000001M;
+
+        /// <summary>
+        ///     100,000,000 Satoshi are in 1 BTC
+        /// </summary>
+        public const UInt64 SatoshiInOneBtc = ( UInt64 )( BTC / Satoshi );
+
+        /// <summary>
+        ///     0.0000001
+        /// </summary>
+        public const Decimal TenSatoshi = 0.0000001M;
+
+        /// <summary>
+        ///     0. 000001
+        /// </summary>
+        public const Decimal ΜBtc = 0.000001M;
+
+        /// <summary>
+        ///     1,000,000 μBTC are in 1 BTC
+        /// </summary>
+        public const UInt64 ΜBtcInOneBtc = ( UInt64 )( BTC / ΜBtc );
 
         public Decimal Balance {
             get {
@@ -117,46 +143,6 @@ namespace Librainian.Measurement.Currency.BTC {
         public TimeSpan Timeout { get; set; }
 
         /// <summary>
-        ///     1
-        /// </summary>
-        public const Decimal BTC = 1M;
-
-        /// <summary>
-        ///     0. 001
-        /// </summary>
-        public const Decimal mBTC = 0.001M;
-
-        /// <summary>
-        ///     1000 mBTC are in 1 BTC
-        /// </summary>
-        public const UInt16 mBTCInOneBTC = ( UInt16 ) ( BTC / mBTC );
-
-        /// <summary>
-        ///     0.00000001
-        /// </summary>
-        public const Decimal Satoshi = 0.00000001M;
-
-        /// <summary>
-        ///     100,000,000 Satoshi are in 1 BTC
-        /// </summary>
-        public const UInt64 SatoshiInOneBtc = ( UInt64 ) ( BTC / Satoshi );
-
-        /// <summary>
-        ///     0.0000001
-        /// </summary>
-        public const Decimal TenSatoshi = 0.0000001M;
-
-        /// <summary>
-        ///     0. 000001
-        /// </summary>
-        public const Decimal ΜBtc = 0.000001M;
-
-        /// <summary>
-        ///     1,000,000 μBTC are in 1 BTC
-        /// </summary>
-        public const UInt64 ΜBtcInOneBtc = ( UInt64 ) ( BTC / ΜBtc );
-
-        /// <summary>
         ///     Initialize the wallet with the specified amount of satoshi.
         /// </summary>
         /// <param name="satoshi"></param>
@@ -185,10 +171,30 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( left, right );
 
+        public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
+            if ( otherWallet is null ) {
+                throw new ArgumentNullException( nameof( otherWallet ) );
+            }
+
+            return this.Balance.CompareTo( otherWallet.Balance );
+        }
+
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
-        public override void DisposeManaged() => this._access.Dispose();
+        public override void DisposeManaged() {
+            using ( this._access ) { }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
+        /// <summary>
+        ///     Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.
+        /// </summary>
+        /// <param name="otherWallet">Annother to compare with this wallet.</param>
+        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
 
         public override Int32 GetHashCode() => this._hashcode;
 
@@ -225,7 +231,7 @@ namespace Librainian.Measurement.Currency.BTC {
         }
 
         public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
@@ -373,7 +379,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="wallet"></param>
         /// <returns></returns>
         public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 

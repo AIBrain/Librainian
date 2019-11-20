@@ -94,7 +94,7 @@ namespace Librainian.Collections {
         }
 
         public StringTable( [NotNull] Folder commonName ) {
-            if ( commonName == null ) {
+            if ( commonName is null ) {
                 throw new ArgumentNullException( paramName: nameof( commonName ) );
             }
 

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "AbandonableTask.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
+// Project: "Librainian", "AbandonableTask.cs" was last formatted by Protiguous on 2019/11/20 at 6:11 AM.
 
 namespace Librainian.Threading {
 
@@ -46,24 +46,23 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
 
-    /// <summary>
-    /// </summary>
+    /// <summary></summary>
     /// <see cref="http://stackoverflow.com/a/4749401/956364" />
     public sealed class AbandonableTask {
 
-        private readonly Action<Task> _afterComplete;
+        private Action _beginWork { get; }
 
-        private readonly Action _beginWork;
+        private Action _blockingWork { get; }
 
-        private readonly Action _blockingWork;
+        private CancellationToken _cancellationToken { get; }
 
-        private readonly CancellationToken _cancellationToken;
+        public Action<Task> AfterComplete { get; }
 
-        private AbandonableTask( CancellationToken cancellationToken, Action beginWork, [NotNull] Action blockingWork, Action<Task> afterComplete ) {
+        private AbandonableTask( CancellationToken cancellationToken, [CanBeNull] Action beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task> afterComplete ) {
             this._cancellationToken = cancellationToken;
             this._beginWork = beginWork;
             this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
-            this._afterComplete = afterComplete;
+            this.AfterComplete = afterComplete;
         }
 
         private void RunTask() {
@@ -75,14 +74,14 @@ namespace Librainian.Threading {
             innerTask.Wait( this._cancellationToken );
 
             if ( innerTask.IsCompleted ) {
-                this._afterComplete?.Invoke( innerTask );
+                this.AfterComplete?.Invoke( innerTask );
             }
         }
 
         [NotNull]
         public static Task Start( CancellationToken cancellationToken, [NotNull] Action blockingWork, [CanBeNull] Action beginWork = null,
             [CanBeNull] Action<Task> afterComplete = null ) {
-            if ( blockingWork == null ) {
+            if ( blockingWork is null ) {
                 throw new ArgumentNullException( nameof( blockingWork ) );
             }
 

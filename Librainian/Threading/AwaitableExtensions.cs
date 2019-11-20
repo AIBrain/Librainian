@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "AwaitableExtensions.cs" was last formatted by Protiguous on 2019/11/07 at 11:03 AM.
+// Project: "Librainian", "AwaitableExtensions.cs" was last formatted by Protiguous on 2019/11/20 at 6:45 AM.
 
 // ReSharper disable once CheckNamespace
 
@@ -56,12 +56,10 @@ namespace ExtremeConfigAwait {
         using System.Threading;
         using JetBrains.Annotations;
 
-        /// <summary>
-        /// From https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/SynchronizationContextRemover.cs
-        /// </summary>
+        /// <summary>From https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/SynchronizationContextRemover.cs</summary>
         public struct SynchronizationContextRemover : INotifyCompletion {
 
-            public Boolean IsCompleted => SynchronizationContext.Current == null;
+            public Boolean IsCompleted => SynchronizationContext.Current is null;
 
             public SynchronizationContextRemover GetAwaiter() => this;
 
@@ -83,10 +81,7 @@ namespace ExtremeConfigAwait {
 
     }
 
-    /// <summary>
-    ///     From
-    ///     https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/AwaitableExtensions.cs
-    /// </summary>
+    /// <summary>From https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/AwaitableExtensions.cs</summary>
     public static class AwaitableExtensions {
 
         private static void PrintContext( [CallerMemberName] [CanBeNull] String callerName = null, [CallerLineNumber] Int32 line = 0 ) {

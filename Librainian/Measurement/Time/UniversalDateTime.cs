@@ -45,6 +45,7 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -55,13 +56,15 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     [JsonObject]
     [DebuggerDisplay( "ToString()" )]
-    public struct UniversalDateTime : IComparable<UniversalDateTime> {
+    public class UniversalDateTime : IComparable<UniversalDateTime> {
 
+        [NotNull]
         public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
         ///     <para>1 planck times</para>
         /// </summary>
+        [NotNull]
         public static UniversalDateTime One { get; } = new UniversalDateTime( BigInteger.One );
 
         /// <summary>
@@ -73,8 +76,10 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>0 planck times</para>
         /// </summary>
+        [NotNull]
         public static UniversalDateTime TheBeginning { get; } = new UniversalDateTime( BigInteger.Zero );
 
+        [NotNull]
         public static UniversalDateTime Unix { get; } = new UniversalDateTime( Epochs.Unix );
 
         /// <summary>
@@ -112,15 +117,18 @@ namespace Librainian.Measurement.Time {
             //this.Time = new Time();
         }
 
+        [NotNull]
         private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 
-        private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
+        [NotNull]
+        private static UniversalDateTime Combine( [CanBeNull] UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
 
         /// <summary>
         ///     Given a <see cref="DateTime" />, calculate the <see cref="SpanOfTime" />.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
+        [NotNull]
         public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
             var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
             var plancksSinceThen = sinceThen.CalcTotalPlanckTimes();
@@ -129,8 +137,10 @@ namespace Librainian.Measurement.Time {
             return span;
         }
 
-        public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
+        [NotNull]
+        public static UniversalDateTime operator -( [CanBeNull] UniversalDateTime left, [CanBeNull] UniversalDateTime right ) => Combine( left, -right );
 
+        [NotNull]
         public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new UniversalDateTime( universalDateTime.Value * -1 );
 
         public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) => left.Value < right.Value;

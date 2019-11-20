@@ -61,7 +61,7 @@ namespace Librainian.Extensions {
         public Boolean OnFaith;
 
         private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
@@ -69,7 +69,7 @@ namespace Librainian.Extensions {
         }
 
         private static Boolean IsWhiteListed( [NotNull] Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
@@ -111,15 +111,15 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            if ( type.BaseType == null ) {
+            if ( type.BaseType is null ) {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            if ( whiteList == null ) {
+            if ( whiteList is null ) {
                 throw new ArgumentNullException( nameof( whiteList ) );
             }
 
@@ -164,7 +164,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
-            if ( assemblies == null ) {
+            if ( assemblies is null ) {
                 throw new ArgumentNullException( paramName: nameof( assemblies ) );
             }
 

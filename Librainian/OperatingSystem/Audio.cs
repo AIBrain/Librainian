@@ -185,7 +185,7 @@ namespace Librainian.OperatingSystem {
         public static Boolean? GetApplicationMute( String name ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return null;
             }
 
@@ -197,7 +197,7 @@ namespace Librainian.OperatingSystem {
         public static Single? GetApplicationVolume( String name ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return null;
             }
 
@@ -221,7 +221,7 @@ namespace Librainian.OperatingSystem {
             // activate the session manager. we need the enumerator
             var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
             speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out var o );
-            var mgr = ( IAudioSessionManager2 ) o;
+            var mgr = ( IAudioSessionManager2 )o;
 
             // enumerate sessions for on this device
             mgr.GetSessionEnumerator( out var sessionEnumerator );
@@ -257,7 +257,7 @@ namespace Librainian.OperatingSystem {
         public static void SetApplicationMute( String name, Boolean mute ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return;
             }
 
@@ -268,7 +268,7 @@ namespace Librainian.OperatingSystem {
         public static void SetApplicationVolume( String name, Single level ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume == null ) {
+            if ( volume is null ) {
                 return;
             }
 

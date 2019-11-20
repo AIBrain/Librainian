@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DatabaseServer.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "DatabaseServer.cs" was last formatted by Protiguous on 2019/11/14 at 10:06 AM.
+//
+// Project: "Librainian", "DatabaseServer.cs" was last formatted by Protiguous on 2019/11/19 at 6:19 AM.
 
 namespace Librainian.Databases {
 
@@ -49,8 +49,6 @@ namespace Librainian.Databases {
     using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Linq;
-    using System.Net;
-    using System.ServiceProcess;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -83,7 +81,7 @@ namespace Librainian.Databases {
             } );
         }
 
-        public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, [CanBeNull] params SqlParameter[] parameters ) {
+        public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( String.IsNullOrWhiteSpace( value: query ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
             }
@@ -97,7 +95,10 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand {
-                    Connection = connection, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.StoredProcedure, CommandText = query
+                    Connection = connection,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                    CommandType = commandType,
+                    CommandText = query
                 };
 
                 if ( null != parameters ) {
@@ -137,7 +138,7 @@ namespace Librainian.Databases {
 
         /// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
         /// <returns></returns>
-        public Int32? ExecuteNonQuery( [NotNull] String query, [CanBeNull] params SqlParameter[] parameters ) {
+        public Int32? ExecuteNonQuery( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( String.IsNullOrWhiteSpace( value: query ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
             }
@@ -148,7 +149,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -179,7 +181,8 @@ namespace Librainian.Databases {
                 using ( var connection = new SqlConnection( this.ConnectionString ) ) {
 
                     using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                        CommandType = commandType,
+                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                     } ) {
                         if ( null != parameters ) {
                             foreach ( var parameter in parameters ) {
@@ -189,9 +192,7 @@ namespace Librainian.Databases {
 
                         await connection.OpenAsync( this.Token ).ConfigureAwait( false );
 
-                        using ( var nonQueryAsync = command.ExecuteNonQueryAsync( this.Token ) ) {
-                            return await nonQueryAsync.ConfigureAwait( false );
-                        }
+                        return await command.ExecuteNonQueryAsync( this.Token ).ConfigureAwait( false );
                     }
                 }
             }
@@ -227,7 +228,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -269,7 +271,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -313,7 +316,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -358,7 +362,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -369,7 +374,7 @@ namespace Librainian.Databases {
 
                 connection.Open();
 
-                return command.ExecuteScalar().ConvertTo<T>();
+                return command.ExecuteScalar().Cast<T>();
             }
             catch ( SqlException exception ) {
                 exception.Log( Rebuild( query, parameters ) );
@@ -402,7 +407,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -415,7 +421,7 @@ namespace Librainian.Databases {
 
                 var scalar = await command.ExecuteScalarAsync( this.Token ).ConfigureAwait( false );
 
-                return scalar.ConvertTo<T>();
+                return scalar.Cast<T>();
             }
             catch ( InvalidCastException exception ) {
 
@@ -441,9 +447,10 @@ namespace Librainian.Databases {
         /// <para>Can throw exceptions on connecting or executing the sproc.</para>
         /// </summary>
         /// <param name="sproc"></param>
+        /// <param name="commandType"></param>
         /// <param name="table"></param>
-        public async Task<Boolean> FillTableAsync( [NotNull] String sproc, [NotNull] DataTable table ) {
-            if ( table == null ) {
+        public async Task<Boolean> FillTableAsync( [NotNull] String sproc, CommandType commandType, [NotNull] DataTable table ) {
+            if ( table is null ) {
                 throw new ArgumentNullException( paramName: nameof( table ) );
             }
 
@@ -463,7 +470,7 @@ namespace Librainian.Databases {
                 MissingMappingAction = MissingMappingAction.Passthrough,
                 MissingSchemaAction = MissingSchemaAction.Add,
                 SelectCommand = {
-                    CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandType = CommandType.StoredProcedure
+                    CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandType = commandType
                 }
             };
 
@@ -480,7 +487,8 @@ namespace Librainian.Databases {
         ///     <para>Does not catch any exceptions.</para>
         /// </summary>
         /// <param name="sproc"></param>
-        public async Task NonQueryAsync( [NotNull] String sproc ) {
+        /// <param name="commandType"></param>
+        public async Task NonQueryAsync( [NotNull] String sproc, CommandType commandType ) {
             if ( String.IsNullOrWhiteSpace( value: sproc ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( sproc ) );
             }
@@ -490,7 +498,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandText = sproc
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                CommandText = sproc
             };
 
             command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -511,7 +522,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+                Connection = connection,
+                CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                CommandType = CommandType.Text,
+                CommandText = sql
             };
 
             command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -537,7 +551,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+                Connection = connection,
+                CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                CommandType = CommandType.Text,
+                CommandText = sql
             };
 
             command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -553,10 +570,11 @@ namespace Librainian.Databases {
         /// <para>Connect and then run <paramref name="sproc" />.</para>
         /// </summary>
         /// <param name="sproc"></param>
+        /// <param name="commandType"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         [NotNull]
-        public async Task<SqlDataReader> QueryAsync( [NotNull] String sproc ) {
+        public async Task<SqlDataReader> QueryAsync( [NotNull] String sproc, CommandType commandType ) {
             if ( String.IsNullOrWhiteSpace( value: sproc ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( sproc ) );
             }
@@ -566,7 +584,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.Timeout.TotalSeconds, CommandText = sproc
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = ( Int32 )this.Timeout.TotalSeconds,
+                CommandText = sproc
             };
 
             command.Parameters.AddRange( this.ParameterSet.ToArray() );
@@ -577,11 +598,12 @@ namespace Librainian.Databases {
 
         /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">     </param>
+        /// <param name="commandType"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
         [CanBeNull]
         [ItemCanBeNull]
-        public IEnumerable<TResult> QueryList<TResult>( String query, [CanBeNull] params SqlParameter[] parameters ) {
+        public IEnumerable<TResult> QueryList<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
@@ -592,7 +614,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 if ( null != parameters ) {
@@ -644,7 +667,7 @@ namespace Librainian.Databases {
         ///     <para>Create a database object to the specified server.</para>
         /// </summary>
         public DatabaseServer( [NotNull] SqlConnectionStringBuilder builder, [CanBeNull] String useDatabase = null, CancellationToken? token = default ) {
-            if ( builder == null ) {
+            if ( builder is null ) {
                 throw new ArgumentNullException( paramName: nameof( builder ) );
             }
 
@@ -684,8 +707,14 @@ namespace Librainian.Databases {
 
         ~DatabaseServer() {
 #pragma warning restore CA1063 // Implement IDisposable Correctly
-            $"We have an undisposed Database() connection somewhere. Query={this.Sproc.DoubleQuote()}".Break();
+            $"Warning: We have an undisposed Database() connection somewhere. This could cause a memory leak. Query={this.Sproc.DoubleQuote()}".Log();
         }
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() { }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() { }
 
         [DebuggerStepThrough]
         [NotNull]
@@ -694,7 +723,7 @@ namespace Librainian.Databases {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
             }
 
-            if ( parameters == null ) {
+            if ( parameters is null ) {
                 return $"exec {query}";
             }
 
@@ -735,7 +764,7 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<SqlServer> FindUsableServers( TimeSpan timeout, [NotNull] params Credentials[] credentials ) {
-            if ( credentials == null ) {
+            if ( credentials is null ) {
                 throw new ArgumentNullException( paramName: nameof( credentials ) );
             }
 
@@ -743,7 +772,7 @@ namespace Librainian.Databases {
                 var cts = new CancellationTokenSource( timeout );
 
                 return credentials.Where( c => c != default ).SelectMany( credential => LookForAnyDatabaseServerWithThisCredential( credential, timeout ) )
-                    .Select( builder => builder?.TryGetResponse( cts.Token ) ).Where( builder => builder != default && builder.Status == Status.Success );
+                    .Select( builder => builder?.TryGetResponse( cts.Token ) ).Where( builder => builder != default && builder.Status == Status.Success ).ToList();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -784,7 +813,7 @@ namespace Librainian.Databases {
                 ApplicationIntent = ApplicationIntent.ReadWrite,
                 ApplicationName = Application.ProductName,
                 ConnectRetryCount = 3,
-                ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
+                ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
                 ConnectRetryInterval = 1,
                 PacketSize = 8060,
                 Pooling = true
@@ -807,22 +836,22 @@ namespace Librainian.Databases {
             return builder;
         }
 
+        /*
         [NotNull]
         [DebuggerStepThrough]
         public static async Task StartAnySQLBrowsers( TimeSpan timeout ) {
-
-            "Searching for any database servers...".Log();
-
-            var machines = new ConcurrentHashset<String> {
-                "Thor", Dns.GetHostName(), "127.0.0.1" //my development servers' names. Feel free to add your server.
-            };
-
-            var stopwatch = Stopwatch.StartNew();
-
             await Task.Run( () => {
 
-                var services = new List<ServiceController>( machines.Where( s => !String.IsNullOrWhiteSpace( s ) ).Select( machineName => {
-                    using var service = new ServiceController {
+                "Searching for any database servers...".Log();
+
+                var machines = new ConcurrentHashset<String> {
+                    "Thor", Dns.GetHostName(), "127.0.0.1" //my development servers' names. Feel free to add your server.
+                };
+
+                var stopwatch = Stopwatch.StartNew();
+
+                var services = machines.Where( s => !String.IsNullOrWhiteSpace( s ) ).Select( machineName => {
+                    var service = new ServiceController {
                         ServiceName = "SQLBrowser", MachineName = machineName
                     };
 
@@ -831,19 +860,20 @@ namespace Librainian.Databases {
                     }
 
                     return service;
-                } ) );
-
-                "Searching for database servers...".Log();
+                } ).ToList();
 
                 while ( stopwatch.Elapsed < timeout ) {
-                    var notRunningYet = services.Where( controller => controller != default ).Where( controller =>
-                        controller.Status.In( ServiceControllerStatus.StartPending, ServiceControllerStatus.Running ) == false );
+                    var notRunningYet = services.Where( controller =>
+                        controller?.Status.In( ServiceControllerStatus.StartPending, ServiceControllerStatus.Running ) == false );
 
                     Parallel.ForEach( notRunningYet, controller => controller?.WaitForStatus( ServiceControllerStatus.Running, timeout ) );
+
+                    if ( services.Any( controller => controller?.Status.In( ServiceControllerStatus.Running ) == true ) ) {
+                        return;
+                    }
                 }
             } ).ConfigureAwait( false );
         }
-
+        */
     }
-
 }

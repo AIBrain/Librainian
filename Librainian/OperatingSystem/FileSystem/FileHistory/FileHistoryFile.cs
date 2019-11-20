@@ -53,13 +53,6 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
 
         private readonly DateTime? _when;
 
-        /// <summary>
-        ///     (includes the extension)
-        /// </summary>
-        public String FileName => this._filename;
-
-        public IFolder Folder => this._folder;
-
         [NotNull]
         public IDocument FullPathAndName => new Document( folder: this.Folder, filename: this.FileName );
 
@@ -68,6 +61,13 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         public Document OriginalPath { get; }
 
         public DateTime? When => this._when;
+
+        /// <summary>
+        ///     (includes the extension)
+        /// </summary>
+        public String FileName => this._filename;
+
+        public IFolder Folder => this._folder;
 
         public FileHistoryFile( [NotNull] Document biglongpath ) {
             this.OriginalPath = biglongpath;
@@ -85,7 +85,7 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         /// </param>
         /// <returns></returns>
         public static Boolean TryParseFileHistoryFile( [NotNull] Document original, [CanBeNull] out IFolder folder, [CanBeNull] out String filename, out DateTime? when ) {
-            if ( original == null ) {
+            if ( original is null ) {
                 throw new ArgumentNullException( nameof( original ) );
             }
 

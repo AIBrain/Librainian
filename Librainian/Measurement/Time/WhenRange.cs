@@ -41,6 +41,7 @@
 
 namespace Librainian.Measurement.Time {
 
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -51,20 +52,20 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>Length of the range (difference between maximum and minimum values).</summary>
         [JsonProperty]
-        public readonly SpanOfTime Length;
+        public SpanOfTime Length;
 
         /// <summary>Maximum value</summary>
         [JsonProperty]
-        public readonly UniversalDateTime Max;
+        public UniversalDateTime Max;
 
         /// <summary>Minimum value</summary>
         [JsonProperty]
-        public readonly UniversalDateTime Min;
+        public UniversalDateTime Min;
 
         /// <summary>Initializes a new instance of the <see cref="WhenRange" /> class</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
-        public WhenRange( UniversalDateTime min, UniversalDateTime max ) {
+        public WhenRange( [CanBeNull] UniversalDateTime min, [CanBeNull] UniversalDateTime max ) {
             if ( min < max ) {
                 this.Min = min;
                 this.Max = max;

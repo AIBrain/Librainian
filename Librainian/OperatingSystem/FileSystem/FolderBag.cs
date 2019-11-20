@@ -55,31 +55,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     [JsonObject]
     public partial class FolderBag : IEnumerable<Folder> {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     An enumerator that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<Folder> GetEnumerator() {
-            foreach ( var ending in this.Endings ) {
-                var node = ending;
-                var path = String.Empty;
-
-                while ( node.Parent != null ) {
-                    path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
-                    node = node.Parent;
-                }
-
-                //this.Roots.Should().Contain( node );
-                path = String.Concat( node.Data, path );
-
-                yield return new Folder( path );
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         [JsonProperty]
         public List<Node> Endings { get; } = new List<Node>();
 
@@ -112,7 +87,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public void FoundAnotherFolder( [NotNull] IFolder folder ) {
-            if ( folder == null ) {
+            if ( folder is null ) {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
@@ -158,5 +133,30 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             this.Endings.Add( currentNode );
         }
+
+        /// <summary>
+        ///     Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        ///     An enumerator that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<Folder> GetEnumerator() {
+            foreach ( var ending in this.Endings ) {
+                var node = ending;
+                var path = String.Empty;
+
+                while ( node.Parent != null ) {
+                    path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
+                    node = node.Parent;
+                }
+
+                //this.Roots.Should().Contain( node );
+                path = String.Concat( node.Data, path );
+
+                yield return new Folder( path );
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

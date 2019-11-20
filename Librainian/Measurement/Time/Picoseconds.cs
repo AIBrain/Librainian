@@ -45,6 +45,7 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
+    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -133,7 +134,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Picoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Picoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Picoseconds( Rational value ) => this.Value = value;
 
@@ -157,19 +158,20 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
 
         public static Picoseconds operator -( Picoseconds nanoseconds ) => new Picoseconds( nanoseconds.Value * -1 );
 
         public static Picoseconds operator -( Picoseconds left, Picoseconds right ) => Combine( left, -right );
 
-        public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) ( -nanoseconds ) );
+        public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
 
         public static Boolean operator !=( Picoseconds left, Picoseconds right ) => !Equals( left, right );
 
         public static Picoseconds operator +( Picoseconds left, Picoseconds right ) => Combine( left, right );
 
-        public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) nanoseconds );
+        public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
 
         public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
 
@@ -182,7 +184,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Picoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -195,7 +197,7 @@ namespace Librainian.Measurement.Time {
 
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOnePicosecond * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOnePicosecond * this.Value );
 
         public Seconds ToSeconds() => throw new NotImplementedException();
 
@@ -206,7 +208,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "ps" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "ps" )}";
         }

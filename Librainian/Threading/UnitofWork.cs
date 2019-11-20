@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UnitofWork.cs" was last formatted by Protiguous on 2019/08/08 at 9:39 AM.
+// Project: "Librainian", "UnitofWork.cs" was last formatted by Protiguous on 2019/11/20 at 5:54 AM.
 
 namespace Librainian.Threading {
 
@@ -55,53 +55,35 @@ namespace Librainian.Threading {
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is <see langword="null" />.</exception>
         public UnitofWork( [NotNull] Action action ) : base( action ) { }
 
-        /// <summary>
-        ///     Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and
-        ///     <see cref="T:System.Threading.CancellationToken" />.
-        /// </summary>
+        /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and <see cref="T:System.Threading.CancellationToken" />.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
-        /// <param name="cancellationToken">
-        ///     The <see cref="T:System.Threading.CancellationToken" /> that the new  task will
-        ///     observe.
-        /// </param>
-        /// <exception cref="T:System.ObjectDisposedException">
-        ///     The provided <see cref="T:System.Threading.CancellationToken" /> has
-        ///     already been disposed.
-        /// </exception>
+        /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> that the new  task will observe.</param>
+        /// <exception cref="T:System.ObjectDisposedException">The provided <see cref="T:System.Threading.CancellationToken" /> has already been disposed.</exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         public UnitofWork( [NotNull] Action action, CancellationToken cancellationToken ) : base( action, cancellationToken ) { }
 
         /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and creation options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
-        /// <param name="creationOptions">
-        ///     The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the
-        ///     task's behavior.
-        /// </param>
+        /// <param name="creationOptions">The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     The <paramref name="creationOptions" /> argument specifies an
-        ///     invalid value for <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
+        /// The <paramref name="creationOptions" /> argument specifies an invalid value for
+        /// <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
         /// </exception>
         public UnitofWork( [NotNull] Action action, TaskCreationOptions creationOptions ) : base( action, creationOptions ) { }
 
         /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action and creation options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
-        /// <param name="cancellationToken">
-        ///     The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that the new
-        ///     task will observe.
-        /// </param>
-        /// <param name="creationOptions">
-        ///     The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the
-        ///     task's behavior.
-        /// </param>
+        /// <param name="cancellationToken">The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that the new task will observe.</param>
+        /// <param name="creationOptions">The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
         /// <exception cref="T:System.ObjectDisposedException">
-        ///     The <see cref="T:System.Threading.CancellationTokenSource" /> that
-        ///     created <paramref name="cancellationToken" /> has already been disposed.
+        /// The <see cref="T:System.Threading.CancellationTokenSource" /> that created <paramref name="cancellationToken" /> has already
+        /// been disposed.
         /// </exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     The <paramref name="creationOptions" /> argument specifies an
-        ///     invalid value for <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
+        /// The <paramref name="creationOptions" /> argument specifies an invalid value for
+        /// <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
         /// </exception>
         public UnitofWork( [NotNull] Action action, CancellationToken cancellationToken, TaskCreationOptions creationOptions ) : base( action, cancellationToken,
             creationOptions ) { }
@@ -110,58 +92,46 @@ namespace Librainian.Threading {
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
         /// <param name="state">An object representing data to be used by the action.</param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, Object state ) : base( action, state ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state ) : base( action, state ) { }
 
         /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
         /// <param name="state">An object representing data to be used by the action.</param>
-        /// <param name="cancellationToken">
-        ///     The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the
-        ///     new task will observe.
-        /// </param>
+        /// <param name="cancellationToken">The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the new task will observe.</param>
         /// <exception cref="T:System.ObjectDisposedException">
-        ///     The <see cref="T:System.Threading.CancellationTokenSource" /> that
-        ///     created <paramref name="cancellationToken" /> has already been disposed.
+        /// The <see cref="T:System.Threading.CancellationTokenSource" /> that created <paramref name="cancellationToken" /> has already
+        /// been disposed.
         /// </exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, Object state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
 
         /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
         /// <param name="state">An object representing data to be used by the action.</param>
-        /// <param name="creationOptions">
-        ///     The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the
-        ///     task's behavior.
-        /// </param>
+        /// <param name="creationOptions">The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     The <paramref name="creationOptions" /> argument specifies an
-        ///     invalid value for <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
+        /// The <paramref name="creationOptions" /> argument specifies an invalid value for
+        /// <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
         /// </exception>
-        public UnitofWork( [NotNull] Action<Object> action, Object state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
 
         /// <summary>Initializes a new <see cref="T:System.Threading.Tasks.Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
         /// <param name="state">An object representing data to be used by the action.</param>
-        /// <param name="cancellationToken">
-        ///     The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the
-        ///     new task will observe..
-        /// </param>
-        /// <param name="creationOptions">
-        ///     The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the
-        ///     task's behavior.
-        /// </param>
+        /// <param name="cancellationToken">The <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" /> that that the new task will observe..</param>
+        /// <param name="creationOptions">The <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> used to customize the task's behavior.</param>
         /// <exception cref="T:System.ObjectDisposedException">
-        ///     The <see cref="T:System.Threading.CancellationTokenSource" /> that
-        ///     created <paramref name="cancellationToken" /> has already been disposed.
+        /// The <see cref="T:System.Threading.CancellationTokenSource" /> that created <paramref name="cancellationToken" /> has already
+        /// been disposed.
         /// </exception>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     The <paramref name="creationOptions" /> argument specifies an
-        ///     invalid value for <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
+        /// The <paramref name="creationOptions" /> argument specifies an invalid value for
+        /// <see cref="T:System.Threading.Tasks.TaskCreationOptions" />.
         /// </exception>
-        public UnitofWork( [NotNull] Action<Object> action, Object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions ) : base( action, state,
-            cancellationToken, creationOptions ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions ) : base(
+            action, state, cancellationToken, creationOptions ) { }
 
         [DllImport( "user32.dll", ExactSpelling = true, CharSet = CharSet.Auto )]
         [ResourceExposure( ResourceScope.Process )]
@@ -178,7 +148,7 @@ namespace Librainian.Threading {
             Int32 currentThread = SafeNativeMethods.GetCurrentThreadId();
             return (hwndThread != currentThread);
             */
-            return ( UnitofWork ) task;
+            return ( UnitofWork )task;
         }
     }
 }

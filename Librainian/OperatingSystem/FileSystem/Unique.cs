@@ -64,18 +64,16 @@ namespace Librainian.OperatingSystem.FileSystem {
     [Serializable]
     public class Unique : IEquatable<Unique> {
 
-        public Boolean Equals( Unique other ) => Equals( this, other );
+        private const Int32 EOFMarker = -1;
 
         [NotNull]
         [JsonProperty]
         private readonly Uri u;
 
         /// <summary>
-        ///     Just an easier to use mnemonic.
+        ///     A <see cref="Unique" /> that points to nowhere.
         /// </summary>
-        [NotNull]
-        [JsonIgnore]
-        public String AbsolutePath => this.U.AbsolutePath;
+        public static readonly Unique Empty = new Unique();
 
         /// <summary>
         ///     The location/directory/path/file/name/whatever.ext
@@ -85,12 +83,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         [JsonIgnore]
         public Uri U => this.u;
 
-        private const Int32 EOFMarker = -1;
-
         /// <summary>
-        ///     A <see cref="Unique" /> that points to nowhere.
+        ///     Just an easier to use mnemonic.
         /// </summary>
-        public static readonly Unique Empty = new Unique();
+        [NotNull]
+        [JsonIgnore]
+        public String AbsolutePath => this.U.AbsolutePath;
 
         /// <summary>
         ///     What effect will this have down the road?
@@ -126,7 +124,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return true;
             }
 
-            if ( left == null || right == null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 
@@ -160,7 +158,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="unique"></param>
         /// <returns></returns>
         public static Boolean TryCreate( [CanBeNull] Uri uri, [NotNull] out Unique unique ) {
-            if ( uri == null ) {
+            if ( uri is null ) {
 
                 unique = Empty;
 
@@ -196,7 +194,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             yield break;
                         }
 
-                        yield return ( Byte ) a;
+                        yield return ( Byte )a;
                     }
                 }
             }
@@ -295,6 +293,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
         }
+
+        public Boolean Equals( Unique other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) => Equals( this, obj as Unique );
 

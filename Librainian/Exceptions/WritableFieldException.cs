@@ -52,20 +52,20 @@ namespace Librainian.Exceptions {
     internal class WritableFieldException : ImmutableFailureException {
 
         protected WritableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-            if ( serializationInfo == null ) {
+            if ( serializationInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
             }
         }
 
         internal WritableFieldException( [NotNull] FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
-            if ( fieldInfo == null ) {
+            if ( fieldInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
-            if ( fieldInfo == null ) {
+            if ( fieldInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
             }
 

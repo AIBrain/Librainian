@@ -57,6 +57,13 @@ namespace Librainian.Controls {
     /// </summary>
     public sealed class ListBoxLog : ABetterClassDispose {
 
+        private const Int32 DefaultMaxLinesInListbox = 2000;
+
+        /// <summary>
+        ///     <see cref="FormatALogEventMessage" />
+        /// </summary>
+        private const String DefaultMessageFormat = "{4}>{8}";
+
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         private ListBox Box { get; set; }
@@ -69,19 +76,12 @@ namespace Librainian.Controls {
 
         public Boolean Paused { get; }
 
-        private const Int32 DefaultMaxLinesInListbox = 2000;
-
-        /// <summary>
-        ///     <see cref="FormatALogEventMessage" />
-        /// </summary>
-        private const String DefaultMessageFormat = "{4}>{8}";
-
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
-            if ( listBox == null ) {
+            if ( listBox is null ) {
                 throw new ArgumentNullException( paramName: nameof( listBox ) );
             }
 
-            if ( messageFormat == null ) {
+            if ( messageFormat is null ) {
                 throw new ArgumentNullException( paramName: nameof( messageFormat ) );
             }
         }
@@ -129,7 +129,7 @@ namespace Librainian.Controls {
                 logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
                 logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
                 logEvent.LoggingLevel.LevelName()[ 0 ], /* {6} */
-                logEvent.LoggingLevel.LevelName(), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
+                logEvent.LoggingLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LoggingLevel, /* {8} */ message );
         }
 
         private void AddALogEntry( Object item ) {
@@ -180,7 +180,7 @@ namespace Librainian.Controls {
             foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
 
                 selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
-                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 ) logEvent.LoggingLevel > 5 ? 6 : ( Int32 ) logEvent.LoggingLevel + 1 );
+                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 )logEvent.LoggingLevel > 5 ? 6 : ( Int32 )logEvent.LoggingLevel + 1 );
 
                 selectedItemsAsRTFText.Append( FormatALogEventMessage( logEvent, this.MessageFormat ) );
                 selectedItemsAsRTFText.AppendLine( @"\par}" );
@@ -208,7 +208,7 @@ namespace Librainian.Controls {
             LogEvent logEvent;
 
             if ( listbox.Items[ e.Index ] is LogEvent ) {
-                logEvent = ( LogEvent ) listbox.Items[ e.Index ];
+                logEvent = ( LogEvent )listbox.Items[ e.Index ];
             }
             else {
                 logEvent = new LogEvent( LoggingLevel.Critical, listbox.Items[ e.Index ].ToString() );
@@ -250,7 +250,7 @@ namespace Librainian.Controls {
         }
 
         public override void DisposeManaged() {
-            if ( this.Box == null ) {
+            if ( this.Box is null ) {
                 return;
             }
 
@@ -270,14 +270,18 @@ namespace Librainian.Controls {
             this.Box = null;
         }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public void Log( String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
 
         public void LogLine( String message ) => this.LogLine( LoggingLevel.Debug, message );
 
-        public void LogLine( [CanBeNull] String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format == null ? null : String.Format( format, args ) );
+        public void LogLine( [CanBeNull] String format, params Object[] args ) => this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
         public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, params Object[] args ) =>
-            this.LogLine( loggingLevel, format == null ? null : String.Format( format, args ) );
+            this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
         public void LogLine( LoggingLevel loggingLevel, String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 

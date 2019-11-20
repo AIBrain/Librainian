@@ -113,7 +113,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Yoctoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Yoctoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Yoctoseconds( Rational value ) => this.Value = value;
 
@@ -138,8 +138,10 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
+        [NotNull]
         public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds: yoctoseconds );
 
         /// <summary>
@@ -153,13 +155,13 @@ namespace Librainian.Measurement.Time {
 
         public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, right: -right );
 
-        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
+        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
 
         public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left, right );
 
         public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
 
-        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational ) yoctoseconds );
+        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational )yoctoseconds );
 
         public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
 
@@ -167,14 +169,15 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
+        [NotNull]
+        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
         public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
         public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -183,7 +186,7 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
         [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
@@ -195,7 +198,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "ys" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "ys" )}";
         }

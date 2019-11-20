@@ -53,27 +53,6 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     public class ImageFile {
 
-        public enum Types {
-
-            FileNotFound,
-
-            FileEmpty,
-
-            FileNull,
-
-            FileTooLarge,
-
-            FileUnrecognized,
-
-            PNG,
-
-            JPG,
-
-            GIFa,
-
-            GIFb
-        }
-
         private readonly Byte[] _abEndGIF = {
             0, 59
         };
@@ -216,12 +195,33 @@ namespace Librainian.Graphics.Imaging {
             }
         }
 
+        public enum Types {
+
+            FileNotFound,
+
+            FileEmpty,
+
+            FileNull,
+
+            FileTooLarge,
+
+            FileUnrecognized,
+
+            PNG,
+
+            JPG,
+
+            GIFa,
+
+            GIFb
+        }
+
         private static Boolean _EndsWidth( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyCollection<Byte> search ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( paramName: nameof( data ) );
             }
 
-            if ( search == null ) {
+            if ( search is null ) {
                 throw new ArgumentNullException( paramName: nameof( search ) );
             }
 
@@ -236,11 +236,11 @@ namespace Librainian.Graphics.Imaging {
         }
 
         public static Boolean _StartsWith( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyList<Byte> search ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( paramName: nameof( data ) );
             }
 
-            if ( search == null ) {
+            if ( search is null ) {
                 throw new ArgumentNullException( paramName: nameof( search ) );
             }
 

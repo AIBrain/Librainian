@@ -70,11 +70,11 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentException();
             }
 
-            if ( this.GetLogicalDrive() == null ) {
+            if ( this.GetLogicalDrive() is null ) {
                 return 1;
             }
 
-            if ( device.GetLogicalDrive() == null ) {
+            if ( device.GetLogicalDrive() is null ) {
                 return -1;
             }
 
@@ -111,11 +111,11 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 if ( bytesReturned > 0 ) {
-                    var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, typeof( Int32 ) );
+                    var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
                     for ( var i = 0; i < numberOfDiskExtents; i++ ) {
-                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + (i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) )) );
-                        var extent = ( NativeMethods.DISK_EXTENT ) Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
+                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + ( i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) ) );
+                        var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
                         numbers.Add( extent.DiskNumber );
                     }
                 }
@@ -161,7 +161,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Gets a list of removable devices for this volume.
         /// </summary>
         public override IEnumerable<Device> GetRemovableDevices() {
-            if ( this.GetDisks() == null ) {
+            if ( this.GetDisks() is null ) {
                 foreach ( var removableDevice in base.GetRemovableDevices() ) {
                     yield return removableDevice;
                 }
@@ -182,7 +182,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String GetVolumeName() {
             var sb = new StringBuilder( 1024 );
 
-            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 ) sb.Capacity ) ) {
+            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
 
                 // throw new Win32Exception(Marshal.GetLastWin32Error());
                 return null;

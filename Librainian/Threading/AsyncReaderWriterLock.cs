@@ -44,28 +44,34 @@ namespace Librainian.Threading {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// </summary>
     public class AsyncReaderWriterLock {
 
-        private readonly Task<Releaser> _readerReleaser;
-
-        private readonly Queue<TaskCompletionSource<Releaser>> _waitingWriters = new Queue<TaskCompletionSource<Releaser>>();
-
-        private readonly Task<Releaser> _writerReleaser;
-
         private Int32 _mReadersWaiting;
 
         private Int32 _mStatus;
 
-        private TaskCompletionSource<Releaser> _mWaitingReader = new TaskCompletionSource<Releaser>();
+        [NotNull]
+        private TaskCompletionSource<Releaser> _mWaitingReader { get; set; } = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
+
+        [NotNull]
+        private Task<Releaser> _readerReleaser { get; }
+
+        [NotNull]
+        private Queue<TaskCompletionSource<Releaser>> _waitingWriters { get; } = new Queue<TaskCompletionSource<Releaser>>();
+
+        [NotNull]
+        private Task<Releaser> _writerReleaser { get; }
 
         public AsyncReaderWriterLock() {
             this._readerReleaser = Task.FromResult( result: new Releaser( toRelease: this, writer: false ) );
             this._writerReleaser = Task.FromResult( result: new Releaser( toRelease: this, writer: true ) );
         }
 
+        [NotNull]
         public Task<Releaser> ReaderLockAsync() {
             lock ( this._waitingWriters ) {
                 if ( this._mStatus >= 0 && this._waitingWriters.Count == 0 ) {
@@ -95,6 +101,7 @@ namespace Librainian.Threading {
             toWake?.SetResult( new Releaser( this, true ) );
         }
 
+        [NotNull]
         public Task<Releaser> WriterLockAsync() {
             lock ( this._waitingWriters ) {
                 if ( this._mStatus == 0 ) {
@@ -103,7 +110,7 @@ namespace Librainian.Threading {
                     return this._writerReleaser;
                 }
 
-                var waiter = new TaskCompletionSource<Releaser>();
+                var waiter = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
                 this._waitingWriters.Enqueue( waiter );
 
                 return waiter.Task;
@@ -123,7 +130,7 @@ namespace Librainian.Threading {
                     toWake = this._mWaitingReader;
                     this._mStatus = this._mReadersWaiting;
                     this._mReadersWaiting = 0;
-                    this._mWaitingReader = new TaskCompletionSource<Releaser>();
+                    this._mWaitingReader = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
                 }
                 else {
                     this._mStatus = 0;

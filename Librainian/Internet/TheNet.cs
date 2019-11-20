@@ -57,11 +57,11 @@ namespace Librainian.Internet {
 
         [ItemCanBeNull]
         public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
-            if ( uri == null ) {
+            if ( uri is null ) {
                 throw new ArgumentNullException( paramName: nameof( uri ) );
             }
 
-            if ( timeout == null ) {
+            if ( timeout is null ) {
                 timeout = TimeSpan.Zero + Seconds.Seven;
             }
 
@@ -94,7 +94,8 @@ namespace Librainian.Internet {
             try {
                 if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
                     using ( var client = new WebClient {
-                        Encoding = Encoding.Unicode, CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
+                        Encoding = Encoding.Unicode,
+                        CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                     } ) {
                         return client.DownloadString( uri );
                     }
@@ -131,13 +132,14 @@ namespace Librainian.Internet {
 
         [CanBeNull]
         public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
-            if ( uri == null ) {
+            if ( uri is null ) {
                 throw new ArgumentNullException( paramName: nameof( uri ) );
             }
 
             try {
                 var client = new WebClient {
-                    Encoding = Encoding.UTF8, CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
+                    Encoding = Encoding.UTF8,
+                    CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
 
                 client.Add( timeout );
@@ -160,7 +162,7 @@ namespace Librainian.Internet {
 
             var bytes = Encoding.UTF8.GetBytes( s: data );
 
-            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 ) bytes.Length );
+            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
 
             return BitConverter.GetBytes( hostToNetworkOrder ).Concat( second: bytes );
         }

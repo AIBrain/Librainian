@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "TrimmedString.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2019/10/22 at 5:24 PM.
 
 namespace Librainian.Parsing {
@@ -60,8 +60,6 @@ namespace Librainian.Parsing {
     [JsonObject]
     [Immutable]
     public struct TrimmedString : IConvertible, IEquatable<TrimmedString>, IComparable<TrimmedString>, IComparable<String> {
-
-        
 
         /// <summary>
         ///     An immutable empty <see cref="TrimmedString" /> ( our version of <see cref="String.Empty" />).
@@ -183,7 +181,7 @@ namespace Librainian.Parsing {
 
         [DebuggerStepThrough]
         public void ThrowIfEmpty() {
-            if ( this.Value == null || this.IsEmpty() ) {
+            if ( this.Value is null || this.IsEmpty() ) {
                 throw new ArgumentEmptyException( "Value was empty." );
             }
         }
@@ -215,7 +213,7 @@ namespace Librainian.Parsing {
         [DebuggerStepThrough]
         public Int64 ToInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt64( provider: provider );
 
-        public TrimmedString ToLower() => this.Value.ToLower(CultureInfo.CurrentCulture);
+        public TrimmedString ToLower() => this.Value.ToLower( CultureInfo.CurrentCulture );
 
         [DebuggerStepThrough]
         public SByte ToSByte( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToSByte( provider: provider );
@@ -243,7 +241,7 @@ namespace Librainian.Parsing {
         public UInt64 ToUInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt64( provider: provider );
 
         [DebuggerStepThrough]
-        public TrimmedString ToUpper() => this.Value.ToUpper(CultureInfo.CurrentCulture);
+        public TrimmedString ToUpper() => this.Value.ToUpper( CultureInfo.CurrentCulture );
 
         /// <summary>
         ///     Strings to be replaced with <see cref="Replacements" />,
@@ -259,7 +257,6 @@ namespace Librainian.Parsing {
             public const String Spaces = Replacements.Space + Replacements.Space;
 
             public const String Tabs = Replacements.Tab + Replacements.Tab;
-
         }
 
         internal static class Replacements {
@@ -273,8 +270,6 @@ namespace Librainian.Parsing {
             public const String Space = " ";
 
             public const String Tab = "\t";
-
         }
-
     }
 }

@@ -59,7 +59,7 @@ namespace Librainian.Exceptions {
         private StreamException() { }
 
         protected StreamException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( paramName: nameof( info ) );
             }
         }

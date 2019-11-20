@@ -81,7 +81,7 @@ namespace Librainian.ComputerSystem.Devices {
 
             var lastError = Marshal.GetLastWin32Error();
 
-            if ( this._deviceInfoSet == ( IntPtr ) ( -1 ) ) {
+            if ( this._deviceInfoSet == ( IntPtr )( -1 ) ) {
                 throw new Win32Exception( lastError );
             }
         }
@@ -102,7 +102,7 @@ namespace Librainian.ComputerSystem.Devices {
             }
 
             var devData = new NativeMethods.SP_DEVINFO_DATA();
-            devData.cbSize = ( UInt32 ) Marshal.SizeOf( devData );
+            devData.cbSize = ( UInt32 )Marshal.SizeOf( devData );
 
             if ( !NativeMethods.SetupDiOpenDeviceInfo( this._deviceInfoSet, sb.ToString(), IntPtr.Zero, 0, devData ) ) {
                 throw new Win32Exception( Marshal.GetLastWin32Error() );
@@ -137,7 +137,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         internal UInt32 GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, UInt32 defaultValue ) {
 
-            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( typeof( UInt32 ) );
+            var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
 
             //var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
             var propertyBuffer = new Byte[ propertyBufferSize ];
@@ -163,7 +163,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         internal Guid GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, Guid defaultValue ) {
 
-            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( typeof( Guid ) );
+            var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );
 
             var propertyBuffer = new Byte[ propertyBufferSize ];
 
@@ -200,8 +200,6 @@ namespace Librainian.ComputerSystem.Devices {
                 NativeMethods.SetupDiDestroyDeviceInfoList( this._deviceInfoSet );
                 this._deviceInfoSet = IntPtr.Zero;
             }
-
-            base.DisposeNative();
         }
 
         /// <summary>
@@ -216,7 +214,7 @@ namespace Librainian.ComputerSystem.Devices {
 
             while ( true ) {
                 var interfaceData = new NativeMethods.SP_DEVICE_INTERFACE_DATA();
-                interfaceData.cbSize = ( UInt32 ) Marshal.SizeOf( interfaceData );
+                interfaceData.cbSize = ( UInt32 )Marshal.SizeOf( interfaceData );
 
                 if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default, ref this._classGuid, index, interfaceData ) ) {
                     var error = Marshal.GetLastWin32Error();
@@ -229,7 +227,7 @@ namespace Librainian.ComputerSystem.Devices {
                 }
 
                 var devData = new NativeMethods.SP_DEVINFO_DATA();
-                devData.cbSize = ( UInt32 ) Marshal.SizeOf( devData );
+                devData.cbSize = ( UInt32 )Marshal.SizeOf( devData );
                 var size = 0;
 
                 if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData, IntPtr.Zero, 0, ref size, devData ) ) {
@@ -275,7 +273,7 @@ namespace Librainian.ComputerSystem.Devices {
 
                     UInt32 bytesReturned = 0;
                     const UInt32 numBufSize = 0x1000; // some big size
-                    var numBuffer = Marshal.AllocHGlobal( ( IntPtr ) numBufSize );
+                    var numBuffer = Marshal.AllocHGlobal( ( IntPtr )numBufSize );
                     NativeMethods.STORAGE_DEVICE_NUMBER disknum;
 
                     try {
@@ -292,11 +290,13 @@ namespace Librainian.ComputerSystem.Devices {
                     }
 
                     if ( bytesReturned > 0 ) {
-                        disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER ) Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
+                        disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER )Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
                     }
                     else {
                         disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {
-                            DeviceNumber = -1, DeviceType = -1, PartitionNumber = -1
+                            DeviceNumber = -1,
+                            DeviceType = -1,
+                            PartitionNumber = -1
                         };
                     }
 

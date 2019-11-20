@@ -81,6 +81,10 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         public override void DisposeManaged() => this._listenForNextRequest?.Dispose();
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         public void Start() {
             if ( String.IsNullOrEmpty( this.Prefix ) ) {
                 throw new InvalidOperationException( "Specify prefix" );

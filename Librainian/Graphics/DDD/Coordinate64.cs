@@ -125,7 +125,7 @@ namespace Librainian.Graphics.DDD {
             this.X = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, x ) );
             this.Y = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, y ) );
             this.Z = Math.Max( Int64.MinValue, Math.Min( Int64.MaxValue, z ) );
-            this.Length = (this.X * this.X) + (this.Y * this.Y) + (this.Z * this.Z);
+            this.Length = ( this.X * this.X ) + ( this.Y * this.Y ) + ( this.Z * this.Z );
             this._hashCode = HashingExtensions.GetHashCodes( this.X, this.Y, this.Z );
         }
 
@@ -137,7 +137,7 @@ namespace Librainian.Graphics.DDD {
             var num2 = left.Y - rhs.Y;
             var num3 = left.Z - rhs.Z;
 
-            return ( Int64 ) Math.Sqrt( (num1 * num1) + (num2 * num2) + (num3 * num3) );
+            return ( Int64 )Math.Sqrt( ( num1 * num1 ) + ( num2 * num2 ) + ( num3 * num3 ) );
         }
 
         /// <summary>
@@ -151,18 +151,18 @@ namespace Librainian.Graphics.DDD {
                 return true;
             }
 
-            if ( left == null ) {
+            if ( left is null ) {
                 return false;
             }
 
-            if ( rhs == null ) {
+            if ( rhs is null ) {
                 return false;
             }
 
             return left.X == rhs.X && left.Y == rhs.Y && left.Z == rhs.Z;
         }
 
-        public static explicit operator Point( [NotNull] Coordinate64 coordinate ) => new Point( x: ( Int32 ) coordinate.X, y: ( Int32 ) coordinate.Y );
+        public static explicit operator Point( [NotNull] Coordinate64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
         public static explicit operator PointF( [NotNull] Coordinate64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
@@ -180,7 +180,7 @@ namespace Librainian.Graphics.DDD {
         public static Coordinate64 Normalize( [NotNull] Coordinate64 coordinate ) {
             var num = 1.0D / coordinate.Length;
 
-            return new Coordinate64( ( Int64 ) ( coordinate.X * num ), ( Int64 ) ( coordinate.Y * num ), ( Int64 ) ( coordinate.Z * num ) );
+            return new Coordinate64( ( Int64 )( coordinate.X * num ), ( Int64 )( coordinate.Y * num ), ( Int64 )( coordinate.Z * num ) );
         }
 
         [NotNull]
@@ -199,7 +199,7 @@ namespace Librainian.Graphics.DDD {
         public Int64 Distance( [NotNull] Coordinate64 to ) => Distance( this, to );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 

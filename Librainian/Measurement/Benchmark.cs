@@ -73,7 +73,7 @@ namespace Librainian.Measurement {
         /// <param name="runFor"></param>
         /// <returns>Returns how many rounds are ran in the time given.</returns>
         public static UInt64 GetBenchmark( [NotNull] this Action method, TimeSpan? runFor ) {
-            if ( method == null ) {
+            if ( method is null ) {
                 throw new ArgumentNullException( paramName: nameof( method ) );
             }
 
@@ -85,7 +85,7 @@ namespace Librainian.Measurement {
             var oldPriority = Thread.CurrentThread.Priority;
             Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-            if ( runFor == null ) {
+            if ( runFor is null ) {
                 runFor = Seconds.One;
             }
 
@@ -122,11 +122,11 @@ namespace Librainian.Measurement {
         }
 
         public static AorB WhichIsFaster( [NotNull] Action methodA, [NotNull] Action methodB, TimeSpan? runfor = null ) {
-            if ( methodA == null ) {
+            if ( methodA is null ) {
                 throw new ArgumentNullException( paramName: nameof( methodA ) );
             }
 
-            if ( methodB == null ) {
+            if ( methodB is null ) {
                 throw new ArgumentNullException( paramName: nameof( methodB ) );
             }
 

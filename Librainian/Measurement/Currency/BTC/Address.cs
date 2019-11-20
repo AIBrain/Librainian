@@ -60,11 +60,19 @@ namespace Librainian.Measurement.Currency.BTC {
 
         private Byte? _type;
 
+        public const Byte Pubkey = 0xFE;
+
+        public const Byte Pubkeyhash = 0x00;
+
+        public const Byte Script = 0xFF;
+
+        public const Byte Scripthash = 0x05;
+
         public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
         public Hash EitherHash {
             get {
-                if ( this._pubKeyHash == null && this._scriptHash == null ) {
+                if ( this._pubKeyHash is null && this._scriptHash is null ) {
                     this.CalcHash();
                 }
 
@@ -78,7 +86,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Hash PubKeyHash {
             get {
-                if ( this._pubKeyHash == null && this.CalcHash() != Pubkeyhash ) {
+                if ( this._pubKeyHash is null && this.CalcHash() != Pubkeyhash ) {
                     throw new InvalidOperationException( "Address is not a public key hash." );
                 }
 
@@ -88,7 +96,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Hash ScriptHash {
             get {
-                if ( this._pubKeyHash == null && this.CalcHash() != Scripthash ) {
+                if ( this._pubKeyHash is null && this.CalcHash() != Scripthash ) {
                     throw new InvalidOperationException( "Address is not a script hash." );
                 }
 
@@ -98,25 +106,17 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Byte Type {
             get {
-                if ( this._type == null ) {
+                if ( this._type is null ) {
                     this.CalcHash();
                 }
 
-                if ( this._type == null ) {
+                if ( this._type is null ) {
                     throw new InvalidOperationException();
                 }
 
                 return this._type.Value;
             }
         }
-
-        public const Byte Pubkey = 0xFE;
-
-        public const Byte Pubkeyhash = 0x00;
-
-        public const Byte Script = 0xFF;
-
-        public const Byte Scripthash = 0x05;
 
         public Address( Byte[] data, Byte version = Pubkey ) {
             RIPEMD160 ripemd160 = new RIPEMD160Managed();
@@ -187,17 +187,17 @@ namespace Librainian.Measurement.Currency.BTC {
                 return false;
             }
 
-            if ( this.EitherHash == null || ( ( Address ) obj ).EitherHash == null ) {
+            if ( this.EitherHash is null || ( ( Address )obj ).EitherHash is null ) {
                 return false;
             }
 
-            return this.EitherHash.HashBytes.SequenceEqual( ( ( Address ) obj ).EitherHash.HashBytes );
+            return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );
         }
 
         public override Int32 GetHashCode() => this.EitherHash.GetHashCode();
 
         public override String ToString() {
-            if ( this._address == null ) {
+            if ( this._address is null ) {
                 this.CalcBase58();
             }
 

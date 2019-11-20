@@ -54,7 +54,6 @@ namespace Librainian.Persistence {
     using Measurement.Time;
     using Newtonsoft.Json;
     using OperatingSystem.FileSystem;
-    using Threading;
 
     /// <summary>
     ///     Persist a dictionary to and from a JSON formatted text document.
@@ -101,7 +100,7 @@ namespace Librainian.Persistence {
             }
 
             if ( preload ) {
-                this.Load().Consume();
+                this.Load();
             }
         }
 
@@ -121,7 +120,7 @@ namespace Librainian.Persistence {
             GC.SuppressFinalize( this );
         }
 
-        public async Task<Boolean> Load( CancellationToken token = default ) {
+        public Boolean Load( CancellationToken token = default ) {
             var document = this.Document;
 
             if ( document.Exists() == false ) {
@@ -135,18 +134,17 @@ namespace Librainian.Persistence {
                     token = this.MainCTS.Token;
                 }
 
-                var dictionary = document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( token );
+                var dictionary = document.LoadJSON<ConcurrentDictionary<TKey, TValue>>();
 
-                await Task.WhenAll( dictionary /*add other tasks as needed*/ ).ConfigureAwait( false );
-
-                if ( dictionary.IsDone() ) {
-                    var result = Parallel.ForEach( source: dictionary.Result.Keys.AsParallel(), body: key => this[ key ] = dictionary.Result[ key ],
+                if ( dictionary != null ) {
+                    var result = Parallel.ForEach( source: dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ],
                         parallelOptions: new ParallelOptions {
                             CancellationToken = token
                         } );
 
                     return result.IsCompleted;
                 }
+
             }
             catch ( JsonException exception ) {
                 exception.Log();

@@ -53,36 +53,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     /// </remarks>
     public class Location : IEquatable<Location>, IComparable<Location>, IComparable {
 
-        public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( obj == null ) {
-                return 1;
-            }
-
-            if ( ReferenceEquals( this, obj ) ) {
-                return 0;
-            }
-
-            if ( !( obj is Location ) ) {
-                throw new ArgumentException( $"Object must be of type {nameof( Location )}" );
-            }
-
-            return this.CompareTo( other: ( Location ) obj );
-        }
-
-        public Int32 CompareTo( Location other ) {
-            if ( ReferenceEquals( this, other ) ) {
-                return 0;
-            }
-
-            if ( other == null ) {
-                return 1;
-            }
-
-            return String.Compare( strA: this.Address, strB: other.Address, comparisonType: StringComparison.Ordinal );
-        }
-
-        public Boolean Equals( Location other ) => other != null && this.Address == other.Address;
-
         private Int32 HashCode => this.Address.GetHashCode();
 
         /// <summary>
@@ -108,15 +78,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static Boolean Equals( [CanBeNull] Location left, [CanBeNull] Location right ) {
-            if ( left == null && right == null ) {
+            if ( left is null && right is null ) {
                 return true;
             }
 
-            if ( left != null && right == null ) {
+            if ( left != null && right is null ) {
                 return false;
             }
 
-            if ( left == null ) {
+            if ( left is null ) {
                 return false;
             }
 
@@ -134,6 +104,36 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Boolean operator >( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) > 0;
 
         public static Boolean operator >=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) >= 0;
+
+        public Int32 CompareTo( [CanBeNull] Object obj ) {
+            if ( obj is null ) {
+                return 1;
+            }
+
+            if ( ReferenceEquals( this, obj ) ) {
+                return 0;
+            }
+
+            if ( !( obj is Location ) ) {
+                throw new ArgumentException( $"Object must be of type {nameof( Location )}" );
+            }
+
+            return this.CompareTo( other: ( Location )obj );
+        }
+
+        public Int32 CompareTo( Location other ) {
+            if ( ReferenceEquals( this, other ) ) {
+                return 0;
+            }
+
+            if ( other is null ) {
+                return 1;
+            }
+
+            return String.Compare( strA: this.Address, strB: other.Address, comparisonType: StringComparison.Ordinal );
+        }
+
+        public Boolean Equals( Location other ) => other != null && this.Address == other.Address;
 
         public override Boolean Equals( Object obj ) => this.Equals( other: obj as Location );
 

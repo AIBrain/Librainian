@@ -68,7 +68,7 @@ namespace Librainian.Persistence {
         public I( [NotNull] String key, [NotNull] Uri pointer ) {
             this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
-            if ( pointer == null ) {
+            if ( pointer is null ) {
                 throw new ArgumentNullException( paramName: nameof( pointer ) );
             }
 

@@ -61,7 +61,7 @@ namespace Librainian.Collections.Stacks {
             do {
                 ret = this._head;
 
-                if ( ret.Next == null ) {
+                if ( ret.Next is null ) {
                     throw new IndexOutOfRangeException( "Stack is empty" );
                 }
             } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );

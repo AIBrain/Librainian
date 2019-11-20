@@ -104,7 +104,7 @@ namespace Librainian.Maths {
 
         public static void Seed( Int32 seed ) {
             unchecked {
-                if ( SeedArray == null || SeedArray.Length != SpecialLength ) {
+                if ( SeedArray is null || SeedArray.Length != SpecialLength ) {
                     SeedArray = new Int32[ SpecialLength ];
                 }
 
@@ -123,7 +123,7 @@ namespace Librainian.Maths {
 
                 for ( var k = 1; k < 5; k++ ) {
                     for ( var i = 1; i < SpecialLength; i++ ) {
-                        SeedArray[ i ] -= SeedArray[ 1 + (( i + 30 ) % Special) ];
+                        SeedArray[ i ] -= SeedArray[ 1 + ( ( i + 30 ) % Special ) ];
                     }
                 }
 
@@ -155,7 +155,7 @@ namespace Librainian.Maths {
                 throw new ArgumentOutOfRangeException( nameof( maxValue ) );
             }
 
-            return ( Int32 ) ( this.Sample() * maxValue );
+            return ( Int32 )( this.Sample() * maxValue );
         }
 
         /*=====================================Next=====================================
@@ -165,12 +165,12 @@ namespace Librainian.Maths {
 	==============================================================================*/
 
         public virtual void NextBytes( [NotNull] Byte[] buffer ) {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException( nameof( buffer ) );
             }
 
             for ( var i = 0; i < buffer.Length; i++ ) {
-                buffer[ i ] = ( Byte ) ( InternalSample() % ( Byte.MaxValue + 1 ) );
+                buffer[ i ] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
             }
         }
 

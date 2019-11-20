@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WebClientExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 8:02 AM.
+// Project: "Librainian", "WebClientExtensions.cs" was last formatted by Protiguous on 2019/11/20 at 6:12 AM.
 
 namespace Librainian.Internet {
 
@@ -75,7 +75,7 @@ namespace Librainian.Internet {
         /// <copyright>Protiguous</copyright>
         [NotNull]
         public static WebClient Add( [NotNull] this WebClient client, CancellationToken token ) {
-            if ( client == null ) {
+            if ( client is null ) {
                 throw new ArgumentNullException( paramName: nameof( client ) );
             }
 
@@ -96,7 +96,7 @@ namespace Librainian.Internet {
         /// <copyright>Protiguous</copyright>
         [NotNull]
         public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout ) {
-            if ( client == null ) {
+            if ( client is null ) {
                 throw new ArgumentNullException( paramName: nameof( client ) );
             }
 
@@ -106,16 +106,14 @@ namespace Librainian.Internet {
             return client;
         }
 
-        /// <summary>
-        ///     Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.
-        /// </summary>
+        /// <summary>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</summary>
         /// <param name="client"></param>
         /// <param name="timeout"></param>
         /// <param name="token"></param>
         /// <copyright>Protiguous</copyright>
         [NotNull]
         public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
-            if ( client == null ) {
+            if ( client is null ) {
                 throw new ArgumentNullException( paramName: nameof( client ) );
             }
 
@@ -129,7 +127,7 @@ namespace Librainian.Internet {
         /// <returns>A Task that contains the downloaded data.</returns>
         [NotNull]
         public static Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
@@ -145,11 +143,11 @@ namespace Librainian.Internet {
         /// <param name="address">The URI from which to download data.</param>
         /// <returns>A Task that contains the downloaded data.</returns>
         public static async Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
-            if ( address == null ) {
+            if ( address is null ) {
                 throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
@@ -163,9 +161,7 @@ namespace Librainian.Internet {
             return null;
         }
 
-        /// <summary>
-        ///     This seems to work great!
-        /// </summary>
+        /// <summary>This seems to work great!</summary>
         /// <param name="webClient"></param>
         /// <param name="address"></param>
         /// <param name="fileName"></param>
@@ -173,11 +169,11 @@ namespace Librainian.Internet {
         /// <returns></returns>
         public static async Task DownloadFileTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String fileName,
             IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
-            if ( address == null ) {
+            if ( address is null ) {
                 throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
@@ -185,7 +181,7 @@ namespace Librainian.Internet {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
             }
 
-            var tcs = new TaskCompletionSource<Object>( address );
+            var tcs = new TaskCompletionSource<Object>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
                 if ( ce.UserState != tcs ) {
@@ -206,7 +202,7 @@ namespace Librainian.Internet {
             void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
 
                 if ( pe.UserState == tcs ) {
-                    progress.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+                    progress.Report( (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
                 }
             }
 
@@ -222,9 +218,8 @@ namespace Librainian.Internet {
             }
         }
 
-        /// <summary>
-        ///     A thread-local (threadsafe) <see cref="WebClient" />.
-        ///     <para>Do NOT use Dispose on these clients. You've been warned.</para>
+        /// <summary>A thread-local (threadsafe) <see cref="WebClient" />.
+        /// <para>Do NOT use Dispose on these clients. You've been warned.</para>
         /// </summary>
         [NotNull]
         public static WebClient Instance() => ThreadSafeWebClients.Value.Value;
@@ -234,7 +229,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
         public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, TrimmedString address ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
@@ -250,15 +245,15 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
         public static Task<Stream> OpenReadTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
-            if ( address == null ) {
+            if ( address is null ) {
                 throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
-            var taskCompletionSource = new TaskCompletionSource<Stream>( address );
+            var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             void Handler( Object sender, OpenReadCompletedEventArgs e ) =>
                 taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
@@ -290,11 +285,11 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
         public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, [NotNull] Uri address, TrimmedString method ) {
-            if ( webClient == null ) {
+            if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
 
-            if ( address == null ) {
+            if ( address is null ) {
                 throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
@@ -302,7 +297,7 @@ namespace Librainian.Internet {
                 throw new ArgumentEmptyException( message: "Value cannot be empty.", paramName: nameof( method ) );
             }
 
-            var taskCompletionSource = new TaskCompletionSource<Stream>( address );
+            var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             void Handler( Object sender, OpenWriteCompletedEventArgs e ) =>
                 taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
@@ -343,7 +338,7 @@ namespace Librainian.Internet {
         public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, Uri address, String method, Byte[] data ) {
 
             // Create the task to be returned
-            var tcs = new TaskCompletionSource<Byte[]>( address );
+            var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Setup the callback event handler
             void Handler( Object sender, UploadDataCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadDataCompleted -= Handler );
@@ -384,7 +379,7 @@ namespace Librainian.Internet {
         public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, Uri address, String method, String fileName ) {
 
             // Create the task to be returned
-            var tcs = new TaskCompletionSource<Byte[]>( address );
+            var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Setup the callback event handler
             void Handler( Object sender, UploadFileCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadFileCompleted -= Handler );
@@ -425,7 +420,7 @@ namespace Librainian.Internet {
         public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, Uri address, String method, String data ) {
 
             // Create the task to be returned
-            var tcs = new TaskCompletionSource<String>( address );
+            var tcs = new TaskCompletionSource<String>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Setup the callback event handler
             void Handler( Object sender, UploadStringCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadStringCompleted -= Handler );

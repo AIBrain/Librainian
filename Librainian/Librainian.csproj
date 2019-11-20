@@ -384,8 +384,10 @@
     <Compile Include="Security\Document.cs" />
     <Compile Include="Security\GpwData.cs" />
     <Compile Include="Security\PronounceablePasswordCreator.cs" />
+    <Compile Include="Threading\BackgroundThread.cs" />
     <Compile Include="Threading\BalancedResourceLoader.cs" />
     <Compile Include="Threading\AwaitableExtensions.cs" />
+    <Compile Include="Threading\BackgroundThreadQueue.cs" />
     <Compile Include="Threading\IResourceLoader.cs" />
     <Compile Include="Threading\IThrottle.cs" />
     <Compile Include="Threading\IUsableSemaphore.cs" />

@@ -47,5 +47,9 @@ namespace Librainian.Financial.Containers.Banking {
     public abstract class BankAccount : Wallet, IBankAccount {
 
         protected BankAccount( Guid id ) : base( id ) { }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
     }
 }

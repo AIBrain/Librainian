@@ -78,7 +78,7 @@ namespace Librainian.Controls {
 
         [NotNull]
         public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
-            if ( form == null ) {
+            if ( form is null ) {
                 throw new ArgumentNullException( nameof( form ) );
             }
 
@@ -101,7 +101,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cx -= ( Int32 ) step;
+                            cx -= ( Int32 )step;
                         }
                         else {
                             var step = ( cx - x ) / 10.0f;
@@ -110,7 +110,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cx += ( Int32 ) step;
+                            cx += ( Int32 )step;
                         }
                     }
                     else {
@@ -121,7 +121,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cy -= ( Int32 ) step;
+                            cy -= ( Int32 )step;
                         }
                         else {
                             var step = ( cy - y ) / 10.0f;
@@ -130,7 +130,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cy += ( Int32 ) step;
+                            cy += ( Int32 )step;
                         }
                     }
 

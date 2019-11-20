@@ -65,7 +65,7 @@ namespace Librainian.ComputerSystem.Devices {
         }
 
         public static Boolean IsFixed( [NotNull] this Disk disk ) {
-            if ( disk == null ) {
+            if ( disk is null ) {
                 throw new ArgumentNullException( paramName: nameof( disk ) );
             }
 
@@ -73,7 +73,7 @@ namespace Librainian.ComputerSystem.Devices {
         }
 
         public static Boolean IsFixed( [NotNull] this DriveInfo drive ) {
-            if ( drive == null ) {
+            if ( drive is null ) {
                 throw new ArgumentNullException( paramName: nameof( drive ) );
             }
 
@@ -81,7 +81,7 @@ namespace Librainian.ComputerSystem.Devices {
         }
 
         public static Boolean IsFleeting( [NotNull] this Disk disk ) {
-            if ( disk == null ) {
+            if ( disk is null ) {
                 throw new ArgumentNullException( paramName: nameof( disk ) );
             }
 
@@ -89,7 +89,7 @@ namespace Librainian.ComputerSystem.Devices {
         }
 
         public static Boolean IsFleeting( [NotNull] this DriveInfo drive ) {
-            if ( drive == null ) {
+            if ( drive is null ) {
                 throw new ArgumentNullException( paramName: nameof( drive ) );
             }
 

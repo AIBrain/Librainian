@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 6:23 AM.
 
 namespace Librainian.Threading {
@@ -75,7 +75,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         /// <remarks>I know, this is a "thread" consuming a "task", but oh well. Don't use it. :)</remarks>
         public static void Consume<T>( [NotNull] this Task<T> task, [CanBeNull] Object anything = default ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -110,10 +110,10 @@ namespace Librainian.Threading {
         /// <param name="delay">How long to run the delay.</param>
         [NotNull]
         public static Task Delay( this TimeSpan delay ) => Task.Delay( delay );
-        
+
         [NotNull]
         public static Task Delay( [NotNull] this IQuantityOfTime delay ) {
-            if ( delay == null ) {
+            if ( delay is null ) {
                 throw new ArgumentNullException( paramName: nameof( delay ) );
             }
 
@@ -206,25 +206,23 @@ namespace Librainian.Threading {
         }
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static void FireAndForget( [CanBeNull] this Task task ) {
-            task.Nop();
-        }
+        public static void FireAndForget( [CanBeNull] this Task task ) => task.Nop();
 
         public static async Task<TResult> FromEvent<TDelegate, TResult>( [NotNull] Func<TaskCompletionSource<TResult>, TDelegate> createDelegate,
             [NotNull] Action<TDelegate> registerDelegate, [NotNull] Action<TDelegate> unregisterDelegate, TimeSpan timeout ) {
-            if ( createDelegate == null ) {
+            if ( createDelegate is null ) {
                 throw new ArgumentNullException( paramName: nameof( createDelegate ) );
             }
 
-            if ( registerDelegate == null ) {
+            if ( registerDelegate is null ) {
                 throw new ArgumentNullException( paramName: nameof( registerDelegate ) );
             }
 
-            if ( unregisterDelegate == null ) {
+            if ( unregisterDelegate is null ) {
                 throw new ArgumentNullException( paramName: nameof( unregisterDelegate ) );
             }
 
-            var tcs = new TaskCompletionSource<TResult>();
+            var tcs = new TaskCompletionSource<TResult>( TaskCreationOptions.RunContinuationsAsynchronously );
 
             var cts = new CancellationTokenSource( timeout );
             cts.Token.Register( () => tcs.TrySetCanceled() );
@@ -251,12 +249,12 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<Task<T>> InCompletionOrder<T>( [NotNull] this IEnumerable<Task<T>> source ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( paramName: nameof( source ) );
             }
 
             var inputs = source.ToList();
-            var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
+            var boxes = inputs.Select( x => new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously ) ).ToList();
             var currentIndex = -1;
 
             foreach ( var task in inputs ) {
@@ -282,7 +280,7 @@ namespace Librainian.Threading {
         /// </example>
         [NotNull]
         public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
-            if ( tasks == null ) {
+            if ( tasks is null ) {
                 throw new ArgumentNullException( paramName: nameof( tasks ) );
             }
 
@@ -291,14 +289,14 @@ namespace Librainian.Threading {
             var results = new Task<Task<T>>[ buckets.Length ];
 
             for ( var i = 0; i < buckets.Length; i++ ) {
-                buckets[ i ] = new TaskCompletionSource<Task<T>>();
+                buckets[ i ] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
                 results[ i ] = buckets[ i ].Task;
             }
 
             var nextTaskIndex = -1;
 
             void Continuation( Task<T> completed ) {
-                if ( completed == null ) {
+                if ( completed is null ) {
                     throw new ArgumentNullException( paramName: nameof( completed ) );
                 }
 
@@ -321,7 +319,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [DebuggerStepThrough]
         public static Boolean IsDone( [NotNull] this Task task ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -353,11 +351,11 @@ namespace Librainian.Threading {
         /// <param name="completionSource"></param>
         /// <exception cref="ArgumentEmptyException"></exception>
         public static void PropagateResult<T>( [NotNull] this Task<T> completedTask, [NotNull] TaskCompletionSource<T> completionSource ) {
-            if ( completedTask == null ) {
+            if ( completedTask is null ) {
                 throw new ArgumentNullException( paramName: nameof( completedTask ) );
             }
 
-            if ( completionSource == null ) {
+            if ( completionSource is null ) {
                 throw new ArgumentNullException( paramName: nameof( completionSource ) );
             }
 
@@ -385,11 +383,11 @@ namespace Librainian.Threading {
         }
 
         public static void SetFromTask<T>( [NotNull] this TaskCompletionSource<T> tcs, [NotNull] Task<T> task ) {
-            if ( tcs == null ) {
+            if ( tcs is null ) {
                 throw new ArgumentNullException( paramName: nameof( tcs ) );
             }
 
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -401,7 +399,7 @@ namespace Librainian.Threading {
                 tcs.TrySetCanceled();
             }
             else if ( task.IsFaulted ) {
-                var ex = ( Exception ) task.Exception ?? new InvalidOperationException( "Faulted Task" );
+                var ex = ( Exception )task.Exception ?? new InvalidOperationException( "Faulted Task" );
                 tcs.TrySetException( ex );
             }
             else {
@@ -417,7 +415,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-            if ( job == null ) {
+            if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
@@ -434,12 +432,12 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( this TimeSpan delay, [NotNull] Action job, CancellationToken token ) {
-            if ( job == null ) {
+            if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
             await Task.Delay( delay: delay, cancellationToken: token ).ConfigureAwait( false );
-            await Task.Run( job, token ).ConfigureAwait( false );
+            await new Task( job, token, TaskCreationOptions.PreferFairness | TaskCreationOptions.RunContinuationsAsynchronously ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -450,7 +448,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( this SpanOfTime delay, [NotNull] Action job ) {
-            if ( job == null ) {
+            if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
@@ -466,11 +464,11 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( [NotNull] this Task first, [NotNull] Task second ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( paramName: nameof( first ) );
             }
 
-            if ( second == null ) {
+            if ( second is null ) {
                 throw new ArgumentNullException( paramName: nameof( second ) );
             }
 
@@ -487,7 +485,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken token ) {
-            if ( job == null ) {
+            if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
@@ -504,11 +502,11 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [NotNull]
         public static async Task Then( [NotNull] this IQuantityOfTime delay, [NotNull] Action job, CancellationToken token ) {
-            if ( delay == null ) {
+            if ( delay is null ) {
                 throw new ArgumentNullException( paramName: nameof( delay ) );
             }
 
-            if ( job == null ) {
+            if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
@@ -516,50 +514,52 @@ namespace Librainian.Threading {
             await Task.Run( job, token ).ConfigureAwait( false );
         }
 
+        [NotNull]
         public static Task Then( [NotNull] this Task first, [NotNull] Action next, CancellationToken? token ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( paramName: nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( paramName: nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<Object>();
+            var tcs = new TaskCompletionSource<Object>( TaskCreationOptions.RunContinuationsAsynchronously );
 
             first.ContinueWith( task => {
-                    if ( first.IsFaulted ) {
-                        if ( first.Exception != null ) {
-                            tcs.TrySetException( first.Exception.InnerExceptions );
-                        }
+                if ( first.IsFaulted ) {
+                    if ( first.Exception != null ) {
+                        tcs.TrySetException( first.Exception.InnerExceptions );
                     }
-                    else if ( first.IsCanceled ) {
-                        tcs.TrySetCanceled();
+                }
+                else if ( first.IsCanceled ) {
+                    tcs.TrySetCanceled();
+                }
+                else {
+                    try {
+                        next();
+                        tcs.TrySetResult( null );
                     }
-                    else {
-                        try {
-                            next();
-                            tcs.TrySetResult( null );
-                        }
-                        catch ( Exception exception ) {
-                            tcs.TrySetException( exception );
-                        }
+                    catch ( Exception exception ) {
+                        tcs.TrySetException( exception );
                     }
-                }, token ?? CancellationToken.None );
+                }
+            }, token ?? CancellationToken.None );
 
             return tcs.Task;
         }
 
+        [NotNull]
         public static Task<T2> Then<T2>( [NotNull] this Task first, [NotNull] Func<Task<T2>> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( obj => {
                 if ( first.IsFaulted ) {
@@ -574,7 +574,7 @@ namespace Librainian.Threading {
                     try {
                         var t = next();
 
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -602,16 +602,17 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
+        [NotNull]
         public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Action<T1> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<Object>();
+            var tcs = new TaskCompletionSource<Object>( TaskCreationOptions.RunContinuationsAsynchronously );
 
             first.ContinueWith( task => {
                 if ( first.IsFaulted ) {
@@ -631,21 +632,22 @@ namespace Librainian.Threading {
                         tcs.TrySetException( ex );
                     }
                 }
-            } );
+            }, TaskContinuationOptions.PreferFairness );
 
             return tcs.Task;
         }
 
+        [NotNull]
         public static Task Then<T1>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<Object>(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<Object>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
             first.ContinueWith( obj => {
                 if ( first.IsFaulted ) {
@@ -660,7 +662,7 @@ namespace Librainian.Threading {
                     try {
                         var t = next( first.Result );
 
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -688,22 +690,25 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
+        [NotNull]
         public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, T2> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
-            first.ContinueWith( delegate {
+            first.ContinueWith( obj => {
                 if ( first.IsFaulted ) {
-                    if ( first.Exception != null ) {
-                        tcs.TrySetException( first.Exception.InnerExceptions );
+                    if ( first.Exception is null ) {
+                        return;
                     }
+
+                    tcs.TrySetException( first.Exception.InnerExceptions );
                 }
                 else if ( first.IsCanceled ) {
                     tcs.TrySetCanceled();
@@ -722,16 +727,17 @@ namespace Librainian.Threading {
             return tcs.Task;
         }
 
+        [NotNull]
         public static Task<T2> Then<T1, T2>( [NotNull] this Task<T1> first, [NotNull] Func<T1, Task<T2>> next ) {
-            if ( first == null ) {
+            if ( first is null ) {
                 throw new ArgumentNullException( nameof( first ) );
             }
 
-            if ( next == null ) {
+            if ( next is null ) {
                 throw new ArgumentNullException( nameof( next ) );
             }
 
-            var tcs = new TaskCompletionSource<T2>(); //Tasks.FactorySooner.CreationOptions
+            var tcs = new TaskCompletionSource<T2>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
             void ContinuationFunction( Task<T1> obj ) {
                 if ( first.IsFaulted ) {
@@ -746,7 +752,7 @@ namespace Librainian.Threading {
                     try {
                         var t = next( first.Result );
 
-                        if ( t == null ) {
+                        if ( t is null ) {
                             tcs.TrySetCanceled();
                         }
                         else {
@@ -785,8 +791,8 @@ namespace Librainian.Threading {
         /// <param name="target"></param>
         /// <param name="item">  </param>
         /// <param name="token"></param>
-        public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, T item, CancellationToken token ) {
-            if ( target == null ) {
+        public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, [CanBeNull] T item, CancellationToken token ) {
+            if ( target is null ) {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
@@ -827,7 +833,7 @@ namespace Librainian.Threading {
         /// <param name="timeout"></param>
         /// <returns></returns>
         public static async Task<Boolean> Until( [NotNull] this Task task, TimeSpan timeout ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -855,7 +861,7 @@ namespace Librainian.Threading {
         public static Task<Boolean> Until( this TimeSpan timeout, [NotNull] Task task ) => Until( task, timeout );
 
         public static async Task<Boolean> WaitAsync( [NotNull] this Task task, TimeSpan timeout ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -884,11 +890,11 @@ namespace Librainian.Threading {
         /// <param name="condition"> </param>
         [CanBeNull]
         public static Timer When( this TimeSpan afterDelay, [NotNull] Func<Boolean> condition, [NotNull] Action action ) {
-            if ( condition == null ) {
+            if ( condition is null ) {
                 throw new ArgumentNullException( nameof( condition ) );
             }
 
-            if ( action == null ) {
+            if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }
 
@@ -945,7 +951,7 @@ namespace Librainian.Threading {
         /// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
         [ItemNotNull]
         public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -968,7 +974,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<Task> With<T>( [NotNull] this Task<T> task, CancellationToken token ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -991,7 +997,7 @@ namespace Librainian.Threading {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
@@ -1078,42 +1084,22 @@ namespace Librainian.Threading {
 
         public class ResourceLoader<T> : IResourceLoader<T> {
 
+            private Int32 _count;
+
+            [NotNull]
+            private Func<CancellationToken, Task<T>> _loader { get; }
+
+            [NotNull]
+            private Object _lock { get; } = new Object();
+
+            [NotNull]
+            private SemaphoreSlim _semaphore { get; }
+
             public Int32 Available => this._semaphore.CurrentCount;
 
             public Int32 Count => this._count;
 
             public Int32 MaxConcurrency { get; }
-
-            public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
-                lock ( this._lock ) {
-                    return this.WaitAndLoadAsync( cancelToken );
-                }
-            }
-
-            public Boolean TryGet( out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
-                lock ( this._lock ) {
-                    if ( this._semaphore.CurrentCount == 0 ) {
-                        resource = null;
-
-                        return false;
-                    }
-
-                    resource = this.WaitAndLoadAsync( cancelToken );
-
-                    return true;
-                }
-            }
-
-            [NotNull]
-            private readonly Func<CancellationToken, Task<T>> _loader;
-
-            [NotNull]
-            private readonly Object _lock = new Object();
-
-            [NotNull]
-            private readonly SemaphoreSlim _semaphore;
-
-            private Int32 _count;
 
             public ResourceLoader( [NotNull] Func<CancellationToken, Task<T>> loader, Int32 maxConcurrency ) {
                 this._loader = loader ?? throw new ArgumentNullException( nameof( loader ) );
@@ -1130,8 +1116,26 @@ namespace Librainian.Threading {
                 }
             }
 
+            [NotNull]
+            public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
+                lock ( this._lock ) {
+                    return this.WaitAndLoadAsync( cancelToken );
+                }
+            }
+
+            public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+                lock ( this._lock ) {
+                    if ( this._semaphore.CurrentCount == 0 ) {
+                        resource = null;
+
+                        return false;
+                    }
+
+                    resource = this.WaitAndLoadAsync( cancelToken );
+
+                    return true;
+                }
+            }
         }
-
     }
-
 }

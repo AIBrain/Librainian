@@ -60,7 +60,7 @@ namespace Librainian.Collections.Trees {
 
         [NotNull]
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
-            if ( node == null ) {
+            if ( node is null ) {
                 throw new ArgumentNullException( nameof( node ) );
             }
 

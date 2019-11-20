@@ -98,7 +98,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [NotNull]
         public ContinuousSentence Add( [CanBeNull] String text ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 text = String.Empty;
             }
 
@@ -112,6 +112,10 @@ namespace Librainian.Parsing {
         /// </summary>
         public override void DisposeManaged() {
             using ( this.AccessInputBuffer ) { }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
 
         [NotNull]

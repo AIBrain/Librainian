@@ -46,27 +46,21 @@ namespace Librainian.Security {
     /// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
     internal class MersenneTwister : Random {
 
-        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
-
-        private Int16 _mti;
-
         private const UInt32 LowerMask = 0x7fffffff;
-
         private const Int32 M = 397;
-
         private const UInt32 MatrixA = 0x9908b0df;
-
         private const Int32 N = 624;
-
         private const UInt32 TemperingMaskB = 0x9d2c5680;
-
         private const UInt32 TemperingMaskC = 0xefc60000;
-
         private const UInt32 UpperMask = 0x80000000;
 
         private static readonly UInt32[] Mag01 = {
             0x0, MatrixA
         };
+
+        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
+
+        private Int16 _mti;
 
         public MersenneTwister( UInt32 seed ) {
             /* setting initial seeds to mt[N] using         */
@@ -127,7 +121,7 @@ namespace Librainian.Security {
 
         public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( maxValue > 1 ) {
-                return ( Int32 ) ( this.NextDouble() * maxValue );
+                return ( Int32 )( this.NextDouble() * maxValue );
             }
 
             if ( maxValue < 0 ) {
@@ -153,29 +147,29 @@ namespace Librainian.Security {
         /// <param name="buffer"></param>
         /// <exception cref="ArgumentNullException"></exception>
         public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 throw new ArgumentNullException();
             }
 
             var bufLen = buffer.Length;
 
             for ( var idx = 0; idx < bufLen; ++idx ) {
-                buffer[ idx ] = ( Byte ) this.Next( maxValue: 256 );
+                buffer[ idx ] = ( Byte )this.Next( maxValue: 256 );
             }
         }
 
-        public override Double NextDouble() => ( Double ) this.GenerateUInt() / ( ( UInt64 ) UInt32.MaxValue + 1 );
+        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
 
         public virtual UInt32 NextUInt() => this.GenerateUInt();
 
-        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 ) ( this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / maxValue ) );
+        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
 
         public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( minValue >= maxValue ) {
                 throw new ArgumentOutOfRangeException();
             }
 
-            return ( UInt32 ) ( (this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / ( maxValue - minValue ) )) + minValue );
+            return ( UInt32 )( ( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) ) + minValue );
         }
 
         /* Period parameters */

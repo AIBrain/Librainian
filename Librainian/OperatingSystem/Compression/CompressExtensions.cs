@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "CompressExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "CompressExtensions.cs" was last formatted by Protiguous on 2019/11/07 at 2:06 PM.
 
 namespace Librainian.OperatingSystem.Compression {
@@ -60,7 +60,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         [NotNull]
         public static Byte[] Compress( [NotNull] this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
@@ -80,7 +80,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <see cref="http://bitbucket.org/jpbochi/jplabscode/src/e1bb20c8f273/Extensions/CompressionExt.cs" />
         [NotNull]
         public static Byte[] Compress( [NotNull] this String text ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
 
@@ -89,11 +89,11 @@ namespace Librainian.OperatingSystem.Compression {
 
         [NotNull]
         public static Byte[] Compress( [NotNull] this String text, [NotNull] Encoding encoding ) {
-            if ( text == null ) {
+            if ( text is null ) {
                 throw new ArgumentNullException( nameof( text ) );
             }
 
-            if ( encoding == null ) {
+            if ( encoding is null ) {
                 throw new ArgumentNullException( nameof( encoding ) );
             }
 
@@ -122,7 +122,7 @@ namespace Librainian.OperatingSystem.Compression {
 
         [NotNull]
         public static Byte[] Decompress( [NotNull] this Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
@@ -157,7 +157,7 @@ namespace Librainian.OperatingSystem.Compression {
 
         [NotNull]
         public static String DecompressToString( [NotNull] this Byte[] data ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
@@ -166,11 +166,11 @@ namespace Librainian.OperatingSystem.Compression {
 
         [NotNull]
         public static String DecompressToString( [NotNull] this Byte[] data, [NotNull] Encoding encoding ) {
-            if ( data == null ) {
+            if ( data is null ) {
                 throw new ArgumentNullException( nameof( data ) );
             }
 
-            if ( encoding == null ) {
+            if ( encoding is null ) {
                 throw new ArgumentNullException( nameof( encoding ) );
             }
 
@@ -195,7 +195,7 @@ namespace Librainian.OperatingSystem.Compression {
                     }
                 }
 
-                if ( encoding == null ) {
+                if ( encoding is null ) {
                     encoding = Encoding.Unicode;
                 }
 
@@ -211,7 +211,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         [NotNull]
         public static String ToCompressedBase64( [NotNull] this String text, [CanBeNull] Encoding encoding = null ) {
-            if ( encoding == null ) {
+            if ( encoding is null ) {
                 encoding = Encoding.Unicode;
             }
 
@@ -225,7 +225,5 @@ namespace Librainian.OperatingSystem.Compression {
                 }
             }
         }
-
     }
-
 }

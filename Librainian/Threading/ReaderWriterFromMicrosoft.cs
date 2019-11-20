@@ -59,7 +59,34 @@ namespace Librainian.Threading {
     [HostProtection( MayLeakOnAbort = true )]
     public class ReaderWriterFromMicrosoft : IDisposable {
 
-        public void Dispose() => this.Dispose( true );
+        private const Int32 LockSleep0Count = 5;
+
+        private const Int32 LockSpinCount = 10;
+
+        private const Int32 LockSpinCycles = 20;
+
+        //The max readers is actually one less than it's theoretical max.
+        //This is done in order to prevent reader count overflows. If the reader
+        //count reaches max, other readers will wait.
+        private const UInt32 MAX_READER = 0x10000000 - 2;
+
+        private const Int32 MaxSpinCount = 20;
+
+        private const UInt32 READER_MASK = 0x10000000 - 1;
+
+        private const UInt32 WAITING_UPGRADER = 0x20000000;
+
+        private const UInt32 WAITING_WRITERS = 0x40000000;
+
+        private const UInt32 WRITER_HELD = 0x80000000;
+
+        // Every lock instance has a unique ID, which is used by ReaderWriterCount to associate itself with the lock
+        // without holding a reference to it.
+        private static Int64 NextLockID;
+
+        // See comments on ReaderWriterCount.
+        [ThreadStatic]
+        private static ReaderWriterCount t_rwc;
 
         private readonly Int64 lockID;
 
@@ -100,7 +127,7 @@ namespace Librainian.Threading {
 
         public Int32 CurrentReadCount {
             get {
-                var numreaders = ( Int32 ) this.GetNumReaders();
+                var numreaders = ( Int32 )this.GetNumReaders();
 
                 if ( this.upgradeLockOwnerId != -1 ) {
                     return numreaders - 1;
@@ -188,40 +215,11 @@ namespace Librainian.Threading {
             }
         }
 
-        public Int32 WaitingReadCount => ( Int32 ) this.numReadWaiters;
+        public Int32 WaitingReadCount => ( Int32 )this.numReadWaiters;
 
-        public Int32 WaitingUpgradeCount => ( Int32 ) this.numUpgradeWaiters;
+        public Int32 WaitingUpgradeCount => ( Int32 )this.numUpgradeWaiters;
 
-        public Int32 WaitingWriteCount => ( Int32 ) this.numWriteWaiters;
-
-        private const Int32 LockSleep0Count = 5;
-
-        private const Int32 LockSpinCount = 10;
-
-        private const Int32 LockSpinCycles = 20;
-
-        //The max readers is actually one less than it's theoretical max.
-        //This is done in order to prevent reader count overflows. If the reader
-        //count reaches max, other readers will wait.
-        private const UInt32 MAX_READER = 0x10000000 - 2;
-
-        private const Int32 MaxSpinCount = 20;
-
-        private const UInt32 READER_MASK = 0x10000000 - 1;
-
-        private const UInt32 WAITING_UPGRADER = 0x20000000;
-
-        private const UInt32 WAITING_WRITERS = 0x40000000;
-
-        private const UInt32 WRITER_HELD = 0x80000000;
-
-        // Every lock instance has a unique ID, which is used by ReaderWriterCount to associate itself with the lock
-        // without holding a reference to it.
-        private static Int64 NextLockID;
-
-        // See comments on ReaderWriterCount.
-        [ThreadStatic]
-        private static ReaderWriterCount t_rwc;
+        public Int32 WaitingWriteCount => ( Int32 )this.numWriteWaiters;
 
         public ReaderWriterFromMicrosoft() {
 
@@ -232,7 +230,7 @@ namespace Librainian.Threading {
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         private static Boolean IsRWEntryEmpty( [NotNull] ReaderWriterCount rwc ) {
-            if ( rwc == null ) {
+            if ( rwc is null ) {
                 throw new ArgumentNullException( paramName: nameof( rwc ) );
             }
 
@@ -390,7 +388,7 @@ namespace Librainian.Threading {
                     return rwc;
                 }
 
-                if ( !dontAllocate && empty == null && IsRWEntryEmpty( rwc ) ) {
+                if ( !dontAllocate && empty is null && IsRWEntryEmpty( rwc ) ) {
                     empty = rwc;
                 }
 
@@ -401,7 +399,7 @@ namespace Librainian.Threading {
                 return null;
             }
 
-            if ( empty == null ) {
+            if ( empty is null ) {
                 empty = new ReaderWriterCount {
                     next = t_rwc
                 };
@@ -432,7 +430,7 @@ namespace Librainian.Threading {
         ///     set 'waitEvent'
         /// </summary>
         private void LazyCreateEvent( [NotNull] ref EventWaitHandle waitEvent, Boolean makeAutoResetEvent ) {
-            if ( waitEvent == null ) {
+            if ( waitEvent is null ) {
                 throw new ArgumentNullException( paramName: nameof( waitEvent ) );
             }
 
@@ -522,7 +520,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
 
                 // We can enter a read lock if there are only read-locks have been given out
                 // and a writer is not trying to get in.
@@ -557,7 +555,7 @@ namespace Librainian.Threading {
                 }
 
                 // Drat, we need to wait.  Mark that we have waiters and wait.
-                if ( this.readEvent == null ) // Create the needed event
+                if ( this.readEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this.readEvent, false );
 
@@ -645,7 +643,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
 
                 //Once an upgrade lock is taken, it's like having a reader lock held
                 //until upgrade or downgrade operations are performed.
@@ -670,7 +668,7 @@ namespace Librainian.Threading {
                 }
 
                 // Drat, we need to wait.  Mark that we have waiters and wait.
-                if ( this.upgradeEvent == null ) // Create the needed event
+                if ( this.upgradeEvent is null ) // Create the needed event
                 {
                     this.LazyCreateEvent( ref this.upgradeEvent, true );
 
@@ -749,7 +747,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
                 if ( this.IsWriterAcquired() ) {
 
                     // Good case, there is no contention, we are basically done
@@ -810,7 +808,7 @@ namespace Librainian.Threading {
                 Boolean retVal;
 
                 if ( upgradingToWrite ) {
-                    if ( this.waitUpgradeEvent == null ) // Create the needed event
+                    if ( this.waitUpgradeEvent is null ) // Create the needed event
                     {
                         this.LazyCreateEvent( ref this.waitUpgradeEvent, true );
 
@@ -829,7 +827,7 @@ namespace Librainian.Threading {
                 else {
 
                     // Drat, we need to wait.  Mark that we have waiters and wait.
-                    if ( this.writeEvent == null ) // create the needed event.
+                    if ( this.writeEvent is null ) // create the needed event.
                     {
                         this.LazyCreateEvent( ref this.writeEvent, true );
 
@@ -865,7 +863,7 @@ namespace Librainian.Threading {
         ///     Before the wait 'numWaiters' is incremented and is restored before leaving this routine.
         /// </summary>
         private Boolean WaitOnEvent( [NotNull] EventWaitHandle waitEvent, ref UInt32 numWaiters, TimeoutTracker timeout ) {
-            if ( waitEvent == null ) {
+            if ( waitEvent is null ) {
                 throw new ArgumentNullException( paramName: nameof( waitEvent ) );
             }
 
@@ -912,6 +910,8 @@ namespace Librainian.Threading {
             return waitSuccessful;
         }
 
+        public void Dispose() => this.Dispose( true );
+
         // threads waiting to acquire a read lock go here (will be released in bulk)
         public void EnterReadLock() => this.TryEnterReadLock( -1 );
 
@@ -923,7 +923,7 @@ namespace Librainian.Threading {
 
             var lrwc = this.GetThreadRWCount( true );
 
-            if ( lrwc == null || lrwc.readercount < 1 ) {
+            if ( lrwc is null || lrwc.readercount < 1 ) {
 
                 //You have to be holding the read lock to make this call.
 
@@ -960,7 +960,7 @@ namespace Librainian.Threading {
 
             var lrwc = this.GetThreadRWCount( true );
 
-            if ( lrwc == null ) {
+            if ( lrwc is null ) {
 
                 throw new SynchronizationLockException( "Mismatched Upgrade" );
             }
@@ -993,7 +993,7 @@ namespace Librainian.Threading {
 
             var lrwc = this.GetThreadRWCount( false );
 
-            if ( lrwc == null ) {
+            if ( lrwc is null ) {
 
                 throw new SynchronizationLockException( "Mismatched Write" );
             }
@@ -1063,13 +1063,13 @@ namespace Librainian.Threading {
             }
 
             public TimeoutTracker( TimeSpan timeout ) {
-                var ltm = ( Int64 ) timeout.TotalMilliseconds;
+                var ltm = ( Int64 )timeout.TotalMilliseconds;
 
                 if ( ltm < -1 || ltm > Int32.MaxValue ) {
                     throw new ArgumentOutOfRangeException( nameof( timeout ) );
                 }
 
-                this._total = ( Int32 ) ltm;
+                this._total = ( Int32 )ltm;
 
                 if ( this._total != -1 && this._total != 0 ) {
                     this._start = Environment.TickCount;

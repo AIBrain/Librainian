@@ -144,7 +144,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// </summary>
         public DeviceCapabilities GetCapabilities() {
             if ( this._capabilities == DeviceCapabilities.Unknown ) {
-                this._capabilities = ( DeviceCapabilities ) this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CAPABILITIES, 0 );
+                this._capabilities = ( DeviceCapabilities )this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CAPABILITIES, 0 );
             }
 
             return this._capabilities;
@@ -185,7 +185,7 @@ namespace Librainian.ComputerSystem.Devices {
                 yield return this;
             }
             else {
-                if ( this.Parent() == null ) {
+                if ( this.Parent() is null ) {
                     yield break;
                 }
 

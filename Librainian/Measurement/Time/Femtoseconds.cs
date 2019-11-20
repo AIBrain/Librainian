@@ -137,7 +137,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Femtoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Femtoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Femtoseconds( Rational value ) => this.Value = value;
 
@@ -161,19 +161,20 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
+        [NotNull]
         public static implicit operator SpanOfTime( Femtoseconds femtoseconds ) => new SpanOfTime( femtoseconds: femtoseconds );
 
         public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
 
         public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
-        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational ) ( -femtoseconds ) );
+        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )( -femtoseconds ) );
 
         public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) => !Equals( left, right );
 
         public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) => Combine( left, right );
 
-        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational ) femtoseconds );
+        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )femtoseconds );
 
         public static Boolean operator <( Femtoseconds left, Femtoseconds right ) => left.Value < right.Value;
 
@@ -186,7 +187,7 @@ namespace Librainian.Measurement.Time {
         public Boolean Equals( Femtoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -207,7 +208,7 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneFemtosecond );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneFemtosecond );
 
         public Seconds ToSeconds() => throw new NotImplementedException();
 
@@ -218,7 +219,7 @@ namespace Librainian.Measurement.Time {
                 return $"{whole} {whole.PluralOf( "fs" )}";
             }
 
-            var dec = ( Decimal ) this.Value;
+            var dec = ( Decimal )this.Value;
 
             return $"{dec} {dec.PluralOf( "fs" )}";
         }

@@ -63,10 +63,6 @@ namespace Librainian.Collections.Sets {
     [JsonObject]
     public class ConcurrentHashset<T> : IEnumerable<T> {
 
-        public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<T, Object> Set { get; }
@@ -90,7 +86,7 @@ namespace Librainian.Collections.Sets {
 
         [DebuggerStepThrough]
         public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( paramName: nameof( list ) );
             }
 
@@ -105,7 +101,7 @@ namespace Librainian.Collections.Sets {
 
         [DebuggerStepThrough]
         public void Add( [CanBeNull] T item ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 return;
             }
 
@@ -114,7 +110,7 @@ namespace Librainian.Collections.Sets {
 
         [DebuggerStepThrough]
         public void AddRange( [NotNull] IEnumerable<T> items ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( paramName: nameof( items ) );
             }
 
@@ -126,16 +122,18 @@ namespace Librainian.Collections.Sets {
 
         [DebuggerStepThrough]
         public Boolean Contains( [NotNull] T item ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );
             }
 
             return this.Set.ContainsKey( item );
         }
 
+        public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
+
         [DebuggerStepThrough]
         public Boolean Remove( [NotNull] T item ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );
             }
 
@@ -167,7 +165,7 @@ namespace Librainian.Collections.Sets {
         /// <param name="tag"></param>
         /// <returns></returns>
         public Boolean Tag( [NotNull] T item, [CanBeNull] Object tag ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );
             }
 
@@ -183,7 +181,7 @@ namespace Librainian.Collections.Sets {
         /// <returns></returns>
         [CanBeNull]
         public Object Tag( [NotNull] T item ) {
-            if ( item == null ) {
+            if ( item is null ) {
                 throw new ArgumentNullException( paramName: nameof( item ) );
             }
 
@@ -191,5 +189,7 @@ namespace Librainian.Collections.Sets {
 
             return tag;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

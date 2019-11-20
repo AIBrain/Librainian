@@ -78,7 +78,7 @@ namespace Librainian.Internet.RandomOrg {
 
             var task = url.GetWebPageAsync( Seconds.Two );
 
-            if ( task == null ) {
+            if ( task is null ) {
                 throw new InvalidOperationException( "Unable to pull any data from random.org." );
             }
 
@@ -92,23 +92,16 @@ namespace Librainian.Internet.RandomOrg {
         /// <see cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
         public class IntegerGenerator {
 
+            private const Int32 BaseDefault = 10;
+            private const Int32 ColDefault = 1;
+            private const Int32 ColMax = 1000000000;
+            private const Int32 Max = 1000000000;
+            private const Int32 Min = -1000000000;
+            private const Int32 NumMax = 10000;
+            private const Int32 NumMin = 1;
             private Int32 _index;
 
             private List<Int32> Ints { get; } = new List<Int32>();
-
-            private const Int32 BaseDefault = 10;
-
-            private const Int32 ColDefault = 1;
-
-            private const Int32 ColMax = 1000000000;
-
-            private const Int32 Max = 1000000000;
-
-            private const Int32 Min = -1000000000;
-
-            private const Int32 NumMax = 10000;
-
-            private const Int32 NumMin = 1;
 
             public IntegerGenerator() => this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
 
@@ -132,7 +125,7 @@ namespace Librainian.Internet.RandomOrg {
                                         var toParse =
                                             $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPage();
 
-                                        if ( toParse == null ) {
+                                        if ( toParse is null ) {
                                             return;
                                         }
 

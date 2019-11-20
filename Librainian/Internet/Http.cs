@@ -56,6 +56,10 @@ namespace Librainian.Internet {
     /// </summary>
     public static class Http {
 
+        private static readonly Object Synch = new Object();
+
+        private static Hashtable _urls;
+
         private static Hashtable Urls {
             get {
                 lock ( Synch ) {
@@ -69,10 +73,6 @@ namespace Librainian.Internet {
                 }
             }
         }
-
-        private static readonly Object Synch = new Object();
-
-        private static Hashtable _urls;
 
         /*
         public class HtmlDocument : Uri {
@@ -101,9 +101,9 @@ namespace Librainian.Internet {
             }
 
             //(result.AsyncState is HttpWebRequest).BreakIfFalse(); //heh
-            var request = ( HttpWebRequest ) result.AsyncState;
+            var request = ( HttpWebRequest )result.AsyncState;
 
-            var response = ( HttpWebResponse ) request.GetResponse();
+            var response = ( HttpWebResponse )request.GetResponse();
 
             if ( response.StatusCode != HttpStatusCode.OK ) {
                 return;
@@ -111,7 +111,7 @@ namespace Librainian.Internet {
 
             var tempresp = response.GetResponseStream();
 
-            if ( tempresp == null ) {
+            if ( tempresp is null ) {
                 return;
             }
 
@@ -161,7 +161,7 @@ namespace Librainian.Internet {
                 return peek; //but return what we have already.
             }
 
-            var request = ( HttpWebRequest ) WebRequest.Create( uri );
+            var request = ( HttpWebRequest )WebRequest.Create( uri );
             request.AllowAutoRedirect = true;
             request.UserAgent = "AIBrain Engine v2010.04";
             request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );
@@ -242,7 +242,7 @@ namespace Librainian.Internet {
             //TODO
             //DownloadString http1 = new WebClient().DownloadStringAsync;
 
-            var request = ( HttpWebRequest ) WebRequest.Create( uri );
+            var request = ( HttpWebRequest )WebRequest.Create( uri );
             request.AllowAutoRedirect = true;
             request.UserAgent = "AIBrain Engine v" + DateTime.Now.Year + "." + DateTime.Now.Month;
             request.CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default );

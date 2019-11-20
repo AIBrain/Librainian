@@ -58,6 +58,13 @@ namespace Librainian.Maths {
         [JsonProperty]
         private Double _value;
 
+        /// <summary>1 <see cref="MaxValue" /></summary>
+        public const Double MaxValue = +1D;
+
+        //public object Clone() { return new Weight( this ); }
+        /// <summary>- 1 <see cref="MinValue" /></summary>
+        public const Double MinValue = -1D;
+
         public Double Value {
             get => Interlocked.Exchange( ref this._value, this._value );
 
@@ -75,15 +82,8 @@ namespace Librainian.Maths {
             }
         }
 
-        /// <summary>1 <see cref="MaxValue" /></summary>
-        public const Double MaxValue = +1D;
-
-        //public object Clone() { return new Weight( this ); }
-        /// <summary>- 1 <see cref="MinValue" /></summary>
-        public const Double MinValue = -1D;
-
         /// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
-        public WeightObsolete() => this.Value = (Randem.NextDouble() * 0.25) + (Randem.NextDouble() * 0.25);
+        public WeightObsolete() => this.Value = ( Randem.NextDouble() * 0.25 ) + ( Randem.NextDouble() * 0.25 );
 
         /// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
         /// <param name="value"></param>
@@ -95,7 +95,7 @@ namespace Librainian.Maths {
 
         [NotNull]
         public static WeightObsolete Parse( [NotNull] String value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
 

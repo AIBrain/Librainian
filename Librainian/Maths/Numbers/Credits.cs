@@ -62,6 +62,9 @@ namespace Librainian.Maths.Numbers {
         [JsonProperty]
         private UInt64 _lifetimeCredits;
 
+        /// <summary>No credits.</summary>
+        public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
+
         public UInt64 CurrentCredits {
             get => Thread.VolatileRead( ref this._currentCredits );
 
@@ -74,9 +77,6 @@ namespace Librainian.Maths.Numbers {
             private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
         }
 
-        /// <summary>No credits.</summary>
-        public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
-
         public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
             this.CurrentCredits = currentCredits;
             this.LifetimeCredits = lifetimeCredits;
@@ -84,11 +84,11 @@ namespace Librainian.Maths.Numbers {
 
         [NotNull]
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
@@ -104,9 +104,9 @@ namespace Librainian.Maths.Numbers {
         public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
 
         public void SubtractCredits( UInt64 credits = 1 ) {
-            var currentcredits = ( Int64 ) this.CurrentCredits;
+            var currentcredits = ( Int64 )this.CurrentCredits;
 
-            if ( currentcredits - ( Int64 ) credits < 0 ) {
+            if ( currentcredits - ( Int64 )credits < 0 ) {
                 this.CurrentCredits = 0;
             }
             else {

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/11/07 at 2:07 PM.
 
 namespace Librainian.Graphics {
@@ -963,7 +963,6 @@ namespace Librainian.Graphics {
             HalftoneScreen = 0x500F,
 
             HalftoneShape = 0x500D
-
         }
 
         [NotNull]
@@ -1051,7 +1050,7 @@ namespace Librainian.Graphics {
 
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this Document document, DateTime oldestDate, DateTime youngestDate ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -1062,7 +1061,7 @@ namespace Librainian.Graphics {
 
         [CanBeNull]
         public static DateTime? ImageCreationBestGuess( [CanBeNull] this FileSystemInfo info, DateTime oldestDate, DateTime youngestDate ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
 
@@ -1212,7 +1211,7 @@ namespace Librainian.Graphics {
         /// <param name="document"></param>
         /// <returns></returns>
         public static Boolean IsaValidImage( [NotNull] this IDocument document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
@@ -1327,20 +1326,20 @@ namespace Librainian.Graphics {
 
         [NotNull]
         public static Image ResizeImage( [NotNull] this Image imgToResize, Size size ) {
-            if ( imgToResize == null ) {
+            if ( imgToResize is null ) {
                 throw new ArgumentNullException( nameof( imgToResize ) );
             }
 
             var sourceWidth = imgToResize.Width;
             var sourceHeight = imgToResize.Height;
 
-            var nPercentW = size.Width / ( Single ) sourceWidth;
-            var nPercentH = size.Height / ( Single ) sourceHeight;
+            var nPercentW = size.Width / ( Single )sourceWidth;
+            var nPercentH = size.Height / ( Single )sourceHeight;
 
             var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
-            var destWidth = ( Int32 ) ( sourceWidth * nPercent );
-            var destHeight = ( Int32 ) ( sourceHeight * nPercent );
+            var destWidth = ( Int32 )( sourceWidth * nPercent );
+            var destHeight = ( Int32 )( sourceHeight * nPercent );
 
             using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
                 using ( var g = Graphics.FromImage( image: bitmap ) ) {
@@ -1361,7 +1360,7 @@ namespace Librainian.Graphics {
         /// <param name="bestGuess"></param>
         /// <returns></returns>
         private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
 
@@ -1425,7 +1424,6 @@ namespace Librainian.Graphics {
             /// <see cref="http://wikipedia.org/wiki/TIFF" />
             [NotNull]
             public static String Tiff => ".tif";
-
         }
 
         public static class PropertyList {
@@ -1435,9 +1433,6 @@ namespace Librainian.Graphics {
             public const Int32 DateTimeOriginal = 0x9003;
 
             public const Int32 PropertyTagDateTime = 0x132;
-
         }
-
     }
-
 }

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2019/10/25 at 12:26 PM.
 
 namespace Librainian.Maths {
@@ -269,7 +269,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Int16 ) ( value - 1 );
+                value &= ( Int16 )( value - 1 );
             }
 
             return i;
@@ -285,7 +285,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( UInt16 ) ( value - 1 );
+                value &= ( UInt16 )( value - 1 );
             }
 
             return i;
@@ -301,7 +301,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Byte ) ( value - 1 );
+                value &= ( Byte )( value - 1 );
             }
 
             return i;
@@ -317,7 +317,7 @@ namespace Librainian.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( SByte ) ( value - 1 );
+                value &= ( SByte )( value - 1 );
             }
 
             return i;
@@ -449,7 +449,7 @@ namespace Librainian.Maths {
         /// <returns>True for even, False for odd.</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 ) ( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
+        public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -458,7 +458,7 @@ namespace Librainian.Maths {
         /// <returns>Input value with reversed bits</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ReverseBits( this Byte source ) => ( Byte ) ( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
+        public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
         /// <summary>
         ///     Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)
@@ -475,7 +475,7 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt32 ReverseBits( this UInt32 source ) =>
-            ( UInt32 ) ( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
+            ( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
                          ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
 
         /// <summary>
@@ -484,11 +484,11 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt16 ReverseBits( this UInt16 source ) {
-            source = ( UInt16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-            source = ( UInt16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-            source = ( UInt16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+            source = ( UInt16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( UInt16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( UInt16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( UInt16 ) ( ( source >> 8 ) | ( source << 8 ) );
+            return ( UInt16 )( ( source >> 8 ) | ( source << 8 ) );
         }
 
         /// <summary>
@@ -497,11 +497,11 @@ namespace Librainian.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static Int16 ReverseBits( this Int16 source ) {
-            source = ( Int16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-            source = ( Int16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-            source = ( Int16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+            source = ( Int16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( Int16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( Int16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( Int16 ) ( ( source >> 8 ) | ( source << 8 ) );
+            return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
         }
 
         [NotNull]
@@ -517,10 +517,10 @@ namespace Librainian.Maths {
             }
 
             // mag is 0 for bytes, 1 for KB, 2, for MB.
-            var mag = ( Int32 ) Math.Log( value, 1024 );
+            var mag = ( Int32 )Math.Log( value, 1024 );
 
             // 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
-            var adjustedSize = ( Decimal ) value / ( 1L << ( mag * 10 ) );
+            var adjustedSize = ( Decimal )value / ( 1L << ( mag * 10 ) );
 
             // make adjustment when the value is large enough that it would round up to 1000 or more
             if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
@@ -594,9 +594,9 @@ namespace Librainian.Maths {
                 step = 1UL;
             }
 
-            var reFrom = ( UInt64 ) start;
+            var reFrom = ( UInt64 )start;
 
-            if ( start <= ( Decimal ) end ) {
+            if ( start <= ( Decimal )end ) {
                 for ( var ul = reFrom; ul <= end; ul += step ) {
                     yield return ul;
 
@@ -902,7 +902,7 @@ namespace Librainian.Maths {
         [Pure]
         [NotNull]
         public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
-            if ( input == null ) {
+            if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
 
@@ -924,7 +924,5 @@ namespace Librainian.Maths {
 
         [NotNull]
         public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
-
     }
-
 }

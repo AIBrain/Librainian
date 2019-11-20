@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Idler.cs" was last formatted by Protiguous on 2019/08/08 at 9:36 AM.
+// Project: "Librainian", "Idler.cs" was last formatted by Protiguous on 2019/11/17 at 5:18 PM.
 
 namespace Librainian.Threading {
 
@@ -48,6 +48,7 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Collections.Sets;
+    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Magic;
@@ -66,9 +67,7 @@ namespace Librainian.Threading {
 
     public interface IIdler {
 
-        /// <summary>
-        ///     Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.
-        /// </summary>
+        /// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
         /// <param name="name"></param>
         /// <param name="action"> </param>
         void Add( [NotNull] String name, [NotNull] Action action );
@@ -76,23 +75,67 @@ namespace Librainian.Threading {
         Boolean Any();
 
         /// <summary>
-        ///     Run any remaining jobs.
-        ///     <para>
-        ///         Will exit while loop if <see cref="CancellationToken" /> is signaled to cancel.
-        ///     </para>
+        /// Run any remaining jobs.
+        /// <para>Will exit while loop if <see cref="CancellationToken" /> is signaled to cancel.</para>
         /// </summary>
         void Finish();
     }
 
     public class Idler : ABetterClassDispose, IIdler {
 
-        /// <summary>
-        ///     Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.
-        /// </summary>
+        [NotNull]
+        private ConcurrentDictionary<String, Action> Jobs { get; } = new ConcurrentDictionary<String, Action>();
+
+        [NotNull]
+        private ConcurrentHashset<Task> Runners { get; } = new ConcurrentHashset<Task>();
+
+        private CancellationToken Token { get; }
+
+        public Idler( CancellationToken token ) {
+            this.Token = token;
+
+            //this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
+            this.AddHandler();
+        }
+
+        private void AddHandler() => Application.Idle += this.OnIdle;
+
+        /// <summary>Pull next <see cref="Action" /> to run from the queue and execute it.</summary>
+        private void NextJob() {
+            if ( !this.Any() || this.Token.IsCancellationRequested ) {
+                return;
+            }
+
+            var job = this.Jobs.Keys.FirstOrDefault();
+
+            if ( job is null || !this.Jobs.TryRemove( job, out var jack ) ) {
+                return;
+            }
+
+            try {
+
+                //"Idle(): Running next job...".Verbose();
+                jack.Execute();
+            }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+            finally {
+                this.Nop();
+
+                //"Idle(): Done with job.".Verbose();
+            }
+        }
+
+        private void OnIdle( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) => this.NextJob();
+
+        private void RemoveHandler() => Application.Idle -= this.OnIdle;
+
+        /// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
         /// <param name="name"></param>
         /// <param name="action"> </param>
         public void Add( [NotNull] String name, [NotNull] Action action ) {
-            if ( action == null ) {
+            if ( action is null ) {
                 throw new ArgumentNullException( paramName: nameof( action ) );
             }
 
@@ -105,66 +148,21 @@ namespace Librainian.Threading {
 
         public Boolean Any() => this.Jobs.Any();
 
-        /// <summary>
-        ///     Run any remaining jobs.
-        ///     <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
+        public override void DisposeManaged() {
+            if ( !this.IsDisposed() ) {
+                this.RemoveHandler();
+            }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() { }
+
+        /// <summary>Run any remaining jobs.
+        /// <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
         /// </summary>
         public void Finish() {
             while ( this.Any() && !this.Token.IsCancellationRequested ) {
                 this.NextJob();
-            }
-        }
-
-        private CancellationToken Token { get; }
-
-        [NotNull]
-        private ConcurrentDictionary<String, Action> Jobs { get; } = new ConcurrentDictionary<String, Action>();
-
-        [NotNull]
-        private ConcurrentHashset<Task> Runners { get; } = new ConcurrentHashset<Task>();
-
-        public Idler( CancellationToken token ) {
-            this.Token = token;
-
-            //this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
-            this.AddHandler();
-        }
-
-        private void AddHandler() => Application.Idle += this.OnIdle;
-
-        /// <summary>
-        ///     Pull next <see cref="Action" /> to run from the queue and execute it.
-        /// </summary>
-        private void NextJob() {
-            if ( !this.Any() || this.Token.IsCancellationRequested ) {
-                return;
-            }
-
-            var job = this.Jobs.Keys.FirstOrDefault();
-
-            if ( job == null || !this.Jobs.TryRemove( job, out var jack ) ) {
-                return;
-            }
-
-            try {
-                "Idle(): Running next job...".Trace();
-                jack.Execute();
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-            finally {
-                "Idle(): Done with job.".Trace();
-            }
-        }
-
-        private void OnIdle( Object sender, EventArgs e ) => this.NextJob();
-
-        private void RemoveHandler() => Application.Idle -= this.OnIdle;
-
-        public override void DisposeManaged() {
-            if ( !this.IsDisposed() ) {
-                this.RemoveHandler();
             }
         }
     }

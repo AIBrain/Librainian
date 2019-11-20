@@ -47,6 +47,15 @@ namespace Librainian.Extensions {
 
     public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
+        private const String FileSizeFormat = "fs";
+
+        [NotNull]
+        private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
+            var formattableArg = arg as IFormattable;
+
+            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
+        }
+
         [NotNull]
         public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
             if ( format?.StartsWith( FileSizeFormat ) != true ) {
@@ -92,20 +101,11 @@ namespace Librainian.Extensions {
         }
 
         public Object GetFormat( [NotNull] Type formatType ) {
-            if ( formatType == null ) {
+            if ( formatType is null ) {
                 throw new ArgumentNullException( nameof( formatType ) );
             }
 
             return formatType == typeof( ICustomFormatter ) ? this : null;
-        }
-
-        private const String FileSizeFormat = "fs";
-
-        [NotNull]
-        private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
-            var formattableArg = arg as IFormattable;
-
-            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
         }
     }
 }

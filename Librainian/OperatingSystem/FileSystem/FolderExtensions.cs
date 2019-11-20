@@ -105,11 +105,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
             IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
-            if ( sourceFolder == null ) {
+            if ( sourceFolder is null ) {
                 throw new ArgumentNullException( nameof( sourceFolder ) );
             }
 
-            if ( destinationFolder == null ) {
+            if ( destinationFolder is null ) {
                 throw new ArgumentNullException( nameof( destinationFolder ) );
             }
 
@@ -130,7 +130,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                     var beginTime = DateTime.UtcNow;
 
                     var statistics = new DocumentCopyStatistics {
-                        TimeStarted = beginTime, SourceDocument = sourceDocument
+                        TimeStarted = beginTime,
+                        SourceDocument = sourceDocument
                     };
 
                     if ( crc ) {
@@ -175,7 +176,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         public static IEnumerable<IFolder> FindFolder( [NotNull] this String folderName ) {
-            if ( folderName == null ) {
+            if ( folderName is null ) {
                 throw new ArgumentNullException( nameof( folderName ) );
             }
 
@@ -205,7 +206,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
                 foreach ( var folder in folders ) {
-                    var parts = SplitPath( ( Folder ) folder ); //TODO fix this cast
+                    var parts = SplitPath( ( Folder )folder ); //TODO fix this cast
 
                     if ( parts.Any( s => s.Like( folderName ) ) ) {
                         found = true;
@@ -239,7 +240,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
             }
 

@@ -75,7 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                     while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
                         await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
-                        var bytesCopied = ( UInt64 ) numRead;
+                        var bytesCopied = ( UInt64 )numRead;
 
                         var percent = bytesCopied / bytesToBeCopied;
 
@@ -119,9 +119,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
             IProgress<TimeSpan> eta = null ) {
-            if ( source == null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
 
-            if ( destination == null ) { throw new ArgumentNullException( nameof( destination ) ); }
+            if ( destination is null ) { throw new ArgumentNullException( nameof( destination ) ); }
 
             try {
                 var begin = Stopwatch.StartNew();
@@ -204,7 +204,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         */
 
         public static void TryPlayFile( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -219,7 +219,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
         }
-
     }
 
     /*

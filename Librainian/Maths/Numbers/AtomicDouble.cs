@@ -79,7 +79,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         public static AtomicDouble Parse( [NotNull] String value ) {
-            if ( value == null ) {
+            if ( value is null ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
 

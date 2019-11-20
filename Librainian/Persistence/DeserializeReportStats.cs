@@ -86,7 +86,7 @@ namespace Librainian.Persistence {
 
             var handler = this.Handler;
 
-            if ( handler == null ) {
+            if ( handler is null ) {
                 return;
             }
 
@@ -107,6 +107,10 @@ namespace Librainian.Persistence {
         public override void DisposeManaged() {
             this.Gains.Dispose();
             this.Losses.Dispose();
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
 
         public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2019/11/06 at 12:16 AM.
+// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2019/11/19 at 6:16 AM.
 
 namespace Librainian.Databases {
 
@@ -58,19 +58,15 @@ namespace Librainian.Databases {
 
         void Add<T>( [NotNull] String name, SqlDbType type, [CanBeNull] T value );
 
-        /// <summary>
-        ///     Opens and then closes a <see cref="SqlConnection" />.
-        /// </summary>
+        /// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
         /// <returns></returns>
-        Int32? ExecuteNonQuery( String query, params SqlParameter[] parameters );
+        Int32? ExecuteNonQuery( String query, CommandType commandType, params SqlParameter[] parameters );
 
-        Int32? ExecuteNonQuery( String query, Int32 retries, params SqlParameter[] parameters );
+        Int32? ExecuteNonQuery( String query, Int32 retries, CommandType commandType, params SqlParameter[] parameters );
 
         Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="table">      </param>
@@ -78,17 +74,14 @@ namespace Librainian.Databases {
         /// <returns></returns>
         Boolean ExecuteReader( [NotNull] String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
         Task<DataTableReader> ExecuteReaderAsyncDataReader( String query, CommandType commandType, params SqlParameter[] parameters );
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
@@ -113,50 +106,46 @@ namespace Librainian.Databases {
         /// <returns></returns>
         Task<TResult> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
-        /// <summary>
-        ///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="sproc" />.
-        ///     <para>Note: Include the parameters after the sproc.</para>
-        ///     <para>Can throw exceptions on connecting or executing the sproc.</para>
+        /// <summary>Overwrites the <paramref name="table" /> contents with data from the <paramref name="sproc" />.
+        /// <para>Note: Include the parameters after the sproc.</para>
+        /// <para>Can throw exceptions on connecting or executing the sproc.</para>
         /// </summary>
         /// <param name="sproc"></param>
+        /// <param name="commandType"></param>
         /// <param name="table"></param>
-        Task<Boolean> FillTableAsync( [NotNull] String sproc, [NotNull] DataTable table );
+        Task<Boolean> FillTableAsync( [NotNull] String sproc, CommandType commandType, [NotNull] DataTable table );
 
         /// <summary>
         ///     <para>Run a query, no rows expected to be read.</para>
         ///     <para>Does not catch any exceptions.</para>
         /// </summary>
         /// <param name="sproc"></param>
-        Task NonQueryAsync( [NotNull] String sproc );
+        /// <param name="commandType"></param>
+        Task NonQueryAsync( [NotNull] String sproc, CommandType commandType );
 
-        /// <summary>
-        ///     Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.
-        /// </summary>
+        /// <summary>Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.</summary>
         /// <param name="sql"></param>
         DataTableReader QueryAdHoc( [NotNull] String sql );
 
-        /// <summary>
-        ///     Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.
-        /// </summary>
+        /// <summary>Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.</summary>
         /// <param name="sql"></param>
         Task<DataTableReader> QueryAdHocAsync( [NotNull] String sql );
 
-        /// <summary>
-        ///     Simplest possible database connection.
-        ///     <para>Connect and then run <paramref name="sproc" />.</para>
+        /// <summary>Simplest possible database connection.
+        /// <para>Connect and then run <paramref name="sproc" />.</para>
         /// </summary>
         /// <param name="sproc"></param>
+        /// <param name="commandType"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        Task<SqlDataReader> QueryAsync( [NotNull] String sproc );
+        Task<SqlDataReader> QueryAsync( [NotNull] String sproc, CommandType commandType );
 
-        /// <summary>
-        ///     Returns a <see cref="IEnumerable{T}" />
-        /// </summary>
+        /// <summary>Returns a <see cref="IEnumerable{T}" /></summary>
         /// <param name="query">     </param>
+        /// <param name="commandType"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, params SqlParameter[] parameters );
+        IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
         void UseDatabase( [NotNull] String dbName );
 

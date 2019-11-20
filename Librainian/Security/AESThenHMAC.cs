@@ -91,15 +91,15 @@ namespace Librainian.Security {
         public static Byte[] SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
             //Basic Usage Error Checks
-            if ( cryptKey == null || cryptKey.Length != KeyBitSize / 8 ) {
+            if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( authKey == null || authKey.Length != KeyBitSize / 8 ) {
+            if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"AuthKey needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
+            if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
@@ -178,7 +178,7 @@ namespace Librainian.Security {
             var cipherText = Convert.FromBase64String( s: encryptedMessage );
             var plainText = SimpleDecrypt( encryptedMessage: cipherText, cryptKey: cryptKey, authKey: authKey, nonSecretPayloadLength: nonSecretPayloadLength );
 
-            return plainText == null ? null : Encoding.UTF8.GetString( bytes: plainText );
+            return plainText is null ? null : Encoding.UTF8.GetString( bytes: plainText );
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Librainian.Security {
             var cipherText = Convert.FromBase64String( s: encryptedMessage );
             var plainText = SimpleDecryptWithPassword( encryptedMessage: cipherText, password: password, nonSecretPayloadLength: nonSecretPayloadLength );
 
-            return plainText == null ? null : Encoding.UTF8.GetString( bytes: plainText );
+            return plainText is null ? null : Encoding.UTF8.GetString( bytes: plainText );
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( encryptedMessage == null || encryptedMessage.Length == 0 ) {
+            if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
@@ -273,15 +273,15 @@ namespace Librainian.Security {
         public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[] nonSecretPayload = null ) {
 
             //User Error Checks
-            if ( cryptKey == null || cryptKey.Length != KeyBitSize / 8 ) {
+            if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( authKey == null || authKey.Length != KeyBitSize / 8 ) {
+            if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( secretMessage == null || secretMessage.Length < 1 ) {
+            if ( secretMessage is null || secretMessage.Length < 1 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
@@ -410,7 +410,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( secretMessage == null || secretMessage.Length == 0 ) {
+            if ( secretMessage is null || secretMessage.Length == 0 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 

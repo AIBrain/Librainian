@@ -61,11 +61,13 @@ namespace Librainian.Measurement.Currency {
     [JsonObject]
     public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-        /// <summary>
-        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
-        /// </summary>
-        /// <param name="other">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
+        [NotNull]
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        private readonly Int32 _hashcode;
+
+        [JsonProperty]
+        private Decimal _balance;
 
         public Decimal Balance {
             get {
@@ -91,6 +93,62 @@ namespace Librainian.Measurement.Currency {
         public Action<Decimal> OnBeforeDeposit { get; set; }
 
         public Action<Decimal> OnBeforeWithdraw { get; set; }
+
+        /// <summary>
+        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+        /// </summary>
+        public TimeSpan Timeout { get; set; }
+
+        public SimpleWallet() {
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        /// <summary>
+        ///     Initialize the wallet with the specified <paramref name="balance" />.
+        /// </summary>
+        /// <param name="balance"></param>
+        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
+
+        /// <summary>
+        ///     <para>Static comparison.</para>
+        ///     <para>Returns true if the wallets ARE the same instance.</para>
+        ///     <para>Returns true if the wallets HAVE the same balance.</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( null == left || null == right ) {
+                return false;
+            }
+
+            return left.Balance == right.Balance;
+        }
+
+        /// <summary>
+        ///     Dispose any disposable members.
+        /// </summary>
+        public override void DisposeManaged() => this._access.Dispose();
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
+        /// <summary>
+        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
+        /// </summary>
+        /// <param name="other">Annother to compare with this wallet.</param>
+        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
+
+        [Pure]
+        public override Int32 GetHashCode() => this._hashcode;
+
+        public override String ToString() => $"{this.Balance:F8}";
 
         /// <summary>
         ///     Add any (+-)amount directly to the balance.
@@ -123,7 +181,7 @@ namespace Librainian.Measurement.Currency {
         }
 
         public Boolean TryAdd( SimpleWallet wallet, Boolean sanitize = true ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
@@ -266,65 +324,11 @@ namespace Librainian.Measurement.Currency {
         }
 
         public Boolean TryWithdraw( SimpleWallet wallet ) {
-            if ( wallet == null ) {
+            if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
             return this.TryWithdraw( wallet.Balance );
         }
-
-        [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-
-        private readonly Int32 _hashcode;
-
-        [JsonProperty]
-        private Decimal _balance;
-
-        /// <summary>
-        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
-        /// </summary>
-        public TimeSpan Timeout { get; set; }
-
-        public SimpleWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
-        /// </summary>
-        /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
-
-        /// <summary>
-        ///     <para>Static comparison.</para>
-        ///     <para>Returns true if the wallets ARE the same instance.</para>
-        ///     <para>Returns true if the wallets HAVE the same balance.</para>
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
-
-            if ( null == left || null == right ) {
-                return false;
-            }
-
-            return left.Balance == right.Balance;
-        }
-
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this._access.Dispose();
-
-        [Pure]
-        public override Int32 GetHashCode() => this._hashcode;
-
-        public override String ToString() => $"{this.Balance:F8}";
     }
 }

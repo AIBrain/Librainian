@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/10/23 at 11:33 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
@@ -416,7 +416,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         Task<Boolean> IsAll( Byte number );
-
     }
 
     //TODO Document class is getting too large. abstract some more, and make extensions.
@@ -564,7 +563,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             get {
                 var info = this.GetFreshInfo();
 
-                return info.Exists ? ( UInt64? ) info.Length : default;
+                return info.Exists ? ( UInt64? )info.Length : default;
             }
         }
 
@@ -626,7 +625,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.ThrowIfNotExists();
 
             return this.AsInt32().AsParallel().WithMergeOptions( mergeOptions: ParallelMergeOptions.NotBuffered )
-                .Aggregate( seed: 0, func: ( current, i ) => unchecked( current + i ) );
+                .Aggregate( seed: 0, func: ( current, i ) => unchecked(current + i) );
         }
 
         /// <summary>
@@ -815,7 +814,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
             [CanBeNull] IProgress<Single> progress = null, [CanBeNull] IProgress<TimeSpan> eta = null ) {
-            if ( destination == null ) {
+            if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
@@ -828,7 +827,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                             await client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath ).ConfigureAwait( false );
 
-                            return ( true, stopwatch.Elapsed );
+                            return (true, stopwatch.Elapsed);
                         }
                     }
                 }
@@ -837,7 +836,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
 
-            return ( false, stopwatch.Elapsed );
+            return (false, stopwatch.Elapsed);
         }
 
         /// <summary>
@@ -870,7 +869,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             var webClient = new WebClient();
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
-                var percentage = new Percentage( numerator: ( BigInteger ) args.BytesReceived, denominator: args.TotalBytesToReceive );
+                var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
                 onProgress?.Invoke( obj: percentage );
             };
 
@@ -888,7 +887,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 if ( size?.Any() == true ) {
                     using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
-                        using var crc32 = new CRC32( polynomial: ( UInt32 ) size, seed: ( UInt32 ) size );
+                        using var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
 
                         var result = crc32.ComputeHash( inputStream: fileStream );
 
@@ -933,7 +932,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         return null;
                     }
 
-                    using var crc32 = new CRC32( polynomial: ( UInt32 ) size.Value, seed: ( UInt32 ) size.Value );
+                    using var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
 
                     return crc32.ComputeHash( inputStream: fileStream )
                         .Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "x2" ).ToLower() );
@@ -1056,6 +1055,14 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         /// <summary>
         ///     <para>Downloads (replaces) the local IDocument with the specified <paramref name="source" />.</para>
         ///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
@@ -1063,23 +1070,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="source"></param>
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( paramName: nameof( source ) );
             }
 
             try {
                 if ( !source.IsWellFormedOriginalString() ) {
-                    return ( new DownloadException( message: $"Could not use source Uri '{source}'." ), null );
+                    return (new DownloadException( message: $"Could not use source Uri '{source}'." ), null);
                 }
 
                 using ( var webClient = new WebClient() ) {
                     await webClient.DownloadFileTaskAsync( address: source, fileName: this.FullPath ).ConfigureAwait( false );
 
-                    return ( null, webClient.ResponseHeaders );
+                    return (null, webClient.ResponseHeaders);
                 }
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1181,7 +1188,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( oursize <= Int32.MaxValue ) {
-                return ( Int32 ) oursize;
+                return ( Int32 )oursize;
             }
 
             return Int32.MaxValue;
@@ -1198,7 +1205,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( fileName: this.FullPath ) {
-                    Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
+                    Arguments = arguments ?? String.Empty,
+                    UseShellExecute = useShell,
+                    Verb = verb
                 };
 
                 return Task.Run( function: () => Process.Start( startInfo: info ) );
@@ -1225,7 +1234,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 using ( var textReader = File.OpenText( path: this.FullPath ) ) {
                     using ( var jsonReader = new JsonTextReader( reader: textReader ) ) {
                         return new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         }.Deserialize<T>( reader: jsonReader );
                     }
                 }
@@ -1249,7 +1259,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean makeExact = true ) {
-            if ( destination == null ) {
+            if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
@@ -1339,7 +1349,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="FileNotFoundException"></exception>
         public Boolean SameContent( [CanBeNull] IDocument right ) {
 
-            if ( right == null ) {
+            if ( right is null ) {
                 return false;
             }
 
@@ -1378,7 +1388,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             try {
-                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 ) bufferSize, leaveOpen: false );
+                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 )bufferSize, leaveOpen: false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1450,23 +1460,23 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="destination"></param>
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
-            if ( destination == null ) {
+            if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {
-                return ( new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null );
+                return (new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null);
             }
 
             try {
                 using ( var webClient = new WebClient() ) {
                     await webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath ).ConfigureAwait( false );
 
-                    return ( null, webClient.ResponseHeaders );
+                    return (null, webClient.ResponseHeaders);
                 }
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1529,7 +1539,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             new ThreadLocal<Lazy<WebClient>>( valueFactory: () => new Lazy<WebClient>( valueFactory: () => new WebClient(), isThreadSafe: false ), trackAllValues: true );
 
         protected Document( [NotNull] SerializationInfo info ) {
-            if ( info == null ) {
+            if ( info is null ) {
                 throw new ArgumentNullException( paramName: nameof( info ) );
             }
 
@@ -1582,7 +1592,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( watchFile ) {
                 this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName ) {
-                    IncludeSubdirectories = false, EnableRaisingEvents = true
+                    IncludeSubdirectories = false,
+                    EnableRaisingEvents = true
                 } );
 
                 this.WatchEvents = new Lazy<FileWatchingEvents>( valueFactory: () => new FileWatchingEvents(), isThreadSafe: false );
@@ -1626,7 +1637,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 //.AsParallel()
                 //.WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
-                .Aggregate( seed: 0L, func: ( current, i ) => unchecked( current + i ) );
+                .Aggregate( seed: 0L, func: ( current, i ) => unchecked(current + i) );
         }
 
         /// <summary>
@@ -1763,7 +1774,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<Boolean> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
             [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
-            if ( destination == null ) {
+            if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
@@ -1787,7 +1798,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using var webClient = new WebClient();
             webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
-            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, ( this, destination ) );
+            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, (this, destination) );
             await webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath ).ConfigureAwait( false );
 
             return destination.Exists() && destination.Size() == this.Size();
@@ -1836,7 +1847,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static implicit operator FileInfo( [NotNull] Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -1884,7 +1895,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             internal Int32 nLength;
 
             internal unsafe Byte* pSecurityDescriptor = null;
-
         }
 
         /// <summary>
@@ -1912,7 +1922,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static async Task DownloadFileTaskAsync( [NotNull] Uri address, [NotNull] String fileName,
             IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
 
-            if ( address == null ) {
+            if ( address is null ) {
                 throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
@@ -1920,7 +1930,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
             }
 
-            var tcs = new TaskCompletionSource<Object>( state: address );
+            var tcs = new TaskCompletionSource<Object>( state: address, TaskCreationOptions.RunContinuationsAsynchronously );
 
             void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
                 if ( ce.UserState != tcs ) {
@@ -1940,7 +1950,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
                 if ( pe.UserState == tcs ) {
-                    progress.Report( value: ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+                    progress.Report( value: (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
                 }
             }
 
@@ -2035,7 +2045,5 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static String CleanFileName( [NotNull] String filename, [CanBeNull] String replacement = null ) =>
             RegexForInvalidFileNameCharacters.Replace( filename, replacement ?? String.Empty ).Trim();
-
     }
-
 }

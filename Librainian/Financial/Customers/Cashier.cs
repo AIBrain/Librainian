@@ -55,5 +55,9 @@ namespace Librainian.Financial.Customers {
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() => this.Wallet.Dispose();
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
     }
 }

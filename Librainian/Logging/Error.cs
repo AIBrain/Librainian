@@ -50,7 +50,7 @@ namespace Librainian.Logging {
 
         public static void Trap( [CanBeNull] Action action ) {
             try {
-                if ( action == null ) {
+                if ( action is null ) {
                     throw new ArgumentNullException( paramName: nameof( action ) );
                 }
 
@@ -63,7 +63,7 @@ namespace Librainian.Logging {
 
         public static void Trap<E>( [CanBeNull] Action action ) where E : Exception {
             try {
-                if ( action == null ) {
+                if ( action is null ) {
                     throw new ArgumentNullException( paramName: nameof( action ) );
                 }
 
@@ -76,7 +76,7 @@ namespace Librainian.Logging {
 
         public static void Trap( [CanBeNull] params Action[] actions ) {
             try {
-                if ( actions == null ) {
+                if ( actions is null ) {
                     throw new ArgumentNullException( paramName: nameof( actions ) );
                 }
 
@@ -92,7 +92,7 @@ namespace Librainian.Logging {
         [CanBeNull]
         public static Object Trap<T>( [CanBeNull] Func<T> func ) {
             try {
-                if ( func == null ) {
+                if ( func is null ) {
                     throw new ArgumentNullException( paramName: nameof( func ) );
                 }
 

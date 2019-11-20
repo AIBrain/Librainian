@@ -94,7 +94,7 @@ namespace Librainian.Threading {
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) {
-            if ( name == null ) {
+            if ( name is null ) {
                 throw new ArgumentNullException( paramName: nameof( name ) );
             }
 
@@ -116,7 +116,7 @@ namespace Librainian.Threading {
         ///     Uses a named semaphore to allow only ONE of <paramref name="name" />.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
-        public SingleAccess( String name, TimeSpan? timeout = null ) {
+        public SingleAccess( [CanBeNull] String name, TimeSpan? timeout = null ) {
 
             try {
                 if ( !timeout.HasValue ) {
@@ -151,6 +151,10 @@ namespace Librainian.Threading {
                 }
             }
         }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
     }
 
     /// <summary>
@@ -175,7 +179,7 @@ namespace Librainian.Threading {
         ///     Uses a named semaphore to allow only ONE of <paramref name="self" />.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-        public SingleAccess( T self, TimeSpan? timeout = null ) {
+        public SingleAccess( [CanBeNull] T self, TimeSpan? timeout = null ) {
             try {
                 if ( !timeout.HasValue ) {
                     timeout = Minutes.One;
@@ -207,6 +211,10 @@ namespace Librainian.Threading {
                     this.Snagged = false;
                 }
             }
+        }
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
         }
     }
 }

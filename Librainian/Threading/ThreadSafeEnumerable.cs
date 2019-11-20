@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ThreadSafeEnumerable.cs" was last formatted by Protiguous on 2019/08/08 at 9:39 AM.
+// Project: "Librainian", "ThreadSafeEnumerable.cs" was last formatted by Protiguous on 2019/11/20 at 5:54 AM.
 
 namespace Librainian.Threading {
 
@@ -45,22 +45,39 @@ namespace Librainian.Threading {
     using System.Collections;
     using System.Collections.Generic;
     using System.Threading;
+    using JetBrains.Annotations;
 
     public class ThreadSafeEnumerable<T> : IEnumerable<T> {
 
+        [NotNull]
+        private IEnumerable<T> original { get; }
+
+        public ThreadSafeEnumerable( [NotNull] IEnumerable<T> original ) => this.original = original ?? throw new ArgumentNullException( nameof( original ) );
+
+        [NotNull]
         public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this.original.GetEnumerator() );
 
+        [NotNull]
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        private readonly IEnumerable<T> original;
-
-        public ThreadSafeEnumerable( IEnumerable<T> original ) => this.original = original;
 
         private sealed class ThreadSafeEnumerator : IEnumerator<T> {
 
+            [NotNull]
+            private ThreadLocal<T> current { get; } = new ThreadLocal<T>();
+
+            [NotNull]
+            private IEnumerator<T> original { get; }
+
+            [NotNull]
+            private Object padlock { get; } = new Object();
+
+            [NotNull]
             public T Current => this.current.Value;
 
+            [NotNull]
             Object IEnumerator.Current => this.Current;
+
+            internal ThreadSafeEnumerator( [NotNull] IEnumerator<T> original ) => this.original = original ?? throw new ArgumentNullException( nameof( original ) );
 
             public void Dispose() {
                 this.original.Dispose();
@@ -80,14 +97,6 @@ namespace Librainian.Threading {
             }
 
             public void Reset() => throw new NotSupportedException();
-
-            private readonly ThreadLocal<T> current = new ThreadLocal<T>();
-
-            private readonly IEnumerator<T> original;
-
-            private readonly Object padlock = new Object();
-
-            internal ThreadSafeEnumerator( IEnumerator<T> original ) => this.original = original;
         }
     }
 }

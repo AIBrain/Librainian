@@ -53,6 +53,12 @@ namespace Librainian.Collections.Stacks {
 
     public class ConcurrentCollection<T> : IProducerConsumerCollection<T> {
 
+        private const Int32 BackoffMaxYields = 8;
+
+        private Node Head { get; set; }
+
+        private T[] SerializationArray { get; set; }
+
         public Int32 Count {
             get {
                 var num = 0;
@@ -69,56 +75,10 @@ namespace Librainian.Collections.Stacks {
 
         public Object SyncRoot => throw new NotSupportedException( "ConcurrentCollection_SyncRoot_NotSupported" );
 
-        public void CopyTo( [NotNull] T[] array, Int32 index ) {
-            if ( array == null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-
-            this.ToList().CopyTo( array: array, arrayIndex: index );
-        }
-
-        public IEnumerator<T> GetEnumerator() => GetEnumerator( head: this.Head );
-
-        /// <summary>
-        /// </summary>
-        /// <returns></returns>
-        [NotNull]
-
-        // ReSharper disable once RemoveToList.1
-        public T[] ToArray() => this.ToList().ToArray();
-
-        public Boolean TryAdd( T item ) {
-            this.Push( item: item );
-
-            return true;
-        }
-
-        public Boolean TryTake( out T item ) => this.TryPop( result: out item );
-
-        void ICollection.CopyTo( Array array, Int32 index ) {
-            if ( array == null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-
-            if ( !( array is T[] ) ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-
-            this.ToList().CopyTo( array: ( T[] ) array, arrayIndex: index );
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        private Node Head { get; set; }
-
-        private T[] SerializationArray { get; set; }
-
-        private const Int32 BackoffMaxYields = 8;
-
         public ConcurrentCollection() { }
 
         public ConcurrentCollection( [NotNull] IEnumerable<T> collection ) {
-            if ( collection == null ) {
+            if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
@@ -141,7 +101,7 @@ namespace Librainian.Collections.Stacks {
         }
 
         private static void ValidatePushPopRangeInput( [NotNull] ICollection<T> items, Int32 startIndex, Int32 count ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
@@ -174,7 +134,7 @@ namespace Librainian.Collections.Stacks {
             Node node2 = null;
 
             foreach ( var node3 in this.SerializationArray.Select( selector: t => new Node( t ) ) ) {
-                if ( node1 == null ) {
+                if ( node1 is null ) {
                     node2 = node3;
                 }
                 else {
@@ -235,7 +195,7 @@ namespace Librainian.Collections.Stacks {
             while ( true ) {
                 comparand = this.Head;
 
-                if ( comparand == null ) {
+                if ( comparand is null ) {
                     break;
                 }
 
@@ -270,7 +230,17 @@ namespace Librainian.Collections.Stacks {
 
         public void Clear() => this.Head = null;
 
-        public Boolean IsEmpty() => this.Head == null;
+        public void CopyTo( [NotNull] T[] array, Int32 index ) {
+            if ( array is null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+
+            this.ToList().CopyTo( array: array, arrayIndex: index );
+        }
+
+        public IEnumerator<T> GetEnumerator() => GetEnumerator( head: this.Head );
+
+        public Boolean IsEmpty() => this.Head is null;
 
         public void Push( T item ) {
             var node = new Node( item ) {
@@ -287,7 +257,7 @@ namespace Librainian.Collections.Stacks {
         }
 
         public void PushRange( [NotNull] T[] items ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
@@ -320,10 +290,24 @@ namespace Librainian.Collections.Stacks {
             this.PushCore( head: head, tail: tail );
         }
 
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        [NotNull]
+
+        // ReSharper disable once RemoveToList.1
+        public T[] ToArray() => this.ToList().ToArray();
+
+        public Boolean TryAdd( T item ) {
+            this.Push( item: item );
+
+            return true;
+        }
+
         public Boolean TryPeek( out T result ) {
             var node = this.Head;
 
-            if ( node == null ) {
+            if ( node is null ) {
                 result = default;
 
                 return false;
@@ -355,7 +339,7 @@ namespace Librainian.Collections.Stacks {
         }
 
         public Int32 TryPopRange( [NotNull] T[] items ) {
-            if ( items == null ) {
+            if ( items is null ) {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
@@ -379,6 +363,22 @@ namespace Librainian.Collections.Stacks {
 
             return nodesCount;
         }
+
+        public Boolean TryTake( out T item ) => this.TryPop( result: out item );
+
+        void ICollection.CopyTo( Array array, Int32 index ) {
+            if ( array is null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+
+            if ( !( array is T[] ) ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+
+            this.ToList().CopyTo( array: ( T[] )array, arrayIndex: index );
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         private sealed class Node {
 

@@ -76,7 +76,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -95,7 +95,7 @@ namespace Librainian.Persistence {
         ///     <para>Defaults to user\appdata\Local\productname\filename</para>
         /// </summary>
         /// <param name="filename"></param>
-        public ConcurrentListFile( [NotNull] String filename ) : this( new Document(filename) ) {
+        public ConcurrentListFile( [NotNull] String filename ) : this( new Document( filename ) ) {
         }
 
         public async Task<Boolean> Read( CancellationToken token = default ) {

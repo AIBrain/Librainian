@@ -51,20 +51,6 @@ namespace Librainian.Internet {
 
     public class OAuthBase {
 
-        /// <summary>
-        ///     Provides a predefined set of algorithms that are supported officially by the protocol
-        /// </summary>
-        public enum SignatureTypes {
-
-            Hmacsha1,
-
-            Plaintext,
-
-            Rsasha1
-        }
-
-        protected readonly Random Random = new Random();
-
         protected const String Hmacsha1SignatureType = "HMAC-SHA1";
 
         protected const String OAuthCallbackKey = "oauth_callback";
@@ -97,6 +83,20 @@ namespace Librainian.Internet {
         protected const String Rsasha1SignatureType = "RSA-SHA1";
 
         protected const String UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+
+        protected readonly Random Random = new Random();
+
+        /// <summary>
+        ///     Provides a predefined set of algorithms that are supported officially by the protocol
+        /// </summary>
+        public enum SignatureTypes {
+
+            Hmacsha1,
+
+            Plaintext,
+
+            Rsasha1
+        }
 
         /// <summary>
         ///     Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")
@@ -139,7 +139,7 @@ namespace Librainian.Internet {
         /// <returns>a Base64 string of the hash value</returns>
         [NotNull]
         private String ComputeHash( [NotNull] HashAlgorithm hashAlgorithm, [NotNull] String data ) {
-            if ( hashAlgorithm == null ) {
+            if ( hashAlgorithm is null ) {
                 throw new ArgumentNullException( nameof( hashAlgorithm ) );
             }
 
@@ -190,7 +190,7 @@ namespace Librainian.Internet {
                     result.Append( symbol );
                 }
                 else {
-                    result.Append( $"{'%'}{( Int32 ) symbol:X2}" );
+                    result.Append( $"{'%'}{( Int32 )symbol:X2}" );
                 }
             }
 
@@ -284,11 +284,11 @@ namespace Librainian.Internet {
         [NotNull]
         public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, String tokenSecret, [NotNull] String httpMethod, String timeStamp,
             String nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl, [NotNull] out String normalizedRequestParameters ) {
-            if ( token == null ) {
+            if ( token is null ) {
                 token = String.Empty;
             }
 
-            if ( tokenSecret == null ) {
+            if ( tokenSecret is null ) {
 
                 // ReSharper disable once RedundantAssignment
                 tokenSecret = String.Empty;
@@ -321,7 +321,7 @@ namespace Librainian.Internet {
 
             normalizedUrl = $"{url.Scheme}://{url.Host}";
 
-            if ( !( (url.Scheme == "http" && url.Port == 80) || (url.Scheme == "https" && url.Port == 443) ) ) {
+            if ( !( ( url.Scheme == "http" && url.Port == 80 ) || ( url.Scheme == "https" && url.Port == 443 ) ) ) {
                 normalizedUrl += $":{url.Port}";
             }
 

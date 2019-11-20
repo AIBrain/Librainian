@@ -65,15 +65,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         private const Byte SizeLow = 0;
 
-        public const Int32 DefaultBufferSize = 4096;
-
         /// <summary>
         ///     Just some common buffer sizes we might use.
         /// </summary>
-        private static readonly HashSet<Int32> BufferSizes = new HashSet<Int32>( SizeLow.To( SizeHigh ).Select( b => ( Int32 ) Math.Pow( 2, b ) ) );
+        private static readonly HashSet<Int32> BufferSizes = new HashSet<Int32>( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
+
+        public const Int32 DefaultBufferSize = 4096;
 
         public static Int32 OptimalBufferSize( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -87,7 +87,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 size = Int64.MaxValue;
             }
 
-            var fileSize = ( Int64 ) size.Value;
+            var fileSize = ( Int64 )size.Value;
 
             return fileSize.OptimalBufferSize();
         }
@@ -103,7 +103,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return DefaultBufferSize;
                 }
 
-                var ram = ( Int64 ) new Computer().GetAvailableMemeory();
+                var ram = ( Int64 )new Computer().GetAvailableMemeory();
 
                 foreach ( var ul in BufferSizes.Where( value => value <= fileSize && value <= ram ).OrderByDescending( value => value ).Select( value => value ) ) {
                     try {

@@ -115,13 +115,13 @@ namespace Librainian.Measurement.Length {
 
         public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
+        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
 
         public static Boolean operator !=( Feet left, Feet right ) => !Equals( left, right );
 
         public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
+        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational )seconds );
 
         public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 
@@ -136,7 +136,7 @@ namespace Librainian.Measurement.Length {
         public Boolean Equals( Feet other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 

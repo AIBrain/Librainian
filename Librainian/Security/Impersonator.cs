@@ -52,11 +52,9 @@ namespace Librainian.Security {
     /// </summary>
     public class Impersonator : ABetterClassDispose {
 
-        private WindowsImpersonationContext _impersonationContext;
-
         private const Int32 Logon32LogonInteractive = 2;
-
         private const Int32 Logon32ProviderDefault = 0;
+        private WindowsImpersonationContext _impersonationContext;
 
         public Impersonator( String userName, String domainName, String password ) => this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
 
@@ -96,5 +94,9 @@ namespace Librainian.Security {
         }
 
         public override void DisposeManaged() => this._impersonationContext?.Undo();
+
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
     }
 }

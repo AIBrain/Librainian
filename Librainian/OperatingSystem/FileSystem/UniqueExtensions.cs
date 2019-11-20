@@ -67,7 +67,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static Unique ToUnique( [NotNull] this Uri location ) {
-            if ( location == null ) {
+            if ( location is null ) {
                 throw new ArgumentNullException( paramName: nameof( location ) );
             }
 

@@ -54,8 +54,6 @@ namespace Librainian.Maths.Numbers {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyD : ICloneable {
 
-        Object ICloneable.Clone() => this.Clone();
-
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _aVotes;
@@ -63,6 +61,9 @@ namespace Librainian.Maths.Numbers {
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _bVotes;
+
+        /// <summary>No vote for either.</summary>
+        public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
 
         public Double A {
             get => Thread.VolatileRead( ref this._aVotes );
@@ -84,6 +85,8 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
+        public Boolean IsAWinning => this.A > this.B;
+
         public Boolean IsBWinning => this.B > this.A;
 
         public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
@@ -95,11 +98,6 @@ namespace Librainian.Maths.Numbers {
         /// </summary>
         public Double Votes => this.A + this.B;
 
-        public Boolean IsAWinning => this.A > this.B;
-
-        /// <summary>No vote for either.</summary>
-        public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
-
         public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
             this.A = votesForA;
             this.B = votesForB;
@@ -107,11 +105,11 @@ namespace Librainian.Maths.Numbers {
 
         [NotNull]
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
@@ -180,5 +178,7 @@ namespace Librainian.Maths.Numbers {
 
         [NotNull]
         public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
+
+        Object ICloneable.Clone() => this.Clone();
     }
 }

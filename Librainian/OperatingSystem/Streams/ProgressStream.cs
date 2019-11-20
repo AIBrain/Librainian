@@ -69,7 +69,7 @@ namespace Librainian.OperatingSystem.Streams {
         public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
             var amountRead = this.Stream.Read( buffer, offset, count );
 
-            var newProgress = ( Int32 ) ( 1024.0 * ( this.Position / ( Double ) this.Length ) );
+            var newProgress = ( Int32 )( 1024.0 * ( this.Position / ( Double )this.Length ) );
 
             if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) {
                 return amountRead;
@@ -131,7 +131,7 @@ namespace Librainian.OperatingSystem.Streams {
         ///     The sum of <paramref name="offset" /> and <paramref name="count" /> is
         ///     greater than the buffer length.
         /// </exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="buffer" /> == null.</exception>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="buffer" /> is null.</exception>
         /// <exception cref="T:System.ArgumentOutOfRangeException">
         ///     <paramref name="offset" /> or <paramref name="count" /> is
         ///     negative.

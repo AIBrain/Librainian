@@ -53,18 +53,18 @@ namespace Librainian.Exceptions {
         protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
         internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
-            if ( inner == null ) {
+            if ( inner is null ) {
                 throw new ArgumentNullException( paramName: nameof( inner ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] Type type ) {
-            if ( type == null ) {
+            if ( type is null ) {
                 throw new ArgumentNullException( paramName: nameof( type ) );
             }
 

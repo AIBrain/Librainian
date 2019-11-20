@@ -59,10 +59,6 @@ namespace Librainian.Persistence {
         ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
     public class D : IEqualityComparer<D> {
 
-        public Int32 GetHashCode( D d ) => d.K.GetHashCode();
-
-        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
-
         /// <summary>
         ///     The key.
         /// </summary>
@@ -89,41 +85,6 @@ namespace Librainian.Persistence {
             this.V = value;
         }
 
-        /// <summary>
-        ///     <para>Static equality test.</para>
-        ///     <para>Return true if: K and K have the same value, and V and V have the same value.</para>
-        ///     <para>Two nulls should be equal.</para>
-        ///     <para>Comparison is by <see cref="StringComparison.Ordinal" />.</para>
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( D left, D right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
-
-            if ( left == null || right == null ) {
-                return false;
-            }
-
-            if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
-                return false;
-            }
-
-            if ( ReferenceEquals( left.V, right.V ) ) {
-                return true;
-            }
-
-            if ( left.V == null || right.V == null ) {
-                return false;
-            }
-
-            return left.V.Equals( right.V, StringComparison.Ordinal );
-        }
-
-        public override Boolean Equals( Object obj ) => Equals( this, obj as D );
-
         public override Int32 GetHashCode() => this.K.GetHashCode();
 
         public override String ToString() {
@@ -136,7 +97,7 @@ namespace Librainian.Persistence {
                 keypart = $"{left}..{right}";
             }
 
-            if ( this.V == null ) {
+            if ( this.V is null ) {
                 return $"{keypart}=";
             }
 
@@ -151,5 +112,44 @@ namespace Librainian.Persistence {
 
             return $"{keypart}={valuepart}";
         }
+
+        /// <summary>
+        ///     <para>Static equality test.</para>
+        ///     <para>Return true if: K and K have the same value, and V and V have the same value.</para>
+        ///     <para>Two nulls should be equal.</para>
+        ///     <para>Comparison is by <see cref="StringComparison.Ordinal" />.</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( D left, D right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
+                return false;
+            }
+
+            if ( ReferenceEquals( left.V, right.V ) ) {
+                return true;
+            }
+
+            if ( left.V is null || right.V is null ) {
+                return false;
+            }
+
+            return left.V.Equals( right.V, StringComparison.Ordinal );
+        }
+
+        public override Boolean Equals( Object obj ) => Equals( this, obj as D );
+
+        public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+
+        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
     }
 }

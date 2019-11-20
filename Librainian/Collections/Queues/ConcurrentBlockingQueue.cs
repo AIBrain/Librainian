@@ -92,6 +92,10 @@ namespace Librainian.Collections.Queues {
 
         public override void DisposeManaged() { }
 
+        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
+        public override void DisposeNative() {
+        }
+
         /// <summary>
         ///     Provides a consuming enumerable of the items in the queue.
         /// </summary>

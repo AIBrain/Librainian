@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Bitten.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2019/11/07 at 2:04 PM.
 
 namespace Librainian.Misc {
@@ -131,7 +131,6 @@ namespace Librainian.Misc {
             ParenthesisFormat = RequireParenthesis | RequireDashes, /* P */
 
             Any = AllowParenthesis | AllowBraces | AllowDashes | AllowHexPrefix
-
         }
 
         // Creates a new guid based on the value in the String. The value is made up of hex digits
@@ -140,7 +139,7 @@ namespace Librainian.Misc {
         // The String must be of the form dddddddd-dddd-dddd-dddd-dddddddddddd. where d is a hex
         // digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
         public Bitten( [NotNull] String g ) {
-            if ( g == null ) {
+            if ( g is null ) {
                 throw new ArgumentNullException( nameof( g ) );
             }
 
@@ -182,7 +181,7 @@ namespace Librainian.Misc {
         private static Char HexToChar( Int32 a ) {
             a &= 0xf;
 
-            return ( Char ) ( a > 9 ? a - 10 + 0x61 : a + 0x30 );
+            return ( Char )( a > 9 ? a - 10 + 0x61 : a + 0x30 );
         }
 
         private static Int32 HexsToChars( [NotNull] IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
@@ -229,7 +228,7 @@ namespace Librainian.Misc {
         }
 
         public override Boolean Equals( Object obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 return false;
             }
 
@@ -237,7 +236,7 @@ namespace Librainian.Misc {
                 return false;
             }
 
-            return this.Equals( ( Bitten ) obj );
+            return this.Equals( ( Bitten )obj );
         }
 
         public override Int32 GetHashCode() {
@@ -254,7 +253,5 @@ namespace Librainian.Misc {
                 return result;
             }
         }
-
     }
-
 }
