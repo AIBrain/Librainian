@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "LibrainianCore", "ClassAndStructExt.cs" was last formatted by Protiguous on 2019/10/01 at 5:04 AM.
+// Project: "LibrainianCore", "ClassAndStructExt.cs" was last formatted by Protiguous on 2019/11/20 at 5:01 AM.
 
 namespace LibrainianCore {
 
@@ -48,58 +48,35 @@ namespace LibrainianCore {
     using System.Runtime.CompilerServices;
     using Xunit;
 
-    /// <summary>
-    ///     Used directly from LanguageExt source with my modifications.
-    /// </summary>
+    /// <summary>Used directly from LanguageExt source with my modifications.</summary>
     public static class ClassAndStructExt {
 
-        /// <summary>
-        ///     Returns true if the value is equal to this type's default value.
-        /// </summary>
-        /// <example>
-        ///     0.IsDefault()  // true
-        ///     1.IsDefault()  // false
-        /// </example>
-        /// <returns>
-        ///     True if the value is equal to this type's
-        ///     default value
-        /// </returns>
+        /// <summary>Returns true if the value is equal to this type's default value.</summary>
+        /// <example>0.IsDefault()  // true 1.IsDefault()  // false</example>
+        /// <returns>True if the value is equal to this type's default value</returns>
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDefault<A>( this A value ) => Check<A>.IsDefault( value );
 
-        /// <summary>
-        ///     Returns true if the value is null, and does so without
-        ///     boxing of any value-types.  Value-types will always
-        ///     return false.
-        /// </summary>
-        /// <example>
-        ///     int x = 0;
-        ///     string y = null;
-        ///     x.IsNull()  // false
-        ///     y.IsNull()  // true
-        /// </example>
-        /// <returns>
-        ///     True if the value is null, and does so without
-        ///     boxing of any value-types.  Value-types will always
-        ///     return false.
-        /// </returns>
+        /// <summary>Returns true if the value is null, and does so without boxing of any value-types.  Value-types will always return false.</summary>
+        /// <example>int x = 0; string y = null; x.IsNull()  // false y.IsNull()  // true</example>
+        /// <returns>True if the value is null, and does so without boxing of any value-types.  Value-types will always return false.</returns>
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsNull<A>( this A value ) => Check<A>.IsNull( value );
 
         internal static class Check<A> {
 
-            private static readonly EqualityComparer<A> DefaultEqualityComparer;
+            private static EqualityComparer<A> DefaultEqualityComparer { get; }
 
-            private static readonly NullableOrRefFlag flags;
+            private static NullableOrRefFlag flags { get; }
 
             static Check() {
                 if ( Nullable.GetUnderlyingType( typeof( A ) ) != null ) {
                     flags |= NullableOrRefFlag.Nullable;
                 }
 
-                if ( !typeof( A ).GetTypeInfo().IsValueType ) {
+                if ( !typeof( A ).GetTypeInfo()?.IsValueType == true ) {
                     flags |= NullableOrRefFlag.IsRef;
                 }
 
@@ -116,17 +93,16 @@ namespace LibrainianCore {
                 IsRef = 0b10
             }
 
-            //private static readonly Boolean IsNullable;
+            //private static  Boolean IsNullable;
 
-            //private static readonly Boolean IsReferenceType;
+            //private static  Boolean IsReferenceType;
 
             //trade a byte for cpu time?
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
             internal static Boolean IsDefault( A value ) => DefaultEqualityComparer.Equals( value, default );
 
             [MethodImpl( MethodImplOptions.AggressiveInlining )]
-            internal static Boolean IsNull( A value ) =>
-                flags.HasFlag( NullableOrRefFlag.IsRef ) && ReferenceEquals( value, null ) || flags.HasFlag( NullableOrRefFlag.Nullable ) && value.Equals( null );
+            internal static Boolean IsNull( A value ) => value is null && ( flags.HasFlag( NullableOrRefFlag.IsRef ) || flags.HasFlag( NullableOrRefFlag.Nullable ) );
         }
 
         public static class Tests {
@@ -136,7 +112,7 @@ namespace LibrainianCore {
             public static void TestClassHasDefaults<T>( T cls ) {
 
                 //Is.TypeOf
-                if ( cls == null ) {
+                if ( cls is null ) {
                     throw new ArgumentNullException( paramName: nameof( cls ) );
                 }
 

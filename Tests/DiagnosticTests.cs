@@ -57,18 +57,12 @@ namespace LibrainianTests {
     public static class DiagnosticTests {
 
         private static void AddToList( [NotNull] this ConcurrentBag<Int32> list ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
 
             Parallel.ForEach( 1.To( 128 ), i => list.Add( Int32.MinValue.Next( maxValue: Int32.MaxValue ) ) );
         }
-
-        //[OneTimeSetUp]
-        public static void Setup() { }
-
-        //[OneTimeTearDown]
-        public static void TearDown() { }
 
         [Fact]
         public static void PassProbabilityTest() {
@@ -91,6 +85,12 @@ namespace LibrainianTests {
 
             higher.Count.Should().BeGreaterThan( lower.Count );
         }
+
+        //[OneTimeSetUp]
+        public static void Setup() { }
+
+        //[OneTimeTearDown]
+        public static void TearDown() { }
 
         [Fact]
         public static void TestHour() {
@@ -137,8 +137,8 @@ namespace LibrainianTests {
             const UInt32 e = 4000;
             const UInt32 f = 5000;
 
-            $"{a} {a.ToRoman().Should().Be(String.Empty)}".Log();
-            $"{b} {b.ToRoman().Should().Be("I")}".Log();
+            $"{a} {a.ToRoman().Should().Be( String.Empty )}".Log();
+            $"{b} {b.ToRoman().Should().Be( "I" )}".Log();
             $"{c} {c.ToRoman()}".Log();
             $"{d} {d.ToRoman()}".Log();
             $"{e} {e.ToRoman()}".Log();
