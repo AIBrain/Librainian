@@ -42,6 +42,7 @@
 namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -129,8 +130,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>
         ///     Returns true if the path is too long
         /// </summary>
+        [DebuggerStepThrough]
         public static Boolean IsPathTooLong( [NotNull] this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
 
+        [DebuggerStepThrough]
         [Pure]
         [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsValidDriveChar( this Char value ) => (value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z');
@@ -141,6 +144,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="path"></param>
         /// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
+        [DebuggerStepThrough]
         [NotNull]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static String TrimAndThrowIfBlank( [NotNull] this String path ) {

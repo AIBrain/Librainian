@@ -41,10 +41,9 @@
 
 namespace Librainian.Collections {
 
-    using System;
     using System.Runtime.Serialization;
 
-    public enum Positionial : Byte {
+    public enum Positionial  {
 
         [EnumMember( Value = nameof( Lowest ) )]
         Lowest,

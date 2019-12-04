@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "WalletStatistics.cs" was last formatted by Protiguous on 2019/09/30 at 4:17 PM.
+// Project: "Librainian", "WalletStatistics.cs" was last formatted by Protiguous on 2019/11/25 at 4:24 AM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -52,10 +52,10 @@ namespace Librainian.Financial.Containers.Wallets {
     public class WalletStatistics : ABetterClassDispose {
 
         [NotNull]
-        private readonly ReaderWriterLockSlim _depositLock;
+        private readonly ReaderWriterLockSlim _depositLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         [NotNull]
-        private readonly ReaderWriterLockSlim _withwrawLock;
+        private readonly ReaderWriterLockSlim _withwrawLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         [JsonProperty]
         private Decimal _allTimeDeposited;
@@ -115,23 +115,13 @@ namespace Librainian.Financial.Containers.Wallets {
         [JsonProperty]
         public DateTime InstanceCreationTime { get; private set; }
 
-        public WalletStatistics() {
-            this._depositLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-            this._withwrawLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        public WalletStatistics() => this.Reset();
 
-            this.Reset();
-        }
-
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
-            this._depositLock.Dispose();
-            this._withwrawLock.Dispose();
-        }
+            using ( this._depositLock ) { }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
+            using ( this._withwrawLock ) { }
         }
 
         public void Reset() {

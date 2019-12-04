@@ -46,12 +46,13 @@ namespace Librainian.Measurement.Currency.USD {
     using System.Threading;
     using System.Windows.Forms;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary>
     ///     A simple, thread-safe,  Decimal-based wallet.
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class SimpleWallet : ISimpleWallet {
+    public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 
         /// <summary>
         /// </summary>
@@ -192,5 +193,12 @@ namespace Librainian.Measurement.Currency.USD {
         public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
 
         public override String ToString() => this.Balance.ToString( "C" );
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._access ) {
+            }
+        }
+
     }
 }

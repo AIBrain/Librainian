@@ -910,12 +910,6 @@ namespace Librainian.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( d: x * 100.0 ) / 100.0f );
 
-        [Obsolete]
-        [DebuggerStepThrough]
-        [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Int32 Nested( this Int32 x ) => ( Int32 )Math.Sqrt( d: x );
-
         /// <summary>
         ///     Remove all the trailing zeros from the decimal
         /// </summary>
@@ -976,7 +970,11 @@ namespace Librainian.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Single OneThird( this Single x ) => x / 3.0f;
 
-        public static UInt32 PackBitFields( [NotNull] UInt16[] values, Byte[] bitFields ) {
+        public static UInt32 PackBitFields( [NotNull] UInt16[] values, [NotNull] Byte[] bitFields ) {
+            if ( bitFields == null ) {
+                throw new ArgumentNullException( paramName: nameof( bitFields ) );
+            }
+
             UInt32 retVal = values[ 0 ]; //we set the first value right away
 
             for ( var f = 1; f < values.Length; f++ ) {
@@ -1350,7 +1348,7 @@ namespace Librainian.Maths {
             return s;
         }
 
-        public static UInt64? ToUInt64( this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? )result : null;
+        public static UInt64? ToUInt64( [CanBeNull] this String text ) => UInt64.TryParse( s: text, result: out var result ) ? ( UInt64? )result : null;
 
         public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) =>
             ( UInt64 )( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );

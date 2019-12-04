@@ -1008,10 +1008,11 @@ namespace Librainian.Collections.Extensions {
 
         /// <summary>
         ///     <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="enumerable" />.</para>
+        /// <para>If no separator is given, it defaults to <code>", "</code></para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="enumerable"></param>
-        /// <param name="separator"> </param>
+        /// <param name="separator">Defaults to ", ".</param>
         /// <param name="atTheEnd">  </param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -1022,36 +1023,35 @@ namespace Librainian.Collections.Extensions {
             }
 
             if ( separator is null ) {
-                separator = String.Empty;
+                separator = ", ";
             }
 
-            String result;
-            var list = enumerable as IList<T> ?? enumerable.ToList();
+            return String.Join( separator: separator, values: enumerable ) + separator + atTheEnd;
 
-            if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
-                result = String.Join( separator: separator, values: list );
+            //if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
+            //    return String.Join( separator: separator, values: list );
+            //}
+            /*
+            var result = String.Join( separator: separator, values: list.Take( count: list.Count - 2 ) );
+
+            while ( list.Count > 2 ) {
+                list.RemoveAt( index: 0 );
             }
-            else {
-                result = String.Join( separator: separator, values: list.Take( count: list.Count - 2 ) );
 
-                while ( list.Count > 2 ) {
-                    list.RemoveAt( index: 0 );
-                }
+            result += separator;
 
-                result += separator;
+            if ( list.TakeFirst( item: out var item ) ) {
+                result += item;
+            }
 
-                if ( list.TakeFirst( item: out var item ) ) {
-                    result += item;
-                }
+            result += atTheEnd;
 
-                result += atTheEnd;
-
-                if ( list.TakeFirst( out item ) ) {
-                    result += item;
-                }
+            if ( list.TakeFirst( out item ) ) {
+                result += item;
             }
 
             return result;
+            */
         }
 
         /// <summary>Extension to aomtically remove a KVP.</summary>

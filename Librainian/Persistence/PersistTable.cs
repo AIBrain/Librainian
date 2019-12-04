@@ -260,9 +260,7 @@ namespace Librainian.Persistence {
             Trace.WriteLine( "done." );
         }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() { }
-
+        
         public void Flush() => this.Dictionary.Flush();
 
         public void Initialize() {

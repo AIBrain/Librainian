@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/11/20 at 6:36 AM.
+// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/11/25 at 4:42 AM.
 
 namespace Librainian.Internet.Servers {
 
@@ -125,9 +125,6 @@ namespace Librainian.Internet.Servers {
 
         /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() => this.Stop();
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() { }
 
         /// <summary>Start the http listener.</summary>
         /// <param name="cancellationToken"></param>

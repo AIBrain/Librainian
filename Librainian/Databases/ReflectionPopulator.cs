@@ -43,7 +43,7 @@ namespace Librainian.Databases {
 
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using JetBrains.Annotations;
 
     public class ReflectionPopulator<T> {

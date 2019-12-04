@@ -37,16 +37,16 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2019/11/19 at 6:16 AM.
+// Project: "Librainian", "IDatabase.cs" was last formatted by Protiguous on 2019/11/25 at 2:42 PM.
 
 namespace Librainian.Databases {
 
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Microsoft.Data.SqlClient;
 
     public interface IDatabase {
 
@@ -54,9 +54,7 @@ namespace Librainian.Databases {
 
         String Sproc { get; set; }
 
-        TimeSpan Timeout { get; set; }
-
-        void Add<T>( [NotNull] String name, SqlDbType type, [CanBeNull] T value );
+        //void Add<T>( [NotNull] String name, SqlDbType type, [CanBeNull] T value );
 
         /// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
         /// <returns></returns>
@@ -113,7 +111,8 @@ namespace Librainian.Databases {
         /// <param name="sproc"></param>
         /// <param name="commandType"></param>
         /// <param name="table"></param>
-        Task<Boolean> FillTableAsync( [NotNull] String sproc, CommandType commandType, [NotNull] DataTable table );
+        /// <param name="parameters"></param>
+        Task<Boolean> FillTableAsync( [NotNull] String sproc, CommandType commandType, [NotNull] DataTable table, params SqlParameter[] parameters );
 
         /// <summary>
         ///     <para>Run a query, no rows expected to be read.</para>
@@ -121,24 +120,22 @@ namespace Librainian.Databases {
         /// </summary>
         /// <param name="sproc"></param>
         /// <param name="commandType"></param>
-        Task NonQueryAsync( [NotNull] String sproc, CommandType commandType );
+        /// <param name="parameters"></param>
+        Task NonQueryAsync( [NotNull] String sproc, CommandType commandType, params SqlParameter[] parameters );
 
-        /// <summary>Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.</summary>
-        /// <param name="sql"></param>
-        DataTableReader QueryAdHoc( [NotNull] String sql );
+        DataTableReader QueryAdHoc( [NotNull] String sql, params SqlParameter[] parameters );
 
-        /// <summary>Make sure to include any parameters ( <see cref="DatabaseServer.Add{T}" />) to avoid sql injection attacks.</summary>
-        /// <param name="sql"></param>
-        Task<DataTableReader> QueryAdHocAsync( [NotNull] String sql );
+        Task<DataTableReader> QueryAdHocAsync( [NotNull] String sql, params SqlParameter[] parameters );
 
-        /// <summary>Simplest possible database connection.
-        /// <para>Connect and then run <paramref name="sproc" />.</para>
+        /// <summary>
+        ///     <para>Connect and then run <paramref name="sproc" />.</para>
         /// </summary>
         /// <param name="sproc"></param>
         /// <param name="commandType"></param>
+        /// <param name="parameters"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        Task<SqlDataReader> QueryAsync( [NotNull] String sproc, CommandType commandType );
+        Task<SqlDataReader> QueryAsync( [NotNull] String sproc, CommandType commandType, params SqlParameter[] parameters );
 
         /// <summary>Returns a <see cref="IEnumerable{T}" /></summary>
         /// <param name="query">     </param>

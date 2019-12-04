@@ -285,29 +285,36 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
+        [DebuggerStepThrough]
         public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, [NotNull] params String[] subFolders ) :
-            this( Path.Combine( Environment.GetFolderPath( specialFolder ), companyName ?? Application.CompanyName, applicationName ?? Application.ProductName,
+            this( Path.Combine( Environment.GetFolderPath( specialFolder ),
+                companyName ?? Application.CompanyName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.CompanyName}." ),
+                applicationName ?? Application.ProductName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.ProductName}." ),
                 subFolders.ToStrings( @"\" ) ) ) { }
 
+        [DebuggerStepThrough]
         public Folder( Environment.SpecialFolder specialFolder, [NotNull] params String[] subFolders ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ),
-                    subFolders.Select( s => CleanPath( s ) ).ToStrings( @"\" ) ) ) { }
+                    subFolders.Select( fullpath => CleanPath( fullpath ) ).ToStrings( @"\" ) ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
+        [DebuggerStepThrough]
         public Folder( [NotNull] String fullPath, [NotNull] String subFolder ) : this( Path.Combine( fullPath, subFolder ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
+        [DebuggerStepThrough]
         public Folder( [NotNull] IFolder folder, [NotNull] String subFolder ) : this( Path.Combine( folder.FullName, subFolder ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
+        [DebuggerStepThrough]
         public Folder( [NotNull] FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { }
 
         /// <summary>
@@ -317,9 +324,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="fullpath"></param>
         /// <param name="replacement"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
-        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) =>
-            RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
+        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) {
+            if ( fullpath == null ) {
+                throw new ArgumentNullException( paramName: nameof( fullpath ) );
+            }
+
+            return RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
+        }
 
         ///// <summary>
         /////     <para>

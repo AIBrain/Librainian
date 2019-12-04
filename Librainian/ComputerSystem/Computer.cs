@@ -48,19 +48,10 @@ namespace Librainian.ComputerSystem {
     using System.Management;
     using System.Net.NetworkInformation;
     using System.Text;
+    using Converters;
     using JetBrains.Annotations;
     using Logging;
-    using Measurement.Time;
     using Microsoft.VisualBasic.Devices;
-
-    public class Beep {
-
-        public void At( Int32 frequency, TimeSpan duration ) => Console.Beep( frequency: frequency, duration: ( Int32 ) duration.TotalMilliseconds );
-
-        public void High() => this.At( 14917, TimeExtensions.GetAverageDateTimePrecision() );
-
-        public void Low() => this.At( 440, TimeExtensions.GetAverageDateTimePrecision() );
-    }
 
     public class Computer {
 
@@ -189,13 +180,13 @@ namespace Librainian.ComputerSystem {
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public Single GetCPUUsage() {
-            var cpuTimes = this.PerfFormattedDataManagementObjectSearcher.Get().Cast<ManagementObject>().Select( managementObject => new {
-                Name = managementObject[ "Name" ], Usage = Convert.ToSingle( managementObject[ "PercentProcessorTime" ] ) / 100.0f
+        public Single? GetCPUUsage() {
+            var cpuTimes = this.PerfFormattedDataManagementObjectSearcher?.Get().Cast<ManagementObject>().Select( managementObject => new {
+                Name = managementObject?[ "Name" ], Usage =  managementObject?[ "PercentProcessorTime" ].Cast<Single>()  / 100.0f
             } ); //.ToList();
 
             //The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
-            var cpuUsage = cpuTimes.Where( x => x.Name.ToString() == "_Total" ).Select( x => x.Usage ).Single();
+            var cpuUsage = cpuTimes?.Where( x => x.Name.ToString() == "_Total" ).Select( x => x.Usage ).Single();
 
             return cpuUsage;
         }
@@ -231,128 +222,6 @@ namespace Librainian.ComputerSystem {
         /// </summary>
         public void ShutdownNow() => Process.Start( "shutdown", "/p" );
 
-        public class SATScores {
-
-            public Lazy<ManagementObjectSearcher> Searcher { get; } =
-                new Lazy<ManagementObjectSearcher>( () => new ManagementObjectSearcher( "root\\CIMV2", "SELECT * FROM Win32_WinSAT" ) );
-
-            public Single? CPU() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "CPUScore" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Single? D3D() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "D3DScore" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Single? Disk() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "DiskScore" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Single? Graphics() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "GraphicsScore" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Single? Memory() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "MemoryScore" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Object TimeTaken() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        return queryObj[ "TimeTaken" ];
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Int32? WinSAT_AssessmentState() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-
-            public Single? WinSPRLevel() {
-                try {
-                    foreach ( var queryObj in this.Searcher.Value.Get().OfType<ManagementObject>() ) {
-                        if ( Single.TryParse( queryObj[ "WinSPRLevel" ].ToString(), out var result ) ) {
-                            return result;
-                        }
-                    }
-                }
-                catch ( ManagementException exception ) {
-                    exception.Log();
-                }
-
-                return null;
-            }
-        }
     }
+
 }

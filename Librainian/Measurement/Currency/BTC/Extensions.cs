@@ -209,7 +209,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
 
-            var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
+            var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible(default) );
             Parallel.ForEach( sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>(), pair => actionBlock.Post( pair ) );
             actionBlock.Complete();
 
@@ -298,7 +298,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 throw new ArgumentNullException( nameof( coinWallet ) );
             }
 
-            var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible );
+            var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible(default) );
             bsfasd.Complete();
 
             return bsfasd.Completion;

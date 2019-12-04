@@ -224,6 +224,6 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "fs" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
     }
 }

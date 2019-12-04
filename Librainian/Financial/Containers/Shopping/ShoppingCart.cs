@@ -98,10 +98,6 @@ namespace Librainian.Financial.Containers.Shopping {
             using ( this.Items ) { }
         }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
-
         /// <summary>
         ///     Removes the first <paramref name="item" /> from the list.
         /// </summary>

@@ -45,7 +45,7 @@ namespace Librainian.Databases {
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
@@ -222,10 +222,6 @@ namespace Librainian.Databases {
                     default: throw new ArgumentOutOfRangeException();
                 }
             }
-        }
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
         }
 
         /// <summary>

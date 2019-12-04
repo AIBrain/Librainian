@@ -79,10 +79,7 @@ namespace Librainian.Threading {
 
         public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
-
+        
         /// <summary>
         /// </summary>
         /// <returns></returns>

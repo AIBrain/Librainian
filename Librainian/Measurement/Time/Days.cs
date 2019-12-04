@@ -197,11 +197,15 @@ namespace Librainian.Measurement.Time {
         ///     <paramref name="obj" /> is not the same type as this instance.
         /// </exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return 1;
             }
 
-            return obj is Days other ? this.CompareTo( other ) : throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
+            if ( obj is Days other ) {
+                return this.CompareTo( other );
+            }
+
+            throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
         }
 
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
@@ -235,7 +239,7 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "day" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }

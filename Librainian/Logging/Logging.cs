@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/10/21 at 1:12 PM.
+// 
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/11/25 at 4:08 PM.
 
 namespace Librainian.Logging {
 
@@ -94,55 +94,53 @@ namespace Librainian.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                        return (Color.Blue, Color.Aqua);
-                    }
+                    return ( Color.Blue, Color.Aqua );
+                }
 
                 case LoggingLevel.SubspaceTear: {
-                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
-                    }
+                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
+                }
 
                 case LoggingLevel.Fatal: {
 
-                        return (Color.DarkRed, Color.Aqua);
-                    }
+                    return ( Color.DarkRed, Color.Aqua );
+                }
 
                 case LoggingLevel.Critical: {
 
-                        return (Color.Red, Color.Aqua);
-                    }
+                    return ( Color.Red, Color.Aqua );
+                }
 
                 case LoggingLevel.Error: {
 
-                        return (Color.Red, Color.White);
-                    }
+                    return ( Color.Red, Color.White );
+                }
 
                 case LoggingLevel.Warning: {
 
-                        return (Color.Goldenrod, Color.White);
-                    }
+                    return ( Color.Goldenrod, Color.White );
+                }
 
                 case LoggingLevel.Diagnostic: {
 
-                        return (Color.Green, Color.White);
-                    }
+                    return ( Color.Green, Color.White );
+                }
 
                 case LoggingLevel.Debug: {
 
-                        return (Color.DarkSeaGreen, Color.White);
-                    }
+                    return ( Color.DarkSeaGreen, Color.White );
+                }
 
                 case LoggingLevel.Exception: {
 
-                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
-                    }
+                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
+                }
 
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
         }
 
-        /// <summary>
-        ///     Write <paramref name="self" /> to the <see cref="Logger" />.
-        /// </summary>
+        /// <summary>Write <paramref name="self" /> to the <see cref="Logger" />.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="self"></param>
         [DebuggerStepThrough]
@@ -158,11 +156,7 @@ namespace Librainian.Logging {
         public static void Info<T>( [CanBeNull] this T self ) => Logger.Info( self );
 
         [DebuggerStepThrough]
-        public static void Info( [CanBeNull] this String message ) {
-            if ( !String.IsNullOrEmpty( message ) ) {
-                Logger.Info( message );
-            }
-        }
+        public static void Info( [CanBeNull] this String message ) => Logger.Info( message );
 
         [DebuggerStepThrough]
         [NotNull]
@@ -181,10 +175,7 @@ namespace Librainian.Logging {
             }
         }
 
-        /// <summary>
-        ///     Prefix <paramref name="message" /> with the datetime and write out to the attached debugger and/or trace
-        ///     <see cref="Logger" />.
-        /// </summary>
+        /// <summary>Prefix <paramref name="message" /> with the datetime and write out to the attached debugger and/or trace <see cref="Logger" />.</summary>
         /// <param name="message"></param>
         /// <param name="breakinto"></param>
         [Conditional( "DEBUG" )]
@@ -209,14 +200,10 @@ namespace Librainian.Logging {
             }
         }
 
-        /// <summary>
-        ///
-        /// </summary>
+        /// <summary></summary>
         /// <param name="exception"></param>
         /// <param name="breakinto"></param>
         /// <returns></returns>
-        //[Conditional( "DEBUG" )]
-        //[Conditional( "TRACE" )]
         [DebuggerStepThrough]
         [NotNull]
         public static Exception Log( [CanBeNull] this Exception exception, Boolean breakinto = false ) {
@@ -244,11 +231,10 @@ namespace Librainian.Logging {
             return message;
         }
 
-        /// <summary>
-        ///     Write
-        ///     <param name="self"></param>
-        ///     as JSON to the <see cref="Logger" />.
-        ///     <para>Append <paramref name="more" /> if it has text.</para>
+        /// <summary>Write
+        /// <param name="self"></param>
+        /// as JSON to the <see cref="Logger" />.
+        /// <para>Append <paramref name="more" /> if it has text.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="M"></typeparam>
@@ -282,9 +268,7 @@ namespace Librainian.Logging {
             return self;
         }
 
-        /// <summary>
-        ///     Add a <see cref="Target" /> or a <see cref="RichTextBox" />.
-        /// </summary>
+        /// <summary>Add a <see cref="Target" /> or a <see cref="RichTextBox" />.</summary>
         /// <param name="minLogLevel"></param>
         /// <param name="maxLogLevel"></param>
         /// <param name="target">     </param>
@@ -388,6 +372,16 @@ namespace Librainian.Logging {
         [DebuggerStepThrough]
         public static void Trace<T>( [CanBeNull] this T message ) => Logger.Trace( message );
 
+        [Conditional( "VERBOSE" )]
+        [DebuggerStepThrough]
+        public static void Verbose( [CanBeNull] this String message ) {
+            if ( Logger.IsTraceEnabled ) {
+                Logger.Trace( message );
+            } else if ( Logger.IsDebugEnabled ) {
+                Logger.Debug( message );
+            }
+        }
+
         [DebuggerStepThrough]
         public static void Warn( [CanBeNull] this String message ) => Logger.Warn( message );
 
@@ -396,5 +390,7 @@ namespace Librainian.Logging {
 
         [DebuggerStepThrough]
         public static void Warn<T>( [CanBeNull] this T message ) => Logger.Warn( message );
+
     }
+
 }

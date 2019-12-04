@@ -186,10 +186,6 @@ namespace Librainian.Measurement.Currency.BTC {
             using ( this._access ) { }
         }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
-
         /// <summary>
         ///     Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.
         /// </summary>

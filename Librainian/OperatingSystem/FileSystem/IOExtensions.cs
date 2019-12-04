@@ -95,7 +95,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( fileInfo ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( fileInfo.FullName ) || String.IsNullOrWhiteSpace( text ) ) {
+            if ( String.IsNullOrWhiteSpace( text ) ) {
                 return;
             }
 
@@ -103,11 +103,21 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var encodedText = Encoding.Unicode.GetBytes( text );
                 var length = encodedText.Length;
 
-                using ( var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length,
-                    useAsync: true ) ) {
-                    await sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length ).ConfigureAwait( false );
-                    await sourceStream.FlushAsync().ConfigureAwait( false );
+                using var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length,
+                    useAsync: true );
+
+                var write = sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length );
+
+                if ( write != null ) {
+                    await write.ConfigureAwait( false );
                 }
+
+                var flush = sourceStream.FlushAsync();
+
+                if ( flush != null ) {
+                    await flush.ConfigureAwait( false );
+                }
+
             }
             catch ( UnauthorizedAccessException exception ) {
                 exception.Log();
@@ -134,6 +144,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
+        /// <remarks>Don't use on large files obviously..</remarks>
+        [NotNull]
         public static IEnumerable<Byte> AsBytes( [NotNull] this FileInfo fileInfo ) {
             if ( fileInfo is null ) {
                 throw new ArgumentNullException( nameof( fileInfo ) );
@@ -143,7 +155,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 yield break;
             }
 
-            var stream = ReTry( () => new FileStream( fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+            using var stream = ReTry( () => new FileStream( fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
             if ( stream is null ) {
                 yield break;
@@ -154,17 +166,18 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             using ( stream ) {
-                using ( var buffered = new BufferedStream( stream ) ) {
-                    do {
-                        var b = buffered.ReadByte();
+                using var buffered = new BufferedStream( stream );
 
-                        if ( b == -1 ) {
-                            yield break;
-                        }
+                do {
+                    var b = buffered.ReadByte();
 
-                        yield return ( Byte )b;
-                    } while ( true );
-                }
+                    if ( b == -1 ) {
+                        yield break;
+                    }
+
+                    yield return ( Byte )b;
+                } while ( true );
+
             }
         }
 
@@ -801,7 +814,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return true;
             }
             catch ( OutOfMemoryException ) {
-                GC.Collect();
+                GC.Collect( generation: 2, mode: GCCollectionMode.Forced, blocking: true, compacting: true );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1463,9 +1476,11 @@ namespace Librainian.OperatingSystem.FileSystem {
             return memoryStream;
         }
 
+        [DebuggerStepThrough]
         public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) =>
             TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
 
+        [DebuggerStepThrough]
         public static Boolean TryGetFolderFromPath( [CanBeNull] this String path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {
 
             directoryInfo = null;

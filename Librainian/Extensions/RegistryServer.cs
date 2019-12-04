@@ -45,7 +45,6 @@ namespace Librainian.Extensions {
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using JetBrains.Annotations;
     using Microsoft.Win32;
@@ -203,7 +202,7 @@ namespace Librainian.Extensions {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? RuntimeHelpers.GetHashCode( new Object() );
+        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? 0;
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/10/06 at 9:58 AM.
+// Project: "Librainian", "Status.cs" was last formatted by Protiguous on 2019/11/25 at 3:52 PM.
 
 namespace Librainian {
 
@@ -47,8 +47,7 @@ namespace Librainian {
     using JetBrains.Annotations;
     using Parsing;
 
-    [Flags]
-    public enum Status : SByte {
+    public enum Status {
 
         [Description( Symbols.SkullAndCrossbones )]
         Fatal = Exception - 1,
@@ -114,7 +113,7 @@ namespace Librainian {
 
         public static Boolean IsGood( this Status status ) => status >= Status.Success;
 
-        public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
+        public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || ( !status.IsBad() && !status.IsGood() );
 
         public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,22 +28,21 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 6:48 AM.
+// 
+// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/11/25 at 3:17 PM.
 
 namespace Librainian.Converters {
 
     using System;
     using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.Diagnostics;
     using System.IO;
     using System.Management;
@@ -60,6 +59,7 @@ namespace Librainian.Converters {
     using Logging;
     using Maths;
     using Maths.Numbers;
+    using Microsoft.Data.SqlClient;
     using OperatingSystem.FileSystem;
     using Parsing;
     using Security;
@@ -104,7 +104,7 @@ namespace Librainian.Converters {
             }
 
             try {
-                return ( T )Convert.ChangeType( scalar, typeof( T ) );
+                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -114,9 +114,8 @@ namespace Librainian.Converters {
             return default;
         }
 
-        /// <summary>
-        ///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
-        ///     <para>Null or empty strings return <see cref="Decimal.Zero" />.</para>
+        /// <summary>Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
+        /// <para>Null or empty strings return <see cref="Decimal.Zero" />.</para>
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -163,9 +162,7 @@ namespace Librainian.Converters {
             return Regex.Replace( s, "[a-zA-Z]", String.Empty );
         }
 
-        /// <summary>
-        ///     Untested.
-        /// </summary>
+        /// <summary>Untested.</summary>
         /// <param name="self"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -187,18 +184,18 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return false;
                 case String s: {
-                        s = s.Trimmed();
+                    s = s.Trimmed();
 
-                        if ( s.In( TrueStrings ) ) {
-                            return true;
-                        }
-
-                        if ( Boolean.TryParse( s, out var result ) ) {
-                            return result;
-                        }
-
-                        break;
+                    if ( s.In( TrueStrings ) ) {
+                        return true;
                     }
+
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
+
+                    break;
+                }
                 case Control control: return control.Text().ToBoolean();
             }
 
@@ -324,17 +321,15 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ToByteOrThrow<T>( [CanBeNull] this T value ) => value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
+        public static Byte ToByteOrThrow<T>( [CanBeNull] this T value ) =>
+            value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
 
         [DebuggerStepThrough]
         [Pure]
         public static Byte ToByteOrZero<T>( [CanBeNull] this T value ) => value.ToByteOrNull() ?? 0;
 
         /// <summary>
-        ///     <para>
-        ///         Converts the <paramref name="self" /> to a <see cref="DateTime" />. Returns <see cref="DateTime.MinValue" />
-        ///         if any error occurs.
-        ///     </para>
+        ///     <para>Converts the <paramref name="self" /> to a <see cref="DateTime" />. Returns <see cref="DateTime.MinValue" /> if any error occurs.</para>
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
@@ -349,7 +344,7 @@ namespace Librainian.Converters {
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
             return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
+                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
         }
 
         [Pure]
@@ -377,9 +372,7 @@ namespace Librainian.Converters {
             return converter.Decimal;
         }
 
-        /// <summary>
-        ///     Tries to convert <paramref name="value" /> to a <see cref="Decimal" />.
-        /// </summary>
+        /// <summary>Tries to convert <paramref name="value" /> to a <see cref="Decimal" />.</summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -437,9 +430,7 @@ namespace Librainian.Converters {
             return converter.Guid;
         }
 
-        /// <summary>
-        ///     Convert the first 16 bytes of the SHA256 hash of the <paramref name="word" /> into a <see cref="Guid" />.
-        /// </summary>
+        /// <summary>Convert the first 16 bytes of the SHA256 hash of the <paramref name="word" /> into a <see cref="Guid" />.</summary>
         /// <param name="word"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -451,9 +442,7 @@ namespace Librainian.Converters {
             return new Guid( b: hashedBytes );
         }
 
-        /// <summary>
-        ///     Converts a datetime to a guid. Returns Guid.Empty if any error occurs.
-        /// </summary>
+        /// <summary>Converts a datetime to a guid. Returns Guid.Empty if any error occurs.</summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
         /// <see cref="ToDateTime" />
@@ -462,17 +451,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
-                        , b: ( UInt16 )dateTime.DayOfYear //4,5
-                        , c: ( UInt16 )dateTime.Millisecond //6,7
-                        , d: ( Byte )dateTime.DayOfWeek //8
-                        , e: ( Byte )dateTime.Day //9
-                        , f: ( Byte )dateTime.Hour //10
-                        , g: ( Byte )dateTime.Minute //11
-                        , h: ( Byte )dateTime.Second //12
-                        , i: ( Byte )dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
+                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
+                        , c: ( UInt16 ) dateTime.Millisecond //6,7
+                        , d: ( Byte ) dateTime.DayOfWeek //8
+                        , e: ( Byte ) dateTime.Day //9
+                        , f: ( Byte ) dateTime.Hour //10
+                        , g: ( Byte ) dateTime.Minute //11
+                        , h: ( Byte ) dateTime.Second //12
+                        , i: ( Byte ) dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte )dateTime.Kind ); //15
+                        , k: ( Byte ) dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -483,10 +472,7 @@ namespace Librainian.Converters {
         }
 
         /// <summary>
-        ///     <para>
-        ///         A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique
-        ///         identifier is required.
-        ///     </para>
+        ///     <para>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</para>
         ///     <para>A GUID has a very low probability of being duplicated.</para>
         /// </summary>
         /// <param name="high">    </param>
@@ -500,9 +486,7 @@ namespace Librainian.Converters {
         [Pure]
         public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( high: values.high, low: values.low ).guid;
 
-        /// <summary>
-        ///     Returns the value converted to an <see cref="Int32" /> or null.
-        /// </summary>
+        /// <summary>Returns the value converted to an <see cref="Int32" /> or null.</summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -556,9 +540,7 @@ namespace Librainian.Converters {
             return null;
         }
 
-        /// <summary>
-        ///     Converts <paramref name="value" /> to an <see cref="Int32" /> or throws <see cref="FormatException" />.
-        /// </summary>
+        /// <summary>Converts <paramref name="value" /> to an <see cref="Int32" /> or throws <see cref="FormatException" />.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -596,9 +578,7 @@ namespace Librainian.Converters {
             return managed;
         }
 
-        /// <summary>
-        ///     Convert string to Guid
-        /// </summary>
+        /// <summary>Convert string to Guid</summary>
         /// <param name="value">the string value</param>
         /// <returns>the Guid value</returns>
         [DebuggerStepThrough]
@@ -641,9 +621,7 @@ namespace Librainian.Converters {
             return null;
         }
 
-        /// <summary>
-        ///     Return the characters of the guid as a path structure.
-        /// </summary>
+        /// <summary>Return the characters of the guid as a path structure.</summary>
         /// <example>1/a/b/2/c/d/e/f/</example>
         /// <param name="guid">    </param>
         /// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
@@ -681,11 +659,10 @@ namespace Librainian.Converters {
             }, StringSplitOptions.RemoveEmptyEntries );
         }
 
-        /// <summary>
-        ///     Returns the trimmed <paramref name="obj" /> ToString() or null.
-        ///     <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
+        /// <summary>Returns the trimmed <paramref name="obj" /> ToString() or null.
+        /// <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
         /// </summary>
-        /// <remarks>If the <paramref name="obj"/> is a <see cref="Control"/> then the <see cref="Control.Text"/> will be returned.</remarks>
+        /// <remarks>If the <paramref name="obj" /> is a <see cref="Control" /> then the <see cref="Control.Text" /> will be returned.</remarks>
         /// <param name="obj"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -702,9 +679,7 @@ namespace Librainian.Converters {
             return Equals( obj, DBNull.Value ) ? default : obj.ToString().Trimmed();
         }
 
-        /// <summary>
-        ///     Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.
-        /// </summary>
+        /// <summary>Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         [DebuggerStepThrough]
@@ -713,9 +688,7 @@ namespace Librainian.Converters {
         public static String ToStringOrThrow<T>( [CanBeNull] this T value ) =>
             value.ToStringOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a string." );
 
-        /// <summary>
-        ///     Untested.
-        /// </summary>
+        /// <summary>Untested.</summary>
         /// <param name="guid"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -726,12 +699,12 @@ namespace Librainian.Converters {
             return bigInteger;
         }
 
-        /// <summary>
-        ///     Returns a 'Y' for true, or an 'N' for false.
-        /// </summary>
+        /// <summary>Returns a 'Y' for true, or an 'N' for false.</summary>
         /// <param name="value"></param>
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
+
     }
+
 }

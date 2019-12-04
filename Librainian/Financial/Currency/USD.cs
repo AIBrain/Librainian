@@ -69,9 +69,5 @@ namespace Librainian.Financial.Currency {
                 throw new InvalidOperationException( $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
             }
         }
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
     }
 }

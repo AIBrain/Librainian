@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CoinWallet.cs" was last formatted by Protiguous on 2019/11/17 at 4:38 PM.
+// Project: "Librainian", "CoinWallet.cs" was last formatted by Protiguous on 2019/11/24 at 2:31 PM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -108,7 +108,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
                     default: throw new ArgumentOutOfRangeException();
                 }
-            }, Blocks.ManyProducers.ConsumeSerial );
+            }, Blocks.ManyProducers.ConsumeSerial( default ) );
         }
 
         /// <summary>
@@ -177,9 +177,6 @@ namespace Librainian.Measurement.Currency.BTC {
         public override void DisposeManaged() {
             using ( this.Statistics ) { }
         }
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() { }
 
         public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
 

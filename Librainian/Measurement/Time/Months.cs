@@ -160,7 +160,7 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "month" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 

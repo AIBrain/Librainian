@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "BackgroundThread.cs" was last formatted by Protiguous on 2019/11/19 at 7:01 AM.
+// Project: "Librainian", "BackgroundThread.cs" was last formatted by Protiguous on 2019/12/04 at 12:00 AM.
 
 namespace Librainian.Threading {
 
@@ -52,41 +52,37 @@ namespace Librainian.Threading {
     /// </summary>
     public class BackgroundThread : ABetterClassDispose {
 
-        private volatile Boolean _quit;
-
-        private volatile Boolean _runningLoop;
-
         [NotNull]
         private Thread thread { get; }
 
-        private CancellationToken Token { get; }
+        [NotNull]
+        public CancellationTokenSource CTS { get; }
 
         [NotNull]
         public Action Loop { get; }
 
         /// <summary>True if the loop is currently running.</summary>
-        public Boolean RunningLoop {
-            get => this._runningLoop;
-            private set => this._runningLoop = value;
-        }
+        public Boolean RunningLoop { get; private set; }
 
         [NotNull]
         public AutoResetEvent Signal { get; } = new AutoResetEvent( true );
 
+        private CancellationToken Token => this.CTS.Token;
+
         /// <summary></summary>
         /// <param name="loop">Action to perform on each <see cref="Signal" />.</param>
         /// <param name="autoStart"></param>
-        /// <param name="token"></param>
-        public BackgroundThread( [NotNull] Action loop, Boolean autoStart, CancellationToken token ) {
+        /// <param name="cancellationTokenSource"></param>
+        public BackgroundThread( [NotNull] Action loop, Boolean autoStart, [NotNull] out CancellationTokenSource cancellationTokenSource ) {
             this.Loop = loop ?? throw new ArgumentNullException( paramName: nameof( loop ) );
-            this.Token = token;
+            this.CTS = cancellationTokenSource = new CancellationTokenSource();
 
             this.thread = new Thread( () => {
-                while ( !this._quit && !this.Token.IsCancellationRequested ) {
-                    if ( this.Signal.WaitOne( Seconds.One ) ) {
+                while ( !this.Token.IsCancellationRequested ) {
+                    if ( this.Signal.WaitOne( Seconds.Five ) ) {
                         try {
                             this.RunningLoop = true;
-                            this.Loop.Execute();
+                            this.Loop();
                         }
                         finally {
                             this.RunningLoop = false;
@@ -102,17 +98,13 @@ namespace Librainian.Threading {
             }
         }
 
-        private void Start() {
-            this.thread.Start();
-        }
+        private void Start() => this.thread.Start();
 
         /// <summary>Marks to exit the loop.</summary>
-        public void Cancel() => this._quit = true;
+        public void Cancel() => this.CTS.Cancel();
 
         /// <summary>Calling this or <see cref="IDisposable.Dispose" /> will cancel the signal-waiting loop.</summary>
         public override void DisposeManaged() => this.Cancel();
-
-        public override void DisposeNative() { }
 
         /// <summary>Do anything needed in this method before the loops run.</summary>
         public virtual void Initialize() { }

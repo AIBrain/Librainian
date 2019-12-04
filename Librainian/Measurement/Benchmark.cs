@@ -48,10 +48,7 @@ namespace Librainian.Measurement {
     using Logging;
     using Time;
 
-    /// <summary>
-    ///     Originally based upon the idea from
-    ///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
-    /// </summary>
+    /// <summary>Originally based upon the idea from <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.</summary>
     /// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
     public static class Benchmark {
 
@@ -64,11 +61,10 @@ namespace Librainian.Measurement {
             MethodB,
 
             Same
+
         }
 
-        /// <summary>
-        ///     For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.
-        /// </summary>
+        /// <summary>For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.</summary>
         /// <param name="method"></param>
         /// <param name="runFor"></param>
         /// <returns>Returns how many rounds are ran in the time given.</returns>
@@ -148,5 +144,7 @@ namespace Librainian.Measurement {
 
             return AorB.Same;
         }
+
     }
+
 }

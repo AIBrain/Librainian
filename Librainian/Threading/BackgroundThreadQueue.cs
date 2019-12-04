@@ -49,7 +49,7 @@ namespace Librainian.Threading {
 
     public class BackgroundThreadQueue<T> : ABetterClassDispose {
 
-        private volatile Boolean _quit;
+        private VolatileBoolean _quit;
 
         private Thread thread;
 
@@ -97,7 +97,7 @@ namespace Librainian.Threading {
 
         public override void DisposeManaged() => this.Cancel();
 
-        public override void DisposeNative() { }
+        
 
         /// <summary>Same as <see cref="Add" />.</summary>
         /// <param name="message"></param>

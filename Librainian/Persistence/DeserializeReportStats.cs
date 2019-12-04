@@ -109,9 +109,7 @@ namespace Librainian.Persistence {
             this.Losses.Dispose();
         }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
+        
 
         public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
 

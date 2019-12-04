@@ -66,15 +66,15 @@ namespace Librainian.Internet {
         /// <returns></returns>
         [ItemCanBeNull]
         public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null,
-            [CanBeNull] VolatileBoolean inProgress = null, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
+            VolatileBoolean inProgress = default, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
             if ( address is null ) {
                 throw new ArgumentNullException( nameof( address ) );
             }
 
             try {
-                if ( inProgress != null ) {
+                
                     inProgress.Value = true;
-                }
+                
 
                 reportProgress?.Report( ZeroToOne.MinValue );
 
@@ -115,9 +115,7 @@ namespace Librainian.Internet {
             finally {
                 reportProgress?.Report( ZeroToOne.MaxValue );
 
-                if ( inProgress != null ) {
-                    inProgress.Value = false;
-                }
+                //inProgress = false;
             }
 
             return null;

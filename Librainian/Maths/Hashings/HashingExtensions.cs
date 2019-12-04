@@ -121,20 +121,6 @@ namespace Librainian.Maths.Hashings {
             return fileInfo.AsBytes().Aggregate( 0, ( current, b ) => current.GetHashMerge( b ) );
         }
 
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2 ) => ( ( h1 << 5 ) + h1 ) ^ h2;
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3 );
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4 ) => CombineHashCodes( h1, h2 ).CombineHashCodes( h3.CombineHashCodes( h4 ) );
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5 ) => h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5 );
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6 ) =>
-            h1.CombineHashCodes( h2, h3 ).CombineHashCodes( h4.CombineHashCodes( h5, h6 ) );
-
-        public static Int32 CombineHashCodes( this Int32 h1, Int32 h2, Int32 h3, Int32 h4, Int32 h5, Int32 h6, Int32 h7 ) =>
-            h1.CombineHashCodes( h2, h3, h4 ).CombineHashCodes( h5.CombineHashCodes( h6, h7 ) );
-
         /// <summary>
         ///     Takes one <see cref="UInt64" />, and returns another Deterministic <see cref="UInt64" />.
         /// </summary>
@@ -194,6 +180,7 @@ namespace Librainian.Maths.Hashings {
             return translate64.SignedValue;
         }
 
+        /*
         public static Byte GetHashCodeByte<TLeft>( [NotNull] this TLeft objectA, Byte maximum = Byte.MaxValue ) {
             if ( Equals( objectA, default ) ) {
                 return 0;
@@ -205,6 +192,7 @@ namespace Librainian.Maths.Hashings {
                 return ( Byte )( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
             }
         }
+        */
 
         /// <summary>
         ///     Returns the combined <see cref="Object.GetHashCode" /> of all <paramref name="objects" />.
@@ -213,20 +201,17 @@ namespace Librainian.Maths.Hashings {
         /// <returns></returns>
         [Pure]
         public static Int32 GetHashCodes<T>( [CanBeNull] params T[] objects ) {
-            unchecked {
-                if ( objects is null ) {
-                    return 0;
-                }
-
-                if ( !objects.Any() ) {
-                    return objects.GetHashCode();
-                }
-
-                var objectA = objects[ 0 ];
-                var hashA = objectA.GetHashCode();
-
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
+            if ( objects is null ) {
+                return 0;
             }
+
+            var hash = new HashCode();
+
+            foreach ( var o in objects ) {
+                hash.Add( o );
+            }
+
+            return hash.ToHashCode();
         }
 
         /// <summary>
@@ -236,20 +221,17 @@ namespace Librainian.Maths.Hashings {
         /// <returns></returns>
         [Pure]
         public static Int32 GetHashCodes( [CanBeNull] params Object[] objects ) {
-            unchecked {
-                if ( objects is null ) {
-                    return 0;
-                }
-
-                if ( !objects.Any() ) {
-                    return objects.GetHashCode();
-                }
-
-                var objectA = objects[ 0 ];
-                var hashA = objectA.GetHashCode();
-
-                return objects.Skip( 1 ).Select( objectB => objectB.GetHashCode() ).Aggregate( hashA, ( current, hashB ) => ( ( current << 5 ) + current ) ^ hashB );
+            if ( objects is null ) {
+                return 0;
             }
+
+            var hash = new HashCode();
+
+            foreach ( var o in objects ) {
+                hash.Add( o );
+            }
+
+            return hash.ToHashCode();
         }
 
         /// <summary>
@@ -261,54 +243,34 @@ namespace Librainian.Maths.Hashings {
         /// <param name="objectA"></param>
         /// <param name="objectB"></param>
         /// <returns></returns>
-        public static Int32 GetHashCodes<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-            if ( Equals( objectA, default ) ) {
-                return 0;
-            }
+        public static Int32 GetHashCodes<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) {
+            var hash = new HashCode();
+            hash.Add( objectA );
+            hash.Add( objectB );
 
-            if ( Equals( objectB, default ) ) {
-                return 0;
-            }
-
-            var bob = new Translate64( objectA.GetHashCode(), objectB.GetHashCode() );
-
-            return bob.SignedLow;
+            return hash.ToHashCode();
         }
 
-        public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA, UInt16 maximum = UInt16.MaxValue ) {
-            if ( Equals( objectA, default ) ) {
-                return 0;
-            }
+        public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA ) {
+            var hash = new HashCode();
+            hash.Add( objectA );
 
-            unchecked {
-                var hashA = ( UInt16 )objectA.GetHashCode();
-
-                return ( UInt16 )( ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum );
-            }
+            return ( UInt16 ) hash.ToHashCode();
         }
 
-        public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA, UInt32 maximum = UInt32.MaxValue ) {
-            if ( Equals( objectA, default ) ) {
-                return 0;
-            }
+        public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA ) {
+            var hash = new HashCode();
+            hash.Add( objectA );
 
-            unchecked {
-                var hashA = ( UInt32 )objectA.GetHashCode();
-
-                return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
-            }
+            return ( UInt32 ) hash.ToHashCode();
         }
 
-        public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA, UInt64 maximum = UInt64.MaxValue ) {
-            if ( Equals( objectA, default ) ) {
-                return 0;
-            }
+        public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA ) {
+            var hash = new HashCode();
+            hash.Add( objectA );
 
-            unchecked {
-                var hashA = ( UInt64 )objectA.GetHashCode();
+            return ( UInt64 ) hash.ToHashCode();
 
-                return ( ( ( hashA << 5 ) + hashA ) ^ hashA ) % maximum;
-            }
         }
 
         /// <summary>
@@ -321,18 +283,14 @@ namespace Librainian.Maths.Hashings {
         /// <param name="objectB"></param>
         /// <returns></returns>
         [Pure]
-        public static Int32 GetHashMerge<TLeft, TRight>( this TLeft objectA, TRight objectB ) {
-            if ( Equals( objectA, default ) || Equals( objectB, default ) ) {
-                return 0;
-            }
+        public static Int32 GetHashMerge<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) {
+            var hash = new HashCode();
+            hash.Add( objectA );
+            hash.Add( objectB );
 
-            unchecked {
-                var hashA = objectA.GetHashCode();
-                var hashB = objectB.GetHashCode();
-                var combined = ( ( hashA << 5 ) + hashA ) ^ hashB;
-
-                return combined;
-            }
+            return hash.ToHashCode();
         }
+
     }
+
 }

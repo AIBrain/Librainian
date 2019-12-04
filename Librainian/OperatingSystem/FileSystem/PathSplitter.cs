@@ -37,15 +37,17 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2019/11/20 at 6:42 AM.
+// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2019/12/02 at 3:58 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using Collections.Extensions;
     using JetBrains.Annotations;
+    using Parsing;
 
     public class PathSplitter {
 
@@ -59,17 +61,22 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public String OriginalPath { get; }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
+        [DebuggerStepThrough]
         public PathSplitter( String fullpathandfilename ) {
             if ( String.IsNullOrWhiteSpace( value: fullpathandfilename ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpathandfilename ) );
             }
 
-            this.FileName = Path.GetFileName( fullpathandfilename );
             this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
 
-            if ( default == this.OriginalPath ) {
-                return;
+            if ( this.OriginalPath is null ) {
+                throw new InvalidOperationException( $"Empth path on {fullpathandfilename.DoubleQuote()}." );
+            }
+
+            this.FileName = Path.GetFileName( fullpathandfilename );
+
+            if ( this.FileName is null ) {
+                throw new InvalidOperationException( $"Empth file name on {fullpathandfilename.DoubleQuote()}." );
             }
 
             var strings = this.OriginalPath.Split( new[] {
@@ -83,8 +90,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( Folder folder ) : this( folder?.FullName ) { }
+        public PathSplitter( [CanBeNull] Folder folder ) : this( folder?.FullName ) { }
 
+        [DebuggerStepThrough]
         public Boolean InsertRoot( [NotNull] String path ) {
             if ( path is null ) {
                 throw new ArgumentNullException( nameof( path ) );
@@ -102,12 +110,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Returns the reconstructed path and filename.</summary>
         /// <returns></returns>
         [NotNull]
+        [DebuggerStepThrough]
         public Document Recombined() {
             var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
 
             return new Document( folder, this.FileName );
         }
 
+        [DebuggerStepThrough]
         public Boolean SubstituteDrive( Char c ) {
             var pz = this.Parts[ 0 ];
 

@@ -84,10 +84,9 @@ namespace Librainian.Collections.Queues {
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
-        public override void DisposeManaged() => this.Wait.Dispose();
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
+        public override void DisposeManaged() {
+            using ( this.Wait ) {
+            }
         }
 
         /// <summary>

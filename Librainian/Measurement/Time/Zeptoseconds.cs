@@ -211,7 +211,7 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "zs" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
         /// <summary>
         ///     <para>Convert to a smaller unit.</para>

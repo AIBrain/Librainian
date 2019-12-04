@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public struct Years : IComparable<Years>, IQuantityOfTime {
+    public class Years : IComparable<Years>, IQuantityOfTime {
 
         /// <summary>
         ///     One <see cref="Years" /> .
@@ -85,11 +85,36 @@ namespace Librainian.Measurement.Time {
 
         public Years( BigInteger value ) => this.Value = value;
 
-        public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
+        [NotNull]
+        public static Years Combine( [NotNull] Years left, [NotNull] Years right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        public static Years Combine( Years left, Decimal years ) => new Years( left.Value + ( Rational )years );
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
 
-        public static Years Combine( Years left, Rational years ) => new Years( left.Value + years );
+            return Combine( left, right.Value );
+        }
+
+        [NotNull]
+        public static Years Combine( [NotNull] Years left, Decimal years ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return new Years( left.Value + ( Rational ) years );
+        }
+
+        [NotNull]
+        public static Years Combine( [NotNull] Years left, Rational years ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return new Years( left.Value + years );
+        }
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -97,36 +122,96 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Years left, Years right ) => left.Value == right.Value;
+        public static Boolean Equals( [CanBeNull] Years left, [CanBeNull] Years right ) {
+            if ( ReferenceEquals(left,right) ) {
+                return true;
+            }
 
-        public static implicit operator Months( Years years ) => years.ToMonths();
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Value == right.Value;
+        }
+
+        public static implicit operator Months( [NotNull] Years years ) {
+            if ( years == null ) {
+                throw new ArgumentNullException( paramName: nameof( years ) );
+            }
+
+            return years.ToMonths();
+        }
 
         [NotNull]
-        public static implicit operator SpanOfTime( Years years ) => new SpanOfTime( years: years );
+        public static implicit operator SpanOfTime( [NotNull] Years years ) {
+            if ( years == null ) {
+                throw new ArgumentNullException( paramName: nameof( years ) );
+            }
 
-        public static Years operator -( Years days ) => new Years( days.Value * -1 );
+            return new SpanOfTime( years: years );
+        }
 
-        public static Years operator -( Years left, Years right ) => Combine( left: left, right: -right );
+        [NotNull]
+        public static Years operator -( [NotNull] Years years ) {
+            if ( years == null ) {
+                throw new ArgumentNullException( paramName: nameof( years ) );
+            }
 
-        public static Years operator -( Years left, Decimal years ) => Combine( left, -years );
+            return new Years( years.Value * -1 );
+        }
 
-        public static Boolean operator !=( Years left, Years right ) => !Equals( left, right );
+        [NotNull]
+        public static Years operator -( [NotNull] Years left, [NotNull] Years right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return Combine( left: left, right: -right );
+        }
+
+        [NotNull]
+        public static Years operator -( [NotNull] Years left, Decimal years ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return Combine( left, -years );
+        }
+
+        public static Boolean operator !=( [NotNull] Years left, [NotNull] Years right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return !Equals( left, right );
+        }
+
+        [NotNull]
         public static Years operator +( Years left, Years right ) => Combine( left, right );
 
+        [NotNull]
         public static Years operator +( Years left, Decimal years ) => Combine( left, years );
 
+        [NotNull]
         public static Years operator +( Years left, BigInteger years ) => Combine( left, years );
 
         public static Boolean operator <( Years left, Years right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Years left, Years right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Years left, [CanBeNull] Years right ) => Equals( left, right );
 
         public static Boolean operator >( Years left, Years right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Years other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Years other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Years other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -159,7 +244,7 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "year" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
         public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneCommonYear );
     }

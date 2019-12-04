@@ -396,6 +396,6 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "µs" )}";
         }
 
-        public TimeSpan ToTimeSpan() => throw new NotImplementedException();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
     }
 }

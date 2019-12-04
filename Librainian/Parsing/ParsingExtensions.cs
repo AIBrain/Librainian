@@ -143,6 +143,7 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <param name="count"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [CanBeNull]
         public static String Right( [CanBeNull] this String self, Int32 count ) {
             if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
@@ -160,6 +161,7 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <param name="maxlength"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [CanBeNull]
         public static String LimitAndTrim( [CanBeNull] this String self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) ).TrimEnd();
 
@@ -168,6 +170,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
         public static String SingleQuote( [CanBeNull] this String self ) => $"'{self.Trimmed()}'";
 
@@ -176,6 +179,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
         public static String Bracket( [NotNull] this String self ) {
             if ( self is null ) {
@@ -208,6 +212,7 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [CanBeNull]
         public static String Trimmed<T>( [CanBeNull] this T self ) {
             if ( self is null ) {
@@ -221,6 +226,7 @@ namespace Librainian.Parsing {
             return self.ToString().NullIfEmpty();
         }
 
+        [DebuggerStepThrough]
         [NotNull]
         public static String DoubleQuote<T>( [CanBeNull] this T self ) => $"\"{self}\"";
 
@@ -940,6 +946,7 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         [CanBeNull]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [DebuggerStepThrough]
         public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? null : self;
 
         /// <summary>
@@ -948,11 +955,14 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
+        [DebuggerStepThrough]
         public static String NullIfEmptyOrWhiteSpace( [CanBeNull] this String self ) => String.IsNullOrWhiteSpace( self ) ? null : self;
 
+        [DebuggerStepThrough]
         [CanBeNull]
         public static String NullIfJustNumbers( [CanBeNull] this String self ) => self.IsJustNumbers() ? null : self;
 
+        [DebuggerStepThrough]
         public static Int32 NumberOfDigits( this BigInteger number ) => number.ToString().Length;
 
         /// <summary>
@@ -961,6 +971,7 @@ namespace Librainian.Parsing {
         /// <param name="c"></param>
         /// <param name="count"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
         public static String Repeat( this Char c, Int32 count ) => new String( c, count );
 
@@ -970,9 +981,11 @@ namespace Librainian.Parsing {
         /// <param name="self"></param>
         /// <param name="count"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
         public static String Repeat( [CanBeNull] this String self, Int32 count ) => Enumerable.Repeat( self, count ).ToStrings( separator: null );
 
+        [DebuggerStepThrough]
         [NotNull]
         public static String RepeatFirstChar( [NotNull] this String self, Int32 count ) {
             if ( self is null ) {
@@ -991,6 +1004,7 @@ namespace Librainian.Parsing {
         /// <param name="middlePadding"></param>
         /// <param name="count"></param>
         /// <returns></returns>
+        [DebuggerStepThrough]
         [NotNull]
         public static String PadMiddle( [NotNull] this String left, [CanBeNull] String right, Char middlePadding, Int32 count = 1 ) {
             if ( left is null ) {

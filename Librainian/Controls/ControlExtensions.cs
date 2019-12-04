@@ -728,9 +728,9 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Text( [NotNull] this Control control ) {
+        public static String Text( [CanBeNull] this Control control ) {
             if ( control is null ) {
-                throw new ArgumentNullException( paramName: nameof( control ) );
+                return default;
             }
 
             return control.InvokeRequired ? control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty : control.Text;

@@ -582,9 +582,6 @@ namespace Librainian.OperatingSystem.Compression {
         /// </summary>
         public override void DisposeManaged() => this.Close();
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
 
         /// <summary>
         ///     Copy the contents of a stored file into a physical file

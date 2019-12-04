@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,21 +28,22 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConsoleWindow.cs" was last formatted by Protiguous on 2019/08/08 at 6:40 AM.
+// 
+// Project: "Librainian", "ConsoleWindow.cs" was last formatted by Protiguous on 2019/11/25 at 3:53 PM.
 
 namespace Librainian.ComputerSystem {
 
     using System;
     using System.Diagnostics;
+    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -51,6 +52,8 @@ namespace Librainian.ComputerSystem {
 
     public class ConsoleWindow {
 
+        public static Boolean IsConsoleVisible { get; set; }
+
         private const Int32 MY_CODE_PAGE = 437;
 
         private const Int32 STD_ERROR_HANDLE = -12;
@@ -58,8 +61,6 @@ namespace Librainian.ComputerSystem {
         private const Int32 STD_OUTPUT_HANDLE = -11;
 
         private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
-
-        public static Boolean IsConsoleVisible { get; set; }
 
         [Flags]
         private enum DesiredAccess : UInt32 {
@@ -71,6 +72,7 @@ namespace Librainian.ComputerSystem {
             GenericExecute = 0x20000000,
 
             GenericAll = 0x10000000
+
         }
 
         private enum StdHandle {
@@ -80,6 +82,7 @@ namespace Librainian.ComputerSystem {
             Output = -11,
 
             Error = -12
+
         }
 
         [DllImport( "kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
@@ -135,7 +138,7 @@ namespace Librainian.ComputerSystem {
         public static extern Boolean MoveWindow( IntPtr hWnd, Int32 X, Int32 Y, Int32 nWidth, Int32 nHeight, Boolean bRepaint );
 
         [DllImport( "kernel32.dll" )]
-        public static extern Boolean SetConsoleScreenBufferSize( IntPtr hConsoleOutput, COORD size );
+        public static extern Boolean SetConsoleScreenBufferSize( IntPtr hConsoleOutput, Point size );
 
         public static void Show( Int32 bufferWidth = -1, Boolean breakRedirection = true, Int32 bufferHeight = 1600, Int32 screenNum = -1 /*-1 = Any but primary*/ ) {
             AllocConsole();
@@ -184,9 +187,8 @@ namespace Librainian.ComputerSystem {
                 Console.SetError( standardError );
 
                 if ( breakRedirection ) {
-                    var coord = new COORD {
-                        X = ( Int16 )bufferWidth,
-                        Y = ( Int16 )bufferHeight
+                    var coord = new Point {
+                        X = bufferWidth, Y = bufferHeight
                     };
 
                     SetConsoleScreenBufferSize( stdOut, coord );
@@ -222,11 +224,8 @@ namespace Librainian.ComputerSystem {
             SetStdHandle( StdHandle.Error, stdErr = GetConsoleStandardError() );
         }
 
-        public struct COORD {
-
-            public Int16 X;
-
-            public Int16 Y;
-        }
     }
+
 }
+
+namespace Librainian.Graphics {}

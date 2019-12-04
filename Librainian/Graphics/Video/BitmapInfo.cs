@@ -44,8 +44,9 @@ namespace Librainian.Graphics.Video {
     using System;
     using System.Drawing;
     using JetBrains.Annotations;
+    using Magic;
 
-    public struct BitmapInfo {
+    public class BitmapInfo : ABetterClassDispose {
 
         //count of frames in the AVI stream, or 0
         public Int32 AviCountFrames;
@@ -54,15 +55,27 @@ namespace Librainian.Graphics.Video {
         public Int32 AviPosition;
 
         //uncompressed image
+        [NotNull]
         public Bitmap Bitmap;
 
         //how many bytes will be hidden in this image
         public Int64 MessageBytesToHide;
 
         //path and name of the bitmap file
+        [NotNull]
         public String SourceFileName;
 
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this.Bitmap ) {
+            }
+        }
+
         public void LoadBitmap( [NotNull] String fileName ) {
+            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+            }
+
             this.Bitmap = new Bitmap( fileName );
             this.SourceFileName = fileName;
         }

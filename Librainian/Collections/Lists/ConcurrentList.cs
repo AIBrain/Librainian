@@ -39,6 +39,10 @@
 //
 // Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2019/10/25 at 12:10 PM.
 
+
+
+
+
 namespace Librainian.Collections.Lists {
 
     using System;
@@ -47,7 +51,6 @@ namespace Librainian.Collections.Lists {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
@@ -569,9 +572,7 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         public override void DisposeManaged() => this.SetDisposeHint( $"{nameof( ConcurrentList<T> )}, count={this.Count}." );
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
+        
 
         /// <summary>
         ///     <para>
@@ -856,14 +857,6 @@ namespace Librainian.Collections.Lists {
             } );
         */
 
-        [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
-        public struct TranslateBytesToInt32 {
-
-            [FieldOffset( offset: 0 )]
-            public Byte[] Bytes;
-
-            [FieldOffset( offset: 0 )]
-            public Int32[] Ints;
-        }
     }
+
 }

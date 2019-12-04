@@ -154,9 +154,7 @@ namespace Librainian.Threading {
             }
         }
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() { }
-
+        
         /// <summary>Run any remaining jobs.
         /// <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
         /// </summary>

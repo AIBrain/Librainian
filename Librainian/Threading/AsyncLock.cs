@@ -67,11 +67,13 @@ namespace Librainian.Threading {
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
-        public override void DisposeManaged() => this.Semaphore.Dispose();
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
+        public override void DisposeManaged() {
+            using (this.Semaphore) { }
         }
+
+        
+
+
 
         [CanBeNull]
         public Task<IDisposable> LockAsync() {

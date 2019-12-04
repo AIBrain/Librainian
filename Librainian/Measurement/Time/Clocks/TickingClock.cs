@@ -44,6 +44,7 @@ namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Timers;
     using JetBrains.Annotations;
+    using Magic;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -66,7 +67,7 @@ namespace Librainian.Measurement.Time.Clocks {
     ///     </para>
     /// </summary>
     [JsonObject]
-    public class TickingClock : IStandardClock {
+    public class TickingClock : ABetterClassDispose, IStandardClock {
 
         /// <summary>
         /// </summary>
@@ -263,5 +264,13 @@ namespace Librainian.Measurement.Time.Clocks {
                 this._timer?.Start();
             }
         }
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._timer ) {
+                
+            }
+        }
+
     }
 }

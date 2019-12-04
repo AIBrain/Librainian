@@ -99,10 +99,9 @@ namespace Librainian.Databases.MMF {
         /// <summary>
         ///     Dispose any disposable members.
         /// </summary>
-        public override void DisposeManaged() => this._tcpClient?.Dispose();
-
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
+        public override void DisposeManaged() {
+            using ( this._tcpClient ) {
+            }
         }
 
         //32 bytes for datetime String... it's an overkill i know

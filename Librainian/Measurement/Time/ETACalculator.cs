@@ -49,12 +49,13 @@ namespace Librainian.Measurement.Time {
     using System.Timers;
     using FluentTime;
     using JetBrains.Annotations;
+    using Magic;
     using Maths;
 
     /// <summary>
     ///     <para>Calculates the "Estimated Time of Arrival", aka ETA</para>
     /// </summary>
-    public class EtaCalculator {
+    public class EtaCalculator : ABetterClassDispose {
 
         /// <summary>
         ///     At these points in time, how far along have we progressed?
@@ -149,5 +150,13 @@ namespace Librainian.Measurement.Time {
 
             //throw new ArgumentOutOfRangeException( "Progress", "The Progress is out of the range 0 to 1." );
         }
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._timer ) {
+                
+            }
+        }
+
     }
 }

@@ -58,6 +58,7 @@ namespace Librainian.Maths {
         /// <summary>
         ///     Table used for reversing bits.
         /// </summary>
+        [NotNull]
         private static readonly Byte[] BitReverseTable256 = {
             0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58,
             0xD8, 0x38, 0xB8, 0x78, 0xF8, 0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4, 0x0C, 0x8C, 0x4C, 0xCC, 0x2C, 0xAC,
@@ -71,6 +72,7 @@ namespace Librainian.Maths {
             0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
         };
 
+        [NotNull]
         private static readonly String[] SizeSuffixes = {
             "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
         };
@@ -634,7 +636,7 @@ namespace Librainian.Maths {
                 step = 1;
             }
 
-            var reFrom = start; //bug here is the bug if from is less than zero
+            var reFrom = start; //TODO bug here (less than zero?)
 
             if ( start <= end ) {
                 for ( var ul = reFrom; ul <= end; ul += step ) {
@@ -823,30 +825,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
-                TimeSpan diff;
-
-                if ( from > to ) {
-                    diff = from - from;
-                }
-                else {
-                    diff = to - from;
-                }
-
-                if ( diff.TotalDays > 1 ) {
-                    step = Days.One;
-                }
-                else if ( diff.TotalHours > 1 ) {
-                    step = Hours.One;
-                }
-                else if ( diff.TotalMinutes > 1 ) {
-                    step = Minutes.One;
-                }
-                else if ( diff.TotalSeconds > 1 ) {
-                    step = Seconds.One;
-                }
-                else {
-                    step = Milliseconds.One;
-                }
+                step = ToInternalDateTimes( fromm: @from, to: to );
             }
 
             if ( from > to ) {
@@ -867,6 +846,42 @@ namespace Librainian.Maths {
                     yield return dateTime;
                 }
             }
+        }
+
+        /// <summary>
+        /// Guts of <see cref="To(DateTime,DateTime,TimeSpan?)"/>.
+        /// </summary>
+        /// <param name="fromm"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        private static TimeSpan? ToInternalDateTimes( DateTime fromm, DateTime to ) {
+            TimeSpan? step;
+            TimeSpan diff;
+
+            if ( fromm > to ) {
+                diff = fromm - fromm;
+            }
+            else {
+                diff = to - fromm;
+            }
+
+            if ( diff.TotalDays > 1 ) {
+                step = Days.One;
+            }
+            else if ( diff.TotalHours > 1 ) {
+                step = Hours.One;
+            }
+            else if ( diff.TotalMinutes > 1 ) {
+                step = Minutes.One;
+            }
+            else if ( diff.TotalSeconds > 1 ) {
+                step = Seconds.One;
+            }
+            else {
+                step = Milliseconds.One;
+            }
+
+            return step;
         }
 
         [Pure]
@@ -915,9 +930,11 @@ namespace Librainian.Maths {
             return result.ToString();
         }
 
-        public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "X2" ) );
+        [CanBeNull]
+        public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
 
-        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( "", ( current, b ) => current + b.ToString( "X2" ) );
+        [CanBeNull]
+        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
 
         [NotNull]
         public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();

@@ -135,10 +135,7 @@ namespace Librainian.Measurement.Currency {
         /// </summary>
         public override void DisposeManaged() => this._access.Dispose();
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
-
+        
         /// <summary>
         ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
         /// </summary>

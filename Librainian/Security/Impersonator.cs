@@ -95,8 +95,6 @@ namespace Librainian.Security {
 
         public override void DisposeManaged() => this._impersonationContext?.Undo();
 
-        /// <summary>Dispose of COM objects, Handles, etc. (Do they now need set to null?) in this method.</summary>
-        public override void DisposeNative() {
-        }
+        
     }
 }

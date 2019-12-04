@@ -44,6 +44,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Media;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
@@ -219,6 +220,46 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
         }
+
+        [NotNull]
+        public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            if ( !document.Exists() ) {
+                return false;
+            }
+
+            using ( var stream = new FileStream( path: document.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+
+                if ( !stream.CanRead ) {
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {document.FullPath}" );
+                }
+
+                var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
+
+                using ( var buffered = new BufferedStream( stream: stream ) ) {
+                    var bytesRead = 0;
+
+                    do {
+                        var readTask = buffered.ReadAsync( buffer, offset: 0, count: buffer.Length );
+
+                        if ( readTask != null ) {
+                            bytesRead = await readTask.ConfigureAwait( false );
+
+                            if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+                                return false;
+                            }
+                        }
+                    } while ( bytesRead.Any() );
+                }
+
+                return true;
+            }
+        }
+
     }
 
     /*

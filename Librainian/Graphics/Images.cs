@@ -1203,6 +1203,7 @@ namespace Librainian.Graphics {
             return null;
         }
 
+        /*
         /// <summary>
         ///     <para>Returns true if the file could be loaded as an image.</para>
         ///     <para>Uses <see cref="BitmapImage" /> first, and then</para>
@@ -1217,6 +1218,7 @@ namespace Librainian.Graphics {
 
             return new FileInfo( document.FullPath ).IsaValidImage();
         }
+        */
 
         [CanBeNull]
         public static BitmapImage BitmapFromUri( this Uri source ) {
@@ -1235,6 +1237,40 @@ namespace Librainian.Graphics {
             catch ( NotSupportedException ) { }
 
             return null;
+        }
+
+        public static async Task<Boolean> IsaValidImage( [NotNull] this Document document ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            if ( !document.IsBufferLoaded ) {
+                await document.LoadDocumentIntoBuffer().ConfigureAwait( false );
+            }
+
+            if ( !document.IsBufferLoaded || document.Buffer is null ) {
+                return false;
+            }
+
+            try {
+                using var ms = new MemoryStream( document.Buffer );
+                document.Bitmap = new Bitmap( Image.FromStream( ms ) );
+
+                return true;
+            }
+            catch ( NotSupportedException ) { }
+            catch ( OutOfMemoryException ) { GC.Collect( 2, GCCollectionMode.Forced, true, true ); }
+            catch ( ExternalException ) { }
+            catch ( InvalidOperationException ) { }
+            catch ( FileNotFoundException ) { }
+            catch ( IOException ) { }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            document.Bitmap = default;
+
+            return false;
         }
 
         /// <summary>

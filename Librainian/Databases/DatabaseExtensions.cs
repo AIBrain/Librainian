@@ -44,7 +44,7 @@ namespace Librainian.Databases {
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
+    using Microsoft.Data.SqlClient;
     using System.Diagnostics;
     using System.Linq;
     using System.Management;
@@ -61,6 +61,7 @@ namespace Librainian.Databases {
     using Persistence;
     using static Persistence.Cache;
     using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
+    using SqlException = Microsoft.Data.SqlClient.SqlException;
 
     public static class DatabaseExtensions {
 
@@ -958,5 +959,16 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
+
+        public static void PopulateParameters( [CanBeNull] this SqlCommand command, [CanBeNull] IEnumerable<SqlParameter> parameters ) {
+            if ( parameters is null || command?.Parameters is null ) {
+                return;
+            }
+
+            foreach ( var parameter in parameters ) {
+                command.Parameters.Add( parameter );
+            }
+        }
+
     }
 }

@@ -68,7 +68,8 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>1 of each measure of time</para>
         /// </summary>
-        public static SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+        public static SpanOfTime Identity = new SpanOfTime( planckTimes: 1, yoctoseconds: 1, zeptoseconds: 1, attoseconds: 1, femtoseconds: 1, picoseconds: 1, nanoseconds: 1,
+            microseconds: 1, milliseconds: 1, seconds: 1, minutes: 1, hours: 1, days: 1, weeks: 1, months: 1, years: 1 );
 
         /// <summary></summary>
         public static SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
@@ -223,12 +224,12 @@ namespace Librainian.Measurement.Time {
         /// <param name="planckTimes"></param>
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
-        public SpanOfTime( PlanckTimes planckTimes = default, Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default,
-            Femtoseconds femtoseconds = default, Picoseconds picoseconds = default, Nanoseconds nanoseconds = default, Microseconds microseconds = default,
-            Milliseconds milliseconds = default, [NotNull] Seconds seconds = default, Minutes minutes = default, Hours hours = default, Days days = default,
-            Weeks weeks = default, Months months = default, Years years = default ) : this( planckTimes: planckTimes.Value, yoctoseconds: yoctoseconds.Value,
+        public SpanOfTime( [CanBeNull] PlanckTimes planckTimes = default, Yoctoseconds yoctoseconds = default, Zeptoseconds zeptoseconds = default, Attoseconds attoseconds = default,
+            Femtoseconds femtoseconds = default, Picoseconds picoseconds = default, Nanoseconds nanoseconds = default, [CanBeNull] Microseconds microseconds = default,
+            Milliseconds milliseconds = default, [NotNull] Seconds seconds = default, [CanBeNull] Minutes minutes = default, Hours hours = default, Days days = default,
+            Weeks weeks = default, Months months = default, Years years = default ) : this( planckTimes: planckTimes?.Value, yoctoseconds: yoctoseconds.Value,
             zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value, picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value,
-            microseconds: microseconds.Value, milliseconds: milliseconds.Value, seconds: seconds.Value, minutes: minutes.Value, hours: hours.Value, days: days.Value,
+            microseconds: microseconds?.Value, milliseconds: milliseconds?.Value, seconds: seconds?.Value, minutes: minutes?.Value, hours: hours.Value, days: days.Value,
             weeks: weeks.Value, months: months.Value, years: years.Value ) { }
 
         /// <summary></summary>
