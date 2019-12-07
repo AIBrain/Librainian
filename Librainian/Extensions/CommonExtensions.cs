@@ -62,7 +62,19 @@ namespace Librainian.Extensions {
         /// <example>5. Between(10, 1)</example>
         /// <example>5. Between(10, 6) == false</example>
         /// <example>5. Between(5, 5))</example>
-        public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, T endInclusive ) where T : IComparable {
+        public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
+            if ( target is null ) {
+                throw new ArgumentNullException( paramName: nameof( target ) );
+            }
+
+            if ( startInclusive is null ) {
+                throw new ArgumentNullException( paramName: nameof( startInclusive ) );
+            }
+
+            if ( endInclusive is null ) {
+                throw new ArgumentNullException( paramName: nameof( endInclusive ) );
+            }
+
             if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
                 return target.CompareTo( startInclusive ) <= 0 && target.CompareTo( endInclusive ) >= 0;
             }
@@ -72,7 +84,7 @@ namespace Librainian.Extensions {
 
         [DebuggerStepThrough]
         [Conditional( "DEBUG" )]
-        public static void BreakIfDebug<T>( this T obj ) {
+        public static void BreakIfDebug<T>( [CanBeNull] this T obj ) {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
             }
@@ -86,7 +98,20 @@ namespace Librainian.Extensions {
         /// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
         /// <param name="max"> The maximum value of the <typeparamref name="T" /> that can be returned.</param>
         /// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
-        public static T Clamp<T>( [NotNull] this T self, T min, T max ) where T : IComparable<T> {
+        [NotNull]
+        public static T Clamp<T>( [NotNull] this T self, [NotNull] T min, [NotNull] T max ) where T : IComparable<T> {
+            if ( self is null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
+
+            if ( min is null ) {
+                throw new ArgumentNullException( paramName: nameof( min ) );
+            }
+
+            if ( max is null ) {
+                throw new ArgumentNullException( paramName: nameof( max ) );
+            }
+
             if ( self.CompareTo( other: min ) < 0 ) {
                 return min;
             }

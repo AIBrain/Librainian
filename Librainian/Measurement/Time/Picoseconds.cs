@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public struct Picoseconds : IComparable<Picoseconds>, IQuantityOfTime {
+    public class Picoseconds : IComparable<Picoseconds>, IQuantityOfTime {
 
         /// <summary>
         ///     1000

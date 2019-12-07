@@ -971,7 +971,7 @@ namespace Librainian.Maths {
         public static Single OneThird( this Single x ) => x / 3.0f;
 
         public static UInt32 PackBitFields( [NotNull] UInt16[] values, [NotNull] Byte[] bitFields ) {
-            if ( bitFields == null ) {
+            if ( bitFields is null ) {
                 throw new ArgumentNullException( paramName: nameof( bitFields ) );
             }
 

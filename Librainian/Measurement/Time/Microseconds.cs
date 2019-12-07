@@ -340,9 +340,13 @@ namespace Librainian.Measurement.Time {
             return left.Value > right.Value;
         }
 
-        public static Boolean operator >( [NotNull] Microseconds left, Milliseconds right ) {
+        public static Boolean operator >( [NotNull] Microseconds left, [NotNull] Milliseconds right ) {
             if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right is null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
             return left.Value > right.Value;

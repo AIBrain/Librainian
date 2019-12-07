@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "LeanStringBuilder.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "LeanStringBuilder.cs" was last formatted by Protiguous on 2019/12/02 at 7:13 AM.
 
 // ReSharper disable once CheckNamespace
@@ -58,10 +58,7 @@ namespace System.Text {
     [Serializable]
     public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
 
-        /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
-        public Boolean Equals( LeanStringBuilder other ) => Equals( this, other );
+        private const Int32 InitialCapacity = 8;
 
         [JsonProperty]
         [NotNull]
@@ -70,13 +67,15 @@ namespace System.Text {
 
         private Int32 charCount;
 
-        private const Int32 InitialCapacity = 8;
+        private String compiled;
 
         /// <summary>Optimized for .Add()ing many! strings.
         /// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
         /// <para>Won't throw exceptions on null or empty strings being added.</para>
         /// </summary>
         public LeanStringBuilder( Int32 initialCapacity = InitialCapacity ) => this._parts = new List<Char[]>( initialCapacity );
+
+        private void ClearCompiled() => this.compiled = null;
 
         /// <summary>Optimized for .Add()ing many! strings.
         /// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
@@ -124,7 +123,7 @@ namespace System.Text {
 
         [NotNull]
         public LeanStringBuilder Add( [CanBeNull] Char[] chars ) {
-            if ( chars == null ) {
+            if ( chars is null ) {
                 return this;
             }
 
@@ -138,8 +137,6 @@ namespace System.Text {
 
             return this;
         }
-
-        private void ClearCompiled() => this.compiled = null;
 
         [NotNull]
         public LeanStringBuilder Append( [CanBeNull] String item ) => this.Add( item?.ToCharArray() );
@@ -159,6 +156,11 @@ namespace System.Text {
             this.ClearCompiled();
         }
 
+        /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+        public Boolean Equals( LeanStringBuilder other ) => Equals( this, other );
+
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object. </param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
@@ -168,17 +170,15 @@ namespace System.Text {
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this._parts.GetHashCode();
 
-        private String compiled;
-
         public override String ToString() {
-            if ( !String.IsNullOrEmpty( this.compiled) ) {
+            if ( !String.IsNullOrEmpty( this.compiled ) ) {
                 return this.compiled;
             }
 
             this.TrimExcess();
             var final = new Char[ this.charCount ];
             var offest = 0;
-            
+
             foreach ( var t in this._parts ) {
                 var l = t.Length * 2; //*2 because char are 2 bytes??
                 Buffer.BlockCopy( t, 0, final, offest, l );
@@ -194,7 +194,5 @@ namespace System.Text {
 
             return this;
         }
-
     }
-
 }

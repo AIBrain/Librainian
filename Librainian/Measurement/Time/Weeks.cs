@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
 
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public struct Weeks : IComparable<Weeks>, IQuantityOfTime {
+    public class Weeks : IComparable<Weeks>, IQuantityOfTime {
 
         /// <summary>
         ///     52

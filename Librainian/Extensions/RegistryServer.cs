@@ -1,26 +1,26 @@
 // Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "RegistryServer.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "RegistryServer.cs" was last formatted by Protiguous on 2019/08/08 at 7:20 AM.
+// 
+// Project: "Librainian", "RegistryServer.cs" was last formatted by Protiguous on 2019/12/04 at 10:35 PM.
 
 namespace Librainian.Extensions {
 
@@ -50,17 +50,44 @@ namespace Librainian.Extensions {
     using Microsoft.Win32;
 
     /// <summary>
-    ///     Provider immutable projections from the registry of the machine, as well as events for
-    ///     status and errors via a singeton wrapper on the .NET Registry singleton. Here we are only
-    ///     exposing the HKLM area subkey but you can see it is easily extensible
+    /// Provider immutable projections from the registry of the machine, as well as events for status and errors via a singeton wrapper on the .NET Registry singleton. Here we
+    /// are only exposing the HKLM area subkey but you can see it is easily extensible
     /// </summary>
     public class RegistryServer : IEqualityComparer<RegistryKey> /*, IInitializable*/, IEnumerable<RegistryKey> {
 
-        private static readonly RegistryServer Instance;
+        public IEnumerator<RegistryKey> GetEnumerator() {
+            if ( !this._isInitialized ) {
+                throw new InvalidOperationException( "Please initialize the backing store first" );
+            }
 
-        // IInitializable is from Castle.Core Contractually saying we need a call on our
-        // Initialize() method before we can be given out as a service to others
-        private static Int32 _iCounter;
+            return this._allKeys.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        /// If either contains a null, the result is false (actually it is null be we do not have that option. It is 'unknown and indeterminant'. An emptry String however is treated
+        /// as 'known to be empty' where null is 'could be anything we have no idea'.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public Boolean Equals( [NotNull] RegistryKey x, [NotNull] RegistryKey y ) {
+            if ( x is null ) {
+                throw new ArgumentNullException( paramName: nameof( x ) );
+            }
+
+            if ( y is null ) {
+                throw new ArgumentNullException( paramName: nameof( y ) );
+            }
+
+            return x.Name != null && y.Name != null && x.Name == y.Name;
+        }
+
+        /// <summary>For null names here we will calculate a funky random number as null != null</summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public Int32 GetHashCode( [CanBeNull] RegistryKey obj ) => obj?.Name?.GetHashCode() ?? 0;
 
         private HashSet<RegistryKey> _allKeys;
 
@@ -93,9 +120,16 @@ namespace Librainian.Extensions {
             }
         }
 
-        private RegistryServer() { }
+        [NotNull]
+        private static readonly RegistryServer Instance;
+
+        // IInitializable is from Castle.Core Contractually saying we need a call on our
+        // Initialize() method before we can be given out as a service to others
+        private static Int32 _iCounter;
 
         static RegistryServer() => Instance = new RegistryServer();
+
+        private RegistryServer() { }
 
         public static event PopulateProgressDelegate PopulateProgress {
             add => Instance._populateEventOk += value;
@@ -179,31 +213,6 @@ namespace Librainian.Extensions {
 
         public static void Initialize() => Initialize( Registry.LocalMachine );
 
-        /// <summary>
-        ///     If either contains a null, the result is false (actually it is null be we do not have
-        ///     that option. It is 'unknown and indeterminant'. An emptry String however is treated as
-        ///     'known to be empty' where null is 'could be anything we have no idea'.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public Boolean Equals( RegistryKey x, RegistryKey y ) => x.Name != null && y.Name != null && x.Name == y.Name;
-
-        public IEnumerator<RegistryKey> GetEnumerator() {
-            if ( !this._isInitialized ) {
-                throw new InvalidOperationException( "Please initialize the backing store first" );
-            }
-
-            return this._allKeys.GetEnumerator();
-        }
-
-        /// <summary>
-        ///     For null names here we will calculate a funky random number as null != null
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public Int32 GetHashCode( RegistryKey obj ) => obj.Name?.GetHashCode() ?? 0;
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
+
 }

@@ -181,7 +181,7 @@ namespace Librainian.Maths.Numbers {
         private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( selector: Hash );
 
         public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
-            if ( keys == null ) {
+            if ( keys is null ) {
                 throw new ArgumentNullException( paramName: nameof( keys ) );
             }
 

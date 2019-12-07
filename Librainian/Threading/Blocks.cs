@@ -52,7 +52,7 @@ namespace Librainian.Threading {
 
         [NotNull]
         public static IPropagatorBlock<T, T> CreateDelayBlock<T>( [NotNull] SpanOfTime delay ) {
-            if ( delay == null ) {
+            if ( delay is null ) {
                 throw new ArgumentNullException( paramName: nameof( delay ) );
             }
 

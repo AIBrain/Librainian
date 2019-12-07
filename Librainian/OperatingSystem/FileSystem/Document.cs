@@ -76,6 +76,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
     public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
+        [NotNull]
         String FullPath { get; }
 
         /*
@@ -348,13 +349,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="token"></param>
-        /// <param name="makeExact">
-        ///     If true, the file creation and lastwrite dates are set after the <see cref="IDocument.MoveAsync" />
-        ///     .
-        /// </param>
         /// <returns></returns>
         [NotNull]
-        Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean makeExact = true );
+        Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token );
 
         Task<String> ReadStringAsync();
 
@@ -372,6 +369,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
+        [NotNull]
         Task<Boolean> SameContent( [CanBeNull] Document right );
 
         /// <summary>
@@ -415,6 +413,15 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         Task<Boolean> IsAll( Byte number );
+
+        /// <summary>
+        ///     Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.
+        /// </summary>
+        /// <see cref="Document.op_Implicit" />
+        /// <returns></returns>
+        [NotNull]
+        FileInfo GetFreshInfo();
+
     }
 
     //TODO Document class is getting too large. abstract some more, and make extensions.
@@ -1079,7 +1086,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var buffer = this.Buffer;
 
-            if ( buffer == null ) {
+            if ( buffer is null ) {
                 return false;
             }
 
@@ -1139,7 +1146,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             bytesRead = await readTask.ConfigureAwait( false );
                             bytesLeft -= bytesRead;
 
-                            if ( !bytesRead.Any() || !bytesLeft.Any()  ) {
+                            if ( !bytesRead.Any() || !bytesLeft.Any() ) {
                                 this.IsBufferLoaded = true;
 
                                 return Status.Success;
@@ -1353,75 +1360,42 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="token"></param>
-        /// <param name="makeExact">If true, the file creation and lastwrite dates are set after the <see cref="MoveAsync" />.</param>
         /// <returns></returns>
         [NotNull]
-        public Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token, Boolean makeExact = true ) {
+        public async Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token ) {
             if ( destination is null ) {
                 throw new ArgumentNullException( paramName: nameof( destination ) );
             }
 
-            return Task.Run( async () => {
-                try {
-                    var container = destination.ContainingingFolder();
+            try {
+                destination.ContainingingFolder()?.Create();
 
-                    if ( container?.Exists() == false ) {
-                        if ( !container.Create() ) {
-                            return default;
-                        }
-                    }
-
-                    var task = destination.SameContent( this );
-
-                    if ( task != null && await task.ConfigureAwait( false ) ) {
-                        this.Delete();
-
-                        return destination.Size();
-                    }
-
-                    move();
-
-                    after();
+                if ( await destination.SameContent( this ).ConfigureAwait( false ) ) {
+                    this.Delete();
                 }
-                catch ( FileNotFoundException exception ) {
-                    exception.Log();
-                }
-                catch ( DirectoryNotFoundException exception ) {
-                    exception.Log();
-                }
-                catch ( PathTooLongException exception ) {
-                    exception.Log();
-                }
-                catch ( IOException exception ) {
-                    exception.Log();
-                }
-                catch ( UnauthorizedAccessException exception ) {
-                    exception.Log();
-                }
-
-                return destination.Size();
-            }, token );
-
-            void after() {
-                if ( makeExact && destination.Exists() ) {
-                    var documentInfo = new DocumentInfo( this );
-
-                    if ( documentInfo.CreationTimeUtc.HasValue ) {
-                        destination.CreationTimeUtc = documentInfo.CreationTimeUtc.Value;
-                    }
-
-                    if ( documentInfo.LastWriteTimeUtc.HasValue ) {
-                        destination.LastWriteTimeUtc = documentInfo.LastWriteTimeUtc.Value;
-                    }
-                }
-            }
-
-            void move() {
-                if ( destination.FullPath != null ) {
+                else {
                     thisComputer.FileSystem.MoveFile( sourceFileName: this.FullPath, destinationFileName: destination.FullPath, showUI: UIOption.OnlyErrorDialogs,
                         onUserCancel: UICancelOption.DoNothing );
+
+                    if ( destination.Exists() ) {
+                        var documentInfo = new DocumentInfo( this );
+
+                        if ( documentInfo.CreationTimeUtc.HasValue ) {
+                            destination.CreationTimeUtc = documentInfo.CreationTimeUtc.Value;
+                        }
+
+                        if ( documentInfo.LastWriteTimeUtc.HasValue ) {
+                            destination.LastWriteTimeUtc = documentInfo.LastWriteTimeUtc.Value;
+                        }
+                    }
                 }
             }
+            catch ( Exception exception ) {
+                exception.Log();
+            }
+
+            return destination.Size();
+
         }
 
         /// <summary>

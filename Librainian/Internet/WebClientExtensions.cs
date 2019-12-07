@@ -79,7 +79,7 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( paramName: nameof( client ) );
             }
 
-            if ( token == null ) {
+            if ( token is null ) {
                 throw new ArgumentNullException( nameof( token ) );
             }
 

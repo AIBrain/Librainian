@@ -68,16 +68,16 @@ namespace Librainian.Logging {
         ///     <para>Then calls <see cref="Debugger.Break" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="_"></param>
+        /// <param name="s"></param>
         /// <param name="message"></param>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String Break<T>( [CanBeNull] this T _, [CanBeNull] String message = null ) {
+        public static String Break<T>( [CanBeNull] this T s, [CanBeNull] String message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
 
-            _.BreakIfDebug();
+            s.BreakIfDebug();
 
             return message;
         }

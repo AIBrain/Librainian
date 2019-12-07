@@ -77,6 +77,9 @@ namespace Librainian {
         Negative = Failure,
 
         [Description( Symbols.Fail )]
+        Bad = Failure,
+
+        [Description( Symbols.Fail )]
         Failure = -1,
 
         [Description( Symbols.Unknown )]

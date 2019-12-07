@@ -87,11 +87,11 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static Years Combine( [NotNull] Years left, [NotNull] Years right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
@@ -100,16 +100,16 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static Years Combine( [NotNull] Years left, Decimal years ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
-            return new Years( left.Value + ( Rational ) years );
+            return new Years( left.Value + ( Rational )years );
         }
 
         [NotNull]
         public static Years Combine( [NotNull] Years left, Rational years ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
@@ -123,7 +123,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Years left, [CanBeNull] Years right ) {
-            if ( ReferenceEquals(left,right) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -135,7 +135,7 @@ namespace Librainian.Measurement.Time {
         }
 
         public static implicit operator Months( [NotNull] Years years ) {
-            if ( years == null ) {
+            if ( years is null ) {
                 throw new ArgumentNullException( paramName: nameof( years ) );
             }
 
@@ -144,7 +144,7 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static implicit operator SpanOfTime( [NotNull] Years years ) {
-            if ( years == null ) {
+            if ( years is null ) {
                 throw new ArgumentNullException( paramName: nameof( years ) );
             }
 
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static Years operator -( [NotNull] Years years ) {
-            if ( years == null ) {
+            if ( years is null ) {
                 throw new ArgumentNullException( paramName: nameof( years ) );
             }
 
@@ -162,11 +162,11 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static Years operator -( [NotNull] Years left, [NotNull] Years right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
@@ -175,7 +175,7 @@ namespace Librainian.Measurement.Time {
 
         [NotNull]
         public static Years operator -( [NotNull] Years left, Decimal years ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
@@ -183,11 +183,11 @@ namespace Librainian.Measurement.Time {
         }
 
         public static Boolean operator !=( [NotNull] Years left, [NotNull] Years right ) {
-            if ( left == null ) {
+            if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
-            if ( right == null ) {
+            if ( right is null ) {
                 throw new ArgumentNullException( paramName: nameof( right ) );
             }
 

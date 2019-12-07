@@ -963,6 +963,7 @@ namespace Librainian.Graphics {
             HalftoneScreen = 0x500F,
 
             HalftoneShape = 0x500D
+
         }
 
         [NotNull]
@@ -1240,7 +1241,7 @@ namespace Librainian.Graphics {
         }
 
         public static async Task<Boolean> IsaValidImage( [NotNull] this Document document ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
@@ -1259,7 +1260,9 @@ namespace Librainian.Graphics {
                 return true;
             }
             catch ( NotSupportedException ) { }
-            catch ( OutOfMemoryException ) { GC.Collect( 2, GCCollectionMode.Forced, true, true ); }
+            catch ( OutOfMemoryException ) {
+                GC.Collect( 2, GCCollectionMode.Forced, true, true );
+            }
             catch ( ExternalException ) { }
             catch ( InvalidOperationException ) { }
             catch ( FileNotFoundException ) { }
@@ -1369,13 +1372,13 @@ namespace Librainian.Graphics {
             var sourceWidth = imgToResize.Width;
             var sourceHeight = imgToResize.Height;
 
-            var nPercentW = size.Width / ( Single )sourceWidth;
-            var nPercentH = size.Height / ( Single )sourceHeight;
+            var nPercentW = size.Width / ( Single ) sourceWidth;
+            var nPercentH = size.Height / ( Single ) sourceHeight;
 
             var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
-            var destWidth = ( Int32 )( sourceWidth * nPercent );
-            var destHeight = ( Int32 )( sourceHeight * nPercent );
+            var destWidth = ( Int32 ) ( sourceWidth * nPercent );
+            var destHeight = ( Int32 ) ( sourceHeight * nPercent );
 
             using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
                 using ( var g = Graphics.FromImage( image: bitmap ) ) {
@@ -1452,7 +1455,7 @@ namespace Librainian.Graphics {
             return false;
         }
 
-        public static class FileNameExtension {
+        internal static class FileNameExtension {
 
             /// <summary>
             ///     <para>.tif</para>
@@ -1460,15 +1463,19 @@ namespace Librainian.Graphics {
             /// <see cref="http://wikipedia.org/wiki/TIFF" />
             [NotNull]
             public static String Tiff => ".tif";
+
         }
 
-        public static class PropertyList {
+        internal static class PropertyList {
 
             public const Int32 DateTimeDigitized = 0x9004;
 
             public const Int32 DateTimeOriginal = 0x9003;
 
             public const Int32 PropertyTagDateTime = 0x132;
+
         }
+
     }
+
 }

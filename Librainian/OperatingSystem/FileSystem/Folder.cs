@@ -327,7 +327,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [DebuggerStepThrough]
         [NotNull]
         public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) {
-            if ( fullpath == null ) {
+            if ( fullpath is null ) {
                 throw new ArgumentNullException( paramName: nameof( fullpath ) );
             }
 

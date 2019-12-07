@@ -47,6 +47,7 @@ namespace Librainian.Threading {
     using System.Security.Permissions;
     using System.Threading;
     using JetBrains.Annotations;
+    using Magic;
 
     /// <summary>
     /// A reader-writer lock implementation that is intended to be simple, yet very efficient.  In particular only 1 interlocked operation is taken for any lock operation (we use
@@ -55,13 +56,9 @@ namespace Librainian.Threading {
     /// </summary>
     [HostProtection( SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true )]
     [HostProtection( MayLeakOnAbort = true )]
-    public class ReaderWriterFromMicrosoft : IDisposable {
-
-        public void Dispose() => this.Dispose( true );
+    public class ReaderWriterFromMicrosoft : ABetterClassDispose {
 
         private readonly Int64 lockID;
-
-        private Boolean _isDisposed;
 
         private Boolean fNoWaiters;
 
@@ -81,16 +78,20 @@ namespace Librainian.Threading {
         //readers etc.
         private UInt32 owners;
 
+        [CanBeNull]
         private EventWaitHandle readEvent;
 
+        [CanBeNull]
         private EventWaitHandle upgradeEvent;
 
         // maximum number of threads that can be doing a WaitOne on the upgradeEvent (at most 1).
         private Int32 upgradeLockOwnerId;
 
+        [CanBeNull]
         private EventWaitHandle waitUpgradeEvent;
 
         // conditions we wait on.
+        [CanBeNull]
         private EventWaitHandle writeEvent;
 
         // maximum number of threads that can be doing a WaitOne on the readEvent
@@ -98,7 +99,7 @@ namespace Librainian.Threading {
 
         public Int32 CurrentReadCount {
             get {
-                var numreaders = ( Int32 ) this.GetNumReaders();
+                var numreaders = ( Int32 )this.GetNumReaders();
 
                 if ( this.upgradeLockOwnerId != -1 ) {
                     return numreaders - 1;
@@ -186,11 +187,11 @@ namespace Librainian.Threading {
             }
         }
 
-        public Int32 WaitingReadCount => ( Int32 ) this.numReadWaiters;
+        public Int32 WaitingReadCount => ( Int32 )this.numReadWaiters;
 
-        public Int32 WaitingUpgradeCount => ( Int32 ) this.numUpgradeWaiters;
+        public Int32 WaitingUpgradeCount => ( Int32 )this.numUpgradeWaiters;
 
-        public Int32 WaitingWriteCount => ( Int32 ) this.numWriteWaiters;
+        public Int32 WaitingWriteCount => ( Int32 )this.numWriteWaiters;
 
         private const Int32 LockSleep0Count = 5;
 
@@ -265,7 +266,8 @@ namespace Librainian.Threading {
 
         private void ClearWritersWaiting() => this.owners &= ~WAITING_WRITERS;
 
-        private void Dispose( Boolean disposing ) {
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
             if ( this.IsWriteLockHeld ) {
                 this.ExitWriteLock();
             }
@@ -278,37 +280,26 @@ namespace Librainian.Threading {
                 this.ExitReadLock();
             }
 
-            if ( disposing && !this._isDisposed ) {
-                if ( this.WaitingReadCount > 0 || this.WaitingUpgradeCount > 0 || this.WaitingWriteCount > 0 ) {
-                    throw new SynchronizationLockException( "Incorrect Dispose" );
-                }
-
-                if ( this.IsReadLockHeld || this.IsUpgradeableReadLockHeld || this.IsWriteLockHeld ) {
-                    throw new SynchronizationLockException( "Incorrect Dispose" );
-                }
-
-                if ( this.writeEvent != null ) {
-                    this.writeEvent.Close();
-                    this.writeEvent = null;
-                }
-
-                if ( this.readEvent != null ) {
-                    this.readEvent.Close();
-                    this.readEvent = null;
-                }
-
-                if ( this.upgradeEvent != null ) {
-                    this.upgradeEvent.Close();
-                    this.upgradeEvent = null;
-                }
-
-                if ( this.waitUpgradeEvent != null ) {
-                    this.waitUpgradeEvent.Close();
-                    this.waitUpgradeEvent = null;
-                }
-
-                this._isDisposed = true;
+            if ( this.WaitingReadCount > 0 || this.WaitingUpgradeCount > 0 || this.WaitingWriteCount > 0) {
+                throw new SynchronizationLockException( "Incorrect Dispose" );
             }
+
+            using ( this.writeEvent ) {
+                this.writeEvent?.Close();
+            }
+
+            using ( this.readEvent ) {
+                this.readEvent?.Close();
+            }
+
+            using ( this.upgradeEvent ) {
+                this.upgradeEvent?.Close();
+            }
+
+            using ( this.waitUpgradeEvent ) {
+                this.waitUpgradeEvent?.Close();
+            }
+
         }
 
         /// <summary>Determines the appropriate events to set, leaves the locks, and sets the events.</summary>
@@ -328,7 +319,7 @@ namespace Librainian.Threading {
             //that scenario.
             if ( true ) {
                 if ( this.numWriteUpgradeWaiters > 0 && this.fUpgradeThreadHoldingRead && readercount == 2 ) {
-                    this.waitUpgradeEvent.Set(); // release all upgraders (however there can be at most one).
+                    this.waitUpgradeEvent?.Set(); // release all upgraders (however there can be at most one).
 
                     return;
                 }
@@ -340,10 +331,10 @@ namespace Librainian.Threading {
                 //No new writes should be allowed to sneak in if an upgrade
                 //was pending.
 
-                this.waitUpgradeEvent.Set(); // release all upgraders (however there can be at most one).
+                this.waitUpgradeEvent?.Set(); // release all upgraders (however there can be at most one).
             }
             else if ( readercount == 0 && this.numWriteWaiters > 0 ) {
-                this.writeEvent.Set(); // release one writer.
+                this.writeEvent?.Set(); // release one writer.
             }
             else {
                 if ( this.numReadWaiters != 0 || this.numUpgradeWaiters != 0 ) {
@@ -356,11 +347,11 @@ namespace Librainian.Threading {
                     }
 
                     if ( setReadEvent ) {
-                        this.readEvent.Set(); // release all readers.
+                        this.readEvent?.Set(); // release all readers.
                     }
 
                     if ( setUpgradeEvent ) {
-                        this.upgradeEvent.Set(); //release one upgrader.
+                        this.upgradeEvent?.Set(); //release one upgrader.
                     }
                 }
             }
@@ -436,7 +427,7 @@ namespace Librainian.Threading {
                 newEvent = new ManualResetEvent( false );
             }
 
-            if ( waitEvent == null ) // maybe someone snuck in.
+            if ( waitEvent is null ) // maybe someone snuck in.
             {
                 waitEvent = newEvent;
             }
@@ -513,7 +504,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
 
                 // We can enter a read lock if there are only read-locks have been given out
                 // and a writer is not trying to get in.
@@ -636,7 +627,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
 
                 //Once an upgrade lock is taken, it's like having a reader lock held
                 //until upgrade or downgrade operations are performed.
@@ -740,7 +731,7 @@ namespace Librainian.Threading {
 
             var spincount = 0;
 
-            for ( ;; ) {
+            for (; ; ) {
                 if ( this.IsWriterAcquired() ) {
 
                     // Good case, there is no contention, we are basically done
@@ -1051,13 +1042,13 @@ namespace Librainian.Threading {
             }
 
             public TimeoutTracker( TimeSpan timeout ) {
-                var ltm = ( Int64 ) timeout.TotalMilliseconds;
+                var ltm = ( Int64 )timeout.TotalMilliseconds;
 
                 if ( ltm < -1 || ltm > Int32.MaxValue ) {
                     throw new ArgumentOutOfRangeException( nameof( timeout ) );
                 }
 
-                this._total = ( Int32 ) ltm;
+                this._total = ( Int32 )ltm;
 
                 if ( this._total != -1 && this._total != 0 ) {
                     this._start = Environment.TickCount;

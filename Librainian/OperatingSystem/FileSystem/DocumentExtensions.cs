@@ -223,7 +223,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
-            if ( document == null ) {
+            if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 

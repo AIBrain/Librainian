@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Time {
 
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public struct Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
+    public class Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
 
         /// <summary>
         ///     365

@@ -72,9 +72,8 @@ namespace Librainian.Internet {
             }
 
             try {
-                
-                    inProgress.Value = true;
-                
+
+                inProgress.Value = true;
 
                 reportProgress?.Report( ZeroToOne.MinValue );
 
@@ -121,7 +120,15 @@ namespace Librainian.Internet {
             return null;
         }
 
-        public static IEnumerable<Document> FindFile( String filename, [NotNull] IEnumerable<String> locationClues ) {
+        public static IEnumerable<Document> FindFile( [NotNull] String filename, [NotNull] IEnumerable<String> locationClues ) {
+            if ( locationClues is null ) {
+                throw new ArgumentNullException( paramName: nameof( locationClues ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filename ) );
+            }
+
             foreach ( var locationClue in locationClues ) {
                 if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
                     continue;
