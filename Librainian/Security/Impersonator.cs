@@ -45,8 +45,8 @@ namespace Librainian.Security {
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Security.Principal;
-    using Magic;
     using OperatingSystem;
+    using Utilities;
 
     /// <summary>
     /// </summary>
@@ -94,7 +94,5 @@ namespace Librainian.Security {
         }
 
         public override void DisposeManaged() => this._impersonationContext?.Undo();
-
-        
     }
 }

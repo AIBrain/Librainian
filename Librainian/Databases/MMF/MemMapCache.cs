@@ -50,7 +50,7 @@ namespace Librainian.Databases.MMF {
     using System.Text;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
+    using Utilities;
 
     public class MemMapCache<T> : ABetterClassDispose {
 

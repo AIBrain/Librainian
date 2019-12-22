@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Surfer.cs" was last formatted by Protiguous on 2019/08/08 at 8:01 AM.
+// Project: "Librainian", "Surfer.cs" was last formatted by Protiguous on 2019/12/10 at 7:16 AM.
 
 namespace Librainian.Internet {
 
@@ -52,7 +52,8 @@ namespace Librainian.Internet {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
+    using Utilities;
+    
 
     public class Surfer : ABetterClassDispose {
 
@@ -67,9 +68,7 @@ namespace Librainian.Internet {
 
         private Boolean _downloadInProgressStatus;
 
-        /// <summary>
-        ///     Returns True if a download is currently in progress
-        /// </summary>
+        /// <summary>Returns True if a download is currently in progress</summary>
         public Boolean DownloadInProgress {
             get {
                 try {
@@ -144,9 +143,7 @@ namespace Librainian.Internet {
             }
         }
 
-        /// <summary>
-        ///     Returns True if the address was successfully added to the queue to be downloaded.
-        /// </summary>
+        /// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
         /// <param name="address"></param>
         /// <returns></returns>
         public Boolean Surf( [CanBeNull] String address ) {
@@ -166,9 +163,7 @@ namespace Librainian.Internet {
             }
         }
 
-        /// <summary>
-        ///     Returns True if the address was successfully added to the queue to be downloaded.
-        /// </summary>
+        /// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
         /// <param name="address"></param>
         /// <returns></returns>
         public Boolean Surf( [CanBeNull] Uri address ) {
@@ -221,9 +216,7 @@ namespace Librainian.Internet {
                 }
             } );
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
     }
 }

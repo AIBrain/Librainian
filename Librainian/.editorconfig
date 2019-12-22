@@ -1,8 +1,0 @@
-﻿[*.cs]
-
-# HAA0101: Array allocation for params parameter
-dotnet_diagnostic.HAA0101.severity = suggestion
-dotnet_code_quality.ca1000.api_surface = private, internal
-
-# HAA0601: Value type to reference type conversion causing boxing allocation
-dotnet_diagnostic.HAA0601.severity = suggestion

@@ -42,37 +42,37 @@
 namespace Librainian.OperatingSystem.Compression {
 
     using System;
-    using System.Diagnostics;
+    using JetBrains.Annotations;
     using Maths;
 
     //[TestFixture]
     public static class RandomnessTest {
 
-        public static RandomnessFeeding RandomnessFeeding;
+        [NotNull]
+        public static RandomnessFeeding RandomnessFeeding { get; } = new RandomnessFeeding();
 
         //[OneTimeTearDown]
         public static void Done() {
             using ( RandomnessFeeding ) { }
         }
 
-        //[OneTimeSetUp]
-        public static void Init() => RandomnessFeeding = new RandomnessFeeding();
-
         //[Test]
         public static Boolean RunSimulation() {
             var buffer = new Byte[ MathConstants.Sizes.OneMegaByte ]; //one megabyte
-            var bufferLength = buffer.LongLength;
+#if TRACE
+            //var bufferLength = buffer.LongLength;
+#endif
 
             var counter = 10;
 
             while ( counter-- > 0 ) {
-                Trace.WriteLine( $"Generating {bufferLength} bytes of data.." );
+                //Trace.WriteLine( $"Generating {bufferLength} bytes of data.." );
                 Randem.NextBytes( ref buffer );
 
-                Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
-                var before = RandomnessFeeding.HowManyBytesFed;
+                //Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
+                //var before = RandomnessFeeding.HowManyBytesFed;
                 RandomnessFeeding.FeedItData( buffer );
-                var after = RandomnessFeeding.HowManyBytesFed;
+                //var after = RandomnessFeeding.HowManyBytesFed;
 
                 RandomnessFeeding.Report();
             }

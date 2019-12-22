@@ -46,13 +46,19 @@ namespace Librainian.Measurement.Currency.USD {
     using System.Threading;
     using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Magic;
+    using Utilities;
+    
 
     /// <summary>
     ///     A simple, thread-safe,  Decimal-based wallet.
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
+
+        [NotNull]
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        private Decimal _balance;
 
         /// <summary>
         /// </summary>
@@ -85,6 +91,10 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
+        [UsedImplicitly]
+        [NotNull]
+        public String Formatted => this.ToString();
+
         public Label LabelToFlashOnChanges { get; set; }
 
         public Action<Decimal> OnAfterDeposit { get; set; }
@@ -96,6 +106,22 @@ namespace Librainian.Measurement.Currency.USD {
         public Action<Decimal> OnBeforeDeposit { get; set; }
 
         public Action<Decimal> OnBeforeWithdraw { get; set; }
+
+        /// <summary>
+        ///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
+        ///     <para>Defaults to one minute.</para>
+        /// </summary>
+        public TimeSpan Timeout { get; set; }
+
+        public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._access ) {
+            }
+        }
+
+        public override String ToString() => this.Balance.ToString( "C" );
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
@@ -174,31 +200,5 @@ namespace Librainian.Measurement.Currency.USD {
         }
 
         public Boolean TryWithdraw( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
-
-        [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-
-        private Decimal _balance;
-
-        [UsedImplicitly]
-        [NotNull]
-        public String Formatted => this.ToString();
-
-        /// <summary>
-        ///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
-        ///     <para>Defaults to one minute.</para>
-        /// </summary>
-        public TimeSpan Timeout { get; set; }
-
-        public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
-
-        public override String ToString() => this.Balance.ToString( "C" );
-
-        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-        public override void DisposeManaged() {
-            using ( this._access ) {
-            }
-        }
-
     }
 }

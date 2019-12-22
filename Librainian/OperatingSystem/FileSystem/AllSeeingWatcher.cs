@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
+    using Utilities;
 
     /// <summary>
     /// </summary>
@@ -83,7 +83,6 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.Stop();
         }
 
-        
         public void Start() {
             var drives = DriveInfo.GetDrives();
 

@@ -42,7 +42,7 @@
 namespace LibrainianTests.Magic {
 
     using System;
-    using Librainian.Magic;
+    using Librainian.Utilities;
     using Xunit;
 
     public class TestABetterClassDispose {

@@ -52,9 +52,9 @@ namespace Librainian.Databases {
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
     using Maths;
     using Parsing;
+    using Utilities;
 
     public class DurableDatabase : ABetterClassDispose {
 

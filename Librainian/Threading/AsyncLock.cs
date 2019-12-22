@@ -46,9 +46,9 @@ namespace Librainian.Threading {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Measurement.Time;
+    using Utilities;
 
     /// <summary>
     ///     Usage: private  AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) {
@@ -68,12 +68,8 @@ namespace Librainian.Threading {
         ///     Dispose any disposable members.
         /// </summary>
         public override void DisposeManaged() {
-            using (this.Semaphore) { }
+            using ( this.Semaphore ) { }
         }
-
-        
-
-
 
         [CanBeNull]
         public Task<IDisposable> LockAsync() {

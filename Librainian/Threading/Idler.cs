@@ -51,7 +51,7 @@ namespace Librainian.Threading {
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
+    using Utilities;
     using Error = System.Error;
 
     public enum JobStatus {
@@ -154,7 +154,6 @@ namespace Librainian.Threading {
             }
         }
 
-        
         /// <summary>Run any remaining jobs.
         /// <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
         /// </summary>

@@ -44,8 +44,8 @@ namespace Librainian.Measurement.Time.Clocks {
     using System;
     using System.Timers;
     using JetBrains.Annotations;
-    using Magic;
     using Newtonsoft.Json;
+    using Utilities;
 
     /// <summary>
     ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -194,6 +194,12 @@ namespace Librainian.Measurement.Time.Clocks {
             this.OnMinuteElapsed( sender, e );
         }
 
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._timer ) {
+            }
+        }
+
         public Boolean IsAm() => !this.IsPm();
 
         public Boolean IsPm() => this.Hour.Value >= 12;
@@ -264,13 +270,5 @@ namespace Librainian.Measurement.Time.Clocks {
                 this._timer?.Start();
             }
         }
-
-        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-        public override void DisposeManaged() {
-            using ( this._timer ) {
-                
-            }
-        }
-
     }
 }

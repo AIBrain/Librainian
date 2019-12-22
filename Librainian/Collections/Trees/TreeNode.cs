@@ -43,7 +43,7 @@ namespace Librainian.Collections.Trees {
 
     using System;
     using JetBrains.Annotations;
-    using Magic;
+    using Utilities;
 
     /// <summary>
     ///     http: //dvanderboom.wordpress.com/2008/03/15/treet-implementing-a-non-binary-tree-in-c/

@@ -47,9 +47,9 @@ namespace Librainian.Financial.Containers.Shopping {
     using System.Linq;
     using Collections.Lists;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Newtonsoft.Json;
+    using Utilities;
 
     [JsonObject]
     public class ShoppingCart : ABetterClassDispose {

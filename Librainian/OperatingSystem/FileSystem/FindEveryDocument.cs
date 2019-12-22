@@ -49,8 +49,8 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Threading.Tasks.Dataflow;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
-    using Magic;
     using Parsing;
+    using Utilities;
 
     public class FindEveryDocument : ABetterClassDispose {
 
@@ -80,8 +80,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {
         }
-
-        
 
         [NotNull]
         public Task StartScanning() =>

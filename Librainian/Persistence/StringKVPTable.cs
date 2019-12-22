@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "StringKVPTable.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "StringKVPTable.cs" was last formatted by Protiguous on 2019/11/25 at 5:01 PM.
 
 namespace Librainian.Persistence {
@@ -50,7 +50,6 @@ namespace Librainian.Persistence {
     using System.Linq;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
     using Maths;
     using Measurement.Time;
     using Microsoft.Database.Isam.Config;
@@ -60,6 +59,7 @@ namespace Librainian.Persistence {
     using OperatingSystem.Compression;
     using OperatingSystem.FileSystem;
     using Parsing;
+    using Utilities;
 
     /// <summary>
     ///     <para>Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist a <see cref="KeyValuePair{TKey,TValue}" /> of base64 compressed strings.</para>
@@ -76,7 +76,7 @@ namespace Librainian.Persistence {
 
         public ICollection<String> Keys => this.Dictionary.Keys;
 
-        public ICollection<String> Values => ( ICollection<String> ) this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
+        public ICollection<String> Values => ( ICollection<String> )this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
 
         /// <summary></summary>
         /// <param name="key"></param>
@@ -234,7 +234,7 @@ namespace Librainian.Persistence {
         public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
             tableName ) ) { }
 
-        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder ) specialFolder,
+        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder )specialFolder,
             subFolder, tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
@@ -255,7 +255,9 @@ namespace Librainian.Persistence {
                 }
 
                 var customConfig = new DatabaseConfig {
-                    CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
+                    CreatePathIfNotExist = true,
+                    EnableShrinkDatabase = ShrinkDatabaseGrbit.On,
+                    DefragmentSequentialBTrees = true
                 };
 
                 this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullName, customConfig: customConfig );
@@ -339,7 +341,5 @@ namespace Librainian.Persistence {
 
             return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
         }
-
     }
-
 }

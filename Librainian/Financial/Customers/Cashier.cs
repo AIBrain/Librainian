@@ -43,7 +43,7 @@ namespace Librainian.Financial.Customers {
 
     using System;
     using Containers.Wallets;
-    using Magic;
+    using Utilities;
 
     public class Cashier : ABetterClassDispose, IPerson {
 

@@ -51,10 +51,10 @@ namespace Librainian.Financial.Containers.Wallets {
     using Currency.BankNotes;
     using Currency.Coins;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Measurement.Currency;
     using Newtonsoft.Json;
+    using Utilities;
 
     /// <summary>
     ///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for

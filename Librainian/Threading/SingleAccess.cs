@@ -46,11 +46,11 @@ namespace Librainian.Threading {
     using System.Threading;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
     using Measurement.Time;
     using OperatingSystem.FileSystem;
     using Persistence;
     using Security;
+    using Utilities;
 
     /// <summary>
     ///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
@@ -151,8 +151,6 @@ namespace Librainian.Threading {
                 }
             }
         }
-
-        
     }
 
     /// <summary>
@@ -210,6 +208,5 @@ namespace Librainian.Threading {
                 }
             }
         }
-
     }
 }

@@ -45,8 +45,8 @@ namespace Librainian.Persistence {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Magic;
     using Threading;
+    using Utilities;
 
     public class ResourceScanner : ABetterClassDispose {
 
@@ -117,7 +117,6 @@ namespace Librainian.Persistence {
                 this.Wait();
             }
         }
-
 
         public Boolean IsWaiting() => this.Waiting;
 

@@ -142,7 +142,7 @@ namespace Librainian.Internet {
                     CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
 
-                client.Add( timeout );
+                client.SetTimeout( timeout );
 
                 return client.DownloadStringTaskAsync( uri );
             }

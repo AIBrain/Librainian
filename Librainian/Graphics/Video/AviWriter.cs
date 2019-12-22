@@ -46,8 +46,8 @@ namespace Librainian.Graphics.Video {
     using System.Drawing.Imaging;
     using System.Runtime.InteropServices;
     using JetBrains.Annotations;
-    using Magic;
     using OperatingSystem;
+    using Utilities;
 
     /// <summary>
     ///     Create AVI files from bitmaps

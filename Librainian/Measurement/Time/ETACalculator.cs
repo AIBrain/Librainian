@@ -49,8 +49,8 @@ namespace Librainian.Measurement.Time {
     using System.Timers;
     using FluentTime;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
+    using Utilities;
 
     /// <summary>
     ///     <para>Calculates the "Estimated Time of Arrival", aka ETA</para>
@@ -94,6 +94,12 @@ namespace Librainian.Measurement.Time {
         }
 
         public EtaCalculator() => this.Reset( Seconds.One );
+
+        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        public override void DisposeManaged() {
+            using ( this._timer ) {
+            }
+        }
 
         /// <summary>
         ///     <para>Returns True when there is enough data to calculate the ETA.</para>
@@ -150,13 +156,5 @@ namespace Librainian.Measurement.Time {
 
             //throw new ArgumentOutOfRangeException( "Progress", "The Progress is out of the range 0 to 1." );
         }
-
-        /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-        public override void DisposeManaged() {
-            using ( this._timer ) {
-                
-            }
-        }
-
     }
 }

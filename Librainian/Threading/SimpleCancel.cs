@@ -46,8 +46,8 @@ namespace Librainian.Threading {
     using System.Threading.Tasks;
     using Collections;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
+    using Utilities;
 
     /// <summary>
     ///     <para>A threadsafe way to mark anything as cancelled.</para>
@@ -79,7 +79,6 @@ namespace Librainian.Threading {
 
         public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
 
-        
         /// <summary>
         /// </summary>
         /// <returns></returns>

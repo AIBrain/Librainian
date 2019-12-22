@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:41 AM.
+// Project: "Librainian", "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2019/12/10 at 7:16 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -48,14 +48,13 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Windows.Forms;
     using Controls;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Newtonsoft.Json;
     using Time;
+    using Utilities;
+    
 
-    /// <summary>
-    ///     A very simple, thread-safe, Decimal-based bitcoin wallet.
-    /// </summary>
+    /// <summary>A very simple, thread-safe, Decimal-based bitcoin wallet.</summary>
     /// <remarks>TODO add in support for automatic persisting TODO add in support for exploring the blockchain</remarks>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
@@ -72,44 +71,28 @@ namespace Librainian.Measurement.Currency.BTC {
         [JsonProperty]
         private Decimal _balance;
 
-        /// <summary>
-        ///     1
-        /// </summary>
+        /// <summary>1</summary>
         public const Decimal BTC = 1M;
 
-        /// <summary>
-        ///     0. 001
-        /// </summary>
+        /// <summary>0. 001</summary>
         public const Decimal mBTC = 0.001M;
 
-        /// <summary>
-        ///     1000 mBTC are in 1 BTC
-        /// </summary>
+        /// <summary>1000 mBTC are in 1 BTC</summary>
         public const UInt16 mBTCInOneBTC = ( UInt16 )( BTC / mBTC );
 
-        /// <summary>
-        ///     0.00000001
-        /// </summary>
+        /// <summary>0.00000001</summary>
         public const Decimal Satoshi = 0.00000001M;
 
-        /// <summary>
-        ///     100,000,000 Satoshi are in 1 BTC
-        /// </summary>
+        /// <summary>100,000,000 Satoshi are in 1 BTC</summary>
         public const UInt64 SatoshiInOneBtc = ( UInt64 )( BTC / Satoshi );
 
-        /// <summary>
-        ///     0.0000001
-        /// </summary>
+        /// <summary>0.0000001</summary>
         public const Decimal TenSatoshi = 0.0000001M;
 
-        /// <summary>
-        ///     0. 000001
-        /// </summary>
+        /// <summary>0. 000001</summary>
         public const Decimal ΜBtc = 0.000001M;
 
-        /// <summary>
-        ///     1,000,000 μBTC are in 1 BTC
-        /// </summary>
+        /// <summary>1,000,000 μBTC are in 1 BTC</summary>
         public const UInt64 ΜBtcInOneBtc = ( UInt64 )( BTC / ΜBtc );
 
         public Decimal Balance {
@@ -142,17 +125,13 @@ namespace Librainian.Measurement.Currency.BTC {
         /// </summary>
         public TimeSpan Timeout { get; set; }
 
-        /// <summary>
-        ///     Initialize the wallet with the specified amount of satoshi.
-        /// </summary>
+        /// <summary>Initialize the wallet with the specified amount of satoshi.</summary>
         /// <param name="satoshi"></param>
         public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
 
         public SimpleBitcoinWallet( [NotNull] ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
 
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" /> .
-        /// </summary>
+        /// <summary>Initialize the wallet with the specified <paramref name="balance" /> .</summary>
         /// <param name="balance"></param>
         public SimpleBitcoinWallet( Decimal balance ) {
             this._balance = balance.Sanitize();
@@ -179,16 +158,12 @@ namespace Librainian.Measurement.Currency.BTC {
             return this.Balance.CompareTo( otherWallet.Balance );
         }
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
             using ( this._access ) { }
         }
 
-        /// <summary>
-        ///     Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.
-        /// </summary>
+        /// <summary>Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.</summary>
         /// <param name="otherWallet">Annother to compare with this wallet.</param>
         public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
 
@@ -196,9 +171,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public override String ToString() => $"฿ {this.Balance:F8}";
 
-        /// <summary>
-        ///     Add any (+-)amount directly to the balance.
-        /// </summary>
+        /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -234,9 +207,7 @@ namespace Librainian.Measurement.Currency.BTC {
             return this.TryAdd( amount: wallet.Balance, sanitize: sanitize );
         }
 
-        /// <summary>
-        ///     Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .
-        /// </summary>
+        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -369,9 +340,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        /// <summary>
-        ///     Attempt to withdraw an amount (must be larger than Zero) from the wallet.
-        /// </summary>
+        /// <summary>Attempt to withdraw an amount (must be larger than Zero) from the wallet.</summary>
         /// <param name="wallet"></param>
         /// <returns></returns>
         public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {

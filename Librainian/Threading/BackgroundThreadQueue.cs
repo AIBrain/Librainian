@@ -45,7 +45,7 @@ namespace Librainian.Threading {
     using System.Collections.Concurrent;
     using System.Threading;
     using JetBrains.Annotations;
-    using Magic;
+    using Utilities;
 
     public class BackgroundThreadQueue<T> : ABetterClassDispose {
 
@@ -96,8 +96,6 @@ namespace Librainian.Threading {
         }
 
         public override void DisposeManaged() => this.Cancel();
-
-        
 
         /// <summary>Same as <see cref="Add" />.</summary>
         /// <param name="message"></param>

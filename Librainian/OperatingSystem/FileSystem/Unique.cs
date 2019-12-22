@@ -181,7 +181,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         public IEnumerable<Byte> AsBytes( CancellationToken token, TimeSpan timeout ) {
-            using ( var client = new WebClient().Add( timeout, token ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
                 using ( var stream = client.OpenRead( this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
@@ -206,7 +206,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public IEnumerable<Int32> AsInt16( CancellationToken token, TimeSpan timeout ) {
 
-            using ( var client = new WebClient().Add( timeout, token ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
                 using ( var stream = client.OpenRead( this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
@@ -243,7 +243,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public IEnumerable<Int32> AsInt32( CancellationToken token, TimeSpan timeout ) {
 
-            using ( var client = new WebClient().Add( timeout, token ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
                 using ( var stream = client.OpenRead( this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
@@ -322,7 +322,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<Int64> Length( CancellationToken token, TimeSpan timeout ) {
             try {
-                using ( var client = new WebClient().Add( timeout, token ) ) {
+                using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
                     try {
                         await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
 

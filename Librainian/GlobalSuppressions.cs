@@ -48,3 +48,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Design", "CA1036:Override methods on comparable types" )]
 [assembly: SuppressMessage( "Design", "CA1040:Avoid empty interfaces" )]
 [assembly: SuppressMessage( "Design", "CA1032:Implement standard exception constructors" )]
+[assembly: SuppressMessage( "Design", "CA1062:Validate arguments of public methods" )]
+[assembly: SuppressMessage( "Naming", "CA1710:Identifiers should have correct suffix" )]
+[assembly: SuppressMessage( "Performance", "CA1819:Properties should not return arrays", Justification = "What a dumb rule for dumb programmers." )]

@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.Compression {
     using System.Linq;
     using System.Text;
     using JetBrains.Annotations;
-    using Magic;
+    using Utilities;
 
     /// <summary>
     ///     Class for compression/decompression file. Represents a Zip file.
@@ -581,7 +581,6 @@ namespace Librainian.OperatingSystem.Compression {
         ///     Dispose any disposable members. Closes the Zip file stream.
         /// </summary>
         public override void DisposeManaged() => this.Close();
-
 
         /// <summary>
         ///     Copy the contents of a stored file into a physical file

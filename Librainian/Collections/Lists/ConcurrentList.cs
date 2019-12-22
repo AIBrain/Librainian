@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConcurrentList.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,20 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2019/10/25 at 12:10 PM.
-
-
-
-
+// 
+// Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2019/12/11 at 5:39 AM.
 
 namespace Librainian.Collections.Lists {
 
@@ -55,59 +51,34 @@ namespace Librainian.Collections.Lists {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
+    using Librainian.Extensions;
     using Logging;
-    using Magic;
     using Maths;
     using Newtonsoft.Json;
     using Threading;
+    using Utilities;
 
     /// <summary>
     ///     <para>A thread safe generic list.</para>
-    /// <para>Use at your own risk.</para>
+    ///     <para>Use at your own risk.</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <remarks>
     ///     <para>This class was created on a spur of the moment idea, and is <b>THOROUGHLY UNTESTED™</b>.</para>
     ///     <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
     /// </remarks>
-    /// <copyright>
-    ///     PayPal:Protiguous@Protiguous.com. Used with full permissions from original copyright holder Rick@AIBrain.org.
-    /// </copyright>
+    /// <copyright>PayPal:Protiguous@Protiguous.com. Used with full permissions from original copyright holder Rick@AIBrain.org.</copyright>
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class ConcurrentList<T> : ABetterClassDispose, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
-
-        private volatile Boolean _isReadOnly;
-
-        /// <summary>
-        ///     Threadsafe item counter (so we don't have to enter and exit the readerwriter).
-        /// </summary>
-        [JsonIgnore]
-        private Int64 ItemCount;
-
-        [NotNull]
-        private ConcurrentQueue<T> InputBuffer { get; set; } = new ConcurrentQueue<T>();
-
-        [JsonIgnore]
-        [NotNull]
-        private ReaderWriterLockSlim ReaderWriter { get; }
-
-        /// <summary>
-        ///     <para>The internal list actually used.</para>
-        /// </summary>
-        [NotNull]
-        [JsonProperty]
-        private List<T> TheList { get; set; } = new List<T>();
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         [JsonIgnore]
-        public Int32 Count => ( Int32 )Interlocked.Read( ref this.ItemCount );
+        public Int32 Count => ( Int32 ) Interlocked.Read( ref this.ItemCount );
 
-        /// <summary>
-        ///     Get or set if the list is .
-        /// </summary>
+        /// <summary>Get or set if the list is .</summary>
         /// <see cref="AllowModifications" />
         public Boolean IsReadOnly {
             get => this._isReadOnly;
@@ -115,30 +86,11 @@ namespace Librainian.Collections.Lists {
             private set => this._isReadOnly = value;
         }
 
-        /// <summary>
-        ///     If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.
-        /// </summary>
-        public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
-
-        [JsonProperty]
-        public TimeSpan TimeoutForReads { get; set; }
-
-        [JsonProperty]
-        public TimeSpan TimeoutForWrites { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the element at the specified index.
-        /// </summary>
+        /// <summary>Gets or sets the element at the specified index.</summary>
         /// <returns>The element at the specified index.</returns>
         /// <param name="index">The zero-based index of the element to get or set.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        ///     <paramref name="index" /> is not a valid index in the
-        ///     <see cref="T:System.Collections.Generic.IList`1" />.
-        /// </exception>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The property is set and the
-        ///     <see cref="T:System.Collections.Generic.IList`1" /> is read-only.
-        /// </exception>
+        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1" />.</exception>
+        /// <exception cref="T:System.NotSupportedException">The property is set and the <see cref="T:System.Collections.Generic.IList`1" /> is read-only.</exception>
         [CanBeNull]
         public T this[ Int32 index ] {
             [CanBeNull]
@@ -187,8 +139,164 @@ namespace Librainian.Collections.Lists {
         }
 
         /// <summary>
-        ///     Create an empty list with different timeout values.
+        ///     <para>Add the
+        ///     <typeparam name="T">item</typeparam>
+        ///     to the end of this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
+        /// <param name="item"></param>
+        public void Add( T item ) => this.Add( item: item, afterAdd: null );
+
+        /// <summary>Mark this <see cref="ConcurrentList{TType}" /> to be cleared.</summary>
+        public void Clear() {
+            if ( !this.AllowModifications() ) {
+                this.IfDisallowedModificationsThrow();
+
+                return;
+            }
+
+            this.Write( func: () => {
+                this.TheList.Clear();
+                this.ResetCount();
+
+                return true;
+            } );
+        }
+
+        /// <summary>
+        ///     <para>Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this moment in time.</para>
+        /// </summary>
+        public Boolean Contains( T item ) => this.Read( func: () => this.TheList.Contains( item: item ) );
+
+        /// <summary>Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified index in the target array.</summary>
+        /// <param name="array">     </param>
+        /// <param name="arrayIndex"></param>
+        public void CopyTo( T[] array, Int32 arrayIndex ) {
+            if ( array is null ) {
+                throw new ArgumentNullException( nameof( array ) );
+            }
+
+            this.Read( func: () => {
+                this.TheList.CopyTo( array: array, arrayIndex: arrayIndex );
+
+                return true;
+            } );
+        }
+
+        /// <summary>
+        ///     <para>Returns an enumerator that iterates through a <see cref="Clone" /> of this <see cref="ConcurrentList{TType}" /> .</para>
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+
+        /// <summary>
+        ///     <para>Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the zero-based index, or -1 if not found.</para>
+        /// </summary>
+        /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
+        public Int32 IndexOf( T item ) => this.Read( func: () => this.TheList.IndexOf( item: item ) );
+
+        /// <summary>
+        ///     <para>Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the specified <paramref name="index" />.</para>
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="item"> </param>
+        public void Insert( Int32 index, T item ) {
+            if ( !this.AllowModifications() ) {
+                this.IfDisallowedModificationsThrow();
+
+                return;
+            }
+
+            this.Write( func: () => {
+                try {
+                    this.TheList.Insert( index: index, item: item );
+                    this.AnItemHasBeenAdded();
+
+                    return true;
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    this.ThrowOutOfRange( index );
+
+                    return false;
+                }
+            } );
+        }
+
+        /// <summary>
+        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: default );
+
+        public void RemoveAt( Int32 index ) {
+
+            if ( index < 0 ) {
+
+                if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+                    throw new ArgumentOutOfRangeException( nameof( index ), index, "Value must be 0 or greater." );
+                }
+
+                return;
+            }
+
+            if ( !this.AllowModifications() ) {
+                this.IfDisallowedModificationsThrow();
+
+                return;
+            }
+
+            this.Write( func: () => {
+                try {
+                    if ( index <= this.TheList.Count ) {
+                        this.TheList.RemoveAt( index: index );
+                        this.AnItemHasBeenRemoved();
+
+                        return true;
+                    }
+                }
+                catch ( ArgumentOutOfRangeException ) {
+                    this.ThrowOutOfRange( index );
+                }
+
+                return false;
+            } );
+        }
+
+        /// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
+        /// <returns></returns>
+        [NotNull]
+        IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+
+        /// <summary>If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
+        public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
+
+        private volatile Boolean _isReadOnly;
+
+        /// <summary>Threadsafe item counter (so we don't have to enter and exit the readerwriter).</summary>
+        [JsonIgnore]
+        private Int64 ItemCount;
+
+        [NotNull]
+        private ConcurrentQueue<T> InputBuffer { get; set; } = new ConcurrentQueue<T>();
+
+        [JsonIgnore]
+        [NotNull]
+        private ReaderWriterLockSlim ReaderWriter { get; }
+
+        /// <summary>
+        ///     <para>The internal list actually used.</para>
+        /// </summary>
+        [NotNull]
+        [JsonProperty]
+        private List<T> TheList { get; set; } = new List<T>();
+
+        [JsonProperty]
+        public TimeSpan TimeoutForReads { get; set; }
+
+        [JsonProperty]
+        public TimeSpan TimeoutForWrites { get; set; }
+
+        /// <summary>Create an empty list with different timeout values.</summary>
         /// <param name="enumerable">  Fill the list with the given enumerable.</param>
         /// <param name="readTimeout">Defaults to 60 seconds.</param>
         /// <param name="writeTimeout">Defaults to 60 seconds.</param>
@@ -265,8 +373,7 @@ namespace Librainian.Collections.Lists {
 
         private void ResetCount() => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) );
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <exception cref="ObjectDisposedException"></exception>
         private void ThrowIfDisposed() {
             if ( this.IsDisposed() && this.ThrowExceptions == ThrowSetting.Throw ) {
@@ -321,9 +428,7 @@ namespace Librainian.Collections.Lists {
             return default;
         }
 
-        /// <summary>
-        ///     Static comparison function.
-        /// </summary>
+        /// <summary>Static comparison function.</summary>
         /// <param name="left"></param>
         /// <param name="right"> </param>
         /// <returns></returns>
@@ -336,21 +441,9 @@ namespace Librainian.Collections.Lists {
         }
 
         /// <summary>
-        ///     <para>
-        ///         Add the
-        ///         <typeparam name="T">item</typeparam>
-        ///         to the end of this <see cref="ConcurrentList{TType}" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="item"></param>
-        public void Add( T item ) => this.Add( item: item, afterAdd: null );
-
-        /// <summary>
-        ///     <para>
-        ///         Add the
-        ///         <typeparam name="T">item</typeparam>
-        ///         to the end of this <see cref="ConcurrentList{TType}" />.
-        ///     </para>
+        ///     <para>Add the
+        ///     <typeparam name="T">item</typeparam>
+        ///     to the end of this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         /// <param name="item">    </param>
         /// <param name="afterAdd"></param>
@@ -380,23 +473,16 @@ namespace Librainian.Collections.Lists {
 
         public Boolean AddAndWait( [CanBeNull] T item ) => this.Add( item: item, afterAdd: this.CatchUp );
 
-        /// <summary>
-        ///     Creates a hot task that needs to be awaited.
-        /// </summary>
+        /// <summary>Creates a hot task that needs to be awaited.</summary>
         /// <param name="item"></param>
         /// <param name="afterAdd"></param>
         /// <returns></returns>
         [NotNull]
         public Task<Boolean> AddAsync( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => Task.Run( function: () => this.TryAdd( item: item, afterAdd: afterAdd ) );
 
-        /// <summary>
-        ///     Add a collection of items.
-        /// </summary>
+        /// <summary>Add a collection of items.</summary>
         /// <param name="items">          </param>
-        /// <param name="useParallelism">
-        ///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
-        ///     of items.
-        /// </param>
+        /// <param name="useParallelism">Enables parallelization of the <paramref name="items" /> No guarantee of the final order of items.</param>
         /// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
         /// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
         /// <exception cref="ArgumentNullException"></exception>
@@ -429,9 +515,7 @@ namespace Librainian.Collections.Lists {
             }
         }
 
-        /// <summary>
-        ///     Returns a hot task that needs to be awaited.
-        /// </summary>
+        /// <summary>Returns a hot task that needs to be awaited.</summary>
         /// <param name="items"></param>
         /// <param name="token"></param>
         /// <param name="afterEachAdd"></param>
@@ -449,19 +533,14 @@ namespace Librainian.Collections.Lists {
                 }
             }, token );
 
-        /// <summary>
-        ///     Returns true if this <see cref="ConcurrentList{TType}" /> has not been marked as <see cref="Complete" />.
-        /// </summary>
+        /// <summary>Returns true if this <see cref="ConcurrentList{TType}" /> has not been marked as <see cref="Complete" />.</summary>
         public Boolean AllowModifications() => !this.IsReadOnly;
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <see cref="CatchUp" />
         public Boolean AnyWritesPending() => this.InputBuffer.Any();
 
-        /// <summary>
-        ///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.
-        /// </summary>
+        /// <summary>Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.</summary>
         public void CatchUp() {
             if ( !this.AnyWritesPending() ) {
                 return;
@@ -486,33 +565,14 @@ namespace Librainian.Collections.Lists {
         }
 
         /// <summary>
-        ///     Mark this <see cref="ConcurrentList{TType}" /> to be cleared.
-        /// </summary>
-        public void Clear() {
-            if ( !this.AllowModifications() ) {
-                this.IfDisallowedModificationsThrow();
-
-                return;
-            }
-
-            this.Write( func: () => {
-                this.TheList.Clear();
-                this.ResetCount();
-
-                return true;
-            } );
-        }
-
-        /// <summary>
         ///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> at this moment in time.</para>
         /// </summary>
         /// <returns></returns>
         [NotNull]
         public IList<T> Clone() => this.Read( func: () => this.TheList ) ?? throw new InvalidOperationException( "Possible timeout when waiting to read list." );
 
-        /// <summary>
-        ///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
-        ///     <para>Blocking.</para>
+        /// <summary>Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
+        /// <para>Blocking.</para>
         /// </summary>
         /// <see cref="AllowModifications" />
         /// <see cref="IsReadOnly" />
@@ -526,32 +586,6 @@ namespace Librainian.Collections.Lists {
             }
         }
 
-        /// <summary>
-        ///     <para>
-        ///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this
-        ///         moment in time.
-        ///     </para>
-        /// </summary>
-        public Boolean Contains( T item ) => this.Read( func: () => this.TheList.Contains( item: item ) );
-
-        /// <summary>
-        ///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified
-        ///     index in the target array.
-        /// </summary>
-        /// <param name="array">     </param>
-        /// <param name="arrayIndex"></param>
-        public void CopyTo( T[] array, Int32 arrayIndex ) {
-            if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
-            }
-
-            this.Read( func: () => {
-                this.TheList.CopyTo( array: array, arrayIndex: arrayIndex );
-
-                return true;
-            } );
-        }
-
         /*
 
         /// <summary>
@@ -563,71 +597,18 @@ namespace Librainian.Collections.Lists {
         */
 
         /// <summary>
-        ///     Dispose any disposable managed fields or properties.
-        ///     <para>
-        ///         Providing the object inside a using construct will then call <see cref="ABetterClassDispose.Dispose()" />,
-        ///         which in turn calls
-        ///         <see cref="ABetterClassDispose.DisposeManaged" /> and <see cref="ABetterClassDispose.DisposeNative" />.
-        ///     </para>
+        /// Dispose any disposable managed fields or properties.
+        /// <para>
+        /// Providing the object inside a using construct will then call <see cref="ABetterClassDispose.Dispose()" />, which in turn calls
+        /// <see cref="ABetterClassDispose.DisposeManaged" /> and <see cref="ABetterClassDispose.DisposeNative" />.
+        /// </para>
         /// </summary>
-        public override void DisposeManaged() => this.SetDisposeHint( $"{nameof( ConcurrentList<T> )}, count={this.Count}." );
+        public override void DisposeManaged() {
+            this.Nop();
+            this.Nop();
 
-        
-
-        /// <summary>
-        ///     <para>
-        ///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
-        ///         <see cref="ConcurrentList{TType}" /> .
-        ///     </para>
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
-
-        /// <summary>
-        ///     <para>
-        ///         Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the
-        ///         zero-based index, or -1 if not found.
-        ///     </para>
-        /// </summary>
-        /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
-        public Int32 IndexOf( T item ) => this.Read( func: () => this.TheList.IndexOf( item: item ) );
-
-        /// <summary>
-        ///     <para>
-        ///         Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the
-        ///         specified <paramref name="index" />.
-        ///     </para>
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="item"> </param>
-        public void Insert( Int32 index, T item ) {
-            if ( !this.AllowModifications() ) {
-                this.IfDisallowedModificationsThrow();
-
-                return;
-            }
-
-            this.Write( func: () => {
-                try {
-                    this.TheList.Insert( index: index, item: item );
-                    this.AnItemHasBeenAdded();
-
-                    return true;
-                }
-                catch ( ArgumentOutOfRangeException ) {
-                    this.ThrowOutOfRange( index );
-
-                    return false;
-                }
-            } );
+            //this.SetDisposeHint( $"{nameof( ConcurrentList<T> )}, count={this.Count}." );
         }
-
-        /// <summary>
-        ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: default );
 
         /// <summary>
         ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
@@ -655,43 +636,7 @@ namespace Librainian.Collections.Lists {
             } );
         }
 
-        public void RemoveAt( Int32 index ) {
-
-            if ( index < 0 ) {
-
-                if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-                    throw new ArgumentOutOfRangeException( nameof( index ), index, "Value must be 0 or greater." );
-                }
-
-                return;
-            }
-
-            if ( !this.AllowModifications() ) {
-                this.IfDisallowedModificationsThrow();
-
-                return;
-            }
-
-            this.Write( func: () => {
-                try {
-                    if ( index <= this.TheList.Count ) {
-                        this.TheList.RemoveAt( index: index );
-                        this.AnItemHasBeenRemoved();
-
-                        return true;
-                    }
-                }
-                catch ( ArgumentOutOfRangeException ) {
-                    this.ThrowOutOfRange( index );
-                }
-
-                return false;
-            } );
-        }
-
-        /// <summary>
-        ///     The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.
-        /// </summary>
+        /// <summary>The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.</summary>
         public void TrimExcess() =>
             this.Write( func: () => {
                 this.TheList.TrimExcess();
@@ -753,13 +698,6 @@ namespace Librainian.Collections.Lists {
                 return true;
             } );
         }
-
-        /// <summary>
-        ///     Returns the enumerator of this list's <see cref="Clone" />.
-        /// </summary>
-        /// <returns></returns>
-        [NotNull]
-        IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
         /*
 

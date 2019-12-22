@@ -44,7 +44,7 @@ namespace Librainian.Graphics.Video {
     using System;
     using System.Drawing;
     using JetBrains.Annotations;
-    using Magic;
+    using Utilities;
 
     public class BitmapInfo : ABetterClassDispose {
 

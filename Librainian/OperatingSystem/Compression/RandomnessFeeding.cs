@@ -50,8 +50,8 @@ namespace Librainian.OperatingSystem.Compression {
     using Extensions;
     using FileSystem;
     using JetBrains.Annotations;
-    using Magic;
     using Rationals;
+    using Utilities;
 
     public class RandomnessFeeding : ABetterClassDispose {
 
@@ -89,8 +89,17 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         public void FeedItData( [NotNull] Document document ) {
-            var data = document.AsBytes().ToArray();
-            this.FeedItData( data );
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            var bytes = document.AsBytes();
+
+            if ( bytes != null ) {
+                var data = bytes.ToArray();
+                this.FeedItData( data );
+            }
+
         }
 
         /// <summary>

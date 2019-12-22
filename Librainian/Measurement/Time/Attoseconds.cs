@@ -302,7 +302,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         /// <exception cref="T:System.ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( ReferenceEquals( null, obj ) ) {
+            if ( obj is null ) {
                 return 1;
             }
 

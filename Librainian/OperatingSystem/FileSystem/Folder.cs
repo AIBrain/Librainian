@@ -64,13 +64,16 @@ namespace Librainian.OperatingSystem.FileSystem {
 
     public interface IFolder : IEquatable<IFolder> {
 
+        [NotNull]
         String FullName { get; }
 
         /// <summary>
         ///     The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.
         /// </summary>
+        [NotNull]
         DirectoryInfo Info { get; }
 
+        [NotNull]
         String Name { get; }
 
         /// <summary>
@@ -140,6 +143,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns );
 
+        [NotNull]
         Disk GetDrive();
 
         [NotNull]
@@ -172,6 +176,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Returns a String that represents the current object.
         /// </summary>
         /// <returns>A String that represents the current object.</returns>
+        [NotNull]
         String ToString();
     }
 
@@ -396,6 +401,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static implicit operator DirectoryInfo( [NotNull] Folder folder ) => folder.Info;
 
+        [NotNull]
+        public DirectoryInfo ToDirectoryInfo() => this;
+
         /// <summary>
         ///     Opens a folder in file explorer.
         /// </summary>
@@ -605,6 +613,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Disk GetDrive() => new Disk( this.Info.Root.FullName );
 
         [ItemNotNull]
+        [NotNull]
         public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
@@ -663,6 +672,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     Returns a String that represents the current object.
         /// </summary>
         /// <returns>A String that represents the current object.</returns>
+        [NotNull]
         public override String ToString() => this.FullName;
     }
 }

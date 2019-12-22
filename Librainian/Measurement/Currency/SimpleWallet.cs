@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "SimpleWallet.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-//
+// 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +28,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2019/08/08 at 8:43 AM.
+// 
+// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2019/12/11 at 5:40 AM.
 
 namespace Librainian.Measurement.Currency {
 
@@ -48,26 +48,20 @@ namespace Librainian.Measurement.Currency {
     using BTC;
     using Controls;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Newtonsoft.Json;
     using Time;
+    using Utilities;
 
-    /// <summary>
-    ///     A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.
-    /// </summary>
+    /// <summary>A very simple, thread-safe, Decimal-based wallet. 8 points past decimal dot.</summary>
     /// <remarks>TODO add in support for automatic persisting</remarks>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-        [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-
-        private readonly Int32 _hashcode;
-
-        [JsonProperty]
-        private Decimal _balance;
+        /// <summary>Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.</summary>
+        /// <param name="other">Annother to compare with this wallet.</param>
+        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
         public Decimal Balance {
             get {
@@ -94,62 +88,7 @@ namespace Librainian.Measurement.Currency {
 
         public Action<Decimal> OnBeforeWithdraw { get; set; }
 
-        /// <summary>
-        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
-        /// </summary>
-        public TimeSpan Timeout { get; set; }
-
-        public SimpleWallet() {
-            this.Timeout = Minutes.One;
-            this._hashcode = Randem.NextInt32();
-        }
-
-        /// <summary>
-        ///     Initialize the wallet with the specified <paramref name="balance" />.
-        /// </summary>
-        /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
-
-        /// <summary>
-        ///     <para>Static comparison.</para>
-        ///     <para>Returns true if the wallets ARE the same instance.</para>
-        ///     <para>Returns true if the wallets HAVE the same balance.</para>
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
-
-            if ( null == left || null == right ) {
-                return false;
-            }
-
-            return left.Balance == right.Balance;
-        }
-
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
-        public override void DisposeManaged() => this._access.Dispose();
-
-        
-        /// <summary>
-        ///     Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.
-        /// </summary>
-        /// <param name="other">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
-
-        [Pure]
-        public override Int32 GetHashCode() => this._hashcode;
-
-        public override String ToString() => $"{this.Balance:F8}";
-
-        /// <summary>
-        ///     Add any (+-)amount directly to the balance.
-        /// </summary>
+        /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -185,9 +124,7 @@ namespace Librainian.Measurement.Currency {
             return this.TryAdd( wallet.Balance, sanitize );
         }
 
-        /// <summary>
-        ///     Attempt to deposit amoount (larger than zero) to the <see cref="Balance" />.
-        /// </summary>
+        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="Balance" />.</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
@@ -327,5 +264,57 @@ namespace Librainian.Measurement.Currency {
 
             return this.TryWithdraw( wallet.Balance );
         }
+
+        [NotNull]
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+        private readonly Int32 _hashcode;
+
+        [JsonProperty]
+        private Decimal _balance;
+
+        /// <summary>
+        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+        /// </summary>
+        public TimeSpan Timeout { get; set; }
+
+        public SimpleWallet() {
+            this.Timeout = Minutes.One;
+            this._hashcode = Randem.NextInt32();
+        }
+
+        /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
+        /// <param name="balance"></param>
+        public SimpleWallet( Decimal balance ) : this() => this._balance = balance.Sanitize();
+
+        /// <summary>
+        ///     <para>Static comparison.</para>
+        ///     <para>Returns true if the wallets ARE the same instance.</para>
+        ///     <para>Returns true if the wallets HAVE the same balance.</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Balance == right.Balance;
+        }
+
+        /// <summary>Dispose any disposable members.</summary>
+        public override void DisposeManaged() => this._access.Dispose();
+
+        [Pure]
+        public override Int32 GetHashCode() => this._hashcode;
+
+        public override String ToString() => $"{this.Balance:F8}";
+
     }
+
 }

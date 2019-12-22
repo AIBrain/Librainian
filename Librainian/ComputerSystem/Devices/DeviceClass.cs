@@ -48,8 +48,8 @@ namespace Librainian.ComputerSystem.Devices {
     using System.Runtime.InteropServices;
     using System.Text;
     using JetBrains.Annotations;
-    using Magic;
     using OperatingSystem;
+    using Utilities;
 
     /// <summary>
     ///     A generic base class for physical device classes.

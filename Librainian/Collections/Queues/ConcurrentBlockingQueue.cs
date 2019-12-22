@@ -45,7 +45,7 @@ namespace Librainian.Collections.Queues {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading;
-    using Magic;
+    using Utilities;
 
     /// <summary>
     ///     Represents a thread-safe blocking, first-in, first-out collection of objects.

@@ -79,45 +79,9 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( paramName: nameof( client ) );
             }
 
-            if ( token is null ) {
-                throw new ArgumentNullException( nameof( token ) );
-            }
-
             token.Register( client.CancelAsync );
 
             return client;
-        }
-
-        /// <summary>
-        ///     <para>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</para>
-        /// </summary>
-        /// <param name="client"></param>
-        /// <param name="timeout"></param>
-        /// <copyright>Protiguous</copyright>
-        [NotNull]
-        public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout ) {
-            if ( client is null ) {
-                throw new ArgumentNullException( paramName: nameof( client ) );
-            }
-
-            var cancel = new CancellationTokenSource( timeout );
-            cancel.Token.Register( client.CancelAsync );
-
-            return client;
-        }
-
-        /// <summary>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</summary>
-        /// <param name="client"></param>
-        /// <param name="timeout"></param>
-        /// <param name="token"></param>
-        /// <copyright>Protiguous</copyright>
-        [NotNull]
-        public static WebClient Add( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
-            if ( client is null ) {
-                throw new ArgumentNullException( paramName: nameof( client ) );
-            }
-
-            return client.Add( token ).Add( timeout );
         }
 
         /// <summary>Downloads the resource with the specified URI as a byte array, asynchronously.</summary>
@@ -318,6 +282,38 @@ namespace Librainian.Internet {
 
             // Return the task that represents the async operation
             return taskCompletionSource.Task;
+        }
+
+        /// <summary>
+        ///     <para>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</para>
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="timeout"></param>
+        /// <copyright>Protiguous</copyright>
+        [NotNull]
+        public static WebClient SetTimeout( [NotNull] this WebClient client, TimeSpan timeout ) {
+            if ( client is null ) {
+                throw new ArgumentNullException( paramName: nameof( client ) );
+            }
+
+            var cancel = new CancellationTokenSource( timeout );
+            cancel.Token.Register( client.CancelAsync );
+
+            return client;
+        }
+
+        /// <summary>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</summary>
+        /// <param name="client"></param>
+        /// <param name="timeout"></param>
+        /// <param name="token"></param>
+        /// <copyright>Protiguous</copyright>
+        [NotNull]
+        public static WebClient SetTimeoutAndCancel( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
+            if ( client is null ) {
+                throw new ArgumentNullException( paramName: nameof( client ) );
+            }
+
+            return client.Add( token ).SetTimeout( timeout );
         }
 
         /// <summary>Uploads data to the specified resource, asynchronously.</summary>

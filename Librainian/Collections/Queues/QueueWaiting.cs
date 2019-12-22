@@ -48,8 +48,8 @@ namespace Librainian.Collections.Queues {
     using System.Linq;
     using System.Threading;
     using JetBrains.Annotations;
-    using Magic;
     using Measurement.Time;
+    using Utilities;
 
     public class QueueWaiting<T> : ABetterClassDispose, IEnumerable<T> where T : class {
 

@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "ABetterClassDispose.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ABetterClassDispose.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 // 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 // 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -37,31 +35,34 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/11/19 at 6:28 AM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/12/22 at 4:59 AM.
 
-namespace Librainian.Magic {
+namespace Librainian.Utilities {
 
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Threading;
-    using JetBrains.Annotations;
-    using Logging;
-    using Parsing;
 
     /// <summary>
     ///     <para>A non-sealed class for easier implementation the <see cref="IDisposable" /> pattern.</para>
-    ///     <para>Implement overrides on <see cref="DisposeManaged" /> and <see cref="DisposeNative" />.</para>
+    ///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> if needed.</para>
+    ///     <code></code>
     /// </summary>
-    /// <remarks>ABCD (hehe)</remarks>
-    /// <copyright>Created by Rick Harker.</copyright>
+    /// <remarks>ABCD (hehe).
+    /// <para>I wanted to make the <see cref="GC.SuppressFinalize" /> be called only once, but the rules were complaining..</para>
+    /// <para>I also wanted to add in the optional dispose hint, so we could diagnose which object was being disposed..</para>
+    /// </remarks>
+    /// <copyright>Created by Protiguous.</copyright>
     public abstract class ABetterClassDispose : IDisposable {
 
         /// <summary>
         ///     <para>Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> on this object.</para>
         /// </summary>
         [DebuggerStepThrough]
-        public void Dispose() => this.Dispose( true );
+        public void Dispose() {
+            this.Dispose( true );
+        }
 
         private Int32 _hasDisposedManaged;
 
@@ -69,13 +70,20 @@ namespace Librainian.Magic {
 
         private Int32 _hasSuppressedFinalize;
 
-        private String DisposeHint { get; set; }
+        protected ABetterClassDispose() {
+            GC.SuppressFinalize( this );
+            this._hasSuppressedFinalize = 1;
+        }
 
-        //[DebuggerStepThrough]
+        [DebuggerStepThrough]
         ~ABetterClassDispose() {
-            if ( !String.IsNullOrWhiteSpace( this.DisposeHint ) && Debugger.IsAttached ) {
-                Debug.WriteLine( $"{nameof( this.DisposeHint )}={this.DisposeHint.DoubleQuote()}" );
+
+            /*
+            if ( !String.IsNullOrEmpty( this.DisposeHint ) && Debugger.IsAttached ) {
+                Debug.WriteLine( $"{nameof( this.DisposeHint )}=\"{this.DisposeHint}\"" );
+                Debugger.Break();
             }
+            */
 
             this.Dispose( false );
         }
@@ -88,36 +96,43 @@ namespace Librainian.Magic {
         ///     </para>
         /// </summary>
         /// <param name="cleanupManaged"></param>
-        /// TODO [DebuggerStepThrough]
-        protected void Dispose( Boolean cleanupManaged ) {
+        [DebuggerStepThrough]
+        protected virtual void Dispose( Boolean cleanupManaged ) {
             if ( cleanupManaged ) {
 
                 if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 /*allow once*/ ) {
                     try {
-                        this.DisposeManaged(); //allow once. Any derived class should have overloaded this method.
+                        this.DisposeManaged(); //Any derived class should have overloaded this method and disposed of any managed objects inside.
                     }
                     catch ( Exception exception ) {
-                        exception.Log();
+                        Debug.WriteLine( exception );
                     }
                 }
             }
 
             if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 /*allow once*/ ) {
-
                 try {
-                    this.DisposeNative(); //Any derived class should overloaded this method.
+                    this.DisposeNative(); //Any derived class should overload this method.
                 }
                 catch ( Exception exception ) {
-                    exception.Log();
+                    Debug.WriteLine( exception );
                 }
             }
 
             if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 /*allow once*/ ) {
-                GC.SuppressFinalize( this ); //allow once
+                GC.SuppressFinalize( this );
             }
         }
 
+        /*
+
+        /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
+        [CanBeNull]
+        private String DisposeHint { get; set; }
+        */
+
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+        /// <remarks>This is the method that you will Dispose of any disposable managed objects. (ie <code>using ( var bob = )</code>)</remarks>
         [DebuggerStepThrough]
         public abstract void DisposeManaged();
 
@@ -135,18 +150,25 @@ namespace Librainian.Magic {
         [DebuggerStepThrough]
         public Boolean HasDisposedNative() => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
 
+        /*
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
         public Boolean HasSuppressedFinalize() => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
+        */
 
+        /// <summary>Can easily be changed to a property, if desired.</summary>
+        /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
         public Boolean IsDisposed() => this.HasDisposedManaged() && this.HasDisposedNative();
+
+        /*
 
         /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
         /// <param name="hint"></param>
         [Conditional( "DEBUG" )]
         public void SetDisposeHint( [CanBeNull] String hint ) => this.DisposeHint = hint;
+        */
 
     }
 

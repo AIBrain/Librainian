@@ -46,9 +46,9 @@ namespace Librainian.Persistence {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Magic;
     using Measurement.Time;
     using Threading;
+    using Utilities;
 
     public sealed class DeserializeReportStats : ABetterClassDispose {
 
@@ -108,8 +108,6 @@ namespace Librainian.Persistence {
             this.Gains.Dispose();
             this.Losses.Dispose();
         }
-
-        
 
         public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
 

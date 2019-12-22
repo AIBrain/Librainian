@@ -44,8 +44,8 @@ namespace Librainian.Financial.Customers {
     using System;
     using Containers.Accounts;
     using Containers.Wallets;
-    using Magic;
     using Newtonsoft.Json;
+    using Utilities;
 
     [JsonObject]
     public class Customer : ABetterClassDispose, ICustomer {

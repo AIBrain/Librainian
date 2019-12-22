@@ -52,10 +52,10 @@ namespace Librainian.Measurement.Currency.BTC {
     using Financial;
     using Financial.Containers.Wallets;
     using JetBrains.Annotations;
-    using Magic;
     using Maths;
     using Newtonsoft.Json;
     using Threading;
+    using Utilities;
 
     /// <summary>
     /// My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or ideas? Any dos

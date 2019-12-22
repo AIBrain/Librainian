@@ -37,7 +37,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/11/25 at 4:42 AM.
+// Project: "Librainian", "SimpleWebServer.cs" was last formatted by Protiguous on 2019/12/10 at 7:16 AM.
 
 namespace Librainian.Internet.Servers {
 
@@ -51,7 +51,7 @@ namespace Librainian.Internet.Servers {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
+    using Utilities;
 
     /// <summary></summary>
     /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>

@@ -1,26 +1,26 @@
 ﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DatabaseServer.cs" belongs to Protiguous@Protiguous.com and
 // Rick@AIBrain.org unless otherwise specified or the original license has
 // been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code, you must contact Protiguous@Protiguous.com or
 // Sales@AIBrain.org for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
 //     (We're always looking into other solutions.. Any ideas?)
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,15 +28,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "DatabaseServer.cs" was last formatted by Protiguous on 2019/11/25 at 2:48 PM.
 
 namespace Librainian.Databases {
@@ -57,11 +57,11 @@ namespace Librainian.Databases {
     using Internet;
     using JetBrains.Annotations;
     using Logging;
-    using Magic;
     using Maths;
     using Measurement.Time;
     using Microsoft.Data.SqlClient;
     using Parsing;
+    using Utilities;
 
     public class DatabaseServer : ABetterClassDispose, IDatabase {
 
@@ -84,7 +84,10 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand {
-                    Connection = connection, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType, CommandText = query
+                    Connection = connection,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                    CommandType = commandType,
+                    CommandText = query
                 };
 
                 command.PopulateParameters( parameters );
@@ -131,7 +134,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -158,7 +162,8 @@ namespace Librainian.Databases {
                 using ( var connection = new SqlConnection( this.ConnectionString ) ) {
 
                     using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                        CommandType = commandType,
+                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                     } ) {
                         command.PopulateParameters( parameters );
 
@@ -202,7 +207,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -245,7 +251,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -270,7 +277,7 @@ namespace Librainian.Databases {
 
             return default;
         }
-        
+
         [CanBeNull]
         public DataTableReader ExecuteDataReader( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
             if ( String.IsNullOrWhiteSpace( value: query ) ) {
@@ -284,13 +291,14 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
 
-                connection.Open( );
-                
+                connection.Open();
+
                 using var reader = command.ExecuteReader( CommandBehavior.CloseConnection );
 
                 if ( reader != null ) {
@@ -328,7 +336,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -375,7 +384,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -415,7 +425,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -506,7 +517,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandText = sproc
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                CommandText = sproc
             };
 
             command.PopulateParameters( parameters );
@@ -527,7 +541,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+                Connection = connection,
+                CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                CommandType = CommandType.Text,
+                CommandText = sql
             };
 
             command.PopulateParameters( parameters );
@@ -552,7 +569,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+                Connection = connection,
+                CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                CommandType = CommandType.Text,
+                CommandText = sql
             };
 
             command.PopulateParameters( parameters );
@@ -594,7 +614,10 @@ namespace Librainian.Databases {
             using var connection = new SqlConnection( this.ConnectionString );
 
             using var command = new SqlCommand {
-                Connection = connection, CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandText = sproc
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+                CommandText = sproc
             };
 
             command.PopulateParameters( parameters );
@@ -629,7 +652,8 @@ namespace Librainian.Databases {
                 using var connection = new SqlConnection( this.ConnectionString );
 
                 using var command = new SqlCommand( query, connection ) {
-                    CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
                 };
 
                 command.PopulateParameters( parameters );
@@ -679,7 +703,7 @@ namespace Librainian.Databases {
         /// <summary>
         ///     <para>Create a database object to the specified server.</para>
         /// </summary>
-        public DatabaseServer( [CanBeNull] SqlConnectionStringBuilder builder, [CanBeNull] String useDatabase = null, CancellationToken? token = default ) : this(builder?.ConnectionString, useDatabase, token) {
+        public DatabaseServer( [CanBeNull] SqlConnectionStringBuilder builder, [CanBeNull] String useDatabase = null, CancellationToken? token = default ) : this( builder?.ConnectionString, useDatabase, token ) {
         }
 
         /// <summary></summary>
@@ -704,9 +728,11 @@ namespace Librainian.Databases {
         }
 
 #if VERBOSE
+
         ~DatabaseServer() {
             $"Warning: We have an undisposed Database() connection somewhere. This could cause a memory leak. Query={this.Sproc.DoubleQuote()}".Log();
         }
+
 #endif
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
@@ -809,7 +835,7 @@ namespace Librainian.Databases {
                 ApplicationIntent = ApplicationIntent.ReadWrite,
                 ApplicationName = Application.ProductName,
                 ConnectRetryCount = 3,
-                ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
+                ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
                 ConnectRetryInterval = 1,
                 PacketSize = 8060,
                 Pooling = true
@@ -871,7 +897,5 @@ namespace Librainian.Databases {
             } ).ConfigureAwait( false );
         }
         */
-
     }
-
 }
