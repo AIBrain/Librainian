@@ -89,8 +89,8 @@ namespace Librainian.Collections.Lists {
         /// <summary>Gets or sets the element at the specified index.</summary>
         /// <returns>The element at the specified index.</returns>
         /// <param name="index">The zero-based index of the element to get or set.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> is not a valid index in the <see cref="T:System.Collections.Generic.IList`1" />.</exception>
-        /// <exception cref="T:System.NotSupportedException">The property is set and the <see cref="T:System.Collections.Generic.IList`1" /> is read-only.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is not a valid index in the <see cref="IList" />.</exception>
+        /// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
         [CanBeNull]
         public T this[ Int32 index ] {
             [CanBeNull]
@@ -651,27 +651,21 @@ namespace Librainian.Collections.Lists {
                 return true;
             }
 
-            var haveLock = false;
+            if ( this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
+                try {
+                    while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
+                        this.TheList.Add( item: bob );
+                        this.AnItemHasBeenAdded();
+                    }
 
-            try {
-                if ( !this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
-                    return false;
+                    return true;
                 }
-
-                haveLock = true;
-
-                while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
-                    this.TheList.Add( item: bob );
-                    this.AnItemHasBeenAdded();
-                }
-
-                return true;
-            }
-            finally {
-                if ( haveLock ) {
+                finally {
                     this.ReaderWriter.ExitWriteLock();
                 }
             }
+
+            return false;
         }
 
         /// <summary>

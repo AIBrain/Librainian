@@ -51,3 +51,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Design", "CA1062:Validate arguments of public methods" )]
 [assembly: SuppressMessage( "Naming", "CA1710:Identifiers should have correct suffix" )]
 [assembly: SuppressMessage( "Performance", "CA1819:Properties should not return arrays", Justification = "What a dumb rule for dumb programmers." )]
+[assembly: SuppressMessage( "Design", "CA1000:Do not declare static members on generic types", Justification = "Stupid rule." )]

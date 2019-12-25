@@ -4,13 +4,7 @@
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "ABetterClassDispose.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// This source code contained in "ABetterClassDispose.cs" belongs to Protiguous@Protiguous.com.
 // 
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
@@ -28,14 +22,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact us at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/12/22 at 4:59 AM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2019/12/24.
 
 namespace Librainian.Utilities {
 
@@ -60,33 +54,13 @@ namespace Librainian.Utilities {
         ///     <para>Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> on this object.</para>
         /// </summary>
         [DebuggerStepThrough]
-        public void Dispose() {
-            this.Dispose( true );
-        }
+        public void Dispose() => this.Dispose( true );
 
         private Int32 _hasDisposedManaged;
 
         private Int32 _hasDisposedNative;
 
-        private Int32 _hasSuppressedFinalize;
-
-        protected ABetterClassDispose() {
-            GC.SuppressFinalize( this );
-            this._hasSuppressedFinalize = 1;
-        }
-
-        [DebuggerStepThrough]
-        ~ABetterClassDispose() {
-
-            /*
-            if ( !String.IsNullOrEmpty( this.DisposeHint ) && Debugger.IsAttached ) {
-                Debug.WriteLine( $"{nameof( this.DisposeHint )}=\"{this.DisposeHint}\"" );
-                Debugger.Break();
-            }
-            */
-
-            this.Dispose( false );
-        }
+        protected ABetterClassDispose() => GC.SuppressFinalize( this );
 
         /// <summary>
         ///     <para>If cleanupManaged, the method has been called by user's code. Managed and unmanaged resources can be disposed.</para>
@@ -97,7 +71,7 @@ namespace Librainian.Utilities {
         /// </summary>
         /// <param name="cleanupManaged"></param>
         [DebuggerStepThrough]
-        protected virtual void Dispose( Boolean cleanupManaged ) {
+        protected void Dispose( Boolean cleanupManaged ) {
             if ( cleanupManaged ) {
 
                 if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 /*allow once*/ ) {
@@ -118,14 +92,9 @@ namespace Librainian.Utilities {
                     Debug.WriteLine( exception );
                 }
             }
-
-            if ( Interlocked.Exchange( ref this._hasSuppressedFinalize, 1 ) == 0 /*allow once*/ ) {
-                GC.SuppressFinalize( this );
-            }
         }
 
         /*
-
         /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
         [CanBeNull]
         private String DisposeHint { get; set; }
@@ -163,7 +132,6 @@ namespace Librainian.Utilities {
         public Boolean IsDisposed() => this.HasDisposedManaged() && this.HasDisposedNative();
 
         /*
-
         /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
         /// <param name="hint"></param>
         [Conditional( "DEBUG" )]
