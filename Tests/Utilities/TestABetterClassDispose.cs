@@ -39,9 +39,10 @@
 //
 // Project: "LibrainianTests", "TestABetterClassDispose.cs" was last formatted by Protiguous on 2019/11/15 at 1:38 PM.
 
-namespace LibrainianTests.Magic {
+namespace LibrainianTests.Utilities {
 
     using System;
+    using System.Diagnostics;
     using Librainian.Utilities;
     using Xunit;
 
@@ -56,15 +57,15 @@ namespace LibrainianTests.Magic {
             using var test = test1;
         }
 
-        public class Test : ABetterClassDispose {
+        internal class Test : ABetterClassDispose {
 
-            private Byte value;
+            private readonly Byte value;
 
             public Test( Byte val ) => this.value = val;
 
             /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-            public override void DisposeManaged() {
-            }
+            public override void DisposeManaged() => Debug.WriteLine( this.value );
+
         }
     }
 }

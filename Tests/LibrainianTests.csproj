@@ -68,7 +68,7 @@
     <Compile Include="FolderTests.cs" />
     <Compile Include="Linguistics\ParsingTests.cs" />
     <Compile Include="Linguistics\SentenceTests.cs" />
-    <Compile Include="Magic\TestABetterClassDispose.cs" />
+    <Compile Include="Utilities\TestABetterClassDispose.cs" />
     <Compile Include="Maths\ArithmeticMethods.cs" />
     <Compile Include="Maths\DateSpanTests.cs" />
     <Compile Include="Maths\MathsTests.cs" />
