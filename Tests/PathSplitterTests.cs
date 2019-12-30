@@ -53,13 +53,13 @@ namespace LibrainianTests {
             const String example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
             const String newExample = @"C:\recovered\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
-            var bob = new PathSplitter( example );
+            var bob = new PathSplitter( new Document(example) );
 
             var reconstructed = bob.Recombined();
 
             reconstructed.FullPath.Should().Be( example );
 
-            bob.InsertRoot( @"C:\recovered" );
+            bob.InsertRoot( new Folder( @"C:\recovered" ) );
             reconstructed = bob.Recombined();
 
             reconstructed.FullPath.Should().Be( newExample );
