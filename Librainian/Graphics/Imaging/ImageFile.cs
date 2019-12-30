@@ -43,9 +43,17 @@ namespace Librainian.Graphics.Imaging {
 
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using JetBrains.Annotations;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
 
     /// <summary>
     ///     Untested.

@@ -57,6 +57,16 @@ namespace Librainian.Security {
     using Logging;
     using OperatingSystem.FileSystem;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
+
+
     public static class SecurityExtensions {
 
         private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";

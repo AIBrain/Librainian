@@ -94,11 +94,8 @@ namespace Librainian.OperatingSystem.Compression {
             }
 
             var bytes = document.AsBytes();
+            this.FeedItData( bytes.ToArray() );
 
-            if ( bytes != null ) {
-                var data = bytes.ToArray();
-                this.FeedItData( data );
-            }
 
         }
 

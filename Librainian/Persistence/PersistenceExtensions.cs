@@ -71,6 +71,16 @@ namespace Librainian.Persistence {
     using OperatingSystem.Streams;
     using Threading;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
+
+
     public static class PersistenceExtensions {
 
         public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {

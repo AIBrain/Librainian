@@ -43,7 +43,6 @@ namespace Librainian.Threading {
 
     using System;
     using System.Threading;
-    using Xunit;
 
     public struct VolatileBoolean {
 
@@ -60,22 +59,6 @@ namespace Librainian.Threading {
         public static implicit operator Boolean( VolatileBoolean value ) => value.Value;
 
         public static implicit operator VolatileBoolean( Boolean value ) => new VolatileBoolean( value );
-
-    }
-
-    public class VolatileBooleanTests {
-
-        [Fact]
-        public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
-
-        [Fact]
-        public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
-
-        [Fact]
-        public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
-
-        [Fact]
-        public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
 
     }
 

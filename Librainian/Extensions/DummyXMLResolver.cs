@@ -57,8 +57,9 @@ namespace Librainian.Extensions {
         }
 
         [NotNull]
-        public override Object GetEntity( Uri absoluteUri, String role, Type ofObjectToReturn ) => new MemoryStream();
+        public override Object GetEntity( Uri absoluteUri, [CanBeNull] String role, [CanBeNull] Type ofObjectToReturn ) => new MemoryStream();
 
+        [NotNull]
         public override Uri ResolveUri( Uri baseUri, String relativeUri ) => new Uri( String.Empty );
     }
 }

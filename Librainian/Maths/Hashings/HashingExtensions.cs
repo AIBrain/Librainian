@@ -42,11 +42,19 @@
 namespace Librainian.Maths.Hashings {
 
     using System;
-    using System.IO;
     using System.Linq;
     using Converters;
     using JetBrains.Annotations;
     using OperatingSystem.FileSystem;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
 
     public static class HashingExtensions {
 

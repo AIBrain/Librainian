@@ -52,3 +52,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Naming", "CA1710:Identifiers should have correct suffix" )]
 [assembly: SuppressMessage( "Performance", "CA1819:Properties should not return arrays", Justification = "What a dumb rule for dumb programmers." )]
 [assembly: SuppressMessage( "Design", "CA1000:Do not declare static members on generic types", Justification = "Stupid rule." )]
+[assembly: SuppressMessage( "Design", "CA1008:Enums should have zero value" )]
+[assembly: SuppressMessage( "Design", "CA1034:Nested types should not be visible", Justification = "Who comes up with some of these stupid 'rules'?" )]
+[assembly: SuppressMessage( "Performance", "CA1814:Prefer jagged arrays over multidimensional" )]

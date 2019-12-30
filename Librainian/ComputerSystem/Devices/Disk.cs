@@ -50,6 +50,15 @@ namespace Librainian.ComputerSystem.Devices {
     using JetBrains.Annotations;
     using OperatingSystem.FileSystem;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
+
     /// <summary>
     ///     <para>A Drive contains 1 or more <see cref="Disk" />.</para>
     /// </summary>
@@ -71,7 +80,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
 
-        public Disk( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
+        public Disk( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory.FullName ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
 
         public Disk( Char driveLetter ) {
             this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
@@ -96,7 +105,7 @@ namespace Librainian.ComputerSystem.Devices {
         public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 ) this.Info.AvailableFreeSpace : 0;
 
         public IEnumerable<IFolder> GetFolders( String searchPattern = "*" ) {
-            var root = new Folder( this.Info.RootDirectory );
+            var root = new Folder( this.Info.RootDirectory.FullName );
 
             return root.GetFolders( searchPattern );
         }

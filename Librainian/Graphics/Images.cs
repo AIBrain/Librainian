@@ -54,13 +54,21 @@ namespace Librainian.Graphics {
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
-    using Converters;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
     using OperatingSystem.FileSystem;
     using Parsing;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
 
     public static class Images {
 
@@ -1055,9 +1063,7 @@ namespace Librainian.Graphics {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var info = new FileInfo( document.FullPath );
-
-            return info.ImageCreationBestGuess( oldestDate, youngestDate );
+            return document.GetFreshInfo().ImageCreationBestGuess( oldestDate, youngestDate );
         }
 
         [CanBeNull]
@@ -1067,7 +1073,6 @@ namespace Librainian.Graphics {
             }
 
             try {
-                var justName = Path.GetFileNameWithoutExtension( info.FullName );
 
                 var bestGuesses = new List<DateTime>();
 
@@ -1080,13 +1085,13 @@ namespace Librainian.Graphics {
                 bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
                 if ( bestGuesses.Any() ) {
-#if DEBUG
-                    var first4 = justName.Left( 4 ).ToIntOrNull();
+//#if DEBUG
+//                    var first4 = justName.Left( 4 ).ToIntOrNull();
 
-                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
-                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
-                    }
-#endif
+//                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
+//                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
+//                    }
+//#endif
 
                     return bestGuesses.Min();
                 }
@@ -1097,63 +1102,67 @@ namespace Librainian.Graphics {
 
                 //example 1, "blahblahblah_20040823_173454" == "August 23rd, 2010 at 10:34am"
 
-                var mostlyDigits = new StringBuilder( justName.Length );
+                var justName = Path.GetFileNameWithoutExtension( info.FullName );
 
-                foreach ( var c in justName ) {
-                    if ( Char.IsDigit( c ) ) {
-                        mostlyDigits.Append( c );
-                    }
-                    else {
-                        mostlyDigits.Append( Symbols.Singlespace );
-                    }
-                }
+                if ( justName != null ) {
+                    var mostlyDigits = new StringBuilder( justName.Length );
 
-                var digits = mostlyDigits.ToString().Trim();
-
-                var patternsYmd = new[] {
-                    "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd"
-                };
-
-                DateTime bestGuess;
-
-                foreach ( var pattern in patternsYmd ) {
-                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                        switch ( pattern ) {
-                            case "yyyyMMdd HHmmss" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
-                            case "yyyyMMdd" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
+                    foreach ( var c in justName ) {
+                        if ( Char.IsDigit( c ) ) {
+                            mostlyDigits.Append( c );
                         }
-
-                        bestGuesses.Add( bestGuess );
+                        else {
+                            mostlyDigits.Append( Symbols.Singlespace );
+                        }
                     }
-                }
 
-                var patternsDmy = new[] {
-                    "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
-                };
+                    var digits = mostlyDigits.ToString().Trim();
 
-                foreach ( var pattern in patternsDmy ) {
-                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                        bestGuesses.Add( bestGuess );
+                    var patternsYmd = new[] {
+                        "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd"
+                    };
+
+                    DateTime bestGuess;
+
+                    foreach ( var pattern in patternsYmd ) {
+                        if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                            switch ( pattern ) {
+                                case "yyyyMMdd HHmmss" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
+                                case "yyyyMMdd" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
+                            }
+
+                            bestGuesses.Add( bestGuess );
+                        }
                     }
-                }
 
-                // per http://stackoverflow.com/q/51224/956364
-                const String pattern1 =
-                    @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
+                    var patternsDmy = new[] {
+                        "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
+                    };
 
-                foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        bestGuesses.Add( bestGuess );
+                    foreach ( var pattern in patternsDmy ) {
+                        if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                            bestGuesses.Add( bestGuess );
+                        }
                     }
-                }
 
-                //per http://stackoverflow.com/a/669758/956364
-                const String pattern2 =
-                    @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
+                    // per http://stackoverflow.com/q/51224/956364
+                    const String pattern1 =
+                        @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
 
-                foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                        bestGuesses.Add( bestGuess );
+                    foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
+                        if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                            bestGuesses.Add( bestGuess );
+                        }
+                    }
+
+                    //per http://stackoverflow.com/a/669758/956364
+                    const String pattern2 =
+                        @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
+
+                    foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
+                        if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                            bestGuesses.Add( bestGuess );
+                        }
                     }
                 }
 
@@ -1165,15 +1174,15 @@ namespace Librainian.Graphics {
                 }
 
                 if ( bestGuesses.Any() ) {
-#if DEBUG
-                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
-                        "".Break();
-                    }
+//#if DEBUG
+//                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
+//                        "".Break();
+//                    }
 
-                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
-                        "".Break();
-                    }
-#endif
+//                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
+//                        "".Break();
+//                    }
+//#endif
 
                     return bestGuesses.Min();
 
@@ -1259,6 +1268,7 @@ namespace Librainian.Graphics {
 
                 return true;
             }
+            catch ( ArgumentException ) { }
             catch ( NotSupportedException ) { }
             catch ( OutOfMemoryException ) {
                 GC.Collect( 2, GCCollectionMode.Forced, true, true );

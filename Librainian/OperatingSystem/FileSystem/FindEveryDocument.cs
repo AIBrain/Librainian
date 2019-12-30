@@ -98,7 +98,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 Int64 counter = 0;
 
                 this.DrivesFound = new ActionBlock<Disk>( disk => {
-                    var root = new Folder( disk.Info.RootDirectory );
+                    var root = new Folder( disk.Info.RootDirectory.FullName );
 
                     Parallel.ForEach( root.BetterGetFolders().AsParallel(), folder => {
                         if ( this.CancellationTokenSource.IsCancellationRequested ) {

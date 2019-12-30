@@ -54,6 +54,16 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Newtonsoft.Json;
     using Parsing;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
+
+
     /// <summary>
     ///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
     ///     <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>

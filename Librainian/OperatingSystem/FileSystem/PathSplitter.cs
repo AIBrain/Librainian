@@ -48,61 +48,99 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Collections.Extensions;
     using JetBrains.Annotations;
     using Parsing;
+    //using LanguageExt.Prelude;
 
     public class PathSplitter {
 
         [NotNull]
         [ItemNotNull]
-        private List<String> Parts { get; }
+        private List<String> Parts { get; } = new List<String>();
 
         [NotNull]
         public String FileName { get; }
 
+        /// <summary>
+        /// Null when equal to (is) the root folder.
+        /// </summary>
         [CanBeNull]
         public String OriginalPath { get; }
 
-        [DebuggerStepThrough]
-        public PathSplitter( String fullpathandfilename ) {
-            if ( String.IsNullOrWhiteSpace( value: fullpathandfilename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpathandfilename ) );
+        [NotNull]
+        private static IEnumerable<String> Split( [NotNull] String path ) {
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
-            this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
-
-            if ( this.OriginalPath is null ) {
-                throw new InvalidOperationException( $"Empth path on {fullpathandfilename.DoubleQuote()}." );
-            }
-
-            this.FileName = Path.GetFileName( fullpathandfilename );
-
-            if ( this.FileName is null ) {
-                throw new InvalidOperationException( $"Empth file name on {fullpathandfilename.DoubleQuote()}." );
-            }
-
-            var strings = this.OriginalPath.Split( new[] {
+            return path.Split( new[] {
                 Path.DirectorySeparatorChar
             }, StringSplitOptions.RemoveEmptyEntries );
-
-            this.Parts = new List<String>( strings );
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) { }
+        public PathSplitter( [NotNull] Folder folder ) : this( new Document(folder.FullName), default ) { }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( [CanBeNull] Folder folder ) : this( folder?.FullName ) { }
+        public PathSplitter( [NotNull] IDocument document, String newExtension = default ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
 
-        [DebuggerStepThrough]
-        public Boolean InsertRoot( [NotNull] String path ) {
+            newExtension = newExtension.Trimmed() ?? document.Extension() ?? String.Empty;
+
+            if ( !newExtension.StartsWith( "." ) ) {
+                newExtension = $".{newExtension}";
+            }
+
+            this.FileName = $"{document.JustName()}{newExtension}";
+
+            this.OriginalPath = Path.GetDirectoryName( document.FullPath );
+
+            this.Parts.Clear();
+            if ( !String.IsNullOrEmpty( this.OriginalPath ) ) {
+                this.Parts.AddRange( Split( this.OriginalPath ) );
+            }
+            this.Parts.TrimExcess();
+        }
+
+        //[DebuggerStepThrough]
+        public Boolean InsertRoot( [NotNull] Folder path ) {
             if ( path is null ) {
                 throw new ArgumentNullException( nameof( path ) );
             }
 
-            this.Parts.Insert( 1, path );
+            this.Parts.Insert( 1, path.FullName );
 
-            if ( path[ 1 ] == ':' ) {
-                this.Parts.RemoveAt( 0 );
+            if ( path.FullName[ 1 ] == ':' ) {
+                this.Parts.RemoveAt( 0 );   //inserting a drive:\folder? remove the original drive:\folder part
             }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Replace the original path, with <paramref name="replacement"/> path, not changing the filename.
+        /// </summary>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        //[DebuggerStepThrough]
+        public Boolean ReplacePath( [NotNull] IFolder replacement ) {
+            if ( replacement == null ) {
+                throw new ArgumentNullException( paramName: nameof( replacement ) );
+            }
+
+            this.Parts.Clear();
+            this.Parts.AddRange( Split( replacement.FullName ) );
+            this.Parts.TrimExcess();
+
+            return true;
+        }
+
+        public Boolean AddSubFolder( [NotNull] String subfolder ) {
+            subfolder = Folder.CleanPath( subfolder.Trim() );
+
+            if ( String.IsNullOrWhiteSpace( value: subfolder ) ) {
+                return false;
+            }
+
+            this.Parts.Add( subfolder );
 
             return true;
         }
@@ -118,14 +156,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [DebuggerStepThrough]
-        public Boolean SubstituteDrive( Char c ) {
-            var pz = this.Parts[ 0 ];
+        public Boolean SubstituteDrive( Char d ) {
+            var s = this.Parts[ 0 ] ?? String.Empty;
 
-            if ( pz?.Length != 2 || !pz.EndsWith( ":", StringComparison.Ordinal ) ) {
+            if ( s.Length != 2 || !s.EndsWith( ":", StringComparison.Ordinal ) ) {
                 return false;
             }
 
-            this.Parts[ 0 ] = $"{new String( new[] { c } )}:";
+            this.Parts[ 0 ] = $"{d}:";
 
             return true;
         }

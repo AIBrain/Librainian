@@ -54,7 +54,6 @@ namespace Librainian.Parsing {
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Xml;
     using Collections.Extensions;
     using Extensions;
     using JetBrains.Annotations;
@@ -176,6 +175,7 @@ namespace Librainian.Parsing {
 
         /// <summary>
         ///     Add the left [ and right ] brackets if they're not already on the string.
+        /// <para>An empty or whitepsace string returns an empty string.</para>
         /// </summary>
         /// <param name="self"></param>
         /// <returns></returns>
@@ -192,19 +192,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var left = String.Empty;
-
-            if ( !self.StartsWith( "[" ) ) {
-                left = "[";
-            }
-
-            var right = String.Empty;
-
-            if ( !self.EndsWith( "]" ) ) {
-                right = "]";
-            }
-
-            return $"{left}{self}{right}";
+            return $"{( self.StartsWith( "[", StringComparison.Ordinal ) ? String.Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? String.Empty : "]" )}";
         }
 
         /// <summary>
@@ -215,15 +203,12 @@ namespace Librainian.Parsing {
         [DebuggerStepThrough]
         [CanBeNull]
         public static String Trimmed<T>( [CanBeNull] this T self ) {
-            if ( self is null ) {
-                return default;
+            switch ( self ) {
+                case null: return default;
+                case String s: return s.Trim().NullIfEmpty();
+                default: return self.ToString().Trim().NullIfEmpty();
             }
 
-            if ( self is String s ) {
-                return s.Trim().NullIfEmpty();
-            }
-
-            return self.ToString().NullIfEmpty();
         }
 
         [DebuggerStepThrough]
@@ -275,7 +260,7 @@ namespace Librainian.Parsing {
         /// <param name="pascalCasedWord"></param>
         /// <returns></returns>
         [NotNull]
-        public static String AddUnderscorePrefix( this String pascalCasedWord ) => $"_{pascalCasedWord}";
+        public static String AddUnderscorePrefix( [CanBeNull] this String pascalCasedWord ) => $"_{pascalCasedWord}";
 
         /// <summary>
         ///     Add underscores to a pascal-cased String
@@ -356,7 +341,8 @@ namespace Librainian.Parsing {
         /// <param name="sequence"></param>
         /// <param name="element"></param>
         /// <returns></returns>
-        public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, T element ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> ConcatSingle<T>( [NotNull] this IEnumerable<T> sequence, [CanBeNull] T element ) {
             if ( sequence is null ) {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
@@ -511,15 +497,6 @@ namespace Librainian.Parsing {
         }
 
         /// <summary>
-        ///     for chaining empty strings with the ?? operator
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        [DebuggerStepThrough]
-        public static String EmptyAsNull( this String value ) => value == "" ? null : value;
-
-        /// <summary>
         ///     <para>Case insensitive String-end comparison.</para>
         ///     <para>( true example: cAt == CaT )</para>
         ///     <para>
@@ -531,7 +508,8 @@ namespace Librainian.Parsing {
         /// <returns></returns>
         public static Boolean EndsLike( [NotNull] this String source, [NotNull] String compare ) => source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
 
-        public static IEnumerable<Char> EnglishOnly( this String s ) {
+        [CanBeNull]
+        public static IEnumerable<Char> EnglishOnly( [CanBeNull] this String s ) {
             try {
                 var sb = new StringBuilder();
 #pragma warning disable IDE0007 // Use implicit type
@@ -614,7 +592,7 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static String FirstWord( this String sentence ) => sentence.ToWords().FirstOrDefault() ?? String.Empty;
+        public static String FirstWord( [CanBeNull] this String sentence ) => sentence.ToWords().FirstOrDefault() ?? String.Empty;
 
         /// <summary>
         /// </summary>
@@ -681,7 +659,7 @@ namespace Librainian.Parsing {
             const String codes = "0123012D02245501262301D202";
 
             // i need a capitalized String
-            s = s.ToUpper();
+            s = s.ToUpper( CultureInfo.CurrentCulture );
 
             // i'm building the coded String using a String builder because i think this is probably the fastest and least intensive way
             var coded = new StringBuilder();
@@ -817,7 +795,8 @@ namespace Librainian.Parsing {
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static String JustNumbers( this String s ) {
+        [CanBeNull]
+        public static String JustNumbers( [CanBeNull] this String s ) {
             try {
                 var sb = new StringBuilder();
 #pragma warning disable IDE0007 // Use implicit type
@@ -843,7 +822,7 @@ namespace Librainian.Parsing {
         /// <see cref="Sentence" />
         [NotNull]
         [Pure]
-        public static IEnumerable<String> JustWords( this String sentence ) => sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
+        public static IEnumerable<String> JustWords( [CanBeNull] this String sentence ) => sentence.ToWords().Where( word => word.Any( Char.IsLetterOrDigit ) );
 
         /// <summary>
         ///     <para>Case insensitive String comparison.</para>
@@ -900,7 +879,14 @@ namespace Librainian.Parsing {
         /// <param name="word">String to convert</param>
         /// <returns>String</returns>
         [NotNull]
-        public static String MakeInitialLowerCase( [NotNull] this String word ) => String.Concat( word.Substring( 0, 1 ).ToLowerInvariant(), word.Substring( 1 ) );
+        public static String MakeInitialLowerCase( [NotNull] this String word ) {
+            switch ( word.Length ) {
+                case 0: return String.Empty;
+                case 1: return Char.ToLower( word[ 0 ], CultureInfo.CurrentCulture ).ToString();
+                default: return String.Concat( Char.ToLower( word[ 0 ], CultureInfo.CurrentCulture ).ToString(), word.Substring( 1 ) );
+            }
+
+        }
 
         /// <summary>
         ///     Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using <see cref="JsonConvert" /> .
@@ -1151,7 +1137,8 @@ namespace Librainian.Parsing {
             return builder.ToString();
         }
 
-        public static String ReplaceAll( this String haystack, String needle, String replacement ) {
+        [CanBeNull]
+        public static String ReplaceAll( this String haystack, [CanBeNull] String needle, [CanBeNull] String replacement ) {
             Int32 pos;
 
             // Avoid a possible infinite loop
@@ -1167,7 +1154,7 @@ namespace Librainian.Parsing {
         }
 
         [NotNull]
-        public static String ReplaceFirst( [NotNull] this String haystack, [NotNull] String needle, String replacement ) {
+        public static String ReplaceFirst( [NotNull] this String haystack, [NotNull] String needle, [CanBeNull] String replacement ) {
             var pos = haystack.IndexOf( needle, StringComparison.Ordinal );
 
             if ( pos < 0 ) {
@@ -1516,14 +1503,16 @@ namespace Librainian.Parsing {
         public static String StripHTML( [NotNull] this String s ) => Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
 
         [NotNull]
-        public static String StripTags( [NotNull] this String input, String[] allowedTags ) {
+        public static String StripTags( [NotNull] this String input, [NotNull] String[] allowedTags ) {
+            if ( allowedTags == null ) {
+                throw new ArgumentNullException( paramName: nameof( allowedTags ) );
+            }
+
             var stripHTMLExp = new Regex( @"(<\/?[^>]+>)" );
             var output = input;
 
-#pragma warning disable IDE0007 // Use implicit type
             foreach ( Match tag in stripHTMLExp.Matches( input ) ) {
-#pragma warning restore IDE0007 // Use implicit type
-                var htmlTag = tag.Value.ToLower();
+                var htmlTag = tag.Value.ToLower( CultureInfo.CurrentCulture );
                 var isAllowed = false;
 
                 foreach ( var allowedTag in allowedTags ) {
@@ -1561,6 +1550,7 @@ namespace Librainian.Parsing {
             return output;
         }
 
+        [CanBeNull]
         public static String StripTagsAndAttributes( [NotNull] this String input, String[] allowedTags ) {
             /* Remove all unwanted tags first */
             var output = input.StripTags( allowedTags );
@@ -1682,7 +1672,7 @@ namespace Librainian.Parsing {
         /// <param name="lowercaseAndUnderscoredWord">String to convert</param>
         /// <returns>String</returns>
         [NotNull]
-        public static String ToCamelCase( this String lowercaseAndUnderscoredWord ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
+        public static String ToCamelCase( [CanBeNull] this String lowercaseAndUnderscoredWord ) => MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord ) );
 
         /// <summary>
         ///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
@@ -1709,31 +1699,29 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            text = text.Replace( "_", " " );
-            var joinString = removeUnderscores ? String.Empty : "_";
-            var words = text.Split( ' ' );
-
-            if ( words.Length <= 1 && !words[ 0 ].IsUpperCase() ) {
-                return String.Concat( words[ 0 ].Substring( 0, 1 ).ToUpper(), words[ 0 ].Substring( 1 ) );
+            if ( removeUnderscores ) {
+                text = text.Replace( Symbols.Underscore, Symbols.Singlespace );
             }
 
-            for ( var i = 0; i < words.Length; i++ ) {
-                if ( words[ i ].Length <= 0 ) {
-                    continue;
+            text = text.Trimmed() ?? String.Empty;
+
+            var sb = new StringBuilder( text.Length );
+
+            var words = text.Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+
+            foreach ( var word in words ) {
+                var w = word.TrimEnd();
+                var l = w.Length;
+                if ( l > 0 ) {
+                    sb.Append( Char.ToUpper( w[ 0 ], CultureInfo.CurrentCulture ) );
+
+                    if ( l > 1 ) {
+                        sb.Append( w.Substring( 1 ) );
+                    }
                 }
-
-                var word = words[ i ];
-                var restOfWord = word.Substring( 1 );
-
-                if ( restOfWord.IsUpperCase() ) {
-                    restOfWord = restOfWord.ToLower();
-                }
-
-                var firstChar = Char.ToUpper( word[ 0 ] );
-                words[ i ] = String.Concat( firstChar, restOfWord );
             }
 
-            return String.Join( joinString, words );
+            return sb.ToString();
         }
 
         [NotNull]
@@ -1761,7 +1749,7 @@ namespace Librainian.Parsing {
             }
 
             var results = RegexBySentenceStackoverflow.Split( input: paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trim() )
-                .Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( "." ) );
+                .Where( ts => !String.IsNullOrWhiteSpace( ts ) && !ts.Equals( ".", StringComparison.Ordinal ) );
 
             return results.Select( Sentence.Parse );
         }
@@ -1803,7 +1791,7 @@ namespace Librainian.Parsing {
                 return words;
             }
 
-            if ( words != "" ) {
+            if ( !String.IsNullOrEmpty( words ) ) {
                 words += "and ";
             }
 
@@ -1890,25 +1878,7 @@ namespace Librainian.Parsing {
             //return sb.ToString().Split( SpaceSplitBy, StringSplitOptions.RemoveEmptyEntries );
         }
 
-        /// <summary>
-        ///     Attempt to conver the String into an XmlDocument. An empty XmlDocument will be returned if the conversion throws an
-        ///     XmlException
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static XmlDocument ToXmlDoc( this String input ) {
-            try {
-                var doc = new XmlDocument();
-                doc.LoadXml( input );
-
-                return doc;
-            }
-            catch ( XmlException ) {
-                return new XmlDocument();
-            }
-        }
-
+    
         [CanBeNull]
         public static String Truncate( [CanBeNull] this String s, Int32 maxLen ) {
             if ( maxLen < 0 ) {
@@ -1952,34 +1922,24 @@ namespace Librainian.Parsing {
         /// <param name="s"></param>
         /// <returns></returns>
         [NotNull]
-        public static String WithoutDuplicateWords( [CanBeNull] String s ) {
+        public static String RemoveDuplicateWords( [CanBeNull] String s ) {
             if ( String.IsNullOrEmpty( s ) ) {
                 return String.Empty;
             }
 
-            var words = s.ToWords().ToList();
+            var words = s.ToWords();
+            var result = new List<String>( words.Length );
 
-            //if ( 0 == words.Count() ) { return String.Empty; }
-            //if ( 1 == words.Count() ) { return words.FirstOrDefault(); }
+            String previous = default;
+            foreach ( var word in words ) {
+                if ( !String.Equals( word, previous, StringComparison.CurrentCulture ) ) {
+                    result.Add( word );
+                }
 
-            var sb = new StringBuilder( words.Count );
-            var prevWord = words.FirstOrDefault();
-            sb.Append( prevWord );
-
-            foreach ( var cur in words.Where( cur => !cur.Equals( prevWord ) ) ) {
-                sb.Append( $" {cur}" );
+                previous = word;
             }
 
-            //for ( int idx = 1; idx < words.Count(); idx++ ) {
-            //    String wordA = words[ idx - 1 ];
-            //    String wordB = words[ idx ];
-            //    if ( !wordB.Equals( wordA ) ) {
-            //        sb.Append( " " );
-            //        sb.Append( wordB );
-            //    }
-            //}
-
-            return sb.ToString();
+            return result.ToStrings( Symbols.Singlespace );
         }
 
         /// <summary>
@@ -2045,7 +2005,7 @@ namespace Librainian.Parsing {
             }
 
             ref var first = ref memory.Span[ 0 ];
-            first = Char.ToUpper( first );
+            first = Char.ToUpper( first, CultureInfo.CurrentCulture );
         }
 
         /// <summary>
@@ -2060,7 +2020,11 @@ namespace Librainian.Parsing {
                 return default;
             }
 
-            return Char.ToUpper( text[ 0 ] ) + text.Substring( 1 );
+            if ( text.Length == 1 ) {
+                return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ).ToString();
+            }
+
+            return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text.Substring( 1 );
         }
     }
 }

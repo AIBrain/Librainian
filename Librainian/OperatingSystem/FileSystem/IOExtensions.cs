@@ -66,6 +66,13 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Parsing;
     using Threading;
 
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+
     public static class IOExtensions {
 
         public const Int32 FsctlSetCompression = 0x9C040;
@@ -750,7 +757,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return String.Empty;
             }
 
-            var files = Directory.EnumerateFiles( dir.FullName, searchPattern: searchPattern, searchOption: searchOption );
+            var files = Directory.EnumerateFiles( dir.FullName, searchPattern: searchPattern, searchOption );
             var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
 
             if ( pickedfile != null && File.Exists( pickedfile ) ) {
@@ -1290,8 +1297,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                     }
 
                     $"Scanning [{drive.VolumeLabel}]".Info();
-
-                    drive.RootDirectory.FindFiles( fileSearchPatterns: fileSearchPatterns, token: token, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
+                    var root = new DirectoryInfo( drive.RootDirectory.FullName );
+                    root.FindFiles( fileSearchPatterns: fileSearchPatterns, token: token, onFindFile: onFindFile, onEachDirectory: onEachDirectory,
                         searchStyle: searchStyle );
                 } );
             }

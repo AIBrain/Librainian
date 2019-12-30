@@ -56,22 +56,22 @@ namespace Librainian {
         Exception = Error - 1,
 
         [Description( Symbols.Error )]
-        Error = Timeout - 1,
+        Error = Stop - 1,
+
+        [Description( Symbols.Fail )]
+        NoGo = Halt,
+
+        [Description( Symbols.FailBig )]
+        Stop = Halt,
+
+        [Description( Symbols.Fail )]
+        Halt = Skip-1,
+
+        [Description( Symbols.Fail )]
+        Skip = Timeout-1,
 
         [Description( Symbols.Fail )]
         Timeout = Failure - 1,
-
-        [Description( Symbols.Fail )]
-        No = Failure,
-
-        [Description( Symbols.Fail )]
-        NoGo = Failure,
-
-        [Description( Symbols.Fail )]
-        Stop = Failure,
-
-        [Description( Symbols.Fail )]
-        Halt = Failure,
 
         [Description( Symbols.Fail )]
         Negative = Failure,
@@ -80,7 +80,10 @@ namespace Librainian {
         Bad = Failure,
 
         [Description( Symbols.Fail )]
-        Failure = -1,
+        Failure = No-1,
+
+        [Description( Symbols.Fail )]
+        No = -1,
 
         [Description( Symbols.Unknown )]
         Unknown = 0,
@@ -90,6 +93,9 @@ namespace Librainian {
 
         [Description( Symbols.CheckMark )]
         Go = Success,
+
+        [Description( Symbols.CheckMark )]
+        Good = Success,
 
         [Description( Symbols.CheckMark )]
         Yes = Success,

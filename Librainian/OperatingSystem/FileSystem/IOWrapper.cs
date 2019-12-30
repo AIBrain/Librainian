@@ -47,6 +47,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.InteropServices;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     defrag stuff
@@ -281,7 +282,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var startingVcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-                Trace.Assert( startingVcn == 0 );
+                Debug.Assert( startingVcn == 0 );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
@@ -323,7 +324,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="deviceName">use "c:"</param>
         /// <returns>a bitarray for each cluster</returns>
-        public static BitArray GetVolumeMap( String deviceName ) {
+        [NotNull]
+        public static BitArray GetVolumeMap( [NotNull] String deviceName ) {
+            if ( String.IsNullOrWhiteSpace( value: deviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( deviceName ) );
+            }
+
             var pAlloc = IntPtr.Zero;
             var hDevice = IntPtr.Zero;
 
@@ -362,7 +368,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 */
                 var startingLcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
 
-                Trace.Assert( startingLcn == 0 );
+                Debug.Assert( startingLcn == 0 );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
                 var bitmapSize = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );

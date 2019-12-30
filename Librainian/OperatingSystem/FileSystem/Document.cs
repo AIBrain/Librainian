@@ -74,6 +74,16 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Threading;
     using Utilities;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    // ReSharper restore RedundantUsingDirective
+
+
     public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
 
         [NotNull]
@@ -611,12 +621,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
         [NotNull]
         public IEnumerable<Byte> AsBytes( FileOptions options = FileOptions.SequentialScan ) {
-            if ( this.Exists() == false ) {
+            if ( !this.Exists() ) {
                 yield break;
             }
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneMegaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneMegaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
@@ -649,13 +658,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
         /// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
         /// <returns></returns>
+        [NotNull]
         public IEnumerable<Int32> AsInt32( FileOptions options = FileOptions.SequentialScan ) {
-            if ( this.Exists() == false ) {
+            if ( !this.Exists() ) {
                 yield break;
             }
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
@@ -683,8 +693,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 yield break;
             }
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
@@ -713,8 +723,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 yield break;
             }
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
@@ -740,8 +750,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 yield break;
             }
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
@@ -804,19 +814,19 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public Folder ContainingingFolder() {
-            if ( this._containingFolder == default ) {
-                var dir = Path.GetDirectoryName( path: this.FullPath );
-
-                if ( String.IsNullOrEmpty( value: dir ) ) {
-
-                    //empty means a root-level folder (C:\) was found. Right?
-                    dir = Path.GetPathRoot( path: this.FullPath );
-                }
-
-                this._containingFolder = new Folder( fullPath: dir );
+            if ( this._containingFolder != default ) {
+                return this._containingFolder;
             }
 
-            return this._containingFolder;
+            var dir = Path.GetDirectoryName( this.FullPath );
+
+            if ( String.IsNullOrWhiteSpace( value: dir ) ) {
+
+                //empty means a root-level folder (C:\) was found. Right?
+                dir = Path.GetPathRoot( this.FullPath );
+            }
+
+            return this._containingFolder = new Folder( fullPath: dir );
         }
 
         /// <summary>
@@ -914,7 +924,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var size = this.Size();
 
                 if ( size?.Any() == true ) {
-                    using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
+                    using ( var fileStream = File.OpenRead( this.FullPath ) ) {
                         using var crc32 = new CRC32( polynomial: ( UInt32 )size, seed: ( UInt32 )size );
 
                         var result = crc32.ComputeHash( inputStream: fileStream );
@@ -969,7 +979,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     throw new InvalidOperationException( "File too large to convert to hex." );
                 }
 
-                using ( var fileStream = File.OpenRead( path: this.FullPath ) ) {
+                using ( var fileStream = File.OpenRead( this.FullPath ) ) {
 
                     using var crc32 = new CRC32( polynomial: ( UInt32 )size.Value, seed: ( UInt32 )size.Value );
 
@@ -1009,7 +1019,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return null;
                 }
 
-                using ( var fileStream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                using ( var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
                     var size = this.Size();
 
                     if ( !size.HasValue || !size.Any() ) {
@@ -1058,8 +1068,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 using var crc64 = new CRC64( polynomial: size.Value, seed: size.Value );
 
-                using ( var fileStream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                    bufferSize: MathConstants.Sizes.OneMegaByte ) ) {
+                using ( var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                    MathConstants.Sizes.OneMegaByte ) ) {
                     return crc64.ComputeHash( inputStream: fileStream )
                         .Aggregate( seed: String.Empty, func: ( current, b ) => current + $"{b:X}" );
                 }
@@ -1156,8 +1166,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var offset = 0;
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: filelength, options: FileOptions.SequentialScan ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                filelength, FileOptions.SequentialScan ) ) {
 
                 if ( !stream.CanRead ) {
 
@@ -1227,7 +1237,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
         [NotNull]
-        public String Extension() => Path.GetExtension( path: this.FullPath ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
+        public String Extension() => Path.GetExtension( this.FullPath ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
         /// <summary>
         ///     <para>Just the file's name, including the extension (no path).</para>
@@ -1237,7 +1247,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </example>
         /// <see cref="Path.GetFileName" />
         [NotNull]
-        public String FileName => Path.GetFileName( path: this.FullPath );
+        public String FileName => Path.GetFileName( this.FullPath );
 
         /// <summary>
         ///     Returns the size of the file, if it exists.
@@ -1251,20 +1261,20 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="text"></param>
         [NotNull]
-        public IDocument AppendText( String text ) {
+        public IDocument AppendText( [CanBeNull] String text ) {
             var folder = this.ContainingingFolder();
 
             if ( !folder.Exists() ) {
-                if ( !Directory.CreateDirectory( path: folder.FullName ).Exists ) {
+                if ( !Directory.CreateDirectory( folder.FullName ).Exists ) {
                     throw new DirectoryNotFoundException( message: $"Could not create folder \"{folder.FullName}\"." );
                 }
             }
 
             this.SetReadOnly( false );
 
-            using ( var writer = File.AppendText( path: this.FullPath ) ) {
-                writer.WriteLine( value: text );
-            }
+            using var writer = File.AppendText( this.FullPath );
+
+            writer.WriteLine( text );
 
             return this;
         }
@@ -1284,7 +1294,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public Boolean HavePermission( FileIOPermissionAccess access ) {
             try {
-                var bob = new FileIOPermission( access: access, path: this.FullPath );
+                var bob = new FileIOPermission( access, this.FullPath );
                 bob.Demand();
 
                 return true;
@@ -1302,7 +1312,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public String JustName() => Path.GetFileNameWithoutExtension( path: this.FileName );
+        public String JustName() => Path.GetFileNameWithoutExtension( this.FileName );
 
         /// <summary>
         ///     <para>
@@ -1364,7 +1374,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             try {
-                using ( var textReader = File.OpenText( path: this.FullPath ) ) {
+                using ( var textReader = File.OpenText( this.FullPath ) ) {
                     using ( var jsonReader = new JsonTextReader( reader: textReader ) ) {
                         return new JsonSerializer {
                             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -1433,7 +1443,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String Name => this.FileName;
 
         public async Task<String> ReadStringAsync() {
-            using ( var reader = new StreamReader( path: this.FullPath ) ) {
+            using ( var reader = new StreamReader( this.FullPath ) ) {
                 return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
@@ -1478,7 +1488,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public StreamReader StreamReader() => new StreamReader( stream: File.OpenRead( path: this.FullPath ) );
+        public StreamReader StreamReader() => new StreamReader( stream: File.OpenRead( this.FullPath ) );
 
         /// <summary>
         ///     Open the file for writing and return a <see cref="StreamWriter" />.
@@ -1497,7 +1507,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             try {
-                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, bufferSize: ( Int32 )bufferSize, leaveOpen: false );
+                return this.WriterStream = new StreamWriter( stream: this.Writer, encoding: encoding ?? Encoding.UTF8, ( Int32 )bufferSize, leaveOpen: false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1513,7 +1523,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         public async Task<String> ToJSON() {
-            using ( var reader = new StreamReader( path: this.FullPath ) ) {
+            using ( var reader = new StreamReader( this.FullPath ) ) {
                 return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
         }
@@ -1676,7 +1686,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( watchFile ) {
-                this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( path: this.ContainingingFolder().FullName, filter: this.FileName ) {
+                this.Watcher = new Lazy<FileSystemWatcher>( valueFactory: () => new FileSystemWatcher( this.ContainingingFolder().FullName, filter: this.FileName ) {
                     IncludeSubdirectories = false,
                     EnableRaisingEvents = true
                 } );
@@ -1694,7 +1704,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         private Document() => throw new NotImplementedException( message: "Private contructor is not allowed." );
 
         public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( path1: justPath, path2: filename ), deleteAfterClose: deleteAfterClose ) { }
+            fullPath: Path.Combine( justPath, filename ), deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPath: info.FullName, deleteAfterClose: deleteAfterClose ) {
         }
@@ -1703,7 +1713,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( path1: folder.FullName, path2: document.FileName ), deleteAfterClose: deleteAfterClose ) { }
+            fullPath: Path.Combine( folder.FullName, document.FileName ), deleteAfterClose: deleteAfterClose ) { }
 
         [NotNull]
         public Task<Int32> CalculateHarkerHashInt32Async() {
@@ -1780,8 +1790,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             //Span<Decimal> outBuffer = stackalloc Decimal[ MathConstants.Sizes.OneGigaByte / sizeof( Decimal ) ];
             //var outLength = outBuffer.Length;
 
-            using ( var stream = new FileStream( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: options ) ) {
+            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, options ) ) {
 
                 if ( !stream.CanRead ) {
                     throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}." );
@@ -1940,7 +1950,13 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
-            return new FileInfo( fileName: document.FullPath );
+            var info = new FileInfo( fileName: document.FullPath );
+
+            if ( info == null ) {
+                throw new NotImplementedException();
+            }
+
+            return info;
         }
 
         [NotNull]

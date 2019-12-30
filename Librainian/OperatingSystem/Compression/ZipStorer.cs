@@ -118,7 +118,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <summary>
         ///     Compression method enumeration
         /// </summary>
-        public enum Compression : UInt16 {
+        public enum Compression {
 
             /// <summary>
             ///     Uncompressed storage

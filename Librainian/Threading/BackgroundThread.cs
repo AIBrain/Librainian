@@ -101,7 +101,11 @@ namespace Librainian.Threading {
         private void Start() => this.thread.Start();
 
         /// <summary>Marks to exit the loop.</summary>
-        public void Cancel() => this.CTS.Cancel();
+        public void Cancel() {
+            if ( !this.CTS.IsCancellationRequested ) {
+                this.CTS.Cancel();
+            }
+        }
 
         /// <summary>Calling this or <see cref="IDisposable.Dispose" /> will cancel the signal-waiting loop.</summary>
         public override void DisposeManaged() => this.Cancel();

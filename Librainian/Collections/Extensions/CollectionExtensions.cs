@@ -183,11 +183,11 @@ namespace Librainian.Collections.Extensions {
             }
 
             if ( offset < 0 ) {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException( nameof(offset));
             }
 
             if ( length < 0 ) {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException( nameof(length));
             }
 
             var copy = new Byte[ length ];
@@ -1002,56 +1002,32 @@ namespace Librainian.Collections.Extensions {
 
         [NotNull]
         public static String ToStrings( [NotNull] this IEnumerable<Object> enumerable, Char c ) =>
-            ToStrings( enumerable: enumerable, separator: new String( new[] {
+            ToStrings( items: enumerable, separator: new String( new[] {
                 c
             } ) );
 
         /// <summary>
-        ///     <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="enumerable" />.</para>
-        /// <para>If no separator is given, it defaults to <code>", "</code></para>
+        ///     <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="items" />.</para>
+        /// <para>If no separator is given, it defaults to ", ".</para>
+        /// <para>Additonally, <paramref name="atTheEnd"/> can optionally be added to the returned string.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="enumerable"></param>
+        /// <param name="items"></param>
         /// <param name="separator">Defaults to ", ".</param>
         /// <param name="atTheEnd">  </param>
         /// <returns></returns>
         [DebuggerStepThrough]
         [NotNull]
-        public static String ToStrings<T>( [NotNull] this IEnumerable<T> enumerable, [CanBeNull] String separator = ", ", [CanBeNull] String atTheEnd = null ) {
-            if ( enumerable is null ) {
-                throw new ArgumentNullException( nameof( enumerable ) );
+        public static String ToStrings<T>( [NotNull] this IEnumerable<T> items, [CanBeNull] String separator = ", ", [CanBeNull] String atTheEnd = null ) {
+            if ( items is null ) {
+                throw new ArgumentNullException( nameof( items ) );
             }
 
-            if ( separator is null ) {
-                separator = ", ";
+            if ( String.IsNullOrEmpty( atTheEnd ) ) {
+                return String.Join( separator: separator, values: items ).TrimEnd();
             }
 
-            return String.Join( separator: separator, values: enumerable ) + separator + atTheEnd;
-
-            //if ( String.IsNullOrEmpty( atTheEnd ) || list.Count <= 2 ) {
-            //    return String.Join( separator: separator, values: list );
-            //}
-            /*
-            var result = String.Join( separator: separator, values: list.Take( count: list.Count - 2 ) );
-
-            while ( list.Count > 2 ) {
-                list.RemoveAt( index: 0 );
-            }
-
-            result += separator;
-
-            if ( list.TakeFirst( item: out var item ) ) {
-                result += item;
-            }
-
-            result += atTheEnd;
-
-            if ( list.TakeFirst( out item ) ) {
-                result += item;
-            }
-
-            return result;
-            */
+            return $"{String.Join( separator: separator, values: items )}{separator}{atTheEnd}".TrimEnd();
         }
 
         /// <summary>Extension to aomtically remove a KVP.</summary>
