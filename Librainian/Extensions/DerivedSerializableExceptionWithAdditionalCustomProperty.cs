@@ -62,16 +62,16 @@ namespace Librainian.Extensions {
 
         public DerivedSerializableExceptionWithAdditionalCustomProperty() { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message ) : base( message ) { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message ) : base( message ) { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, Exception innerException ) : base( message, innerException ) { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors ) : base(
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] String username, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors ) : base(
             message, resourceName, validationErrors ) =>
             this.Username = username;
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( String message, String username, String resourceName, IList<String> validationErrors,
-            Exception innerException ) : base( message, resourceName, validationErrors, innerException ) =>
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] String username, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors,
+            [CanBeNull] Exception innerException ) : base( message, resourceName, validationErrors, innerException ) =>
             this.Username = username;
 
         public override void GetObjectData( SerializationInfo info, StreamingContext context ) {

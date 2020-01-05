@@ -60,7 +60,7 @@ namespace Librainian.Parsing.Markov {
 
         public MkModel() => throw new NotImplementedException();
 
-        public MkModel( String name ) => this.Name = name;
+        public MkModel( [CanBeNull] String name ) => this.Name = name;
 
         [NotNull]
         public String GenerateRandomCorpus( Int32 numberOfWords ) {
@@ -101,6 +101,7 @@ namespace Librainian.Parsing.Markov {
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
+        [CanBeNull]
         public IEnumerable<String> Nexts( [CanBeNull] String word ) {
             if ( word is null ) {
                 return Enumerable.Empty<String>();
@@ -119,7 +120,7 @@ namespace Librainian.Parsing.Markov {
         /// <returns></returns>
         public Boolean Save() => this.Saver( this.Name );
 
-        public void Train( String corpus, Int32 level = 3 ) {
+        public void Train( [CanBeNull] String corpus, Int32 level = 3 ) {
             var words = corpus.ToWords().AsParallel().ToArray();
 
             Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );

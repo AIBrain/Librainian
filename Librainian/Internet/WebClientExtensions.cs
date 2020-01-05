@@ -132,7 +132,7 @@ namespace Librainian.Internet {
         /// <param name="progress"></param>
         /// <returns></returns>
         public static async Task DownloadFileTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String fileName,
-            IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
+            [CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
             if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
             }
@@ -192,6 +192,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
+        [CanBeNull]
         public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, TrimmedString address ) {
             if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
@@ -208,6 +209,7 @@ namespace Librainian.Internet {
         /// <param name="webClient">The WebClient.</param>
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <returns>A Task that contains the opened stream.</returns>
+        [CanBeNull]
         public static Task<Stream> OpenReadTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
             if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
@@ -240,6 +242,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
+        [CanBeNull]
         public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, TrimmedString address, TrimmedString method ) =>
             OpenWriteTask( webClient, new Uri( address ), method );
 
@@ -248,6 +251,7 @@ namespace Librainian.Internet {
         /// <param name="address">The URI for which the stream should be opened.</param>
         /// <param name="method">The HTTP method that should be used to open the stream.</param>
         /// <returns>A Task that contains the opened stream.</returns>
+        [CanBeNull]
         public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, [NotNull] Uri address, TrimmedString method ) {
             if ( webClient is null ) {
                 throw new ArgumentNullException( paramName: nameof( webClient ) );
@@ -322,7 +326,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, Byte[] data ) =>
+        [CanBeNull]
+        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] Byte[] data ) =>
             UploadDataTask( webClient, new Uri( address ), method, data );
 
         /// <summary>Uploads data to the specified resource, asynchronously.</summary>
@@ -331,7 +336,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, Uri address, String method, Byte[] data ) {
+        [CanBeNull]
+        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] Byte[] data ) {
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -363,7 +369,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the file.</param>
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String fileName ) =>
+        [CanBeNull]
+        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] String fileName ) =>
             UploadFileTask( webClient, new Uri( address ), method, fileName );
 
         /// <summary>Uploads a file to the specified resource, asynchronously.</summary>
@@ -372,7 +379,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the file.</param>
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, Uri address, String method, String fileName ) {
+        [CanBeNull]
+        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] String fileName ) {
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -404,7 +412,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, String method, String data ) =>
+        [CanBeNull]
+        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] String data ) =>
             UploadStringTask( webClient, new Uri( address ), method, data );
 
         /// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
@@ -413,7 +422,8 @@ namespace Librainian.Internet {
         /// <param name="method">The HTTP method that should be used to upload the data.</param>
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
-        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, Uri address, String method, String data ) {
+        [CanBeNull]
+        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] String data ) {
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<String>( address, TaskCreationOptions.RunContinuationsAsynchronously );

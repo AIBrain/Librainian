@@ -60,6 +60,7 @@ namespace Librainian.Collections.Trees {
         //public event EventHandler Disposing;
         public TreeTraversalType DisposeTraversal { get; } = TreeTraversalType.BottomUp;
 
+        [CanBeNull]
         public TreeNode<T> Parent {
             get => this._parent;
 
@@ -94,6 +95,7 @@ namespace Librainian.Collections.Trees {
             }
         }
 
+        [CanBeNull]
         public T Value {
             get => this._value;
 
@@ -106,13 +108,13 @@ namespace Librainian.Collections.Trees {
             }
         }
 
-        public TreeNode( T value ) {
+        public TreeNode( [CanBeNull] T value ) {
             this.Value = value;
             this.Parent = null;
             this.Children = new TreeNodeList<T>( parent: this );
         }
 
-        public TreeNode( T value, [NotNull] TreeNode<T> parent ) {
+        public TreeNode( [CanBeNull] T value, [NotNull] TreeNode<T> parent ) {
             this.Value = value;
             this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
             this.Children = new TreeNodeList<T>( parent: this );

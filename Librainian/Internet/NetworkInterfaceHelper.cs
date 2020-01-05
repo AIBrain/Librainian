@@ -58,6 +58,7 @@ namespace Librainian.Internet {
 
         static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
 
+        [CanBeNull]
         public static NetworkInterface GetBestInterface( [NotNull] this IPAddress address ) {
             var byteArray1 = address.GetAddressBytes();
 

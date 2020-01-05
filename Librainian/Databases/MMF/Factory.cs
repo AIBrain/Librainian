@@ -53,7 +53,7 @@ namespace Librainian.Databases.MMF {
 
         private static Dictionary<Type, ISerializeDeserialize<T>> DictionaryCache { get; } = new Dictionary<Type, ISerializeDeserialize<T>>();
 
-        private static Int32 BenchMarkSerializer( ISerializeDeserialize<T> serDeser ) {
+        private static Int32 BenchMarkSerializer( [CanBeNull] ISerializeDeserialize<T> serDeser ) {
             Object[] args = null;
 
             if ( typeof( T ) == typeof( String ) ) {
@@ -162,6 +162,7 @@ namespace Librainian.Databases.MMF {
             return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
         }
 
+        [CanBeNull]
         private static ISerializeDeserialize<T> PickOptimalSerializer() {
             CompileAndRegisterUnsafeSerializer();
 
@@ -191,7 +192,7 @@ namespace Librainian.Databases.MMF {
         }
 
         [CanBeNull]
-        public ISerializeDeserialize<T> GetSerializer( String name ) =>
+        public ISerializeDeserialize<T> GetSerializer( [CanBeNull] String name ) =>
             ( from pair in DictionaryCache where pair.Value.GetType().AssemblyQualifiedName == name select pair.Value ).FirstOrDefault();
 
         [NotNull]

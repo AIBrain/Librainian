@@ -113,7 +113,7 @@ namespace Librainian.Collections.Queues {
         ///     Adds an object to the end of the queue.
         /// </summary>
         /// <param name="item">the object to add to the queue</param>
-        public void Enqueue( T item ) {
+        public void Enqueue( [CanBeNull] T item ) {
             SingleLinkNode<T> oldTail = null;
 
             var newNode = new SingleLinkNode<T> {
@@ -172,7 +172,7 @@ namespace Librainian.Collections.Queues {
         ///     is not empty; otherwise it is the default value for the element type
         /// </param>
         /// <returns>true if an object from removed from the beginning of the queue; false if the queue is empty</returns>
-        public Boolean TryDequeue( out T item ) {
+        public Boolean TryDequeue( [CanBeNull] out T item ) {
             item = default;
 
             var haveAdvancedHead = false;

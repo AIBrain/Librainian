@@ -89,13 +89,13 @@ namespace Librainian.Maths {
         public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
         [NotNull]
-        public static FuzzyNonTs Combine( FuzzyNonTs value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( Double value1, FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
@@ -105,7 +105,7 @@ namespace Librainian.Maths {
 
         public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
 
-        public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+        public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
         [NotNull]
         public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );

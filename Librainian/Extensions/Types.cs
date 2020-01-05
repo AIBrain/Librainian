@@ -125,7 +125,7 @@ namespace Librainian.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyFields<TSource>( this TSource source, TSource destination ) {
+        public static Boolean CopyFields<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             try {
                 var sourceFields = source.GetType().GetAllFields();
                 var destFields = destination.GetType().GetAllFields();
@@ -146,7 +146,7 @@ namespace Librainian.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyProperties<TSource>( this TSource source, TSource destination ) {
+        public static Boolean CopyProperties<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             try {
                 var sourceProps = source.GetType().GetAllProperties().Where( prop => prop.CanRead );
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
@@ -162,7 +162,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
+        public static void CopyProperty<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination, [NotNull] PropertyInfo prop ) {
             if ( prop is null ) {
                 throw new ArgumentNullException( nameof( prop ) );
             }
@@ -197,7 +197,7 @@ namespace Librainian.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean DeepClone<TSource>( this TSource source, TSource destination ) {
+        public static Boolean DeepClone<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             if ( ReferenceEquals( source, destination ) ) {
                 return true;
             }
@@ -245,7 +245,7 @@ namespace Librainian.Extensions {
         }
 
         [ItemCanBeNull]
-        public static IEnumerable<T> GetEnumerableOfType<T>( params Object[] constructorArgs ) where T : class, IComparable<T> {
+        public static IEnumerable<T> GetEnumerableOfType<T>( [CanBeNull] params Object[] constructorArgs ) where T : class, IComparable<T> {
             if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out var list ) ) {
                 list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
                 EnumerableOfTypeCache[ typeof( T ) ] = list;
@@ -343,7 +343,7 @@ namespace Librainian.Extensions {
         /// <param name="type">   </param>
         /// <param name="generic"></param>
         /// <returns></returns>
-        public static Boolean IsSubclassOfRawGeneric( this Type type, Type generic ) {
+        public static Boolean IsSubclassOfRawGeneric( this Type type, [CanBeNull] Type generic ) {
             while ( type != typeof( Object ) ) {
                 var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
@@ -357,7 +357,7 @@ namespace Librainian.Extensions {
             return false;
         }
 
-        public static Boolean MergeDictionaries<TSource>( [CanBeNull] this IDictionary sourceValue, FieldInfo field, TSource destination ) {
+        public static Boolean MergeDictionaries<TSource>( [CanBeNull] this IDictionary sourceValue, [CanBeNull] FieldInfo field, [CanBeNull] TSource destination ) {
             if ( null == sourceValue ) {
                 return false;
             }

@@ -44,6 +44,7 @@ namespace Librainian.Financial.Containers.Shopping {
     using System;
     using Exceptions;
     using Extensions;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     [JsonObject]
@@ -87,7 +88,7 @@ namespace Librainian.Financial.Containers.Shopping {
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( ShoppingItem left, ShoppingItem rhs ) {
+        public static Boolean Equals( [CanBeNull] ShoppingItem left, [CanBeNull] ShoppingItem rhs ) {
             if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }

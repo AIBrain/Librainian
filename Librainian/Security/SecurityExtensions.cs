@@ -133,7 +133,7 @@ namespace Librainian.Security {
         }
 
         [NotNull]
-        public static Task<Byte[]> ComputeMD5HashAsync( String filename ) =>
+        public static Task<Byte[]> ComputeMD5HashAsync( [CanBeNull] String filename ) =>
             Task.Run( function: () => {
 
                 using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) {
@@ -233,7 +233,7 @@ namespace Librainian.Security {
         }
 
         [NotNull]
-        public static SecureString DecryptString( this String encryptedData ) {
+        public static SecureString DecryptString( [CanBeNull] this String encryptedData ) {
             try {
                 var decryptedData = ProtectedData.Unprotect( encryptedData: Convert.FromBase64String( s: encryptedData ), optionalEntropy: Entropy,
                     scope: DataProtectionScope.CurrentUser );
@@ -622,6 +622,7 @@ namespace Librainian.Security {
             return sb.ToString();
         }
 
+        [CanBeNull]
         public static String ToInsecureString( [NotNull] this SecureString input ) {
             if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
@@ -697,7 +698,7 @@ namespace Librainian.Security {
         /// <param name="reportEveryXBytes"></param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryDecryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes,
-            Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            [CanBeNull] Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {
@@ -814,7 +815,7 @@ namespace Librainian.Security {
         /// <param name="exceptions">       List of exceptions encountered.</param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryEncryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes,
-            Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            [CanBeNull] Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {

@@ -204,6 +204,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="coinWallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static Task StartDeposit( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
             if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );
@@ -293,6 +294,7 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <param name="coinWallet"></param>
         /// <param name="sourceAmounts"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static Task Transfer( [NotNull] CoinWallet coinWallet, [CanBeNull] IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
             if ( coinWallet is null ) {
                 throw new ArgumentNullException( nameof( coinWallet ) );

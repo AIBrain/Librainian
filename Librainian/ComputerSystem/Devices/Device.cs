@@ -153,22 +153,26 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>
         ///     Gets the device's class name.
         /// </summary>
+        [CanBeNull]
         public String GetClass() => this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null );
 
         /// <summary>
         ///     Gets the device's class Guid as a string.
         /// </summary>
+        [CanBeNull]
         public String GetClassGuid() => this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null );
 
         /// <summary>
         ///     Gets the device's description.
         /// </summary>
+        [CanBeNull]
         public String GetDescription() =>
             this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null );
 
         /// <summary>
         ///     Gets the device's friendly name.
         /// </summary>
+        [CanBeNull]
         public String GetFriendlyName() =>
             this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null );
 

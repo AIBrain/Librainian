@@ -45,6 +45,7 @@ namespace Librainian.Graphics.DD {
     using System.Collections;
     using System.Collections.Generic;
     using System.Drawing;
+    using JetBrains.Annotations;
 
     public struct Polygon : IEnumerable<PointF> {
 
@@ -58,11 +59,12 @@ namespace Librainian.Graphics.DD {
             set => this.Points[ index ] = value;
         }
 
-        public Polygon( PointF[] points ) : this() => this.Points = points;
+        public Polygon( [CanBeNull] PointF[] points ) : this() => this.Points = points;
 
+        [CanBeNull]
         public static implicit operator PointF[]( Polygon polygon ) => polygon.Points;
 
-        public static implicit operator Polygon( PointF[] points ) => new Polygon( points );
+        public static implicit operator Polygon( [CanBeNull] PointF[] points ) => new Polygon( points );
 
         public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
 

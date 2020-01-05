@@ -351,7 +351,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"> General comment for Zip file</param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( [NotNull] String filename, String comment ) {
+        public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String comment ) {
             Stream stream = new FileStream( filename, FileMode.Create, FileAccess.ReadWrite );
 
             var zip = Create( stream, comment );
@@ -368,7 +368,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"></param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( Stream stream, String comment ) {
+        public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String comment ) {
             var zip = new ZipStorer {
                 _comment = comment,
                 _zipFileStream = stream,
@@ -427,7 +427,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="zfes">List of Entries to remove from storage</param>
         /// <returns>True if success, false if not</returns>
         /// <remarks>This method only works for storage of type FileStream</remarks>
-        public static Boolean RemoveEntries( [NotNull] ref ZipStorer zip, List<ZipFileEntry> zfes ) {
+        public static Boolean RemoveEntries( [NotNull] ref ZipStorer zip, [CanBeNull] List<ZipFileEntry> zfes ) {
             if ( !( zip._zipFileStream is FileStream ) ) {
                 throw new InvalidOperationException( "RemoveEntries is allowed just over streams of type FileStream" );
             }
@@ -481,7 +481,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="pathname">     Full path of file to add to Zip storage</param>
         /// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
         /// <param name="comment">      Comment for stored file</param>
-        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, String comment ) {
+        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String comment ) {
             if ( this._access == FileAccess.Read ) {
                 throw new InvalidOperationException( "Writing is not allowed" );
             }

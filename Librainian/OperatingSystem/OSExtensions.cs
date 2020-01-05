@@ -55,7 +55,7 @@ namespace Librainian.OperatingSystem {
         /// <param name="command"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String CmdExecute( this String command ) {
+        public static String CmdExecute( [CanBeNull] this String command ) {
             using ( var process = Process.Start( startInfo: new ProcessStartInfo( fileName: "cmd.exe", arguments: $"/c {command}" ) {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,

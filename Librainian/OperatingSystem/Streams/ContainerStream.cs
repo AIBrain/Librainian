@@ -47,6 +47,7 @@ namespace Librainian.OperatingSystem.Streams {
 
     public abstract class ContainerStream : Stream {
 
+        [CanBeNull]
         protected Stream ContainedStream => this.Stream;
 
         protected Stream Stream { get; }

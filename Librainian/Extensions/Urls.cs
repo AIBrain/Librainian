@@ -50,7 +50,8 @@ namespace Librainian.Extensions {
 
     public static class Urls {
 
-        public static String GetSuggestedNameFromUrl( String url, String defaultValue ) {
+        [CanBeNull]
+        public static String GetSuggestedNameFromUrl( [CanBeNull] String url, [CanBeNull] String defaultValue ) {
             var res = Path.GetFileNameWithoutExtension( url );
 
             //check if there is no file name, i.e. just folder name + query String
@@ -74,7 +75,7 @@ namespace Librainian.Extensions {
         public static String HtmlAttributeEncode( [NotNull] this String input ) => HttpUtility.HtmlAttributeEncode( input );
 
         [CanBeNull]
-        public static String HtmlDecode( this String input ) => HttpUtility.HtmlDecode( input );
+        public static String HtmlDecode( [CanBeNull] this String input ) => HttpUtility.HtmlDecode( input );
 
         [CanBeNull]
         public static String HtmlEncode( [NotNull] this String input ) => HttpUtility.HtmlEncode( input );
@@ -82,7 +83,7 @@ namespace Librainian.Extensions {
         public static Boolean IsNameOnlyQueryString( [CanBeNull] this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
         [CanBeNull]
-        public static String UrlDecode( this String input ) => HttpUtility.UrlDecode( input );
+        public static String UrlDecode( [CanBeNull] this String input ) => HttpUtility.UrlDecode( input );
 
         /// <summary>
         ///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:

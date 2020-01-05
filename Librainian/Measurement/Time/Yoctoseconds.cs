@@ -68,6 +68,7 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
 
         [NotNull]
@@ -194,6 +195,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.</summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Zeptoseconds( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
                 throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
@@ -312,6 +314,7 @@ namespace Librainian.Measurement.Time {
             return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
         }
 
+        [NotNull]
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
 
     }

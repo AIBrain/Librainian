@@ -61,7 +61,7 @@ namespace Librainian.Parsing {
 
         /// <summary>Adds the specified formatter.</summary>
         /// <param name="formatter">The formatter.</param>
-        public void Add( Formatter formatter ) => this._formatters.Add( formatter );
+        public void Add( [CanBeNull] Formatter formatter ) => this._formatters.Add( formatter );
 
         /// <summary>
         ///     Converts the value of a specified object to an equivalent string representation using specified format and
@@ -77,7 +77,7 @@ namespace Librainian.Parsing {
         ///     <paramref name="formatProvider" />.
         /// </returns>
         [CanBeNull]
-        public override String Format( String format, Object arg, IFormatProvider formatProvider ) {
+        public override String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             foreach ( var formatter in this._formatters ) {
                 var result = formatter.Format( format, arg, formatProvider );
 

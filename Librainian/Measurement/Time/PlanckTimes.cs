@@ -173,6 +173,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.</summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Yoctoseconds( [NotNull] PlanckTimes planckTimes ) {
             if ( planckTimes is null ) {
                 throw new ArgumentNullException( paramName: nameof( planckTimes ) );
@@ -257,6 +258,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
+        [NotNull]
         public static Yoctoseconds ToYoctoseconds( [NotNull] PlanckTimes planckTimes ) {
             if ( planckTimes is null ) {
                 throw new ArgumentNullException( paramName: nameof( planckTimes ) );

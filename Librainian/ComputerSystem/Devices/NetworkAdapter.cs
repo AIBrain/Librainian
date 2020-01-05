@@ -76,7 +76,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// </summary>
         public Int32 NetEnabled { get; }
 
-        public NetworkAdapter( Int32 deviceId, String name, Int32 netEnabled, Int32 netConnectionStatus ) {
+        public NetworkAdapter( Int32 deviceId, [CanBeNull] String name, Int32 netEnabled, Int32 netConnectionStatus ) {
             this.DeviceId = deviceId;
             this.Name = name;
             this.NetEnabled = netEnabled;
@@ -145,6 +145,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// </summary>
         /// <returns>The list of all NetworkAdapter of the machine</returns>
         [NotNull]
+        [ItemNotNull]
         public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
             var networkAdapters =
                 WMIExtensions.WmiQuery( "SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'" );

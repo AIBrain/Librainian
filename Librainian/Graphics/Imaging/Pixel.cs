@@ -171,6 +171,7 @@ namespace Librainian.Graphics.Imaging {
 
         public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
+        [CanBeNull]
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
             if ( streamWriter is null ) {
                 throw new ArgumentNullException( nameof( streamWriter ) );

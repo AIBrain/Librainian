@@ -44,6 +44,7 @@ namespace Librainian.Controls {
     using System;
     using System.Collections.Concurrent;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
 
     public partial class AutoLayoutWindow : Form {
 
@@ -53,7 +54,7 @@ namespace Librainian.Controls {
 
         public AutoLayoutWindow() => this.InitializeComponent();
 
-        public Boolean Add( String message ) {
+        public Boolean Add( [CanBeNull] String message ) {
             try {
                 this.Messages.Enqueue( message );
 

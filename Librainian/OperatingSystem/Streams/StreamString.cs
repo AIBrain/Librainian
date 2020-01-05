@@ -55,7 +55,7 @@ namespace Librainian.OperatingSystem.Streams {
 
         private UnicodeEncoding StreamEncoding { get; }
 
-        public StreamString( Stream ioStream ) {
+        public StreamString( [CanBeNull] Stream ioStream ) {
             this.IOStream = ioStream;
             this.StreamEncoding = new UnicodeEncoding();
         }

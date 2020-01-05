@@ -70,13 +70,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } =
             new ConcurrentDictionary<DateTime, RenamedEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
 
-        private void OnChanged( Object sender, FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
+        private void OnChanged( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
 
-        private void OnCreated( Object sender, FileSystemEventArgs args ) => this.Created[ DateTime.UtcNow ] = args;
+        private void OnCreated( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Created[ DateTime.UtcNow ] = args;
 
-        private void OnDeleted( Object sender, FileSystemEventArgs args ) => this.Deleted[ DateTime.UtcNow ] = args;
+        private void OnDeleted( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Deleted[ DateTime.UtcNow ] = args;
 
-        private void OnRenamed( Object sender, RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
+        private void OnRenamed( [CanBeNull] Object sender, [CanBeNull] RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
 
         public override void DisposeManaged() {
             this.Nop();

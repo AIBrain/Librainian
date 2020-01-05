@@ -92,10 +92,13 @@ namespace Librainian.Measurement.Time {
 
         public Months( Byte value ) => this.Value = value;
 
-        public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
+        [CanBeNull]
+        public static Months Combine( [CanBeNull] Months left, Months right ) => Combine( left, right.Value );
 
+        [NotNull]
         public static Months Combine( Months left, Rational months ) => new Months( left.Value + months );
 
+        [NotNull]
         public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
@@ -107,31 +110,37 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
         [NotNull]
-        public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months );
+        public static implicit operator SpanOfTime( [CanBeNull] Months months ) => new SpanOfTime( months: months );
 
+        [CanBeNull]
         public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
+        [NotNull]
         public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
-        public static Months operator -( Months left, Months right ) => Combine( left: left, right: -right );
+        [CanBeNull]
+        public static Months operator -( [CanBeNull] Months left, [CanBeNull] Months right ) => Combine( left: left, right: -right );
 
-        public static Months operator -( Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
+        [NotNull]
+        public static Months operator -( [CanBeNull] Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
 
-        public static Boolean operator !=( Months left, Months right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Months left, [CanBeNull] Months right ) => !Equals( left, right );
 
-        public static Months operator +( Months left, Months right ) => Combine( left, right );
+        [CanBeNull]
+        public static Months operator +( [CanBeNull] Months left, [CanBeNull] Months right ) => Combine( left, right );
 
-        public static Months operator +( Months left, Rational months ) => Combine( left, months );
+        [NotNull]
+        public static Months operator +( [CanBeNull] Months left, Rational months ) => Combine( left, months );
 
         public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Months left, Months right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Months left, [CanBeNull] Months right ) => Equals( left, right );
 
         public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Months other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Months other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Months other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -164,6 +173,7 @@ namespace Librainian.Measurement.Time {
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
+        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneMonth );
     }
 }

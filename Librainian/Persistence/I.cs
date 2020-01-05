@@ -84,7 +84,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <param name="pointer"></param>
         /// <exception cref="ArgumentException"></exception>
-        public I( [NotNull] String key, String pointer ) {
+        public I( [NotNull] String key, [CanBeNull] String pointer ) {
             this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
             if ( !Uri.TryCreate( pointer, UriKind.Absolute, out var uri ) ) {

@@ -62,6 +62,7 @@ namespace Librainian.Internet {
         /// </param>
         /// <returns></returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        [CanBeNull]
         private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, [NotNull] Object userToken, [NotNull] Action<TaskCompletionSource<PingReply>> sendAsync ) {
             if ( ping is null ) {
                 throw new ArgumentNullException( paramName: nameof( ping ) );
@@ -113,7 +114,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] IPAddress address, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
 
         /// <summary>
@@ -128,7 +130,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] String hostNameOrAddress, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
 
         /// <summary>
@@ -145,7 +148,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] IPAddress address, Int32 timeout, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
 
         /// <summary>
@@ -164,7 +168,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] String hostNameOrAddress, Int32 timeout, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
 
         /// <summary>
@@ -185,7 +190,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] IPAddress address, Int32 timeout, [CanBeNull] Byte[] buffer, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
 
         /// <summary>
@@ -208,7 +214,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] String hostNameOrAddress, Int32 timeout, [CanBeNull] Byte[] buffer, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
 
         /// <summary>
@@ -233,7 +240,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] IPAddress address, Int32 timeout, [CanBeNull] Byte[] buffer, [CanBeNull] PingOptions options, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
 
         /// <summary>
@@ -260,7 +268,8 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [CanBeNull] String hostNameOrAddress, Int32 timeout, [CanBeNull] Byte[] buffer, [CanBeNull] PingOptions options, Object userToken ) =>
             SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
     }
 }

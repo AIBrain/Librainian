@@ -67,14 +67,15 @@ namespace Librainian.Measurement.Physics {
         public const Decimal InOneTeraElectronVolt = 1E3m;
 
         /// <summary></summary>
-        public static readonly GigaElectronVolts One = new GigaElectronVolts( 1 );
+        public static readonly GigaElectronVolts One = new GigaElectronVolts( Decimal.One );
 
         /// <summary></summary>
-        public static readonly GigaElectronVolts Zero = new GigaElectronVolts( 0 );
+        public static readonly GigaElectronVolts Zero = new GigaElectronVolts( Decimal.Zero );
 
         /// <summary></summary>
         public readonly Rational Value;
 
+        public GigaElectronVolts( Decimal units ) : this() => this.Value = ( Rational ) units;
         public GigaElectronVolts( Rational units ) : this() => this.Value = units;
 
         public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToGigaElectronVolts().Value;

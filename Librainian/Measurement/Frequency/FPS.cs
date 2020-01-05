@@ -43,6 +43,7 @@ namespace Librainian.Measurement.Frequency {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Time;
@@ -172,6 +173,7 @@ namespace Librainian.Measurement.Frequency {
         /// <param name="fps"></param>
         public Fps( Double fps ) : this( ( Decimal ) fps ) { }
 
+        [NotNull]
         public static implicit operator SpanOfTime( Fps fps ) => new Seconds( 1.0m / fps.Value );
 
         public static implicit operator TimeSpan( Fps fps ) => TimeSpan.FromSeconds( ( Double ) ( 1.0m / fps.Value ) );

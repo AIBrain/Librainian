@@ -61,7 +61,8 @@ namespace Librainian.Internet {
         ///     be passed as the user-supplied state to the actual SmtpClient.SendAsync method.
         /// </param>
         /// <returns></returns>
-        private static Task SendTaskCore( [NotNull] SmtpClient smtpClient, Object userToken, Action<TaskCompletionSource<Object>> sendAsync ) {
+        [CanBeNull]
+        private static Task SendTaskCore( [NotNull] SmtpClient smtpClient, [CanBeNull] Object userToken, [CanBeNull] Action<TaskCompletionSource<Object>> sendAsync ) {
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
             // happen in the call to sendAsync.
@@ -96,7 +97,8 @@ namespace Librainian.Internet {
         /// <param name="message">A MailMessage that contains the message to send.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( [NotNull] this SmtpClient smtpClient, MailMessage message, Object userToken ) =>
+        [CanBeNull]
+        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [CanBeNull] MailMessage message, [CanBeNull] Object userToken ) =>
             SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
 
         /// <summary>Sends an e-mail message asynchronously.</summary>
@@ -109,7 +111,8 @@ namespace Librainian.Internet {
         /// <param name="body">A String that contains the message body.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
-        public static Task SendTask( [NotNull] this SmtpClient smtpClient, String from, String recipients, String subject, String body, Object userToken ) =>
+        [CanBeNull]
+        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [CanBeNull] String from, [CanBeNull] String recipients, [CanBeNull] String subject, [CanBeNull] String body, [CanBeNull] Object userToken ) =>
             SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
     }
 }

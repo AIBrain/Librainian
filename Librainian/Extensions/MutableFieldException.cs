@@ -58,7 +58,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        internal MutableFieldException( [NotNull] FieldInfo fieldInfo, Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
+        internal MutableFieldException( [NotNull] FieldInfo fieldInfo, [CanBeNull] Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
             if ( fieldInfo is null ) {
                 throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
             }

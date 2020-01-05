@@ -187,7 +187,7 @@ namespace Librainian.Graphics {
         public static Double AngleBetweenVectors( Vector3D a, Vector3D b ) => TranslateRadianToAngle( RadiansBetweenVectors( a, b ) );
 
         //===========================================================================================================
-        public static Point3D Convert2DPoint( Point pointToConvert, Visual3D sphere, TranslateTransform3D cameraPosition ) // transform world matrix
+        public static Point3D Convert2DPoint( Point pointToConvert, [CanBeNull] Visual3D sphere, [CanBeNull] TranslateTransform3D cameraPosition ) // transform world matrix
         {
             var screenTransform = TryTransformTo2DAncestor( sphere, out var viewport, out var success );
 
@@ -431,7 +431,7 @@ namespace Librainian.Graphics {
         /// <param name="viewport"></param>
         /// <param name="success"></param>
         /// <returns></returns>
-        public static Matrix3D TryTransformTo2DAncestor( DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
+        public static Matrix3D TryTransformTo2DAncestor( [CanBeNull] DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
             var to2D = GetWorldTransformationMatrix( visual, out viewport );
             to2D.Append( TryWorldToViewportTransform( viewport, out success ) );
 
@@ -452,7 +452,7 @@ namespace Librainian.Graphics {
         /// <param name="viewport"></param>
         /// <param name="success"></param>
         /// <returns></returns>
-        public static Matrix3D TryTransformToCameraSpace( DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
+        public static Matrix3D TryTransformToCameraSpace( [CanBeNull] DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
             var toViewSpace = GetWorldTransformationMatrix( visual, out viewport );
             toViewSpace.Append( TryWorldToCameraTransform( viewport, out success ) );
 
@@ -513,7 +513,7 @@ namespace Librainian.Graphics {
         ///     method can fail if Camera.Transform is non-invertable in which case the camera clip
         ///     planes will be coincident and nothing will render. In this case success will be false.
         /// </summary>
-        public static Matrix3D TryWorldToViewportTransform( Viewport3DVisual visual, out Boolean success ) {
+        public static Matrix3D TryWorldToViewportTransform( [CanBeNull] Viewport3DVisual visual, out Boolean success ) {
             var result = TryWorldToCameraTransform( visual, out success );
 
             if ( success ) {

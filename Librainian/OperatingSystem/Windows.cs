@@ -202,7 +202,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [NotNull]
-        public static Task<Process> ExecuteCommandPromptAsync( String arguments ) =>
+        public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String arguments ) =>
             Task.Run( () => {
                 try {
                     if ( CommandPrompt != null ) {
@@ -230,7 +230,7 @@ namespace Librainian.OperatingSystem {
             } );
 
         [NotNull]
-        public static Task<Boolean> ExecutePowershellCommandAsync( String arguments, Boolean elevated = false ) =>
+        public static Task<Boolean> ExecutePowershellCommandAsync( [CanBeNull] String arguments, Boolean elevated = false ) =>
             Task.Run( () => {
                 try {
                     var startInfo = new ProcessStartInfo {
@@ -267,7 +267,7 @@ namespace Librainian.OperatingSystem {
             } );
 
         [NotNull]
-        public static Task<Process> ExecuteProcessAsync( Document filename, Folder workingFolder, String arguments, Boolean elevate ) =>
+        public static Task<Process> ExecuteProcessAsync( [CanBeNull] Document filename, [CanBeNull] Folder workingFolder, [CanBeNull] String arguments, Boolean elevate ) =>
             Task.Run( () => {
                 try {
                     var proc = new ProcessStartInfo {
@@ -348,7 +348,7 @@ namespace Librainian.OperatingSystem {
             ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullName}\" \"{baseFolder.FullName}\" /E /T" );
 
         [CanBeNull]
-        public static Process OpenWithExplorer( String value ) {
+        public static Process OpenWithExplorer( [CanBeNull] String value ) {
             try {
 
                 //Verb = "runas", //demand elevated permissions
@@ -373,11 +373,11 @@ namespace Librainian.OperatingSystem {
             return default;
         }
 
-        public static async Task<Boolean> RestartServiceAsync( String serviceName, TimeSpan timeout ) =>
+        public static async Task<Boolean> RestartServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) =>
             await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
             await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
 
-        public static async Task<Boolean> StartServiceAsync( String serviceName, TimeSpan timeout ) {
+        public static async Task<Boolean> StartServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) {
             try {
                 return await Task.Run( () => {
                     using ( var service = new ServiceController( name: serviceName ) ) {
@@ -398,7 +398,7 @@ namespace Librainian.OperatingSystem {
             return false;
         }
 
-        public static async Task<Boolean> StopServiceAsync( String serviceName, TimeSpan timeout ) {
+        public static async Task<Boolean> StopServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) {
             try {
                 return await Task.Run( () => {
                     using ( var service = new ServiceController( name: serviceName ) ) {
@@ -417,7 +417,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [CanBeNull]
-        public static Task<Process> TryConvert_WithIrfanviewAsync( Document inDocument, Document outDocument ) =>
+        public static Task<Process> TryConvert_WithIrfanviewAsync( [CanBeNull] Document inDocument, [CanBeNull] Document outDocument ) =>
             Task.Run( () => {
 
                 if ( IrfanView64?.Value.Exists() != true ) {

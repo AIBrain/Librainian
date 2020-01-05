@@ -97,6 +97,7 @@ namespace Librainian.Extensions {
             yield return b;
         }
 
+        [CanBeNull]
         public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
             IEnumerable<IEnumerable<T>> emptyProduct = new[] {
                 Enumerable.Empty<T>()
@@ -154,7 +155,8 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
             var found = false;
 
             foreach ( var bGroup in b ) {
@@ -168,7 +170,8 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] IEnumerable<T> b ) {
             var found = false;
 
             foreach ( var aGroup in a ) {
@@ -182,7 +185,8 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
             var found = false;
 
             foreach ( var bGroup in b ) {
@@ -198,7 +202,8 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, T b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] T b ) {
             var found = false;
 
             foreach ( var aGroup in a ) {
@@ -245,7 +250,8 @@ namespace Librainian.Extensions {
             return powerSet;
         }
 
-        public static IEnumerable<T> Group<T>( this T a, T b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> Group<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
             yield return a;
             yield return b;
         }

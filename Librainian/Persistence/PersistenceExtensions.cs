@@ -162,7 +162,7 @@ namespace Librainian.Persistence {
         /// <param name="isf">     </param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        private static Boolean FileCanBeRead( IsolatedStorageFile isf, String fileName ) {
+        private static Boolean FileCanBeRead( [CanBeNull] IsolatedStorageFile isf, [CanBeNull] String fileName ) {
             try {
                 using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
                     try {
@@ -222,7 +222,7 @@ namespace Librainian.Persistence {
         /// <exception cref="FormatException"></exception>
         /// <exception cref="System.Xml.XmlException"></exception>
         [CanBeNull]
-        public static TType Deserialize<TType>( this String storedAsString ) {
+        public static TType Deserialize<TType>( [CanBeNull] this String storedAsString ) {
             try {
                 return storedAsString.FromJSON<TType>();
             }
@@ -251,8 +251,8 @@ namespace Librainian.Persistence {
             }
         }
 
-        public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, Folder folder, String calledWhat,
-            [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" ) where TKey : IComparable<TKey> {
+        public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, [CanBeNull] Folder folder, [CanBeNull] String calledWhat,
+            [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
             try {
 
                 //Report.Enter();
@@ -383,7 +383,7 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        public static Boolean FileCannotBeRead( this IsolatedStorageFile isf, String fileName ) => !FileCanBeRead( isf: isf, fileName: fileName );
+        public static Boolean FileCannotBeRead( [CanBeNull] this IsolatedStorageFile isf, [CanBeNull] String fileName ) => !FileCanBeRead( isf: isf, fileName: fileName );
 
         /// <summary>
         ///     Return this JSON string as an object.
@@ -972,8 +972,8 @@ namespace Librainian.Persistence {
         /// <param name="progress">  </param>
         /// <param name="extension"> </param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, String calledWhat,
-            [CanBeNull] IProgress<Single> progress = null, String extension = ".xml" ) where TKey : IComparable<TKey> {
+        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, [CanBeNull] String calledWhat,
+            [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
             if ( null == dictionary ) {
                 return false;
             }
@@ -1066,7 +1066,7 @@ namespace Librainian.Persistence {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Byte[] Serializer<T>( this T self ) {
+        public static Byte[] Serializer<T>( [CanBeNull] this T self ) {
             try {
                 using ( var memoryStream = new MemoryStream() ) {
                     var binaryFormatter = new BinaryFormatter();
@@ -1126,7 +1126,7 @@ namespace Librainian.Persistence {
         /// <param name="key">  </param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean Settings( String key, String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
+        public static Boolean Settings( [CanBeNull] String key, [CanBeNull] String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
 
         /// <summary>
         ///     Set a static <paramref name="key" /> to the <paramref name="value" />.
@@ -1135,7 +1135,7 @@ namespace Librainian.Persistence {
         /// <param name="key">          </param>
         /// <param name="value">        </param>
         /// <returns></returns>
-        public static Boolean Settings( this Environment.SpecialFolder specialFolder, String key, String value ) {
+        public static Boolean Settings( this Environment.SpecialFolder specialFolder, [CanBeNull] String key, [CanBeNull] String value ) {
             try {
                 var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
                 var settings = configFile.AppSettings.Settings;
@@ -1204,7 +1204,8 @@ namespace Librainian.Persistence {
         /// <param name="obj">       </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static String ToJSON<T>( this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
+        [CanBeNull]
+        public static String ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
 
         /*
 
@@ -1257,7 +1258,7 @@ namespace Librainian.Persistence {
         /// <param name="overwrite"> </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static Boolean TrySave<TKey>( this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
+        public static Boolean TrySave<TKey>( [CanBeNull] this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
             if ( document is null ) {
                 throw new ArgumentNullException( paramName: nameof( document ) );
             }
@@ -1292,7 +1293,7 @@ namespace Librainian.Persistence {
         private class MyContractResolver : DefaultContractResolver {
 
             [NotNull]
-            protected override IList<JsonProperty> CreateProperties( Type type, MemberSerialization memberSerialization ) {
+            protected override IList<JsonProperty> CreateProperties( [CanBeNull] Type type, MemberSerialization memberSerialization ) {
                 var list = base.CreateProperties( type, memberSerialization );
 
                 foreach ( var prop in list ) {

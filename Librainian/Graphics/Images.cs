@@ -1231,7 +1231,7 @@ namespace Librainian.Graphics {
         */
 
         [CanBeNull]
-        public static BitmapImage BitmapFromUri( this Uri source ) {
+        public static BitmapImage BitmapFromUri( [CanBeNull] this Uri source ) {
             try {
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();

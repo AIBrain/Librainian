@@ -114,7 +114,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
-            IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
+            [CanBeNull] IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
             if ( sourceFolder is null ) {
                 throw new ArgumentNullException( nameof( sourceFolder ) );
             }
@@ -185,6 +185,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             return documentCopyStatistics;
         }
 
+        [ItemNotNull]
         public static IEnumerable<IFolder> FindFolder( [NotNull] this String folderName ) {
             if ( folderName is null ) {
                 throw new ArgumentNullException( nameof( folderName ) );
@@ -264,7 +265,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="folder"></param>
         /// <param name="tryFor"></param>
         /// <returns></returns>
-        public static Boolean? TryDeleting( this Folder folder, TimeSpan tryFor ) {
+        public static Boolean? TryDeleting( [CanBeNull] this Folder folder, TimeSpan tryFor ) {
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
 

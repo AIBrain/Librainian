@@ -80,7 +80,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="method">  </param>
         /// <exception cref="HttpListenerException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public SimpleWebServer( ICollection<String> prefixes, Func<HttpListenerRequest, String> method ) {
+        public SimpleWebServer( [CanBeNull] ICollection<String> prefixes, [CanBeNull] Func<HttpListenerRequest, String> method ) {
             this.ImNotReady( String.Empty );
 
             if ( !HttpListener.IsSupported ) {
@@ -116,9 +116,9 @@ namespace Librainian.Internet.Servers {
             }
         }
 
-        public SimpleWebServer( Func<HttpListenerRequest, String> method, params String[] prefixes ) : this( prefixes, method ) { }
+        public SimpleWebServer( [CanBeNull] Func<HttpListenerRequest, String> method, [CanBeNull] params String[] prefixes ) : this( prefixes, method ) { }
 
-        private void ImNotReady( String because ) {
+        private void ImNotReady( [CanBeNull] String because ) {
             this.IsReadyForRequests = false;
             this.NotReadyBecause = because;
         }

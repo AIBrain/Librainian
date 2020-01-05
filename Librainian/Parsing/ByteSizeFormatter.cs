@@ -149,7 +149,7 @@ namespace Librainian.Parsing {
         ///     <paramref name="formatProvider" />.
         /// </returns>
         [NotNull]
-        public override String Format( String format, Object arg, IFormatProvider formatProvider ) {
+        public override String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             Int64 bytes;
 
             try {

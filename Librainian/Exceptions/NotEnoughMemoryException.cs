@@ -42,6 +42,7 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>This exception should be thrown when there is not enough memory to satisfy the memory required to continue.</para>
@@ -55,8 +56,8 @@ namespace Librainian.Exceptions {
         /// </summary>
         private NotEnoughMemoryException() { }
 
-        public NotEnoughMemoryException( String message ) : base( message ) { }
+        public NotEnoughMemoryException( [CanBeNull] String message ) : base( message ) { }
 
-        public NotEnoughMemoryException( String message, Exception inner ) : base( message, inner ) { }
+        public NotEnoughMemoryException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) { }
     }
 }

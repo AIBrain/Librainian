@@ -55,7 +55,7 @@ namespace Librainian.Exceptions {
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }
 
-        public ValueTooHighException( [NotNull] String message, Exception inner ) : base( message, inner ) {
+        public ValueTooHighException( [NotNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }

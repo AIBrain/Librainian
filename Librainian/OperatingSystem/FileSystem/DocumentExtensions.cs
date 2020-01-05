@@ -69,7 +69,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         */
 
         private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
-            [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, Stopwatch begin ) {
+            [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
             using ( var reader = new StreamReader( source.FullPath ) ) {
                 using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
                     Int32 numRead;

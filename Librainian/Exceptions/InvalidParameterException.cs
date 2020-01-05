@@ -60,7 +60,7 @@ namespace Librainian.Exceptions {
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }
 
-        public InvalidParameterException( [NotNull] String message, Exception inner ) : base( message, inner ) {
+        public InvalidParameterException( [NotNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }

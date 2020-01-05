@@ -48,6 +48,7 @@ namespace Librainian.Extensions {
 
     public static class AssemblyInformation {
 
+        [CanBeNull]
         public static String Company {
             get {
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCompanyAttribute ), false );
@@ -56,6 +57,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [CanBeNull]
         public static String Copyright {
             get {
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyCopyrightAttribute ), false );
@@ -64,6 +66,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [CanBeNull]
         public static String Description {
             get {
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyDescriptionAttribute ), false );
@@ -72,6 +75,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [CanBeNull]
         public static String Product {
             get {
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyProductAttribute ), false );
@@ -80,6 +84,7 @@ namespace Librainian.Extensions {
             }
         }
 
+        [CanBeNull]
         public static String Title {
             get {
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes( typeof( AssemblyTitleAttribute ), false );

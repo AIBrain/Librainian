@@ -65,9 +65,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             [JsonProperty]
             public List<Node> SubFolders { get; } = new List<Node>();
 
-            public Node( String data ) => this.Data = data;
+            public Node( [CanBeNull] String data ) => this.Data = data;
 
-            public Node( String data, Node parent ) {
+            public Node( [CanBeNull] String data, [CanBeNull] Node parent ) {
                 this.Data = data;
                 this.Parent = parent;
             }
@@ -78,7 +78,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             /// <param name="left"></param>
             /// <param name="rhs"> </param>
             /// <returns></returns>
-            public static Boolean Equals( Node left, Node rhs ) {
+            public static Boolean Equals( [CanBeNull] Node left, [CanBeNull] Node rhs ) {
                 if ( ReferenceEquals( left, rhs ) ) {
                     return true;
                 }

@@ -159,7 +159,7 @@ namespace Librainian.Graphics.Imaging {
         }
 
         [NotNull]
-        public static Task<UInt64> CalculateChecksumAsync( IEnumerable<Pixel> pixels ) =>
+        public static Task<UInt64> CalculateChecksumAsync( [CanBeNull] IEnumerable<Pixel> pixels ) =>
             Task.Run( () => {
                 var checksum = UInt64.MinValue;
 

@@ -90,7 +90,7 @@ namespace Librainian.Internet {
         public static String GetHostName() => Dns.GetHostName();
 
         [CanBeNull]
-        public static String GetWebPage( this String url ) {
+        public static String GetWebPage( [CanBeNull] this String url ) {
             try {
                 if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
                     using ( var client = new WebClient {

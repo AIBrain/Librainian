@@ -69,7 +69,7 @@ namespace Librainian.Extensions {
         /// }
         /// </code>
         /// </example>
-        public static Boolean Contains<T>( this Enum value, T request ) {
+        public static Boolean Contains<T>( [CanBeNull] this Enum value, [CanBeNull] T request ) {
             var valueAsInt = Convert.ToInt32( value );
             var requestAsInt = Convert.ToInt32( request );
 
@@ -113,7 +113,7 @@ namespace Librainian.Extensions {
         /// </code>
         /// </example>
         [NotNull]
-        public static IEnumerable<T> GetAllSelectedItems<T>( this Enum value ) {
+        public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
             var valueAsInt = Convert.ToInt32( value );
 
             return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
@@ -143,6 +143,7 @@ namespace Librainian.Extensions {
         public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
         // This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
+        [CanBeNull]
         public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
             var type = value.GetType();
             var memberInfo = type.GetMember( value.ToString() );
@@ -152,7 +153,7 @@ namespace Librainian.Extensions {
         }
 
         [CanBeNull]
-        public static String GetDescription<T>( this T e ) where T : IConvertible {
+        public static String GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
             if ( !( e is Enum ) ) {
                 return default;
             }
@@ -182,6 +183,6 @@ namespace Librainian.Extensions {
         }
 
         [NotNull]
-        public static IEnumerable<T> GetEnums<T>( this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+        public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
     }
 }

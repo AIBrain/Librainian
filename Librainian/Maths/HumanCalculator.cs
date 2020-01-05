@@ -129,7 +129,7 @@ namespace Librainian.Maths {
 
         public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
 
-        public static BigInteger Operate( Operation operation, params BigInteger[] terms ) {
+        public static BigInteger Operate( Operation operation, [CanBeNull] params BigInteger[] terms ) {
             switch ( operation ) {
                 case Operation.Addition: return Add( terms );
 

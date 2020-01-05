@@ -59,6 +59,7 @@ namespace Librainian.Internet {
 
         private static Regex ValidateURLRegex { get; } = new Regex( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
 
+        [ItemCanBeNull]
         public static async Task<TextReader> DoRequestAsync( [NotNull] this WebRequest request ) {
             if ( request is null ) {
                 throw new ArgumentNullException( nameof( request ) );
@@ -72,6 +73,7 @@ namespace Librainian.Internet {
             return stream != null ? new StreamReader( stream ) : TextReader.Null;
         }
 
+        [ItemCanBeNull]
         public static async Task<TextReader> DoRequestAsync( [NotNull] this Uri uri ) {
             if ( uri is null ) {
                 throw new ArgumentNullException( nameof( uri ) );
@@ -85,6 +87,7 @@ namespace Librainian.Internet {
             return textReader;
         }
 
+        [ItemCanBeNull]
         public static async Task<T> DoRequestJsonAsync<T>( [NotNull] this WebRequest request ) {
             if ( request is null ) {
                 throw new ArgumentNullException( nameof( request ) );
@@ -96,6 +99,7 @@ namespace Librainian.Internet {
             return JsonConvert.DeserializeObject<T>( response );
         }
 
+        [ItemCanBeNull]
         public static async Task<T> DoRequestJsonAsync<T>( [NotNull] Uri uri ) {
             var reader = await DoRequestAsync( uri ).ConfigureAwait( false );
             var response = await reader.ReadToEndAsync().ConfigureAwait( false );
@@ -122,13 +126,15 @@ namespace Librainian.Internet {
         [NotNull]
         public static String GetHostName() => Dns.GetHostName();
 
-        public static JObject GetNonAsync( Uri uri ) {
+        [CanBeNull]
+        public static JObject GetNonAsync( [CanBeNull] Uri uri ) {
             var httpClient = new HttpClient();
             var content = httpClient.GetStringAsync( uri ).Result; //TODO bad
 
             return JObject.Parse( content );
         }
 
+        [CanBeNull]
         public static String GetWebPage2( [NotNull] this String url ) {
             try {
                 var request = WebRequest.Create( url );
@@ -160,7 +166,7 @@ namespace Librainian.Internet {
         }
 
         [ItemCanBeNull]
-        public static async Task<String> GetWebPageAsync( this Uri url ) {
+        public static async Task<String> GetWebPageAsync( [CanBeNull] this Uri url ) {
             try {
                 var request = WebRequest.Create( url );
                 request.Proxy = null;

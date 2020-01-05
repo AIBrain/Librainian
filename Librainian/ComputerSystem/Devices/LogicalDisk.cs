@@ -44,6 +44,7 @@ namespace Librainian.ComputerSystem.Devices {
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using JetBrains.Annotations;
     using OperatingSystem.WMI;
 
     public class LogicalDisk {
@@ -58,7 +59,8 @@ namespace Librainian.ComputerSystem.Devices {
 
         public String VolumeName { get; set; }
 
-        public static IEnumerable<LogicalDisk> GetLogicalDisks( String machineName ) {
+        [ItemNotNull]
+        public static IEnumerable<LogicalDisk> GetLogicalDisks( [CanBeNull] String machineName ) {
             foreach ( var o in WMIExtensions.QueryWMI( machineName, "cimv2", "SELECT * FROM Win32_LogicalDisk" ) ) {
                 var disk = new LogicalDisk {
                     DriveLetter = o[ "Name" ].ToString(),

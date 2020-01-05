@@ -90,7 +90,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         [NotNull]
         protected virtual Device
-            CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
+            CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32 disknum = -1 ) =>
             new Device( deviceClass, deviceInfoData, path, index, disknum );
 
         internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
@@ -111,7 +111,8 @@ namespace Librainian.ComputerSystem.Devices {
             return devData;
         }
 
-        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String defaultValue ) {
+        [CanBeNull]
+        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
 
             const Int32 propertyBufferSize = 1024;
 

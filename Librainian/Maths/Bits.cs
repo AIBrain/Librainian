@@ -50,33 +50,40 @@ namespace Librainian.Maths {
 
         public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
 
+        [CanBeNull]
         public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
 
+        [CanBeNull]
         public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
 
+        [CanBeNull]
         public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
 
+        [CanBeNull]
         public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
 
+        [CanBeNull]
         public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
 
+        [CanBeNull]
         public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
         public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
 
-        public static Byte[] Order( this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();
+        [CanBeNull]
+        public static Byte[] Order( [CanBeNull] this Byte[] value ) => IsLittleEndian ? value : value.Reverse().ToArray();
 
-        public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
+        public static Int32 ToInt32( [CanBeNull] this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToInt32( Order( value ), startIndex );
 
         [NotNull]
-        public static String ToString( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
+        public static String ToString( [CanBeNull] this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToString( Order( value ), startIndex );
 
-        public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );
+        public static UInt16 ToUInt16( [CanBeNull] this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt16( Order( value ), startIndex );
 
-        public static UInt256 ToUInt256( this Byte[] value ) => new UInt256( value );
+        public static UInt256 ToUInt256( [CanBeNull] this Byte[] value ) => new UInt256( value );
 
-        public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt32( Order( value ), startIndex );
+        public static UInt32 ToUInt32( [CanBeNull] this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt32( Order( value ), startIndex );
 
         //public static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) => BitConverter.ToUInt64( Order( value ), startIndex );
     }

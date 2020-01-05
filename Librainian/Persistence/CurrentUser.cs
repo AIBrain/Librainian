@@ -108,7 +108,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean Set<T>( [NotNull] this String key, T value ) {
+        public static Boolean Set<T>( [NotNull] this String key, [CanBeNull] T value ) {
 
             if ( App is null ) {
                 throw new ArgumentNullException( paramName: nameof( App ) );

@@ -45,6 +45,7 @@ namespace Librainian.Collections.Queues {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Threading;
+    using JetBrains.Annotations;
     using Utilities;
 
     /// <summary>
@@ -63,7 +64,7 @@ namespace Librainian.Collections.Queues {
         ///     Adds the item to the queue.
         /// </summary>
         /// <param name="item">The item to be added.</param>
-        public void Add( T item ) {
+        public void Add( [CanBeNull] T item ) {
 
             // queue must not be marked as completed adding
             if ( this._isCompleteAdding ) {

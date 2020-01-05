@@ -390,6 +390,7 @@ namespace Librainian.Databases {
             return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
         }
 
+        [CanBeNull]
         public static IList<PropertyInfo> GetPropertiesForType<T>() {
             var type = typeof( T );
 
@@ -741,13 +742,13 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public static SqlParameter ToSqlParameter<TValue>( this TValue value, String parameterName ) =>
+        public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String parameterName ) =>
             new SqlParameter( parameterName, value ) {
                 Value = value
             };
 
         [NotNull]
-        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
+        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String parameterName, Int32 size ) => new SqlParameter( parameterName, sqlDbType, size );
 
         /*
                 private static List<T> MapList<T>( DataTable dt ) {

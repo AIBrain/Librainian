@@ -541,7 +541,7 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [NotNull] String section, String key ) {
+        public Boolean TryRemove( [NotNull] String section, [CanBeNull] String key ) {
             if ( section is null ) {
                 throw new ArgumentNullException( nameof( section ) );
             }

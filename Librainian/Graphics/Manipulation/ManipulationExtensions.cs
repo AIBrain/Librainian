@@ -101,7 +101,7 @@ namespace Librainian.Graphics.Manipulation {
         public static Bitmap LoadAndResize( [NotNull] this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
 
         [CanBeNull]
-        public static Bitmap LoadAndResize( Document document, Single multiplier ) {
+        public static Bitmap LoadAndResize( [CanBeNull] Document document, Single multiplier ) {
             if ( !multiplier.IsNumber() ) {
                 return null;
             }

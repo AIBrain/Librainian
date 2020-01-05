@@ -167,7 +167,7 @@ namespace Librainian.Graphics.Video {
 
         /// <summary>Opens an AVI file and creates a GetFrame object</summary>
         /// <param name="fileName">Name of the AVI file</param>
-        public void Open( String fileName ) {
+        public void Open( [CanBeNull] String fileName ) {
 
             //Intitialize AVI Library
             NativeMethods.AVIFileInit();

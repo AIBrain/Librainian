@@ -55,7 +55,7 @@ namespace Librainian.Databases {
 
         private String Path { get; }
 
-        public OleText( String path, Boolean hasHeaders, Char delimiter ) {
+        public OleText( [CanBeNull] String path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
 
@@ -69,7 +69,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public String[] GetColumnsList( String worksheet ) {
+        public String[] GetColumnsList( [CanBeNull] String worksheet ) {
             String[] columns = { };
 
             try {
@@ -109,7 +109,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public DataTable GetWorksheet( String worksheet ) {
+        public DataTable GetWorksheet( [CanBeNull] String worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                 using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
                     var ws = new DataTable( worksheet );

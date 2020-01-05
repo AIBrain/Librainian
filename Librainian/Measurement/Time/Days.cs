@@ -101,11 +101,14 @@ namespace Librainian.Measurement.Time {
 
         public Days( BigInteger value ) => this.Value = value;
 
-        public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
+        [CanBeNull]
+        public static Days Combine( [CanBeNull] Days left, Days right ) => Combine( left, right.Value );
 
         //public const Byte InOneMonth = 31;
+        [NotNull]
         public static Days Combine( Days left, Rational days ) => new Days( left.Value + days );
 
+        [NotNull]
         public static Days Combine( Days left, BigInteger days ) => new Days( left.Value + days );
 
         /// <summary>
@@ -121,10 +124,11 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Hours( Days days ) => days.ToHours();
 
         [NotNull]
-        public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days: days );
+        public static implicit operator SpanOfTime( [CanBeNull] Days days ) => new SpanOfTime( days: days );
 
         public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
@@ -133,29 +137,36 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
+        [NotNull]
         public static Days operator -( Days days ) => new Days( days.Value * -1 );
 
-        public static Days operator -( Days left, Days right ) => Combine( left: left, right: -right );
+        [CanBeNull]
+        public static Days operator -( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left: left, right: -right );
 
-        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
+        [NotNull]
+        public static Days operator -( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
 
-        public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Days left, [CanBeNull] Days right ) => !Equals( left, right );
 
-        public static Days operator +( Days left, Days right ) => Combine( left, right );
+        [CanBeNull]
+        public static Days operator +( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left, right );
 
-        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
+        [NotNull]
+        public static Days operator +( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )days );
 
-        public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
+        [NotNull]
+        public static Days operator +( [CanBeNull] Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
+        public static Boolean operator <( [CanBeNull] Days left, [CanBeNull] Hours right ) => left < ( Days )right;
 
-        public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Days left, [CanBeNull] Days right ) => Equals( left, right );
 
-        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
+        public static Boolean operator >( [CanBeNull] Days left, [CanBeNull] Hours right ) => left > ( Days )right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
@@ -220,6 +231,7 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
@@ -241,6 +253,7 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
+        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }
 }

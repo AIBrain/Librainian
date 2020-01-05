@@ -54,11 +54,12 @@ namespace Librainian.Extensions {
         public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new ConditionalWeakTable<Object, Storage>();
 
         // Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
-        public static TResult ApplyMemoized<TSource, TResult, TParam>( this TSource source, Func<TSource, TParam, TResult> selector, TParam param ) =>
+        [CanBeNull]
+        public static TResult ApplyMemoized<TSource, TResult, TParam>( [CanBeNull] this TSource source, [CanBeNull] Func<TSource, TParam, TResult> selector, [CanBeNull] TParam param ) =>
             selector.AsWeakMemoized( source )( param );
 
         [NotNull]
-        public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, TSource source ) =>
+        public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( [CanBeNull] this Func<TSource, TParam, TResult> selector, [CanBeNull] TSource source ) =>
             param => {
 
                 // Get the dictionary that associates delegates to a parameter, on the specified source

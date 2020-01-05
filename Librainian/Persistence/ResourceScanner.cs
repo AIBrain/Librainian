@@ -66,6 +66,7 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     await on this after creation.
         /// </summary>
+        [CanBeNull]
         public Task<Status> Completion => this.CompletionSource.Task;
 
         /// <summary>

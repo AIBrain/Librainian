@@ -46,12 +46,13 @@ namespace Librainian.Graphics.Line {
     using System.Drawing;
     using System.Numerics;
     using System.Windows.Media.Media3D;
+    using JetBrains.Annotations;
     using Maths.Numbers;
 
     public static class LineExtensions {
 
         // evaluate a point on a bezier-curve. t goes from 0 to 1.0
-        public static Point Bezier( this Point a, Point b, Point c, Point d, ZeroToOne t ) {
+        public static Point Bezier( this Point a, Point b, Point c, Point d, [CanBeNull] ZeroToOne t ) {
             var ab = a.Lerp( b, t );
             var bc = b.Lerp( c, t ); // point between b and c (green)
             var cd = c.Lerp( d, t ); // point between c and d (green)
@@ -88,7 +89,7 @@ namespace Librainian.Graphics.Line {
         /// <param name="b"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static Point Lerp( this Point a, Point b, ZeroToOne t ) {
+        public static Point Lerp( this Point a, Point b, [CanBeNull] ZeroToOne t ) {
             var dest = new Point {
                 X = ( Int32 ) ( a.X + (( b.X - a.X ) * t) ), Y = ( Int32 ) ( a.Y + (( b.Y - a.Y ) * t) )
             };
@@ -103,7 +104,7 @@ namespace Librainian.Graphics.Line {
         /// <param name="b"></param>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static Point3D Lerp( this Point3D a, Point3D b, ZeroToOne t ) {
+        public static Point3D Lerp( this Point3D a, Point3D b, [CanBeNull] ZeroToOne t ) {
             var dest = new Point3D {
                 X = a.X + (( b.X - a.X ) * t), Y = a.Y + (( b.Y - a.Y ) * t), Z = a.Z + (( b.Z - a.Z ) * t)
             };

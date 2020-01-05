@@ -45,6 +45,7 @@ namespace Librainian.Measurement.Currency.BTC {
     using System.Linq;
     using System.Security.Cryptography;
     using System.Threading;
+    using JetBrains.Annotations;
     using Parsing;
 
     /// <summary>
@@ -70,6 +71,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
+        [CanBeNull]
         public Hash EitherHash {
             get {
                 if ( this._pubKeyHash is null && this._scriptHash is null ) {
@@ -84,6 +86,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
+        [CanBeNull]
         public Hash PubKeyHash {
             get {
                 if ( this._pubKeyHash is null && this.CalcHash() != Pubkeyhash ) {
@@ -94,6 +97,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
+        [CanBeNull]
         public Hash ScriptHash {
             get {
                 if ( this._pubKeyHash is null && this.CalcHash() != Scripthash ) {
@@ -118,7 +122,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public Address( Byte[] data, Byte version = Pubkey ) {
+        public Address( [CanBeNull] Byte[] data, Byte version = Pubkey ) {
             RIPEMD160 ripemd160 = new RIPEMD160Managed();
 
             switch ( version ) {
@@ -148,7 +152,7 @@ namespace Librainian.Measurement.Currency.BTC {
             this._type = version;
         }
 
-        public Address( String address ) => this._address = address;
+        public Address( [CanBeNull] String address ) => this._address = address;
 
         private void CalcBase58() {
             if ( this._pubKeyHash != null ) {

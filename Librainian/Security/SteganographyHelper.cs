@@ -55,7 +55,7 @@ namespace Librainian.Security {
         }
 
         [NotNull]
-        public static Bitmap EmbedText( [NotNull] this Bitmap bmp, String text ) {
+        public static Bitmap EmbedText( [NotNull] this Bitmap bmp, [CanBeNull] String text ) {
 
             // initially, we'll be hiding characters in the image
             var state = State.Hiding;

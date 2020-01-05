@@ -47,14 +47,15 @@ namespace Librainian.Extensions {
 
     public static class MemoizeClass {
 
-        private static Func<T, TR> CastByExample<T, TR>( Func<T, TR> f, T _ ) => f;
+        [CanBeNull]
+        private static Func<T, TR> CastByExample<T, TR>( [CanBeNull] Func<T, TR> f, [CanBeNull] T _ ) => f;
 
         //static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
         //    return f.Tuplify().Memoize().Detuplify();
         //}
 
         [NotNull]
-        private static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR> f ) {
+        private static Func<TA, TB, TR> Memoize<TA, TB, TR>( [CanBeNull] this Func<TA, TB, TR> f ) {
             var example = new {
                 A = default( TA ), B = default( TB )
             };
@@ -68,10 +69,10 @@ namespace Librainian.Extensions {
         }
 
         [NotNull]
-        public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( this Func<Tuple<TA, TB>, TR> func ) => ( a, b ) => func( Tuple.Create( a, b ) );
+        public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( [CanBeNull] this Func<Tuple<TA, TB>, TR> func ) => ( a, b ) => func( Tuple.Create( a, b ) );
 
         [NotNull]
-        public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> f ) {
+        public static Func<TKey, TResult> Memoize<TKey, TResult>( [CanBeNull] this Func<TKey, TResult> f ) {
             var d = new ConcurrentDictionary<TKey, TResult>();
 
             return a => {
@@ -91,6 +92,6 @@ namespace Librainian.Extensions {
         //}
 
         [NotNull]
-        public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( this Func<TA, TB, TR> func ) => t => func( t.Item1, t.Item2 );
+        public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( [CanBeNull] this Func<TA, TB, TR> func ) => t => func( t.Item1, t.Item2 );
     }
 }

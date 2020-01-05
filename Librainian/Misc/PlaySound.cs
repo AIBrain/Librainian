@@ -44,6 +44,7 @@ namespace Librainian.Misc {
     using System;
     using System.Text;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using OperatingSystem;
 
     /// <summary>
@@ -54,7 +55,7 @@ namespace Librainian.Misc {
 
         private Boolean _isOpen;
 
-        public Int32 GetSoundLength( String fileName ) {
+        public Int32 GetSoundLength( [CanBeNull] String fileName ) {
             var lengthBuf = new StringBuilder( 32 );
 
             NativeMethods.mciSendString( $"open \"{fileName}\" type waveaudio alias wave", null, 0, IntPtr.Zero );
@@ -66,7 +67,7 @@ namespace Librainian.Misc {
             return length;
         }
 
-        public async Task Start( String fileName ) {
+        public async Task Start( [CanBeNull] String fileName ) {
             NativeMethods.mciSendString( $"open \"{fileName}\" type mpegvideo alias MediaFile", null, 0, IntPtr.Zero );
             this._isOpen = true;
 

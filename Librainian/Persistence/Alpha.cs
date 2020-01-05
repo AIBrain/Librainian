@@ -68,7 +68,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean TryGet( String key, [CanBeNull] out String value ) {
+        public static Boolean TryGet( [CanBeNull] String key, [CanBeNull] out String value ) {
             value = null;
 
             return false;
@@ -189,6 +189,7 @@ namespace Librainian.Persistence {
                 return false;
             }
 
+            [NotNull]
             public static String BuildKey<T>( [NotNull] params T[] keys ) {
                 if ( keys is null ) {
                     throw new ArgumentNullException( paramName: nameof( keys ) );

@@ -97,7 +97,7 @@ namespace Librainian.Security {
             return result;
         }
 
-        protected static UInt64 CalculateHash( UInt64 seed, UInt64[] table, IList<Byte> buffer, Int32 start, Int32 size ) {
+        protected static UInt64 CalculateHash( UInt64 seed, [CanBeNull] UInt64[] table, [CanBeNull] IList<Byte> buffer, Int32 start, Int32 size ) {
             var crc = seed;
 
             for ( var i = start; i < size; i++ ) {

@@ -79,7 +79,7 @@ namespace Librainian.Security {
             return status;
         }
 
-        public UInt32 Decrypt( Int32 pcbCipherText, Byte[] pbCipherText ) {
+        public UInt32 Decrypt( Int32 pcbCipherText, [CanBeNull] Byte[] pbCipherText ) {
 
             //Initialize Initialization Vector
             Byte[] pbIV2 = {

@@ -150,7 +150,7 @@ namespace Librainian.Security {
             return reverseKeyByte;
         }
 
-        private static void HideBits( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles,
+        private static void HideBits( [CanBeNull] Stream keyStream, [CanBeNull] Stream messageStream, Int64 messageLength, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter, [CanBeNull] CarrierImage[] imageFiles,
             BitmapInfo bitmapInfo, Boolean extract ) {
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
@@ -274,7 +274,7 @@ namespace Librainian.Security {
         /// <param name="bitmapInfo"></param>
         /// <param name="extract">Hide the message (false) or extract it (true)</param>
         /// <param name="aviReader"></param>
-        private static void HideBytes( Stream keyStream, Stream messageStream, Int64 messageLength, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles,
+        private static void HideBytes( [CanBeNull] Stream keyStream, [CanBeNull] Stream messageStream, Int64 messageLength, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter, [CanBeNull] CarrierImage[] imageFiles,
             BitmapInfo bitmapInfo, Boolean extract ) {
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
@@ -528,7 +528,8 @@ namespace Librainian.Security {
             keyStream.Close();
         }
 
-        private static BitmapInfo LoadBitmap( CarrierImage imageFile, AviReader aviReader, AviWriter aviWriter ) {
+        [NotNull]
+        private static BitmapInfo LoadBitmap( CarrierImage imageFile, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter ) {
             var bitmapInfo = new BitmapInfo();
 
             if ( imageFile.SourceFileName.ToLower().EndsWith( ".avi" ) ) {
@@ -573,7 +574,7 @@ namespace Librainian.Security {
             return bitmapInfo;
         }
 
-        private static void MovePixelPosition( Boolean extract, AviReader aviReader, AviWriter aviWriter, CarrierImage[] imageFiles, [NotNull] Stream keyStream,
+        private static void MovePixelPosition( Boolean extract, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter, [CanBeNull] CarrierImage[] imageFiles, [NotNull] Stream keyStream,
             ref Int32 countBytesInCurrentImage, ref Int32 indexBitmaps, ref Point pixelPosition, ref Int32 bitmapWidth, ref BitmapInfo bitmapInfo ) {
 
             //Repeat the key, if it is shorter than the message

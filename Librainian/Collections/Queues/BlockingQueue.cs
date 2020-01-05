@@ -43,6 +43,7 @@ namespace Librainian.Collections.Queues {
 
     using System;
     using System.Threading;
+    using JetBrains.Annotations;
 
     public class BlockingQueue<T> {
 
@@ -57,6 +58,7 @@ namespace Librainian.Collections.Queues {
             this.Head = this.Tail = new Node<T>( item: default, next: null );
         }
 
+        [CanBeNull]
         public T Dequeue() {
             lock ( this.LockObj ) {
                 while ( this.Head.Next is null ) {
@@ -70,7 +72,7 @@ namespace Librainian.Collections.Queues {
             }
         }
 
-        public void Enqueue( T item ) {
+        public void Enqueue( [CanBeNull] T item ) {
             var newNode = new Node<T>( item: item, next: null );
 
             lock ( this.LockObj ) {
@@ -90,7 +92,7 @@ namespace Librainian.Collections.Queues {
 
         public Node() { }
 
-        public Node( T item, Node<T> next ) {
+        public Node( [CanBeNull] T item, [CanBeNull] Node<T> next ) {
             this.Item = item;
             this.Next = next;
         }

@@ -284,6 +284,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Return how many years old the person is in <see cref="Years" />.</summary>
         /// <param name="dateOfBirth"></param>
         /// <returns></returns>
+        [NotNull]
         public static Years GetAge( this DateTime dateOfBirth ) {
             var today = DateTime.Today;
 

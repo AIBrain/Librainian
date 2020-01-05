@@ -172,7 +172,7 @@ namespace Librainian.Graphics.Video {
         /// </summary>
         /// <param name="fileName"> Name of the new AVI file</param>
         /// <param name="frameRate">Frames per second</param>
-        public void Open( String fileName, UInt32 frameRate ) {
+        public void Open( [CanBeNull] String fileName, UInt32 frameRate ) {
             this._frameRate = frameRate;
 
             NativeMethods.AVIFileInit();

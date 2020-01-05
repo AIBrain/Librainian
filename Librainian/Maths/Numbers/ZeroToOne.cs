@@ -120,7 +120,7 @@ namespace Librainian.Maths.Numbers {
         ///     of <paramref name="value2" /> .
         /// </returns>
         [NotNull]
-        public static ZeroToOne Combine( ZeroToOne value1, ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
+        public static ZeroToOne Combine( [CanBeNull] ZeroToOne value1, [CanBeNull] ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
 
         public static implicit operator Double( [NotNull] ZeroToOne value ) => value.Value;
 

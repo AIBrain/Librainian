@@ -128,6 +128,7 @@ namespace Librainian.Maths {
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="items">The collection of items to choose a random element from.</param>
         /// <returns>A randomly chosen element in the given collection <paramref name="items" />.</returns>
+        [CanBeNull]
         public static T Choose<T>( [NotNull] params T[] items ) => items[ items.Length.NextInt() ];
 
         /// <summary>
@@ -136,7 +137,8 @@ namespace Librainian.Maths {
         /// <typeparam name="T">The Type of element.</typeparam>
         /// <param name="a">The first item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a ) => a;
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a ) => a;
 
         /// <summary>
         ///     Chooses a random element in the given set of items.
@@ -145,7 +147,8 @@ namespace Librainian.Maths {
         /// <param name="a">The first item.</param>
         /// <param name="b">The second item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
             switch ( 2.NextInt() ) {
                 case 0: return a;
 
@@ -161,7 +164,8 @@ namespace Librainian.Maths {
         /// <param name="b">The second item.</param>
         /// <param name="c">The third item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c ) {
             switch ( 3.NextInt() ) {
                 case 0: return a;
 
@@ -180,7 +184,8 @@ namespace Librainian.Maths {
         /// <param name="c">The third item.</param>
         /// <param name="d">The fourth item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c, T d ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c, [CanBeNull] T d ) {
             switch ( 4.NextInt() ) {
                 case 0: return a;
 
@@ -202,7 +207,8 @@ namespace Librainian.Maths {
         /// <param name="d">The fourth item.</param>
         /// <param name="e">The fifth item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c, T d, T e ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c, [CanBeNull] T d, [CanBeNull] T e ) {
             switch ( 5.NextInt() ) {
                 case 0: return a;
 
@@ -227,7 +233,8 @@ namespace Librainian.Maths {
         /// <param name="e">The fifth item.</param>
         /// <param name="f">The sixth item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c, T d, T e, T f ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c, [CanBeNull] T d, [CanBeNull] T e, [CanBeNull] T f ) {
             var index = 6.NextInt();
 
             switch ( index ) {
@@ -257,7 +264,8 @@ namespace Librainian.Maths {
         /// <param name="f">The sixth item.</param>
         /// <param name="g">The seventh item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c, T d, T e, T f, T g ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c, [CanBeNull] T d, [CanBeNull] T e, [CanBeNull] T f, [CanBeNull] T g ) {
             var index = 7.NextInt();
 
             switch ( index ) {
@@ -290,7 +298,8 @@ namespace Librainian.Maths {
         /// <param name="g">The seventh item.</param>
         /// <param name="h">The eigth item.</param>
         /// <returns>A randomly chosen element in the given set of items.</returns>
-        public static T Choose<T>( this T a, T b, T c, T d, T e, T f, T g, T h ) {
+        [CanBeNull]
+        public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b, [CanBeNull] T c, [CanBeNull] T d, [CanBeNull] T e, [CanBeNull] T f, [CanBeNull] T g, [CanBeNull] T h ) {
             var index = 8.NextInt();
 
             switch ( index ) {
@@ -482,6 +491,7 @@ namespace Librainian.Maths {
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Int32 Next( this Int32 maxValue ) => Instance().Next( maxValue: maxValue );
 
+        [CanBeNull]
         public static String Next( [NotNull] this String[] strings ) => strings[ strings.Length.Next() ];
 
         /// <summary>
@@ -890,6 +900,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
+        [NotNull]
         public static SpanOfTime NextSpan( this SpanOfTime min, SpanOfTime max ) {
             var tpMin = min.CalcTotalPlanckTimes();
             var tpMax = max.CalcTotalPlanckTimes();
@@ -1059,6 +1070,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="charPool"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static String Randomize( [CanBeNull] this String charPool ) =>
             null == charPool ? String.Empty : charPool.OrderBy( keySelector: r => Next() ).Aggregate( seed: String.Empty, func: ( current, c ) => current + c );
 

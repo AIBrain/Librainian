@@ -64,6 +64,7 @@ namespace Librainian.Linguistics.PoS {
         }
 
         [Pure]
+        [NotNull]
         public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
         /// <summary>

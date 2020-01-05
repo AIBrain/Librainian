@@ -42,12 +42,13 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using JetBrains.Annotations;
 
     [Serializable]
     public class StreamWriteException : StreamException {
 
-        public StreamWriteException( String message ) : base( message ) { }
+        public StreamWriteException( [CanBeNull] String message ) : base( message ) { }
 
-        public StreamWriteException( String message, Exception innerException ) : base( message, innerException ) { }
+        public StreamWriteException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

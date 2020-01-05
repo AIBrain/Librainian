@@ -319,8 +319,10 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.Value );
 
+        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
 
+        [NotNull]
         public Years ToYears() => new Years( this.Value / InOneCommonYear );
     }
 }

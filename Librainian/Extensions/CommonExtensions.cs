@@ -150,7 +150,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static T NullIf<T>( [NotNull] this T left, T right ) => Comparer<T>.Default.Compare( left, right ) == 0 ? default : left;
+        public static T NullIf<T>( [NotNull] this T left, [CanBeNull] T right ) => Comparer<T>.Default.Compare( left, right ) == 0 ? default : left;
 
         [CanBeNull]
         public static String OnlyDigits( [CanBeNull] this String input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsDigit ).ToArray() );
@@ -168,7 +168,7 @@ namespace Librainian.Extensions {
         /// <typeparam name="T"></typeparam>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        public static void Swap<T>( ref T left, ref T right ) {
+        public static void Swap<T>( [CanBeNull] ref T left, [CanBeNull] ref T right ) {
             var temp = left;
             left = right;
             right = temp;
@@ -181,6 +181,6 @@ namespace Librainian.Extensions {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static (T right, T left) Swap<T>( this T left, T right ) => ( right, left );
+        public static (T right, T left) Swap<T>( [CanBeNull] this T left, [CanBeNull] T right ) => ( right, left );
     }
 }

@@ -113,7 +113,7 @@ namespace Librainian.Graphics.Imaging {
                 }
             } );
 
-        public async Task<Boolean> TryAdd( Document document, TimeSpan delay, CancellationToken cancellationToken ) {
+        public async Task<Boolean> TryAdd( [CanBeNull] Document document, TimeSpan delay, CancellationToken cancellationToken ) {
             try {
                 return await this.TryAddAsync( new Bitmap( document.FullPath ), delay, cancellationToken ).ConfigureAwait( false );
             }

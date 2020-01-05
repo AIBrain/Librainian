@@ -194,6 +194,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             Delete = 0x00000004
         }
 
+        [CanBeNull]
         private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
@@ -232,7 +233,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        private static SafeFileHandle OpenReparsePoint( String reparsePoint, FileAccess accessMode ) {
+        private static SafeFileHandle OpenReparsePoint( [CanBeNull] String reparsePoint, FileAccess accessMode ) {
             var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
                 FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 
@@ -314,7 +315,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
-        public static void Delete( String junctionPoint ) {
+        public static void Delete( [CanBeNull] String junctionPoint ) {
             if ( !Directory.Exists( junctionPoint ) ) {
                 if ( File.Exists( junctionPoint ) ) {
                     throw new IOException( "Path is not a junction point." );
@@ -362,7 +363,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="path">The junction point path</param>
         /// <returns>True if the specified path represents a junction point</returns>
         /// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
-        public static Boolean Exists( String path ) {
+        public static Boolean Exists( [CanBeNull] String path ) {
             if ( !Directory.Exists( path ) ) {
                 return false;
             }
@@ -385,7 +386,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     some other error occurs
         /// </exception>
         [NotNull]
-        public static String GetTarget( String junctionPoint ) {
+        public static String GetTarget( [CanBeNull] String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
 

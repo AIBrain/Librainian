@@ -449,7 +449,7 @@ namespace Librainian.Threading {
         /// <param name="job">  </param>
         /// <returns></returns>
         [NotNull]
-        public static async Task Then( this SpanOfTime delay, [NotNull] Action job ) {
+        public static async Task Then( [CanBeNull] this SpanOfTime delay, [NotNull] Action job ) {
             if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }
@@ -486,7 +486,7 @@ namespace Librainian.Threading {
         /// <param name="token"></param>
         /// <returns></returns>
         [NotNull]
-        public static async Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken token ) {
+        public static async Task Then( [CanBeNull] this SpanOfTime delay, [NotNull] Action job, CancellationToken token ) {
             if ( job is null ) {
                 throw new ArgumentNullException( paramName: nameof( job ) );
             }

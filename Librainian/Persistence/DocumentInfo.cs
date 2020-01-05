@@ -170,7 +170,7 @@ namespace Librainian.Persistence {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( DocumentInfo left, DocumentInfo right ) {
+        public static Boolean Equals( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true; //this is true for null==null, right?
             }

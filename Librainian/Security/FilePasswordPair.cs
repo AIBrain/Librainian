@@ -42,6 +42,7 @@
 namespace Librainian.Security {
 
     using System;
+    using JetBrains.Annotations;
 
     public struct FilePasswordPair {
 
@@ -49,7 +50,7 @@ namespace Librainian.Security {
 
         public String Password { get; }
 
-        public FilePasswordPair( String fileName, String password ) {
+        public FilePasswordPair( [CanBeNull] String fileName, [CanBeNull] String password ) {
             this.FileName = fileName;
             this.Password = password;
         }

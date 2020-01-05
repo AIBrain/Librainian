@@ -125,7 +125,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="vals">The array of values in which we look</param>
         /// <returns>The maximum value</returns>
-        private Int64 GetMaxim( IEnumerable<Int64> vals ) {
+        private Int64 GetMaxim( [CanBeNull] IEnumerable<Int64> vals ) {
             if ( this._myIsDrawing ) {
                 return vals.Concat( new Int64[] {
                     0
@@ -135,7 +135,7 @@ namespace Librainian.Controls {
             return 1;
         }
 
-        private void HistogramaDesenat_Paint( Object sender, PaintEventArgs e ) {
+        private void HistogramaDesenat_Paint( [CanBeNull] Object sender, [CanBeNull] PaintEventArgs e ) {
             if ( !this._myIsDrawing ) {
                 return;
             }
@@ -172,7 +172,7 @@ namespace Librainian.Controls {
             g.DrawRectangle( new Pen( new SolidBrush( Color.Black ), 1 ), 0, 0, this.Width - 1, this.Height - 1 );
         }
 
-        private void HistogramaDesenat_Resize( Object sender, EventArgs e ) {
+        private void HistogramaDesenat_Resize( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
             if ( this._myIsDrawing ) {
                 this.ComputeXyUnitValues();
             }

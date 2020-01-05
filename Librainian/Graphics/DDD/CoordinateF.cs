@@ -137,7 +137,7 @@ namespace Librainian.Graphics.DDD {
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( CoordinateF left, CoordinateF rhs ) {
+        public static Boolean Equals( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) {
             if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }

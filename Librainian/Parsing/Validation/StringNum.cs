@@ -55,7 +55,7 @@ namespace Librainian.Parsing.Validation {
         public StringNum( String value ) : base( value, "^[0-9]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringNum( String str ) => new StringNum( str );
+        public static explicit operator StringNum( [CanBeNull] String str ) => new StringNum( str );
 
     }
 

@@ -68,6 +68,7 @@ namespace Librainian.Extensions {
 
         public Object[] Parameters { get; set; }
 
+        [CanBeNull]
         public String SourceCode {
             get {
                 lock ( this.OSourceCode ) {
@@ -85,7 +86,7 @@ namespace Librainian.Extensions {
 
         public String SourcePath { get; }
 
-        public CodeEngine( [NotNull] String sourcePath, Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
+        public CodeEngine( [NotNull] String sourcePath, [CanBeNull] Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
 
         public CodeEngine( Guid id, [NotNull] String sourcePath, [CanBeNull] Action<String> output ) {
             if ( null != output ) {
@@ -156,7 +157,7 @@ namespace Coding
             }
         }
 
-        public static Boolean Test( Action<String> output ) {
+        public static Boolean Test( [CanBeNull] Action<String> output ) {
             try {
                 var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
                 test.Run();
@@ -172,6 +173,7 @@ namespace Coding
 
         public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
 
+        [CanBeNull]
         public Object Run() {
             lock ( this.ORun ) {
                 if ( null == this._compilerResults ) {

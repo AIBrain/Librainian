@@ -73,7 +73,7 @@ namespace Librainian.Threading {
         public BalancedResourceLoader( [NotNull] IList<IResourceLoader<T>> resourceLoaders ) =>
             this._resourceLoaders = resourceLoaders ?? throw new ArgumentNullException( nameof( resourceLoaders ) );
 
-        private Boolean GetOrQueue( out Task<T> resource, CancellationToken cancelToken, Boolean queueOnFailure ) {
+        private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, CancellationToken cancelToken, Boolean queueOnFailure ) {
             var i = this._index;
 
             while ( true ) {
@@ -143,6 +143,7 @@ namespace Librainian.Threading {
             } );
         }
 
+        [CanBeNull]
         public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
             lock ( this._lock ) {
                 this.GetOrQueue( out var resource, cancelToken, true );
@@ -151,7 +152,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public Boolean TryGet( out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+        public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
             lock ( this._lock ) {
                 return this.GetOrQueue( out resource, cancelToken, false );
             }

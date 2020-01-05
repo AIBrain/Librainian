@@ -45,6 +45,7 @@ namespace Librainian.Security {
     using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Security.Principal;
+    using JetBrains.Annotations;
     using OperatingSystem;
     using Utilities;
 
@@ -56,9 +57,9 @@ namespace Librainian.Security {
         private const Int32 Logon32ProviderDefault = 0;
         private WindowsImpersonationContext _impersonationContext;
 
-        public Impersonator( String userName, String domainName, String password ) => this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
+        public Impersonator( [CanBeNull] String userName, [CanBeNull] String domainName, [CanBeNull] String password ) => this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
 
-        private void ImpersonateValidUser( String userName, String domain, String password ) {
+        private void ImpersonateValidUser( [CanBeNull] String userName, [CanBeNull] String domain, [CanBeNull] String password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 

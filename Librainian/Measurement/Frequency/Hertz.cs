@@ -162,6 +162,7 @@ namespace Librainian.Measurement.Frequency {
 
         public Hertz( Double frequency ) : this( ( Decimal ) frequency ) { }
 
+        [NotNull]
         public static implicit operator SpanOfTime( [NotNull] Hertz hertz ) => new Seconds( 1.0m / hertz.Value );
 
         public static implicit operator TimeSpan( [NotNull] Hertz hertz ) => TimeSpan.FromSeconds( ( Double ) ( 1.0m / hertz.Value ) );

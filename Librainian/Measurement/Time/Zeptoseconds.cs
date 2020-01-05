@@ -121,8 +121,10 @@ namespace Librainian.Measurement.Time {
 
         public Zeptoseconds( BigInteger value ) => this.Value = value;
 
-        public static Zeptoseconds Combine( Zeptoseconds left, Zeptoseconds right ) => Combine( left, right.Value );
+        [CanBeNull]
+        public static Zeptoseconds Combine( [CanBeNull] Zeptoseconds left, Zeptoseconds right ) => Combine( left, right.Value );
 
+        [NotNull]
         public static Zeptoseconds Combine( Zeptoseconds left, Rational zeptoseconds ) => new Zeptoseconds( left.Value + zeptoseconds );
 
         /// <summary>
@@ -138,10 +140,11 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
+        [NotNull]
         public static implicit operator Attoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToAttoseconds();
 
         [NotNull]
-        public static implicit operator SpanOfTime( Zeptoseconds zeptoseconds ) => new SpanOfTime( zeptoseconds: zeptoseconds );
+        public static implicit operator SpanOfTime( [CanBeNull] Zeptoseconds zeptoseconds ) => new SpanOfTime( zeptoseconds: zeptoseconds );
 
         public static implicit operator TimeSpan( Zeptoseconds zeptoseconds ) => TimeSpan.FromSeconds( ( Double )zeptoseconds.Value );
 
@@ -150,33 +153,39 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="zeptoseconds"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Yoctoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToYoctoseconds();
 
+        [NotNull]
         public static Zeptoseconds operator -( Zeptoseconds zeptoseconds ) => new Zeptoseconds( zeptoseconds.Value * -1 );
 
-        public static Zeptoseconds operator -( Zeptoseconds left, Zeptoseconds right ) => Combine( left: left, right: -right );
+        [CanBeNull]
+        public static Zeptoseconds operator -( [CanBeNull] Zeptoseconds left, [CanBeNull] Zeptoseconds right ) => Combine( left: left, right: -right );
 
-        public static Zeptoseconds operator -( Zeptoseconds left, Decimal zeptoseconds ) => Combine( left, ( Rational )( -zeptoseconds ) );
+        [NotNull]
+        public static Zeptoseconds operator -( [CanBeNull] Zeptoseconds left, Decimal zeptoseconds ) => Combine( left, ( Rational )( -zeptoseconds ) );
 
-        public static Boolean operator !=( Zeptoseconds left, Zeptoseconds right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Zeptoseconds left, [CanBeNull] Zeptoseconds right ) => !Equals( left, right );
 
-        public static Zeptoseconds operator +( Zeptoseconds left, Zeptoseconds right ) => Combine( left, right );
+        [CanBeNull]
+        public static Zeptoseconds operator +( [CanBeNull] Zeptoseconds left, [CanBeNull] Zeptoseconds right ) => Combine( left, right );
 
-        public static Zeptoseconds operator +( Zeptoseconds left, Decimal zeptoseconds ) => Combine( left, ( Rational )zeptoseconds );
+        [NotNull]
+        public static Zeptoseconds operator +( [CanBeNull] Zeptoseconds left, Decimal zeptoseconds ) => Combine( left, ( Rational )zeptoseconds );
 
         public static Boolean operator <( Zeptoseconds left, Zeptoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Zeptoseconds left, Yoctoseconds right ) => left < ( Zeptoseconds )right;
+        public static Boolean operator <( [CanBeNull] Zeptoseconds left, [CanBeNull] Yoctoseconds right ) => left < ( Zeptoseconds )right;
 
-        public static Boolean operator ==( Zeptoseconds left, Zeptoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Zeptoseconds left, [CanBeNull] Zeptoseconds right ) => Equals( left, right );
 
-        public static Boolean operator >( Zeptoseconds left, Yoctoseconds right ) => left > ( Zeptoseconds )right;
+        public static Boolean operator >( [CanBeNull] Zeptoseconds left, [CanBeNull] Yoctoseconds right ) => left > ( Zeptoseconds )right;
 
         public static Boolean operator >( Zeptoseconds left, Zeptoseconds right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Zeptoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Zeptoseconds other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Zeptoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -192,8 +201,10 @@ namespace Librainian.Measurement.Time {
         ///     <para>Convert to a larger unit.</para>
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         public Attoseconds ToAttoseconds() => new Attoseconds( this.Value / InOneAttosecond );
 
+        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneZeptosecond );
 
         [NotNull]
@@ -217,6 +228,7 @@ namespace Librainian.Measurement.Time {
         ///     <para>Convert to a smaller unit.</para>
         /// </summary>
         /// <returns></returns>
+        [NotNull]
         public Yoctoseconds ToYoctoseconds() => new Yoctoseconds( this.Value * Yoctoseconds.InOneZeptosecond );
     }
 }

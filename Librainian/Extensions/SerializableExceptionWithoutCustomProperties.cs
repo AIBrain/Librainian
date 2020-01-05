@@ -56,8 +56,8 @@ namespace Librainian.Extensions {
 
         public SerializableExceptionWithoutCustomProperties() { }
 
-        public SerializableExceptionWithoutCustomProperties( String message ) : base( message ) { }
+        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String message ) : base( message ) { }
 
-        public SerializableExceptionWithoutCustomProperties( String message, Exception innerException ) : base( message, innerException ) { }
+        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

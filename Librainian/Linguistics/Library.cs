@@ -70,7 +70,7 @@ namespace Librainian.Linguistics {
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Library left, Library rhs ) {
+        public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library rhs ) {
             if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }

@@ -43,6 +43,7 @@ namespace Librainian.Controls {
 
     using System;
     using System.Windows.Forms;
+    using JetBrains.Annotations;
     using OperatingSystem;
 
     public class BufferedTreeView : TreeView {
@@ -54,7 +55,7 @@ namespace Librainian.Controls {
 
         private const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
 
-        protected override void OnHandleCreated( EventArgs e ) {
+        protected override void OnHandleCreated( [CanBeNull] EventArgs e ) {
             NativeMethods.SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr ) TVS_EX_DOUBLEBUFFER, ( IntPtr ) TVS_EX_DOUBLEBUFFER );
             base.OnHandleCreated( e );
         }

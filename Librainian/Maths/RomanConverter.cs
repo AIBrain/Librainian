@@ -44,6 +44,7 @@ namespace Librainian.Maths {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using JetBrains.Annotations;
     using Numbers;
 
     /// <summary>Based on the idea from lavz24.</summary>
@@ -63,6 +64,7 @@ namespace Librainian.Maths {
         /// <param name="number"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
+        [CanBeNull]
         public static String ToRoman( this UInt32 number ) {
 
             var result = new Queue<RomanNumber>( number.ToString().Length * 2 );

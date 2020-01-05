@@ -77,7 +77,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public const Int32 FsctlSetCompression = 0x9C040;
 
-        private static FileInfo InternalSearchFoundFile( this FileInfo info, [CanBeNull] Action<FileInfo> onFindFile, CancellationToken token ) {
+        [CanBeNull]
+        private static FileInfo InternalSearchFoundFile( [CanBeNull] this FileInfo info, [CanBeNull] Action<FileInfo> onFindFile, CancellationToken token ) {
             try {
                 if ( !token.IsCancellationRequested ) {
                     onFindFile?.Invoke( info );
@@ -232,7 +233,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="hint">todo: describe hint parameter on AskUserForStorageFolder</param>
         [CanBeNull]
-        public static Folder AskUserForStorageFolder( String hint ) {
+        public static Folder AskUserForStorageFolder( [CanBeNull] String hint ) {
             using ( var folderBrowserDialog = new FolderBrowserDialog {
                 ShowNewFolderButton = true,
                 Description = $"Please direct me to a storage folder for {hint}.",
@@ -405,7 +406,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, String description = "Please select a folder." ) {
+        public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, [CanBeNull] String description = "Please select a folder." ) {
             using ( var folderDialog = new FolderBrowserDialog {
                 Description = description,
                 RootFolder = startFolder,
@@ -746,7 +747,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchOption"> </param>
         /// <returns></returns>
         [NotNull]
-        public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
+        public static String GetRandomFile( [CanBeNull] String path, [CanBeNull] String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
             if ( !Directory.Exists( path ) ) {
                 return String.Empty;
             }
@@ -839,8 +840,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="progressFolders">       </param>
         /// <param name="progressDocuments">     </param>
         /// <returns></returns>
-        public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, IEnumerable<String> documentSearchPatterns,
-            [NotNull] Action<Document> onEachDocumentFound, IProgress<Int64> progressFolders, IProgress<Int64> progressDocuments,
+        public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, [CanBeNull] IEnumerable<String> documentSearchPatterns,
+            [NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64> progressFolders, [CanBeNull] IProgress<Int64> progressDocuments,
             [NotNull] CancellationTokenSource cancellation ) {
             if ( startingFolder is null ) {
                 throw new ArgumentNullException( nameof( startingFolder ) );
@@ -1324,7 +1325,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
-        public static Boolean SetCompression( this DirectoryInfo directoryInfo, Boolean compressed = true ) {
+        public static Boolean SetCompression( [CanBeNull] this DirectoryInfo directoryInfo, Boolean compressed = true ) {
             try {
                 if ( directoryInfo.Exists ) {
                     using ( var dir = new ManagementObject( directoryInfo.ToManagementPath() ) ) {
@@ -1449,7 +1450,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        public static MemoryStream TryCopyStream( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
+        public static MemoryStream TryCopyStream( [CanBeNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
             FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO
@@ -1572,7 +1573,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     attempts
         /// </returns>
         [CanBeNull]
-        public static FileStream TryOpen( String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+        public static FileStream TryOpen( [CanBeNull] String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
             //TODO
             try {
@@ -1587,7 +1588,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static FileStream TryOpenForReading( String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
+        public static FileStream TryOpenForReading( [CanBeNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open, FileAccess fileAccess = FileAccess.Read,
             FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO
@@ -1616,7 +1617,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static FileStream TryOpenForWriting( String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write,
+        public static FileStream TryOpenForWriting( [CanBeNull] String filePath, FileMode fileMode = FileMode.Create, FileAccess fileAccess = FileAccess.Write,
             FileShare fileShare = FileShare.ReadWrite ) {
 
             //TODO

@@ -48,7 +48,7 @@ namespace Librainian.Extensions {
 
     public static class MmfExt2 {
 
-        public static Boolean Resize( [NotNull] FileInfo source, FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
+        public static Boolean Resize( [NotNull] FileInfo source, [CanBeNull] FileInfo destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
             source.Refresh();
 
             if ( !source.Exists ) {

@@ -45,6 +45,7 @@ namespace Librainian.Internet {
     using System.IO;
     using System.Media;
     using System.Net;
+    using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
     using Threading;
@@ -53,7 +54,7 @@ namespace Librainian.Internet {
 
         public static SoundPlayer Player { get; } = new SoundPlayer();
 
-        private static void OnWebException( Uri uri, WebExceptionStatus webExceptionStatus ) {
+        private static void OnWebException( [CanBeNull] Uri uri, WebExceptionStatus webExceptionStatus ) {
             Console.WriteLine( uri );
             Console.WriteLine( webExceptionStatus );
         }

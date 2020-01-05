@@ -198,7 +198,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         private String NetworkName { get; }
 
-        public NetworkConnection( String networkName, [NotNull] NetworkCredential credentials ) {
+        public NetworkConnection( [CanBeNull] String networkName, [NotNull] NetworkCredential credentials ) {
             this.NetworkName = networkName;
 
             var netResource = new NetResource {

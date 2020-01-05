@@ -76,22 +76,22 @@ namespace Librainian.Measurement.Time {
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Attoseconds Attoseconds { get; }
 
         /// <summary>How many <see cref="Days" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Days Days { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Femtoseconds Femtoseconds { get; }
 
         /// <summary>How many <see cref="Hours" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Hours Hours { get; }
 
         /// <summary>
@@ -100,63 +100,63 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <trivia>One microsecond is to one second as one second is to 11.574 days.</trivia>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Microseconds Microseconds { get; }
 
         /// <summary>How many <see cref="Milliseconds" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Milliseconds Milliseconds { get; }
 
         /// <summary>How many <see cref="Minutes" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Minutes Minutes { get; }
 
         /// <summary>How many <see cref="Months" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Months Months { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Nanoseconds Nanoseconds { get; }
 
         /// <summary>A picosecond is an SI unit of time equal to 10E−12 of a second.</summary>
         /// <see cref="http://wikipedia.org/wiki/Picosecond" />
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Picoseconds Picoseconds { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public PlanckTimes PlanckTimes { get; }
 
         /// <summary>How many <see cref="Seconds" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Seconds Seconds { get; }
 
         /// <summary>How many <see cref="Weeks" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Weeks Weeks { get; }
 
         /// <summary>How many <see cref="Years" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Years Years { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Yoctoseconds Yoctoseconds { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Zeptoseconds Zeptoseconds { get; }
 
         public SpanOfTime( BigInteger planckTimes ) {
@@ -347,25 +347,32 @@ namespace Librainian.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         [NotNull]
-        public static SpanOfTime Combine( SpanOfTime left, SpanOfTime right ) {
+        public static SpanOfTime Combine( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
 
             //TODO do some overflow handling with BigInteger math
 
             //var planckTimes = left.PlanckTimes + right.PlanckTimes;
-            var yoctoseconds = left?.Yoctoseconds + right?.Yoctoseconds;
-            var zeptoseconds = left?.Zeptoseconds + right?.Zeptoseconds;
-            var attoseconds = left?.Attoseconds + right?.Attoseconds;
-            var femtoseconds = left?.Femtoseconds + right?.Femtoseconds;
-            var picoseconds = left?.Picoseconds + right?.Picoseconds;
-            var nanoseconds = left?.Nanoseconds + right?.Nanoseconds;
-            var microseconds = left?.Microseconds + right?.Microseconds;
-            var milliseconds = left?.Milliseconds + right?.Milliseconds;
-            var seconds = left?.Seconds + right?.Seconds;
-            var minutes = left?.Minutes + right?.Minutes;
-            var hours = left?.Hours + right?.Hours;
-            var days = left?.Days + right?.Days;
-            var months = left?.Months + right?.Months;
-            var years = left?.Years + right?.Years;
+            var yoctoseconds = left.Yoctoseconds + right.Yoctoseconds;
+            var zeptoseconds = left.Zeptoseconds + right.Zeptoseconds;
+            var attoseconds = left.Attoseconds + right.Attoseconds;
+            var femtoseconds = left.Femtoseconds + right.Femtoseconds;
+            var picoseconds = left.Picoseconds + right.Picoseconds;
+            var nanoseconds = left.Nanoseconds + right.Nanoseconds;
+            var microseconds = left.Microseconds + right.Microseconds;
+            var milliseconds = left.Milliseconds + right.Milliseconds;
+            var seconds = left.Seconds + right.Seconds;
+            var minutes = left.Minutes + right.Minutes;
+            var hours = left.Hours + right.Hours;
+            var days = left.Days + right.Days;
+            var months = left.Months + right.Months;
+            var years = left.Years + right.Years;
 
             return new SpanOfTime( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds,
                 nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months,
@@ -385,7 +392,15 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Int32 CompareTo( SpanOfTime left, SpanOfTime right ) {
+        public static Int32 CompareTo( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
             var leftPlancks = left.CalcTotalPlanckTimes();
             var rightPlancks = right.CalcTotalPlanckTimes();
 
@@ -526,7 +541,7 @@ namespace Librainian.Measurement.Time {
             return Zero;
         }
 
-        [CanBeNull]
+        [NotNull]
         public PlanckTimes CalcTotalPlanckTimes() {
 
             var sum = new[] {
@@ -603,40 +618,28 @@ namespace Librainian.Measurement.Time {
         public override String ToString() {
             var bob = new Queue<String>( 20 );
 
-            var years = this.Years;
-
-            if ( years != null && years.Value != 0 ) {
-                bob.Enqueue( years.ToString() );
+            if ( this.Years.Value != 0 ) {
+                bob.Enqueue( this.Years.ToString() );
             }
 
-            var months = this.Months;
-
-            if ( months != null && months.Value != 0 ) {
-                bob.Enqueue( months.ToString() );
+            if ( this.Months.Value != 0 ) {
+                bob.Enqueue( this.Months.ToString() );
             }
 
-            var weeks = this.Weeks;
-
-            if ( weeks != null && weeks.Value != 0 ) {
-                bob.Enqueue( weeks.ToString() );
+            if ( this.Weeks.Value != 0 ) {
+                bob.Enqueue( this.Weeks.ToString() );
             }
 
-            var days = this.Days;
-
-            if ( days != null && days.Value != 0 ) {
-                bob.Enqueue( days.ToString() );
+            if ( this.Days.Value != 0 ) {
+                bob.Enqueue( this.Days.ToString() );
             }
 
-            var hours = this.Hours;
-
-            if ( hours != null && hours.Value != 0 ) {
-                bob.Enqueue( hours.ToString() );
+            if ( this.Hours.Value != 0 ) {
+                bob.Enqueue( this.Hours.ToString() );
             }
 
-            var minutes = this.Minutes;
-
-            if ( minutes != null && minutes.Value != 0 ) {
-                bob.Enqueue( minutes.ToString() );
+            if ( this.Minutes.Value != 0 ) {
+                bob.Enqueue( this.Minutes.ToString() );
             }
 
             if ( this.Seconds.Value != 0 ) {

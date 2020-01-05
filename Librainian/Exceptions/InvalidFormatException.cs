@@ -42,6 +42,7 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     [Serializable]
@@ -52,10 +53,10 @@ namespace Librainian.Exceptions {
 
         private InvalidFormatException() { }
 
-        public InvalidFormatException( String message ) : base( message ) { }
+        public InvalidFormatException( [CanBeNull] String message ) : base( message ) { }
 
-        public InvalidFormatException( String message, String paramName ) : base( message ) => this.Parameter = paramName;
+        public InvalidFormatException( [CanBeNull] String message, [CanBeNull] String paramName ) : base( message ) => this.Parameter = paramName;
 
-        public InvalidFormatException( String message, Exception inner ) : base( message, inner ) { }
+        public InvalidFormatException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) { }
     }
 }

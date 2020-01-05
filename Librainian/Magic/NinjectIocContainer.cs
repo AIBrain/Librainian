@@ -75,7 +75,7 @@ namespace Librainian.Magic {
             return tryGet;
         }
 
-        public void Inject<T>( T item ) => this.Kernel.Inject( item );
+        public void Inject<T>( [CanBeNull] T item ) => this.Kernel.Inject( item );
 
         /// <summary>Warning!</summary>
         public void ResetKernel() {

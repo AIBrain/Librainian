@@ -43,6 +43,7 @@ namespace Librainian.Internet.RandomOrg {
 
     using System;
     using System.Net;
+    using JetBrains.Annotations;
 
     public static class Quota {
 
@@ -52,6 +53,6 @@ namespace Librainian.Internet.RandomOrg {
 
         public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
 
-        public static Int64 Check( IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
+        public static Int64 Check( [CanBeNull] IPAddress ip ) => Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
     }
 }

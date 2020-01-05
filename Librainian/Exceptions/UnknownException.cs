@@ -42,6 +42,7 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using JetBrains.Annotations;
 
     /// <inheritdoc />
     /// <summary>
@@ -61,7 +62,7 @@ namespace Librainian.Exceptions {
         ///     <para>Something should not have happened, but it did.</para>
         /// </summary>
         /// <param name="message"></param>
-        public UnknownException( String message ) : base( message ) { }
+        public UnknownException( [CanBeNull] String message ) : base( message ) { }
 
         /// <inheritdoc />
         /// <summary>
@@ -69,6 +70,6 @@ namespace Librainian.Exceptions {
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public UnknownException( String message, Exception innerException ) : base( message, innerException ) { }
+        public UnknownException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

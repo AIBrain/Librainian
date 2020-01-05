@@ -77,7 +77,7 @@ namespace Librainian.Collections.Queues {
         /// </summary>
         /// <param name="item">    </param>
         /// <param name="priority"></param>
-        public void Add( TValue item, Single priority ) =>
+        public void Add( [CanBeNull] TValue item, Single priority ) =>
 
             //while ( this.Dictionary.ContainsKey( priority ) ) {
             //    priority += Constants.EpsilonSingle;

@@ -107,7 +107,7 @@ namespace Librainian.Persistence {
             }
         }
 
-        public void Add( String key, String value ) => this[ key ] = value;
+        public void Add( String key, [CanBeNull] String value ) => this[ key ] = value;
 
         public void Add( KeyValuePair<String, String> item ) {
             if ( item.Key != null ) {
@@ -231,10 +231,10 @@ namespace Librainian.Persistence {
         public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder,
             applicationName: null, subFolder: tableName ) ) { }
 
-        public StringKVPTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
+        public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
             tableName ) ) { }
 
-        public StringKVPTable( Byte specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder )specialFolder,
+        public StringKVPTable( Byte specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( folder: new Folder( ( Environment.SpecialFolder )specialFolder,
             subFolder, tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
@@ -324,7 +324,7 @@ namespace Librainian.Persistence {
         public override String ToString() => $"{this.Count} items";
 
         //should be all that's needed..
-        public void TryAdd( [NotNull] String key, String value ) {
+        public void TryAdd( [NotNull] String key, [CanBeNull] String value ) {
             if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }

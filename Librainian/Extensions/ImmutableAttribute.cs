@@ -163,7 +163,7 @@ namespace Librainian.Extensions {
         ///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-        public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
+        public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [CanBeNull] params Type[] whiteList ) {
             if ( assemblies is null ) {
                 throw new ArgumentNullException( paramName: nameof( assemblies ) );
             }

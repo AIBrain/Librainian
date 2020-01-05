@@ -52,7 +52,7 @@ namespace Librainian.Parsing.Validation {
         public StringAlpha( String value ) : base( value, "^[a-zA-Z]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringAlpha( String str ) => new StringAlpha( str );
+        public static explicit operator StringAlpha( [CanBeNull] String str ) => new StringAlpha( str );
 
     }
 

@@ -148,7 +148,7 @@ namespace Librainian.Measurement.Currency {
             return true;
         }
 
-        public Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true ) {
+        public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleWallet intoWallet, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }

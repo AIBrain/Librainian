@@ -95,15 +95,15 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public static Boolean operator !=( [CanBeNull] Location left, [CanBeNull] Location right ) => !Equals( left: left, right: right );
 
-        public static Boolean operator <( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) < 0;
+        public static Boolean operator <( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) < 0;
 
-        public static Boolean operator <=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) <= 0;
+        public static Boolean operator <=( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) <= 0;
 
         public static Boolean operator ==( [CanBeNull] Location left, [CanBeNull] Location right ) => Equals( left: left, right: right );
 
-        public static Boolean operator >( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) > 0;
+        public static Boolean operator >( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) > 0;
 
-        public static Boolean operator >=( Location left, Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) >= 0;
+        public static Boolean operator >=( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( x: left, y: right ) >= 0;
 
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( obj is null ) {
@@ -121,7 +121,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             return this.CompareTo( other: ( Location )obj );
         }
 
-        public Int32 CompareTo( Location other ) {
+        public Int32 CompareTo( [CanBeNull] Location other ) {
             if ( ReferenceEquals( this, other ) ) {
                 return 0;
             }

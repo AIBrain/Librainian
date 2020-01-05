@@ -231,7 +231,7 @@ namespace Librainian.Measurement.Currency.BTC {
             return true;
         }
 
-        public Boolean TryTransfer( Decimal amount, ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
+        public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }

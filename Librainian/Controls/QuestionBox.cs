@@ -69,26 +69,26 @@ namespace Librainian.Controls {
             this.richTextBoxQuestion.Text( question.Limit( this.richTextBoxQuestion.MaxLength ) );
         }
 
-        private void buttonCancel_Click( Object sender, EventArgs e ) {
+        private void buttonCancel_Click( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
             this.Response = null;
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        private void buttonOkay_Click( Object sender, EventArgs e ) {
+        private void buttonOkay_Click( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
             this.Response = this.textBoxInput.Text()?.Trim();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void Question_FormClosed( Object sender, FormClosedEventArgs e ) => this.Response = this.textBoxInput.Text.Trim();
+        private void Question_FormClosed( [CanBeNull] Object sender, [CanBeNull] FormClosedEventArgs e ) => this.Response = this.textBoxInput.Text.Trim();
 
-        private void QuestionBox_Load( Object sender, EventArgs e ) {
+        private void QuestionBox_Load( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
             this.Visible( true ); //fix per http://stackoverflow.com/a/18619181/956364
             this.richTextBoxQuestion.Focus(); //BUG not working under unit test
         }
 
-        private void textBoxInput_VisibleChanged( Object sender, EventArgs e ) {
+        private void textBoxInput_VisibleChanged( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
             if ( this.Visible ) {
                 this.richTextBoxQuestion.Focus(); //BUG not working under unit test
             }

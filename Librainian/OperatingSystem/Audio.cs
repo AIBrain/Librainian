@@ -182,7 +182,7 @@ namespace Librainian.OperatingSystem {
             Marshal.ReleaseComObject( deviceEnumerator );
         }
 
-        public static Boolean? GetApplicationMute( String name ) {
+        public static Boolean? GetApplicationMute( [CanBeNull] String name ) {
             var volume = GetVolumeObject( name );
 
             if ( volume is null ) {
@@ -194,7 +194,7 @@ namespace Librainian.OperatingSystem {
             return mute;
         }
 
-        public static Single? GetApplicationVolume( String name ) {
+        public static Single? GetApplicationVolume( [CanBeNull] String name ) {
             var volume = GetVolumeObject( name );
 
             if ( volume is null ) {
@@ -207,7 +207,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [CanBeNull]
-        public static ISimpleAudioVolume GetVolumeObject( String name ) {
+        public static ISimpleAudioVolume GetVolumeObject( [CanBeNull] String name ) {
 
             // get the speakers (1st render + multimedia) device
 
@@ -254,7 +254,7 @@ namespace Librainian.OperatingSystem {
             return volumeControl;
         }
 
-        public static void SetApplicationMute( String name, Boolean mute ) {
+        public static void SetApplicationMute( [CanBeNull] String name, Boolean mute ) {
             var volume = GetVolumeObject( name );
 
             if ( volume is null ) {
@@ -265,7 +265,7 @@ namespace Librainian.OperatingSystem {
             volume.SetMute( mute, ref guid );
         }
 
-        public static void SetApplicationVolume( String name, Single level ) {
+        public static void SetApplicationVolume( [CanBeNull] String name, Single level ) {
             var volume = GetVolumeObject( name );
 
             if ( volume is null ) {

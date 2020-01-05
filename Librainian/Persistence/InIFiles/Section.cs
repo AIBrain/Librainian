@@ -191,6 +191,7 @@ namespace Librainian.Persistence.InIFiles {
         /// </summary>
         /// <param name="writer"></param>
         /// <returns></returns>
+        [CanBeNull]
         public Task Write( [NotNull] TextWriter writer ) {
             if ( writer is null ) {
                 throw new ArgumentNullException( paramName: nameof( writer ) );

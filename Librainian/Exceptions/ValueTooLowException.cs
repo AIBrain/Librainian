@@ -42,6 +42,7 @@
 namespace Librainian.Exceptions {
 
     using System;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     Use when a value is too low.
@@ -49,12 +50,12 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class ValueTooLowException : OutOfRangeException {
 
-        public ValueTooLowException( String message ) : base( message ) {
+        public ValueTooLowException( [CanBeNull] String message ) : base( message ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }
 
-        public ValueTooLowException( String message, Exception inner ) : base( message, inner ) {
+        public ValueTooLowException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }

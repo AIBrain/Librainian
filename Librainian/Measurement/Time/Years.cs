@@ -134,6 +134,7 @@ namespace Librainian.Measurement.Time {
             return left.Value == right.Value;
         }
 
+        [CanBeNull]
         public static implicit operator Months( [NotNull] Years years ) {
             if ( years is null ) {
                 throw new ArgumentNullException( paramName: nameof( years ) );
@@ -195,21 +196,27 @@ namespace Librainian.Measurement.Time {
         }
 
         [NotNull]
-        public static Years operator +( Years left, Years right ) => Combine( left, right );
+        public static Years operator +( [NotNull] Years left, [NotNull] Years right ) => Combine( left, right );
 
         [NotNull]
-        public static Years operator +( Years left, Decimal years ) => Combine( left, years );
+        public static Years operator +( [NotNull] Years left, Decimal years ) => Combine( left, years );
 
         [NotNull]
-        public static Years operator +( Years left, BigInteger years ) => Combine( left, years );
+        public static Years operator +( [NotNull] Years left, BigInteger years ) => Combine( left, years );
 
-        public static Boolean operator <( Years left, Years right ) => left.Value < right.Value;
+        public static Boolean operator <( [NotNull] Years left, [NotNull] Years right ) => left.Value < right.Value;
 
         public static Boolean operator ==( [CanBeNull] Years left, [CanBeNull] Years right ) => Equals( left, right );
 
-        public static Boolean operator >( Years left, Years right ) => left.Value > right.Value;
+        public static Boolean operator >( [NotNull] Years left, [NotNull] Years right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Years other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( [NotNull] Years other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( paramName: nameof( other ) );
+            }
+
+            return this.Value.CompareTo( other.Value );
+        }
 
         public Boolean Equals( [CanBeNull] Years other ) => Equals( this, other );
 
@@ -223,8 +230,10 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public Days ToDays() => new Days( this.Value * Days.InOneCommonYear );
 
+        [NotNull]
         public Months ToMonths() => new Months( this.Value * Months.InOneCommonYear );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYear );
@@ -246,6 +255,7 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
+        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneCommonYear );
     }
 }

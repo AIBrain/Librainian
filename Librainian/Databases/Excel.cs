@@ -53,7 +53,7 @@ namespace Librainian.Databases {
 
         private String Path { get; }
 
-        public Excel( String path, Boolean hasHeaders, Boolean hasMixedData ) {
+        public Excel( [CanBeNull] String path, Boolean hasHeaders, Boolean hasMixedData ) {
             this.Path = path;
 
             var strBuilder = new OleDbConnectionStringBuilder {
@@ -66,7 +66,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public String[] GetColumnsList( String worksheet ) {
+        public String[] GetColumnsList( [CanBeNull] String worksheet ) {
             String[] columns = { };
 
             try {
@@ -114,7 +114,7 @@ namespace Librainian.Databases {
         }
 
         [CanBeNull]
-        public DataTable GetWorksheet( String worksheet ) {
+        public DataTable GetWorksheet( [CanBeNull] String worksheet ) {
             try {
                 using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                     using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) {

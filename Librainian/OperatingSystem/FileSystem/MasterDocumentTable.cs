@@ -79,7 +79,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="ReportDocument"></param>
         /// <returns></returns>
         [NotNull]
-        public static async Task SearchAsync( IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> ReportDocument = null ) {
+        public static async Task SearchAsync( [CanBeNull] IFolder folder, [CanBeNull] IProgress<IFolder> folders = null, [CanBeNull] IProgress<Document> ReportDocument = null ) {
 
             if ( CTS.IsCancellationRequested ) {
                 return;

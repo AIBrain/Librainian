@@ -42,6 +42,7 @@
 namespace Librainian.Collections.Queues {
 
     using System;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     [JsonObject]
@@ -53,7 +54,7 @@ namespace Librainian.Collections.Queues {
         [JsonProperty( PropertyName = "t" )]
         public DateTime TimeStamp { get; } = DateTime.UtcNow;
 
-        public WithTime( T item ) => this.Item = item;
+        public WithTime( [CanBeNull] T item ) => this.Item = item;
 
         public override String ToString() => $"{this.Item} @ {this.TimeStamp:s}";
     }

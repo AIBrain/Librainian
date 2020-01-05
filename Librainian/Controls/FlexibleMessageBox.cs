@@ -131,7 +131,7 @@ namespace Librainian.Controls {
         /// </summary>
         /// <param name="text">The text.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( String text ) =>
+        public static DialogResult Show( [CanBeNull] String text ) =>
             FlexibleMessageBoxForm.ShowDialog( null, text, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Librainian.Controls {
         /// <param name="owner">The owner.</param>
         /// <param name="text"> The text.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( IWin32Window owner, String text ) =>
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String text ) =>
             FlexibleMessageBoxForm.ShowDialog( owner, text, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Librainian.Controls {
         /// <param name="text">   The text.</param>
         /// <param name="caption">The caption.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( String text, String caption ) =>
+        public static DialogResult Show( [CanBeNull] String text, [CanBeNull] String caption ) =>
             FlexibleMessageBoxForm.ShowDialog( null, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace Librainian.Controls {
         /// <param name="text">   The text.</param>
         /// <param name="caption">The caption.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( IWin32Window owner, String text, String caption ) =>
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String text, [CanBeNull] String caption ) =>
             FlexibleMessageBoxForm.ShowDialog( owner, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Librainian.Controls {
         /// <param name="caption">The caption.</param>
         /// <param name="buttons">The buttons.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( String text, String caption, MessageBoxButtons buttons ) =>
+        public static DialogResult Show( [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons ) =>
             FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Librainian.Controls {
         /// <param name="caption">The caption.</param>
         /// <param name="buttons">The buttons.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( IWin32Window owner, String text, String caption, MessageBoxButtons buttons ) =>
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons ) =>
             FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Librainian.Controls {
         /// <param name="buttons">The buttons.</param>
         /// <param name="icon">   The icon.</param>
         /// <returns></returns>
-        public static DialogResult Show( String text, String caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
+        public static DialogResult Show( [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
             FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Librainian.Controls {
         /// <param name="buttons">The buttons.</param>
         /// <param name="icon">   The icon.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( IWin32Window owner, String text, String caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
             FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Librainian.Controls {
         /// <param name="icon">         The icon.</param>
         /// <param name="defaultButton">The default button.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( String text, String caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton ) =>
+        public static DialogResult Show( [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton ) =>
             FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, defaultButton );
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Librainian.Controls {
         /// <param name="icon">         The icon.</param>
         /// <param name="defaultButton">The default button.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult Show( IWin32Window owner, String text, String caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons, MessageBoxIcon icon,
             MessageBoxDefaultButton defaultButton ) =>
             FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, defaultButton );
 
@@ -332,6 +332,7 @@ namespace Librainian.Controls {
             /// </summary>
             /// <param name="buttonID">The ID of the button.</param>
             /// <returns>The button text</returns>
+            [CanBeNull]
             private static String GetButtonText( ButtonID buttonID ) {
                 var buttonTextArrayIndex = Convert.ToInt32( buttonID );
 
@@ -383,7 +384,7 @@ namespace Librainian.Controls {
             /// </summary>
             /// <param name="sender">The source of the event.</param>
             /// <param name="e">     The <see cref="System.Windows.Forms.LinkClickedEventArgs" /> instance containing the event data.</param>
-            private static void richTextBoxMessage_LinkClicked( Object sender, [NotNull] LinkClickedEventArgs e ) {
+            private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object sender, [NotNull] LinkClickedEventArgs e ) {
                 try {
                     Cursor.Current = Cursors.WaitCursor;
                     Process.Start( e.LinkText );
@@ -547,7 +548,7 @@ namespace Librainian.Controls {
             /// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
             /// <param name="text">                  The text (the longest text row is used to calculate the dialog width).</param>
             /// <param name="caption">               The caption (this can also affect the dialog width).</param>
-            private static void SetDialogSizes( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, String text, String caption ) {
+            private static void SetDialogSizes( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] String text, [CanBeNull] String caption ) {
 
                 //First set the bounds for the maximum dialog size
                 flexibleMessageBoxForm.MaximumSize = new Size( Convert.ToInt32( SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( MAX_WIDTH_FACTOR ) ),
@@ -582,7 +583,7 @@ namespace Librainian.Controls {
             /// </summary>
             /// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
             /// <param name="owner">                 The owner.</param>
-            private static void SetDialogStartPosition( FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] IWin32Window owner ) {
+            private static void SetDialogStartPosition( [CanBeNull] FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] IWin32Window owner ) {
 
                 //If no owner given: Center on current screen
                 if ( owner is null ) {
@@ -598,7 +599,7 @@ namespace Librainian.Controls {
             /// </summary>
             /// <param name="sender">The source of the event.</param>
             /// <param name="e">     The <see cref="System.Windows.Forms.KeyEventArgs" /> instance containing the event data.</param>
-            private void FlexibleMessageBoxForm_KeyUp( Object sender, [NotNull] KeyEventArgs e ) {
+            private void FlexibleMessageBoxForm_KeyUp( [CanBeNull] Object sender, [NotNull] KeyEventArgs e ) {
 
                 //Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
                 if ( e.Control && ( e.KeyCode == Keys.C || e.KeyCode == Keys.Insert ) ) {
@@ -621,7 +622,7 @@ namespace Librainian.Controls {
             /// </summary>
             /// <param name="sender">The source of the event.</param>
             /// <param name="e">     The <see cref="System.EventArgs" /> instance containing the event data.</param>
-            private void FlexibleMessageBoxForm_Shown( Object sender, EventArgs e ) {
+            private void FlexibleMessageBoxForm_Shown( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
                 Int32 buttonIndexToFocus;
                 Button buttonToFocus;
 
@@ -816,7 +817,7 @@ namespace Librainian.Controls {
             /// <param name="icon">         The icon.</param>
             /// <param name="defaultButton">The default button.</param>
             /// <returns>The dialog result.</returns>
-            public static DialogResult ShowDialog( IWin32Window owner, String text, String caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+            public static DialogResult ShowDialog( [CanBeNull] IWin32Window owner, [CanBeNull] String text, [CanBeNull] String caption, MessageBoxButtons buttons, MessageBoxIcon icon,
                 MessageBoxDefaultButton defaultButton ) {
                 var func = new Func<DialogResult>( () => {
 

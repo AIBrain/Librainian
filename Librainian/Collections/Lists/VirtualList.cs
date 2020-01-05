@@ -44,6 +44,7 @@ namespace Librainian.Collections.Lists {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using JetBrains.Annotations;
 
     /// <summary>
     /// </summary>
@@ -66,6 +67,7 @@ namespace Librainian.Collections.Lists {
 
         Object ICollection.SyncRoot => this;
 
+        [CanBeNull]
         Object IList.this[ Int32 index ] {
             get => this.GetValueForIndex( arg: index );
 
@@ -92,6 +94,7 @@ namespace Librainian.Collections.Lists {
 
         Boolean ICollection<T>.IsReadOnly => true;
 
+        [CanBeNull]
         T IList<T>.this[ Int32 index ] {
             get => this.GetValueForIndex( arg: index );
 
@@ -126,7 +129,7 @@ namespace Librainian.Collections.Lists {
 
         private Func<Int32, T> GetValueForIndex { get; }
 
-        public VirtualList( Int32 count, Func<Int32, T> getValueForIndex ) {
+        public VirtualList( Int32 count, [CanBeNull] Func<Int32, T> getValueForIndex ) {
             this.GetValueForIndex = getValueForIndex;
             this._count = count;
         }

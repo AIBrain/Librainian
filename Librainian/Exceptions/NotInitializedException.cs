@@ -43,6 +43,7 @@ namespace Librainian.Exceptions {
 
     using System;
     using System.Runtime.Serialization;
+    using JetBrains.Annotations;
     using Logging;
     using Newtonsoft.Json;
 
@@ -76,13 +77,13 @@ namespace Librainian.Exceptions {
             $"{nameof( NotInitializedException )} serialization exception.".Log( breakinto: true );
         }
 
-        public NotInitializedException( String message ) : base( message ) => message.Log();
+        public NotInitializedException( [CanBeNull] String message ) : base( message ) => message.Log();
 
-        public NotInitializedException( String message, String paramName ) : this( message ) => this.Parameter = paramName;
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName ) : this( message ) => this.Parameter = paramName;
 
-        public NotInitializedException( String message, Exception inner ) : base( message, inner ) => message.Log();
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Log();
 
-        public NotInitializedException( String message, String paramName, Exception inner ) : this( message, inner ) => this.Parameter = paramName;
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName, [CanBeNull] Exception inner ) : this( message, inner ) => this.Parameter = paramName;
 
     }
 

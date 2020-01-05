@@ -67,6 +67,7 @@ namespace Librainian.Parsing {
             ".", "?", "!"
         };
 
+        [CanBeNull]
         public String CurrentBuffer {
             get {
                 try {
@@ -137,6 +138,7 @@ namespace Librainian.Parsing {
             return String.IsNullOrEmpty( word ) ? String.Empty : word;
         }
 
+        [NotNull]
         public String PullNextChar() {
             try {
                 this.AccessInputBuffer.EnterWriteLock();
@@ -160,6 +162,7 @@ namespace Librainian.Parsing {
             }
         }
 
+        [NotNull]
         public String PullNextSentence() {
             try {
                 this.AccessInputBuffer.EnterUpgradeableReadLock();

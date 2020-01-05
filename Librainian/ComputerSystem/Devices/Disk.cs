@@ -104,7 +104,8 @@ namespace Librainian.ComputerSystem.Devices {
 
         public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 ) this.Info.AvailableFreeSpace : 0;
 
-        public IEnumerable<IFolder> GetFolders( String searchPattern = "*" ) {
+        [NotNull]
+        public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern = "*" ) {
             var root = new Folder( this.Info.RootDirectory.FullName );
 
             return root.GetFolders( searchPattern );

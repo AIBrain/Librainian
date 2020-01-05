@@ -120,6 +120,7 @@ namespace Librainian.Internet {
             return null;
         }
 
+        [ItemNotNull]
         public static IEnumerable<Document> FindFile( [NotNull] String filename, [NotNull] IEnumerable<String> locationClues ) {
             if ( locationClues is null ) {
                 throw new ArgumentNullException( paramName: nameof( locationClues ) );

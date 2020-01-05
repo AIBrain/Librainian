@@ -71,7 +71,7 @@ namespace Librainian.Parsing {
         ///     supply that type
         ///     of object; otherwise, <see langword="null" />.
         /// </returns>
-        public virtual Object GetFormat( Type formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
+        public virtual Object GetFormat( [CanBeNull] Type formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
 
         /// <summary>Gets the culture.</summary>
         /// <value>The culture.</value>
@@ -90,7 +90,7 @@ namespace Librainian.Parsing {
         ///     <paramref name="format" />.
         /// </returns>
         [NotNull]
-        protected String HandleOtherFormats( String format, [CanBeNull] Object arg ) =>
+        protected String HandleOtherFormats( [CanBeNull] String format, [CanBeNull] Object arg ) =>
             ( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
 
         /// <summary>Gets a default instance of a composite formatter.</summary>

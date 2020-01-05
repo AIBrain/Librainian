@@ -52,6 +52,6 @@ namespace Librainian.Financial.Containers.Wallets {
 
         protected WalletException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
-        public WalletException( String message ) : base( message ) { }
+        public WalletException( [CanBeNull] String message ) : base( message ) { }
     }
 }

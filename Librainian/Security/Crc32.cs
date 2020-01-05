@@ -130,7 +130,7 @@ namespace Librainian.Security {
         /// <param name="start"> </param>
         /// <param name="size">  </param>
         /// <returns></returns>
-        public static UInt32 CalculateHash( UInt32[] table, UInt32 seed, IList<Byte> buffer, Int32 start, Int32 size ) {
+        public static UInt32 CalculateHash( [CanBeNull] UInt32[] table, UInt32 seed, [CanBeNull] IList<Byte> buffer, Int32 start, Int32 size ) {
             var crc = seed;
 
             for ( var i = start; i < size - start; i++ ) {

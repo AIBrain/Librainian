@@ -106,7 +106,7 @@ namespace Librainian.Databases.MMF {
 
         //32 bytes for datetime String... it's an overkill i know
         [CanBeNull]
-        public T Get( String key ) {
+        public T Get( [CanBeNull] String key ) {
             if ( !this.IsConnected ) {
                 return default;
             }
@@ -147,9 +147,9 @@ namespace Librainian.Databases.MMF {
         }
 
         //ideal for Unit Testing of classes that depend upon this Library.
-        public void Set( String key, T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
+        public void Set( [CanBeNull] String key, [CanBeNull] T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
 
-        public void Set( [CanBeNull] String key, T obj, Int64 size, DateTime expire ) {
+        public void Set( [CanBeNull] String key, [CanBeNull] T obj, Int64 size, DateTime expire ) {
             try {
                 if ( String.IsNullOrEmpty( key ) ) {
                     throw new Exception( "The key can't be null or empty." );
@@ -194,18 +194,20 @@ namespace Librainian.Databases.MMF {
             }
         }
 
-        public void Set( String key, T obj, DateTime expire ) => this.Set( key, obj, size: this.ChunkSize, expire: expire );
+        public void Set( [CanBeNull] String key, [CanBeNull] T obj, DateTime expire ) => this.Set( key, obj, size: this.ChunkSize, expire: expire );
 
-        public void Set( String key, T obj, TimeSpan expire ) {
+        public void Set( [CanBeNull] String key, [CanBeNull] T obj, TimeSpan expire ) {
             var expireDt = DateTime.Now.Add( expire );
             this.Set( key, obj, size: this.ChunkSize, expire: expireDt );
         }
 
-        public void Set( String key, T obj, Int64 size ) => this.Set( key, obj, size: size, expire: DateTime.MaxValue );
+        public void Set( [CanBeNull] String key, [CanBeNull] T obj, Int64 size ) => this.Set( key, obj, size: size, expire: DateTime.MaxValue );
 
-        public T TryGetThenSet( String key, Func<T> cacheMiss ) => this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
+        [CanBeNull]
+        public T TryGetThenSet( [CanBeNull] String key, [CanBeNull] Func<T> cacheMiss ) => this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
 
-        public T TryGetThenSet( String key, DateTime expire, Func<T> cacheMiss ) {
+        [CanBeNull]
+        public T TryGetThenSet( [CanBeNull] String key, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
             var obj = this.Get( key );
 
             if ( obj != null ) {
@@ -218,19 +220,22 @@ namespace Librainian.Databases.MMF {
             return obj;
         }
 
-        public T TryGetThenSet( String key, TimeSpan expire, Func<T> cacheMiss ) {
+        [CanBeNull]
+        public T TryGetThenSet( [CanBeNull] String key, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
             var expireDt = DateTime.Now.Add( expire );
 
             return this.TryGetThenSet( key, expire: expireDt, cacheMiss: cacheMiss );
         }
 
-        public T TryGetThenSet( String key, Int64 size, TimeSpan expire, Func<T> cacheMiss ) {
+        [CanBeNull]
+        public T TryGetThenSet( [CanBeNull] String key, Int64 size, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
             var expireDt = DateTime.Now.Add( expire );
 
             return this.TryGetThenSet( key, size: size, expire: expireDt, cacheMiss: cacheMiss );
         }
 
-        public T TryGetThenSet( String key, Int64 size, DateTime expire, Func<T> cacheMiss ) {
+        [CanBeNull]
+        public T TryGetThenSet( [CanBeNull] String key, Int64 size, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
             var obj = this.Get( key );
 
             if ( obj is null ) {

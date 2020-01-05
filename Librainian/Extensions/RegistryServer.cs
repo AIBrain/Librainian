@@ -150,7 +150,7 @@ namespace Librainian.Extensions {
             // ReSharper restore DelegateSubtraction
         }
 
-        private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, String nodeKey ) {
+        private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, [CanBeNull] String nodeKey ) {
             Instance.InvokePopulateProgress();
 
             if ( startkeyIn is null ) {
@@ -168,7 +168,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        private static void Initialize( RegistryKey registryStartKey ) {
+        private static void Initialize( [CanBeNull] RegistryKey registryStartKey ) {
             if ( Instance._isInitialized ) {
                 return;
             }
@@ -180,9 +180,9 @@ namespace Librainian.Extensions {
             Instance._isInitialized = true;
         }
 
-        private static void InvokePopulateProgressItemError( PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
+        private static void InvokePopulateProgressItemError( [CanBeNull] PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
 
-        private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, String name, [CanBeNull] out RegistryKey itemOut ) {
+        private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, [CanBeNull] String name, [CanBeNull] out RegistryKey itemOut ) {
             var bIsOk = false;
             itemOut = null;
 

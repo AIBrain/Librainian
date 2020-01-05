@@ -42,6 +42,7 @@
 namespace Librainian.Extensions {
 
     using System;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     [JsonObject]
@@ -50,6 +51,6 @@ namespace Librainian.Extensions {
         [JsonProperty]
         public T Value;
 
-        public EventArgs( T value ) => this.Value = value;
+        public EventArgs( [CanBeNull] T value ) => this.Value = value;
     }
 }

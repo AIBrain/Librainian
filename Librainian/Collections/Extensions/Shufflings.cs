@@ -342,7 +342,11 @@ namespace Librainian.Collections.Extensions {
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="iterations"></param>
-        public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt32 iterations = 1 ) {
+        public static void ShuffleByRandomThenByRandom<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( paramName: nameof( list ) );
+            }
+
             while ( iterations.Any() ) {
                 iterations--;
                 list = list.OrderBy( keySelector: o => Randem.Next() ).ThenBy( keySelector: o => Randem.Next() ).ToList();

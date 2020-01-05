@@ -132,7 +132,7 @@ namespace Librainian.Collections.Lists {
         /// <param name="value">The value to add.</param>
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
-        public ImmutableList<T> CopyAndAdd( T value ) {
+        public ImmutableList<T> CopyAndAdd( [CanBeNull] T value ) {
             var newArray = new T[ this.Array.Length + 1 ];
             this.Array.CopyTo( array: newArray, index: 0 );
             newArray[ this.Array.Length ] = value;
@@ -154,7 +154,7 @@ namespace Librainian.Collections.Lists {
         /// <param name="item"> The element to insert.</param>
         /// <returns>An immutable copy of this modified list.</returns>
         [NotNull]
-        public ImmutableList<T> CopyAndInsert( Int32 index, T item ) {
+        public ImmutableList<T> CopyAndInsert( Int32 index, [CanBeNull] T item ) {
             var newArray = new T[ this.Array.Length + 1 ];
             Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
             newArray[ index ] = item;
@@ -200,7 +200,7 @@ namespace Librainian.Collections.Lists {
         /// <param name="item"> The value to store at the specified index.</param>
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
-        public ImmutableList<T> CopyAndSet( Int32 index, T item ) {
+        public ImmutableList<T> CopyAndSet( Int32 index, [CanBeNull] T item ) {
             var newArray = new T[ this.Array.Length ];
             this.Array.CopyTo( array: newArray, index: 0 );
             newArray[ index ] = item;

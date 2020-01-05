@@ -91,24 +91,24 @@ namespace Librainian.Parsing {
 
             public ContextImpl() => this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
 
-            public ContextImpl( [NotNull] ContextImpl baseContext, MatchExpression newExpr ) =>
+            public ContextImpl( [NotNull] ContextImpl baseContext, [CanBeNull] MatchExpression newExpr ) =>
                 this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
 
             [NotNull]
             public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
 
             [NotNull]
-            public override OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith ) =>
+            public override OpenMatchContext<T, TResult> Guard( [CanBeNull] Func<T, Boolean> failWhen, [CanBeNull] Func<T, TResult> failWith ) =>
                 new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
 
             [NotNull]
-            public override ClosedMatchContext Return( TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
+            public override ClosedMatchContext Return( [CanBeNull] TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
 
             [NotNull]
-            public override ClosedMatchContext Return( Func<T, TResult> resultProjection ) => new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
+            public override ClosedMatchContext Return( [CanBeNull] Func<T, TResult> resultProjection ) => new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
 
             [NotNull]
-            public override IntermediateMatchResultContext<T, TResult> When( Func<T, Boolean> condition ) => new IntermediateContextImpl( this, condition );
+            public override IntermediateMatchResultContext<T, TResult> When( [CanBeNull] Func<T, Boolean> condition ) => new IntermediateContextImpl( this, condition );
         }
 
         private sealed class IntermediateContextImpl : IntermediateMatchResultContext<T, TResult> {
@@ -117,16 +117,16 @@ namespace Librainian.Parsing {
 
             private readonly Func<T, Boolean> _condition;
 
-            public IntermediateContextImpl( ContextImpl baseContext, Func<T, Boolean> condition ) {
+            public IntermediateContextImpl( [CanBeNull] ContextImpl baseContext, [CanBeNull] Func<T, Boolean> condition ) {
                 this._baseContext = baseContext;
                 this._condition = condition;
             }
 
             [NotNull]
-            public override MatchContext<T, TResult> Return( TResult result ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
+            public override MatchContext<T, TResult> Return( [CanBeNull] TResult result ) => new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
 
             [NotNull]
-            public override MatchContext<T, TResult> Return( Func<T, TResult> resultProjection ) =>
+            public override MatchContext<T, TResult> Return( [CanBeNull] Func<T, TResult> resultProjection ) =>
                 new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
         }
 
@@ -136,14 +136,15 @@ namespace Librainian.Parsing {
 
             private readonly Func<T, Boolean> _isMatch;
 
-            public MatchExpression( Func<T, Boolean> isMatch, Func<T, TResult> getResult ) {
+            public MatchExpression( [CanBeNull] Func<T, Boolean> isMatch, [CanBeNull] Func<T, TResult> getResult ) {
                 this._isMatch = isMatch;
                 this._getResult = getResult;
             }
 
-            public TResult Evaluate( T value ) => this._getResult( value );
+            [CanBeNull]
+            public TResult Evaluate( [CanBeNull] T value ) => this._getResult( value );
 
-            public Boolean Matches( T value ) => this._isMatch( value );
+            public Boolean Matches( [CanBeNull] T value ) => this._isMatch( value );
         }
     }
 }

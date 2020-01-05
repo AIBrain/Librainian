@@ -142,8 +142,10 @@ namespace Librainian.Measurement.Time {
 
         public Picoseconds( BigInteger value ) => this.Value = value;
 
-        public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
+        [CanBeNull]
+        public static Picoseconds Combine( [CanBeNull] Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
 
+        [NotNull]
         public static Picoseconds Combine( Picoseconds left, Rational picoseconds ) => new Picoseconds( left.Value + picoseconds );
 
         /// <summary>
@@ -152,36 +154,58 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Picoseconds left, Picoseconds right ) => left.Value == right.Value;
+        public static Boolean Equals( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) {
+            if ( ReferenceEquals(left, right) ) {
+                return true;
+            }
 
+            if ( left is null || right is null ) {
+                return false;
+            }
+            return left.Value == right.Value;
+        }
+
+        [NotNull]
         public static implicit operator Femtoseconds( Picoseconds picoseconds ) => picoseconds.ToFemtoseconds();
 
+        [NotNull]
         public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
         [NotNull]
-        public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
+        public static implicit operator SpanOfTime( [NotNull] Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
 
-        public static Picoseconds operator -( Picoseconds nanoseconds ) => new Picoseconds( nanoseconds.Value * -1 );
+        [NotNull]
+        public static Picoseconds operator -( [NotNull] Picoseconds nanoseconds ) {
+            if ( nanoseconds == null ) {
+                throw new ArgumentNullException( paramName: nameof( nanoseconds ) );
+            }
 
-        public static Picoseconds operator -( Picoseconds left, Picoseconds right ) => Combine( left, -right );
+            return new Picoseconds( nanoseconds.Value * -1 );
+        }
 
-        public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
+        [CanBeNull]
+        public static Picoseconds operator -( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Combine( left, -right );
 
-        public static Boolean operator !=( Picoseconds left, Picoseconds right ) => !Equals( left, right );
+        [NotNull]
+        public static Picoseconds operator -( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
 
-        public static Picoseconds operator +( Picoseconds left, Picoseconds right ) => Combine( left, right );
+        public static Boolean operator !=( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => !Equals( left, right );
 
-        public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
+        [CanBeNull]
+        public static Picoseconds operator +( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Combine( left, right );
+
+        [NotNull]
+        public static Picoseconds operator +( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
 
         public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Picoseconds left, Picoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Equals( left, right );
 
         public static Boolean operator >( Picoseconds left, Picoseconds right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Picoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( Picoseconds other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Picoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -193,10 +217,13 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value * Femtoseconds.InOnePicosecond );
 
+        [NotNull]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
+        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOnePicosecond * this.Value );
 
         public Seconds ToSeconds() => throw new NotImplementedException();

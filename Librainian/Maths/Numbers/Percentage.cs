@@ -96,7 +96,7 @@ namespace Librainian.Maths.Numbers {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Percentage left, Percentage right ) {
+        public static Boolean Equals( [CanBeNull] Percentage left, [CanBeNull] Percentage right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }

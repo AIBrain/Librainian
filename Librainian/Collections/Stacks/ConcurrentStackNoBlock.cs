@@ -55,6 +55,7 @@ namespace Librainian.Collections.Stacks {
 
         public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
 
+        [CanBeNull]
         public T Pop() {
             Node ret;
 
@@ -69,7 +70,7 @@ namespace Librainian.Collections.Stacks {
             return ret.Item;
         }
 
-        public void Push( T item ) {
+        public void Push( [CanBeNull] T item ) {
             var nodeNew = new Node {
                 Item = item
             };
@@ -90,7 +91,7 @@ namespace Librainian.Collections.Stacks {
 
             public Node() { }
 
-            public Node( T item, Node next ) {
+            public Node( [CanBeNull] T item, [CanBeNull] Node next ) {
                 this.Item = item;
                 this.Next = next;
             }
@@ -109,7 +110,7 @@ namespace Librainian.Collections.Stacks {
 
         public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
 
-        public void Add( T item ) => this.Push( item: item );
+        public void Add( [CanBeNull] T item ) => this.Push( item: item );
 
         public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: CPU.AllCPUExceptOne, body: this.Push );
 
@@ -117,7 +118,7 @@ namespace Librainian.Collections.Stacks {
 
         public Int64 LongCount() => this.Count;
 
-        public void Push( T item ) {
+        public void Push( [CanBeNull] T item ) {
             if ( Equals( default, item ) ) {
                 return;
             }
@@ -136,7 +137,7 @@ namespace Librainian.Collections.Stacks {
             ++this.Count;
         }
 
-        public Boolean TryPop( out T result ) {
+        public Boolean TryPop( [CanBeNull] out T result ) {
             result = default;
 
             Node ret;
@@ -163,7 +164,7 @@ namespace Librainian.Collections.Stacks {
         /// <param name="itemOne"></param>
         /// <param name="itemTwo"></param>
         /// <returns></returns>
-        public Boolean TryPopPop( out T itemOne, out T itemTwo ) {
+        public Boolean TryPopPop( [CanBeNull] out T itemOne, [CanBeNull] out T itemTwo ) {
             if ( !this.TryPop( result: out itemOne ) ) {
                 itemTwo = default;
 
@@ -187,7 +188,7 @@ namespace Librainian.Collections.Stacks {
 
             public Node() { }
 
-            public Node( T item, Node next ) {
+            public Node( [CanBeNull] T item, [CanBeNull] Node next ) {
                 this.Item = item;
                 this.Next = next;
             }

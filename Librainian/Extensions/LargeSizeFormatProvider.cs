@@ -50,14 +50,14 @@ namespace Librainian.Extensions {
         private const String FileSizeFormat = "fs";
 
         [NotNull]
-        private static String DefaultFormat( String format, [NotNull] Object arg, IFormatProvider formatProvider ) {
+        private static String DefaultFormat( [CanBeNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;
 
             return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
         }
 
         [NotNull]
-        public String Format( [CanBeNull] String format, Object arg, IFormatProvider formatProvider ) {
+        public String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( format?.StartsWith( FileSizeFormat ) != true ) {
                 return DefaultFormat( format, arg, formatProvider );
             }

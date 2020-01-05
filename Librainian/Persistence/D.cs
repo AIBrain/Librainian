@@ -122,7 +122,7 @@ namespace Librainian.Persistence {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( D left, D right ) {
+        public static Boolean Equals( [CanBeNull] D left, [CanBeNull] D right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }

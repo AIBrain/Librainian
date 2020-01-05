@@ -72,16 +72,16 @@ namespace Librainian.Extensions {
 
         public SerializableExceptionWithCustomProperties() { }
 
-        public SerializableExceptionWithCustomProperties( String message ) : base( message ) { }
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message ) : base( message ) { }
 
-        public SerializableExceptionWithCustomProperties( String message, Exception innerException ) : base( message, innerException ) { }
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
-        public SerializableExceptionWithCustomProperties( String message, String resourceName, IList<String> validationErrors ) : base( message ) {
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors ) : base( message ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
 
-        public SerializableExceptionWithCustomProperties( String message, String resourceName, IList<String> validationErrors, Exception innerException ) : base( message,
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors, [CanBeNull] Exception innerException ) : base( message,
             innerException ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;

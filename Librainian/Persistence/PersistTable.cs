@@ -126,7 +126,7 @@ namespace Librainian.Persistence {
             applicationName: null, subFolder: tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
+        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder, subFolder,
             tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
@@ -182,7 +182,7 @@ namespace Librainian.Persistence {
             return false;
         }
 
-        public void Add( TKey key, TValue value ) => this[ key ] = value;
+        public void Add( TKey key, [CanBeNull] TValue value ) => this[ key ] = value;
 
         public void Add( KeyValuePair<TKey, TValue> item ) => this[ item.Key ] = item.Value;
 
@@ -253,7 +253,7 @@ namespace Librainian.Persistence {
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() => $"{this.Count} items";
 
-        public void TryAdd( [NotNull] TKey key, TValue value ) {
+        public void TryAdd( [NotNull] TKey key, [CanBeNull] TValue value ) {
             if ( key is null ) {
                 throw new ArgumentNullException( paramName: nameof( key ) );
             }

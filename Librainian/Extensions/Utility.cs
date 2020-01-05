@@ -115,7 +115,7 @@ namespace Librainian.Extensions {
         //    return false;
         //}
 
-        public static void Spin( String text ) {
+        public static void Spin( [CanBeNull] String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
@@ -191,7 +191,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
+        public static void WriteColor( [CanBeNull] this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
             [CanBeNull] params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( parms?.Any() != true ) {
@@ -219,7 +219,7 @@ namespace Librainian.Extensions {
             }
         }
 
-        public static void WriteLineColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
+        public static void WriteLineColor( [CanBeNull] this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
             [CanBeNull] params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( parms?.Any() != true ) {

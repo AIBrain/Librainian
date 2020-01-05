@@ -58,7 +58,7 @@ namespace Librainian.Maths.Numbers {
 
         public BigInt( [NotNull] String number ) => this.Integer = CalculateBigInteger( number );
 
-        public BigInt( List<Int32> list ) => this.Integer = list;
+        public BigInt( [CanBeNull] List<Int32> list ) => this.Integer = list;
 
         [NotNull]
         private static List<Int32> CalculateBigInteger( [NotNull] String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();

@@ -44,6 +44,7 @@ namespace Librainian.Internet.Servers {
     using System;
     using System.Net;
     using System.Threading;
+    using JetBrains.Annotations;
     using Utilities;
 
     public class WebServer : ABetterClassDispose {
@@ -58,13 +59,13 @@ namespace Librainian.Internet.Servers {
 
         protected WebServer() => this._httpListener = new HttpListener();
 
-        private static void ListenerCallback( IAsyncResult ar ) {
+        private static void ListenerCallback( [CanBeNull] IAsyncResult ar ) {
 
             //TODO
         }
 
         // Loop here to begin processing of new requests.
-        private void Listen( Object state ) {
+        private void Listen( [CanBeNull] Object state ) {
             while ( this._httpListener.IsListening ) {
                 this._httpListener.BeginGetContext( ListenerCallback, this._httpListener );
                 this._listenForNextRequest.WaitOne();

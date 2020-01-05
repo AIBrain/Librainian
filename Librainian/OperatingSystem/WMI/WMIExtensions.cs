@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.WMI {
     public static class WMIExtensions {
 
         [NotNull]
-        public static String Identifier( String wmiClass, String wmiProperty, String wmiMustBeTrue ) {
+        public static String Identifier( [CanBeNull] String wmiClass, [CanBeNull] String wmiProperty, [CanBeNull] String wmiMustBeTrue ) {
             using ( var managementClass = new ManagementClass( wmiClass ) ) {
                 var instances = managementClass.GetInstances();
 
@@ -71,7 +71,7 @@ namespace Librainian.OperatingSystem.WMI {
         }
 
         [NotNull]
-        public static String Identifier( String wmiClass, String wmiProperty ) {
+        public static String Identifier( [CanBeNull] String wmiClass, [CanBeNull] String wmiProperty ) {
             using ( var managementClass = new ManagementClass( wmiClass ) ) {
                 var instances = managementClass.GetInstances();
 
@@ -92,7 +92,7 @@ namespace Librainian.OperatingSystem.WMI {
         }
 
         [NotNull]
-        public static ManagementObjectCollection QueryWMI( String machineName, String scope, [NotNull] String query ) {
+        public static ManagementObjectCollection QueryWMI( [CanBeNull] String machineName, [CanBeNull] String scope, [NotNull] String query ) {
             var conn = new ConnectionOptions();
             var nameSpace = @"\\";
             nameSpace += machineName != String.Empty ? machineName : ".";

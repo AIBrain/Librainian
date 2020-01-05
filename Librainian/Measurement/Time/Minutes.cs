@@ -145,6 +145,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
+        [CanBeNull]
         public static implicit operator Hours( [NotNull] Minutes minutes ) {
             if ( minutes is null ) {
                 throw new ArgumentNullException( paramName: nameof( minutes ) );
@@ -275,7 +276,7 @@ namespace Librainian.Measurement.Time {
             return left.Value < right.Value;
         }
 
-        public static Boolean operator <( [NotNull] Minutes left, Hours right ) {
+        public static Boolean operator <( [NotNull] Minutes left, [CanBeNull] Hours right ) {
             if ( left is null ) {
                 throw new ArgumentNullException( paramName: nameof( left ) );
             }
@@ -307,7 +308,7 @@ namespace Librainian.Measurement.Time {
             return Equals( left, right );
         }
 
-        public static Boolean operator >( [CanBeNull] Minutes left, Hours right ) => ( Hours )left > right;
+        public static Boolean operator >( [CanBeNull] Minutes left, [CanBeNull] Hours right ) => ( Hours )left > right;
 
         public static Boolean operator >( [NotNull] Minutes left, [NotNull] Minutes right ) {
             if ( left is null ) {
@@ -359,6 +360,7 @@ namespace Librainian.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public Hours ToHours() => new Hours( this.Value / InOneHour );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMinute * this.Value );

@@ -65,8 +65,10 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         /// <summary>
         ///     (includes the extension)
         /// </summary>
+        [CanBeNull]
         public String FileName => this._filename;
 
+        [CanBeNull]
         public IFolder Folder => this._folder;
 
         public FileHistoryFile( [NotNull] Document biglongpath ) {

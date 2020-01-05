@@ -123,7 +123,7 @@ namespace Librainian.Internet {
             */
         }
 
-        public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, [NotNull] String webpage ) {
+        public static IEnumerable<UriLinkItem> ParseLinks( [CanBeNull] Uri baseUri, [NotNull] String webpage ) {
 
             // ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
@@ -185,7 +185,7 @@ namespace Librainian.Internet {
             }
         }
 
-        internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
+        internal void webclient_DownloadStringCompleted( [CanBeNull] Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
             if ( e.UserState is Uri userState ) {
                 String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).Info();
                 this._pastUrls.Add( userState );

@@ -116,7 +116,7 @@ namespace Librainian.Graphics {
         }
 
         [NotNull]
-        public static Task<Erg> TryConvertToERG( this Document document, CancellationToken token ) =>
+        public static Task<Erg> TryConvertToERG( [CanBeNull] this Document document, CancellationToken token ) =>
             Task.Run( () => {
                 var erg = new Erg();
 
@@ -127,7 +127,7 @@ namespace Librainian.Graphics {
             }, token );
 
         [NotNull]
-        public static Task<Boolean> TrySave( this Erg erg, Document document, CancellationToken token ) =>
+        public static Task<Boolean> TrySave( [CanBeNull] this Erg erg, [CanBeNull] Document document, CancellationToken token ) =>
             Task.Run( () => {
 
                 //TODO recalc the checksums
@@ -137,7 +137,7 @@ namespace Librainian.Graphics {
             }, token );
 
         [NotNull]
-        public static Task<Boolean> TrySave( this Efv efv, Document document, CancellationToken token ) =>
+        public static Task<Boolean> TrySave( [CanBeNull] this Efv efv, [CanBeNull] Document document, CancellationToken token ) =>
             Task.Run( () => {
 
                 //TODO recalc the checksums

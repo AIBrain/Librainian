@@ -80,9 +80,9 @@ namespace Librainian.Collections {
             }
         }
 
-        public void Add( [NotNull] TK primaryKey, TV val ) => this.TryAdd( primaryKey, val );
+        public void Add( [NotNull] TK primaryKey, [CanBeNull] TV val ) => this.TryAdd( primaryKey, val );
 
-        public void Add( [NotNull] TK primaryKey, [NotNull] TL subKey, TV val ) {
+        public void Add( [NotNull] TK primaryKey, [NotNull] TL subKey, [CanBeNull] TV val ) {
             this.TryAdd( primaryKey, val );
 
             this.Associate( subKey: subKey, primaryKey: primaryKey );

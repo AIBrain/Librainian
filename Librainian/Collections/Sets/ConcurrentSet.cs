@@ -263,7 +263,7 @@ namespace Librainian.Collections.Sets {
 
         public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out _ );
 
-        public Boolean TryTakeAny( out T item ) {
+        public Boolean TryTakeAny( [CanBeNull] out T item ) {
             foreach ( var pair in this.Dictionary ) {
                 item = pair.Key;
 

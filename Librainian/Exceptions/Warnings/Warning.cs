@@ -43,6 +43,7 @@ namespace Librainian.Exceptions.Warnings {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using Logging;
     using Parsing;
 
@@ -59,6 +60,6 @@ namespace Librainian.Exceptions.Warnings {
 
         public Warning( TrimmedString message ) : base( message ) => message.Break();
 
-        public Warning( TrimmedString message, Exception inner ) : base( message, inner ) => message.Break();
+        public Warning( TrimmedString message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Break();
     }
 }

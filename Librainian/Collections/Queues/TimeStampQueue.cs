@@ -84,12 +84,13 @@ namespace Librainian.Collections.Queues {
             }
         }
 
-        public Boolean Contains( T value ) => this.Queue.Any( q => Equals( q.Item, value ) );
+        public Boolean Contains( [CanBeNull] T value ) => this.Queue.Any( q => Equals( q.Item, value ) );
 
         /// <summary>
         ///     Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.
         /// </summary>
         /// <returns></returns>
+        [CanBeNull]
         public T Next() {
             var temp = this.Pull();
 

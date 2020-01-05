@@ -102,7 +102,7 @@ namespace Librainian.OperatingSystem {
             return false;
         }
 
-        public static void RemoveRegistryContext( String menuPath, String registryCommand ) {
+        public static void RemoveRegistryContext( [CanBeNull] String menuPath, [CanBeNull] String registryCommand ) {
 
             try {
                 try {

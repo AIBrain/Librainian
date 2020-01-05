@@ -141,8 +141,8 @@ namespace Librainian.Graphics.Geometry {
         ///     Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.
         /// </summary>
         /// <returns></returns>
-        public static Boolean CalculateLineLineIntersection( this CoordinateF line1Point1, CoordinateF line1Point2, CoordinateF line2Point1, CoordinateF line2Point2,
-            out CoordinateF resultSegmentPoint1, out CoordinateF resultSegmentPoint2 ) {
+        public static Boolean CalculateLineLineIntersection( [CanBeNull] this CoordinateF line1Point1, [CanBeNull] CoordinateF line1Point2, [CanBeNull] CoordinateF line2Point1, [CanBeNull] CoordinateF line2Point2,
+            [CanBeNull] out CoordinateF resultSegmentPoint1, [CanBeNull] out CoordinateF resultSegmentPoint2 ) {
             "".Break();
 
             // Algorithm is ported from the C algorithm of Paul Bourke at http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline3d/
@@ -211,7 +211,7 @@ namespace Librainian.Graphics.Geometry {
         /// <param name="horizontalDiameter">Horizontal diameter for the rounded angles.</param>
         /// <param name="verticalDiameter">  Vertical diameter for the rounded angles.</param>
         /// <param name="rectAngles">        Angles to round.</param>
-        public static void DrawAndFillRoundedRectangle( this Graphics g, [CanBeNull] Pen p, [CanBeNull] Brush b, Rectangle r, Int32 horizontalDiameter, Int32 verticalDiameter,
+        public static void DrawAndFillRoundedRectangle( [CanBeNull] this Graphics g, [CanBeNull] Pen p, [CanBeNull] Brush b, Rectangle r, Int32 horizontalDiameter, Int32 verticalDiameter,
             RectAngles rectAngles ) {
 
             // get out data

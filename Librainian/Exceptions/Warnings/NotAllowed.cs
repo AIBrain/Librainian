@@ -42,6 +42,7 @@
 namespace Librainian.Exceptions.Warnings {
 
     using System;
+    using JetBrains.Annotations;
     using Parsing;
 
     /// <summary>
@@ -52,6 +53,6 @@ namespace Librainian.Exceptions.Warnings {
 
         public NotAllowed( TrimmedString message ) : base( message ) { }
 
-        public NotAllowed( TrimmedString message, Exception inner ) : base( message, inner ) { }
+        public NotAllowed( TrimmedString message, [CanBeNull] Exception inner ) : base( message, inner ) { }
     }
 }

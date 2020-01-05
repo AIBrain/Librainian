@@ -219,8 +219,8 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         [NotNull]
-        public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp,
-            String nonce, [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) =>
+        public String GenerateSignature( [CanBeNull] Uri url, [CanBeNull] String consumerKey, [CanBeNull] String consumerSecret, [CanBeNull] String token, [CanBeNull] String tokenSecret, [CanBeNull] String httpMethod, [CanBeNull] String timeStamp,
+            [CanBeNull] String nonce, [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) =>
             this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl,
                 out normalizedRequestParameters );
 
@@ -240,8 +240,8 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         [NotNull]
-        public String GenerateSignature( Uri url, String consumerKey, String consumerSecret, String token, String tokenSecret, String httpMethod, String timeStamp,
-            String nonce, SignatureTypes signatureType, [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) {
+        public String GenerateSignature( [CanBeNull] Uri url, [CanBeNull] String consumerKey, [CanBeNull] String consumerSecret, [CanBeNull] String token, [CanBeNull] String tokenSecret, [CanBeNull] String httpMethod, [CanBeNull] String timeStamp,
+            [CanBeNull] String nonce, SignatureTypes signatureType, [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) {
             normalizedUrl = null;
             normalizedRequestParameters = null;
 
@@ -282,8 +282,8 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>The signature base</returns>
         [NotNull]
-        public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, String tokenSecret, [NotNull] String httpMethod, String timeStamp,
-            String nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl, [NotNull] out String normalizedRequestParameters ) {
+        public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, String tokenSecret, [NotNull] String httpMethod, [CanBeNull] String timeStamp,
+            [CanBeNull] String nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl, [NotNull] out String normalizedRequestParameters ) {
             if ( token is null ) {
                 token = String.Empty;
             }
@@ -370,7 +370,7 @@ namespace Librainian.Internet {
 
             public String Value { get; }
 
-            public QueryParameter( String name, String value ) {
+            public QueryParameter( [CanBeNull] String name, [CanBeNull] String value ) {
                 this.Name = name;
                 this.Value = value;
             }

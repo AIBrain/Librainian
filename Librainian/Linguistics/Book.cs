@@ -94,7 +94,7 @@ namespace Librainian.Linguistics {
         /// <param name="left"></param>
         /// <param name="rhs"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Book left, Book rhs ) {
+        public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book rhs ) {
             if ( ReferenceEquals( left, rhs ) ) {
                 return true;
             }

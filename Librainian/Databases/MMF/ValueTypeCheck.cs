@@ -54,7 +54,7 @@ namespace Librainian.Databases.MMF {
 
         private Type Type { get; }
 
-        public ValueTypeCheck( Type objectType ) => this.Type = objectType;
+        public ValueTypeCheck( [CanBeNull] Type objectType ) => this.Type = objectType;
 
         private static Boolean HasMarshalDefinedSize( [NotNull] MemberInfo info ) {
             var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );

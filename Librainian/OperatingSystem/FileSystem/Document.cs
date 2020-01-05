@@ -877,7 +877,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="eta">        </param>
         /// <returns></returns>
         [NotNull]
-        public Task Copy( IDocument destination, IProgress<Single> progress, IProgress<TimeSpan> eta ) =>
+        public Task Copy( [CanBeNull] IDocument destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta ) =>
             Task.Run( action: () => {
                 var computer = new Computer();
 
@@ -1345,7 +1345,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="useShell"></param>
         /// <returns></returns>
         [NotNull]
-        public Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false ) {
+        public Task<Process> Launch( [CanBeNull] String arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( fileName: this.FullPath ) {
                     Arguments = arguments ?? String.Empty,
@@ -2029,6 +2029,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="fileName"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
+        [ItemNotNull]
         public static async Task<WebClient> DownloadFileTaskAsync( [NotNull] Uri address, [NotNull] String fileName,
             [CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
 

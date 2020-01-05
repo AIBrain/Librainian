@@ -129,7 +129,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Unique left, Unique right ) {
+        public static Boolean Equals( [CanBeNull] Unique left, [CanBeNull] Unique right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }

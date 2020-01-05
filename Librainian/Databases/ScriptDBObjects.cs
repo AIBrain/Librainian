@@ -54,7 +54,7 @@ namespace Librainian.Databases {
 
     public class ScriptDBObjects {
 
-        public static void BackupDB( Server srv, Microsoft.SqlServer.Management.Smo.Database db, DirectoryInfo saveFolder ) {
+        public static void BackupDB( [CanBeNull] Server srv, [CanBeNull] Microsoft.SqlServer.Management.Smo.Database db, [CanBeNull] DirectoryInfo saveFolder ) {
 
             var dboDict = new ConcurrentDictionary<String, IEnumerable<ScriptSchemaObjectBase>>();
 
@@ -92,7 +92,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public static String GetScriptString( Server server, SqlSmoObject obj ) {
+        public static String GetScriptString( [CanBeNull] Server server, [CanBeNull] SqlSmoObject obj ) {
             var output = new StringBuilder();
             var scr = new Scripter( server );
 

@@ -55,6 +55,6 @@ namespace Librainian.Parsing.Validation {
         public StringHex( String value ) : base( value, "^[0-9a-fA-F]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringHex( String str ) => new StringHex( str );
+        public static explicit operator StringHex( [CanBeNull] String str ) => new StringHex( str );
     }
 }

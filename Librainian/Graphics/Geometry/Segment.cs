@@ -45,6 +45,7 @@ namespace Librainian.Graphics.Geometry {
     using System.Diagnostics;
     using DDD;
     using Extensions;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     [Immutable]
@@ -58,7 +59,7 @@ namespace Librainian.Graphics.Geometry {
 
         public static Segment Empty;
 
-        public Segment( CoordinateF p1, CoordinateF p2 ) {
+        public Segment( [CanBeNull] CoordinateF p1, [CanBeNull] CoordinateF p2 ) {
             this.P1 = p1;
             this.P2 = p2;
         }

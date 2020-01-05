@@ -42,6 +42,7 @@
 namespace Librainian.Graphics.Video {
 
     using System;
+    using JetBrains.Annotations;
 
     public struct CarrierImage {
 
@@ -65,7 +66,7 @@ namespace Librainian.Graphics.Video {
         //produce colorful (false) or grayscale noise (true) for this picture
         public Boolean UseGrayscale;
 
-        public CarrierImage( String sourceFileName, String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
+        public CarrierImage( [CanBeNull] String sourceFileName, [CanBeNull] String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
             this.SourceFileName = sourceFileName;
             this.ResultFileName = resultFileName;
             this.CountPixels = countPixels;

@@ -90,13 +90,13 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
-        public void Add( String name, String value ) => this.Add( name, value, TimeSpan.Zero );
+        public void Add( [CanBeNull] String name, [CanBeNull] String value ) => this.Add( name, value, TimeSpan.Zero );
 
         /// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
         /// <param name="expireTime">The amount of time before the cookie should expire.</param>
-        public void Add( String name, String value, TimeSpan expireTime ) {
+        public void Add( String name, [CanBeNull] String value, TimeSpan expireTime ) {
             if ( name is null ) {
                 return;
             }
@@ -119,6 +119,7 @@ namespace Librainian.Internet.Servers {
         /// </summary>
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
+        [CanBeNull]
         public String GetValue( [NotNull] String name ) {
             var cookie = this.Get( name );
 

@@ -42,6 +42,7 @@
 namespace Librainian.Collections {
 
     using System;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     This type is experimental and that usually means untested.
@@ -60,6 +61,6 @@ namespace Librainian.Collections {
         ///     This type is experimental and that usually means untested.
         /// </summary>
         /// <param name="message"></param>
-        public ExperimentalAttribute( String message ) => this.Message = message;
+        public ExperimentalAttribute( [CanBeNull] String message ) => this.Message = message;
     }
 }

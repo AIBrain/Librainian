@@ -76,7 +76,7 @@ namespace Librainian.Persistence {
 
         public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
 
-        public override Boolean TrySetMember( SetMemberBinder binder, Object value ) {
+        public override Boolean TrySetMember( SetMemberBinder binder, [CanBeNull] Object value ) {
             this.Context.Add( binder.Name, value );
 
             return true;

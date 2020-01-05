@@ -212,6 +212,7 @@ namespace Librainian.Measurement.Time {
             return microseconds.ToMilliseconds();
         }
 
+        [CanBeNull]
         public static implicit operator Nanoseconds( [NotNull] Microseconds microseconds ) {
             if ( microseconds is null ) {
                 throw new ArgumentNullException( paramName: nameof( microseconds ) );
@@ -381,6 +382,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Milliseconds ToMilliseconds() => new Milliseconds( this.Value / InOneMillisecond );
 
+        [NotNull]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMicrosecond * this.Value );

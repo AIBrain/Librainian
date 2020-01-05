@@ -57,7 +57,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     /// </summary>
     public class Volume : Device {
 
-        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index ) : base( deviceClass, deviceInfoData, path,
+        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index ) : base( deviceClass, deviceInfoData, path,
             index ) { }
 
         /// <summary>
