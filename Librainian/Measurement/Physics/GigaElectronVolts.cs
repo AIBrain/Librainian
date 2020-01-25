@@ -73,7 +73,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly GigaElectronVolts Zero = new GigaElectronVolts( Decimal.Zero );
 
         /// <summary></summary>
-        public readonly Rational Value;
+        public Rational Value { get; }
 
         public GigaElectronVolts( Decimal units ) : this() => this.Value = ( Rational ) units;
         public GigaElectronVolts( Rational units ) : this() => this.Value = units;
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Physics {
         ///     Returns the fully qualified type name of this instance.
         /// </summary>
         /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
+        ///     A <see cref="String" /> containing a fully qualified type name.
         /// </returns>
         public override String ToString() => $"{this.Value} GeV";
 

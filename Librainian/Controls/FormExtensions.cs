@@ -54,7 +54,7 @@ namespace Librainian.Controls {
 
         public static Boolean IsFullyVisibleOnAnyScreen( [NotNull] this Form form ) {
             if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
+                throw new ArgumentNullException(  nameof( form ) );
             }
 
             var desktopBounds = form.DesktopBounds;
@@ -105,7 +105,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         public static void Location( [NotNull] this Form form, Point location ) {
             if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
+                throw new ArgumentNullException(  nameof( form ) );
             }
 
             form.InvokeAction( () => form.SetDesktopLocation( location.X, location.Y ) );
@@ -158,7 +158,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Size Size( [NotNull] this Form form ) {
             if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
+                throw new ArgumentNullException(  nameof( form ) );
             }
 
             return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
@@ -170,7 +170,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         public static void Size( [NotNull] this Form form, Size size ) {
             if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
+                throw new ArgumentNullException(  nameof( form ) );
             }
 
             form.InvokeAction( () => form.Size = size );

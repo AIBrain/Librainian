@@ -47,7 +47,7 @@ namespace Librainian.Exceptions {
 
     /// <inheritdoc />
     /// <summary>
-    ///     <para>Generic error when using a <see cref="T:System.IO.Stream" />.</para>
+    ///     <para>Generic error when using a <see cref="System.IO.Stream" />.</para>
     /// </summary>
     [Serializable]
     public class StreamException : Exception {
@@ -60,7 +60,7 @@ namespace Librainian.Exceptions {
 
         protected StreamException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
             if ( info is null ) {
-                throw new ArgumentNullException( paramName: nameof( info ) );
+                throw new ArgumentNullException(  nameof( info ) );
             }
         }
 

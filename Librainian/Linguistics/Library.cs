@@ -58,6 +58,12 @@ namespace Librainian.Linguistics {
     [Serializable]
     public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals(this, obj as Library);
+
         [NotNull]
         [JsonProperty]
         private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
@@ -68,22 +74,19 @@ namespace Librainian.Linguistics {
         ///     Static equality test
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
+        public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
-            if ( left is null ) {
+            if ( left is null || right is null ) {
                 return false;
             }
 
-            if ( rhs is null ) {
-                return false;
-            }
-
-            return left.OrderBy( pair => pair.Key ).SequenceEqual( rhs.OrderBy( pair => pair.Key ) );
+            //shouldn't this be more of a set-type comparison? If all A are contained in B or all B are contained in A then true?
+            return left.OrderBy( pair => pair.Key ).SequenceEqual( right.OrderBy( pair => pair.Key ) ); 
         }
 
         public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
@@ -117,7 +120,7 @@ namespace Librainian.Linguistics {
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Books ).GetEnumerator();
     }
 }

@@ -167,9 +167,9 @@ namespace Librainian.Measurement.Frequency {
 
         public static implicit operator TimeSpan( [NotNull] Hertz hertz ) => TimeSpan.FromSeconds( ( Double ) ( 1.0m / hertz.Value ) );
 
-        public static Boolean operator <( [NotNull] Hertz left, [NotNull] Hertz rhs ) => left.Value.CompareTo( rhs.Value ) < 0;
+        public static Boolean operator <( [NotNull] Hertz left, [NotNull] Hertz right ) => left.Value.CompareTo( right.Value ) < 0;
 
-        public static Boolean operator >( [NotNull] Hertz left, [NotNull] Hertz rhs ) => left.Value.CompareTo( rhs.Value ) > 0;
+        public static Boolean operator >( [NotNull] Hertz left, [NotNull] Hertz right ) => left.Value.CompareTo( right.Value ) > 0;
 
         public override String ToString() => $"{this.Value} hertz ({( ( TimeSpan ) this ).Simpler()})";
     }

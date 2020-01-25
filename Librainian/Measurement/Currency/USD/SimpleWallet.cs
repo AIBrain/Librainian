@@ -125,13 +125,12 @@ namespace Librainian.Measurement.Currency.USD {
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) => throw new NotImplementedException();
+        public Boolean TryAdd( Decimal amount ) => throw new NotImplementedException();
 
-        public Boolean TryAdd( Currency.SimpleWallet wallet, Boolean sanitize = true ) => throw new NotImplementedException();
+        public Boolean TryAdd( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
 
-        public Boolean TryDeposit( Decimal amount, Boolean sanitizeAmount = false ) {
+        public Boolean TryDeposit( Decimal amount ) {
             if ( amount < Decimal.Zero ) {
                 return false;
             }
@@ -148,11 +147,11 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet, Boolean sanitize = true ) => throw new NotImplementedException();
+        public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet ) => throw new NotImplementedException();
 
         public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) => throw new NotImplementedException();
 
-        public Boolean TryUpdateBalance( Decimal amount, Boolean sanitizeAmount = true ) {
+        public Boolean TryUpdateBalance( Decimal amount ) {
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return false;
@@ -172,7 +171,7 @@ namespace Librainian.Measurement.Currency.USD {
             }
         }
 
-        public Boolean TryWithdraw( Decimal amount, Boolean sanitizeAmount = false ) {
+        public Boolean TryWithdraw( Decimal amount ) {
             if ( amount < Decimal.Zero ) {
                 return false;
             }

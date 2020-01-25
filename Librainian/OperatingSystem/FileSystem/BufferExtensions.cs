@@ -74,7 +74,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public static Int32 OptimalBufferSize( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             var size = document.Size();

@@ -60,7 +60,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] Yoctoseconds other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.Value.CompareTo( other.Value );
@@ -134,11 +134,11 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static Yoctoseconds Combine( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, right.Value );
@@ -147,7 +147,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Yoctoseconds Combine( [NotNull] Yoctoseconds left, Rational yoctoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return new Yoctoseconds( left.Value + yoctoseconds );
@@ -177,7 +177,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator PlanckTimes( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
+                throw new ArgumentNullException(  nameof( yoctoseconds ) );
             }
 
             return ToPlanckTimes( yoctoseconds );
@@ -186,7 +186,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator SpanOfTime( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
+                throw new ArgumentNullException(  nameof( yoctoseconds ) );
             }
 
             return new SpanOfTime( yoctoseconds: yoctoseconds );
@@ -198,7 +198,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Zeptoseconds( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
+                throw new ArgumentNullException(  nameof( yoctoseconds ) );
             }
 
             return yoctoseconds.ToZeptoseconds();
@@ -207,7 +207,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Yoctoseconds operator -( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
+                throw new ArgumentNullException(  nameof( yoctoseconds ) );
             }
 
             return new Yoctoseconds( yoctoseconds.Value * -1 );
@@ -216,11 +216,11 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static Yoctoseconds operator -( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left: left, right: -right );
@@ -229,7 +229,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Yoctoseconds operator -( [NotNull] Yoctoseconds left, Decimal seconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, ( Rational ) ( -seconds ) );
@@ -237,11 +237,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator !=( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return !Equals( left, right );
@@ -250,11 +250,11 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static Yoctoseconds operator +( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, right );
@@ -263,7 +263,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Yoctoseconds operator +( [NotNull] Yoctoseconds left, Decimal yoctoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, ( Rational ) yoctoseconds );
@@ -271,11 +271,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value < right.Value;
@@ -285,11 +285,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -298,7 +298,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static PlanckTimes ToPlanckTimes( [NotNull] Yoctoseconds yoctoseconds ) {
             if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( yoctoseconds ) );
+                throw new ArgumentNullException(  nameof( yoctoseconds ) );
             }
 
             return new PlanckTimes( yoctoseconds.Value * ( Rational ) PlanckTimes.InOneYoctosecond );

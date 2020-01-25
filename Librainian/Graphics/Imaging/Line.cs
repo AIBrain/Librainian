@@ -50,148 +50,148 @@ namespace Librainian.Graphics.Imaging {
     using JetBrains.Annotations;
     using Newtonsoft.Json;
 
-    /// <summary>
-    ///     A horizontal line of <see cref="Pixel" />.
-    /// </summary>
+    /// <summary>A horizontal line of <see cref="Pixel" />.</summary>
     [JsonObject]
     [StructLayout( LayoutKind.Sequential )]
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
-        ///     collection.
-        /// </returns>
         public IEnumerator<Pixel> GetEnumerator() => this.Pixels.AsEnumerable().GetEnumerator();
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        /// <summary>
-        ///     Determines whether the specified objects are equal.
-        /// </summary>
-        /// <returns>true if the specified objects are equal.</returns>
-        public Boolean Equals( Line x, Line y ) => Equal( x, y );
+        Boolean IEqualityComparer<Line>.Equals( Line x, Line y ) => Equals( x, y );
 
-        /// <summary>
-        ///     Returns a hash code for the specified object.
-        /// </summary>
+        /// <summary>Returns a hash code for the specified object.</summary>
         /// <returns>A hash code for the specified object.</returns>
-        /// <param name="obj">The <see cref="T:System.Object" /> for which a hash code is to be returned.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        ///     The type of <paramref name="obj" /> is a reference type and
-        ///     <paramref name="obj" /> is null.
-        /// </exception>
+        /// <param name="obj">The <see cref="System.Object" /> for which a hash code is to be returned.</param>
+        /// <exception cref="System.ArgumentNullException">The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is null.</exception>
         public Int32 GetHashCode( Line obj ) => this.Pixels.GetHashCode();
 
-        /// <summary>
-        ///     Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
+        /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( Line other ) => Equal( this, other );
+        public Boolean Equals( Line other ) => Equals( this, other );
 
-        /// <summary>
-        ///     Checksum of the pixels (to guard against corruption).
-        /// </summary>
-        /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Line);
+
+
+       
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>A hash code for the current object.</returns>
+        // ReSharper disable 3 NonReadonlyMemberInGetHashCode
+        public override int GetHashCode() => ( this.Count, this.Pixels, this._checksum ).GetHashCode();
+
+        /// <summary>Returns a value that indicates whether the values of two <see cref="Librainian.Graphics.Imaging.Line" /> objects are equal.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+        public static bool operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left, right );
+
+        /// <summary>Returns a value that indicates whether two <see cref="Librainian.Graphics.Imaging.Line" /> objects have different values.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+        public static bool operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left, right );
+
+        /// <summary>How many pixels should be in this line?</summary>
         [JsonProperty]
-
-        //[FieldOffset( 0 )]
-        public UInt64 Checksum;
-
-        /// <summary>
-        ///     How many pixels should be in this line?
-        /// </summary>
-        [JsonProperty]
-
-        //[FieldOffset( sizeof( UInt64 ) * 1 )]
         public UInt64 Count;
 
-        /// <summary>
-        ///     An array of pixels
-        /// </summary>
+        /// <summary>An array of pixels</summary>
         /// <remarks>I'd prefer a list instead of an array.</remarks>
         [JsonProperty]
-
-        //[FieldOffset( sizeof( UInt64 ) * 2 )]
         [NotNull]
         public Pixel[] Pixels;
 
-        /// <summary>
-        ///     Returns the zero-based <see cref="Pixel" /> or null if not found.
-        /// </summary>
+        /// <summary>Returns the zero-based <see cref="Pixel" /> or null if not found.</summary>
         /// <param name="index"></param>
         /// <returns></returns>
         public Pixel? this[ UInt64 index ] {
             get {
-                var pixels = this.Pixels;
-
                 if ( index <= this.Count ) {
-                    return pixels[ index ];
+                    return this.Pixels[ index ];
                 }
 
                 return null;
             }
 
             set {
-                var pixels = this.Pixels;
 
                 if ( value.HasValue && index <= this.Count ) {
-                    pixels[ index ] = value.Value;
+                    this.Pixels[ index ] = value.Value;
                 }
             }
         }
 
-        /// <summary>
-        ///     Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.
-        /// </summary>
+        /// <summary>Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.</summary>
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
+            if ( pixels is null ) {
+                throw new ArgumentNullException( paramName: nameof( pixels ) );
+            }
+
             this.Pixels = pixels.ToArray();
-            this.Count = ( UInt64 )this.Pixels.LongLength;
-            this.Checksum = CalculateChecksumAsync( this.Pixels ).Result;
+            this.Count = ( UInt64 ) this.Pixels.LongLength;
+        }
+
+        private UInt64? _checksum;
+
+        /// <summary>Checksum of the pixels (to guard against corruption).</summary>
+        /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
+        public async Task<UInt64> Checksum() {
+            if ( this._checksum is null ) {
+                this._checksum = await this.CalculateChecksumAsync().ConfigureAwait( false );
+            }
+
+            var checksum = this._checksum;
+
+            if ( checksum.HasValue ) {
+                return checksum.Value;
+            }
+
+            throw new InvalidOperationException();
         }
 
         [NotNull]
-        public static Task<UInt64> CalculateChecksumAsync( [CanBeNull] IEnumerable<Pixel> pixels ) =>
-            Task.Run( () => {
-                var checksum = UInt64.MinValue;
+        private Task<UInt64> CalculateChecksumAsync() {
+            return Task.Run( () => {
+                var checksum = ( UInt64 ) 0;
 
-                foreach ( var pixel in pixels ) {
+                foreach ( var pixel in this.Pixels ) {
                     unchecked {
-                        checksum = ( checksum + ( UInt64 )pixel.GetHashCode() ) / 2;
+                        checksum += ( UInt64 ) pixel.GetHashCode();
                     }
                 }
 
                 return checksum;
             } );
+        }
 
-        /// <summary>
-        ///     Static comparison type.
-        /// </summary>
+        /// <summary>Static comparison type.</summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( [CanBeNull] Line left, [CanBeNull] Line right ) {
+        public static Boolean Equals( [CanBeNull] Line left, [CanBeNull] Line right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
             if ( left is null || right is null ) {
                 return false;
             }
 
-            if ( left.Checksum != right.Checksum ) {
-                return false;
-            }
-
-            if ( left.Count != right.Count ) {
-                return false;
+            if ( left.Checksum().Result != right.Checksum().Result || left.Count != right.Count ) {
+                return false;   //TODO ugh... .Result
             }
 
             return left.Pixels.SequenceEqual( right.Pixels );
         }
+
     }
+
 }

@@ -50,20 +50,20 @@ namespace Librainian.Maths {
     [StructLayout( layoutKind: LayoutKind.Sequential )]
     public struct EightBytes {
 
-        public Byte A;
+        public Byte A { get; set; }
 
-        public Byte B;
+        public Byte B { get; set; }
 
-        public Byte C;
+        public Byte C { get; set; }
 
-        public Byte D;
+        public Byte D { get; set; }
 
-        public Byte E;
+        public Byte E { get; set; }
 
-        public Byte F;
+        public Byte F { get; set; }
 
-        public Byte G;
+        public Byte G { get; set; }
 
-        public Byte H;
+        public Byte H { get; set; }
     }
 }

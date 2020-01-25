@@ -54,18 +54,18 @@ namespace Librainian.Exceptions {
 
         internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             if ( inner is null ) {
-                throw new ArgumentNullException( paramName: nameof( inner ) );
+                throw new ArgumentNullException(  nameof( inner ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             return $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";

@@ -69,14 +69,14 @@ namespace Librainian.Measurement.Length {
         public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
 
         [JsonProperty]
-        public readonly BigInteger Value;
+        public BigInteger Value { get; }
 
         public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
 
         public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-        //public static Boolean operator >( PlanckUnits left, Minutes rhs ) {
-        //    return left.Comparison( rhs ) > 0;
+        //public static Boolean operator >( PlanckUnits left, Minutes right ) {
+        //    return left.Comparison( right ) > 0;
         //}
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
@@ -86,24 +86,24 @@ namespace Librainian.Measurement.Length {
         //    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
         //}
 
-        //public static Boolean operator <( PlanckUnits left, PlanckUnits rhs ) {
-        //    return left.Value.CompareTo( rhs.Value ) < 0;
+        //public static Boolean operator <( PlanckUnits left, PlanckUnits right ) {
+        //    return left.Value.CompareTo( right.Value ) < 0;
         //}
 
-        //public static Boolean operator <( PlanckUnits left, Seconds rhs ) {
-        //    return left.Comparison( rhs ) < 0;
+        //public static Boolean operator <( PlanckUnits left, Seconds right ) {
+        //    return left.Comparison( right ) < 0;
         //}
 
-        //public static Boolean operator <( PlanckUnits left, Minutes rhs ) {
-        //    return left.Comparison( rhs ) < 0;
+        //public static Boolean operator <( PlanckUnits left, Minutes right ) {
+        //    return left.Comparison( right ) < 0;
         //}
 
-        //public static Boolean operator >( PlanckUnits left, PlanckUnits rhs ) {
-        //    return left.Value.CompareTo( rhs.Value ) > 0;
+        //public static Boolean operator >( PlanckUnits left, PlanckUnits right ) {
+        //    return left.Value.CompareTo( right.Value ) > 0;
         //}
 
-        //public static Boolean operator >( PlanckUnits left, Seconds rhs ) {
-        //    return left.Comparison( rhs ) > 0;
+        //public static Boolean operator >( PlanckUnits left, Seconds right ) {
+        //    return left.Comparison( right ) > 0;
         //}
     }
 }

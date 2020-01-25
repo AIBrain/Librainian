@@ -134,7 +134,7 @@ namespace Librainian.Collections.Extensions {
         /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
         public static void Shuffle<T>( [NotNull] this T[] buffer ) {
             if ( buffer is null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException(  nameof( buffer ) );
             }
 
             var length = buffer.Length;
@@ -155,7 +155,7 @@ namespace Librainian.Collections.Extensions {
         /// <remarks>Isn't this just the Fisher-Yates shuffle??</remarks>
         public static void Shuffle<T>( [NotNull] this IList<T> list ) {
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             var length = list.Count;
@@ -241,7 +241,7 @@ namespace Librainian.Collections.Extensions {
         /// <param name="iterations">   </param>
         public static void ShuffleByBags<T>( [NotNull] ref List<T> list, UInt32 iterations ) {
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             var bag = new ConcurrentBag<T>( list.AsParallel() );
@@ -266,7 +266,7 @@ namespace Librainian.Collections.Extensions {
 
         public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             var l = new List<T>( list.Count );
@@ -344,7 +344,7 @@ namespace Librainian.Collections.Extensions {
         /// <param name="iterations"></param>
         public static void ShuffleByRandomThenByRandom<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
             if ( list == null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             while ( iterations.Any() ) {

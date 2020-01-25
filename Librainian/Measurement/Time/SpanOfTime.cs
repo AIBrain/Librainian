@@ -349,11 +349,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static SpanOfTime Combine( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             //TODO do some overflow handling with BigInteger math
@@ -394,11 +394,11 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Int32 CompareTo( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             var leftPlancks = left.CalcTotalPlanckTimes();
@@ -556,7 +556,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] SpanOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return CompareTo( this, other );

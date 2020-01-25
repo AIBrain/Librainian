@@ -52,32 +52,38 @@ namespace Librainian.Extensions {
 
     public class CodeEngine {
 
+        [CanBeNull]
         private CompilerResults _compilerResults;
 
+        [CanBeNull]
         private String _mSourceCode = String.Empty;
 
-        public Action<String> Output = delegate { };
+        public Action<String> Output { get; } = delegate { };
 
-        private Object ORun { get; } = new Object();
+        [NotNull]
+        private Object _run { get; } = new Object();
 
-        private Object OSourceCode { get; } = new Object();
+        [NotNull]
+        private Object _sourceCode { get; } = new Object();
 
+        [NotNull]
         public static CSharpCodeProvider CSharpCodeProvider { get; } = new CSharpCodeProvider();
 
         public Guid ID { get; private set; }
 
+        [CanBeNull]
         public Object[] Parameters { get; set; }
 
         [CanBeNull]
         public String SourceCode {
             get {
-                lock ( this.OSourceCode ) {
+                lock ( this._sourceCode ) {
                     return this._mSourceCode;
                 }
             }
 
             set {
-                lock ( this.OSourceCode ) {
+                lock ( this._sourceCode ) {
                     this._mSourceCode = value;
                     this.Compile();
                 }
@@ -136,13 +142,13 @@ namespace Coding
                     GenerateExecutable = false
                 }, this.SourceCode );
 
-                if ( this._compilerResults.Errors.HasErrors ) {
+                if ( this._compilerResults.Errors?.HasErrors == true ) {
                     "".Break();
 
                     return false;
                 }
 
-                if ( !this._compilerResults.Errors.HasWarnings ) {
+                if ( !this._compilerResults.Errors?.HasWarnings == true ) {
                     return true;
                 }
 
@@ -175,7 +181,7 @@ namespace Coding
 
         [CanBeNull]
         public Object Run() {
-            lock ( this.ORun ) {
+            lock ( this._run ) {
                 if ( null == this._compilerResults ) {
                     this.Compile();
                 }
@@ -184,18 +190,18 @@ namespace Coding
                     return null;
                 }
 
-                if ( this._compilerResults.Errors.HasErrors ) {
+                if ( this._compilerResults.Errors?.HasErrors == true ) {
                     "".Break();
 
                     return null;
                 }
 
-                if ( this._compilerResults.Errors.HasWarnings ) {
+                if ( this._compilerResults.Errors?.HasWarnings == true ) {
                     "".Break();
                 }
 
                 var loAssembly = this._compilerResults.CompiledAssembly;
-                var loObject = loAssembly.CreateInstance( "Coding.CodeEngine" );
+                var loObject = loAssembly?.CreateInstance( "Coding.CodeEngine" );
 
                 if ( loObject is null ) {
                     "".Break();
@@ -216,7 +222,11 @@ namespace Coding
             }
         }
 
-        public Boolean Save() => this.SourceCode.Saver( this.SourcePath );
+        public Boolean Save() {
+            var sourcePath = this.SourcePath;
+
+            return sourcePath != null && this.SourceCode.Saver( sourcePath );
+        }
 
         //private CodeCompileUnit codeCompileUnit;
         //private CodeNamespace codeNamespace;

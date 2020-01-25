@@ -49,11 +49,11 @@ namespace Librainian.Collections.Extensions {
 
         public static void ForEach( [NotNull] this Array array, [NotNull] Action<Array, Int32[]> action ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException(  nameof( array ) );
             }
 
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException(  nameof( action ) );
             }
 
             if ( array.LongLength == 0 ) {

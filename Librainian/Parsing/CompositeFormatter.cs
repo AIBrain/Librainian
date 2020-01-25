@@ -44,6 +44,7 @@ namespace Librainian.Parsing {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using JetBrains.Annotations;
 
     /// <summary>Binds multiple formatters together.</summary>
@@ -51,7 +52,8 @@ namespace Librainian.Parsing {
     /// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara </remarks>
     internal sealed class CompositeFormatter : Formatter {
 
-        private readonly List<Formatter> _formatters;
+        [NotNull]
+        private List<Formatter> _formatters { get; }
 
         /// <summary>Initializes a new instance of the <see cref="CompositeFormatter" /> class.</summary>
         /// <param name="culture">The culture.</param>
@@ -78,15 +80,8 @@ namespace Librainian.Parsing {
         /// </returns>
         [CanBeNull]
         public override String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
-            foreach ( var formatter in this._formatters ) {
-                var result = formatter.Format( format, arg, formatProvider );
+            return this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).FirstOrDefault( result => result != null );
 
-                if ( result != null ) {
-                    return result;
-                }
-            }
-
-            return null;
         }
     }
 }

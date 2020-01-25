@@ -50,7 +50,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Security;
@@ -63,15 +62,12 @@ namespace Librainian.OperatingSystem.FileSystem {
     using JetBrains.Annotations;
     using Logging;
     using Maths;
-    using Maths.Numbers;
-    using Measurement.Time;
     using Microsoft.VisualBasic.Devices;
     using Microsoft.VisualBasic.FileIO;
     using Newtonsoft.Json;
     using Parsing;
     using Persistence;
     using Security;
-    using Threading;
     using Utilities;
 
     // ReSharper disable RedundantUsingDirective
@@ -236,14 +232,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
             [CanBeNull] IProgress<TimeSpan> eta = null );
 
-        /// <summary>
-        ///     Starts a task to copy a file
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="progress">   </param>
-        /// <param name="eta">        </param>
-        /// <returns></returns>
-        Task Copy( IDocument destination, IProgress<Single> progress, IProgress<TimeSpan> eta );
 
         /// <summary>
         ///     Returns the <see cref="WebClient" /> if a file copy was started.
@@ -252,7 +240,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onProgress"> </param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        WebClient CopyFileWithProgress( [NotNull] IDocument destination, Action<Percentage> onProgress, Action onCompleted );
+        Task Copy( [NotNull] IDocument destination, [CanBeNull] Action<(UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress, [CanBeNull] Action onCompleted );
 
         Int32? CRC32();
 
@@ -411,11 +399,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>
         ///     <para>Returns true if the <see cref="IDocument" /> no longer seems to exist.</para>
-        ///     <para>Returns null if existence cannot be determined.</para>
         /// </summary>
-        /// <param name="tryFor"></param>
+        /// <param name="delayBetweenRetries"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        Boolean? TryDeleting( TimeSpan tryFor );
+        Task<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token );
 
         /// <summary>
         ///     Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.
@@ -436,8 +424,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         FileInfo GetFreshInfo();
     }
 
-    //TODO Document class is getting too large. abstract some more, and make extensions.
-
     [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public class Document : ABetterClassDispose, IDocument {
@@ -450,7 +436,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         public Int32 CompareTo( [NotNull] IDocument other ) {
             if ( other == null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return String.Compare( strA: this.FullPath, strB: other.FullPath, comparisonType: StringComparison.Ordinal );
@@ -841,7 +827,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
             [CanBeNull] IProgress<Single> progress = null, [CanBeNull] IProgress<TimeSpan> eta = null ) {
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -849,16 +835,16 @@ namespace Librainian.OperatingSystem.FileSystem {
             try {
                 if ( this.Length.Any() ) {
                     if ( Uri.TryCreate( uriString: this.FullPath, uriKind: UriKind.Absolute, result: out var sourceAddress ) ) {
-                        using ( var client = new WebClient().Add( token: token ) ) {
+                        var client = new WebClient().Add( token: token );
 
-                            var task = client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath );
+                        var task = client.DownloadFileTaskAsync( address: sourceAddress, fileName: destination.FullPath );
 
-                            if ( task != null ) {
-                                await task.ConfigureAwait( false );
-                            }
-
-                            return (true, stopwatch.Elapsed);
+                        if ( task != null ) {
+                            await task.ConfigureAwait( false );
                         }
+
+                        return (true, stopwatch.Elapsed);
+
                     }
                 }
             }
@@ -870,52 +856,28 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         /// <summary>
-        ///     Starts a task to copy a file
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="progress">   </param>
-        /// <param name="eta">        </param>
-        /// <returns></returns>
-        [NotNull]
-        public Task Copy( [CanBeNull] IDocument destination, [CanBeNull] IProgress<Single> progress, [CanBeNull] IProgress<TimeSpan> eta ) =>
-            Task.Run( action: () => {
-                var computer = new Computer();
-
-                //TODO file monitor/watcher?
-                computer.FileSystem.CopyFile( sourceFileName: this.FullPath, destinationFileName: destination.FullPath, showUI: UIOption.AllDialogs,
-                    onUserCancel: UICancelOption.DoNothing );
-            } );
-
-        /// <summary>
-        ///     Returns the <see cref="WebClient" /> if a file copy was started.
+        ///     Start copying this document to the <paramref name="destination"/>.
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="onProgress"> </param>
         /// <param name="onCompleted"></param>
         /// <returns></returns>
-        [NotNull]
-        public WebClient CopyFileWithProgress( [NotNull] IDocument destination, [CanBeNull] Action<Percentage> onProgress, [CanBeNull] Action onCompleted ) {
+        public Task Copy( [NotNull] IDocument destination, [CanBeNull] Action<(UInt64 bytesReceived,UInt64 totalBytesToReceive)> onProgress, [CanBeNull] Action onCompleted ) {
             if ( destination == null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             var webClient = new WebClient();
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
-                if ( args == null ) {
-                    return;
+                if ( !( args is null ) ) {
+                    onProgress?.Invoke( (( UInt64 ) args.BytesReceived, ( UInt64 ) args.TotalBytesToReceive) );
                 }
-
-                var percentage = new Percentage( numerator: ( BigInteger )args.BytesReceived, denominator: args.TotalBytesToReceive );
-                onProgress?.Invoke( obj: percentage );
-
             };
 
             webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
-            webClient.DownloadFileAsync( address: new Uri( uriString: this.FullPath ), fileName: destination.FullPath );
-
-            return webClient;
+            return webClient.DownloadFileTaskAsync( address: new Uri( uriString: this.FullPath ), fileName: destination.FullPath );
         }
 
         public Int32? CRC32() {
@@ -1179,21 +1141,16 @@ namespace Librainian.OperatingSystem.FileSystem {
                     Int32 bytesRead;
 
                     do {
-                        bytesRead = default;
-                        var readTask = buffered.ReadAsync( this.Buffer, offset: offset, count: filelength );
+                        bytesRead = await buffered.ReadAsync( this.Buffer, offset: offset, count: filelength ).ConfigureAwait( false );
+                        bytesLeft -= bytesRead;
 
-                        if ( readTask != null ) {
-                            bytesRead = await readTask.ConfigureAwait( false );
-                            bytesLeft -= bytesRead;
+                        if ( !bytesRead.Any() || !bytesLeft.Any() ) {
+                            this.IsBufferLoaded = true;
 
-                            if ( !bytesRead.Any() || !bytesLeft.Any() ) {
-                                this.IsBufferLoaded = true;
-
-                                return Status.Success;
-                            }
-
-                            offset += bytesRead;
+                            return Status.Success;
                         }
+
+                        offset += bytesRead;
                     } while ( bytesRead.Any() && bytesLeft.Any() );
                 }
             }
@@ -1211,7 +1168,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException(  nameof( source ) );
             }
 
             try {
@@ -1358,7 +1315,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             catch ( Exception exception ) {
                 exception.Log();
 
-                return Task.FromException<Process>( exception: exception );
+                return Task.FromException<Process>( exception );
             }
         }
 
@@ -1402,7 +1359,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public async Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token ) {
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             try {
@@ -1535,42 +1492,31 @@ namespace Librainian.OperatingSystem.FileSystem {
         public override String ToString() => this.FullPath;
 
         /// <summary>
-        ///     <para>Returns true if the <see cref="IDocument" /> no longer seems to exist.</para>
-        ///     <para>Returns null if existence cannot be determined.</para>
+        ///     <para>Returns true if this <see cref="Document" /> no longer seems to exist.</para>
         /// </summary>
-        /// <param name="tryFor"></param>
+        /// <param name="delayBetweenRetries"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public Boolean? TryDeleting( TimeSpan tryFor ) {
-            var stopwatch = Stopwatch.StartNew();
-            TryAgain:
-
-            try {
-                if ( this.Exists() == false ) {
-                    return true;
+        public async Task<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token ) {
+            await Task.Run( async () => {
+                while ( !token.IsCancellationRequested && this.Exists() ) {
+                    try {
+                        if ( this.Exists() ) {
+                            this.Delete();
+                        }
+                    }
+                    catch ( DirectoryNotFoundException ) { }
+                    catch ( PathTooLongException ) { }
+                    catch ( IOException ) {
+                        // IOException is thrown when the file is in use by any process.
+                        await Task.Delay( delayBetweenRetries, token ).ConfigureAwait( false );
+                    }
+                    catch ( UnauthorizedAccessException ) { }
+                    catch ( ArgumentNullException ) { }
                 }
+            }, token ).ConfigureAwait( false );
 
-                this.Delete();
-
-                return !this.Exists();
-            }
-            catch ( DirectoryNotFoundException ) { }
-            catch ( PathTooLongException ) { }
-            catch ( IOException ) {
-
-                // IOExcception is thrown when the file is in use by any process.
-                if ( stopwatch.Elapsed <= tryFor ) {
-                    Thread.CurrentThread.Fraggle( timeSpan: Seconds.One );
-
-                    goto TryAgain;
-                }
-            }
-            catch ( UnauthorizedAccessException ) { }
-            catch ( ArgumentNullException ) { }
-            finally {
-                stopwatch.Stop();
-            }
-
-            return null;
+            return this.Exists();
         }
 
         /// <summary>
@@ -1580,23 +1526,24 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {
-                return (new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.", paramName: nameof( destination ) ), null);
+                return (new ArgumentException( message: $"Destination address '{destination.OriginalString}' is not well formed.",  nameof( destination ) ), null);
             }
 
             try {
-                using ( var webClient = new WebClient() ) {
-                    var task = webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath );
+                var webClient = new WebClient();
 
-                    if ( task != null ) {
-                        await task.ConfigureAwait( false );
-                    }
+                var task = webClient.UploadFileTaskAsync( address: destination, fileName: this.FullPath );
 
-                    return (null, webClient.ResponseHeaders);
+                if ( task != null ) {
+                    await task.ConfigureAwait( false );
                 }
+
+                return (null, webClient.ResponseHeaders);
+
             }
             catch ( Exception exception ) {
                 return (exception, null);
@@ -1631,7 +1578,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         protected Document( [NotNull] SerializationInfo info ) {
             if ( info is null ) {
-                throw new ArgumentNullException( paramName: nameof( info ) );
+                throw new ArgumentNullException(  nameof( info ) );
             }
 
             this.FullPath = ( info.GetString( name: nameof( this.FullPath ) ) ?? throw new InvalidOperationException() ).TrimAndThrowIfBlank();
@@ -1648,7 +1595,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
             if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fullPath ) );
             }
 
             this.FullPath = Path.Combine( Path.GetFullPath( fullPath ), CleanFileName( Path.GetFileName( fullPath ) ) ).TrimAndThrowIfBlank();
@@ -1692,11 +1639,17 @@ namespace Librainian.OperatingSystem.FileSystem {
                 } );
 
                 this.WatchEvents = new Lazy<FileWatchingEvents>( valueFactory: () => new FileWatchingEvents(), isThreadSafe: false );
-                this.Watcher.Value.Created += ( sender, e ) => this.WatchEvents.Value.OnCreated?.Invoke( obj: e );
-                this.Watcher.Value.Changed += ( sender, e ) => this.WatchEvents.Value.OnChanged?.Invoke( obj: e );
-                this.Watcher.Value.Deleted += ( sender, e ) => this.WatchEvents.Value.OnDeleted?.Invoke( obj: e );
-                this.Watcher.Value.Renamed += ( sender, e ) => this.WatchEvents.Value.OnRenamed?.Invoke( obj: e );
-                this.Watcher.Value.Error += ( sender, e ) => this.WatchEvents.Value.OnError?.Invoke( obj: e );
+
+                var watcher = this.Watcher.Value;
+
+                if ( watcher != null ) {
+                    watcher.Created += ( sender, e ) => this.WatchEvents.Value.OnCreated?.Invoke( obj: e );
+                    watcher.Changed += ( sender, e ) => this.WatchEvents.Value.OnChanged?.Invoke( obj: e );
+                    watcher.Deleted += ( sender, e ) => this.WatchEvents.Value.OnDeleted?.Invoke( obj: e );
+                    watcher.Renamed += ( sender, e ) => this.WatchEvents.Value.OnRenamed?.Invoke( obj: e );
+                    watcher.Error += ( sender, e ) => this.WatchEvents.Value.OnError?.Invoke( obj: e );
+                }
+
             }
         }
 
@@ -1704,16 +1657,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         private Document() => throw new NotImplementedException( message: "Private contructor is not allowed." );
 
         public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( justPath, filename ), deleteAfterClose: deleteAfterClose ) { }
+            fullPath: Path.Combine( justPath, filename ) ?? throw new InvalidOperationException(), deleteAfterClose: deleteAfterClose ) { }
 
-        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPath: info.FullName, deleteAfterClose: deleteAfterClose ) {
+        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( fullPath: info.FullName ?? throw new InvalidOperationException(), deleteAfterClose: deleteAfterClose ) {
         }
 
         public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( justPath: folder.FullName, filename: filename,
             deleteAfterClose: deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
-            fullPath: Path.Combine( folder.FullName, document.FileName ), deleteAfterClose: deleteAfterClose ) { }
+            fullPath: Path.Combine( folder.FullName, document.FileName ) ?? throw new InvalidOperationException(), deleteAfterClose: deleteAfterClose ) { }
 
         [NotNull]
         public Task<Int32> CalculateHarkerHashInt32Async() {
@@ -1730,9 +1683,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.ThrowIfNotExists();
 
             return this.AsInt64()
-
-                //.AsParallel()
-                //.WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
+                .AsParallel()
+                .AsUnordered()
+                .WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
                 .Aggregate( seed: 0L, func: ( current, i ) => unchecked(current + i) );
         }
 
@@ -1744,9 +1697,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.ThrowIfNotExists();
 
             return this.AsDecimal()
-
-                //.AsParallel()
-                //.WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
+                .AsParallel()
+                .AsUnordered()
+                .WithMergeOptions( mergeOptions: ParallelMergeOptions.AutoBuffered )
                 .Aggregate( seed: 0M, func: ( current, i ) => current + i );
         }
 
@@ -1870,7 +1823,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public async Task<(WebClient downloader,Boolean exists)> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
             [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             if ( !this.Exists() ) {
@@ -1947,7 +1900,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static implicit operator FileInfo( [NotNull] Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             var info = new FileInfo( fileName: document.FullPath );
@@ -2034,11 +1987,11 @@ namespace Librainian.OperatingSystem.FileSystem {
             [CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
 
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException(  nameof( address ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fileName ) );
             }
 
             var tcs = new TaskCompletionSource<Object>( state: address, TaskCreationOptions.RunContinuationsAsynchronously );

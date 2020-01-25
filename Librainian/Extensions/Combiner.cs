@@ -119,7 +119,7 @@ namespace Librainian.Extensions {
         [CanBeNull]
         public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(  nameof( input ) );
             }
 
             IEnumerable<IEnumerable<T>> result = new T[ 0 ][];

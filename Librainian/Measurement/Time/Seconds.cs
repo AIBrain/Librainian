@@ -252,11 +252,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator ==( [NotNull] Seconds left, [NotNull] Seconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Equals( left, right );
@@ -282,7 +282,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );

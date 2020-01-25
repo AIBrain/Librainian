@@ -95,7 +95,7 @@ namespace Librainian.Threading {
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) {
             if ( name is null ) {
-                throw new ArgumentNullException( paramName: nameof( name ) );
+                throw new ArgumentNullException(  nameof( name ) );
             }
 
             try {

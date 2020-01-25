@@ -85,11 +85,11 @@ namespace Librainian.Persistence {
         public static T Get<T>( [NotNull] this String key ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( paramName: nameof( App ) );
+                throw new ArgumentNullException(  nameof( App ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             var value = App.GetValue( key );
@@ -111,11 +111,11 @@ namespace Librainian.Persistence {
         public static Boolean Set<T>( [NotNull] this String key, [CanBeNull] T value ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( paramName: nameof( App ) );
+                throw new ArgumentNullException(  nameof( App ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             try {

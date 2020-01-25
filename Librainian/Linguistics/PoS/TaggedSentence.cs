@@ -52,8 +52,31 @@ namespace Librainian.Linguistics.PoS {
     [JsonObject]
     public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {
 
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals( this,obj as TaggedSentence);
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode() => this.Tokens.GetHashCode();
+
+        /// <summary>Returns a value that indicates whether the values of two <see cref="Librainian.Linguistics.PoS.TaggedSentence" /> objects are equal.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+        public static bool operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( left, right );
+
+        /// <summary>Returns a value that indicates whether two <see cref="Librainian.Linguistics.PoS.TaggedSentence" /> objects have different values.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+        public static bool operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( left, right );
+
         [JsonProperty]
-        public readonly List<ITaggedWord> Tokens = new List<ITaggedWord>();
+        [NotNull]
+        public List<ITaggedWord> Tokens { get; } = new List<ITaggedWord>();
 
         public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
             if ( words is null ) {
@@ -84,12 +107,6 @@ namespace Librainian.Linguistics.PoS {
             return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate
-        ///     through the collection.
-        /// </returns>
-        /// <filterpriority>1</filterpriority>
         public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
         [Pure]
@@ -97,7 +114,7 @@ namespace Librainian.Linguistics.PoS {
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate
+        ///     An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate
         ///     through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>

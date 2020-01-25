@@ -66,7 +66,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         public static Boolean IsFixed( [NotNull] this Disk disk ) {
             if ( disk is null ) {
-                throw new ArgumentNullException( paramName: nameof( disk ) );
+                throw new ArgumentNullException(  nameof( disk ) );
             }
 
             return FixedDriveTypes.Contains( disk.Info.DriveType );
@@ -74,7 +74,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         public static Boolean IsFixed( [NotNull] this DriveInfo drive ) {
             if ( drive is null ) {
-                throw new ArgumentNullException( paramName: nameof( drive ) );
+                throw new ArgumentNullException(  nameof( drive ) );
             }
 
             return FixedDriveTypes.Contains( drive.DriveType );
@@ -82,7 +82,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         public static Boolean IsFleeting( [NotNull] this Disk disk ) {
             if ( disk is null ) {
-                throw new ArgumentNullException( paramName: nameof( disk ) );
+                throw new ArgumentNullException(  nameof( disk ) );
             }
 
             return FleetingDriveTypes.Contains( disk.Info.DriveType );
@@ -90,7 +90,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         public static Boolean IsFleeting( [NotNull] this DriveInfo drive ) {
             if ( drive is null ) {
-                throw new ArgumentNullException( paramName: nameof( drive ) );
+                throw new ArgumentNullException(  nameof( drive ) );
             }
 
             return FleetingDriveTypes.Contains( drive.DriveType );

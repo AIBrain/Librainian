@@ -69,7 +69,7 @@ namespace Librainian.Persistence {
             this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
             if ( pointer is null ) {
-                throw new ArgumentNullException( paramName: nameof( pointer ) );
+                throw new ArgumentNullException(  nameof( pointer ) );
             }
 
             if ( !pointer.IsAbsoluteUri ) {

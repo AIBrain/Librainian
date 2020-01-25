@@ -123,10 +123,10 @@ namespace Librainian.Graphics.DDD {
         /// <summary>
         ///     Calculates the distance between two Coordinates.
         /// </summary>
-        public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF rhs ) {
-            var num1 = left.X - rhs.X;
-            var num2 = left.Y - rhs.Y;
-            var num3 = left.Z - rhs.Z;
+        public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF right ) {
+            var num1 = left.X - right.X;
+            var num2 = left.Y - right.Y;
+            var num3 = left.Z - right.Z;
 
             return ( Single )Math.Sqrt( ( num1 * num1 ) + ( num2 * num2 ) + ( num3 * num3 ) );
         }
@@ -135,10 +135,10 @@ namespace Librainian.Graphics.DDD {
         ///     static comparison.
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
+        public static Boolean Equals( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -146,31 +146,31 @@ namespace Librainian.Graphics.DDD {
                 return false;
             }
 
-            if ( rhs is null ) {
+            if ( right is null ) {
                 return false;
             }
 
-            if ( left.X < rhs.X ) {
+            if ( left.X < right.X ) {
                 return false;
             }
 
-            if ( left.X > rhs.X ) {
+            if ( left.X > right.X ) {
                 return false;
             }
 
-            if ( left.Y < rhs.Y ) {
+            if ( left.Y < right.Y ) {
                 return false;
             }
 
-            if ( left.Y > rhs.Y ) {
+            if ( left.Y > right.Y ) {
                 return false;
             }
 
-            if ( left.Z < rhs.Z ) {
+            if ( left.Z < right.Z ) {
                 return false;
             }
 
-            return !( left.Z > rhs.Z );
+            return !( left.Z > right.Z );
         }
 
         public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new Point( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
@@ -191,9 +191,9 @@ namespace Librainian.Graphics.DDD {
         [NotNull]
         public static CoordinateF operator -( [NotNull] CoordinateF v1, [NotNull] CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => !Equals( left: left, rhs: rhs );
+        public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => !Equals( left: left, right: right );
 
-        public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF rhs ) => Equals( left: left, rhs: rhs );
+        public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => Equals( left: left, right: right );
 
         public Double DistanceTo( [CanBeNull] CoordinateF to ) {
             if ( to == default ) {

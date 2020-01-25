@@ -178,9 +178,9 @@ namespace Librainian.Measurement.Frequency {
 
         public static implicit operator TimeSpan( Fps fps ) => TimeSpan.FromSeconds( ( Double ) ( 1.0m / fps.Value ) );
 
-        public static Boolean operator <( Fps left, Fps rhs ) => left.Value.CompareTo( rhs.Value ) < 0;
+        public static Boolean operator <( Fps left, Fps right ) => left.Value.CompareTo( right.Value ) < 0;
 
-        public static Boolean operator >( Fps left, Fps rhs ) => left.Value.CompareTo( rhs.Value ) > 0;
+        public static Boolean operator >( Fps left, Fps right ) => left.Value.CompareTo( right.Value ) > 0;
 
         public override String ToString() => $"{this.Value} FPS ({( ( TimeSpan ) this ).Simpler()})";
     }

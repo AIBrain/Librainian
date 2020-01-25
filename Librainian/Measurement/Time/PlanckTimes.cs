@@ -124,11 +124,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return new PlanckTimes( left.Value + right.Value );
@@ -137,7 +137,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return new PlanckTimes( left.Value + planckTimes );
@@ -164,7 +164,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator SpanOfTime( [NotNull] PlanckTimes planckTimes ) {
             if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
+                throw new ArgumentNullException(  nameof( planckTimes ) );
             }
 
             return new SpanOfTime( planckTimes );
@@ -176,7 +176,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Yoctoseconds( [NotNull] PlanckTimes planckTimes ) {
             if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
+                throw new ArgumentNullException(  nameof( planckTimes ) );
             }
 
             return ToYoctoseconds( planckTimes );
@@ -195,11 +195,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value < right.Value;
@@ -207,11 +207,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <=( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value <= right.Value;
@@ -219,11 +219,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator ==( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Equals( left, right );
@@ -231,11 +231,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -243,11 +243,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >=( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value >= right.Value;
@@ -261,7 +261,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Yoctoseconds ToYoctoseconds( [NotNull] PlanckTimes planckTimes ) {
             if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
+                throw new ArgumentNullException(  nameof( planckTimes ) );
             }
 
             return new Yoctoseconds( planckTimes.Value / ( Rational )InOneYoctosecond );
@@ -269,7 +269,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] PlanckTimes other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.Value.CompareTo( other.Value );
@@ -287,7 +287,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );

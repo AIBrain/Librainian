@@ -69,25 +69,23 @@ namespace Librainian.Measurement.Currency {
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        Boolean TryAdd( Decimal amount, Boolean sanitize = true );
+        Boolean TryAdd( Decimal amount );
 
-        Boolean TryAdd( [NotNull] SimpleWallet wallet, Boolean sanitize = true );
+        Boolean TryAdd( [NotNull] SimpleWallet wallet );
 
-        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
+        /// <summary>Attempt to deposit amount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
         /// <param name="amount"></param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        Boolean TryDeposit( Decimal amount, Boolean sanitize = true );
+        Boolean TryDeposit( Decimal amount );
 
-        Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet, Boolean sanitize = true );
+        Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet );
 
-        Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true );
+        Boolean TryUpdateBalance( Decimal amount );
 
         void TryUpdateBalance( SimpleWallet simpleWallet );
 
-        Boolean TryWithdraw( Decimal amount, Boolean sanitize = true );
+        Boolean TryWithdraw( Decimal amount );
 
         Boolean TryWithdraw( [NotNull] SimpleWallet wallet );
     }

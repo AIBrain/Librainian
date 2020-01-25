@@ -165,7 +165,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
         public Int32 EnableOrDisableNetworkAdapter( [NotNull] String strOperation ) {
             if ( String.IsNullOrWhiteSpace( value: strOperation ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( strOperation ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( strOperation ) );
             }
 
             strOperation = strOperation.Trim();

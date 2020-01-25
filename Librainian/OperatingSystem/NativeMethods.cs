@@ -744,7 +744,7 @@ namespace Librainian.OperatingSystem {
 
         public static void HandleLastError( [NotNull] String fullPath ) {
             if ( fullPath is null ) {
-                throw new ArgumentNullException( paramName: nameof( fullPath ) );
+                throw new ArgumentNullException(  nameof( fullPath ) );
             }
 
             var lastWin32Error = Marshal.GetLastWin32Error();
@@ -929,7 +929,7 @@ namespace Librainian.OperatingSystem {
 
         public static Boolean SetWindowIcon( this IntPtr window, [NotNull] Icon icon ) {
             if ( icon is null ) {
-                throw new ArgumentNullException( paramName: nameof( icon ) );
+                throw new ArgumentNullException(  nameof( icon ) );
             }
 
             return window.SendMessage( WM_SETICON, IconSize.Big, icon.Handle ) != default;

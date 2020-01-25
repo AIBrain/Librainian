@@ -87,7 +87,7 @@ namespace Librainian.Threading {
 
         public Job( [NotNull] Func<T> func, TimeSpan maxRuntime ) : this( maxRuntime ) {
             if ( func is null ) {
-                throw new ArgumentNullException( paramName: nameof( func ) );
+                throw new ArgumentNullException(  nameof( func ) );
             }
 
             T result = default;
@@ -98,7 +98,7 @@ namespace Librainian.Threading {
 
         public Job( [NotNull] Action action, TimeSpan maxRuntime ) : this( maxRuntime ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException(  nameof( action ) );
             }
 
             this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( task => this.Done( default ),
@@ -114,7 +114,7 @@ namespace Librainian.Threading {
         [NotNull]
         public static implicit operator Task( [NotNull] Job<T> job ) {
             if ( job is null ) {
-                throw new ArgumentNullException( paramName: nameof( job ) );
+                throw new ArgumentNullException(  nameof( job ) );
             }
 
             return job.TheTask;

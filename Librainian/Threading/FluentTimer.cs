@@ -136,7 +136,7 @@ namespace Librainian.Threading {
         [NotNull]
         public static Timer Start( [NotNull] this Timer timer ) {
             if ( timer is null ) {
-                throw new ArgumentNullException( paramName: nameof( timer ) );
+                throw new ArgumentNullException(  nameof( timer ) );
             }
 
             timer.Start();

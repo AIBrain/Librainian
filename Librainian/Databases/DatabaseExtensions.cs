@@ -46,6 +46,7 @@ namespace Librainian.Databases {
     using System.Data;
     using Microsoft.Data.SqlClient;
     using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
     using System.Management;
     using System.Reflection;
@@ -74,12 +75,13 @@ namespace Librainian.Databases {
             }
 
             if ( properties is null ) {
-                throw new ArgumentNullException( paramName: nameof( properties ) );
+                throw new ArgumentNullException(  nameof( properties ) );
             }
 
             //T item = new T();
             //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function
             //var t = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
+
             var item = ( T )FormatterServices.GetUninitializedObject( typeof( T ) );
 
             foreach ( var property in properties ) {
@@ -97,7 +99,7 @@ namespace Librainian.Databases {
         [NotNull]
         private static Fields GetDict( [NotNull] this IDataReader reader ) {
             if ( reader is null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException(  nameof( reader ) );
             }
 
             var key = reader.Key();
@@ -118,7 +120,7 @@ namespace Librainian.Databases {
         [NotNull]
         private static Fields GetFieldNames( [NotNull] this IDataReader reader ) {
             if ( reader is null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException(  nameof( reader ) );
             }
 
             var dictionary = new Fields( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
@@ -140,7 +142,7 @@ namespace Librainian.Databases {
         [NotNull]
         private static String Key( [NotNull] this IDataReader reader ) {
             if ( reader is null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException(  nameof( reader ) );
             }
 
             return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth, reader.RecordsAffected, reader.FieldCount, reader.IsClosed );
@@ -148,11 +150,11 @@ namespace Librainian.Databases {
 
         public static Boolean Add<T>( [NotNull] this DataSet dataSet, [NotNull] IEnumerable<T> list ) {
             if ( dataSet is null ) {
-                throw new ArgumentNullException( paramName: nameof( dataSet ) );
+                throw new ArgumentNullException(  nameof( dataSet ) );
             }
 
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             try {
@@ -182,16 +184,15 @@ namespace Librainian.Databases {
             [NotNull] String command, CancellationToken? token = null ) {
 
             if ( builderToTest == default ) {
-                throw new ArgumentNullException( paramName: nameof( builderToTest ) );
+                throw new ArgumentNullException(  nameof( builderToTest ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
             }
 
             try {
                 using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
-
                     return db.ExecuteScalar<T>( command, CommandType.Text );
                 }
             }
@@ -207,11 +208,11 @@ namespace Librainian.Databases {
             [NotNull] String command, CancellationToken? token = null ) {
 
             if ( builderToTest == default ) {
-                throw new ArgumentNullException( paramName: nameof( builderToTest ) );
+                throw new ArgumentNullException(  nameof( builderToTest ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( paramName: nameof( command ), message: "Value cannot be null or whitespace." );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
             }
 
             try {
@@ -236,11 +237,12 @@ namespace Librainian.Databases {
         [NotNull]
         public static List<T> DataTableToList<T>( [NotNull] this DataTable table ) where T : class, new() {
             if ( table is null ) {
-                throw new ArgumentNullException( paramName: nameof( table ) );
+                throw new ArgumentNullException(  nameof( table ) );
             }
 
+            var list = new List<T>( table.Rows.Count );
+
             try {
-                var list = new List<T>( table.Rows.Count );
 
                 foreach ( var row in table.AsEnumerable() ) {
                     var obj = new T();
@@ -257,17 +259,14 @@ namespace Librainian.Databases {
                 }
 
                 list.TrimExcess();
-
-                return list;
             }
-            catch {
-                return null;
-            }
+            catch { }
+            return list;
         }
 
         public static void DisplayTable( [NotNull] this DataTable table ) {
             if ( table is null ) {
-                throw new ArgumentNullException( paramName: nameof( table ) );
+                throw new ArgumentNullException(  nameof( table ) );
             }
 
             foreach ( DataRow row in table.Rows ) {
@@ -328,11 +327,11 @@ namespace Librainian.Databases {
         public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
             Boolean throwIfNotFound = true ) {
             if ( file is null ) {
-                throw new ArgumentNullException( paramName: nameof( file ) );
+                throw new ArgumentNullException(  nameof( file ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             if ( file.TryGetValue( key, out var connection ) ) {
@@ -367,7 +366,7 @@ namespace Librainian.Databases {
                 exception.Log();
             }
 
-            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement" ) ) ) {
+            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement", true, CultureInfo.CurrentCulture ) ) ) {
                 yield return $@"{root}\{ns}";
             }
         }
@@ -437,11 +436,11 @@ namespace Librainian.Databases {
         public static Status InitializeDatabaseConnection( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials,
             CancellationToken token ) {
             if ( file is null ) {
-                throw new ArgumentNullException( paramName: nameof( file ) );
+                throw new ArgumentNullException(  nameof( file ) );
             }
 
             if ( credentials is null ) {
-                throw new ArgumentNullException( paramName: nameof( credentials ) );
+                throw new ArgumentNullException(  nameof( credentials ) );
             }
 
             try {
@@ -488,11 +487,11 @@ namespace Librainian.Databases {
         /// <returns></returns>
         public static Int32? Ordinal( [NotNull] this SqlDataReader reader, [NotNull] String columnName ) {
             if ( reader == default ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException(  nameof( reader ) );
             }
 
             if ( String.IsNullOrEmpty( value: columnName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( columnName ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( columnName ) );
             }
 
             var dictionary = reader.GetDict();
@@ -517,15 +516,15 @@ namespace Librainian.Databases {
         public static String Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String connectionString,
             [NotNull] String key = Words.PrimeConnectionString ) {
             if ( file is null ) {
-                throw new ArgumentNullException( paramName: nameof( file ) );
+                throw new ArgumentNullException(  nameof( file ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( connectionString ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( connectionString ) );
             }
 
             file[ key ] = connectionString;
@@ -539,11 +538,11 @@ namespace Librainian.Databases {
         public static Boolean Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] SqlServer sqlServer,
             [NotNull] String key = Words.PrimeConnectionString ) {
             if ( file is null ) {
-                throw new ArgumentNullException( paramName: nameof( file ) );
+                throw new ArgumentNullException(  nameof( file ) );
             }
 
             if ( sqlServer is null ) {
-                throw new ArgumentNullException( paramName: nameof( sqlServer ) );
+                throw new ArgumentNullException(  nameof( sqlServer ) );
             }
 
             if ( sqlServer.Status != Status.Success ) {
@@ -565,7 +564,7 @@ namespace Librainian.Databases {
 
         public static Boolean SQLTimeout( [NotNull] this SqlException exception ) {
             if ( exception is null ) {
-                throw new ArgumentNullException( paramName: nameof( exception ) );
+                throw new ArgumentNullException(  nameof( exception ) );
             }
 
             return exception.Message?.Contains( "The server was not found or was not accessible" ) == true;
@@ -583,7 +582,7 @@ namespace Librainian.Databases {
         [NotNull]
         public static DataSet ToDataSet<T>( [NotNull] this IEnumerable<T> list ) {
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             var ds = new DataSet();
@@ -624,7 +623,7 @@ namespace Librainian.Databases {
         [NotNull]
         public static DataTable ToDataTable2<T>( [NotNull] this IEnumerable<T> list ) {
             if ( list is null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+                throw new ArgumentNullException(  nameof( list ) );
             }
 
             var table = new DataTable();
@@ -729,7 +728,7 @@ namespace Librainian.Databases {
         [NotNull]
         public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
             if ( table is null ) {
-                throw new ArgumentNullException( paramName: nameof( table ) );
+                throw new ArgumentNullException(  nameof( table ) );
             }
 
             var properties = GetPropertiesForType<T>();
@@ -863,7 +862,7 @@ namespace Librainian.Databases {
         public static SqlServer TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
 
             if ( test == default ) {
-                throw new ArgumentNullException( paramName: nameof( test ) );
+                throw new ArgumentNullException(  nameof( test ) );
             }
 
             try {

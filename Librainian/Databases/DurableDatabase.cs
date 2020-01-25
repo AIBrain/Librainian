@@ -45,8 +45,9 @@ namespace Librainian.Databases {
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
-    using Microsoft.Data.SqlClient;
     using System.Diagnostics.CodeAnalysis;
+    using Microsoft.Data.SqlClient;
+    
     using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
@@ -76,7 +77,7 @@ namespace Librainian.Databases {
         /// <exception cref="InvalidOperationException"></exception>
         public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
             if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( connectionString ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( connectionString ) );
             }
 
             this.Retries = retries;
@@ -239,7 +240,7 @@ namespace Librainian.Databases {
                 };
 
                 if ( null != parameters ) {
-                    command.Parameters.AddRange( parameters );
+                    command.Parameters?.AddRange( parameters );
                 }
 
                 return command.ExecuteNonQuery();
@@ -271,7 +272,7 @@ namespace Librainian.Databases {
                 };
 
                 if ( null != parameters ) {
-                    command.Parameters.AddRange( parameters );
+                    command.Parameters?.AddRange( parameters );
                 }
 
                 return command.ExecuteNonQuery();

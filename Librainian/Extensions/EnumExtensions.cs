@@ -128,7 +128,7 @@ namespace Librainian.Extensions {
         [NotNull]
         public static IEnumerable<T> GetAllValues<T>( [NotNull] this Enum value ) {
             if ( value is null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException(  nameof( value ) );
             }
 
             return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );

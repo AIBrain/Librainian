@@ -156,7 +156,7 @@ namespace Librainian.Converters {
         [Pure]
         public static String StripLetters( [NotNull] this String s ) {
             if ( s is null ) {
-                throw new ArgumentNullException( paramName: nameof( s ) );
+                throw new ArgumentNullException(  nameof( s ) );
             }
 
             return Regex.Replace( s, "[a-zA-Z]", String.Empty );
@@ -563,7 +563,7 @@ namespace Librainian.Converters {
         [NotNull]
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
             if ( systemPath is null ) {
-                throw new ArgumentNullException( paramName: nameof( systemPath ) );
+                throw new ArgumentNullException(  nameof( systemPath ) );
             }
 
             var fullPath = systemPath.FullName;

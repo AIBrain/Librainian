@@ -57,7 +57,7 @@ namespace Librainian.Logging {
         //TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
         /// <summary>
         ///     Emits an error message and a detailed error message to the listener you create when you implement the
-        ///     <see cref="T:System.Diagnostics.TraceListener" /> class.
+        ///     <see cref="System.Diagnostics.TraceListener" /> class.
         /// </summary>
         /// <param name="message">      A message to emit.</param>
         /// <param name="detailMessage">A detailed message to emit.</param>
@@ -67,7 +67,7 @@ namespace Librainian.Logging {
         }
 
         /// <summary>
-        ///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />.
+        ///     Writes a message to this instance's <see cref="System.Diagnostics.TextWriterTraceListener.Writer" />.
         /// </summary>
         /// <param name="message">A message to write.</param>
         /// <PermissionSet>
@@ -82,7 +82,7 @@ namespace Librainian.Logging {
         }
 
         /// <summary>
-        ///     Writes a message to this instance's <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" /> followed by
+        ///     Writes a message to this instance's <see cref="System.Diagnostics.TextWriterTraceListener.Writer" /> followed by
         ///     a line terminator. The default line terminator is a carriage return followed by a line feed (\r\n).
         /// </summary>
         /// <param name="message">A message to write.</param>

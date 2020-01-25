@@ -277,7 +277,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
                 */
 
-                var extentCount = ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
+                var extentCount =  ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
@@ -328,7 +328,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static BitArray GetVolumeMap( [NotNull] String deviceName ) {
             if ( String.IsNullOrWhiteSpace( value: deviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( deviceName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( deviceName ) );
             }
 
             var pAlloc = IntPtr.Zero;

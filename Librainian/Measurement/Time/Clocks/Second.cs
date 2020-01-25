@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time.Clocks {
     public sealed class Second : IClockPart {
 
         [JsonProperty]
-        public readonly SByte Value;
+        public SByte Value { get; }
 
         public static Second Maximum { get; } = new Second( MaxValue );
 

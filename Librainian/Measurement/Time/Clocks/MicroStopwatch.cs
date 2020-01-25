@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary>
         /// </summary>
-        public readonly Double MicrosecondsPerTick = 1000000d / Frequency;
+        public Double MicrosecondsPerTick { get; } = 1000000d / Frequency;
 
         public UInt64 ElapsedMicroseconds => ( UInt64 ) ( this.ElapsedTicks * this.MicrosecondsPerTick );
 

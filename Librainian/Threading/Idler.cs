@@ -136,11 +136,11 @@ namespace Librainian.Threading {
         /// <param name="action"> </param>
         public void Add( [NotNull] String name, [NotNull] Action action ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException(  nameof( action ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( name ) );
             }
 
             Error.Trap( () => this.Jobs.TryAdd( name, action ) );

@@ -68,7 +68,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         private static IEnumerable<String> Split( [NotNull] String path ) {
             if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( path ) );
             }
 
             return path.Split( new[] {
@@ -80,7 +80,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public PathSplitter( [NotNull] IDocument document, String newExtension = default ) {
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             newExtension = newExtension.Trimmed() ?? document.Extension() ?? String.Empty;
@@ -123,7 +123,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         //[DebuggerStepThrough]
         public Boolean ReplacePath( [NotNull] IFolder replacement ) {
             if ( replacement == null ) {
-                throw new ArgumentNullException( paramName: nameof( replacement ) );
+                throw new ArgumentNullException(  nameof( replacement ) );
             }
 
             this.Parts.Clear();

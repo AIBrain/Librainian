@@ -108,7 +108,7 @@ namespace Librainian.Magic {
         /// <param name="action"></param>
         public static void Then( this Boolean b, [NotNull] Action action ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException(  nameof( action ) );
             }
 
             if ( b ) {

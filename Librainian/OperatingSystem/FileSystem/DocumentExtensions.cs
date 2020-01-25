@@ -206,7 +206,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public static void TryPlayFile( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             try {
@@ -224,7 +224,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             if ( !document.Exists() ) {

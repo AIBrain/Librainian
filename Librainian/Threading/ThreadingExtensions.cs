@@ -235,10 +235,10 @@ namespace Librainian.Threading {
             }
 
             var stopwatch = Stopwatch.StartNew();
-            var tenth = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
+            var portion = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
 
-            if ( tenth > Seconds.One ) {
-                tenth = Seconds.One;
+            if ( portion > Seconds.One ) {
+                portion = Seconds.One;
             }
 
             var toggle = true;
@@ -248,7 +248,7 @@ namespace Librainian.Threading {
                 toggle = !toggle;
 
                 if ( toggle ) {
-                    Thread.Sleep( tenth );
+                    Thread.Sleep( portion );
                 }
                 else {
                     Thread.Yield();
@@ -417,7 +417,7 @@ namespace Librainian.Threading {
         public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( actions is null ) {
-                throw new ArgumentNullException( paramName: nameof( actions ) );
+                throw new ArgumentNullException(  nameof( actions ) );
             }
 
             if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -448,7 +448,7 @@ namespace Librainian.Threading {
         public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( functions is null ) {
-                throw new ArgumentNullException( paramName: nameof( functions ) );
+                throw new ArgumentNullException(  nameof( functions ) );
             }
 
             if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {

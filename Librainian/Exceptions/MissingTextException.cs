@@ -61,7 +61,7 @@ namespace Librainian.Exceptions {
 
         public MissingTextException( String parameterName, String message, Exception innerException ) : base( paramName: parameterName, message: message,
             innerException: innerException ) =>
-            throw new ArgumentException( message: $"{parameterName} cannot be null, empty, or whitespace.", paramName: parameterName, innerException: innerException );
+            throw new ArgumentException( message: $"{parameterName} cannot be null, empty, or whitespace.",  parameterName, innerException: innerException );
 
     }
 

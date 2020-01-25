@@ -428,11 +428,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="target">The destination stream to copy to.</param>
         public static void CopyStream( [NotNull] this Stream source, [NotNull] Stream target ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException(  nameof( source ) );
             }
 
             if ( target is null ) {
-                throw new ArgumentNullException( paramName: nameof( target ) );
+                throw new ArgumentNullException(  nameof( target ) );
             }
 
             if ( !source.CanRead ) {
@@ -685,7 +685,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public static UInt32? GetFileSizeOnDisk( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             return GetFileSizeOnDisk( new FileInfo( document.FullPath ) );
@@ -953,7 +953,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
         public static Boolean OpenWithExplorer( [NotNull] this DirectoryInfo folder ) {
             if ( folder is null ) {
-                throw new ArgumentNullException( paramName: nameof( folder ) );
+                throw new ArgumentNullException(  nameof( folder ) );
             }
 
             var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
@@ -968,7 +968,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
         public static Boolean OpenWithExplorer( [NotNull] this Folder folder ) {
             if ( folder is null ) {
-                throw new ArgumentNullException( paramName: nameof( folder ) );
+                throw new ArgumentNullException(  nameof( folder ) );
             }
 
             var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
@@ -982,7 +982,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         public static Boolean OpenWithExplorer( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
@@ -1538,7 +1538,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     randomFileName = Path.Combine( folder.FullName, Path.GetFileName( randomFileName ) );
                 }
                 else {
-                    if ( !extension.StartsWith( "." ) ) {
+                    if ( !extension.StartsWith( ".", StringComparison.OrdinalIgnoreCase ) ) {
                         extension = $".{extension}";
                     }
 

@@ -100,7 +100,7 @@ namespace Librainian.Measurement.Physics {
 
         /// <summary>
         /// </summary>
-        public readonly Rational Value;
+        public Rational Value { get; }
 
         public AtomicMassUnits( Decimal value ) : this() => this.Value = ( Rational ) value;
 
@@ -187,7 +187,7 @@ namespace Librainian.Measurement.Physics {
         /// <summary>
         ///     Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
+        /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} u";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );

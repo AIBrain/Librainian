@@ -238,7 +238,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static IEnumerable<String> SplitPath( [NotNull] String path ) {
             if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( path ) );
             }
 
             return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );

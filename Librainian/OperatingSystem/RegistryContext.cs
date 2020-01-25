@@ -61,11 +61,11 @@ namespace Librainian.OperatingSystem {
         /// <param name="action"></param>
         public static Boolean AddRegistryContext( [NotNull] String menuName, [NotNull] String menuPath, [CanBeNull] String command = null, [CanBeNull] String action = null ) {
             if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuPath ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( menuPath ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: menuName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( menuName ) );
             }
 
             try {

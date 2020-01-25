@@ -148,7 +148,7 @@ namespace Librainian.Misc {
 
         public static Bitten Parse( [NotNull] String input ) {
             if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( input ) );
             }
 
             return Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;

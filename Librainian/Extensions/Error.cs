@@ -119,7 +119,7 @@ namespace System {
         public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func, [InstantHandle] [CanBeNull] Action final = default ) {
             if ( func is null ) {
                 if ( Debugger.IsAttached ) {
-                    throw new ArgumentNullException( paramName: nameof( func ) );
+                    throw new ArgumentNullException(  nameof( func ) );
                 }
 
                 return default;
@@ -158,10 +158,10 @@ namespace System {
             [CanBeNull] params Action[] actions ) {
             if ( func is null ) {
                 if ( Debugger.IsAttached ) {
-                    throw new ArgumentNullException( paramName: nameof( func ) );
+                    throw new ArgumentNullException(  nameof( func ) );
                 }
 
-                exception = new ArgumentNullException( paramName: nameof( func ) );
+                exception = new ArgumentNullException(  nameof( func ) );
 
                 return default;
             }

@@ -510,11 +510,11 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Set( [NotNull] String folder, [CanBeNull] String key, [CanBeNull] Object value, RegistryValueKind kind ) {
             if ( folder.IsEmpty() ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.",  nameof( folder ) );
             }
 
             if ( key.IsEmpty() ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             using ( var regFolder = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree ) ) {
@@ -554,15 +554,15 @@ namespace Librainian.Persistence {
         public static Boolean Set<T>( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey, [CanBeNull] T value, RegistryValueKind kind ) {
 
             if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( folder ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( subkey ) );
             }
 
             using ( var registryKey = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree ) ) {

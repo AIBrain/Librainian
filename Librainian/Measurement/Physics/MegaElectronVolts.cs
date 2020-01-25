@@ -71,7 +71,7 @@ namespace Librainian.Measurement.Physics {
         /// <summary></summary>
         public static readonly MegaElectronVolts Zero = new MegaElectronVolts( ( Rational ) 0 );
 
-        public readonly Rational Value;
+        public Rational Value { get; }
 
         public MegaElectronVolts( Rational units ) : this() => this.Value = units;
 

@@ -141,11 +141,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds Combine( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return new Attoseconds( left.Value + right.Value );
@@ -154,7 +154,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds Combine( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return new Attoseconds( left.Value + ( Rational )attoseconds );
@@ -181,7 +181,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator Femtoseconds( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( attoseconds ) );
+                throw new ArgumentNullException(  nameof( attoseconds ) );
             }
 
             return attoseconds.ToFemtoseconds();
@@ -190,7 +190,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator SpanOfTime( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( attoseconds ) );
+                throw new ArgumentNullException(  nameof( attoseconds ) );
             }
 
             return new SpanOfTime( planckTimes: attoseconds.ToPlanckTimes().Value );
@@ -199,7 +199,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Zeptoseconds( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( attoseconds ) );
+                throw new ArgumentNullException(  nameof( attoseconds ) );
             }
 
             return attoseconds.ToZeptoseconds();
@@ -208,7 +208,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator -( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, -attoseconds );
@@ -219,11 +219,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator +( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, right );
@@ -232,7 +232,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator +( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, attoseconds );
@@ -240,11 +240,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value < right.Value;
@@ -254,11 +254,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -266,7 +266,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] Attoseconds other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.Value.CompareTo( other.Value );
@@ -284,7 +284,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
@@ -300,7 +300,7 @@ namespace Librainian.Measurement.Time {
         /// <paramref name="obj" /> in the sort order. Zero This instance occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
         /// <paramref name="obj" /> in the sort order.
         /// </returns>
-        /// <exception cref="T:System.ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
+        /// <exception cref="System.ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( obj is null ) {
                 return 1;

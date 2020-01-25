@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public const Int32 MinValue = 0;
 
         [JsonProperty]
-        public readonly Int16 Value;
+        public Int16 Value { get; }
 
         public static Millisecond Maximum { get; } = new Millisecond( MaxValue );
 

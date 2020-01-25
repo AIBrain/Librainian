@@ -95,7 +95,7 @@ namespace Librainian.Collections {
 
         public StringTable( [NotNull] Folder commonName ) {
             if ( commonName is null ) {
-                throw new ArgumentNullException( paramName: nameof( commonName ) );
+                throw new ArgumentNullException(  nameof( commonName ) );
             }
 
             this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );

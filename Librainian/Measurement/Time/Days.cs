@@ -186,7 +186,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
@@ -204,7 +204,7 @@ namespace Librainian.Measurement.Time {
         ///     occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
         ///     <paramref name="obj" /> in the sort order.
         /// </returns>
-        /// <exception cref="T:System.ArgumentException">
+        /// <exception cref="System.ArgumentException">
         ///     <paramref name="obj" /> is not the same type as this instance.
         /// </exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {

@@ -65,12 +65,12 @@ namespace Librainian.Measurement.Length {
         /// </summary>
         public const Decimal MillimetersInSingleMeter = CentimetersinSingleMeter * MillimetersInSingleCentimeter;
 
-        public static Int32 Comparison( this Millimeters left, Millimeters rhs ) => left.Value.CompareTo( rhs.Value );
+        public static Int32 Comparison( this Millimeters left, Millimeters right ) => left.Value.CompareTo( right.Value );
 
         //public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
         //    var left = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.
-        //    var rhs = centimeters.Value;
-        //    return left.CompareTo( rhs );
+        //    var right = centimeters.Value;
+        //    return left.CompareTo( right );
         //}
     }
 }

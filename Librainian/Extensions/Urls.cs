@@ -42,27 +42,11 @@
 namespace Librainian.Extensions {
 
     using System;
-    using System.IO;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Web;
     using JetBrains.Annotations;
 
     public static class Urls {
-
-        [CanBeNull]
-        public static String GetSuggestedNameFromUrl( [CanBeNull] String url, [CanBeNull] String defaultValue ) {
-            var res = Path.GetFileNameWithoutExtension( url );
-
-            //check if there is no file name, i.e. just folder name + query String
-            if ( !String.IsNullOrEmpty( res ) && !res.IsNameOnlyQueryString() ) {
-                return defaultValue;
-            }
-
-            res = Path.GetFileName( Path.GetDirectoryName( url ) );
-
-            return String.IsNullOrEmpty( res ) ? defaultValue : Regex.Replace( res, @"[^\w]", "_", RegexOptions.Singleline ).Substring( 0, 50 );
-        }
 
         /// <summary>
         ///     Check that a String is not null or empty
@@ -83,14 +67,20 @@ namespace Librainian.Extensions {
         public static Boolean IsNameOnlyQueryString( [CanBeNull] this String res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
         [CanBeNull]
-        public static String UrlDecode( [CanBeNull] this String input ) => HttpUtility.UrlDecode( input );
+        public static Uri UrlDecode( [NotNull] this String input ) {
+            if ( String.IsNullOrWhiteSpace( value: input ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
+            }
+
+            return new Uri( HttpUtility.UrlDecode( input ) );
+        }
 
         /// <summary>
         ///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
         ///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
         /// </summary>
         [NotNull]
-        public static String UrlEncode( [NotNull] this String input ) {
+        public static Uri UrlEncode( [NotNull] this String input ) {
             if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
             }
@@ -98,7 +88,7 @@ namespace Librainian.Extensions {
             const Int32 maxLength = 32766;
 
             if ( input.Length <= maxLength ) {
-                return Uri.EscapeDataString( input );
+                return new Uri( Uri.EscapeDataString( input ) );
             }
 
             var sb = new StringBuilder( input.Length * 2 );
@@ -111,7 +101,7 @@ namespace Librainian.Extensions {
                 index += subString.Length;
             }
 
-            return sb.ToString();
+            return new Uri( sb.ToString() );
         }
     }
 }

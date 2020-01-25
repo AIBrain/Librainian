@@ -192,7 +192,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static String BuildKey<T>( [NotNull] params T[] keys ) {
                 if ( keys is null ) {
-                    throw new ArgumentNullException( paramName: nameof( keys ) );
+                    throw new ArgumentNullException(  nameof( keys ) );
                 }
 
                 return keys.ToStrings( Symbols.TriplePipes );

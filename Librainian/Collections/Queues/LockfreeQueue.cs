@@ -101,6 +101,7 @@ namespace Librainian.Collections.Queues {
         ///     Removes and returns the object at the beginning of the queue.
         /// </summary>
         /// <returns>the object that is removed from the beginning of the queue</returns>
+        [CanBeNull]
         public T Dequeue() {
             if ( !this.TryDequeue( item: out var result ) ) {
                 throw new InvalidOperationException( "the queue is empty" );
@@ -158,6 +159,7 @@ namespace Librainian.Collections.Queues {
             } while ( ( currentNode = currentNode.Next ) != null );
         }
 
+        [CanBeNull]
         public T TryDequeue() {
             this.TryDequeue( item: out var item );
 

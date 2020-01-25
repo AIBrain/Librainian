@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public const Int32 MinValue = 0;
 
         [JsonProperty]
-        public readonly SByte Value;
+        public SByte Value { get; }
 
         public static Minute Maximum { get; } = new Minute( MaxValue );
 

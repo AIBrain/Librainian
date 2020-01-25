@@ -233,8 +233,8 @@ namespace Librainian.Measurement.Time {
 
         //public static int Comparison( this Minutes minutes, Milliseconds milliseconds ) {
         //    var left = minutes.Value;
-        //    var rhs = new Minutes( milliseconds: milliseconds ).Value;
-        //    return left.CompareTo( rhs );
+        //    var right = new Minutes( milliseconds: milliseconds ).Value;
+        //    return left.CompareTo( right );
         //}
         /// <summary>Sets the day of the <see cref="DateTime" /> to the first day in that month.</summary>
         /// <param name="current">The current <see cref="DateTime" /> to be changed.</param>
@@ -511,7 +511,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate( [NotNull] this String input, [CanBeNull] CultureInfo culture ) {
             if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( input ) );
             }
 
             input = input.Replace( "\n", "" );

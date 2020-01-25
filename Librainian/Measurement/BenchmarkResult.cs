@@ -83,7 +83,7 @@ namespace Librainian.Measurement {
         ///     Returns the fully qualified type name of this instance.
         /// </summary>
         /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
+        ///     A <see cref="String" /> containing a fully qualified type name.
         /// </returns>
         public override String ToString() => this.TotalTime.Simpler();
     }

@@ -60,7 +60,7 @@ namespace Librainian.Exceptions {
 
         public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             if ( serializationInfo is null ) {
-                throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
+                throw new ArgumentNullException(  nameof( serializationInfo ) );
             }
         }
 

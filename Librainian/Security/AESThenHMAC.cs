@@ -198,11 +198,11 @@ namespace Librainian.Security {
             }
 
             if ( String.IsNullOrEmpty( value: password ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( password ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( password ) );
             }
 
             if ( !nonSecretPayloadLength.Any() ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( nonSecretPayloadLength ) );
+                throw new ArgumentOutOfRangeException(  nameof( nonSecretPayloadLength ) );
             }
 
             var cipherText = Convert.FromBase64String( s: encryptedMessage );

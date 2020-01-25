@@ -183,7 +183,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String Bracket( [NotNull] this String self ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             self = self.Trimmed();
@@ -975,7 +975,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String RepeatFirstChar( [NotNull] this String self, Int32 count ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             return new String( self[ 0 ], count );
@@ -994,11 +994,11 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String PadMiddle( [NotNull] this String left, [CanBeNull] String right, Char middlePadding, Int32 count = 1 ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return $"{left}{new String( middlePadding, count )}{right}";
@@ -1014,7 +1014,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String PluralOf<T>( [NotNull] this T self, [NotNull] String singular ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             if ( singular is null ) {
@@ -1505,7 +1505,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String StripTags( [NotNull] this String input, [NotNull] String[] allowedTags ) {
             if ( allowedTags == null ) {
-                throw new ArgumentNullException( paramName: nameof( allowedTags ) );
+                throw new ArgumentNullException(  nameof( allowedTags ) );
             }
 
             var stripHTMLExp = new Regex( @"(<\/?[^>]+>)" );
@@ -1842,43 +1842,11 @@ namespace Librainian.Parsing {
 
         [NotNull]
         [ItemNotNull]
-        public static String[] ToWords( [CanBeNull] this String sentence ) {
-
-            //TODO try parsing with different splitters?
-            // ...do we mabe want the most or least words or avg ?
-
-            ////Regex r = new Regex( _regsplit );
-            ////Regex r = new Regex( @"\b(\w+)\s+\b" ); almost works..
-            //Regex r = .Split(    (\$\s*[\d,]+\.\d{2})\b
-            // (\$?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?))$
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(?=\b\$[\d]+\.\d{4}\s+\b)" ).Split( sentence ) );
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"([\w(?=\.\W)]+)|(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"([\w]+)" ).Split( sentence ) );
-
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"\b((([''/,&\:\(\)\$\+\-\*\w\000-\032])|(-*\d+\.\d+[%]*))+[\s]+)+\b[\w'',%\(\)]+[.!?]([''\s]|$)" ).Split( sentence ) );
-
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\s*\w+\W\s*)" ).Split( sentence ) );
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\s*\$\d+\.\d+\D)" ).Split( sentence ) );
-
-            //Regex r = new Regex( @"(\$\d+\.\d+)" );
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( r.Split( sentence ) );
-
-            //AIBrain.Brain.BlackBoxClass.Diagnostic( new Regex( @"(\b\b)|(\$\d+\.\d+)" ).Split( sentence ) );
-
-            //if ( String.IsNullOrWhiteSpace( sentence ) ) {return Enumerable.Empty<String>();}
-            sentence.Nop();
-
-            return RegexByWordBreak.Split( $"{Symbols.Singlespace}{sentence}{Symbols.Singlespace}" ).ToStrings( Symbols.Singlespace )
+        public static String[] ToWords( [CanBeNull] this String sentence ) =>
+            RegexByWordBreak.Split( $"{Symbols.Singlespace}{sentence}{Symbols.Singlespace}" ).ToStrings( Symbols.Singlespace )
                 .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
-            //var sb = new StringBuilder( sentence.Length );
-            //foreach ( var wrod in Regex_ByWordBreak.Split( sentence ) ) {
-            //    sb.AppendFormat( " {0} ", wrod ?? String.Empty );
-            //}
-            //return sb.ToString().Split( SpaceSplitBy, StringSplitOptions.RemoveEmptyEntries );
-        }
 
-    
         [CanBeNull]
         public static String Truncate( [CanBeNull] this String s, Int32 maxLen ) {
             if ( maxLen < 0 ) {
@@ -1965,15 +1933,15 @@ namespace Librainian.Parsing {
         [NotNull]
         public static String Between( [NotNull] this String source, [NotNull] String left, [NotNull] String right ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException(  nameof( source ) );
             }
 
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Regex.Match( source, $"{left}(.*){right}" ).Groups[ 1 ].Value;

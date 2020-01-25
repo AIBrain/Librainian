@@ -148,8 +148,8 @@ namespace Librainian.ComputerSystem.Devices {
     [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public class NetResource {
 
-        [MarshalAs( UnmanagedType.LPWStr )]
-        public String Comment;
+        [field: MarshalAs( UnmanagedType.LPWStr )]
+        public String Comment { get; set; }
 
         public ResourceDisplaytype DisplayType;
 

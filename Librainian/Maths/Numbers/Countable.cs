@@ -175,7 +175,7 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
             if ( keys is null ) {
-                throw new ArgumentNullException( paramName: nameof( keys ) );
+                throw new ArgumentNullException(  nameof( keys ) );
             }
 
             if ( this.IsReadOnly ) {
@@ -193,7 +193,7 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean Add( [NotNull] TKey key ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             return this.Add( key, amount: BigInteger.One );
@@ -201,7 +201,7 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             if ( this.IsReadOnly ) {
@@ -248,12 +248,12 @@ namespace Librainian.Maths.Numbers {
         }
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
         public Boolean Subtract( [NotNull] TKey key, BigInteger amount ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             if ( this.IsReadOnly ) {

@@ -144,11 +144,22 @@ namespace Librainian.Measurement.Currency.BTC {
         /// <summary>
         ///     <para>Static comparison.</para>
         ///     <para>Returns true if the wallets are the same instance.</para>
+        /// <para>Returns true if the balances match! (Even if different wallets)</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( left, right );
+        public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Balance == right.Balance;
+        }
 
         public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
             if ( otherWallet is null ) {
@@ -165,7 +176,13 @@ namespace Librainian.Measurement.Currency.BTC {
 
         /// <summary>Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.</summary>
         /// <param name="otherWallet">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
+        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( this, otherWallet );
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals(this, obj as SimpleBitcoinWallet);
 
         public override Int32 GetHashCode() => this._hashcode;
 
@@ -173,48 +190,42 @@ namespace Librainian.Measurement.Currency.BTC {
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount">  </param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
-
+        public Boolean TryAdd( Decimal amount ) {
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                if ( this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                    try {
+                        this._balance += amount;
+                        this.LabelToFlashOnChanges.Flash();
+                        
+                    }
+                    finally {
+                        this._access.ExitWriteLock();
+                    }
+                    return true;
+                }
+                else {
                     return false;
                 }
-
-                this._balance += amount;
-                this.LabelToFlashOnChanges.Flash();
-
-                return true;
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
-
                 this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
+        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet ) {
             if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
-            return this.TryAdd( amount: wallet.Balance, sanitize: sanitize );
+            return this.TryAdd( amount: wallet.Balance );
         }
 
-        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .</summary>
+        /// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" /> .</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
 
             if ( amount <= Decimal.Zero ) {
                 return false;

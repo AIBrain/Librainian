@@ -50,7 +50,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static Unique ToUnique( [NotNull] this String location ) {
             if ( String.IsNullOrWhiteSpace( value: location ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( location ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( location ) );
             }
 
             return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
@@ -68,7 +68,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static Unique ToUnique( [NotNull] this Uri location ) {
             if ( location is null ) {
-                throw new ArgumentNullException( paramName: nameof( location ) );
+                throw new ArgumentNullException(  nameof( location ) );
             }
 
             return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );

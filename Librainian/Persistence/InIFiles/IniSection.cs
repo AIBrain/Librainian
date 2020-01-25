@@ -64,10 +64,10 @@ namespace Librainian.Persistence.InIFiles {
         public IniLine this[ Int32 index ] {
             get {
                 if ( index <= 0 || index > this.Count ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof( index ) );
+                    throw new ArgumentOutOfRangeException(  nameof( index ) );
                 }
 
-                return this.lines[ index ] ?? throw new ArgumentOutOfRangeException( paramName: nameof( index ) );
+                return this.lines[ index ] ?? throw new ArgumentOutOfRangeException(  nameof( index ) );
             }
         }
 
@@ -76,7 +76,7 @@ namespace Librainian.Persistence.InIFiles {
         public IEnumerator<IniLine> GetEnumerator() => this.lines.GetEnumerator();
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         [JsonProperty]
@@ -85,7 +85,7 @@ namespace Librainian.Persistence.InIFiles {
 
         public Boolean Add( [NotNull] String key, [CanBeNull] String value ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( key ) );
             }
 
             this.lines.Add( new IniLine( key, value ) );

@@ -62,7 +62,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             return type.TypeHasAttribute<ImmutableAttribute>();
@@ -70,7 +70,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsWhiteListed( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             // Boolean, int, etc.
@@ -165,7 +165,7 @@ namespace Librainian.Extensions {
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [CanBeNull] params Type[] whiteList ) {
             if ( assemblies is null ) {
-                throw new ArgumentNullException( paramName: nameof( assemblies ) );
+                throw new ArgumentNullException(  nameof( assemblies ) );
             }
 
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;

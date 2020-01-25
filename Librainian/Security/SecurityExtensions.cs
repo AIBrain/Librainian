@@ -184,7 +184,7 @@ namespace Librainian.Security {
         [NotNull]
         public static String DecryptDES( [NotNull] this String textToDecrypt ) {
             if ( textToDecrypt is null ) {
-                throw new ArgumentNullException( paramName: nameof( textToDecrypt ) );
+                throw new ArgumentNullException(  nameof( textToDecrypt ) );
             }
 
             using ( var ms = new MemoryStream() ) {
@@ -331,7 +331,7 @@ namespace Librainian.Security {
         [NotNull]
         public static String EncryptDES( [NotNull] this String textToEncrypt ) {
             if ( textToEncrypt is null ) {
-                throw new ArgumentNullException( paramName: nameof( textToEncrypt ) );
+                throw new ArgumentNullException(  nameof( textToEncrypt ) );
             }
 
             using ( var ms = new MemoryStream() ) {
@@ -398,7 +398,7 @@ namespace Librainian.Security {
         [NotNull]
         public static String EncryptString( [NotNull] this SecureString input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException(  nameof( input ) );
             }
 
             var encryptedData = ProtectedData.Protect( userData: Encoding.Unicode.GetBytes( s: ToInsecureString( input: input ) ), optionalEntropy: Entropy,

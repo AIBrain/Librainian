@@ -73,7 +73,7 @@ namespace Librainian.Measurement.Physics {
         public static readonly TeraElectronVolts Zero = new TeraElectronVolts( 0m );
 
         /// <summary></summary>
-        public readonly Rational Value;
+        public Rational Value { get; }
 
         public TeraElectronVolts( Rational units ) : this() => this.Value = units;
 

@@ -364,8 +364,8 @@ namespace Librainian.Graphics {
         /// <summary>
         ///     Multiplies the current matrix by the 3x3 matrix passed in
         /// </summary>
-        /// <param name="rhs"></param>
-        public void Multiply( [NotNull] Matrix3X3 rhs ) {
+        /// <param name="right"></param>
+        public void Multiply( [NotNull] Matrix3X3 right ) {
 
             // Get coeffs
             var a = this._coeffs[ _M11 ];
@@ -378,15 +378,15 @@ namespace Librainian.Graphics {
             var h = this._coeffs[ _M32 ];
             var i = this._coeffs[ _M33 ];
 
-            var j = rhs.M11;
-            var k = rhs.M12;
-            var l = rhs.M13;
-            var m = rhs.M21;
-            var n = rhs.M22;
-            var o = rhs.M23;
-            var p = rhs.M31;
-            var q = rhs.M32;
-            var r = rhs.M33;
+            var j = right.M11;
+            var k = right.M12;
+            var l = right.M13;
+            var m = right.M21;
+            var n = right.M22;
+            var o = right.M23;
+            var p = right.M31;
+            var q = right.M32;
+            var r = right.M33;
 
             // Perform multiplication. Formula taken from
             // http: //www.maths.surrey.ac.uk/explore/emmaspages/option1.html

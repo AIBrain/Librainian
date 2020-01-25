@@ -89,15 +89,15 @@ namespace Librainian.OperatingSystem.Streams {
         /// <returns>The new position within the current stream.</returns>
         /// <param name="offset">A byte offset relative to the <paramref name="origin" /> parameter.</param>
         /// <param name="origin">
-        ///     A value of type <see cref="T:System.IO.SeekOrigin" /> indicating the reference point used to
+        ///     A value of type <see cref="System.IO.SeekOrigin" /> indicating the reference point used to
         ///     obtain the new position.
         /// </param>
-        /// <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
-        /// <exception cref="T:System.NotSupportedException">
+        /// <exception cref="System.IO.IOException">An I/O error occurs.</exception>
+        /// <exception cref="System.NotSupportedException">
         ///     The stream does not support seeking, such as if the stream is
         ///     constructed from a pipe or console output.
         /// </exception>
-        /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
+        /// <exception cref="System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
         public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
 
@@ -105,12 +105,12 @@ namespace Librainian.OperatingSystem.Streams {
         ///     When overridden in a derived class, sets the length of the current stream.
         /// </summary>
         /// <param name="value">The desired length of the current stream in bytes.</param>
-        /// <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
-        /// <exception cref="T:System.NotSupportedException">
+        /// <exception cref="System.IO.IOException">An I/O error occurs.</exception>
+        /// <exception cref="System.NotSupportedException">
         ///     The stream does not support both writing and seeking, such as if the
         ///     stream is constructed from a pipe or console output.
         /// </exception>
-        /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
+        /// <exception cref="System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>2</filterpriority>
         public override void SetLength( Int64 value ) => this.Stream.SetLength( value );
 
@@ -127,18 +127,18 @@ namespace Librainian.OperatingSystem.Streams {
         ///     current stream.
         /// </param>
         /// <param name="count"> The number of bytes to be written to the current stream.</param>
-        /// <exception cref="T:System.ArgumentException">
+        /// <exception cref="System.ArgumentException">
         ///     The sum of <paramref name="offset" /> and <paramref name="count" /> is
         ///     greater than the buffer length.
         /// </exception>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="buffer" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
+        /// <exception cref="System.ArgumentNullException"><paramref name="buffer" /> is null.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">
         ///     <paramref name="offset" /> or <paramref name="count" /> is
         ///     negative.
         /// </exception>
-        /// <exception cref="T:System.IO.IOException">An I/O error occurs.</exception>
-        /// <exception cref="T:System.NotSupportedException">The stream does not support writing.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
+        /// <exception cref="System.IO.IOException">An I/O error occurs.</exception>
+        /// <exception cref="System.NotSupportedException">The stream does not support writing.</exception>
+        /// <exception cref="System.ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
         public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
     }

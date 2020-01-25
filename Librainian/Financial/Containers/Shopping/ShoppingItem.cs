@@ -86,18 +86,18 @@ namespace Librainian.Financial.Containers.Shopping {
         ///     Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] ShoppingItem left, [CanBeNull] ShoppingItem rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
+        public static Boolean Equals( [CanBeNull] ShoppingItem left, [CanBeNull] ShoppingItem right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
-            if ( null == left || null == rhs ) {
+            if ( null == left || null == right ) {
                 return false;
             }
 
-            return left.Category == rhs.Category && left.ItemID == rhs.ItemID;
+            return left.Category == right.Category && left.ItemID == right.ItemID;
         }
 
         /// <summary>

@@ -51,7 +51,7 @@ namespace Librainian.Threading {
         [ItemNotNull]
         public static async Task<IDisposable> UseWaitAsync( [NotNull] this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
             if ( semaphore is null ) {
-                throw new ArgumentNullException( paramName: nameof( semaphore ) );
+                throw new ArgumentNullException(  nameof( semaphore ) );
             }
 
             await semaphore.WaitAsync( cancelToken ).ConfigureAwait( false );

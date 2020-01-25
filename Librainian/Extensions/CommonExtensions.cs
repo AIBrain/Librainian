@@ -64,15 +64,15 @@ namespace Librainian.Extensions {
         /// <example>5. Between(5, 5))</example>
         public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
             if ( target is null ) {
-                throw new ArgumentNullException( paramName: nameof( target ) );
+                throw new ArgumentNullException(  nameof( target ) );
             }
 
             if ( startInclusive is null ) {
-                throw new ArgumentNullException( paramName: nameof( startInclusive ) );
+                throw new ArgumentNullException(  nameof( startInclusive ) );
             }
 
             if ( endInclusive is null ) {
-                throw new ArgumentNullException( paramName: nameof( endInclusive ) );
+                throw new ArgumentNullException(  nameof( endInclusive ) );
             }
 
             if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
@@ -101,15 +101,15 @@ namespace Librainian.Extensions {
         [NotNull]
         public static T Clamp<T>( [NotNull] this T self, [NotNull] T min, [NotNull] T max ) where T : IComparable<T> {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             if ( min is null ) {
-                throw new ArgumentNullException( paramName: nameof( min ) );
+                throw new ArgumentNullException(  nameof( min ) );
             }
 
             if ( max is null ) {
-                throw new ArgumentNullException( paramName: nameof( max ) );
+                throw new ArgumentNullException(  nameof( max ) );
             }
 
             if ( self.CompareTo( other: min ) < 0 ) {

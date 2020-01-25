@@ -118,16 +118,16 @@ namespace Librainian.Maths {
             }
         }
 
-        public static Double Combine( Double left, Double rhs ) {
+        public static Double Combine( Double left, Double right ) {
             if ( !left.IsNumber() ) {
                 throw new ArgumentOutOfRangeException( nameof( left ) );
             }
 
-            if ( !rhs.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( nameof( rhs ) );
+            if ( !right.IsNumber() ) {
+                throw new ArgumentOutOfRangeException( nameof( right ) );
             }
 
-            return ( left + rhs ) / 2D;
+            return ( left + right ) / 2D;
         }
 
         [CanBeNull]

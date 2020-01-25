@@ -105,9 +105,9 @@ namespace Librainian.Graphics {
         ///     Static comparison.
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Point3Di left, Point3Di rhs ) => left.ApproximatelyEquals( rhs );
+        public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( right );
 
         /// <summary>
         ///     Determines whether the specified Point3D instances are unequal.

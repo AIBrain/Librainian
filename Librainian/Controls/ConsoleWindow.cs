@@ -107,7 +107,7 @@ namespace Librainian.Controls {
 
         public static void SetIcon( [NotNull] this Icon icon ) {
             if ( icon is null ) {
-                throw new ArgumentNullException( paramName: nameof( icon ) );
+                throw new ArgumentNullException(  nameof( icon ) );
             }
 
             SetConsoleIcon( icon.Handle );

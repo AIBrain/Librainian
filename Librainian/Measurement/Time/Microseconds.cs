@@ -159,11 +159,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds Combine( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, right.Value );
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds Combine( [NotNull] Microseconds left, Rational microseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return new Microseconds( left.Value + microseconds );
@@ -181,7 +181,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds Combine( [NotNull] Microseconds left, BigInteger microseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return new Microseconds( left.Value + microseconds );
@@ -206,7 +206,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Milliseconds( [NotNull] Microseconds microseconds ) {
             if ( microseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( microseconds ) );
+                throw new ArgumentNullException(  nameof( microseconds ) );
             }
 
             return microseconds.ToMilliseconds();
@@ -215,7 +215,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Nanoseconds( [NotNull] Microseconds microseconds ) {
             if ( microseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( microseconds ) );
+                throw new ArgumentNullException(  nameof( microseconds ) );
             }
 
             return microseconds.ToNanoseconds();
@@ -223,7 +223,7 @@ namespace Librainian.Measurement.Time {
 
         public static implicit operator TimeSpan( [NotNull] Microseconds microseconds ) {
             if ( microseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( microseconds ) );
+                throw new ArgumentNullException(  nameof( microseconds ) );
             }
 
             return TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
@@ -232,7 +232,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds operator -( [NotNull] Microseconds milliseconds ) {
             if ( milliseconds is null ) {
-                throw new ArgumentNullException( paramName: nameof( milliseconds ) );
+                throw new ArgumentNullException(  nameof( milliseconds ) );
             }
 
             return new Microseconds( milliseconds.Value * -1 );
@@ -241,11 +241,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds operator -( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, -right );
@@ -256,11 +256,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator !=( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return !Equals( left, right );
@@ -269,11 +269,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds operator +( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Combine( left, right );
@@ -282,7 +282,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds operator +( [NotNull] Microseconds left, Decimal microseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, ( Rational )microseconds );
@@ -291,7 +291,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Microseconds operator +( [NotNull] Microseconds left, BigInteger microseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return Combine( left, microseconds );
@@ -299,11 +299,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value < right.Value;
@@ -311,7 +311,7 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] Microseconds left, [CanBeNull] Milliseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             return ( Milliseconds )left < right;
@@ -319,11 +319,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator ==( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return Equals( left, right );
@@ -331,11 +331,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -343,11 +343,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] Microseconds left, [NotNull] Milliseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -355,7 +355,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] Microseconds other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return this.Value.CompareTo( other.Value );
@@ -363,7 +363,7 @@ namespace Librainian.Measurement.Time {
 
         public Boolean Equals( [NotNull] Microseconds other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException(  nameof( other ) );
             }
 
             return Equals( this, other );

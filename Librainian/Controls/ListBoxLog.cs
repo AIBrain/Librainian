@@ -78,17 +78,17 @@ namespace Librainian.Controls {
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
             if ( listBox is null ) {
-                throw new ArgumentNullException( paramName: nameof( listBox ) );
+                throw new ArgumentNullException(  nameof( listBox ) );
             }
 
             if ( messageFormat is null ) {
-                throw new ArgumentNullException( paramName: nameof( messageFormat ) );
+                throw new ArgumentNullException(  nameof( messageFormat ) );
             }
         }
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
             if ( String.IsNullOrWhiteSpace( value: messageFormat ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( messageFormat ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( messageFormat ) );
             }
 
             this.Box = listBox ?? throw new ArgumentNullException( nameof( listBox ) );

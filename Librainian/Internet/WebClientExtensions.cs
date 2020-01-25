@@ -76,7 +76,7 @@ namespace Librainian.Internet {
         [NotNull]
         public static WebClient Add( [NotNull] this WebClient client, CancellationToken token ) {
             if ( client is null ) {
-                throw new ArgumentNullException( paramName: nameof( client ) );
+                throw new ArgumentNullException(  nameof( client ) );
             }
 
             token.Register( client.CancelAsync );
@@ -92,11 +92,11 @@ namespace Librainian.Internet {
         [NotNull]
         public static Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( address ) );
             }
 
             return DownloadDataTaskAsync( webClient.Add( token ), new Uri( address ) );
@@ -108,11 +108,11 @@ namespace Librainian.Internet {
         /// <returns>A Task that contains the downloaded data.</returns>
         public static async Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException(  nameof( address ) );
             }
 
             try {
@@ -134,15 +134,15 @@ namespace Librainian.Internet {
         public static async Task DownloadFileTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String fileName,
             [CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException(  nameof( address ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fileName ) );
             }
 
             var tcs = new TaskCompletionSource<Object>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -195,11 +195,11 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, TrimmedString address ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( address.IsEmpty() ) {
-                throw new ArgumentEmptyException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+                throw new ArgumentEmptyException( message: "Value cannot be null or whitespace.",  nameof( address ) );
             }
 
             return OpenReadTaskAsync( webClient, new Uri( address ) );
@@ -212,11 +212,11 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task<Stream> OpenReadTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException(  nameof( address ) );
             }
 
             var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -254,15 +254,15 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, [NotNull] Uri address, TrimmedString method ) {
             if ( webClient is null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException(  nameof( webClient ) );
             }
 
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException(  nameof( address ) );
             }
 
             if ( method.IsEmpty() ) {
-                throw new ArgumentEmptyException( message: "Value cannot be empty.", paramName: nameof( method ) );
+                throw new ArgumentEmptyException( message: "Value cannot be empty.",  nameof( method ) );
             }
 
             var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -297,7 +297,7 @@ namespace Librainian.Internet {
         [NotNull]
         public static WebClient SetTimeout( [NotNull] this WebClient client, TimeSpan timeout ) {
             if ( client is null ) {
-                throw new ArgumentNullException( paramName: nameof( client ) );
+                throw new ArgumentNullException(  nameof( client ) );
             }
 
             var cancel = new CancellationTokenSource( timeout );
@@ -314,7 +314,7 @@ namespace Librainian.Internet {
         [NotNull]
         public static WebClient SetTimeoutAndCancel( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
             if ( client is null ) {
-                throw new ArgumentNullException( paramName: nameof( client ) );
+                throw new ArgumentNullException(  nameof( client ) );
             }
 
             return client.Add( token ).SetTimeout( timeout );

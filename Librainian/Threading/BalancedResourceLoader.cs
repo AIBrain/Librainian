@@ -110,7 +110,7 @@ namespace Librainian.Threading {
 
         private void OnResourceLoaded( [NotNull] Task<T> task ) {
             if ( task is null ) {
-                throw new ArgumentNullException( paramName: nameof( task ) );
+                throw new ArgumentNullException(  nameof( task ) );
             }
 
             Task<T> _resource;

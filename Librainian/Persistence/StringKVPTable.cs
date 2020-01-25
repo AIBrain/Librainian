@@ -48,6 +48,8 @@ namespace Librainian.Persistence {
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
@@ -86,7 +88,7 @@ namespace Librainian.Persistence {
             [CanBeNull]
             get {
                 if ( key is null ) {
-                    throw new ArgumentNullException( paramName: nameof( key ) );
+                    throw new ArgumentNullException(  nameof( key ) );
                 }
 
                 return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
@@ -94,7 +96,7 @@ namespace Librainian.Persistence {
 
             set {
                 if ( key is null ) {
-                    throw new ArgumentNullException( paramName: nameof( key ) );
+                    throw new ArgumentNullException(  nameof( key ) );
                 }
 
                 if ( String.IsNullOrEmpty( value ) ) {
@@ -134,23 +136,23 @@ namespace Librainian.Persistence {
 
         public IEnumerator<KeyValuePair<String, String>> GetEnumerator() => this.Items().GetEnumerator();
 
-        /// <summary>Removes the element with the specified key from the <see cref="T:System.Collections.Generic.IDictionary`2" /> .</summary>
+        /// <summary>Removes the element with the specified key from the <see cref="System.Collections.Generic.IDictionary`2" /> .</summary>
         /// <returns>
         /// true if the element is successfully removed; otherwise, false. This method also returns false if <paramref name="key" /> was not found in the original
-        /// <see cref="T:System.Collections.Generic.IDictionary`2" /> .
+        /// <see cref="System.Collections.Generic.IDictionary`2" /> .
         /// </returns>
         /// <param name="key">The key of the element to remove.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
-        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.IDictionary`2" /> is read-only.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="key" /> is null.</exception>
+        /// <exception cref="System.NotSupportedException">The <see cref="System.Collections.Generic.IDictionary`2" /> is read-only.</exception>
         public Boolean Remove( String key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
-        /// <summary>Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1" /> .</summary>
+        /// <summary>Removes the first occurrence of a specific object from the <see cref="System.Collections.Generic.ICollection`1" /> .</summary>
         /// <returns>
-        /// true if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" /> ; otherwise, false. This method also returns
-        /// false if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" /> .
+        /// true if <paramref name="item" /> was successfully removed from the <see cref="System.Collections.Generic.ICollection`1" /> ; otherwise, false. This method also returns
+        /// false if <paramref name="item" /> is not found in the original <see cref="System.Collections.Generic.ICollection`1" /> .
         /// </returns>
-        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" /> .</param>
-        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.</exception>
+        /// <param name="item">The object to remove from the <see cref="System.Collections.Generic.ICollection`1" /> .</param>
+        /// <exception cref="System.NotSupportedException">The <see cref="System.Collections.Generic.ICollection`1" /> is read-only.</exception>
         public Boolean Remove( KeyValuePair<String, String> item ) {
             var value = item.Value.ToJSON().ToCompressedBase64();
             var asItem = new KeyValuePair<String, String>( item.Key, value );
@@ -159,16 +161,16 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>Gets the value associated with the specified key.</summary>
-        /// <returns>true if the object that implements <see cref="T:System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
+        /// <returns>true if the object that implements <see cref="System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
         /// <param name="key">  The key whose value to get.</param>
         /// <param name="value">
         /// When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the
         /// <paramref name="value" /> parameter. This parameter is passed uninitialized.
         /// </param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="key" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="key" /> is null.</exception>
         public Boolean TryGetValue( [NotNull] String key, out String value ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             value = default;
@@ -183,7 +185,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         [JsonProperty]
@@ -201,7 +203,7 @@ namespace Librainian.Persistence {
             [CanBeNull]
             get {
                 if ( keys is null ) {
-                    throw new ArgumentNullException( paramName: nameof( keys ) );
+                    throw new ArgumentNullException(  nameof( keys ) );
                 }
 
                 var key = Cache.BuildKey( keys );
@@ -211,7 +213,7 @@ namespace Librainian.Persistence {
 
             set {
                 if ( keys is null ) {
-                    throw new ArgumentNullException( paramName: nameof( keys ) );
+                    throw new ArgumentNullException(  nameof( keys ) );
                 }
 
                 var key = Cache.BuildKey( keys );
@@ -244,7 +246,7 @@ namespace Librainian.Persistence {
 
         public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
             if ( folder is null ) {
-                throw new ArgumentNullException( paramName: nameof( folder ) );
+                throw new ArgumentNullException(  nameof( folder ) );
             }
 
             try {
@@ -262,7 +264,7 @@ namespace Librainian.Persistence {
 
                 this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullName, customConfig: customConfig );
 
-                if ( testForReadWriteAccess && !this.TestForReadWriteAccess() ) {
+                if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
                     throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." );
                 }
             }
@@ -275,14 +277,16 @@ namespace Librainian.Persistence {
 
         /// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
         /// <returns></returns>
-        private Boolean TestForReadWriteAccess() {
+        private async Task<Boolean> TestForReadWriteAccess() {
             try {
                 if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
                     var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
                     document.AppendText( text: text );
-                    document.TryDeleting( tryFor: Seconds.Five );
 
-                    return true;
+                    var cancel = new CancellationTokenSource( Seconds.Ten );
+                    await document.TryDeleting( Seconds.One, cancel.Token ).ConfigureAwait(false);
+
+                    return !document.Exists();
                 }
             }
             catch { }
@@ -326,7 +330,7 @@ namespace Librainian.Persistence {
         //should be all that's needed..
         public void TryAdd( [NotNull] String key, [CanBeNull] String value ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             if ( !this.Dictionary.ContainsKey( key ) ) {
@@ -336,7 +340,7 @@ namespace Librainian.Persistence {
 
         public Boolean TryRemove( [NotNull] String key ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );

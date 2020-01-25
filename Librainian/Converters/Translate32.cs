@@ -54,23 +54,23 @@ namespace Librainian.Converters {
 #pragma warning restore IDE0015 // Use framework type
     public struct Translate32 {
 
-        [FieldOffset( 0 )]
-        public readonly UInt32 UnsignedValue;
+        [field:FieldOffset( 0 )]
+        public UInt32 UnsignedValue { get; set; }
 
-        [FieldOffset( 0 )]
-        public readonly Int32 SignedValue;
+        [field:FieldOffset( 0 )]
+        public Int32 SignedValue { get; set; }
 
-        [FieldOffset( 0 )]
-        public readonly Int16 SignedLow;
+        [field:FieldOffset( 0 )]
+        public Int16 SignedLow { get; set; }
 
-        [FieldOffset( 0 )]
-        public readonly UInt16 UnsignedLow;
+        [field:FieldOffset( 0 )]
+        public UInt16 UnsignedLow { get; set; }
 
-        [FieldOffset( sizeof( UInt16 ) )]
-        public readonly UInt16 UnsignedHigh;
+        [field:FieldOffset( sizeof( UInt16 ) )]
+        public UInt16 UnsignedHigh { get; set; }
 
-        [FieldOffset( sizeof( Int16 ) )]
-        public readonly Int16 SignedHigh;
+        [field:FieldOffset( sizeof( Int16 ) )]
+        public Int16 SignedHigh { get; set; }
 
         public Translate32( Byte a, Byte b, Byte c, Byte d ) : this( BitConverter.ToInt32( new[] {
             a, b, c, d

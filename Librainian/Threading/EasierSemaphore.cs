@@ -47,23 +47,23 @@ namespace Librainian.Threading {
 
     public static class EasierSemaphore {
 
-        /// <summary>Blocks the current thread until the current <see cref="T:System.Threading.WaitHandle" /> receives a signal.</summary>
+        /// <summary>Blocks the current thread until the current <see cref="System.Threading.WaitHandle" /> receives a signal.</summary>
         /// <returns>
         ///     <see langword="true" /> if the current instance receives a signal. If the current instance is never signaled,
-        ///     <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> never returns.
+        ///     <see cref="System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> never returns.
         /// </returns>
-        /// <exception cref="T:System.ObjectDisposedException">The current instance has already been disposed. </exception>
-        /// <exception cref="T:System.Threading.AbandonedMutexException">
+        /// <exception cref="System.ObjectDisposedException">The current instance has already been disposed. </exception>
+        /// <exception cref="System.Threading.AbandonedMutexException">
         ///     The wait completed because a thread exited without
         ///     releasing a mutex. This exception is not thrown on Windows 98 or Windows Millennium Edition.
         /// </exception>
-        /// <exception cref="T:System.InvalidOperationException">
+        /// <exception cref="System.InvalidOperationException">
         ///     The current instance is a transparent proxy for a
-        ///     <see cref="T:System.Threading.WaitHandle" /> in another application domain.
+        ///     <see cref="System.Threading.WaitHandle" /> in another application domain.
         /// </exception>
         public static Token WaitOneThenRelease( [NotNull] this Semaphore semaphore, TimeSpan? timeout = null ) {
             if ( semaphore is null ) {
-                throw new ArgumentNullException( paramName: nameof( semaphore ) );
+                throw new ArgumentNullException(  nameof( semaphore ) );
             }
 
             if ( timeout.HasValue ) {

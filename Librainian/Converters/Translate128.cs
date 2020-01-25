@@ -52,8 +52,8 @@ namespace Librainian.Converters {
     [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct Translate128 {
 
-        [FieldOffset( offset: 0 )]
-        public Translate64 Lower;
+        [field: FieldOffset( offset: 0 )]
+        public Translate64 Lower { get; set; }
 
         [FieldOffset( offset: 0 )]
         public Guid Guid;

@@ -67,7 +67,7 @@ namespace Librainian.Collections.Lists {
     ///     <para>This class was created on a spur of the moment idea, and is <b>THOROUGHLY UNTESTED™</b>.</para>
     ///     <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
     /// </remarks>
-    /// <copyright>PayPal:Protiguous@Protiguous.com. Used with full permissions from original copyright holder Rick@AIBrain.org.</copyright>
+    /// <copyright>Protiguous@Protiguous.com</copyright>
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class ConcurrentList<T> : ABetterClassDispose, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
@@ -348,7 +348,7 @@ namespace Librainian.Collections.Lists {
         [CanBeNull]
         private TFuncResult Read<TFuncResult>( [NotNull] Func<TFuncResult> func ) {
             if ( func is null ) {
-                throw new ArgumentNullException( paramName: nameof( func ) );
+                throw new ArgumentNullException(  nameof( func ) );
             }
 
             this.ThrowIfDisposed();
@@ -403,7 +403,7 @@ namespace Librainian.Collections.Lists {
         [CanBeNull]
         private TFuncResult Write<TFuncResult>( [NotNull] Func<TFuncResult> func, Boolean ignoreAllowModificationsCheck = false ) {
             if ( func is null ) {
-                throw new ArgumentNullException( paramName: nameof( func ) );
+                throw new ArgumentNullException(  nameof( func ) );
             }
 
             this.ThrowIfDisposed();

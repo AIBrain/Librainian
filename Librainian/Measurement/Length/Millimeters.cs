@@ -60,7 +60,7 @@ namespace Librainian.Measurement.Length {
         public static readonly Millimeters Two = new Millimeters( 2 );
 
         [JsonProperty]
-        public readonly Rational Value;
+        public Rational Value { get; }
 
         public Millimeters( Decimal millimeters ) => this.Value = ( Rational ) millimeters;
 

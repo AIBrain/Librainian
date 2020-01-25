@@ -77,7 +77,7 @@ namespace Librainian.Persistence {
         /// <param name="document"></param>
         public ConcurrentListFile( [NotNull] Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );

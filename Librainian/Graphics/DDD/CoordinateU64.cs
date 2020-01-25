@@ -118,10 +118,10 @@ namespace Librainian.Graphics.DDD {
         /// <summary>
         ///     Calculates the distance between two <see cref="CoordinateU64" />.
         /// </summary>
-        public static UInt64 Distance( CoordinateU64 left, CoordinateU64 rhs ) {
-            var num1 = left.X - rhs.X;
-            var num2 = left.Y - rhs.Y;
-            var num3 = left.Z - rhs.Z;
+        public static UInt64 Distance( CoordinateU64 left, CoordinateU64 right ) {
+            var num1 = left.X - right.X;
+            var num2 = left.Y - right.Y;
+            var num3 = left.Z - right.Z;
 
             return ( UInt64 )Math.Sqrt( ( num1 * num1 ) + ( num2 * num2 ) + ( num3 * num3 ) );
         }
@@ -130,9 +130,9 @@ namespace Librainian.Graphics.DDD {
         ///     static comparison.
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( CoordinateU64 left, CoordinateU64 rhs ) => left.X == rhs.X && left.Y == rhs.Y && left.Z == rhs.Z;
+        public static Boolean Equals( CoordinateU64 left, CoordinateU64 right ) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
         public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
@@ -150,9 +150,9 @@ namespace Librainian.Graphics.DDD {
 
         public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( CoordinateU64 left, CoordinateU64 rhs ) => !Equals( left: left, rhs: rhs );
+        public static Boolean operator !=( CoordinateU64 left, CoordinateU64 right ) => !Equals( left: left, right: right );
 
-        public static Boolean operator ==( CoordinateU64 left, CoordinateU64 rhs ) => Equals( left: left, rhs: rhs );
+        public static Boolean operator ==( CoordinateU64 left, CoordinateU64 right ) => Equals( left: left, right: right );
 
         /// <summary>
         ///     Compares the current <see cref="CoordinateU64" /> with another <see cref="CoordinateU64" />.
@@ -173,10 +173,10 @@ namespace Librainian.Graphics.DDD {
         /// <summary>
         ///     Calculates the distance between this <see cref="CoordinateU64" /> and another <see cref="CoordinateU64" />.
         /// </summary>
-        public UInt64 Distance( CoordinateU64 rhs ) {
-            var num1 = this.X - rhs.X;
-            var num2 = this.Y - rhs.Y;
-            var num3 = this.Z - rhs.Z;
+        public UInt64 Distance( CoordinateU64 right ) {
+            var num1 = this.X - right.X;
+            var num2 = this.Y - right.Y;
+            var num3 = this.Z - right.Z;
 
             return ( UInt64 )Math.Sqrt( ( num1 * num1 ) + ( num2 * num2 ) + ( num3 * num3 ) );
         }

@@ -108,11 +108,11 @@ namespace Librainian.Persistence {
         public static void Set( TrimmedString folder, TrimmedString key, [CanBeNull] Object value ) {
             try {
                 if ( folder.IsEmpty() ) {
-                    throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+                    throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( folder ) );
                 }
 
                 if ( key.IsEmpty() ) {
-                    throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                    throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( key ) );
                 }
 
                 if ( value is null ) {

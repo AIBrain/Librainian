@@ -47,6 +47,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Linq;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
+    using Parsing;
 
     public partial class FolderBag {
 
@@ -54,7 +55,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
         public class Node : IEquatable<Node>, IComparable<Node> {
 
+            /// <summary>Determines whether the specified object is equal to the current object.</summary>
+            /// <param name="obj">The object to compare with the current object.</param>
+            /// <returns>
+            /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+            public override Boolean Equals( Object obj ) => Equals( this,obj as Node);
+
             [JsonProperty]
+            [CanBeNull]
             public String Data { get; }
 
             public Boolean IsEmpty => !this.SubFolders.Any();
@@ -63,6 +71,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             public Node Parent { get; }
 
             [JsonProperty]
+            [NotNull]
             public List<Node> SubFolders { get; } = new List<Node>();
 
             public Node( [CanBeNull] String data ) => this.Data = data;
@@ -76,35 +85,27 @@ namespace Librainian.OperatingSystem.FileSystem {
             ///     Static equality check
             /// </summary>
             /// <param name="left"></param>
-            /// <param name="rhs"> </param>
+            /// <param name="right"> </param>
             /// <returns></returns>
-            public static Boolean Equals( [CanBeNull] Node left, [CanBeNull] Node rhs ) {
-                if ( ReferenceEquals( left, rhs ) ) {
+            public static Boolean Equals( [CanBeNull] Node left, [CanBeNull] Node right ) {
+                if ( ReferenceEquals( left, right ) ) {
                     return true;
                 }
 
-                if ( left is null || rhs is null ) {
+                if ( left is null || right is null ) {
                     return false;
                 }
 
-                return String.Equals( left.Data, rhs.Data, StringComparison.Ordinal );
+                return String.Equals( left.Data, right.Data, StringComparison.Ordinal );
             }
 
             public Int32 CompareTo( [NotNull] Node other ) => String.Compare( this.Data, other.Data, StringComparison.Ordinal );
 
             public Boolean Equals( Node other ) => Equals( this, other );
 
-            //public override Boolean Equals( Object obj ) {
-            //    var bob = obj as Node;
-            //    if ( null == bob ) {
-            //        return false;
-            //    }
-            //    return Equals( this, bob );
-            //}
+            public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
 
-            public override Int32 GetHashCode() => this.Data.GetHashCode();
-
-            public override String ToString() => this.Data;
+            public override String ToString() => this.Data ?? Symbols.Null;
         }
     }
 }

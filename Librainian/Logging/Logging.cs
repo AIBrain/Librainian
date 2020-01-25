@@ -276,11 +276,11 @@ namespace Librainian.Logging {
         [DebuggerStepThrough]
         public static Boolean Setup( [NotNull] LogLevel minLogLevel, [NotNull] LogLevel maxLogLevel, [CanBeNull] Target target = null, [CanBeNull] RichTextBox rtb = null ) {
             if ( minLogLevel is null ) {
-                throw new ArgumentNullException( paramName: nameof( minLogLevel ) );
+                throw new ArgumentNullException(  nameof( minLogLevel ) );
             }
 
             if ( maxLogLevel is null ) {
-                throw new ArgumentNullException( paramName: nameof( maxLogLevel ) );
+                throw new ArgumentNullException(  nameof( maxLogLevel ) );
             }
 
             switch ( target ) {

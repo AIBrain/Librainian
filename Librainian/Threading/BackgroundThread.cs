@@ -74,7 +74,7 @@ namespace Librainian.Threading {
         /// <param name="autoStart"></param>
         /// <param name="cancellationTokenSource"></param>
         public BackgroundThread( [NotNull] Action loop, Boolean autoStart, [NotNull] out CancellationTokenSource cancellationTokenSource ) {
-            this.Loop = loop ?? throw new ArgumentNullException( paramName: nameof( loop ) );
+            this.Loop = loop ?? throw new ArgumentNullException(  nameof( loop ) );
             this.CTS = cancellationTokenSource = new CancellationTokenSource();
 
             this.thread = new Thread( () => {

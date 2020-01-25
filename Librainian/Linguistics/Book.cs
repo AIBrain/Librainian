@@ -57,7 +57,7 @@ namespace Librainian.Linguistics {
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
-    public sealed class Book : IEquatable<Book>, IEnumerable<KeyValuePair<Int32, Page>> {
+    public class Book : IEquatable<Book>, IEnumerable<(Int32, Page)> {
 
         [NotNull]
         [JsonProperty]
@@ -79,8 +79,7 @@ namespace Librainian.Linguistics {
             var pageNumber = 0;
 
             foreach ( var page in pages.Where( page => page != null ) ) {
-                pageNumber++;
-                this.Pages[ pageNumber ] = page;
+                this.Pages[ pageNumber++ ] = page;
             }
 
             if ( null != authors ) {
@@ -89,25 +88,21 @@ namespace Librainian.Linguistics {
         }
 
         /// <summary>
-        ///     static equality test, compare sequence of Books
+        ///     static equality test, compare sequence of Pages
         /// </summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
+        public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
-            if ( left is null ) {
+            if ( left is null || right is null  ) {
                 return false;
             }
 
-            if ( rhs is null ) {
-                return false;
-            }
-
-            return left.SequenceEqual( rhs ); //no authors??
+            return left.SequenceEqual( right ); //no authors?? No authors.
         }
 
         public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
@@ -119,7 +114,7 @@ namespace Librainian.Linguistics {
         ///     Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<KeyValuePair<Int32, Page>> GetEnumerator() => this.Pages.GetEnumerator();
+        public IEnumerator<(Int32, Page)> GetEnumerator() => this.GetPages().GetEnumerator();
 
         /// <summary>
         ///     Serves as the default hash function.
@@ -128,12 +123,19 @@ namespace Librainian.Linguistics {
         public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
         [NotNull]
-        public IEnumerable<KeyValuePair<Int32, Page>> GetPages() => this.Pages;
+        public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select(pair => (pair.Key,pair.Value));
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals(this, obj as Book);
+
     }
 }

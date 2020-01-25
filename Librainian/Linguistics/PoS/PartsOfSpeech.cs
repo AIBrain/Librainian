@@ -71,5 +71,7 @@ namespace Librainian.Linguistics.PoS {
 
         [Description( "An article is used to introduce a noun." )]
         Article
+
+        //TODO there are more parts
     }
 }

@@ -41,8 +41,27 @@
 
 namespace Librainian.Linguistics {
 
-    public class Author : Person { }
+    using System;
+    using JetBrains.Annotations;
 
-    public class Person { }
+    public class Author : Person {
+
+        public Author( [NotNull] String fullName ) : base( fullName ) { }
+
+    }
+
+    public class Person {
+
+        public String FullName { get; }
+
+        public Person( [NotNull] String fullName) {
+            if ( String.IsNullOrWhiteSpace( value: fullName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullName ) );
+            }
+
+            this.FullName = fullName;
+
+        }
+    }
 
 }

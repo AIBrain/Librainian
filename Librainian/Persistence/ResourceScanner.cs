@@ -77,11 +77,11 @@ namespace Librainian.Persistence {
         /// <param name="timeout">Defaults to <see cref="Timeout.InfiniteTimeSpan" /></param>
         public ResourceScanner( [NotNull] Func<Status> discovery, [NotNull] CancellationTokenSource cancellationSource, TimeSpan? timeout = null ) {
             if ( discovery is null ) {
-                throw new ArgumentNullException( paramName: nameof( discovery ) );
+                throw new ArgumentNullException(  nameof( discovery ) );
             }
 
             if ( cancellationSource is null ) {
-                throw new ArgumentNullException( paramName: nameof( cancellationSource ) );
+                throw new ArgumentNullException(  nameof( cancellationSource ) );
             }
 
             this.CancellationSource =

@@ -53,7 +53,7 @@ namespace Librainian.Threading {
         [NotNull]
         public static IPropagatorBlock<T, T> CreateDelayBlock<T>( [NotNull] SpanOfTime delay ) {
             if ( delay is null ) {
-                throw new ArgumentNullException( paramName: nameof( delay ) );
+                throw new ArgumentNullException(  nameof( delay ) );
             }
 
             var lastItem = DateTime.MinValue;

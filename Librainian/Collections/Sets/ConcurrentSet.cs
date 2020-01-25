@@ -64,9 +64,9 @@ namespace Librainian.Collections.Sets {
         private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
 
         /// <summary>
-        ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
+        ///     Gets a value indicating whether the <see cref="System.Collections.Generic.ICollection`1" /> is read-only.
         /// </summary>
-        /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.</returns>
+        /// <returns>true if the <see cref="System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.</returns>
         public Boolean IsReadOnly => false;
 
         /// <summary>
@@ -106,20 +106,20 @@ namespace Librainian.Collections.Sets {
         public Boolean Contains( T item ) => item != null && this.Dictionary.ContainsKey( item );
 
         /// <summary>
-        ///     Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an
-        ///     <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
+        ///     Copies the elements of the <see cref="System.Collections.Generic.ICollection`1" /> to an
+        ///     <see cref="System.Array" />, starting at a particular <see cref="System.Array" /> index.
         /// </summary>
         /// <param name="array">
-        ///     The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have
+        ///     The one-dimensional <see cref="System.Array" /> that is the destination of the elements copied from
+        ///     <see cref="System.Collections.Generic.ICollection`1" />. The <see cref="System.Array" /> must have
         ///     zero-based indexing.
         /// </param>
         /// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="array" /> is null.</exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
-        /// <exception cref="T:System.ArgumentException">
+        /// <exception cref="System.ArgumentNullException"><paramref name="array" /> is null.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
+        /// <exception cref="System.ArgumentException">
         ///     <paramref name="array" /> is multidimensional.-or-The number of elements in the source
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" /> is greater than the available space from
+        ///     <see cref="System.Collections.Generic.ICollection`1" /> is greater than the available space from
         ///     <paramref
         ///         name="arrayIndex" />
         ///     to the end of the destination <paramref name="array" />.-or-Type T cannot be cast automatically to the type of the
@@ -131,7 +131,7 @@ namespace Librainian.Collections.Sets {
         ///     Removes all elements in the specified collection from the current set.
         /// </summary>
         /// <param name="other">The collection of items to remove from the set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public void ExceptWith( IEnumerable<T> other ) {
             foreach ( var item in other ) {
                 this.TryRemove( item: item );
@@ -142,7 +142,7 @@ namespace Librainian.Collections.Sets {
         ///     Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
+        ///     A <see cref="System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the
         ///     collection.
         /// </returns>
         public IEnumerator<T> GetEnumerator() => this.Dictionary.Keys.GetEnumerator();
@@ -151,7 +151,7 @@ namespace Librainian.Collections.Sets {
         ///     Modifies the current set so that it contains only elements that are also in a specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public void IntersectWith( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
@@ -163,7 +163,7 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>true if the current set is a correct subset of <paramref name="other" />; otherwise, false.</returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
@@ -174,11 +174,11 @@ namespace Librainian.Collections.Sets {
         ///     Determines whether the current set is a correct superset of a specified collection.
         /// </summary>
         /// <returns>
-        ///     true if the <see cref="T:System.Collections.Generic.ISet`1" /> object is a correct superset of
+        ///     true if the <see cref="System.Collections.Generic.ISet`1" /> object is a correct superset of
         ///     <paramref name="other" />; otherwise, false.
         /// </returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
@@ -190,7 +190,7 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>true if the current set is a subset of <paramref name="other" />; otherwise, false.</returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean IsSubsetOf( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
@@ -202,7 +202,7 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>true if the current set is a superset of <paramref name="other" />; otherwise, false.</returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean IsSupersetOf( IEnumerable<T> other ) => other.AsParallel().All( this.Contains );
 
         /// <summary>
@@ -210,22 +210,22 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>true if the current set and <paramref name="other" /> share at least one common element; otherwise, false.</returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean Overlaps( IEnumerable<T> other ) => other.AsParallel().Any( this.Contains );
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" />.
+        ///     <see cref="System.Collections.Generic.ICollection`1" />.
         /// </summary>
         /// <returns>
         ///     true if <paramref name="item" /> was successfully removed from the
-        ///     <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if
+        ///     <see cref="System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if
         ///     <paramref name="item" /> is not
-        ///     found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
+        ///     found in the original <see cref="System.Collections.Generic.ICollection`1" />.
         /// </returns>
-        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
+        /// <param name="item">The object to remove from the <see cref="System.Collections.Generic.ICollection`1" />.</param>
+        /// <exception cref="System.NotSupportedException">
+        ///     The <see cref="System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
         public Boolean Remove( T item ) => item != null && this.TryRemove( item: item );
@@ -235,7 +235,7 @@ namespace Librainian.Collections.Sets {
         /// </summary>
         /// <returns>true if the current set is equal to <paramref name="other" />; otherwise, false.</returns>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public Boolean SetEquals( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
@@ -247,7 +247,7 @@ namespace Librainian.Collections.Sets {
         ///     specified collection, but not both.
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Librainian.Collections.Sets {
         ///     specified collection.
         /// </summary>
         /// <param name="other">The collection to compare to the current set.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="other" /> is null.</exception>
+        /// <exception cref="System.ArgumentNullException"><paramref name="other" /> is null.</exception>
         public void UnionWith( IEnumerable<T> other ) {
             foreach ( var item in other ) {
                 this.TryAdd( item: item );
@@ -288,11 +288,11 @@ namespace Librainian.Collections.Sets {
         }
 
         /// <summary>
-        ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        ///     Adds an item to the <see cref="System.Collections.Generic.ICollection`1" />.
         /// </summary>
-        /// <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
-        /// <exception cref="T:System.NotSupportedException">
-        ///     The <see cref="T:System.Collections.Generic.ICollection`1" /> is
+        /// <param name="item">The object to add to the <see cref="System.Collections.Generic.ICollection`1" />.</param>
+        /// <exception cref="System.NotSupportedException">
+        ///     The <see cref="System.Collections.Generic.ICollection`1" /> is
         ///     read-only.
         /// </exception>
         /// <exception cref="ArgumentException"></exception>
@@ -305,7 +305,7 @@ namespace Librainian.Collections.Sets {
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
         /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

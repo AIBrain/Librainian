@@ -69,6 +69,7 @@ namespace Librainian.Persistence {
     using Newtonsoft.Json.Serialization;
     using OperatingSystem.FileSystem;
     using OperatingSystem.Streams;
+    using Parsing;
     using Threading;
 
     // ReSharper disable RedundantUsingDirective
@@ -146,8 +147,8 @@ namespace Librainian.Persistence {
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
+        [NotNull]
         public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
-
             //ContractResolver = new MyContractResolver(),
             TypeNameHandling = TypeNameHandling.Auto,
             NullValueHandling = NullValueHandling.Ignore,
@@ -160,11 +161,19 @@ namespace Librainian.Persistence {
         ///     Can the file be read from at this moment in time ?
         /// </summary>
         /// <param name="isf">     </param>
-        /// <param name="fileName"></param>
+        /// <param name="document"></param>
         /// <returns></returns>
-        private static Boolean FileCanBeRead( [CanBeNull] IsolatedStorageFile isf, [CanBeNull] String fileName ) {
+        public static Boolean FileCanBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
+            if ( isf is null ) {
+                throw new ArgumentNullException( paramName: nameof( isf ) );
+            }
+
+            if ( document is null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
             try {
-                using ( var stream = isf.OpenFile( fileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                using ( var stream = isf.OpenFile( document.FileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
                     try {
                         return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0;
                     }
@@ -251,8 +260,7 @@ namespace Librainian.Persistence {
             }
         }
 
-        public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, [CanBeNull] Folder folder, [CanBeNull] String calledWhat,
-            [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
+        public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, [CanBeNull] Folder folder, [CanBeNull] String calledWhat, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
             try {
 
                 //Report.Enter();
@@ -339,17 +347,14 @@ namespace Librainian.Persistence {
             }
         }
 
-        [Obsolete]
+        [Obsolete("Will this ever be used in the future?")]
         public static Boolean EnableIsolatedStorageCompression() {
             using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
                 var myType = isf.GetType();
                 var myFields = myType.GetFields( bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
 
-                if ( myFields.All( f => f.Name != "m_RootDir" ) ) {
-                    return false;
-                }
+                var myField = myFields.FirstOrDefault( f => f.Name.Like( "m_RootDir" ) );
 
-                var myField = myType.GetField( name: "m_RootDir", bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
                 var path = myField?.GetValue( isf ) as String;
 
                 if ( String.IsNullOrWhiteSpace( path ) ) {
@@ -378,12 +383,23 @@ namespace Librainian.Persistence {
                 catch ( PathTooLongException exception ) {
                     exception.Log();
                 }
+
             }
 
             return false;
         }
 
-        public static Boolean FileCannotBeRead( [CanBeNull] this IsolatedStorageFile isf, [CanBeNull] String fileName ) => !FileCanBeRead( isf: isf, fileName: fileName );
+        public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
+            if ( isf is null ) {
+                throw new ArgumentNullException( paramName: nameof( isf ) );
+            }
+
+            if ( document is null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            return !isf.FileCanBeRead( document );
+        }
 
         /// <summary>
         ///     Return this JSON string as an object.
@@ -402,7 +418,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName"></param>
         /// <returns></returns>
         [CanBeNull]
-        [Obsolete]
+        [Obsolete("Use something else. I don't care anymore.")]
         public static T Load<T>( [CanBeNull] String fileName ) where T : class, new() {
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
@@ -444,26 +460,26 @@ namespace Librainian.Persistence {
         }
 
         //[Obsolete( "Use JSON methods" )]
-        public static Boolean Loader<TSource>( [NotNull] this String fullPathAndFileName, [CanBeNull] Action<TSource> onLoad = null,
+        public static Boolean Loader<TSource>( [NotNull] this Document document, [CanBeNull] Action<TSource> onLoad = null,
             [CanBeNull] ProgressChangedEventHandler feedback = null ) where TSource : class {
-            if ( fullPathAndFileName is null ) {
-                throw new ArgumentNullException( nameof( fullPathAndFileName ) );
+            if ( document is null ) {
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             try {
-                if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fullPathAndFileName ) ) {
+                if ( IsolatedStorageFile.IsEnabled  ) {
                     using ( var _ = new SingleAccess( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
                         using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                            var dir = Path.GetDirectoryName( fullPathAndFileName ) ?? String.Empty;
+                            var dir = Path.GetDirectoryName( document.FullPath );
 
                             if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
                                 isf.CreateDirectory( dir );
                             }
 
-                            if ( isf.FileExists( fullPathAndFileName ) && FileCanBeRead( isf, fullPathAndFileName ) ) {
+                            if ( isf.FileCanBeRead( document ) ) {
                                 try {
-                                    var isfs = new IsolatedStorageFileStream( fullPathAndFileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
-                                    var ext = Path.GetExtension( fullPathAndFileName );
+                                    var isfs = new IsolatedStorageFileStream( document.FullPath, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                    var ext = document.Extension();
                                     var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
                                     TSource result;
@@ -513,15 +529,15 @@ namespace Librainian.Persistence {
         /// <summary>
         ///     Deserialize from an IsolatedStorageFile.
         /// </summary>
-        /// <param name="fileName" />
+        /// <param name="document" />
         /// <param name="parameters"></param>
         /// <returns></returns>
         [CanBeNull]
         [Obsolete( "Use JSON serializers" )]
-        public static TSource LoadOrCreate<TSource>( [NotNull] String fileName, [CanBeNull] ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters )
+        public static TSource LoadOrCreate<TSource>( [NotNull] Document document, [CanBeNull] ProgressChangedEventHandler feedback = null, [NotNull] params Object[] parameters )
             where TSource : class, new() {
-            if ( fileName is null ) {
-                throw new ArgumentNullException( nameof( fileName ) );
+            if ( document is null ) {
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             if ( parameters is null ) {
@@ -529,18 +545,18 @@ namespace Librainian.Persistence {
             }
 
             try {
-                if ( IsolatedStorageFile.IsEnabled && !String.IsNullOrWhiteSpace( fileName ) ) {
+                if ( IsolatedStorageFile.IsEnabled ) {
                     using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                        var dir = Path.GetDirectoryName( fileName );
+                        var dir = Path.GetDirectoryName( document.FullPath );
 
                         if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
                             isf.CreateDirectory( dir );
                         }
 
-                        if ( isf.FileExists( fileName ) && FileCanBeRead( isf, fileName ) ) {
+                        if ( isf.FileCanBeRead( document ) ) {
                             try {
-                                var isfs = new IsolatedStorageFileStream( fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
-                                var ext = Path.GetExtension( fileName );
+                                var isfs = new IsolatedStorageFileStream( document.FullPath, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                var ext = document.Extension();
                                 var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", ignoreCase: true, culture: null );
 
                                 if ( !useCompression ) {
@@ -924,17 +940,17 @@ namespace Librainian.Persistence {
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="T:System.Runtime.Serialization.InvalidDataContractException">
+        /// <exception cref="InvalidDataContractException">
         ///     the type being serialized does not conform to data contract rules. For example, the
-        ///     <see cref="T:System.Runtime.Serialization.DataContractAttribute" /> attribute has not been applied to the type.
+        ///     <see cref="System.Runtime.Serialization.DataContractAttribute" /> attribute has not been applied to the type.
         /// </exception>
-        /// <exception cref="T:System.Runtime.Serialization.SerializationException">
+        /// <exception cref="System.Runtime.Serialization.SerializationException">
         ///     there is a problem with the instance being
         ///     serialized.
         /// </exception>
-        /// <exception cref="T:System.ServiceModel.QuotaExceededException">
+        /// <exception cref="System.ServiceModel.QuotaExceededException">
         ///     the maximum number of objects to serialize has been exceeded. Check the
-        ///     <see cref="P:System.Runtime.Serialization.DataContractSerializer.MaxItemsInObjectGraph" /> property.
+        ///     <see cref="System.Runtime.Serialization.DataContractSerializer.MaxItemsInObjectGraph" /> property.
         /// </exception>
         [CanBeNull]
         public static String Serialize<TType>( [NotNull] this TType obj ) {
@@ -1167,7 +1183,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static String Settings( [NotNull] String key ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             return Environment.SpecialFolder.CommonApplicationData.Settings( key );
@@ -1182,7 +1198,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static String Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             try {
@@ -1260,7 +1276,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean TrySave<TKey>( [CanBeNull] this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             if ( overwrite && document.Exists() ) {

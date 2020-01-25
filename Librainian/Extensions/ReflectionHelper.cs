@@ -56,7 +56,7 @@ namespace Librainian.Extensions {
         [NotNull]
         public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( [NotNull] this Assembly assembly ) {
             if ( assembly is null ) {
-                throw new ArgumentNullException( paramName: nameof( assembly ) );
+                throw new ArgumentNullException(  nameof( assembly ) );
             }
 
             return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
@@ -65,7 +65,7 @@ namespace Librainian.Extensions {
         [NotNull]
         public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( [NotNull] this Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
@@ -78,7 +78,7 @@ namespace Librainian.Extensions {
         [CanBeNull]
         public static TAttribute GetCustomAttribute<TAttribute>( [NotNull] this MemberInfo element ) where TAttribute : Attribute {
             if ( element is null ) {
-                throw new ArgumentNullException( paramName: nameof( element ) );
+                throw new ArgumentNullException(  nameof( element ) );
             }
 
             return Attribute.GetCustomAttribute( element, typeof( TAttribute ) ) as TAttribute;
@@ -90,7 +90,7 @@ namespace Librainian.Extensions {
         [NotNull]
         public static IEnumerable<Type> GetTypes( [NotNull] this IEnumerable<Assembly> assemblies ) {
             if ( assemblies is null ) {
-                throw new ArgumentNullException( paramName: nameof( assemblies ) );
+                throw new ArgumentNullException(  nameof( assemblies ) );
             }
 
             return assemblies.SelectMany( assembly => assembly.GetTypes() );
@@ -102,7 +102,7 @@ namespace Librainian.Extensions {
         /// <owner>jayBaz</owner>
         public static Boolean TypeHasAttribute<TAttribute>( [NotNull] this Type type ) where TAttribute : Attribute {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException(  nameof( type ) );
             }
 
             return Attribute.IsDefined( type, typeof( TAttribute ) );

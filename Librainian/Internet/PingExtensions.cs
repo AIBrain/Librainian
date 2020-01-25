@@ -65,15 +65,15 @@ namespace Librainian.Internet {
         [CanBeNull]
         private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, [NotNull] Object userToken, [NotNull] Action<TaskCompletionSource<PingReply>> sendAsync ) {
             if ( ping is null ) {
-                throw new ArgumentNullException( paramName: nameof( ping ) );
+                throw new ArgumentNullException(  nameof( ping ) );
             }
 
             if ( userToken is null ) {
-                throw new ArgumentNullException( paramName: nameof( userToken ) );
+                throw new ArgumentNullException(  nameof( userToken ) );
             }
 
             if ( sendAsync is null ) {
-                throw new ArgumentNullException( paramName: nameof( sendAsync ) );
+                throw new ArgumentNullException(  nameof( sendAsync ) );
             }
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will

@@ -134,11 +134,11 @@ namespace Librainian.Threading {
         [CanBeNull]
         public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
             if ( instance is null ) {
-                throw new ArgumentNullException( paramName: nameof( instance ) );
+                throw new ArgumentNullException(  nameof( instance ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: fieldName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fieldName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fieldName ) );
             }
 
             var type = instance.GetType();

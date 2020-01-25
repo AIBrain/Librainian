@@ -81,7 +81,7 @@ namespace Librainian.Persistence {
         public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
         public D( [NotNull] String key, [CanBeNull] String value ) {
-            this.K = key ?? throw new ArgumentNullException( paramName: nameof( key ) );
+            this.K = key ?? throw new ArgumentNullException(  nameof( key ) );
             this.V = value;
         }
 

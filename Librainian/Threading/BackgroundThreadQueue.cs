@@ -60,7 +60,7 @@ namespace Librainian.Threading {
 
         private void ProcessQueue( [NotNull] Action<T> action ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException(  nameof( action ) );
             }
 
             try {
@@ -106,7 +106,7 @@ namespace Librainian.Threading {
         /// <param name="token"></param>
         public void Start( [NotNull] Action<T> each, CancellationToken token ) {
             if ( each is null ) {
-                throw new ArgumentNullException( paramName: nameof( each ) );
+                throw new ArgumentNullException(  nameof( each ) );
             }
 
             this.Token = token;

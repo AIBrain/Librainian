@@ -60,7 +60,7 @@ namespace Librainian.Magic {
         [NotNull]
         private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( [NotNull] params Type[] argTypes ) {
             if ( argTypes is null ) {
-                throw new ArgumentNullException( paramName: nameof( argTypes ) );
+                throw new ArgumentNullException(  nameof( argTypes ) );
             }
 
             var paramExpressions = new ParameterExpression[ argTypes.Length ];

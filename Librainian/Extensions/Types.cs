@@ -68,7 +68,7 @@ namespace Librainian.Extensions {
 
         public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) {
             if ( p is null ) {
-                throw new ArgumentNullException( paramName: nameof( p ) );
+                throw new ArgumentNullException(  nameof( p ) );
             }
 
             return value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
@@ -84,11 +84,11 @@ namespace Librainian.Extensions {
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException(  nameof( source ) );
             }
 
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException(  nameof( destination ) );
             }
 
             if ( field is null ) {
@@ -300,7 +300,7 @@ namespace Librainian.Extensions {
 
         public static Boolean HasDefaultConstructor( [NotNull] this Type t ) {
             if ( t is null ) {
-                throw new ArgumentNullException( paramName: nameof( t ) );
+                throw new ArgumentNullException(  nameof( t ) );
             }
 
             return t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;

@@ -226,11 +226,11 @@ namespace Librainian.Graphics.Imaging {
 
         private static Boolean _EndsWidth( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyCollection<Byte> search ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException(  nameof( data ) );
             }
 
             if ( search is null ) {
-                throw new ArgumentNullException( paramName: nameof( search ) );
+                throw new ArgumentNullException(  nameof( search ) );
             }
 
             var blRet = false;
@@ -245,11 +245,11 @@ namespace Librainian.Graphics.Imaging {
 
         public static Boolean _StartsWith( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyList<Byte> search ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException(  nameof( data ) );
             }
 
             if ( search is null ) {
-                throw new ArgumentNullException( paramName: nameof( search ) );
+                throw new ArgumentNullException(  nameof( search ) );
             }
 
             return search.Count <= data.Count && search.SequenceEqual( data.Take( search.Count ) );

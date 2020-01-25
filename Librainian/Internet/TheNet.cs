@@ -58,7 +58,7 @@ namespace Librainian.Internet {
         [ItemCanBeNull]
         public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
             if ( uri is null ) {
-                throw new ArgumentNullException( paramName: nameof( uri ) );
+                throw new ArgumentNullException(  nameof( uri ) );
             }
 
             if ( timeout is null ) {
@@ -113,7 +113,7 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
             if ( String.IsNullOrWhiteSpace( value: url ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( url ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( url ) );
             }
 
             try {
@@ -133,7 +133,7 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
             if ( uri is null ) {
-                throw new ArgumentNullException( paramName: nameof( uri ) );
+                throw new ArgumentNullException(  nameof( uri ) );
             }
 
             try {
@@ -157,7 +157,7 @@ namespace Librainian.Internet {
         [NotNull]
         public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
             if ( String.IsNullOrEmpty( value: data ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( data ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( data ) );
             }
 
             var bytes = Encoding.UTF8.GetBytes( s: data );

@@ -1251,7 +1251,7 @@ namespace Librainian.Graphics {
 
         public static async Task<Boolean> IsaValidImage( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             if ( !document.IsBufferLoaded ) {

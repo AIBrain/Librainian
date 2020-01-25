@@ -74,11 +74,11 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public Boolean Equals( [NotNull] RegistryKey x, [NotNull] RegistryKey y ) {
             if ( x is null ) {
-                throw new ArgumentNullException( paramName: nameof( x ) );
+                throw new ArgumentNullException(  nameof( x ) );
             }
 
             if ( y is null ) {
-                throw new ArgumentNullException( paramName: nameof( y ) );
+                throw new ArgumentNullException(  nameof( y ) );
             }
 
             return x.Name != null && y.Name != null && x.Name == y.Name;

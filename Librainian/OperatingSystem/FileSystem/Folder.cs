@@ -253,13 +253,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( String fullPath ) {
             if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fullPath ) );
             }
 
             fullPath = CleanPath( fullPath ); //replace any invalid path chars with a separator
 
             if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fullPath ) );
             }
 
             if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
@@ -343,7 +343,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) {
             if ( fullpath is null ) {
-                throw new ArgumentNullException( paramName: nameof( fullpath ) );
+                throw new ArgumentNullException(  nameof( fullpath ) );
             }
 
             return RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
@@ -419,7 +419,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         public static void OpenWithExplorer( [CanBeNull] IFolder folder ) {
             if ( folder is null ) {
-                throw new ArgumentNullException( paramName: nameof( folder ) );
+                throw new ArgumentNullException(  nameof( folder ) );
             }
 
             var windowsFolder = Environment.GetFolderPath( Environment.SpecialFolder.Windows );

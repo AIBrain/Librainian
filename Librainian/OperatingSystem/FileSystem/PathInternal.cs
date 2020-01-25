@@ -150,13 +150,13 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static String TrimAndThrowIfBlank( [NotNull] this String path ) {
 
             if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( path ) );
             }
 
             path = path.Trimmed();
 
             if ( String.IsNullOrEmpty( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( path ) );
             }
 
             return path;

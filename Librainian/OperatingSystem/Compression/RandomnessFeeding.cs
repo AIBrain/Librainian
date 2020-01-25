@@ -90,7 +90,7 @@ namespace Librainian.OperatingSystem.Compression {
 
         public void FeedItData( [NotNull] Document document ) {
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             var bytes = document.AsBytes();

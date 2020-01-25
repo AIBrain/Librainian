@@ -62,7 +62,7 @@ namespace Librainian.Persistence {
     public static class Cache {
 
         /// <summary>
-        ///     Gets a reference to the default <see cref="T:System.Runtime.Caching.MemoryCache" /> instance.
+        ///     Gets a reference to the default <see cref="System.Runtime.Caching.MemoryCache" /> instance.
         /// </summary>
         /// <remarks></remarks>
         [NotNull]
@@ -79,11 +79,11 @@ namespace Librainian.Persistence {
         [DebuggerStepThrough]
         public static String BuildKey<T>( [NotNull] params T[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( paramName: nameof( things ) );
+                throw new ArgumentNullException(  nameof( things ) );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.",  nameof( things ) );
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
@@ -116,11 +116,11 @@ namespace Librainian.Persistence {
         [DebuggerStepThrough]
         public static String BuildKey( [NotNull] params Object[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( paramName: nameof( things ) ).Log( true );
+                throw new ArgumentNullException(  nameof( things ) ).Log( true );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.",  nameof( things ) );
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
@@ -146,7 +146,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         public static void Forget( [NotNull] String key ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( key ) );
             }
 
             Memory.Remove( key );
@@ -158,11 +158,11 @@ namespace Librainian.Persistence {
         /// <param name="keys"></param>
         public static void Forget( [NotNull] params Object[] keys ) {
             if ( keys is null ) {
-                throw new ArgumentNullException( paramName: nameof( keys ) );
+                throw new ArgumentNullException(  nameof( keys ) );
             }
 
             if ( !keys.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keys ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.",  nameof( keys ) );
             }
 
             var key = BuildKey( keys );
@@ -177,11 +177,11 @@ namespace Librainian.Persistence {
         /// <param name="keyBuilder"></param>
         public static void Forget<T>( [NotNull] params T[] keyBuilder ) {
             if ( keyBuilder is null ) {
-                throw new ArgumentNullException( paramName: nameof( keyBuilder ) );
+                throw new ArgumentNullException(  nameof( keyBuilder ) );
             }
 
             if ( !keyBuilder.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keyBuilder ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.",  nameof( keyBuilder ) );
             }
 
             Memory.Remove( BuildKey( keyBuilder ) );
@@ -195,7 +195,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static Object Recall( [NotNull] String key ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( key ) );
             }
 
             return Memory[ key ];
@@ -218,7 +218,7 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static T Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( key ) );
             }
 
             if ( value is null ) {

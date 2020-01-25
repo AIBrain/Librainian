@@ -177,7 +177,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Picoseconds operator -( [NotNull] Picoseconds nanoseconds ) {
             if ( nanoseconds == null ) {
-                throw new ArgumentNullException( paramName: nameof( nanoseconds ) );
+                throw new ArgumentNullException(  nameof( nanoseconds ) );
             }
 
             return new Picoseconds( nanoseconds.Value * -1 );

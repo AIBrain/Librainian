@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 // 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 // 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -37,7 +35,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ConsoleWindow.cs" was last formatted by Protiguous on 2019/11/25 at 3:53 PM.
+// Project: "Librainian", "ConsoleWindow.cs" was last formatted by Protiguous on 2020/01/21 at 10:31 AM.
 
 namespace Librainian.ComputerSystem {
 
@@ -50,20 +48,10 @@ namespace Librainian.ComputerSystem {
     using System.Text;
     using System.Windows.Forms;
 
-    public class ConsoleWindow {
-
-        public static Boolean IsConsoleVisible { get; set; }
-
-        private const Int32 MY_CODE_PAGE = 437;
-
-        private const Int32 STD_ERROR_HANDLE = -12;
-
-        private const Int32 STD_OUTPUT_HANDLE = -11;
-
-        private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
+    public static class ConsoleWindow {
 
         [Flags]
-        private enum DesiredAccess : UInt32 {
+        public enum DesiredAccess : UInt32 {
 
             GenericRead = 0x80000000,
 
@@ -75,7 +63,7 @@ namespace Librainian.ComputerSystem {
 
         }
 
-        private enum StdHandle {
+        public enum StdHandle {
 
             Input = -10,
 
@@ -85,47 +73,54 @@ namespace Librainian.ComputerSystem {
 
         }
 
+        public static Boolean IsConsoleVisible { get; set; }
+
+        private const Int32 MY_CODE_PAGE = 437;
+
+        private const Int32 STD_ERROR_HANDLE = -12;
+
+        private const Int32 STD_OUTPUT_HANDLE = -11;
+
+        private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
+
         [DllImport( "kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
-        private static extern Int32 AllocConsole();
+        public static extern Int32 AllocConsole();
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        private static extern IntPtr CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] DesiredAccess dwDesiredAccess,
+        public static extern IntPtr CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] DesiredAccess dwDesiredAccess,
             [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition,
             [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-        private static IntPtr GetConsoleStandardError() {
+        [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, SetLastError = true )]
+        [return: MarshalAs( UnmanagedType.Bool )]
+        public static extern Boolean FreeConsole();
+
+        public static IntPtr GetConsoleStandardError() {
             var handle = CreateFile( "CONERR$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
                 FileAttributes.Normal, IntPtr.Zero );
 
             return handle == InvalidHandleValue ? InvalidHandleValue : handle;
         }
 
-        private static IntPtr GetConsoleStandardInput() {
+        public static IntPtr GetConsoleStandardInput() {
             var handle = CreateFile( "CONIN$", DesiredAccess.GenericRead | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, FileAttributes.Normal,
                 IntPtr.Zero );
 
             return handle == InvalidHandleValue ? InvalidHandleValue : handle;
         }
 
-        private static IntPtr GetConsoleStandardOutput() {
+        public static IntPtr GetConsoleStandardOutput() {
             var handle = CreateFile( "CONOUT$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
                 FileAttributes.Normal, IntPtr.Zero );
 
             return handle == InvalidHandleValue ? InvalidHandleValue : handle;
         }
 
-        [DllImport( "kernel32.dll", EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
-        private static extern IntPtr GetStdHandle( Int32 nStdHandle );
-
-        [DllImport( "kernel32.dll" )]
-        private static extern Boolean SetStdHandle( StdHandle nStdHandle, IntPtr hHandle );
-
-        [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, SetLastError = true )]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        protected static extern Boolean FreeConsole();
-
         [DllImport( "kernel32.dll" )]
         public static extern IntPtr GetConsoleWindow();
+
+        [DllImport( "kernel32.dll", EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
+        public static extern IntPtr GetStdHandle( Int32 nStdHandle );
 
         public static void Hide() => FreeConsole();
 
@@ -139,6 +134,9 @@ namespace Librainian.ComputerSystem {
 
         [DllImport( "kernel32.dll" )]
         public static extern Boolean SetConsoleScreenBufferSize( IntPtr hConsoleOutput, Point size );
+
+        [DllImport( "kernel32.dll" )]
+        public static extern Boolean SetStdHandle( StdHandle nStdHandle, IntPtr hHandle );
 
         public static void Show( Int32 bufferWidth = -1, Boolean breakRedirection = true, Int32 bufferHeight = 1600, Int32 screenNum = -1 /*-1 = Any but primary*/ ) {
             AllocConsole();
@@ -227,5 +225,3 @@ namespace Librainian.ComputerSystem {
     }
 
 }
-
-namespace Librainian.Graphics {}

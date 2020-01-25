@@ -70,11 +70,11 @@ namespace Librainian {
         public static void Run<TOpts>( [NotNull] Action<TOpts> runParsedOptions, String[] arguments ) where TOpts : IOptions {
 
             if ( runParsedOptions is null ) {
-                throw new ArgumentNullException( paramName: nameof( runParsedOptions ) );
+                throw new ArgumentNullException(  nameof( runParsedOptions ) );
             }
 
             if ( arguments is null ) {
-                throw new ArgumentNullException( paramName: nameof( arguments ) );
+                throw new ArgumentNullException(  nameof( arguments ) );
             }
 
             try {

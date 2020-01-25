@@ -106,7 +106,7 @@ namespace Librainian.Persistence {
 
         public DocumentInfo( [NotNull] Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             this.Reset();
@@ -122,11 +122,11 @@ namespace Librainian.Persistence {
 
         public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException(  nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException(  nameof( right ) );
             }
 
             if ( !left.Length.HasValue || !right.Length.HasValue ) {
@@ -219,7 +219,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException(  nameof( document ) );
             }
 
             Debug.Write( $"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}..." );

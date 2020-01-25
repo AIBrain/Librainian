@@ -48,11 +48,12 @@ namespace Librainian.Converters {
     [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct DecimalTo {
 
-        [FieldOffset( offset: 0 )]
-        public Decimal Decimal;
+        [field: FieldOffset( offset: 0 )]
+        public Guid Guid { get; set; }
 
         [FieldOffset( offset: 0 )]
-        public Guid Guid;
+        // ReSharper disable once FieldCanBeMadeReadOnly.Global
+        public Decimal Decimal;
 
         /// <summary>
         ///     Access the first four bytes.

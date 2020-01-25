@@ -47,20 +47,25 @@ namespace Librainian.Parsing.Markov {
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using Extensions;
     using JetBrains.Annotations;
     using Maths;
-    using Persistence;
 
     public class MkModel {
 
-        private readonly ConcurrentDictionary<String, List<String>> _markovChains = new ConcurrentDictionary<String, List<String>>();
+        [NotNull]
+        private ConcurrentDictionary<String, List<String>> _markovChains { get; } = new ConcurrentDictionary<String, List<String>>();
 
         public readonly String Name;
 
-        public MkModel() => throw new NotImplementedException();
+        private MkModel() => throw new NotImplementedException();
 
-        public MkModel( [CanBeNull] String name ) => this.Name = name;
+        public MkModel( [NotNull] String name ) {
+            if ( String.IsNullOrWhiteSpace( value: name ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            }
+
+            this.Name = name;
+        }
 
         [NotNull]
         public String GenerateRandomCorpus( Int32 numberOfWords ) {
@@ -68,60 +73,41 @@ namespace Librainian.Parsing.Markov {
                 return String.Empty;
             }
 
-            var startWord = this._markovChains.OrderBy( o => Randem.Next() ).FirstOrDefault().Key;
-            var newCorpus = new StringBuilder( startWord );
+            var word = this._markovChains.OrderBy( o => Randem.Next() ).First().Key;
+            var corpus = new StringBuilder( numberOfWords * 128 );    //just using 128 as a max avg word length..
 
-            while ( numberOfWords > 0 ) {
-                var word = startWord;
-                var randomChain = this.Nexts( word: word ).OrderBy( o => Randem.Next() );
+            while ( numberOfWords.Any() ) {
+                //var word = startWord;
+                var randomChain = this.Nexts( word ).Where( w => !String.IsNullOrEmpty( w ) ).OrderBy( o => Randem.Next() );
 
                 foreach ( var w in randomChain ) {
-                    newCorpus.Append( $"{w} " );
+                    corpus.Append( $"{w}{Symbols.Singlespace}" );
 
-                    if ( String.IsNullOrEmpty( w ) ) {
-                        continue;
-                    }
-
-                    startWord = w;
+                    word = w;
                     numberOfWords -= 1;
                 }
             }
 
-            return newCorpus.ToString();
+            return corpus.ToString().TrimEnd();
         }
-
-        /// <summary>
-        ///     Need to use JSON loader here..
-        /// </summary>
-        /// <returns></returns>
-        public Boolean Load() => this.Name.Loader<MkModel>( source => source.DeepClone( destination: this ) );
 
         /// <summary>
         ///     Return the list of strings found after this <paramref name="word" />.
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        [CanBeNull]
+        [NotNull]
         public IEnumerable<String> Nexts( [CanBeNull] String word ) {
-            if ( word is null ) {
-                return Enumerable.Empty<String>();
-            }
-
-            if ( this._markovChains.ContainsKey( word ) ) {
+            if ( !( word is null ) && this._markovChains.ContainsKey( word ) ) {
                 return this._markovChains[ word ];
             }
 
-            return Enumerable.Empty<String>();
+            return Enumerable.Empty<String>().ToList();
         }
 
-        /// <summary>
-        ///     Need to use JSON saver here..
-        /// </summary>
-        /// <returns></returns>
-        public Boolean Save() => this.Saver( this.Name );
 
         public void Train( [CanBeNull] String corpus, Int32 level = 3 ) {
-            var words = corpus.ToWords().AsParallel().ToArray();
+            var words = corpus.ToWords();
 
             Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );
         }

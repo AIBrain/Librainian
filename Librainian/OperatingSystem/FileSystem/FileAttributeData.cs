@@ -115,7 +115,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             this.Reset();
 
             if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullPath ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( fullPath ) );
             }
 
             var handle = NativeMethods.FindFirstFile( fullPath, out var data );

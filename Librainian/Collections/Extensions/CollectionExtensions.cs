@@ -226,11 +226,11 @@ namespace Librainian.Collections.Extensions {
         /// <returns>True if both IEnumerables contain the same items, and same number of items; otherwise, false.</returns>
         public static Boolean ContainSameElements<T>( [NotNull] this IList<T> a, [NotNull] IList<T> b ) {
             if ( a is null ) {
-                throw new ArgumentNullException( paramName: nameof( a ) );
+                throw new ArgumentNullException(  nameof( a ) );
             }
 
             if ( b is null ) {
-                throw new ArgumentNullException( paramName: nameof( b ) );
+                throw new ArgumentNullException(  nameof( b ) );
             }
 
             if ( a.Count != b.Count ) {
@@ -353,15 +353,8 @@ namespace Librainian.Collections.Extensions {
                 dict[ member ]--;
             }
 
-            foreach ( var kvp in dict ) {
-                if ( kvp.Value == 0 ) {
-                    continue;
-                }
+            return dict.All( kvp => kvp.Value == 0 );
 
-                return false;
-            }
-
-            return true;
         }
 
         /// <summary>Returns the first two items to in the source collection that satisfy the given <paramref name="relationshipFunc" /> , or <c>null</c> if no match was found.</summary>
@@ -646,11 +639,11 @@ namespace Librainian.Collections.Extensions {
         [CanBeNull]
         public static TValue Pop<TKey, TValue>( [NotNull] this IDictionary<TKey, TValue> self, [NotNull] TKey key ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException(  nameof( key ) );
             }
 
             var result = self[ key ];
@@ -666,7 +659,7 @@ namespace Librainian.Collections.Extensions {
         [CanBeNull]
         public static T PopFirst<T>( [NotNull] this ICollection<T> self ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             var result = self.First();
@@ -682,7 +675,7 @@ namespace Librainian.Collections.Extensions {
         [CanBeNull]
         public static T PopLast<T>( [NotNull] this ICollection<T> self ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException(  nameof( self ) );
             }
 
             var result = self.Last();

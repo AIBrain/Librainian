@@ -52,9 +52,9 @@ namespace Librainian.Databases {
     using Logging;
     using Microsoft.SqlServer.Management.Smo;
 
-    public class ScriptDBObjects {
+    public static class ScriptDBObjects {
 
-        public static void BackupDB( [CanBeNull] Server srv, [CanBeNull] Microsoft.SqlServer.Management.Smo.Database db, [CanBeNull] DirectoryInfo saveFolder ) {
+        public static void BackupDB( [CanBeNull] Server srv, [CanBeNull] Database db, [CanBeNull] DirectoryInfo saveFolder ) {
 
             var dboDict = new ConcurrentDictionary<String, IEnumerable<ScriptSchemaObjectBase>>();
 
