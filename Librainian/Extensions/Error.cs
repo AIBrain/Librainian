@@ -75,7 +75,7 @@ namespace System {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace System {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>

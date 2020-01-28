@@ -55,12 +55,33 @@ namespace Librainian.Extensions {
 
         // Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
         [CanBeNull]
-        public static TResult ApplyMemoized<TSource, TResult, TParam>( [CanBeNull] this TSource source, [CanBeNull] Func<TSource, TParam, TResult> selector, [CanBeNull] TParam param ) =>
-            selector.AsWeakMemoized( source )( param );
+        public static TResult ApplyMemoized<TSource, TResult, TParam>( [NotNull] this TSource source, [NotNull] Func<TSource, TParam, TResult> selector, [NotNull] TParam param ) {
+            if ( source == null ) {
+                throw new ArgumentNullException( paramName: nameof( source ) );
+            }
+
+            if ( selector == null ) {
+                throw new ArgumentNullException( paramName: nameof( selector ) );
+            }
+
+            if ( param == null ) {
+                throw new ArgumentNullException( paramName: nameof( param ) );
+            }
+
+            return selector.AsWeakMemoized( source )( param );
+        }
 
         [NotNull]
-        public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( [CanBeNull] this Func<TSource, TParam, TResult> selector, [CanBeNull] TSource source ) =>
-            param => {
+        public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
+            if ( selector == null ) {
+                throw new ArgumentNullException( paramName: nameof( selector ) );
+            }
+
+            if ( source == null ) {
+                throw new ArgumentNullException( paramName: nameof( source ) );
+            }
+
+            return param => {
 
                 // Get the dictionary that associates delegates to a parameter, on the specified source
                 var values = WeakResults.GetOrCreateValue( source );
@@ -80,5 +101,7 @@ namespace Librainian.Extensions {
 
                 return ( TResult ) res;
             };
+        }
+
     }
 }

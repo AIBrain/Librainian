@@ -255,7 +255,7 @@ namespace Librainian.Collections.Lists {
         Boolean ICollection<T>.Remove( T item ) {
             this.ThrowNotMutable();
 
-            return false;
+            return default;
         }
 
         /// <summary>

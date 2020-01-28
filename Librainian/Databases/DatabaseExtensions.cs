@@ -461,14 +461,14 @@ namespace Librainian.Databases {
 
                 return DatabaseServer.FindUsableServers( Seconds.Thirty, credentials ).Where( server => {
                     if ( server?.Status.IsGood() != true ) {
-                        return false;
+                        return default;
                     }
 
                     if ( file.Set( server ) ) {
                         return true;
                     }
 
-                    return false;
+                    return default;
                 } )
                     .Select( server => server.Status ).FirstOrDefault();
             }
@@ -546,13 +546,13 @@ namespace Librainian.Databases {
             }
 
             if ( sqlServer.Status != Status.Success ) {
-                return false;
+                return default;
             }
 
             var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
 
             if ( connectionStringBuilder == default ) {
-                return false;
+                return default;
             }
 
             var connectionString = connectionStringBuilder.ConnectionString;

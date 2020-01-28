@@ -133,7 +133,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return documentCopyStatistics;
             }
 
-            var sourceFiles = sourceFolder.GetDocuments( searchPatterns );
+            var sourceFiles = sourceFolder.GetDocuments( searchPatterns ?? new[] {
+                "*.*"
+            } );
 
             Parallel.ForEach( sourceFiles.AsParallel(), CPU.AllCPUExceptOne, sourceDocument => {
                 try {
@@ -265,7 +267,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="folder"></param>
         /// <param name="tryFor"></param>
         /// <returns></returns>
-        public static Boolean? TryDeleting( [CanBeNull] this Folder folder, TimeSpan tryFor ) {
+        public static Boolean? TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor ) {
+            if ( folder == null ) {
+                throw new ArgumentNullException( paramName: nameof( folder ) );
+            }
+
             var stopwatch = Stopwatch.StartNew();
             TryAgain:
 

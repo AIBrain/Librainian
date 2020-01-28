@@ -111,21 +111,16 @@ namespace Librainian.Controls {
             this._myXUnit = ( Single ) ( this.Width - (2 * this._myOffset) ) / ( this._myValues.Length - 1 );
         }
 
-        ///// <summary>
-        /////     Clean up any resources being used.
-        ///// </summary>
-        //protected override void Dispose( Boolean disposing ) {
-        //    if ( disposing ) {
-        //        this._components?.Dispose();
-        //    }
-        //    base.Dispose( disposing );
-        //}
         /// <summary>
-        ///     We get the highest value from the array
+        ///     Get the highest value from the array
         /// </summary>
         /// <param name="vals">The array of values in which we look</param>
         /// <returns>The maximum value</returns>
-        private Int64 GetMaxim( [CanBeNull] IEnumerable<Int64> vals ) {
+        private Int64 GetMaxim( [NotNull] IEnumerable<Int64> vals ) {
+            if ( vals == null ) {
+                throw new ArgumentNullException( paramName: nameof( vals ) );
+            }
+
             if ( this._myIsDrawing ) {
                 return vals.Concat( new Int64[] {
                     0
@@ -136,18 +131,21 @@ namespace Librainian.Controls {
         }
 
         private void HistogramaDesenat_Paint( [CanBeNull] Object sender, [CanBeNull] PaintEventArgs e ) {
+            if ( e is null ) {
+                return;
+            }
+
             if ( !this._myIsDrawing ) {
                 return;
             }
 
-            var g = e.Graphics;
-            var myPen = new Pen( new SolidBrush( this.DisplayColor ), this._myXUnit );
+            using var displayBrush = new SolidBrush( this.DisplayColor );
+            using var myPen = new Pen( displayBrush , this._myXUnit );
 
-            //The width of the pen is given by the XUnit for the control.
             for ( var i = 0; i < this._myValues.Length; i++ ) {
 
                 //We draw each line
-                g.DrawLine( myPen, new PointF( this._myOffset + (i * this._myXUnit), this.Height - this._myOffset ),
+                e.Graphics.DrawLine( myPen, new PointF( this._myOffset + (i * this._myXUnit), this.Height - this._myOffset ),
                     new PointF( this._myOffset + (i * this._myXUnit), this.Height - this._myOffset - (this._myValues[ i ] * this._myYUnit) ) );
 
                 //We plot the coresponding index for the maximum value.
@@ -155,21 +153,23 @@ namespace Librainian.Controls {
                     continue;
                 }
 
-                var mySize = g.MeasureString( i.ToString(), this.MyFont );
-
-                g.DrawString( i.ToString(), this.MyFont, new SolidBrush( this.DisplayColor ),
+                var mySize = e.Graphics.MeasureString( i.ToString(), this.MyFont );
+                
+                e.Graphics.DrawString( i.ToString(), this.MyFont, displayBrush,
                     new PointF( this._myOffset + (i * this._myXUnit) - (mySize.Width / 2), this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
             }
 
             //We draw the indexes for 0 and for the length of the array being plotted
-            g.DrawString( "0", this.MyFont, new SolidBrush( this.DisplayColor ), new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
+            e.Graphics.DrawString( "0", this.MyFont, displayBrush, new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
 
-            g.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: new SolidBrush( this.DisplayColor ),
-                point: new PointF( this._myOffset + (this._myValues.Length * this._myXUnit) - g.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width,
+            e.Graphics.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: displayBrush,
+                point: new PointF( this._myOffset + (this._myValues.Length * this._myXUnit) - e.Graphics.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width,
                     this.Height - this.MyFont.Height ), format: StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.
-            g.DrawRectangle( new Pen( new SolidBrush( Color.Black ), 1 ), 0, 0, this.Width - 1, this.Height - 1 );
+            using var blackBrush = new SolidBrush( Color.Black );
+            using var blackPen = new Pen( blackBrush, 1 );
+            e.Graphics.DrawRectangle( blackPen , 0, 0, this.Width - 1, this.Height - 1 );
         }
 
         private void HistogramaDesenat_Resize( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {

@@ -98,8 +98,13 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
         [CanBeNull]
-        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [CanBeNull] MailMessage message, [CanBeNull] Object userToken ) =>
-            SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
+        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] MailMessage message, [CanBeNull] Object userToken ) {
+            if ( message == null ) {
+                throw new ArgumentNullException( paramName: nameof( message ) );
+            }
+
+            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
+        }
 
         /// <summary>Sends an e-mail message asynchronously.</summary>
         /// <param name="smtpClient">The client.</param>
@@ -112,7 +117,17 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
         [CanBeNull]
-        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [CanBeNull] String from, [CanBeNull] String recipients, [CanBeNull] String subject, [CanBeNull] String body, [CanBeNull] Object userToken ) =>
-            SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
+        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] String from, [NotNull] String recipients, [CanBeNull] String subject, [CanBeNull] String body, [CanBeNull] Object userToken ) {
+            if ( String.IsNullOrWhiteSpace( value: @from ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( @from ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: recipients ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( recipients ) );
+            }
+
+            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( @from, recipients, subject, body, tcs ) );
+        }
+
     }
 }

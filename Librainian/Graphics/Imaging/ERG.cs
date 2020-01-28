@@ -121,12 +121,12 @@ namespace Librainian.Graphics.Imaging {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         public async Task<Boolean> TryAddAsync( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
             if ( bitmap is null ) {
-                return false;
+                return default;
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -135,13 +135,13 @@ namespace Librainian.Graphics.Imaging {
                 var width = bitmap.Width;
 
                 if ( width < UInt32.MinValue ) {
-                    return false;
+                    return default;
                 }
 
                 var height = bitmap.Height;
 
                 if ( height < UInt32.MinValue ) {
-                    return false;
+                    return default;
                 }
 
                 this.PropertyIdList.UnionWith( bitmap.PropertyIdList );

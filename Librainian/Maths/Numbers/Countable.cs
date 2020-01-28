@@ -179,7 +179,7 @@ namespace Librainian.Maths.Numbers {
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, body: key => {
@@ -205,7 +205,7 @@ namespace Librainian.Maths.Numbers {
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var bucket = this.Bucket( key );
@@ -227,7 +227,7 @@ namespace Librainian.Maths.Numbers {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
@@ -257,7 +257,7 @@ namespace Librainian.Maths.Numbers {
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var bucket = this.Bucket( key );
@@ -279,7 +279,7 @@ namespace Librainian.Maths.Numbers {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>Return the sum of all values.</summary>

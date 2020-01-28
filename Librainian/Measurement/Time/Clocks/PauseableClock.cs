@@ -136,7 +136,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Day = this.Day.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -155,7 +155,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Hour = this.Hour.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -174,7 +174,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Millisecond = this.Millisecond.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -193,7 +193,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Minute = this.Minute.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -212,7 +212,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Month = this.Month.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -245,7 +245,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Second = this.Second.Next( out var tocked );
 
             if ( !tocked ) {
-                return false;
+                return default;
             }
 
             try {
@@ -359,7 +359,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 throw new NotImplementedException();
 
                 // ReSharper disable once HeuristicUnreachableCode
-                //return false;
+                //return default;
             }
             finally {
                 this.Resume();

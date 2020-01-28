@@ -203,7 +203,7 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             if ( !quantity.Any() ) {
-                return false;
+                return default;
             }
 
             var message = new TransactionMessage {
@@ -352,16 +352,16 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <remarks>Locks the wallet.</remarks>
         public Boolean TryWithdraw( [CanBeNull] IBankNote bankNote, UInt64 quantity ) {
             if ( bankNote is null ) {
-                return false;
+                return default;
             }
 
             if ( quantity <= 0 ) {
-                return false;
+                return default;
             }
 
             lock ( this.BankNotes ) {
                 if ( !this.BankNotes.ContainsKey( bankNote ) || this.BankNotes[ bankNote ] < quantity ) {
-                    return false; //no bills to withdraw!
+                    return default; //no bills to withdraw!
                 }
 
                 this.BankNotes[ bankNote ] -= quantity;
@@ -384,12 +384,12 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             if ( quantity <= 0 ) {
-                return false;
+                return default;
             }
 
             lock ( this.Coins ) {
                 if ( !this.Coins.ContainsKey( coin ) || this.Coins[ coin ] < quantity ) {
-                    return false; //no coins to withdraw!
+                    return default; //no coins to withdraw!
                 }
 
                 this.Coins[ coin ] -= quantity;

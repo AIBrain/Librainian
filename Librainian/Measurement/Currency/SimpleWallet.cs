@@ -109,7 +109,7 @@ namespace Librainian.Measurement.Currency {
                     }
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
             finally {
@@ -141,7 +141,7 @@ namespace Librainian.Measurement.Currency {
                 }
             }
 
-            return false;
+            return default;
         }
 
         public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleWallet intoWallet ) {
@@ -150,14 +150,14 @@ namespace Librainian.Measurement.Currency {
             }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
                 if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
                     try {
                         if ( this._balance < amount ) {
-                            return false;
+                            return default;
                         }
 
                         this._balance -= amount;
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Currency {
                     }
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
             finally {
@@ -202,7 +202,7 @@ namespace Librainian.Measurement.Currency {
                     }
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
             finally {
@@ -222,14 +222,14 @@ namespace Librainian.Measurement.Currency {
         public Boolean TryWithdraw( Decimal amount ) {
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
                 if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
                     try {
                         if ( this._balance < amount ) {
-                            return false;
+                            return default;
                         }
 
                         this._balance -= amount;
@@ -242,7 +242,7 @@ namespace Librainian.Measurement.Currency {
                     }
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
             finally {
@@ -293,7 +293,7 @@ namespace Librainian.Measurement.Currency {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Balance == right.Balance;

@@ -96,7 +96,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return path[ index: 3 ].IsDirectorySeparator();
             }
 
-            return false;
+            return default;
         }
 
         [Pure]
@@ -117,7 +117,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return !path[ index: 1 ].IsDirectorySeparator();
                 }
 
-                return false;
+                return default;
             }
 
             if ( path.Length >= 3 && path[ index: 1 ] == Path.VolumeSeparatorChar && path[ index: 2 ].IsDirectorySeparator() ) {

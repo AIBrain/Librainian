@@ -54,7 +54,6 @@ namespace Librainian.Internet {
 
     public static class Internet {
 
-
         private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
 
         internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new ThreadLocal<WebClientWithTimeout>( () => new WebClientWithTimeout(), true );
@@ -96,6 +95,7 @@ namespace Librainian.Internet {
             [NotNull]
             Uri Source { get; }
 
+            [CanBeNull]
             Task Task { get; set; }
 
             /// <summary>
@@ -126,7 +126,7 @@ namespace Librainian.Internet {
             /// <exception cref="ObjectDisposedException"></exception>
             /// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
             /// <exception cref="Exception"></exception>
-            Boolean Wait( TimeSpan forHowLong );
+            Boolean Wait( TimeSpan forHowLong, CancellationToken token );
         }
 
         public class FileDownloader : UnderlyingDownloader {
@@ -141,10 +141,11 @@ namespace Librainian.Internet {
             ///     <see cref="InvalidOperationException" /> will be thrown.
             /// </param>
             /// <param name="timeout">Time to wait before a download is cancelled.</param>
+            /// <param name="token"></param>
             /// <param name="autoStart">If true, the download will begin now.</param>
             /// <param name="credentials">Username and password, if needed otherwise null.</param>
-            public FileDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitifBusy, TimeSpan timeout, Boolean autoStart = true,
-                [CanBeNull] ICredentials credentials = null ) : base( source, destination, waitifBusy, timeout, credentials ) {
+            public FileDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitifBusy, TimeSpan timeout, CancellationToken token, Boolean autoStart = true,
+                [CanBeNull] ICredentials credentials = null ) : base( source, destination, waitifBusy, timeout, token, credentials ) {
                 $"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
                 DownloadRequests[ this.Id ] = this;
@@ -157,7 +158,7 @@ namespace Librainian.Internet {
             public sealed override Boolean Start() {
                 this.Downloaded.Reset();
 
-                this.AttachedToWebClient.DownloadFileCompleted += ( sender, args ) => {
+                this.Client.DownloadFileCompleted += ( sender, args ) => {
                     this.Downloaded.Set();
 
                     try {
@@ -171,15 +172,25 @@ namespace Librainian.Internet {
                     }
                 };
 
-                this.AttachedToWebClient.Timeout = this.Timeout;
+                this.Client.Timeout = this.Timeout;
 
-                this.Task = this.AttachedToWebClient.DownloadFileTaskAsync( this.Source, this.DestinationDocument.FullPath );
+                this.Task = this.Client.DownloadFileTaskAsync( this.Source, this.DestinationDocument.FullPath );
 
                 return base.Start();
             }
         }
 
         public abstract class UnderlyingDownloader : IDownloader {
+
+            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
+
+            /// <summary>
+            ///     -1 milliseconds
+            /// </summary>
+            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
+
+            [NotNull]
+            public WebClientWithTimeout Client { get; }
 
             [CanBeNull]
             public ICredentials Credentials { get; set; }
@@ -190,10 +201,17 @@ namespace Librainian.Internet {
             [NotNull]
             public Document DestinationDocument { get; set; }
 
+            public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( false );
+
             /// <summary>
             ///     The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.
             /// </summary>
             public Stopwatch Elasped { get; set; }
+
+            /// <summary>
+            ///     The unique identifier assigned to this download.
+            /// </summary>
+            public Guid Id { get; }
 
             [CanBeNull]
             public Action OnCancelled { get; set; }
@@ -223,9 +241,44 @@ namespace Librainian.Internet {
             /// </summary>
             public DateTime WhenStarted { get; set; }
 
+            /// <summary>
+            ///     ctor
+            /// </summary>
+            /// <param name="source"></param>
+            /// <param name="destination"></param>
+            /// <param name="waitIfBusy"></param>
+            /// <param name="timeout"></param>
+            /// <param name="token"></param>
+            /// <param name="credentials"></param>
+            /// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
+            protected UnderlyingDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitIfBusy, TimeSpan timeout,
+                 CancellationToken token, [CanBeNull] ICredentials credentials = null ) {
+                var web = WebClients.Value;
+
+                if ( web.IsBusy ) {
+                    if ( waitIfBusy ) {
+                        this.Wait( timeout, token );
+                    }
+                    else {
+                        throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
+                    }
+                }
+
+                this.Client = web;
+                this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
+                this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
+                this.Timeout = timeout;
+                this.Id = Guid.NewGuid();
+                this.Credentials = credentials;
+
+                this.Client.Credentials = this.Credentials;
+                this.Client.CachePolicy = DefaultCachePolicy;
+                this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
+            }
+
             public virtual Boolean Cancel() {
                 try {
-                    this.AttachedToWebClient.CancelAsync();
+                    this.Client.CancelAsync();
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -234,11 +287,24 @@ namespace Librainian.Internet {
                 return this.IsBusy();
             }
 
+            public (Status responseCode, Int64 fileLength) GetContentLength() {
+
+                if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+                    request.Method = "HEAD";
+
+                    using var response = request.GetResponse();
+
+                    return (Status.Success, response.ContentLength);
+                }
+
+                return (Status.Error, default);
+            }
+
             /// <summary>
             ///     Returns true if the web request is in progress.
             /// </summary>
             /// <returns></returns>
-            public Boolean IsBusy() => this.AttachedToWebClient.IsBusy;
+            public Boolean IsBusy() => this.Client.IsBusy;
 
             public virtual Boolean Start() {
                 this.WhenStarted = DateTime.UtcNow;
@@ -254,130 +320,27 @@ namespace Librainian.Internet {
             /// <exception cref="ObjectDisposedException"></exception>
             /// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
             /// <exception cref="Exception"></exception>
-            public Boolean Wait( TimeSpan forHowLong ) {
+            public Boolean Wait( TimeSpan forHowLong, CancellationToken token ) {
                 try {
                     if ( forHowLong < Forever ) {
                         forHowLong = Forever;
                     }
 
-                    return this.Downloaded.WaitOne( forHowLong );
-                }
-                catch ( ArgumentOutOfRangeException exception ) {
-                    exception.Log();
-
-                    throw;
-                }
-                catch ( ObjectDisposedException exception ) {
-                    exception.Log();
-
-                    throw;
-                }
-                catch ( AbandonedMutexException exception ) {
-                    exception.Log();
-
-                    throw;
-                }
-                catch ( InvalidOperationException exception ) {
-                    exception.Log();
-
-                    throw;
+                    return this.Downloaded.Wait( forHowLong, token );
                 }
                 catch ( Exception exception ) {
-                    exception.Log();
+                    switch ( exception ) {
+                        case ArgumentOutOfRangeException _: { return default; }
+                        case ObjectDisposedException _: { return default; }
+                        case AbandonedMutexException _: { return default; }
+                        case InvalidOperationException _: { return default; }
 
-                    throw;
-                }
-            }
-
-            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
-
-            /// <summary>
-            ///     -1 milliseconds
-            /// </summary>
-            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
-
-            [NotNull]
-            public WebClientWithTimeout AttachedToWebClient { get; set; }
-
-            public AutoResetEvent Downloaded { get; } = new AutoResetEvent( false );
-
-            /// <summary>
-            ///     The unique identifier assigned to this download.
-            /// </summary>
-            public Guid Id { get; set; }
-
-            /// <summary>
-            ///     ctor
-            /// </summary>
-            /// <param name="source"></param>
-            /// <param name="destination"></param>
-            /// <param name="waitIfBusy"></param>
-            /// <param name="timeout"></param>
-            /// <param name="credentials"></param>
-            /// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
-            protected UnderlyingDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitIfBusy, TimeSpan timeout,
-                [CanBeNull] ICredentials credentials = null ) {
-                var web = WebClients.Value;
-
-                if ( web.IsBusy ) {
-                    if ( waitIfBusy ) {
-                        this.Wait( timeout );
-                    }
-                    else {
-                        throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
+                        default: {
+                                exception.Log();
+                                throw;
+                            }
                     }
                 }
-
-                this.AttachedToWebClient = web;
-                this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
-                this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
-                this.Timeout = timeout;
-                this.Id = Guid.NewGuid();
-                this.Credentials = credentials;
-
-                this.AttachedToWebClient.Credentials = this.Credentials;
-                this.AttachedToWebClient.CachePolicy = DefaultCachePolicy;
-                this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
-            }
-
-            public (Status responseCode, Int64 fileLength) GetContentLength() {
-
-                if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
-                    request.Method = "HEAD";
-
-                    using ( var response = request.GetResponse() ) {
-                        return (Status.Success, response.ContentLength );
-                    }
-                }
-
-                return (Status.Error, default );
-            }
-        }
-
-        public class WebClientWithTimeout : WebClient {
-
-            /// <summary>
-            ///     The <see cref="WebRequest" /> instance.
-            /// </summary>
-            [CanBeNull]
-            public WebRequest Request { get; private set; }
-
-            public TimeSpan Timeout { get; set; }
-
-            public WebClientWithTimeout() : this( UnderlyingDownloader.Forever ) { }
-
-            public WebClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
-
-            protected override WebRequest GetWebRequest( Uri address ) {
-                this.Request = base.GetWebRequest( address );
-
-                var webRequest = this.Request;
-
-                if ( webRequest != null ) {
-                    webRequest.Timeout = ( Int32 ) this.Timeout.TotalMilliseconds;
-                }
-
-                return webRequest;
             }
         }
     }

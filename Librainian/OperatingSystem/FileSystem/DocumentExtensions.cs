@@ -228,7 +228,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( !document.Exists() ) {
-                return false;
+                return default;
             }
 
             using ( var stream = new FileStream( path: document.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
@@ -240,21 +240,21 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                using ( var buffered = new BufferedStream( stream: stream ) ) {
-                    var bytesRead = 0;
+                using var buffered = new BufferedStream( stream: stream );
 
-                    do {
-                        var readTask = buffered.ReadAsync( buffer, offset: 0, count: buffer.Length );
+                var bytesRead = 0;
 
-                        if ( readTask != null ) {
-                            bytesRead = await readTask.ConfigureAwait( false );
+                do {
+                    var readTask = buffered.ReadAsync( buffer, offset: 0, count: buffer.Length );
 
-                            if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-                                return false;
-                            }
+                    if ( readTask != null ) {
+                        bytesRead = await readTask.ConfigureAwait( false );
+
+                        if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+                            return default;
                         }
-                    } while ( bytesRead.Any() );
-                }
+                    }
+                } while ( bytesRead.Any() );
 
                 return true;
             }

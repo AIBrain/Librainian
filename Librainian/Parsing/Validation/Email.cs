@@ -48,7 +48,7 @@ namespace Librainian.Parsing.Validation {
 
         public static Boolean IsEmailValid( [NotNull] this String email ) {
             if ( String.IsNullOrWhiteSpace( value: email ) ) {
-                return false;
+                return default;
             }
 
             try {
@@ -57,7 +57,7 @@ namespace Librainian.Parsing.Validation {
                 return true;
             }
             catch ( FormatException ) {
-                return false;
+                return default;
             }
         }
 

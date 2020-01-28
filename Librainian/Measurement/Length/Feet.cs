@@ -137,7 +137,7 @@ namespace Librainian.Measurement.Length {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Feet feet && this.Equals( feet );

@@ -153,7 +153,7 @@ namespace Librainian.Persistence {
                 return true;
             }
 
-            return false;
+            return default;
         }
 
         [NotNull]
@@ -176,23 +176,23 @@ namespace Librainian.Persistence {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( left.LastScanned is null || right.LastScanned is null ) {
-                return false; //the files need to be ran through Update() before we can compare them.
+                return default; //the files need to be ran through Update() before we can compare them.
             }
 
             if ( !left.Length.HasValue || !right.Length.HasValue || left.Length.Value != right.Length.Value ) {
-                return false;
+                return default;
             }
 
             if ( !left.AddHash.HasValue || !right.AddHash.HasValue || left.AddHash.Value != right.AddHash.Value ) {
-                return false;
+                return default;
             }
 
             if ( !left.CRC32.HasValue || !right.CRC32.HasValue || left.CRC32.Value != right.CRC32.Value ) {
-                return false;
+                return default;
             }
 
             //Okay, we've compared by 3 different hashes. File should be unique by now.

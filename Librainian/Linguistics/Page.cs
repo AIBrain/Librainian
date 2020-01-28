@@ -78,7 +78,7 @@ namespace Librainian.Linguistics {
 
         public Boolean Equals( [CanBeNull] Page other ) {
             if ( other is null ) {
-                return false;
+                return default;
             }
 
             return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );

@@ -95,11 +95,11 @@ namespace Librainian.Measurement.Spatial {
 
         public Boolean RotateLeft( Single byAmount ) {
             if ( Single.IsNaN( byAmount ) ) {
-                return false;
+                return default;
             }
 
             if ( Single.IsInfinity( byAmount ) ) {
-                return false;
+                return default;
             }
 
             //TODO would a Lerp here make turning smoother?
@@ -113,11 +113,11 @@ namespace Librainian.Measurement.Spatial {
         /// <returns></returns>
         public Boolean RotateRight( Single byAmount ) {
             if ( Single.IsNaN( byAmount ) ) {
-                return false;
+                return default;
             }
 
             if ( Single.IsInfinity( byAmount ) ) {
-                return false;
+                return default;
             }
 
             //TODO would a Lerp here make turning smoother?

@@ -89,7 +89,7 @@ namespace Librainian.Linguistics {
 
         public Boolean Equals( [CanBeNull] Paragraph other ) {
             if ( other is null ) {
-                return false;
+                return default;
             }
 
             return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );

@@ -70,7 +70,7 @@ namespace Librainian.Controls {
                 return true;
             }
             catch ( Exception ) {
-                return false;
+                return default;
             }
         }
     }

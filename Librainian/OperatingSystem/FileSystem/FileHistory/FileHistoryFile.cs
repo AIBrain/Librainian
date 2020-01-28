@@ -54,7 +54,7 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         private readonly DateTime? _when;
 
         [NotNull]
-        public IDocument FullPathAndName => new Document( folder: this.Folder, filename: this.FileName );
+        public IDocument FullPathAndName => new Document( this.Folder, this.FileName );
 
         public Boolean IsFileHistoryFile { get; }
 
@@ -65,10 +65,10 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
         /// <summary>
         ///     (includes the extension)
         /// </summary>
-        [CanBeNull]
+        [NotNull]
         public String FileName => this._filename;
 
-        [CanBeNull]
+        [NotNull]
         public IFolder Folder => this._folder;
 
         public FileHistoryFile( [NotNull] Document biglongpath ) {
@@ -103,7 +103,7 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
             var posB = value.LastIndexOf( "UTC)", comparisonType: StringComparison.Ordinal );
 
             if ( posA == -1 || posB == -1 || posB < posA ) {
-                return false;
+                return default;
             }
 
             var datepart = value.Substring( startIndex: posA + 1, posB - ( posA + 1 ) );
@@ -130,7 +130,7 @@ namespace Librainian.OperatingSystem.FileSystem.FileHistory {
 
             filename = $"{value}{extension}";
 
-            return false;
+            return default;
         }
     }
 }

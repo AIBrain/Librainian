@@ -72,7 +72,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public Boolean Add( [CanBeNull] String folderpath ) {
             if ( null == folderpath ) {
-                return false;
+                return default;
             }
 
             this.FoundAnotherFolder( new Folder( folderpath ) );

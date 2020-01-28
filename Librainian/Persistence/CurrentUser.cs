@@ -153,7 +153,8 @@ namespace Librainian.Persistence {
                         return true;
 
                     default: {
-                            App.SetValue( key, value, RegistryValueKind.Unknown );
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        App.SetValue( key, value, RegistryValueKind.Unknown );
 
                             return true;
                         }
@@ -163,7 +164,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
     }
 }

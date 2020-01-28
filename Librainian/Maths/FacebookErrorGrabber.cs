@@ -56,7 +56,7 @@ namespace Librainian.Maths {
         ///     See also <see cref="Randem" />.
         /// </summary>
         /// <returns></returns>
-        [NotNull]
+        [CanBeNull]
         public static Task<FaceBookRootObject> GetError() {
             var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
 
@@ -70,6 +70,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<Byte[]> NextDataAsync( Int32 fallbackByteCount = 16 ) {
+
             var rootObject = await GetError().ConfigureAwait( false );
 
             var data = rootObject.Error.FbtraceID;
@@ -110,26 +111,26 @@ namespace Librainian.Maths {
         [JsonObject]
         public struct FaceBookError {
 
-            [JsonProperty( propertyName: "code" )]
+            [JsonProperty(  "code" )]
             public Int32 Code { get; set; }
 
-            [JsonProperty( propertyName: "fbtrace_id" )]
+            [JsonProperty(  "fbtrace_id" )]
             public String FbtraceID { get; set; }
 
-            [JsonProperty( propertyName: "message" )]
+            [JsonProperty(  "message" )]
             public String Message { get; set; }
 
-            [JsonProperty( propertyName: "type" )]
+            [JsonProperty(  "type" )]
             public String Type { get; set; }
         }
 
         [JsonObject]
         public struct FaceBookRootObject {
 
-            [JsonProperty( propertyName: "error" )]
-            internal FaceBookError Error { get; }
+            [JsonProperty(  "error" )]
+            public FaceBookError Error { get; }
         }
     }
 
-    public static partial class Randem { }
+    
 }

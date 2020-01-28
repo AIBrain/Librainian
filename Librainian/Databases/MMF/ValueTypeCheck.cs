@@ -60,7 +60,7 @@ namespace Librainian.Databases.MMF {
             var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
 
             if ( customAttributes.Length == 0 ) {
-                return false;
+                return default;
             }
 
             var attribute = ( MarshalAsAttribute )customAttributes[ 0 ];
@@ -79,11 +79,11 @@ namespace Librainian.Databases.MMF {
         private Boolean PropertySizesAreDefined() {
             foreach ( var propertyInfo in this.Type.GetProperties( BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic ) ) {
                 if ( !propertyInfo.CanRead || !propertyInfo.CanWrite ) {
-                    return false;
+                    return default;
                 }
 
                 if ( !propertyInfo.PropertyType.IsPrimitive && !HasMarshalDefinedSize( propertyInfo ) ) {
-                    return false;
+                    return default;
                 }
             }
 

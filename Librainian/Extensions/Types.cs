@@ -137,7 +137,7 @@ namespace Librainian.Extensions {
                 return true;
             }
             catch ( Exception ) {
-                return false;
+                return default;
             }
         }
 
@@ -158,7 +158,7 @@ namespace Librainian.Extensions {
                 return true;
             }
             catch ( Exception ) {
-                return false;
+                return default;
             }
         }
 
@@ -203,11 +203,11 @@ namespace Librainian.Extensions {
             }
 
             if ( Equals( source, default ) ) {
-                return false;
+                return default;
             }
 
             if ( Equals( destination, default ) ) {
-                return false;
+                return default;
             }
 
             //copy all settable fields
@@ -354,16 +354,16 @@ namespace Librainian.Extensions {
                 type = type?.BaseType;
             }
 
-            return false;
+            return default;
         }
 
         public static Boolean MergeDictionaries<TSource>( [CanBeNull] this IDictionary sourceValue, [CanBeNull] FieldInfo field, [CanBeNull] TSource destination ) {
             if ( null == sourceValue ) {
-                return false;
+                return default;
             }
 
             if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) {
-                return false;
+                return default;
             }
 
             foreach ( var key in sourceValue.Keys ) {
@@ -527,7 +527,7 @@ namespace Librainian.Extensions {
             catch ( Exception ) {
                 result = default;
 
-                return false;
+                return default;
             }
         }
 

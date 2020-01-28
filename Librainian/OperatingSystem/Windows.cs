@@ -198,7 +198,7 @@ namespace Librainian.OperatingSystem {
             }
             catch ( Exception ) { }
 
-            return false;
+            return default;
         }
 
         [NotNull]
@@ -251,7 +251,7 @@ namespace Librainian.OperatingSystem {
                     if ( null == process ) {
                         "failure.".Info();
 
-                        return false;
+                        return default;
                     }
 
                     process.WaitForExit( milliseconds: ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
@@ -263,19 +263,27 @@ namespace Librainian.OperatingSystem {
                     exception.Log();
                 }
 
-                return false;
+                return default;
             } );
 
         [NotNull]
-        public static Task<Process> ExecuteProcessAsync( [CanBeNull] Document filename, [CanBeNull] Folder workingFolder, [CanBeNull] String arguments, Boolean elevate ) =>
-            Task.Run( () => {
+        public static Task<Process> ExecuteProcessAsync( [NotNull] Document filename, [NotNull] Folder workingFolder, [CanBeNull] String arguments, Boolean elevate ) {
+            if ( filename == null ) {
+                throw new ArgumentNullException( paramName: nameof( filename ) );
+            }
+
+            if ( workingFolder == null ) {
+                throw new ArgumentNullException( paramName: nameof( workingFolder ) );
+            }
+
+            return Task.Run( () => {
                 try {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
                         WorkingDirectory = workingFolder.FullName,
                         FileName = filename.FullPath,
                         Verb = elevate ? null : "runas", //demand elevated permissions
-                        Arguments = arguments,
+                        Arguments = arguments ?? String.Empty,
                         CreateNoWindow = false,
                         ErrorDialog = true,
                         WindowStyle = ProcessWindowStyle.Normal
@@ -291,6 +299,7 @@ namespace Librainian.OperatingSystem {
 
                 return null;
             } );
+        }
 
         [CanBeNull]
         public static Document FindDocument( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
@@ -373,14 +382,23 @@ namespace Librainian.OperatingSystem {
             return default;
         }
 
-        public static async Task<Boolean> RestartServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) =>
-            await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
-            await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
+        public static async Task<Boolean> RestartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
 
-        public static async Task<Boolean> StartServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) {
+            return await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
+                   await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
+        }
+
+        public static async Task<Boolean> StartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
+
             try {
                 return await Task.Run( () => {
-                    using ( var service = new ServiceController( name: serviceName ) ) {
+                    using ( var service = new ServiceController( serviceName ) ) {
                         if ( service.Status != ServiceControllerStatus.Running ) {
                             service.Start();
                         }
@@ -395,13 +413,17 @@ namespace Librainian.OperatingSystem {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
-        public static async Task<Boolean> StopServiceAsync( [CanBeNull] String serviceName, TimeSpan timeout ) {
+        public static async Task<Boolean> StopServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
+
             try {
                 return await Task.Run( () => {
-                    using ( var service = new ServiceController( name: serviceName ) ) {
+                    using ( var service = new ServiceController( serviceName ) ) {
                         service.Stop();
                         service.WaitForStatus( desiredStatus: ServiceControllerStatus.Stopped, timeout: timeout );
 
@@ -413,12 +435,20 @@ namespace Librainian.OperatingSystem {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [CanBeNull]
-        public static Task<Process> TryConvert_WithIrfanviewAsync( [CanBeNull] Document inDocument, [CanBeNull] Document outDocument ) =>
-            Task.Run( () => {
+        public static Task<Process> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
+            if ( inDocument == null ) {
+                throw new ArgumentNullException( paramName: nameof( inDocument ) );
+            }
+
+            if ( outDocument == null ) {
+                throw new ArgumentNullException( paramName: nameof( outDocument ) );
+            }
+
+            return Task.Run( () => {
 
                 if ( IrfanView64?.Value.Exists() != true ) {
                     return null;
@@ -449,6 +479,7 @@ namespace Librainian.OperatingSystem {
 
                 return null;
             } );
+        }
 
         /// <summary>
         ///     <see cref="Application.DoEvents()" /> and then <see cref="Thread.Yield()" />.

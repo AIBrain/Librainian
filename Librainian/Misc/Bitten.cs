@@ -229,11 +229,11 @@ namespace Librainian.Misc {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             if ( obj.GetType() != typeof( Bitten ) ) {
-                return false;
+                return default;
             }
 
             return this.Equals( ( Bitten )obj );

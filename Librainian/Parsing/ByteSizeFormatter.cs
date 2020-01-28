@@ -82,7 +82,7 @@ namespace Librainian.Parsing {
             bytes = 0;
 
             if ( !match.Success ) {
-                return false;
+                return default;
             }
 
             Int64 mult = 1;
@@ -149,7 +149,11 @@ namespace Librainian.Parsing {
         ///     <paramref name="formatProvider" />.
         /// </returns>
         [NotNull]
-        public override String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
+        public override String Format( [NotNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
+            if ( format == null ) {
+                throw new ArgumentNullException( paramName: nameof( format ) );
+            }
+
             Int64 bytes;
 
             try {

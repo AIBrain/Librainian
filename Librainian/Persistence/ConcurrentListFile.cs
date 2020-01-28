@@ -100,7 +100,7 @@ namespace Librainian.Persistence {
 
         public async Task<Boolean> Read( CancellationToken token = default ) {
             if ( this.Document.Exists() == false ) {
-                return false;
+                return default;
             }
 
             try {
@@ -126,7 +126,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>

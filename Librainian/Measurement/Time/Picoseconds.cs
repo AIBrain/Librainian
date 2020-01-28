@@ -160,7 +160,7 @@ namespace Librainian.Measurement.Time {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
             return left.Value == right.Value;
         }
@@ -209,7 +209,7 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Picoseconds picoseconds && this.Equals( picoseconds );
@@ -223,7 +223,6 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
-        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOnePicosecond * this.Value );
 
         public Seconds ToSeconds() => throw new NotImplementedException();

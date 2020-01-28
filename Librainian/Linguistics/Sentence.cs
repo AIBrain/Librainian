@@ -69,8 +69,10 @@ namespace Librainian.Linguistics {
         [NotNull]
         public static Sentence Empty { get; }
 
+        [NotNull]
         public static String EndOfSentence { get; }
 
+        [NotNull]
         public static String StartOfSentence { get; }
 
         private Sentence() => throw new InvalidOperationException( "No." );
@@ -115,23 +117,17 @@ namespace Librainian.Linguistics {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Words.SequenceEqual( right.Words );
         }
 
-        public static Boolean operator !=( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => !( left == right );
+        public static Boolean operator !=( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => !Equals(left, right );
 
         public static Boolean operator <( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) < 0;
 
-        public static Boolean operator ==( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) {
-            if ( ReferenceEquals( left, null ) ) {
-                return ReferenceEquals( right, null );
-            }
-
-            return left.Equals( right );
-        }
+        public static Boolean operator ==( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Equals(left, right );
 
         public static Boolean operator >( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) > 0;
 

@@ -119,7 +119,7 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( ReferenceEquals( left.Data, right.Data ) ) {
@@ -174,7 +174,7 @@ namespace Librainian.Persistence.InIFiles {
                         return true;
                     }
 
-                    return false;
+                    return default;
                 } );
             }
             catch ( Exception exception ) {

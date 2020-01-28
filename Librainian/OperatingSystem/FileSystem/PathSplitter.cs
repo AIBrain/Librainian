@@ -137,7 +137,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             subfolder = Folder.CleanPath( subfolder.Trim() );
 
             if ( String.IsNullOrWhiteSpace( value: subfolder ) ) {
-                return false;
+                return default;
             }
 
             this.Parts.Add( subfolder );
@@ -160,7 +160,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             var s = this.Parts[ 0 ] ?? String.Empty;
 
             if ( s.Length != 2 || !s.EndsWith( ":", StringComparison.Ordinal ) ) {
-                return false;
+                return default;
             }
 
             this.Parts[ 0 ] = $"{d}:";

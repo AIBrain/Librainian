@@ -114,7 +114,7 @@ namespace Librainian.Collections {
         /// <returns></returns>
         public Boolean Contains( [CanBeNull] String word ) {
             if ( String.IsNullOrEmpty( word ) ) {
-                return false;
+                return default;
             }
 
             return this.Words.TryGetValue( word, out _ );

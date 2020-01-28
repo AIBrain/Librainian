@@ -182,11 +182,11 @@ namespace Librainian.Graphics.Imaging {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( left.Checksum().Result != right.Checksum().Result || left.Count != right.Count ) {
-                return false;   //TODO ugh... .Result
+                return default;   //TODO ugh... .Result
             }
 
             return left.Pixels.SequenceEqual( right.Pixels );

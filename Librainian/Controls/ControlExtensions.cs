@@ -590,7 +590,7 @@ namespace Librainian.Controls {
             }
 
             if ( browser.Document is null ) {
-                return false;
+                return default;
             }
 
             while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {

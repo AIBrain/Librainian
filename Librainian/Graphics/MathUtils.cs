@@ -412,7 +412,7 @@ namespace Librainian.Graphics {
             var length = v.Length;
 
             if ( length.Near( 0 ) ) {
-                return false;
+                return default;
             }
 
             v /= length;

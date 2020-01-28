@@ -96,7 +96,7 @@ namespace System.Text {
             }
 
             if ( left is null || right is null || left.charCount != right.charCount || left._parts.Count != right._parts.Count ) {
-                return false;
+                return default;
             }
 
             if ( left.compiled != null && right.compiled != null ) {

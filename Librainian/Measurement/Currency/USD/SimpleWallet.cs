@@ -132,7 +132,7 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Boolean TryDeposit( Decimal amount ) {
             if ( amount < Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
@@ -154,7 +154,7 @@ namespace Librainian.Measurement.Currency.USD {
         public Boolean TryUpdateBalance( Decimal amount ) {
             try {
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance = amount;
@@ -173,7 +173,7 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Boolean TryWithdraw( Decimal amount ) {
             if ( amount < Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
@@ -181,7 +181,7 @@ namespace Librainian.Measurement.Currency.USD {
                 onBeforeWithdraw?.Invoke( amount );
 
                 if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance -= amount;

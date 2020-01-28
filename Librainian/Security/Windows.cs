@@ -62,7 +62,7 @@ namespace Librainian.Security {
             catch ( ArgumentNullException ) { }
             catch ( ArgumentException ) { }
 
-            return false;
+            return default;
         }
     }
 }

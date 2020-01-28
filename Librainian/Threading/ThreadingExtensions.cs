@@ -126,6 +126,10 @@ namespace Librainian.Threading {
         /// <param name="obj"></param>
         /// <returns></returns>
         public static UInt64 CalcSizeInBytes<T>( [CanBeNull] this T obj ) {
+            if ( obj is null ) {
+                return 0;
+            }
+
             if ( Equals( obj, default ) ) {
                 return 0;
             }
@@ -171,7 +175,7 @@ namespace Librainian.Threading {
                 if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
                     if ( value is IDictionary dictionary ) {
                         foreach ( var key in dictionary.Keys ) {
-                            sizeInBytes += key.CalcSizeInBytes(); //TODO could optimize this out of the loop
+                            sizeInBytes += key.CalcSizeInBytes();
                             sizeInBytes += dictionary[ key ].CalcSizeInBytes();
                         }
                     }
@@ -190,9 +194,7 @@ namespace Librainian.Threading {
                 if ( field.FieldType.IsArray ) {
 
                     if ( field.GetValue( obj ) is Array bob ) {
-                        foreach ( var o in bob ) {
-                            sizeInBytes += o.CalcSizeInBytes();
-                        }
+                        sizeInBytes += bob.Cast<Object>().Aggregate( 0UL, ( current, o ) => current + o.CalcSizeInBytes() );
                     }
 
                     continue;
@@ -263,8 +265,8 @@ namespace Librainian.Threading {
         }
 
         public static Boolean GetSizeOfPrimitives<T>( [CanBeNull] this T obj, out UInt64 total ) {
-            if ( obj is String s1 ) {
-                total = ( UInt64 )s1.Length;
+            if ( obj is String s ) {
+                total = ( UInt64 )s.Length;
 
                 return true;
             }
@@ -274,7 +276,7 @@ namespace Librainian.Threading {
             if ( !type.IsPrimitive ) {
                 total = 0; //TODO recurse all fields
 
-                return false;
+                return default;
             }
 
             switch ( obj ) {
@@ -341,7 +343,7 @@ namespace Librainian.Threading {
 
             total = 0;
 
-            return false; //unknown type
+            return default; //unknown type
         }
 
         /// <summary>

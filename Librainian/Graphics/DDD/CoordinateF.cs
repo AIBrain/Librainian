@@ -143,31 +143,31 @@ namespace Librainian.Graphics.DDD {
             }
 
             if ( left is null ) {
-                return false;
+                return default;
             }
 
             if ( right is null ) {
-                return false;
+                return default;
             }
 
             if ( left.X < right.X ) {
-                return false;
+                return default;
             }
 
             if ( left.X > right.X ) {
-                return false;
+                return default;
             }
 
             if ( left.Y < right.Y ) {
-                return false;
+                return default;
             }
 
             if ( left.Y > right.Y ) {
-                return false;
+                return default;
             }
 
             if ( left.Z < right.Z ) {
-                return false;
+                return default;
             }
 
             return !( left.Z > right.Z );
@@ -209,7 +209,7 @@ namespace Librainian.Graphics.DDD {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is CoordinateF f && Equals( this, f );

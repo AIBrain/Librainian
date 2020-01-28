@@ -873,7 +873,7 @@ namespace Librainian.Threading {
             var completed = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
             if ( completed != task ) {
-                return false;
+                return default;
             }
 
             canceler.Cancel();
@@ -1130,7 +1130,7 @@ namespace Librainian.Threading {
                     if ( this._semaphore.CurrentCount == 0 ) {
                         resource = null;
 
-                        return false;
+                        return default;
                     }
 
                     resource = this.WaitAndLoadAsync( cancelToken );

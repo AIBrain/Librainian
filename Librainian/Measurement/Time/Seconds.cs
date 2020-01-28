@@ -182,7 +182,7 @@ namespace Librainian.Measurement.Time {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Value == right.Value;

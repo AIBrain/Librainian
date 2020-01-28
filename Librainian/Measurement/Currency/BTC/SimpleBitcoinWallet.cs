@@ -155,7 +155,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Balance == right.Balance;
@@ -205,7 +205,7 @@ namespace Librainian.Measurement.Currency.BTC {
                     return true;
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
             finally {
@@ -228,13 +228,13 @@ namespace Librainian.Measurement.Currency.BTC {
         public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             this.OnBeforeDeposit?.Invoke( amount );
 
             if ( !this.TryAdd( amount: amount ) ) {
-                return false;
+                return default;
             }
 
             this.OnAfterDeposit?.Invoke( amount );
@@ -248,18 +248,18 @@ namespace Librainian.Measurement.Currency.BTC {
             }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             Decimal? withdrewAmount = null;
 
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( this._balance < amount ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance -= amount;
@@ -291,7 +291,7 @@ namespace Librainian.Measurement.Currency.BTC {
         public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
@@ -324,16 +324,16 @@ namespace Librainian.Measurement.Currency.BTC {
             }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( this._balance < amount ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance -= amount;

@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is VariableTimeSpan ) ) {
-                return false;
+                return default;
             }
 
             return this.Equals( ( VariableTimeSpan ) obj );

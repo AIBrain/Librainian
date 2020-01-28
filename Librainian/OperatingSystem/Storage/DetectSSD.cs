@@ -158,7 +158,7 @@ namespace Librainian.OperatingSystem.Storage {
             if ( idQuery.data[ kNominalMediaRotRateWordIndex ] == nonRotateDevice ) {
 
                 //Debug.WriteLine( $"The disk #{diskNumber} is a NON-ROTATE device." );
-                return false;
+                return default;
             }
 
             //Debug.WriteLine( "This disk is ROTATE device." );

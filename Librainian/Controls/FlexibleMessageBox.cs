@@ -42,6 +42,7 @@
 namespace Librainian.Controls {
 
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
@@ -367,16 +368,14 @@ namespace Librainian.Controls {
             /// <param name="message">The message.</param>
             /// <returns>The string rows as 1-dimensional array</returns>
             [CanBeNull]
-            private static String[] GetStringRows( [CanBeNull] String message ) {
+            private static IEnumerable<String> GetStringRows( [CanBeNull] String message ) {
                 if ( String.IsNullOrEmpty( message ) ) {
                     return null;
                 }
 
-                var messageRows = message.Split( new[] {
+                return message.Split( new[] {
                     '\n'
                 }, StringSplitOptions.None );
-
-                return messageRows;
             }
 
             /// <summary>

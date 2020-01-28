@@ -116,7 +116,10 @@ namespace Librainian.Threading {
         ///     Uses a named semaphore to allow only ONE of <paramref name="name" />.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
-        public SingleAccess( [CanBeNull] String name, TimeSpan? timeout = null ) {
+        public SingleAccess( [NotNull] String name, TimeSpan? timeout = null ) {
+            if ( String.IsNullOrWhiteSpace( value: name ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            }
 
             try {
                 if ( !timeout.HasValue ) {
@@ -175,7 +178,11 @@ namespace Librainian.Threading {
         ///     Uses a named semaphore to allow only ONE of <paramref name="self" />.
         /// </summary>
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-        public SingleAccess( [CanBeNull] T self, TimeSpan? timeout = null ) {
+        public SingleAccess( [NotNull] T self, TimeSpan? timeout = null ) {
+            if ( self == null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
+
             try {
                 if ( !timeout.HasValue ) {
                     timeout = Minutes.One;

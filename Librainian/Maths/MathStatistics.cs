@@ -339,7 +339,7 @@ namespace Librainian.Maths {
 
             return probability >= chance;
 
-            // if P is -0.1 then a chance of 0.01 will return false; a chance of 0.90 will return false
+            // if P is -0.1 then a chance of 0.01 will return default; a chance of 0.90 will return false
 
             // if P is 0.1 then a chance of 0.01 will return true a chance of 0.05 will return true
             // a chance of 0.09 will return true a chance of 0.10 will return false a chance of 0.50

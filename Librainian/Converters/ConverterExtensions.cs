@@ -178,11 +178,11 @@ namespace Librainian.Converters {
         [Pure]
         public static Boolean ToBoolean<T>( [CanBeNull] this T value ) {
             switch ( value ) {
-                case null: return false;
+                case null: return default;
                 case Boolean b: return b;
                 case Char c: return c.In( TrueChars );
                 case Int32 i: return i >= 1;
-                case String s when String.IsNullOrWhiteSpace( s ): return false;
+                case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
                     s = s.Trimmed();
 
@@ -209,7 +209,7 @@ namespace Librainian.Converters {
                 }
 
                 if ( t.In( FalseStrings ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( Boolean.TryParse( t, out var rest ) ) {
@@ -217,7 +217,7 @@ namespace Librainian.Converters {
                 }
             }
 
-            return false;
+            return default;
         }
 
         [DebuggerStepThrough]
@@ -255,7 +255,7 @@ namespace Librainian.Converters {
                 }
 
                 if ( s.In( ParsingConstants.FalseStrings ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( Boolean.TryParse( s, out var result ) ) {
@@ -276,7 +276,7 @@ namespace Librainian.Converters {
             }
 
             if ( t.In( ParsingConstants.FalseStrings ) ) {
-                return false;
+                return default;
             }
 
             if ( Boolean.TryParse( t, out var rest ) ) {
@@ -506,13 +506,13 @@ namespace Librainian.Converters {
                     s = value.ToString();
                 }
 
-                s = s.StripLetters();
-                s = s.Replace( "$", String.Empty );
-                s = s.Replace( ")", String.Empty );
-                s = s.Replace( "(", "-" );
-                s = s.Replace( "..", "." );
-                s = s.Replace( " ", "" );
-                s = s.Trim();
+                s = s?.StripLetters();
+                s = s?.Replace( "$", String.Empty );
+                s = s?.Replace( ")", String.Empty );
+                s = s?.Replace( "(", "-" );
+                s = s?.Replace( "..", "." );
+                s = s?.Replace( " ", "" );
+                s = s?.Trimmed() ?? String.Empty;
 
                 var pos = s.LastIndexOf( '.' );
 
@@ -520,15 +520,10 @@ namespace Librainian.Converters {
                     s = s.Substring( 0, pos );
                 }
 
-                if ( String.IsNullOrEmpty( s ) ) {
-                    return null;
-                }
+                if ( !String.IsNullOrEmpty( s ) ) {
+                    return Int32.TryParse( s, out var result ) ? result : Convert.ToInt32( s );
 
-                if ( Int32.TryParse( s, out var result ) ) {
-                    return result;
                 }
-
-                return Convert.ToInt32( s );
             }
             catch ( FormatException exception ) {
                 exception.Log();
@@ -596,7 +591,15 @@ namespace Librainian.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal? ToMoneyOrNull( [CanBeNull] this SqlDataReader bob, [CanBeNull] String columnName ) {
+        public static Decimal? ToMoneyOrNull( [NotNull] this SqlDataReader bob, [NotNull] String columnName ) {
+            if ( bob == null ) {
+                throw new ArgumentNullException( paramName: nameof( bob ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: columnName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( columnName ) );
+            }
+
             try {
                 var ordinal = bob.Ordinal( columnName );
 

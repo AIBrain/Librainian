@@ -134,7 +134,7 @@ namespace Librainian.Measurement.Spatial {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Radians radians && Equals( this, radians );

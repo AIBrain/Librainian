@@ -70,6 +70,7 @@ namespace Librainian.Maths {
         /// <param name="nombre"></param>
         /// <returns></returns>
         /// <see cref="http://wikipedia.org/wiki/Addition#Notation_and_terminology" />
+        // ReSharper disable 2 UnusedParameter.Global
         public static BigInteger Add( this BigInteger whom, BigInteger nombre ) {
             var resultant = BigInteger.Zero;
 
@@ -80,46 +81,48 @@ namespace Librainian.Maths {
         /// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
         /// <param name="terms"></param>
         /// <returns></returns>
-        public static BigInteger Add( [NotNull] params BigInteger[] terms ) {
+        public static BigInteger Add( [CanBeNull] params BigInteger[] terms ) {
             var total = BigInteger.Zero;
 
-            foreach ( var local in terms.Select( term => term.ToString() ) ) {
-                var term = local;
+            if ( terms != null ) {
+                foreach ( var local in terms.Select( term => term.ToString() ) ) {
+                    var term = local;
 
-                // total
-                //+ term
-                //______
-                //result
+                    // total
+                    //+ term
+                    //______
+                    //result
 
-                var s = total.ToString();
-                var result = String.Empty;
+                    var s = total.ToString();
+                    var result = String.Empty;
 
-                if ( s.Length < term.Length ) {
-                    s = s.PadLeft( term.Length, '0' );
-                }
-                else if ( term.Length < s.Length ) {
-                    term = term.PadLeft( s.Length, '0' );
-                }
-
-                while ( term.Any() ) {
-                    var l = Byte.Parse( s.Last().ToString() );
-                    s = s.Substring( 0, s.Length - 1 );
-
-                    var m = Byte.Parse( term.Last().ToString() );
-                    term = term.Substring( 0, term.Length - 1 );
-
-                    var t = ( l + m ).ToString();
-                    var c = Byte.Parse( t.Last().ToString() );
-
-                    if ( 2 == t.Length ) {
-                        result = "1" + c;
+                    if ( s.Length < term.Length ) {
+                        s = s.PadLeft( term.Length, '0' );
                     }
-                    else {
-                        result += c;
+                    else if ( term.Length < s.Length ) {
+                        term = term.PadLeft( s.Length, '0' );
                     }
-                }
 
-                total += BigInteger.Parse( result );
+                    while ( term.Any() ) {
+                        var l = Byte.Parse( s.Last().ToString() );
+                        s = s.Substring( 0, s.Length - 1 );
+
+                        var m = Byte.Parse( term.Last().ToString() );
+                        term = term.Substring( 0, term.Length - 1 );
+
+                        var t = ( l + m ).ToString();
+                        var c = Byte.Parse( t.Last().ToString() );
+
+                        if ( 2 == t.Length ) {
+                            result = "1" + c;
+                        }
+                        else {
+                            result += c;
+                        }
+                    }
+
+                    total += BigInteger.Parse( result );
+                }
             }
 
             return total;

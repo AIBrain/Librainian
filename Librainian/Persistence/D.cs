@@ -128,11 +128,11 @@ namespace Librainian.Persistence {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
-                return false;
+                return default;
             }
 
             if ( ReferenceEquals( left.V, right.V ) ) {
@@ -140,7 +140,7 @@ namespace Librainian.Persistence {
             }
 
             if ( left.V is null || right.V is null ) {
-                return false;
+                return default;
             }
 
             return left.V.Equals( right.V, StringComparison.Ordinal );

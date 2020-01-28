@@ -159,21 +159,21 @@ namespace Librainian.Databases {
             this.Sproc = query ?? throw new ArgumentNullException(  nameof( query ) );
 
             try {
-                using ( var connection = new SqlConnection( this.ConnectionString ) ) {
+                using var connection = new SqlConnection( this.ConnectionString );
 
-                    using ( var command = new SqlCommand( query, connection ) {
-                        CommandType = commandType,
-                        CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-                    } ) {
-                        command.PopulateParameters( parameters );
+                using var command = new SqlCommand( query, connection ) {
+                    CommandType = commandType,
+                    CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+                };
 
-                        using var open = connection.OpenAsync( this.Token );
+                command.PopulateParameters( parameters );
 
-                        await open.ConfigureAwait( false );
+                using var open = connection.OpenAsync( this.Token );
 
-                        return await command.ExecuteNonQueryAsync( this.Token ).ConfigureAwait( false );
-                    }
-                }
+                await open.ConfigureAwait( false );
+
+                return await command.ExecuteNonQueryAsync( this.Token ).ConfigureAwait( false );
+
             }
             catch ( SqlException exception ) {
                 if ( !exception.SQLTimeout() ) {
@@ -777,7 +777,7 @@ namespace Librainian.Databases {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>//TODO Make this better later.. just return any "working" connection for now.</summary>

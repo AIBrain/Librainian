@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ArrayTraverse.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "WebClientWithTimeout.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -37,45 +35,36 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ArrayTraverse.cs" was last formatted by Protiguous on 2019/08/08 at 9:35 AM.
+// Project: "Librainian", "WebClientWithTimeout.cs" was last formatted by Protiguous on 2020/01/25 at 5:50 PM.
 
-namespace Librainian.Collections.Arrays {
+namespace Librainian.Internet {
 
     using System;
+    using System.Net;
     using JetBrains.Annotations;
 
-    public class ArrayTraverse {
+    public class WebClientWithTimeout : WebClient {
 
-        private Int32[] MaxLengths { get; }
+        /// <summary>
+        ///     The <see cref="WebRequest" /> instance.
+        /// </summary>
+        [CanBeNull]
+        public WebRequest Request { get; private set; }
 
-        public Int32[] Position { get; }
+        public TimeSpan Timeout { get; set; }
 
-        public ArrayTraverse( [NotNull] Array array ) {
-            this.MaxLengths = new Int32[ array.Rank ];
+        public WebClientWithTimeout() : this( Internet.UnderlyingDownloader.Forever ) { }
 
-            for ( var i = 0; i < array.Rank; ++i ) {
-                this.MaxLengths[ i ] = array.GetLength( i ) - 1;
+        public WebClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
+
+        protected override WebRequest GetWebRequest( Uri address ) {
+            this.Request = base.GetWebRequest( address );
+
+            if ( this.Request != null ) {
+                this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
             }
 
-            this.Position = new Int32[ array.Rank ];
-        }
-
-        public Boolean Step() {
-            for ( var i = 0; i < this.Position.Length; ++i ) {
-                if ( this.Position[ i ] >= this.MaxLengths[ i ] ) {
-                    continue;
-                }
-
-                this.Position[ i ]++;
-
-                for ( var j = 0; j < i; j++ ) {
-                    this.Position[ j ] = 0;
-                }
-
-                return true;
-            }
-
-            return default;
+            return this.Request;
         }
     }
 }

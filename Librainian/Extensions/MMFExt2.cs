@@ -52,7 +52,7 @@ namespace Librainian.Extensions {
             source.Refresh();
 
             if ( !source.Exists ) {
-                return false;
+                return default;
             }
 
             destination.Refresh();
@@ -62,14 +62,14 @@ namespace Librainian.Extensions {
                     destination.Delete();
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
 
             // ReSharper disable once UnusedVariable
             using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
 
-            return false;
+            return default;
         }
     }
 }

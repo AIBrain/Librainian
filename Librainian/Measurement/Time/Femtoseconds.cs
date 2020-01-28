@@ -197,7 +197,7 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( [CanBeNull] Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Femtoseconds femtoseconds && this.Equals( femtoseconds );
@@ -219,10 +219,8 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
-        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneFemtosecond );
 
-        [CanBeNull]
         public Seconds ToSeconds() => throw new NotImplementedException();
 
         public override String ToString() {

@@ -102,11 +102,11 @@ namespace Librainian.Maths.Numbers {
             }
 
             if ( left is null ) {
-                return false;
+                return default;
             }
 
             if ( right is null ) {
-                return false;
+                return default;
             }
 
             return left.Quotient == right.Quotient;
@@ -162,7 +162,7 @@ namespace Librainian.Maths.Numbers {
 
             result = default;
 
-            return false;
+            return default;
         }
 
         [Pure]

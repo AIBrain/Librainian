@@ -198,12 +198,12 @@ namespace Librainian.Measurement.Currency.BTC {
             }
 
             if ( quantity <= 0 ) {
-                return false;
+                return default;
             }
 
             lock ( this._coins ) {
                 if ( !this._coins.ContainsKey( coin ) || this._coins[ coin ] < quantity ) {
-                    return false; //no coins to withdraw!
+                    return default; //no coins to withdraw!
                 }
 
                 this._coins[ coin ] -= quantity;

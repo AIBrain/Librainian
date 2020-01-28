@@ -104,7 +104,7 @@ namespace Librainian.Threading {
                     resource = tcs.Task;
                 }
 
-                return false;
+                return default;
             }
         }
 

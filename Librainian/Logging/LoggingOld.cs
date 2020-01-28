@@ -317,7 +317,7 @@ namespace Librainian.Logging {
             }
             catch ( Exception exception ) { exception.Log(); }
 
-            return false;
+            return default;
         }
 
         //

@@ -72,7 +72,7 @@ namespace Librainian.Extensions {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public Boolean Equals( [NotNull] RegistryKey x, [NotNull] RegistryKey y ) {
+        public Boolean Equals( RegistryKey x, RegistryKey y ) {
             if ( x is null ) {
                 throw new ArgumentNullException(  nameof( x ) );
             }
@@ -150,12 +150,16 @@ namespace Librainian.Extensions {
             // ReSharper restore DelegateSubtraction
         }
 
-        private static IEnumerable<RegistryKey> GetAllSubkeys( [CanBeNull] RegistryKey startkeyIn, [CanBeNull] String nodeKey ) {
-            Instance.InvokePopulateProgress();
-
-            if ( startkeyIn is null ) {
-                yield break;
+        private static IEnumerable<RegistryKey> GetAllSubkeys( [NotNull] RegistryKey startkeyIn, [NotNull] String nodeKey ) {
+            if ( startkeyIn == null ) {
+                throw new ArgumentNullException( paramName: nameof( startkeyIn ) );
             }
+
+            if ( nodeKey == null ) {
+                throw new ArgumentNullException( paramName: nameof( nodeKey ) );
+            }
+
+            Instance.InvokePopulateProgress();
 
             if ( !TryOpenSubKey( startkeyIn, nodeKey, out var subItemRoot ) ) {
                 yield break;
@@ -163,12 +167,18 @@ namespace Librainian.Extensions {
 
             yield return subItemRoot;
 
-            foreach ( var sub in subItemRoot.GetSubKeyNames().SelectMany( s => GetAllSubkeys( subItemRoot, s ) ) ) {
-                yield return sub;
+            if ( subItemRoot != null ) {
+                foreach ( var sub in subItemRoot.GetSubKeyNames().SelectMany( s => GetAllSubkeys( subItemRoot, s ) ) ) {
+                    yield return sub;
+                }
             }
         }
 
-        private static void Initialize( [CanBeNull] RegistryKey registryStartKey ) {
+        private static void Initialize( [NotNull] RegistryKey registryStartKey ) {
+            if ( registryStartKey == null ) {
+                throw new ArgumentNullException( paramName: nameof( registryStartKey ) );
+            }
+
             if ( Instance._isInitialized ) {
                 return;
             }
@@ -182,7 +192,15 @@ namespace Librainian.Extensions {
 
         private static void InvokePopulateProgressItemError( [CanBeNull] PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
 
-        private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, [CanBeNull] String name, [CanBeNull] out RegistryKey itemOut ) {
+        private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, [NotNull] String name, [CanBeNull] out RegistryKey itemOut ) {
+            if ( startFrom == null ) {
+                throw new ArgumentNullException( paramName: nameof( startFrom ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: name ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            }
+
             var bIsOk = false;
             itemOut = null;
 

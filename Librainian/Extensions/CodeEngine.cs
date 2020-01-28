@@ -145,7 +145,7 @@ namespace Coding
                 if ( this._compilerResults.Errors?.HasErrors == true ) {
                     "".Break();
 
-                    return false;
+                    return default;
                 }
 
                 if ( !this._compilerResults.Errors?.HasWarnings == true ) {
@@ -159,7 +159,7 @@ namespace Coding
             catch ( Exception exception ) {
                 exception.Log();
 
-                return false;
+                return default;
             }
         }
 
@@ -173,7 +173,7 @@ namespace Coding
             catch ( Exception exception ) {
                 exception.Log();
 
-                return false;
+                return default;
             }
         }
 

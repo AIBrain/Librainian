@@ -357,7 +357,7 @@ namespace Librainian.Measurement.Time {
 
             // not divisible by 4? not a leap year
             if ( year % 4 != 0 ) {
-                return false;
+                return default;
             }
 
             // divisible by 4 and not divisible by 100? always a leap year
@@ -946,7 +946,7 @@ namespace Librainian.Measurement.Time {
 
             dateTime = null;
 
-            return false;
+            return default;
         }
 
     }

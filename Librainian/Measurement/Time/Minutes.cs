@@ -352,7 +352,7 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Minutes minutes && this.Equals( minutes );

@@ -132,6 +132,10 @@ namespace Librainian.Controls {
         }
 
         private void AddALogEntry( [CanBeNull] Object item ) {
+            if ( item == null ) {
+                return;
+            }
+
             var items = this.Box.Items;
 
             if ( items.Count == 0 ) {
@@ -276,10 +280,10 @@ namespace Librainian.Controls {
 
         public void LogLine( [CanBeNull] String message ) => this.LogLine( LoggingLevel.Debug, message );
 
-        public void LogLine( [CanBeNull] String format, [CanBeNull] params Object[] args ) =>
+        public void LogLine( [CanBeNull] String format, [NotNull] params Object[] args ) =>
             this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, [CanBeNull] params Object[] args ) =>
+        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, [NotNull] params Object[] args ) =>
             this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
         public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );

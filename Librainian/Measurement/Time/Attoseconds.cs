@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Value == right.Value;
@@ -318,7 +318,6 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
-        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
 
         [NotNull]

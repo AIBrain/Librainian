@@ -106,7 +106,11 @@ namespace Librainian.Databases.MMF {
 
         //32 bytes for datetime String... it's an overkill i know
         [CanBeNull]
-        public T Get( [CanBeNull] String key ) {
+        public T Get( [NotNull] String key ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             if ( !this.IsConnected ) {
                 return default;
             }
@@ -116,7 +120,7 @@ namespace Librainian.Databases.MMF {
             }
 
             try {
-                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( mapName: key ) ) {
+                using ( var memoryMappedFile = MemoryMappedFile.OpenExisting( key ) ) {
                     if ( this._keyExpirations.ContainsKey( key ) ) {
                         if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
                             this._keyExpirations.Remove( key );
@@ -147,22 +151,36 @@ namespace Librainian.Databases.MMF {
         }
 
         //ideal for Unit Testing of classes that depend upon this Library.
-        public void Set( [CanBeNull] String key, [CanBeNull] T obj ) => this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
+        public void Set( [NotNull] String key, [NotNull] T obj ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
 
-        public void Set( [CanBeNull] String key, [CanBeNull] T obj, Int64 size, DateTime expire ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            this.Set( key, obj, size: this.ChunkSize, expire: DateTime.MaxValue );
+        }
+
+        public void Set( [CanBeNull] String key, [NotNull] T obj, Int64 size, DateTime expire ) {
+            if ( String.IsNullOrEmpty( key ) ) {
+                throw new Exception( "The key can't be null or empty." );
+            }
+
+            if ( key.Length >= MaxKeyLength ) {
+                throw new Exception( "The key has exceeded the maximum length." );
+            }
+
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
+
+            if ( !this.IsConnected ) {
+                return;
+            }
+
             try {
-                if ( String.IsNullOrEmpty( key ) ) {
-                    throw new Exception( "The key can't be null or empty." );
-                }
-
-                if ( key.Length >= MaxKeyLength ) {
-                    throw new Exception( "The key has exceeded the maximum length." );
-                }
-
-                if ( !this.IsConnected ) {
-                    return;
-                }
-
                 expire = expire.ToUniversalTime();
 
                 if ( !this._keyExpirations.ContainsKey( key ) ) {
@@ -172,9 +190,12 @@ namespace Librainian.Databases.MMF {
                     this._keyExpirations[ key ] = expire;
                 }
 
-                var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size );
-                var vs = mmf.CreateViewStream();
-                this._formatter.Serialize( serializationStream: vs, graph: obj );
+
+
+                using ( var mmf = MemoryMappedFile.CreateOrOpen( mapName: key, capacity: size ) ) {
+                    var vs = mmf.CreateViewStream();
+                    this._formatter.Serialize( vs, obj );
+                }
 
                 var cmd = String.Format( format: "{0}{1}{2}", arg0: key, arg1: Delim, arg2: expire.ToString( format: "s" ) );
 
@@ -194,20 +215,58 @@ namespace Librainian.Databases.MMF {
             }
         }
 
-        public void Set( [CanBeNull] String key, [CanBeNull] T obj, DateTime expire ) => this.Set( key, obj, size: this.ChunkSize, expire: expire );
+        public void Set( [NotNull] String key, [NotNull] T obj, DateTime expire ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
 
-        public void Set( [CanBeNull] String key, [CanBeNull] T obj, TimeSpan expire ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            this.Set( key, obj, size: this.ChunkSize, expire: expire );
+        }
+
+        public void Set( [NotNull] String key, [NotNull] T obj, TimeSpan expire ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             var expireDt = DateTime.Now.Add( expire );
             this.Set( key, obj, size: this.ChunkSize, expire: expireDt );
         }
 
-        public void Set( [CanBeNull] String key, [CanBeNull] T obj, Int64 size ) => this.Set( key, obj, size: size, expire: DateTime.MaxValue );
+        public void Set( [NotNull] String key, [NotNull] T obj, Int64 size ) {
+            if ( obj == null ) {
+                throw new ArgumentNullException( paramName: nameof( obj ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            this.Set( key, obj, size: size, expire: DateTime.MaxValue );
+        }
 
         [CanBeNull]
-        public T TryGetThenSet( [CanBeNull] String key, [CanBeNull] Func<T> cacheMiss ) => this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
+        public T TryGetThenSet( [NotNull] String key, [CanBeNull] Func<T> cacheMiss ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            return this.TryGetThenSet( key, expire: DateTime.MaxValue, cacheMiss: cacheMiss );
+        }
 
         [CanBeNull]
-        public T TryGetThenSet( [CanBeNull] String key, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+        public T TryGetThenSet( [NotNull] String key, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             var obj = this.Get( key );
 
             if ( obj != null ) {
@@ -221,21 +280,33 @@ namespace Librainian.Databases.MMF {
         }
 
         [CanBeNull]
-        public T TryGetThenSet( [CanBeNull] String key, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+        public T TryGetThenSet( [NotNull] String key, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             var expireDt = DateTime.Now.Add( expire );
 
             return this.TryGetThenSet( key, expire: expireDt, cacheMiss: cacheMiss );
         }
 
         [CanBeNull]
-        public T TryGetThenSet( [CanBeNull] String key, Int64 size, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+        public T TryGetThenSet( [NotNull] String key, Int64 size, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             var expireDt = DateTime.Now.Add( expire );
 
             return this.TryGetThenSet( key, size: size, expire: expireDt, cacheMiss: cacheMiss );
         }
 
         [CanBeNull]
-        public T TryGetThenSet( [CanBeNull] String key, Int64 size, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+        public T TryGetThenSet( [NotNull] String key, Int64 size, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             var obj = this.Get( key );
 
             if ( obj is null ) {

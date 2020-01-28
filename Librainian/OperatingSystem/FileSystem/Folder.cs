@@ -395,7 +395,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.FullName.Is( right.FullName );
@@ -432,13 +432,13 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             try {
                 if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return false;
+                    return default;
                 }
 
                 path = CleanPath( path );
 
                 if ( String.IsNullOrEmpty( path ) ) {
-                    return false;
+                    return default;
                 }
 
                 DirectoryInfo dirInfo;
@@ -461,7 +461,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             catch ( PathTooLongException ) { }
             catch ( InvalidOperationException ) { }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -544,7 +544,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return this.Exists();
             }
             catch ( IOException ) {
-                return false;
+                return default;
             }
         }
 
@@ -565,7 +565,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
             catch ( IOException ) { }
 
-            return false;
+            return default;
         }
 
         public Boolean Equals( IFolder other ) => Equals( this, other );
@@ -651,7 +651,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
             catch ( SecurityException ) { }
 
-            return false;
+            return default;
         }
 
         /// <summary>

@@ -99,9 +99,16 @@ namespace Librainian.Internet.FTP {
             var data = this.DownloadData( ftppath );
 
             // Save the data to disk
-            var fs = new FileStream( destfile, FileMode.Create );
-            fs.Write( data, 0, data.Length );
-            fs.Close();
+            
+
+            if ( data != null ) {
+                using ( var fs = new FileStream( destfile, FileMode.Create ) ) {
+                    fs.Write( data, 0, data.Length );
+                    fs.Close();
+                }
+            }
+
+            
         }
 
         /// <summary>Upload a byte[] to the FTP Server</summary>

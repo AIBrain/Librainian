@@ -148,7 +148,7 @@ namespace Librainian.Collections.Stacks {
                 if ( ret.Next == default( Node ) ) {
 
                     //throw new IndexOutOfRangeException( "Stack is empty" );
-                    return false;
+                    return default;
                 }
             } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
 
@@ -168,13 +168,13 @@ namespace Librainian.Collections.Stacks {
             if ( !this.TryPop( result: out itemOne ) ) {
                 itemTwo = default;
 
-                return false;
+                return default;
             }
 
             if ( !this.TryPop( result: out itemTwo ) ) {
                 this.Push( item: itemOne );
 
-                return false;
+                return default;
             }
 
             return true;

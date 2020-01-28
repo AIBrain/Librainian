@@ -125,11 +125,11 @@ namespace Librainian.Databases {
         /// <returns></returns>
         private Boolean ReOpenConnection( [CanBeNull] Object sender ) {
             if ( this.CancelConnection.IsCancellationRequested ) {
-                return false;
+                return default;
             }
 
             if ( !( sender is SqlConnection connection ) ) {
-                return false;
+                return default;
             }
 
             var retries = this.Retries;
@@ -139,7 +139,7 @@ namespace Librainian.Databases {
 
                 try {
                     if ( this.CancelConnection.IsCancellationRequested ) {
-                        return false;
+                        return default;
                     }
 
                     connection.Open();
@@ -156,7 +156,7 @@ namespace Librainian.Databases {
                 }
             } while ( retries > 0 );
 
-            return false;
+            return default;
         }
 
         private void SqlConnection_StateChange( [CanBeNull] Object sender, [NotNull] StateChangeEventArgs e ) {
@@ -323,7 +323,7 @@ namespace Librainian.Databases {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [ItemCanBeNull]
@@ -397,7 +397,7 @@ namespace Librainian.Databases {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>

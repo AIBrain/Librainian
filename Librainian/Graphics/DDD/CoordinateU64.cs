@@ -190,7 +190,7 @@ namespace Librainian.Graphics.DDD {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is CoordinateU64 u64 && Equals( this, u64 );

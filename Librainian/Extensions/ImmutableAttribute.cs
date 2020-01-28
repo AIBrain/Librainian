@@ -163,9 +163,13 @@ namespace Librainian.Extensions {
         ///     Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.
         /// </summary>
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-        public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [CanBeNull] params Type[] whiteList ) {
+        public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [NotNull] params Type[] whiteList ) {
             if ( assemblies is null ) {
                 throw new ArgumentNullException(  nameof( assemblies ) );
+            }
+
+            if ( whiteList == null ) {
+                throw new ArgumentNullException( paramName: nameof( whiteList ) );
             }
 
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;

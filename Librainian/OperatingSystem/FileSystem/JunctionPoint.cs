@@ -365,7 +365,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
         public static Boolean Exists( [CanBeNull] String path ) {
             if ( !Directory.Exists( path ) ) {
-                return false;
+                return default;
             }
 
             using ( var handle = OpenReparsePoint( path, FileAccess.Read ) ) {

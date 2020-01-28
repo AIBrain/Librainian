@@ -170,7 +170,7 @@ namespace Librainian.Extensions {
                 return true;
             }
 
-            return false;
+            return default;
         }
     }
     */

@@ -168,7 +168,7 @@ namespace Librainian.OperatingSystem.Compression {
         // Reads the end-of-central-directory record
         private Boolean ReadFileInfo() {
             if ( this._zipFileStream.Length < 22 ) {
-                return false;
+                return default;
             }
 
             try {
@@ -189,7 +189,7 @@ namespace Librainian.OperatingSystem.Compression {
 
                         // check if comment field is the very last data in file
                         if ( this._zipFileStream.Position + commentSize != this._zipFileStream.Length ) {
-                            return false;
+                            return default;
                         }
 
                         // Copy entire central directory to a memory buffer
@@ -210,7 +210,7 @@ namespace Librainian.OperatingSystem.Compression {
                 // ignored
             }
 
-            return false;
+            return default;
         }
 
         // Copies all source file into storage file
@@ -459,7 +459,7 @@ namespace Librainian.OperatingSystem.Compression {
                 zip = Open( zip._fileName, zip._access );
             }
             catch {
-                return false;
+                return default;
             }
             finally {
                 if ( File.Exists( tempZipName ) ) {
@@ -597,7 +597,7 @@ namespace Librainian.OperatingSystem.Compression {
             // Make sure the parent directory exists
             var path = Path.GetDirectoryName( filename );
 
-            if ( !Directory.Exists( path ) ) {
+            if ( path != null && !Directory.Exists( path ) ) {
                 Directory.CreateDirectory( path );
             }
 
@@ -606,11 +606,14 @@ namespace Librainian.OperatingSystem.Compression {
                 return true;
             }
 
-            Stream output = new FileStream( filename, FileMode.Create, FileAccess.Write );
-            var result = this.ExtractFile( zfe, output );
+            Boolean result;
 
-            if ( result ) {
-                output.Close();
+            using ( Stream output = new FileStream( filename, FileMode.Create, FileAccess.Write ) ) {
+                result = this.ExtractFile( zfe, output );
+
+                if ( result ) {
+                    output.Close();
+                }
             }
 
             File.SetCreationTime( filename, zfe.ModifyTime );
@@ -637,7 +640,7 @@ namespace Librainian.OperatingSystem.Compression {
             this._zipFileStream.Read( signature, 0, 4 );
 
             if ( BitConverter.ToUInt32( signature, 0 ) != 0x04034b50 ) {
-                return false;
+                return default;
             }
 
             // Select input stream for inflating or just reading
@@ -654,7 +657,7 @@ namespace Librainian.OperatingSystem.Compression {
 
                     break;
 
-                default: return false;
+                default: return default;
             }
 
             // Buffered copy

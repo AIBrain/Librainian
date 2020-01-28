@@ -50,8 +50,12 @@ namespace Librainian.Databases {
 
     public static class GenericPopulator<T> {
 
-        [NotNull]
+        [CanBeNull]
         public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
+            if ( reader == null ) {
+                throw new ArgumentNullException( paramName: nameof( reader ) );
+            }
+
             var readerColumns = new List<String>();
 
             for ( var index = 0; index < reader.FieldCount; index++ ) {
@@ -61,6 +65,10 @@ namespace Librainian.Databases {
             // determine the information about the reader
             var readerParam = Expression.Parameter( typeof( SqlDataReader ), "reader" );
             var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
+
+            if ( readerGetValue is null ) {
+                return null;
+            }
 
             // create a Constant expression of DBNull.Value to compare values to in reader
             var dbNullValue = typeof( DBNull ).GetField( "Value" );

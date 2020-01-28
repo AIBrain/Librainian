@@ -300,7 +300,8 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException(  nameof( client ) );
             }
 
-            var cancel = new CancellationTokenSource( timeout );
+            using var cancel = new CancellationTokenSource( timeout );
+
             cancel.Token.Register( client.CancelAsync );
 
             return client;
@@ -327,8 +328,25 @@ namespace Librainian.Internet {
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] Byte[] data ) =>
-            UploadDataTask( webClient, new Uri( address ), method, data );
+        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] Byte[] data ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( data == null ) {
+                throw new ArgumentNullException( paramName: nameof( data ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: address ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
+
+            return UploadDataTask( webClient, new Uri( address ), method, data );
+        }
 
         /// <summary>Uploads data to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -337,7 +355,22 @@ namespace Librainian.Internet {
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] Byte[] data ) {
+        public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] Byte[] data ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
+
+            if ( data == null ) {
+                throw new ArgumentNullException( paramName: nameof( data ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -370,8 +403,25 @@ namespace Librainian.Internet {
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] String fileName ) =>
-            UploadFileTask( webClient, new Uri( address ), method, fileName );
+        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String fileName ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: address ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+            }
+
+            return UploadFileTask( webClient, new Uri( address ), method, fileName );
+        }
 
         /// <summary>Uploads a file to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -380,7 +430,22 @@ namespace Librainian.Internet {
         /// <param name="fileName">A path to the file to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] String fileName ) {
+        public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String fileName ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+            }
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -413,8 +478,25 @@ namespace Librainian.Internet {
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, [CanBeNull] String method, [CanBeNull] String data ) =>
-            UploadStringTask( webClient, new Uri( address ), method, data );
+        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String data ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( data == null ) {
+                throw new ArgumentNullException( paramName: nameof( data ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: address ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
+
+            return UploadStringTask( webClient, new Uri( address ), method, data );
+        }
 
         /// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
         /// <param name="webClient">The WebClient.</param>
@@ -423,7 +505,22 @@ namespace Librainian.Internet {
         /// <param name="data">The data to upload.</param>
         /// <returns>A Task containing the data in the response from the upload.</returns>
         [CanBeNull]
-        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [CanBeNull] Uri address, [CanBeNull] String method, [CanBeNull] String data ) {
+        public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String data ) {
+            if ( webClient == null ) {
+                throw new ArgumentNullException( paramName: nameof( webClient ) );
+            }
+
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
+
+            if ( data == null ) {
+                throw new ArgumentNullException( paramName: nameof( data ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: method ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            }
 
             // Create the task to be returned
             var tcs = new TaskCompletionSource<String>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -437,12 +534,11 @@ namespace Librainian.Internet {
             try {
                 webClient.UploadStringAsync( address, method, data, tcs );
             }
-            catch ( Exception exc ) {
+            catch ( WebException exception ) {
 
-                // If something goes wrong kicking off the async work, unregister the callback and
-                // cancel the created task
+                // If something goes wrong kicking off the async work, unregister the callback and cancel the created task
                 webClient.UploadStringCompleted -= Handler;
-                tcs.TrySetException( exc );
+                tcs.TrySetException( exception );
             }
 
             // Return the task that represents the async operation

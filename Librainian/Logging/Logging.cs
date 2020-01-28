@@ -287,7 +287,7 @@ namespace Librainian.Logging {
                 case null when rtb is null:
                     "No target or control specified to setup!".Break();
 
-                    return false;
+                    return default;
 
                 case null:
                     target = rtb.ToTarget();
@@ -298,7 +298,7 @@ namespace Librainian.Logging {
             if ( target is null ) {
                 $"Unable to set up target for {minLogLevel} to {maxLogLevel}".Break();
 
-                return false;
+                return default;
             }
 
             LogManager.Configuration?.AddTarget( target );

@@ -88,6 +88,7 @@ namespace Librainian.Persistence {
             var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
 
             if ( !document.Exists() ) {
+                // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                 document.AppendText( String.Empty );
             }
 
@@ -137,7 +138,7 @@ namespace Librainian.Persistence {
         //            return result.IsCompleted;
         //        }
         //    }
-        //    return false;
+        //    return default;
         //}
         [NotNull]
         public static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>(
@@ -201,7 +202,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [NotNull]
@@ -267,11 +268,11 @@ namespace Librainian.Persistence {
                 var stopwatch = Stopwatch.StartNew();
 
                 if ( null == toDictionary ) {
-                    return false;
+                    return default;
                 }
 
                 if ( folder?.Exists() != true ) {
-                    return false;
+                    return default;
                 }
 
                 var fileCount = UInt64.MinValue;
@@ -325,7 +326,7 @@ namespace Librainian.Persistence {
             //finally {
             //    //Report.Exit();
             //}
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -358,7 +359,7 @@ namespace Librainian.Persistence {
                 var path = myField?.GetValue( isf ) as String;
 
                 if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return false;
+                    return default;
                 }
 
                 try {
@@ -386,7 +387,7 @@ namespace Librainian.Persistence {
 
             }
 
-            return false;
+            return default;
         }
 
         public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
@@ -518,7 +519,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -602,7 +603,7 @@ namespace Librainian.Persistence {
 
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
-                    return false;
+                    return default;
                 }
 
                 using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
@@ -613,7 +614,7 @@ namespace Librainian.Persistence {
                     }
 
                     if ( !isf.FileExists( fileName ) ) {
-                        return false;
+                        return default;
                     }
 
                     var deletefile = false;
@@ -630,20 +631,20 @@ namespace Librainian.Persistence {
                     catch ( IsolatedStorageException exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
 
                     try {
                         if ( deletefile ) {
                             isf.DeleteFile( fileName );
 
-                            return false;
+                            return default;
                         }
                     }
                     catch ( IsolatedStorageException exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
 
                     try {
@@ -669,22 +670,22 @@ namespace Librainian.Persistence {
                     catch ( InvalidOperationException exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
                     catch ( ArgumentNullException exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
                     catch ( SerializationException exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
                     catch ( Exception exception ) {
                         exception.Log();
 
-                        return false;
+                        return default;
                     }
                 }
             }
@@ -692,7 +693,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -744,7 +745,7 @@ namespace Librainian.Persistence {
             // or a Backup class ?
 
             if ( null == objectToSerialize ) {
-                return false;
+                return default;
             }
 
             if ( fileName is null ) {
@@ -753,7 +754,7 @@ namespace Librainian.Persistence {
 
             try {
                 if ( !IsolatedStorageFile.IsEnabled || String.IsNullOrWhiteSpace( fileName ) ) {
-                    return false;
+                    return default;
                 }
 
                 using ( var _ = new SingleAccess( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
@@ -768,17 +769,17 @@ namespace Librainian.Persistence {
                         catch ( IsolatedStorageException exception ) {
                             exception.Log();
 
-                            return false;
+                            return default;
                         }
                         catch ( PathTooLongException exception ) {
                             exception.Log();
 
-                            return false;
+                            return default;
                         }
                         catch ( ArgumentException exception ) {
                             exception.Log();
 
-                            return false;
+                            return default;
                         }
 
                         try {
@@ -831,7 +832,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -850,7 +851,7 @@ namespace Librainian.Persistence {
 
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
-                    return false;
+                    return default;
                 }
 
                 try {
@@ -863,12 +864,12 @@ namespace Librainian.Persistence {
                         catch ( PathTooLongException exception ) {
                             exception.Log();
 
-                            return false;
+                            return default;
                         }
                         catch ( ArgumentException exception ) {
                             exception.Log();
 
-                            return false;
+                            return default;
                         }
 
                         if ( !String.IsNullOrEmpty( dir ) && !isf.DirectoryExists( dir ) ) {
@@ -878,7 +879,7 @@ namespace Librainian.Persistence {
                             catch ( IsolatedStorageException exception ) {
                                 exception.Log();
 
-                                return false;
+                                return default;
                             }
                         }
 
@@ -931,7 +932,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -991,15 +992,15 @@ namespace Librainian.Persistence {
         public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder, [CanBeNull] String calledWhat,
             [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
             if ( null == dictionary ) {
-                return false;
+                return default;
             }
 
             if ( null == folder ) {
-                return false;
+                return default;
             }
 
             if ( !dictionary.Any() ) {
-                return false;
+                return default;
             }
 
             try {
@@ -1072,7 +1073,7 @@ namespace Librainian.Persistence {
             //finally {
             //    //Report.Exit();
             //}
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -1082,7 +1083,11 @@ namespace Librainian.Persistence {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Byte[] Serializer<T>( [CanBeNull] this T self ) {
+        public static Byte[] Serializer<T>( [NotNull] this T self ) {
+            if ( self is null ) {
+                throw new ArgumentNullException( paramName: nameof( self ) );
+            }
+
             try {
                 using ( var memoryStream = new MemoryStream() ) {
                     var binaryFormatter = new BinaryFormatter();
@@ -1119,7 +1124,7 @@ namespace Librainian.Persistence {
 
                 var json = objectToSerialize.ToJSON();
 
-                if (json.IsNullOrWhiteSpace()) { return false; }
+                if (json.IsNullOrWhiteSpace()) { return default; }
 
                 var data = Encoding.Unicode.GetBytes(json).Compress(CompressionLevel.Fastest);
 
@@ -1132,7 +1137,7 @@ namespace Librainian.Persistence {
             catch (SerializationException exception) { exception.Log(); }
             catch (Exception exception) { exception.Log(); }
 
-            return false;
+            return default;
         }
         */
 
@@ -1142,7 +1147,17 @@ namespace Librainian.Persistence {
         /// <param name="key">  </param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean Settings( [CanBeNull] String key, [CanBeNull] String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
+        public static Boolean Settings( [NotNull] String key, [NotNull] String value ) {
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: value ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( value ) );
+            }
+
+            return Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
+        }
 
         /// <summary>
         ///     Set a static <paramref name="key" /> to the <paramref name="value" />.
@@ -1151,7 +1166,16 @@ namespace Librainian.Persistence {
         /// <param name="key">          </param>
         /// <param name="value">        </param>
         /// <returns></returns>
-        public static Boolean Settings( this Environment.SpecialFolder specialFolder, [CanBeNull] String key, [CanBeNull] String value ) {
+        public static Boolean Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key, [CanBeNull] String value ) {
+            if ( !Enum.IsDefined( enumType: typeof( Environment.SpecialFolder ), value: specialFolder ) ) {
+                throw new InvalidEnumArgumentException( argumentName: nameof( specialFolder ), invalidValue: ( Int32 ) specialFolder,
+                    enumClass: typeof( Environment.SpecialFolder ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            }
+
             try {
                 var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
                 var settings = configFile.AppSettings.Settings;
@@ -1172,7 +1196,7 @@ namespace Librainian.Persistence {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -1247,7 +1271,7 @@ namespace Librainian.Persistence {
 
                 var filename = $"{location}:{attribute}";
 
-                if (!NtfsAlternateStream.Exists(filename)) { return false; }
+                if (!NtfsAlternateStream.Exists(filename)) { return default; }
 
                 using (var fs = NtfsAlternateStream.Open(filename, access: FileAccess.Read, mode: FileMode.Open, share: FileShare.None)) {
                     var serializer = new NetDataContractSerializer();
@@ -1261,7 +1285,7 @@ namespace Librainian.Persistence {
             catch (SerializationException exception) { exception.Log(); }
             catch (Exception exception) { exception.Log(); }
 
-            return false;
+            return default;
         }
         */
 
@@ -1285,7 +1309,7 @@ namespace Librainian.Persistence {
 
             using ( var snag = new SingleAccess( document ) ) {
                 if ( !snag.Snagged ) {
-                    return false;
+                    return default;
                 }
 
                 using ( var writer = File.AppendText( document.FullPath ) ) {

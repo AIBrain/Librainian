@@ -83,7 +83,7 @@ namespace Librainian.Databases.MMF {
                 this._size = Marshal.SizeOf<T>();
             }
             catch ( ArgumentException ) {
-                return false;
+                return default;
             }
 
             return true;

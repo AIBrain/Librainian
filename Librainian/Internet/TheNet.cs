@@ -62,12 +62,18 @@ namespace Librainian.Internet {
             }
 
             if ( timeout is null ) {
-                timeout = TimeSpan.Zero + Seconds.Seven;
+                timeout = Seconds.Seven;
             }
 
-            var response = await uri.GetWebPageAsync( timeout.Value ).ConfigureAwait( false );
+            var grab = GetWebPageAsync( uri, timeout.Value );
 
-            return JsonConvert.DeserializeObject<T>( response );
+            if ( grab != null ) {
+                var response = await grab.ConfigureAwait( false );
+
+                return JsonConvert.DeserializeObject<T>( response );
+            }
+
+            return default;
         }
 
         /// <summary>Convert network bytes to a string</summary>
@@ -112,13 +118,17 @@ namespace Librainian.Internet {
 
         [CanBeNull]
         public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: url ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( url ) );
+            if ( String.IsNullOrWhiteSpace(  url ) ) {
+                throw new ArgumentException(  "Value cannot be null or whitespace.",  nameof( url ) );
             }
 
             try {
                 if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
-                    return await uri.GetWebPageAsync( timeout ).ConfigureAwait( false );
+                    var task = uri.GetWebPageAsync( timeout );
+
+                    if ( task != null ) {
+                        return await task.ConfigureAwait( false );
+                    }
                 }
 
                 throw new Exception( $"Unable to parse the url:{url}." );
@@ -127,7 +137,7 @@ namespace Librainian.Internet {
                 exception.Log();
             }
 
-            return null;
+            return default;
         }
 
         [CanBeNull]
@@ -137,7 +147,7 @@ namespace Librainian.Internet {
             }
 
             try {
-                var client = new WebClient {
+                var client = new WebClientWithTimeout {
                     Encoding = Encoding.UTF8,
                     CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
@@ -148,16 +158,15 @@ namespace Librainian.Internet {
             }
             catch ( Exception exception ) {
                 exception.Log();
-
-                return Task.FromResult<String>( null );
             }
+            return Task.FromResult<String>( default );
         }
 
         /// <summary>Convert a string to network bytes</summary>
         [NotNull]
         public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
-            if ( String.IsNullOrEmpty( value: data ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( data ) );
+            if ( String.IsNullOrEmpty(  data ) ) {
+                throw new ArgumentException(  "Value cannot be null or empty.",  nameof( data ) );
             }
 
             var bytes = Encoding.UTF8.GetBytes( s: data );

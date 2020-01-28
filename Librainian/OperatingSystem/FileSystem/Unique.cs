@@ -135,7 +135,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
@@ -158,7 +158,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             unique = Empty;
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 unique = Empty;
 
-                return false;
+                return default;
             }
 
             if ( uri.IsAbsoluteUri ) {
@@ -183,7 +183,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             unique = Empty;
 
-            return false;
+            return default;
         }
 
         /// <summary>

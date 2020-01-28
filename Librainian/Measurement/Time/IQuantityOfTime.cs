@@ -48,7 +48,6 @@ namespace Librainian.Measurement.Time {
 
         Int32 GetHashCode();
 
-        [NotNull]
         PlanckTimes ToPlanckTimes();
 
         [NotNull]

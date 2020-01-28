@@ -63,7 +63,7 @@ namespace Librainian.Linguistics.PoS {
         /// <param name="other">An object to compare with this object.</param>
         public Boolean Equals( [CanBeNull] Noun other ) {
             if ( other is null ) {
-                return false;
+                return default;
             }
 
             return ReferenceEquals( this, other ) || this.SequenceEqual( other );

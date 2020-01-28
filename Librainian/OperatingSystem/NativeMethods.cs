@@ -1328,7 +1328,7 @@ namespace Librainian.OperatingSystem {
                 }
 
                 if ( !this.InternalReleaseHandle() ) {
-                    return false;
+                    return default;
                 }
 
                 this.handle = IntPtr.Zero;
@@ -1351,7 +1351,7 @@ namespace Librainian.OperatingSystem {
                 }
 
                 if ( left == default || right == default ) {
-                    return false;
+                    return default;
                 }
 
                 return left.handle == right.handle;

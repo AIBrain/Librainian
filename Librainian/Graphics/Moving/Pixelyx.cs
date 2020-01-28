@@ -125,8 +125,17 @@ namespace Librainian.Graphics.Moving {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equal( [NotNull] Pixelyx left, [NotNull] Pixelyx right ) =>
-            left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
+        public static Boolean Equal( [CanBeNull] Pixelyx left, [CanBeNull] Pixelyx right ) {
+            if ( ReferenceEquals(left,right) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return false;
+            }
+
+            return left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue && left.X == right.X && left.Y == right.Y;
+        }
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>

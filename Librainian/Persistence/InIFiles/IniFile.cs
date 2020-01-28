@@ -196,7 +196,7 @@ namespace Librainian.Persistence.InIFiles {
 
         private Boolean FindComment( [NotNull] String line, [NotNull] String section, ref Int32 counter ) {
             if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                return false;
+                return default;
             }
 
             if ( String.IsNullOrWhiteSpace( value: section ) ) {
@@ -208,7 +208,7 @@ namespace Librainian.Persistence.InIFiles {
                 return true;
             }
 
-            return false;
+            return default;
         }
 
         private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
@@ -250,7 +250,7 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             section = default;
-            return false;
+            return default;
         }
 
         private Boolean WriteSection( [NotNull] IDocument document, [NotNull] String section ) {
@@ -263,7 +263,7 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             if ( !this.Data.TryGetValue( section, out var dict ) ) {
-                return false; //section not found
+                return default; //section not found
             }
 
             try {
@@ -283,7 +283,7 @@ namespace Librainian.Persistence.InIFiles {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
@@ -297,7 +297,7 @@ namespace Librainian.Persistence.InIFiles {
 
             try {
                 if ( !this.Data.TryGetValue( section, out var dict ) ) {
-                    return false; //section not found
+                    return default; //section not found
                 }
 
                 using ( var writer = File.AppendText( document.FullPath ) ) {
@@ -314,7 +314,7 @@ namespace Librainian.Persistence.InIFiles {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String value ) {
@@ -357,7 +357,7 @@ namespace Librainian.Persistence.InIFiles {
                 }
             }
 
-            return false;
+            return default;
         }
 
         public Boolean Add( [NotNull] String section, (String key, String value) tuple ) => this.Add( section, tuple.key, tuple.value );
@@ -381,7 +381,7 @@ namespace Librainian.Persistence.InIFiles {
             }
 
             if ( document.Exists() == false ) {
-                return false;
+                return default;
             }
 
             try {
@@ -394,14 +394,14 @@ namespace Librainian.Persistence.InIFiles {
                 //file in use by another app
                 exception.Log();
 
-                return false;
+                return default;
             }
             catch ( OutOfMemoryException exception ) {
 
                 //file is big-huge! As my daughter would say.
                 exception.Log();
 
-                return false;
+                return default;
             }
         }
 
@@ -493,7 +493,7 @@ namespace Librainian.Persistence.InIFiles {
                     document.Delete();
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
 
@@ -520,7 +520,7 @@ namespace Librainian.Persistence.InIFiles {
                     document.Delete();
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
 
@@ -528,7 +528,7 @@ namespace Librainian.Persistence.InIFiles {
                 await this.WriteSectionAsync( document, section ).ConfigureAwait( false );
             }
 
-            return false;
+            return default;
         }
 
         [DebuggerStepThrough]
@@ -541,13 +541,18 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [NotNull] String section, [CanBeNull] String key ) {
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
+        public Boolean TryRemove( [NotNull] String section, [NotNull] String key ) {
+
+            if ( String.IsNullOrWhiteSpace( value: section ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
             }
 
             if ( !this.Data.ContainsKey( section ) ) {
-                return false;
+                return default;
             }
 
             return this.Data[ section ].Remove( key );

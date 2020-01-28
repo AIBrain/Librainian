@@ -107,7 +107,7 @@ namespace Librainian.OperatingSystem {
             try {
                 using ( var rk = Registry.LocalMachine.OpenSubKey( path ) ) {
                     if ( rk is null ) {
-                        return false;
+                        return default;
                     }
 
                     value = rk.GetValue( key );
@@ -116,7 +116,7 @@ namespace Librainian.OperatingSystem {
                 }
             }
             catch {
-                return false;
+                return default;
             }
         }
 

@@ -124,7 +124,7 @@ namespace Librainian.Persistence {
             var document = this.Document;
 
             if ( document.Exists() == false ) {
-                return false;
+                return default;
             }
 
             try {
@@ -163,7 +163,7 @@ namespace Librainian.Persistence {
                 this.IsLoading = false;
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>

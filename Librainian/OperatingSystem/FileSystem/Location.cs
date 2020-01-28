@@ -83,11 +83,11 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( left != null && right is null ) {
-                return false;
+                return default;
             }
 
             if ( left is null ) {
-                return false;
+                return default;
             }
 
             return left.HashCode == right.HashCode;

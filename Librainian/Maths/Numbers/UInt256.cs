@@ -275,7 +275,7 @@ namespace Librainian.Maths.Numbers {
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is UInt256 ) ) {
-                return false;
+                return default;
             }
 
             var other = ( UInt256 ) obj;

@@ -101,7 +101,7 @@ namespace Librainian.Linguistics.PoS {
         [Pure]
         public Boolean Equals( TaggedSentence other ) {
             if ( other is null ) {
-                return false;
+                return default;
             }
 
             return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );

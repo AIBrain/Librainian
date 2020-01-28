@@ -53,8 +53,10 @@ namespace Librainian.Measurement.Currency.BTC {
     /// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
     public class Address {
 
+        [CanBeNull]
         private String _address;
 
+        [CanBeNull]
         private Hash _pubKeyHash;
 
         private Hash _scriptHash;
@@ -71,7 +73,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
-        [CanBeNull]
+        [NotNull]
         public Hash EitherHash {
             get {
                 if ( this._pubKeyHash is null && this._scriptHash is null ) {
@@ -122,7 +124,11 @@ namespace Librainian.Measurement.Currency.BTC {
             }
         }
 
-        public Address( [CanBeNull] Byte[] data, Byte version = Pubkey ) {
+        public Address( [NotNull] Byte[] data, Byte version = Pubkey ) {
+            if ( data == null ) {
+                throw new ArgumentNullException( paramName: nameof( data ) );
+            }
+
             RIPEMD160 ripemd160 = new RIPEMD160Managed();
 
             switch ( version ) {
@@ -188,11 +194,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is Address ) ) {
-                return false;
-            }
-
-            if ( this.EitherHash is null || ( ( Address )obj ).EitherHash is null ) {
-                return false;
+                return default;
             }
 
             return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );
@@ -205,7 +207,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 this.CalcBase58();
             }
 
-            return this._address;
+            return this._address ?? throw new InvalidOperationException();
         }
     }
 }

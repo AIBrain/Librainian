@@ -127,7 +127,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 else {
                     this.Reset();
 
-                    return false;
+                    return default;
                 }
             }
 

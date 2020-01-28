@@ -82,7 +82,7 @@ namespace Librainian.Linguistics {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             //shouldn't this be more of a set-type comparison? If all A are contained in B or all B are contained in A then true?

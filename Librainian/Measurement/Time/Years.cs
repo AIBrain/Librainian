@@ -128,7 +128,7 @@ namespace Librainian.Measurement.Time {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return left.Value == right.Value;
@@ -222,7 +222,7 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Years years && this.Equals( years );

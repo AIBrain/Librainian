@@ -93,7 +93,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 if ( left is null || right is null ) {
-                    return false;
+                    return default;
                 }
 
                 return String.Equals( left.Data, right.Data, StringComparison.Ordinal );

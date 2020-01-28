@@ -69,59 +69,52 @@ namespace Librainian.OperatingSystem {
             }
 
             try {
-                using ( var registryKey = Registry.ClassesRoot.CreateSubKey( menuPath ) ) {
-                    if ( registryKey != default ) {
-                        registryKey.SetValue( String.Empty, menuName, RegistryValueKind.String );
+                using var registryKey = Registry.ClassesRoot.CreateSubKey( menuPath );
 
-                        if ( String.IsNullOrEmpty( command ) ) {
-                            command = "command";
-                        }
+                if ( registryKey != default ) {
+                    registryKey.SetValue( String.Empty, menuName, RegistryValueKind.String );
 
-                        if ( String.IsNullOrEmpty( action ) ) {
-                            action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
-                        }
-
-                        using ( var commandKey = registryKey.CreateSubKey( command ) ) {
-
-                            if ( commandKey != default ) {
-                                commandKey.SetValue( String.Empty, action, RegistryValueKind.String );
-                            }
-                            else {
-                                return false;
-                            }
-                        }
-
-                        return true;
+                    if ( String.IsNullOrEmpty( command ) ) {
+                        command = "command";
                     }
+
+                    if ( String.IsNullOrEmpty( action ) ) {
+                        action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
+                    }
+
+                    using ( var commandKey = registryKey.CreateSubKey( command ) ) {
+
+                        if ( commandKey != default ) {
+                            commandKey.SetValue( String.Empty, action, RegistryValueKind.String );
+                        }
+                        else {
+                            return default;
+                        }
+                    }
+
+                    return true;
                 }
+
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
-        public static void RemoveRegistryContext( [CanBeNull] String menuPath, [CanBeNull] String registryCommand ) {
+        public static void RemoveRegistryContext( [NotNull] String menuPath, [NotNull] String registryCommand ) {
+            if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuPath ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: registryCommand ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( registryCommand ) );
+            }
 
             try {
-                try {
-                    using ( var reg = Registry.ClassesRoot.OpenSubKey( registryCommand ) ) {
-                        reg?.Close();
-                    }
-                }
-                finally {
-                    Registry.ClassesRoot.DeleteSubKey( registryCommand );
-                }
-
-                try {
-                    using ( var reg2 = Registry.ClassesRoot.OpenSubKey( menuPath ) ) {
-                        reg2?.Close();
-                    }
-                }
-                finally {
-                    Registry.ClassesRoot.DeleteSubKey( menuPath );
-                }
+                Registry.ClassesRoot.DeleteSubKey( registryCommand );
+                Registry.ClassesRoot.DeleteSubKey( menuPath );
             }
             catch ( Exception exception ) {
                 exception.Log();

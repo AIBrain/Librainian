@@ -189,7 +189,7 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is Zeptoseconds zeptoseconds && this.Equals( zeptoseconds );
@@ -204,7 +204,6 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Attoseconds ToAttoseconds() => new Attoseconds( this.Value / InOneAttosecond );
 
-        [NotNull]
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneZeptosecond );
 
         [NotNull]

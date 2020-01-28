@@ -297,7 +297,7 @@ namespace Librainian.Maths {
             catch {
                 result = new ByteSize();
 
-                return false;
+                return default;
             }
         }
 
@@ -335,10 +335,10 @@ namespace Librainian.Maths {
         /// </summary>
         public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
-        [CanBeNull]
+        [NotNull]
         public String ToString( [CanBeNull] String format ) => this.ToString( format, CultureInfo.CurrentCulture );
 
-        [CanBeNull]
+        [NotNull]
         public String ToString( String format, IFormatProvider provider ) {
             if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) {
                 format = "0.## " + format;

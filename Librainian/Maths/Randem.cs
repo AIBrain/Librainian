@@ -54,7 +54,6 @@ namespace Librainian.Maths {
     using System.Threading;
     using System.Threading.Tasks;
     using Collections.Extensions;
-    using ComputerSystem;
     using Extensions;
     using Internet.RandomOrg;
     using JetBrains.Annotations;
@@ -68,7 +67,7 @@ namespace Librainian.Maths {
     using RandomNameGeneratorLibrary;
     using Ranges;
 
-    public static partial class Randem {
+    public static class Randem {
 
         /// <summary>
         ///     A Double-sized byte buffer per-thread.
@@ -108,7 +107,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        private static Char NextChar( [NotNull] this Char[] range ) {
+        public static Char NextChar( [NotNull] this Char[] range ) {
             if ( range is null ) {
                 throw new ArgumentNullException( nameof( range ) );
             }
@@ -941,17 +940,14 @@ namespace Librainian.Maths {
         ///     <see cref="ParsingConstants.Symbols" />
         /// </param>
         /// <returns></returns>
-        [CanBeNull]
+        [NotNull]
         public static String NextString( Int32 length, Boolean lowers = true, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
             if ( !length.Any() ) {
-                return null;
+                return String.Empty;
             }
 
-            if ( !length.CanAllocateMemory() ) {
-                return null;
-            }
-
-            var sb = new StringBuilder();
+            var sb = new StringBuilder( ( lowers ? ParsingConstants.Lowercase.Length : 0 ) + ( uppers ? ParsingConstants.Uppercase.Length : 0 ) +
+                                        ( numbers ? ParsingConstants.Numbers.Length : 0 ) + ( symbols ? ParsingConstants.Symbols.Length : 0 ) );
 
             if ( lowers ) {
                 sb.Append( ParsingConstants.Lowercase );
@@ -975,7 +971,7 @@ namespace Librainian.Maths {
                 return String.Empty;
             }
 
-            return new String( Enumerable.Range( start: 0, count: length ).Select( selector: i => charPool[ index: 0.Next( maxValue: charPool.Length ) ] ).ToArray() );
+            return new String( ParallelEnumerable.Range( 0, length ).AsUnordered().Select( i => charPool[ index: 0.Next( maxValue: charPool.Length ) ] ).ToArray() );
         }
 
         /// <summary>
@@ -1188,7 +1184,7 @@ namespace Librainian.Maths {
             }
 
             if ( !seed.HasValue ) {
-                return false;
+                return default;
             }
 
             ThreadSafeRandom.Value = new Lazy<Random>( valueFactory: () => new Random( seed.Value ) );
@@ -1196,12 +1192,7 @@ namespace Librainian.Maths {
             return true;
         }
 
-        public static void Seed( Int32 newValue ) {
-
-            //ThreadSafeRandom.Value.Value.reseed???
-        }
-
-        /// <summary>
+ /// <summary>
         ///     Generate two random numbers about halfway of
         ///     <param name="goal"></param>
         ///     .

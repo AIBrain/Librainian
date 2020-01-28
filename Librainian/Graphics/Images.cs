@@ -1139,6 +1139,7 @@ namespace Librainian.Graphics {
                         "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
                     };
 
+                    // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach ( var pattern in patternsDmy ) {
                         if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
                             bestGuesses.Add( bestGuess );
@@ -1149,6 +1150,7 @@ namespace Librainian.Graphics {
                     const String pattern1 =
                         @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
 
+                    // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
                         if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
                             bestGuesses.Add( bestGuess );
@@ -1159,6 +1161,7 @@ namespace Librainian.Graphics {
                     const String pattern2 =
                         @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
 
+                    // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
                         if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
                             bestGuesses.Add( bestGuess );
@@ -1259,7 +1262,7 @@ namespace Librainian.Graphics {
             }
 
             if ( !document.IsBufferLoaded || document.Buffer is null ) {
-                return false;
+                return default;
             }
 
             try {
@@ -1283,7 +1286,7 @@ namespace Librainian.Graphics {
 
             document.Bitmap = default;
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -1293,7 +1296,7 @@ namespace Librainian.Graphics {
         /// <returns></returns>
         public static Boolean IsaValidImage( [CanBeNull] this FileInfo file ) {
             if ( null == file ) {
-                return false;
+                return default;
             }
 
             try {
@@ -1313,7 +1316,7 @@ namespace Librainian.Graphics {
 
             GC.Collect( 2, GCCollectionMode.Forced, true, true );
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -1339,11 +1342,11 @@ namespace Librainian.Graphics {
         /// <returns></returns>
         public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
             if ( null == fileA || null == fileB ) {
-                return false;
+                return default;
             }
 
             if ( fileA.Exists() == false || fileB.Exists() == false ) {
-                return false;
+                return default;
             }
 
             try {
@@ -1370,7 +1373,7 @@ namespace Librainian.Graphics {
             catch ( OutOfMemoryException ) { }
             catch ( InvalidOperationException ) { }
 
-            return false;
+            return default;
         }
 
         [NotNull]
@@ -1419,7 +1422,7 @@ namespace Librainian.Graphics {
                 info.Refresh();
 
                 if ( !info.Exists ) {
-                    return false;
+                    return default;
                 }
 
                 using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
@@ -1462,7 +1465,7 @@ namespace Librainian.Graphics {
                 /*swallow*/
             }
 
-            return false;
+            return default;
         }
 
         internal static class FileNameExtension {

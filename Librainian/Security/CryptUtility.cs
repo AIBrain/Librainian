@@ -150,8 +150,31 @@ namespace Librainian.Security {
             return reverseKeyByte;
         }
 
-        private static void HideBits( [CanBeNull] Stream keyStream, [CanBeNull] Stream messageStream, Int64 messageLength, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter, [CanBeNull] CarrierImage[] imageFiles,
-            BitmapInfo bitmapInfo, Boolean extract ) {
+        private static void HideBits( [NotNull] Stream keyStream, [NotNull] Stream messageStream, Int64 messageLength, [NotNull] AviReader aviReader, [NotNull] AviWriter aviWriter,
+            [NotNull] CarrierImage[] imageFiles, [NotNull] BitmapInfo bitmapInfo, Boolean extract ) {
+            if ( keyStream == null ) {
+                throw new ArgumentNullException( paramName: nameof( keyStream ) );
+            }
+
+            if ( messageStream == null ) {
+                throw new ArgumentNullException( paramName: nameof( messageStream ) );
+            }
+
+            if ( aviReader == null ) {
+                throw new ArgumentNullException( paramName: nameof( aviReader ) );
+            }
+
+            if ( aviWriter == null ) {
+                throw new ArgumentNullException( paramName: nameof( aviWriter ) );
+            }
+
+            if ( imageFiles == null ) {
+                throw new ArgumentNullException( paramName: nameof( imageFiles ) );
+            }
+
+            if ( bitmapInfo == null ) {
+                throw new ArgumentNullException( paramName: nameof( bitmapInfo ) );
+            }
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
             //Rotates with every hidden byte
@@ -177,7 +200,7 @@ namespace Librainian.Security {
             //The current byte of the message stream
 
             for ( var messageIndex = 0; messageIndex < messageLength; messageIndex++ ) {
-                var currentReverseKeyByte = GetReverseKeyByte( keyStream: keyStream );
+                var currentReverseKeyByte = GetReverseKeyByte( keyStream );
 
                 Byte currentByte;
 
@@ -274,8 +297,31 @@ namespace Librainian.Security {
         /// <param name="bitmapInfo"></param>
         /// <param name="extract">Hide the message (false) or extract it (true)</param>
         /// <param name="aviReader"></param>
-        private static void HideBytes( [CanBeNull] Stream keyStream, [CanBeNull] Stream messageStream, Int64 messageLength, [CanBeNull] AviReader aviReader, [CanBeNull] AviWriter aviWriter, [CanBeNull] CarrierImage[] imageFiles,
-            BitmapInfo bitmapInfo, Boolean extract ) {
+        private static void HideBytes( [NotNull] Stream keyStream, [NotNull] Stream messageStream, Int64 messageLength, [NotNull] AviReader aviReader, [NotNull] AviWriter aviWriter,
+            [NotNull] CarrierImage[] imageFiles, [NotNull] BitmapInfo bitmapInfo, Boolean extract ) {
+            if ( keyStream == null ) {
+                throw new ArgumentNullException( paramName: nameof( keyStream ) );
+            }
+
+            if ( messageStream == null ) {
+                throw new ArgumentNullException( paramName: nameof( messageStream ) );
+            }
+
+            if ( aviReader == null ) {
+                throw new ArgumentNullException( paramName: nameof( aviReader ) );
+            }
+
+            if ( aviWriter == null ) {
+                throw new ArgumentNullException( paramName: nameof( aviWriter ) );
+            }
+
+            if ( imageFiles == null ) {
+                throw new ArgumentNullException( paramName: nameof( imageFiles ) );
+            }
+
+            if ( bitmapInfo == null ) {
+                throw new ArgumentNullException( paramName: nameof( bitmapInfo ) );
+            }
 
             //Color component to hide the next byte in (0-R, 1-G, 2-B)
             //Rotates with every hidden byte

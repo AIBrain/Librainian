@@ -55,7 +55,7 @@ namespace Librainian.Persistence.InIFiles {
 
         /// <summary>Gets the number of elements in the collection.</summary>
         /// <returns>The number of elements in the collection. </returns>
-        public Int32 Count => this.lines.Select( pair => pair?.Value ).Count();
+        public Int32 Count => this.lines.Select( pair => pair.Value ).Count();
 
         /// <summary>Gets the element at the specified index in the read-only list.</summary>
         /// <param name="index">The zero-based index of the element to get. </param>
@@ -67,7 +67,7 @@ namespace Librainian.Persistence.InIFiles {
                     throw new ArgumentOutOfRangeException(  nameof( index ) );
                 }
 
-                return this.lines[ index ] ?? throw new ArgumentOutOfRangeException(  nameof( index ) );
+                return this.lines[ index ];
             }
         }
 
@@ -81,6 +81,7 @@ namespace Librainian.Persistence.InIFiles {
 
         [JsonProperty]
         [NotNull]
+        [ItemNotNull]
         private List<IniLine> lines { get; } = new List<IniLine>();
 
         public Boolean Add( [NotNull] String key, [CanBeNull] String value ) {
@@ -95,10 +96,10 @@ namespace Librainian.Persistence.InIFiles {
 
         public Boolean Exists( [NotNull] String key ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                return false;
+                return default;
             }
 
-            return this.lines.Any( pair => pair?.Key.Like( key ) == true );
+            return this.lines.Any( pair => pair.Key.Like( key ) );
         }
 
         public Boolean Remove( [NotNull] String key ) => this.lines.RemoveAll( pair => pair?.Key.Like( key ) == true ).Any();

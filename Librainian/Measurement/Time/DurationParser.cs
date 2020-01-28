@@ -102,7 +102,7 @@ namespace Librainian.Measurement.Time {
         //        if ( matches.Count == 0 ) {
         //            const String errmsg = "Invalid input format - unable to make any matches.";
         //            failReason = errmsg;
-        //            return false;
+        //            return default;
         //        }
 
         //        // Handle each match
@@ -113,7 +113,7 @@ namespace Librainian.Measurement.Time {
         //            if ( !Int32.TryParse( match.Groups[ "Value" ].Value, out value ) ) {
         //                const String errmsg = "Invalid number value given near `{0}`.";
         //                failReason = String.Format( errmsg, match.Value );
-        //                return false;
+        //                return default;
         //            }
 
         //            var unit = match.Groups[ "Unit" ].Value.Trim().ToUpperInvariant();
@@ -173,7 +173,7 @@ namespace Librainian.Measurement.Time {
         //                default:
         //                    const String errmsg = "Invalid unit `{0}` near `{1}`.";
         //                    failReason = String.Format( errmsg, unit, match.Value );
-        //                    return false;
+        //                    return default;
         //            }
         //        }
 

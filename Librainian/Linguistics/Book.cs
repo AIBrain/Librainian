@@ -99,7 +99,7 @@ namespace Librainian.Linguistics {
             }
 
             if ( left is null || right is null  ) {
-                return false;
+                return default;
             }
 
             return left.SequenceEqual( right ); //no authors?? No authors.

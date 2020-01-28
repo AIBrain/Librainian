@@ -116,8 +116,12 @@ namespace Librainian.Graphics {
         }
 
         [NotNull]
-        public static Task<Erg> TryConvertToERG( [CanBeNull] this Document document, CancellationToken token ) =>
-            Task.Run( () => {
+        public static Task<Erg> TryConvertToERG( [NotNull] this Document document, CancellationToken token ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            return Task.Run( () => {
                 var erg = new Erg();
 
                 //TODO recalc the checksums
@@ -125,20 +129,38 @@ namespace Librainian.Graphics {
                 //erg.TryAdd( document, Span.Zero,
                 return erg;
             }, token );
+        }
 
         [NotNull]
-        public static Task<Boolean> TrySave( [CanBeNull] this Erg erg, [CanBeNull] Document document, CancellationToken token ) =>
-            Task.Run( () => {
+        public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document, CancellationToken token ) {
+            if ( erg == null ) {
+                throw new ArgumentNullException( paramName: nameof( erg ) );
+            }
+
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            return Task.Run( () => {
 
                 //TODO recalc the checksums
                 //write out to file
                 // ReSharper disable once ConvertToLambdaExpression
                 return false;
             }, token );
+        }
 
         [NotNull]
-        public static Task<Boolean> TrySave( [CanBeNull] this Efv efv, [CanBeNull] Document document, CancellationToken token ) =>
-            Task.Run( () => {
+        public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document, CancellationToken token ) {
+            if ( efv == null ) {
+                throw new ArgumentNullException( paramName: nameof( efv ) );
+            }
+
+            if ( document == null ) {
+                throw new ArgumentNullException( paramName: nameof( document ) );
+            }
+
+            return Task.Run( () => {
 
                 //TODO recalc the checksums
                 //write out to file
@@ -148,6 +170,7 @@ namespace Librainian.Graphics {
                 //bob.Serialize(
                 return false;
             }, token );
+        }
 
         [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct RAMP {

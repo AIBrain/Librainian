@@ -57,6 +57,7 @@ namespace Librainian.Parsing {
         //TODO this class *really* needs updated
 
         [JsonProperty]
+        [NotNull]
         private String _inputBuffer = String.Empty;
 
         [JsonIgnore]
@@ -67,7 +68,7 @@ namespace Librainian.Parsing {
             ".", "?", "!"
         };
 
-        [CanBeNull]
+        [NotNull]
         public String CurrentBuffer {
             get {
                 try {
@@ -83,6 +84,7 @@ namespace Librainian.Parsing {
             set {
                 try {
                     this.AccessInputBuffer.EnterWriteLock();
+
                     this._inputBuffer = value;
                 }
                 finally {

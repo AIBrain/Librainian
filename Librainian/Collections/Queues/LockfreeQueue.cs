@@ -191,7 +191,7 @@ namespace Librainian.Collections.Queues {
 
                 if ( oldHead == oldTail ) {
                     if ( oldHeadNext is null ) {
-                        return false;
+                        return default;
                     }
 
                     Interlocked.CompareExchange( location1: ref this._tail, oldHeadNext, comparand: oldTail );

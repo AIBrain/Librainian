@@ -92,7 +92,7 @@ namespace Librainian.Linguistics {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return String.Equals( left.value, right.value, StringComparison.Ordinal );

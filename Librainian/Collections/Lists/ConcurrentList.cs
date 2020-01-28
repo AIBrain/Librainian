@@ -121,7 +121,7 @@ namespace Librainian.Collections.Lists {
                     if ( !this.AllowModifications() ) {
                         this.IfDisallowedModificationsThrow();
 
-                        return false;
+                        return default;
                     }
 
                     try {
@@ -133,7 +133,7 @@ namespace Librainian.Collections.Lists {
                         this.ThrowOutOfRange( index );
                     }
 
-                    return false;
+                    return default;
                 } );
             }
         }
@@ -216,7 +216,7 @@ namespace Librainian.Collections.Lists {
                 catch ( ArgumentOutOfRangeException ) {
                     this.ThrowOutOfRange( index );
 
-                    return false;
+                    return default;
                 }
             } );
         }
@@ -258,7 +258,7 @@ namespace Librainian.Collections.Lists {
                     this.ThrowOutOfRange( index );
                 }
 
-                return false;
+                return default;
             } );
         }
 
@@ -434,7 +434,7 @@ namespace Librainian.Collections.Lists {
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] IEnumerable<T> left, [CanBeNull] IEnumerable<T> right ) {
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             return ReferenceEquals( left, right ) || left.SequenceEqual( second: right );
@@ -454,7 +454,7 @@ namespace Librainian.Collections.Lists {
             if ( !this.AllowModifications() ) {
                 this.IfDisallowedModificationsThrow();
 
-                return false;
+                return default;
             }
 
             return this.Write( func: () => {
@@ -620,7 +620,7 @@ namespace Librainian.Collections.Lists {
             if ( !this.AllowModifications() ) {
                 this.IfDisallowedModificationsThrow();
 
-                return false;
+                return default;
             }
 
             this.ThrowIfDisposed();
@@ -665,7 +665,7 @@ namespace Librainian.Collections.Lists {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>
@@ -676,14 +676,14 @@ namespace Librainian.Collections.Lists {
         /// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
         public Boolean TryGet( Int32 index, [CanBeNull] Action<T> afterGet ) {
             if ( index < 0 ) {
-                return false;
+                return default;
             }
 
             return this.Read( func: () => {
                 if ( index >= this.TheList.Count ) {
                     this.ThrowOutOfRange( index );
 
-                    return false;
+                    return default;
                 }
 
                 var result = this.TheList[ index: index ];

@@ -72,7 +72,7 @@ namespace Librainian.Persistence {
 
         [JsonProperty]
         [NotNull]
-        private PersistentDictionary<TKey, String> Dictionary { get; }
+        private  PersistentDictionary<TKey, String> Dictionary { get; }
 
         /// <summary>No path given?</summary>
         [NotNull]
@@ -171,18 +171,20 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         private async Task<Boolean> TestForReadWriteAccess() {
             try {
-                if ( this.Folder.TryGetTempDocument( document: out var document ) ) {
+                using var document = this.Folder.TryGetTempDocument();
+
+                
                     var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
                     document.AppendText( text: text );
                     
                     await document.TryDeleting( Seconds.Ten, CancellationToken.None ).ConfigureAwait( false );
 
                     return true;
-                }
+                
             }
             catch { }
 
-            return false;
+            return default;
         }
 
         public void Add( TKey key, [CanBeNull] TValue value ) => this[ key ] = value;
@@ -192,7 +194,7 @@ namespace Librainian.Persistence {
         public void Clear() => this.Dictionary.Clear();
 
         public Boolean Contains( KeyValuePair<TKey, TValue> item ) {
-            var value = item.Value.ToJSON().ToCompressedBase64();
+            var value = item.Value.ToJSON()?.ToCompressedBase64();
             var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
             return this.Dictionary.Contains( asItem );
@@ -238,6 +240,7 @@ namespace Librainian.Persistence {
                 return this.Dictionary.Remove( asItem );
             }
 
+            return default;
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
@@ -255,7 +258,7 @@ namespace Librainian.Persistence {
         }
 
         /// <summary>Gets the value associated with the specified key.</summary>
-        /// <returns>true if the object that implements <see cref="System.Collections.Generic.IDictionary`2" /> contains an element with the specified key; otherwise, false.</returns>
+        /// <returns>true if the object that implements <see cref="IDictionary" /> contains an element with the specified key; otherwise, false.</returns>
         /// <param name="key">  The key whose value to get.</param>
         /// <param name="value">
         /// When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the
@@ -270,7 +273,7 @@ namespace Librainian.Persistence {
             value = default;
 
             if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
-                return false;
+                return default;
             }
 
             value = storedValue.FromCompressedBase64().FromJSON<TValue>();

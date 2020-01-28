@@ -112,7 +112,7 @@ namespace Librainian.Extensions {
         public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs =>
             throw new NotImplementedException(); //if ( @event != null ) { @event( sender, e ); }
 
-        //    return false;
+        //    return default;
         //}
 
         public static void Spin( [CanBeNull] String text ) {
@@ -212,7 +212,7 @@ namespace Librainian.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.Write( text, parms );
+                    Console.Write( text ?? String.Empty, parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
@@ -240,7 +240,7 @@ namespace Librainian.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.WriteLine( text, parms );
+                    Console.WriteLine( text ?? String.Empty, parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
