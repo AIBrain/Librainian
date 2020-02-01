@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Library.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Library.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Library.cs" was last formatted by Protiguous on 2019/08/08 at 8:09 AM.
+// Project: "Librainian", "Library.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Linguistics {
 
@@ -46,8 +44,9 @@ namespace LibrainianCore.Linguistics {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" /> s.</para>
@@ -63,26 +62,21 @@ namespace LibrainianCore.Linguistics {
 
         public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
 
-        /// <summary>
-        ///     Static equality test
-        /// </summary>
+        /// <summary>Static equality test</summary>
         /// <param name="left"></param>
-        /// <param name="rhs"> </param>
+        /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Library left, Library rhs ) {
-            if ( ReferenceEquals( left, rhs ) ) {
+        public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library right ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
-            if ( left is null ) {
-                return false;
+            if ( left is null || right is null ) {
+                return default;
             }
 
-            if ( rhs is null ) {
-                return false;
-            }
-
-            return left.OrderBy( pair => pair.Key ).SequenceEqual( rhs.OrderBy( pair => pair.Key ) );
+            //shouldn't this be more of a set-type comparison? If all A are contained in B or all B are contained in A then true?
+            return left.OrderBy( pair => pair.Key ).SequenceEqual( right.OrderBy( pair => pair.Key ) );
         }
 
         public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
@@ -101,22 +95,21 @@ namespace LibrainianCore.Linguistics {
 
         public Boolean Equals( [CanBeNull] Library other ) => Equals( this, other );
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Library );
+
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<KeyValuePair<UDC, Book>> GetEnumerator() => this.Books.GetEnumerator();
 
-        /// <summary>
-        ///     Serves as the default hash function.
-        /// </summary>
+        /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Books.GetHashCode();
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Books ).GetEnumerator();
     }
 }

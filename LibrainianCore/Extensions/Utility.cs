@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Utility.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "Utility.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "Utility.cs" was last formatted by Protiguous on 2019/12/11 at 5:40 AM.
+//
+// Project: "Librainian", "Utility.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Extensions {
 
@@ -46,6 +44,7 @@ namespace LibrainianCore.Extensions {
     using System.Linq;
     using System.Security;
     using System.Threading;
+    using JetBrains.Annotations;
     using Logging;
 
     public static class Utility {
@@ -111,10 +110,10 @@ namespace LibrainianCore.Extensions {
         public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs =>
             throw new NotImplementedException(); //if ( @event != null ) { @event( sender, e ); }
 
-        //    return false;
+        //    return default;
         //}
 
-        public static void Spin( String text ) {
+        public static void Spin( [CanBeNull] String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
@@ -190,7 +189,7 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        public static void WriteColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
+        public static void WriteColor( [CanBeNull] this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
             [CanBeNull] params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( parms?.Any() != true ) {
@@ -211,14 +210,14 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.Write( text, parms );
+                    Console.Write( text ?? String.Empty, parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
             }
         }
 
-        public static void WriteLineColor( this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
+        public static void WriteLineColor( [CanBeNull] this String text, ConsoleColor foreColor = ConsoleColor.White, ConsoleColor backColor = ConsoleColor.Black,
             [CanBeNull] params Object[] parms ) {
             lock ( ConsoleOutputSynch ) {
                 if ( parms?.Any() != true ) {
@@ -239,13 +238,11 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.WriteLine( text, parms );
+                    Console.WriteLine( text ?? String.Empty, parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
             }
         }
-
     }
-
 }

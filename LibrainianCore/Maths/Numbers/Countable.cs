@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Countable.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Countable.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Countable.cs" was last formatted by Protiguous on 2019/11/25 at 4:30 AM.
+// Project: "Librainian", "Countable.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Maths.Numbers {
 
@@ -45,12 +43,13 @@ namespace LibrainianCore.Maths.Numbers {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Measurement.Time;
+    using Newtonsoft.Json;
     using Threading;
     using Utilities;
 
@@ -173,11 +172,11 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
             if ( keys is null ) {
-                throw new ArgumentNullException( paramName: nameof( keys ) );
+                throw new ArgumentNullException( nameof( keys ) );
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, body: key => {
@@ -191,7 +190,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Boolean Add( [NotNull] TKey key ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException( nameof( key ) );
             }
 
             return this.Add( key, amount: BigInteger.One );
@@ -199,11 +198,11 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException( nameof( key ) );
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var bucket = this.Bucket( key );
@@ -225,7 +224,7 @@ namespace LibrainianCore.Maths.Numbers {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
@@ -246,16 +245,16 @@ namespace LibrainianCore.Maths.Numbers {
         }
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
         public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
         public Boolean Subtract( [NotNull] TKey key, BigInteger amount ) {
             if ( key is null ) {
-                throw new ArgumentNullException( paramName: nameof( key ) );
+                throw new ArgumentNullException( nameof( key ) );
             }
 
             if ( this.IsReadOnly ) {
-                return false;
+                return default;
             }
 
             var bucket = this.Bucket( key );
@@ -277,7 +276,7 @@ namespace LibrainianCore.Maths.Numbers {
                 }
             }
 
-            return false;
+            return default;
         }
 
         /// <summary>Return the sum of all values.</summary>

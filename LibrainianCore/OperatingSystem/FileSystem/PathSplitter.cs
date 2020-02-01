@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "PathSplitter.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "PathSplitter.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,80 +26,101 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2019/12/02 at 3:58 AM.
+//
+// Project: "Librainian", "PathSplitter.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace LibrainianCore.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using Collections.Extensions;
+    using JetBrains.Annotations;
     using Parsing;
+
+    //using LanguageExt.Prelude;
 
     public class PathSplitter {
 
         [NotNull]
         [ItemNotNull]
-        private List<String> Parts { get; }
+        private List<String> Parts { get; } = new List<String>();
 
         [NotNull]
         public String FileName { get; }
 
+        /// <summary>Null when equal to (is) the root folder.</summary>
         [CanBeNull]
         public String OriginalPath { get; }
 
-        [DebuggerStepThrough]
-        public PathSplitter( String fullpathandfilename ) {
-            if ( String.IsNullOrWhiteSpace( value: fullpathandfilename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullpathandfilename ) );
+        public PathSplitter( [NotNull] Folder folder ) : this( new Document( folder.FullName ), default ) { }
+
+        public PathSplitter( [NotNull] IDocument document, String newExtension = default ) {
+            if ( document == null ) {
+                throw new ArgumentNullException( nameof( document ) );
             }
 
-            this.OriginalPath = Path.GetDirectoryName( fullpathandfilename );
+            newExtension = newExtension.Trimmed() ?? document.Extension() ?? String.Empty;
 
-            if ( this.OriginalPath is null ) {
-                throw new InvalidOperationException( $"Empth path on {fullpathandfilename.DoubleQuote()}." );
+            if ( !newExtension.StartsWith( "." ) ) {
+                newExtension = $".{newExtension}";
             }
 
-            this.FileName = Path.GetFileName( fullpathandfilename );
+            this.FileName = $"{document.JustName()}{newExtension}";
 
-            if ( this.FileName is null ) {
-                throw new InvalidOperationException( $"Empth file name on {fullpathandfilename.DoubleQuote()}." );
+            this.OriginalPath = Path.GetDirectoryName( document.FullPath );
+
+            this.Parts.Clear();
+
+            if ( !String.IsNullOrEmpty( this.OriginalPath ) ) {
+                this.Parts.AddRange( Split( this.OriginalPath ) );
             }
 
-            var strings = this.OriginalPath.Split( new[] {
-                Path.DirectorySeparatorChar
-            }, StringSplitOptions.RemoveEmptyEntries );
-
-            this.Parts = new List<String>( strings );
+            this.Parts.TrimExcess();
         }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( IDocument document ) : this( document?.FullPath ?? throw new ArgumentNullException( paramName: nameof( document ) ) ) { }
+        [NotNull]
+        private static IEnumerable<String> Split( [NotNull] String path ) {
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( path ) );
+            }
 
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        public PathSplitter( [CanBeNull] Folder folder ) : this( folder?.FullName ) { }
+            return path.Split( new[] {
+                Path.DirectorySeparatorChar
+            }, StringSplitOptions.RemoveEmptyEntries );
+        }
 
-        [DebuggerStepThrough]
-        public Boolean InsertRoot( [NotNull] String path ) {
+        public Boolean AddSubFolder( [NotNull] String subfolder ) {
+            subfolder = Folder.CleanPath( subfolder.Trim() );
+
+            if ( String.IsNullOrWhiteSpace( value: subfolder ) ) {
+                return default;
+            }
+
+            this.Parts.Add( subfolder );
+
+            return true;
+        }
+
+        //[DebuggerStepThrough]
+        public Boolean InsertRoot( [NotNull] Folder path ) {
             if ( path is null ) {
                 throw new ArgumentNullException( nameof( path ) );
             }
 
-            this.Parts.Insert( 1, path );
+            this.Parts.Insert( 1, path.FullName );
 
-            if ( path[ 1 ] == ':' ) {
-                this.Parts.RemoveAt( 0 );
+            if ( path.FullName[ 1 ] == ':' ) {
+                this.Parts.RemoveAt( 0 ); //inserting a drive:\folder? remove the original drive:\folder part
             }
 
             return true;
@@ -117,19 +136,34 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return new Document( folder, this.FileName );
         }
 
-        [DebuggerStepThrough]
-        public Boolean SubstituteDrive( Char c ) {
-            var pz = this.Parts[ 0 ];
+        /// <summary>Replace the original path, with <paramref name="replacement" /> path, not changing the filename.</summary>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
 
-            if ( pz?.Length != 2 || !pz.EndsWith( ":", StringComparison.Ordinal ) ) {
-                return false;
+        //[DebuggerStepThrough]
+        public Boolean ReplacePath( [NotNull] IFolder replacement ) {
+            if ( replacement == null ) {
+                throw new ArgumentNullException( nameof( replacement ) );
             }
 
-            this.Parts[ 0 ] = $"{new String( new[] { c } )}:";
+            this.Parts.Clear();
+            this.Parts.AddRange( Split( replacement.FullName ) );
+            this.Parts.TrimExcess();
 
             return true;
         }
 
-    }
+        [DebuggerStepThrough]
+        public Boolean SubstituteDrive( Char d ) {
+            var s = this.Parts[ 0 ] ?? String.Empty;
 
+            if ( s.Length != 2 || !s.EndsWith( ":", StringComparison.Ordinal ) ) {
+                return default;
+            }
+
+            this.Parts[ 0 ] = $"{d}:";
+
+            return true;
+        }
+    }
 }

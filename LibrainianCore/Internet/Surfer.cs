@@ -44,13 +44,13 @@ namespace LibrainianCore.Internet {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net;
     using System.Net.Cache;
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Logging;
     using Utilities;
 

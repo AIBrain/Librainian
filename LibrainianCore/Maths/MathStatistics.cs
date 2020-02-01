@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MathStatistics.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "MathStatistics.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,35 +28,35 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MathStatistics.cs" was last formatted by Protiguous on 2019/11/07 at 1:59 PM.
+// Project: "Librainian", "MathStatistics.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Maths {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using JetBrains.Annotations;
     using Measurement.Time;
+    using Rationals;
 
     public static class MathStatistics {
 
         public static Decimal CalcAvg( [NotNull] this IEnumerable<Decimal> values ) => values.DefaultIfEmpty().Average( arg => arg );
 
         public static Decimal CalcEma( [NotNull] this IEnumerable<Decimal> values, Decimal alpha ) =>
-            values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => ( alpha * nextQuote ) + ( ( 1 - alpha ) * ema ) );
+            values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
 
         /// <summary>
         ///     <para>
-        ///         In mathematics, the geometric mean is a type of mean or average, which indicates the
-        ///         central tendency or typical value of a set of numbers by using the product of their
-        ///         values (as opposed to the arithmetic mean which uses their sum).
+        ///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
+        ///     values (as opposed to the arithmetic mean which uses their sum).
         ///     </para>
         ///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
         /// </summary>
@@ -74,9 +72,8 @@ namespace LibrainianCore.Maths {
 
         /// <summary>
         ///     <para>
-        ///         In mathematics, the geometric mean is a type of mean or average, which indicates the
-        ///         central tendency or typical value of a set of numbers by using the product of their
-        ///         values (as opposed to the arithmetic mean which uses their sum).
+        ///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
+        ///     values (as opposed to the arithmetic mean which uses their sum).
         ///     </para>
         ///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
         /// </summary>
@@ -92,9 +89,8 @@ namespace LibrainianCore.Maths {
 
         /// <summary>
         ///     <para>
-        ///         In mathematics, the geometric mean is a type of mean or average, which indicates the
-        ///         central tendency or typical value of a set of numbers by using the product of their
-        ///         values (as opposed to the arithmetic mean which uses their sum).
+        ///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
+        ///     values (as opposed to the arithmetic mean which uses their sum).
         ///     </para>
         ///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
         /// </summary>
@@ -115,7 +111,7 @@ namespace LibrainianCore.Maths {
 
             var slope = data.Slope();
 
-            return data.Average( d => d.Progress ) - ( slope * data.Average( d => d.MillisecondsPassed ) );
+            return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
         }
 
         public static Double MeanGeometric( [NotNull] this IEnumerable<Double> numbers ) {
@@ -179,81 +175,61 @@ namespace LibrainianCore.Maths {
             return enumerable.Count / enumerable.Sum( i => 1 / i );
         }
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000f.OneIn();</example>
         public static Single OneIn( this Single possible ) => 1f / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this Double possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this UInt64 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this Int64 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this UInt32 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this Int32 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this UInt16 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this Int16 possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this Byte possible ) => 1d / possible;
 
-        /// <summary>
-        ///     One in <paramref name="possible" />
-        /// </summary>
+        /// <summary>One in <paramref name="possible" /></summary>
         /// <param name="possible"></param>
         /// <returns></returns>
         /// <example>var f = 7000.OneIn();</example>
@@ -269,9 +245,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 )( x * percent / 100.0f );
 
-        /// <summary>
-        ///     Returns true if this probability happens.
-        /// </summary>
+        /// <summary>Returns true if this probability happens.</summary>
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
@@ -281,9 +255,7 @@ namespace LibrainianCore.Maths {
             return probability >= chance;
         }
 
-        /// <summary>
-        ///     Returns true if this probability happens.
-        /// </summary>
+        /// <summary>Returns true if this probability happens.</summary>
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
@@ -293,9 +265,7 @@ namespace LibrainianCore.Maths {
             return probability >= chance;
         }
 
-        /// <summary>
-        ///     Returns true if this probability happens.
-        /// </summary>
+        /// <summary>Returns true if this probability happens.</summary>
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
@@ -305,9 +275,7 @@ namespace LibrainianCore.Maths {
             return probability >= chance;
         }
 
-        /// <summary>
-        ///     Returns true if this probability happens.
-        /// </summary>
+        /// <summary>Returns true if this probability happens.</summary>
         /// <param name="probability"></param>
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
@@ -317,9 +285,7 @@ namespace LibrainianCore.Maths {
             return probability >= chance;
         }
 
-        /// <summary>
-        ///     Returns true <b>if</b> this probability happens.
-        /// </summary>
+        /// <summary>Returns true <b>if</b> this probability happens.</summary>
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Double probability ) {
@@ -328,9 +294,7 @@ namespace LibrainianCore.Maths {
             return probability >= chance;
         }
 
-        /// <summary>
-        ///     Returns true <b>if</b> this probability happens.
-        /// </summary>
+        /// <summary>Returns true <b>if</b> this probability happens.</summary>
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Single probability ) {
@@ -338,7 +302,7 @@ namespace LibrainianCore.Maths {
 
             return probability >= chance;
 
-            // if P is -0.1 then a chance of 0.01 will return false; a chance of 0.90 will return false
+            // if P is -0.1 then a chance of 0.01 will return default; a chance of 0.90 will return false
 
             // if P is 0.1 then a chance of 0.01 will return true a chance of 0.05 will return true
             // a chance of 0.09 will return true a chance of 0.10 will return false a chance of 0.50

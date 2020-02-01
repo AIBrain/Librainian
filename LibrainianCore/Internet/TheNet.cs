@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TheNet.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "TheNet.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,43 +28,50 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TheNet.cs" was last formatted by Protiguous on 2019/08/08 at 8:02 AM.
+// Project: "Librainian", "TheNet.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Internet {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net;
     using System.Net.Cache;
     using System.Text;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
+    using Newtonsoft.Json;
 
     public static class TheNet {
 
         [ItemCanBeNull]
         public static async Task<T> DeserializeJson<T>( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
             if ( uri is null ) {
-                throw new ArgumentNullException( paramName: nameof( uri ) );
+                throw new ArgumentNullException( nameof( uri ) );
             }
 
             if ( timeout is null ) {
-                timeout = TimeSpan.Zero + Seconds.Seven;
+                timeout = Seconds.Seven;
             }
 
-            var response = await uri.GetWebPageAsync( timeout.Value ).ConfigureAwait( false );
+            var grab = GetWebPageAsync( uri, timeout.Value );
 
-            return JsonConvert.DeserializeObject<T>( response );
+            if ( grab != null ) {
+                var response = await grab.ConfigureAwait( false );
+
+                return JsonConvert.DeserializeObject<T>( response );
+            }
+
+            return default;
         }
 
         /// <summary>Convert network bytes to a string</summary>
@@ -89,7 +94,7 @@ namespace LibrainianCore.Internet {
         public static String GetHostName() => Dns.GetHostName();
 
         [CanBeNull]
-        public static String GetWebPage( this String url ) {
+        public static String GetWebPage( [CanBeNull] this String url ) {
             try {
                 if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
                     using ( var client = new WebClient {
@@ -111,13 +116,17 @@ namespace LibrainianCore.Internet {
 
         [CanBeNull]
         public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: url ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( url ) );
+            if ( String.IsNullOrWhiteSpace( url ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( url ) );
             }
 
             try {
                 if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
-                    return await uri.GetWebPageAsync( timeout ).ConfigureAwait( false );
+                    var task = uri.GetWebPageAsync( timeout );
+
+                    if ( task != null ) {
+                        return await task.ConfigureAwait( false );
+                    }
                 }
 
                 throw new Exception( $"Unable to parse the url:{url}." );
@@ -126,17 +135,17 @@ namespace LibrainianCore.Internet {
                 exception.Log();
             }
 
-            return null;
+            return default;
         }
 
         [CanBeNull]
         public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
             if ( uri is null ) {
-                throw new ArgumentNullException( paramName: nameof( uri ) );
+                throw new ArgumentNullException( nameof( uri ) );
             }
 
             try {
-                var client = new WebClient {
+                var client = new WebClientWithTimeout {
                     Encoding = Encoding.UTF8,
                     CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
@@ -147,16 +156,16 @@ namespace LibrainianCore.Internet {
             }
             catch ( Exception exception ) {
                 exception.Log();
-
-                return Task.FromResult<String>( null );
             }
+
+            return Task.FromResult<String>( default );
         }
 
         /// <summary>Convert a string to network bytes</summary>
         [NotNull]
         public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
-            if ( String.IsNullOrEmpty( value: data ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( data ) );
+            if ( String.IsNullOrEmpty( data ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( data ) );
             }
 
             var bytes = Encoding.UTF8.GetBytes( s: data );

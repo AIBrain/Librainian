@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Volume.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Volume.cs" was last formatted by Protiguous on 2019/08/08 at 9:19 AM.
+// Project: "Librainian", "Volume.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace LibrainianCore.OperatingSystem.FileSystem {
 
@@ -45,24 +43,20 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
     using ComputerSystem.Devices;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     A volume device.
-    /// </summary>
+    /// <summary>A volume device.</summary>
     public class Volume : Device {
 
-        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index ) : base( deviceClass, deviceInfoData, path,
-            index ) { }
+        internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index ) : base( deviceClass,
+            deviceInfoData, path, index ) { }
 
-        /// <summary>
-        ///     Compares the current instance with another object of the same type.
-        /// </summary>
+        /// <summary>Compares the current instance with another object of the same type.</summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
         public override Int32 CompareTo( Object obj ) {
@@ -114,7 +108,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
                     for ( var i = 0; i < numberOfDiskExtents; i++ ) {
-                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + ( i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) ) );
+                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) );
                         var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
                         numbers.Add( extent.DiskNumber );
                     }
@@ -126,9 +120,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return numbers;
         }
 
-        /// <summary>
-        ///     Gets a list of underlying disks for this volume.
-        /// </summary>
+        /// <summary>Gets a list of underlying disks for this volume.</summary>
         [ItemNotNull]
         public IEnumerable<Device> GetDisks() {
 
@@ -142,9 +134,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
         }
 
-        /// <summary>
-        ///     Gets the volume's logical drive in the form [letter]:\
-        /// </summary>
+        /// <summary>Gets the volume's logical drive in the form [letter]:\</summary>
         [CanBeNull]
         public String GetLogicalDrive() {
             var volumeName = this.GetVolumeName();
@@ -157,9 +147,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return logicalDrive;
         }
 
-        /// <summary>
-        ///     Gets a list of removable devices for this volume.
-        /// </summary>
+        /// <summary>Gets a list of removable devices for this volume.</summary>
         public override IEnumerable<Device> GetRemovableDevices() {
             if ( this.GetDisks() is null ) {
                 foreach ( var removableDevice in base.GetRemovableDevices() ) {
@@ -175,9 +163,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
         }
 
-        /// <summary>
-        ///     Gets the volume's name.
-        /// </summary>
+        /// <summary>Gets the volume's name.</summary>
         [CanBeNull]
         public String GetVolumeName() {
             var sb = new StringBuilder( 1024 );
@@ -191,9 +177,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return sb.ToString();
         }
 
-        /// <summary>
-        ///     Gets a value indicating whether this volume is a based on USB devices.
-        /// </summary>
+        /// <summary>Gets a value indicating whether this volume is a based on USB devices.</summary>
         public override Boolean IsUsb() => this.GetDisks()?.Any( disk => disk.IsUsb() ) == true;
     }
 }

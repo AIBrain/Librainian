@@ -41,6 +41,8 @@
 
 namespace LibrainianCore.Threading {
 
+    using JetBrains.Annotations;
+
     /// <summary>
     ///     Singleton Pattern. Judith Bishop Nov 2007
     /// </summary>

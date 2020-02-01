@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PingExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "PingExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,22 +28,22 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PingExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 7:57 AM.
+// Project: "Librainian", "PingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Internet {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Net.NetworkInformation;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Extension methods for working with Ping asynchronously.</para>
@@ -57,22 +55,23 @@ namespace LibrainianCore.Internet {
         /// <param name="ping">The Ping.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <param name="sendAsync">
-        ///     A delegate that initiates the asynchronous send. The provided TaskCompletionSource must
-        ///     be passed as the user-supplied state to the actual Ping.SendAsync method.
+        /// A delegate that initiates the asynchronous send. The provided TaskCompletionSource must be passed as the user-supplied state to the actual Ping.SendAsync
+        /// method.
         /// </param>
         /// <returns></returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        [CanBeNull]
         private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, [NotNull] Object userToken, [NotNull] Action<TaskCompletionSource<PingReply>> sendAsync ) {
             if ( ping is null ) {
-                throw new ArgumentNullException( paramName: nameof( ping ) );
+                throw new ArgumentNullException( nameof( ping ) );
             }
 
             if ( userToken is null ) {
-                throw new ArgumentNullException( paramName: nameof( userToken ) );
+                throw new ArgumentNullException( nameof( userToken ) );
             }
 
             if ( sendAsync is null ) {
-                throw new ArgumentNullException( paramName: nameof( sendAsync ) );
+                throw new ArgumentNullException( nameof( sendAsync ) );
             }
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
@@ -103,164 +102,202 @@ namespace LibrainianCore.Internet {
             return tcs.Task;
         }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
-        /// <param name="address">
-        ///     An IPAddress that identifies the computer that is the destination for the ICMP echo message.
-        /// </param>
+        /// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, [NotNull] Object userToken ) {
+            if ( ping == null ) {
+                throw new ArgumentNullException( paramName: nameof( ping ) );
+            }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
+
+            if ( userToken == null ) {
+                throw new ArgumentNullException( paramName: nameof( userToken ) );
+            }
+
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
-        ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a String representation of
-        ///     an IP address.
+        /// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
+        /// or a String representation of an IP address.
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Object userToken ) {
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
-        /// <param name="address">
-        ///     An IPAddress that identifies the computer that is the destination for the ICMP echo message.
-        /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
+        /// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, Object userToken ) {
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
-        /// <param name="ping">The Ping.</param>
-        /// <param name="hostNameOrAddress">
-        ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a String representation of
-        ///     an IP address.
-        /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
-        /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
+        }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
-        /// <param name="ping">The Ping.</param>
-        /// <param name="address">
-        ///     An IPAddress that identifies the computer that is the destination for the ICMP echo message.
-        /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
-        /// <param name="buffer">
-        ///     A Byte array that contains data to be sent with the ICMP echo message and returned in
-        ///     the ICMP echo reply message. The array cannot contain more than 65,500 bytes.
-        /// </param>
-        /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
-
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
-        ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a String representation of
-        ///     an IP address.
+        /// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
+        /// or a String representation of an IP address.
         /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
-        /// <param name="buffer">
-        ///     A Byte array that contains data to be sent with the ICMP echo message and returned in
-        ///     the ICMP echo reply message. The array cannot contain more than 65,500 bytes.
-        /// </param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, Object userToken ) {
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
-        /// <param name="address">
-        ///     An IPAddress that identifies the computer that is the destination for the ICMP echo message.
-        /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
+        /// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
         /// <param name="buffer">
-        ///     A Byte array that contains data to be sent with the ICMP echo message and returned in
-        ///     the ICMP echo reply message. The array cannot contain more than 65,500 bytes.
-        /// </param>
-        /// <param name="options">
-        ///     A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP
-        ///     echo message packet.
+        /// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
+        /// bytes.
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, IPAddress address, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
 
-        /// <summary>
-        ///     Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.
-        /// </summary>
+            if ( buffer == null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
+            }
+
+            if ( buffer.Length == 0 ) {
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+            }
+
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
         /// <param name="ping">The Ping.</param>
         /// <param name="hostNameOrAddress">
-        ///     A String that identifies the computer that is the destination for the ICMP echo message.
-        ///     The value specified for this parameter can be a host name or a String representation of
-        ///     an IP address.
+        /// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
+        /// or a String representation of an IP address.
         /// </param>
-        /// <param name="timeout">
-        ///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo
-        ///     message) to wait for the ICMP echo reply message.
-        /// </param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
         /// <param name="buffer">
-        ///     A Byte array that contains data to be sent with the ICMP echo message and returned in
-        ///     the ICMP echo reply message. The array cannot contain more than 65,500 bytes.
-        /// </param>
-        /// <param name="options">
-        ///     A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP
-        ///     echo message packet.
+        /// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
+        /// bytes.
         /// </param>
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-        public static Task<PingReply> SendTask( [NotNull] this Ping ping, String hostNameOrAddress, Int32 timeout, Byte[] buffer, PingOptions options, Object userToken ) =>
-            SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
+            if ( buffer == null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            }
+
+            if ( buffer.Length == 0 ) {
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+            }
+
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
+        /// <param name="ping">The Ping.</param>
+        /// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        /// <param name="buffer">
+        /// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
+        /// bytes.
+        /// </param>
+        /// <param name="options">A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+        /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, [CanBeNull] PingOptions options,
+            Object userToken ) {
+            if ( address == null ) {
+                throw new ArgumentNullException( paramName: nameof( address ) );
+            }
+
+            if ( buffer == null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
+            }
+
+            if ( buffer.Length == 0 ) {
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+            }
+
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
+        }
+
+        /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
+        /// <param name="ping">The Ping.</param>
+        /// <param name="hostNameOrAddress">
+        /// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
+        /// or a String representation of an IP address.
+        /// </param>
+        /// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+        /// <param name="buffer">
+        /// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
+        /// bytes.
+        /// </param>
+        /// <param name="options">A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+        /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+        [CanBeNull]
+        public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer,
+            [CanBeNull] PingOptions options, Object userToken ) {
+            if ( buffer == null ) {
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            }
+
+            if ( buffer.Length == 0 ) {
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+            }
+
+            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
+        }
     }
 }

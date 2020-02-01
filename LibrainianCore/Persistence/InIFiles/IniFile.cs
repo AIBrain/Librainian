@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IniFile.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "IniFile.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
+// Project: "Librainian", "IniFile.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Persistence.InIFiles {
 
@@ -45,21 +43,17 @@ namespace LibrainianCore.Persistence.InIFiles {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Text.Json;
     using System.Threading.Tasks;
-    using System.Xml;
+    using JetBrains.Annotations;
     using Logging;
     using Maths;
+    using Newtonsoft.Json;
     using OperatingSystem.FileSystem;
     using Parsing;
 
-    /// <summary>
-    ///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common
-    ///     Sections.
-    /// </summary>
+    /// <summary>A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common Sections.</summary>
     [JsonObject]
     public class IniFile {
 
@@ -148,7 +142,7 @@ namespace LibrainianCore.Persistence.InIFiles {
         [DebuggerStepThrough]
         public IniFile( [NotNull] IDocument document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             this.Add( document );
@@ -156,7 +150,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         public IniFile( [NotNull] String data ) {
             if ( String.IsNullOrWhiteSpace( value: data ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( data ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( data ) );
             }
 
             //cheat: write out to temp file, read in, then delete temp file
@@ -175,7 +169,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         [NotNull]
         [DebuggerStepThrough]
-        private static String Encode( [NotNull] IniLine line ) => $"{line ?? throw new ArgumentNullException( paramName: nameof( line ) )}";
+        private static String Encode( [NotNull] IniLine line ) => $"{line ?? throw new ArgumentNullException( nameof( line ) )}";
 
         [NotNull]
         [DebuggerStepThrough]
@@ -184,41 +178,43 @@ namespace LibrainianCore.Persistence.InIFiles {
         [CanBeNull]
         private IniSection EnsureDataSection( [NotNull] String section ) {
             if ( String.IsNullOrEmpty( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
             }
 
             lock ( this.Data ) {
                 if ( !this.Data.ContainsKey( section ) ) {
                     this.Data[ section ] = new IniSection();
                 }
+
                 return this.Data[ section ];
             }
         }
 
         private Boolean FindComment( [NotNull] String line, [NotNull] String section, ref Int32 counter ) {
             if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                return false;
+                return default;
             }
 
             if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             if ( line.StartsWith( IniLine.CommentHeader ) && this.Add( section, new KeyValuePair<String, String>( line, default ) ) ) {
                 counter++;
+
                 return true;
             }
 
-            return false;
+            return default;
         }
 
         private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
             if ( line is null ) {
-                throw new ArgumentNullException( paramName: nameof( line ) );
+                throw new ArgumentNullException( nameof( line ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             if ( line.Contains( IniLine.PairSeparator ) ) {
@@ -227,6 +223,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
                 if ( !String.IsNullOrEmpty( key ) ) {
                     var value = line.Substring( pos + IniLine.PairSeparator.Length ).Trimmed();
+
                     if ( this.Add( section, key, value ) ) {
                         counter++;
                     }
@@ -238,8 +235,9 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         private Boolean FindSection( [NotNull] String line, [CanBeNull] out String section ) {
             line = line.Trimmed();
+
             if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( line ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( line ) );
             }
 
             if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
@@ -251,7 +249,8 @@ namespace LibrainianCore.Persistence.InIFiles {
             }
 
             section = default;
-            return false;
+
+            return default;
         }
 
         private Boolean WriteSection( [NotNull] IDocument document, [NotNull] String section ) {
@@ -264,7 +263,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             }
 
             if ( !this.Data.TryGetValue( section, out var dict ) ) {
-                return false; //section not found
+                return default; //section not found
             }
 
             try {
@@ -284,7 +283,7 @@ namespace LibrainianCore.Persistence.InIFiles {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
@@ -298,7 +297,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
             try {
                 if ( !this.Data.TryGetValue( section, out var dict ) ) {
-                    return false; //section not found
+                    return default; //section not found
                 }
 
                 using ( var writer = File.AppendText( document.FullPath ) ) {
@@ -315,19 +314,20 @@ namespace LibrainianCore.Persistence.InIFiles {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String value ) {
             section = section.Trimmed();
 
             if ( String.IsNullOrEmpty( section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             key = key.Trimmed();
+
             if ( String.IsNullOrEmpty( key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             var retries = 10;
@@ -358,18 +358,18 @@ namespace LibrainianCore.Persistence.InIFiles {
                 }
             }
 
-            return false;
+            return default;
         }
 
         public Boolean Add( [NotNull] String section, (String key, String value) tuple ) => this.Add( section, tuple.key, tuple.value );
 
         public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
             if ( String.IsNullOrEmpty( section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
             }
 
             if ( String.IsNullOrEmpty( kvp.Key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( section ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
             }
 
             return this.Add( section, kvp.Key, kvp.Value );
@@ -382,7 +382,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             }
 
             if ( document.Exists() == false ) {
-                return false;
+                return default;
             }
 
             try {
@@ -395,20 +395,20 @@ namespace LibrainianCore.Persistence.InIFiles {
                 //file in use by another app
                 exception.Log();
 
-                return false;
+                return default;
             }
             catch ( OutOfMemoryException exception ) {
 
                 //file is big-huge! As my daughter would say.
                 exception.Log();
 
-                return false;
+                return default;
             }
         }
 
         public Boolean Add( [NotNull] String text ) {
             if ( text is null ) {
-                throw new ArgumentNullException( paramName: nameof( text ) );
+                throw new ArgumentNullException( nameof( text ) );
             }
 
             text = text.Replace( Environment.NewLine, "\n" );
@@ -447,9 +447,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             return counter.Any();
         }
 
-        /// <summary>
-        ///     Return the entire structure as a JSON formatted String.
-        /// </summary>
+        /// <summary>Return the entire structure as a JSON formatted String.</summary>
         /// <returns></returns>
         [NotNull]
         public String AsJSON() {
@@ -468,9 +466,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             return text;
         }
 
-        /// <summary>
-        ///     Removes all data from all sections.
-        /// </summary>
+        /// <summary>Removes all data from all sections.</summary>
         /// <returns></returns>
         public Boolean Clear() {
             Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
@@ -478,9 +474,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             return !this.Data.Keys.Any();
         }
 
-        /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
-        /// </summary>
+        /// <summary>Save the data to the specified document, overwriting it by default.</summary>
         /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
@@ -494,7 +488,7 @@ namespace LibrainianCore.Persistence.InIFiles {
                     document.Delete();
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
 
@@ -505,9 +499,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             return true;
         }
 
-        /// <summary>
-        ///     Save the data to the specified document, overwriting it by default.
-        /// </summary>
+        /// <summary>Save the data to the specified document, overwriting it by default.</summary>
         /// <param name="document"> </param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
@@ -521,7 +513,7 @@ namespace LibrainianCore.Persistence.InIFiles {
                     document.Delete();
                 }
                 else {
-                    return false;
+                    return default;
                 }
             }
 
@@ -529,7 +521,7 @@ namespace LibrainianCore.Persistence.InIFiles {
                 await this.WriteSectionAsync( document, section ).ConfigureAwait( false );
             }
 
-            return false;
+            return default;
         }
 
         [DebuggerStepThrough]
@@ -542,13 +534,18 @@ namespace LibrainianCore.Persistence.InIFiles {
         }
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [NotNull] String section, String key ) {
-            if ( section is null ) {
-                throw new ArgumentNullException( nameof( section ) );
+        public Boolean TryRemove( [NotNull] String section, [NotNull] String key ) {
+
+            if ( String.IsNullOrWhiteSpace( value: section ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
             }
 
             if ( !this.Data.ContainsKey( section ) ) {
-                return false;
+                return default;
             }
 
             return this.Data[ section ].Remove( key );

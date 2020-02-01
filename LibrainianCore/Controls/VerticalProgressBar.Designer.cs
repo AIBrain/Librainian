@@ -1,4 +1,4 @@
-﻿namespace Librainian.Controls {
+﻿namespace LibrainianCore.Controls {
 
     using System.ComponentModel;
 

@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
+// Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Security {
 
@@ -45,7 +43,6 @@ namespace LibrainianCore.Security {
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Security;
@@ -54,8 +51,12 @@ namespace LibrainianCore.Security {
     using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
+    using JetBrains.Annotations;
     using Logging;
     using OperatingSystem.FileSystem;
+
+    using File = Pri.LongPathCore.File;
+    using FileInfo = Pri.LongPathCore.FileInfo;
 
     public static class SecurityExtensions {
 
@@ -72,37 +73,28 @@ namespace LibrainianCore.Security {
 
         public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [NotNull]
         public static SHA1CryptoServiceProvider CryptoProvider { get; } = new SHA1CryptoServiceProvider();
 
         [NotNull]
         public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( s: $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
-        /// <summary>
-        ///     threadsafe MD5 hashers
-        /// </summary>
+        /// <summary>threadsafe MD5 hashers</summary>
         [NotNull]
         public static ThreadLocal<MD5> MD5ThreadLocals { get; } = new ThreadLocal<MD5>( valueFactory: System.Security.Cryptography.MD5.Create );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA256Managed" />.
-        /// </summary>
+        /// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
         [NotNull]
         public static ThreadLocal<SHA256Managed> SHA256ThreadLocals { get; } =
             new ThreadLocal<SHA256Managed>( valueFactory: () => new SHA256Managed(), trackAllValues: false );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA384Managed" />.
-        /// </summary>
+        /// <summary>Provide to each thread its own <see cref="SHA384Managed" />.</summary>
         [NotNull]
         public static ThreadLocal<SHA384Managed> SHA384ThreadLocals { get; } =
             new ThreadLocal<SHA384Managed>( valueFactory: () => new SHA384Managed(), trackAllValues: false );
 
-        /// <summary>
-        ///     Provide to each thread its own <see cref="SHA512Managed" />.
-        /// </summary>
+        /// <summary>Provide to each thread its own <see cref="SHA512Managed" />.</summary>
         [NotNull]
         public static ThreadLocal<SHA512Managed> SHA512ThreadLocals { get; } =
             new ThreadLocal<SHA512Managed>( valueFactory: () => new SHA512Managed(), trackAllValues: false );
@@ -123,17 +115,20 @@ namespace LibrainianCore.Security {
         }
 
         [NotNull]
-        public static Task<Byte[]> ComputeMD5HashAsync( String filename ) =>
-            Task.Run( function: () => {
+        public static Task<Byte[]> ComputeMD5HashAsync( [NotNull] String filename ) {
+            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filename ) );
+            }
 
-                using ( var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true ) ) {
-                    return MD5ThreadLocals.Value.ComputeHash( fs );
-                }
+            return Task.Run( function: () => {
+
+                using var fs = new FileStream( filename, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 1073741824, useAsync: true );
+
+                return MD5ThreadLocals.Value.ComputeHash( fs );
             } );
+        }
 
-        /// <summary>
-        ///     Decrypts the string <paramref name="value" />.
-        /// </summary>
+        /// <summary>Decrypts the string <paramref name="value" />.</summary>
         /// <param name="value"></param>
         /// <param name="iv">Optional input vector.</param>
         /// <param name="key">Optional key.</param>
@@ -148,16 +143,16 @@ namespace LibrainianCore.Security {
                 var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
                 var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
 
-                using ( var des = new DESCryptoServiceProvider() ) {
-                    using ( var ms = new MemoryStream() ) {
-                        using ( var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
-                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
-                            cs.FlushFinalBlock();
-                        }
+                using var des = new DESCryptoServiceProvider();
 
-                        return Encoding.UTF8.GetString( ms.ToArray() );
-                    }
-                }
+                using var ms = new MemoryStream();
+
+                using var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write );
+
+                cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                cs.FlushFinalBlock();
+
+                return Encoding.UTF8.GetString( ms.ToArray() );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -166,28 +161,26 @@ namespace LibrainianCore.Security {
             return default;
         }
 
-        /// <summary>
-        ///     To encrypt use <seealso cref="EncryptDES" />.
-        /// </summary>
+        /// <summary>To encrypt use <seealso cref="EncryptDES" />.</summary>
         /// <param name="textToDecrypt"></param>
         /// <returns></returns>
         [NotNull]
         public static String DecryptDES( [NotNull] this String textToDecrypt ) {
             if ( textToDecrypt is null ) {
-                throw new ArgumentNullException( paramName: nameof( textToDecrypt ) );
+                throw new ArgumentNullException( nameof( textToDecrypt ) );
             }
 
-            using ( var ms = new MemoryStream() ) {
-                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateDecryptor() ) {
-                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
-                        var buffer = Convert.FromBase64String( textToDecrypt );
-                        cs.Write( buffer, 0, buffer.Length );
-                        cs.FlushFinalBlock();
+            using var ms = new MemoryStream();
 
-                        return Encoding.Unicode.GetString( ms.ToArray() );
-                    }
-                }
-            }
+            using var transform = _tripleDesCryptoServiceProvider.Value.CreateDecryptor();
+
+            using var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write );
+
+            var buffer = Convert.FromBase64String( textToDecrypt );
+            cs.Write( buffer, 0, buffer.Length );
+            cs.FlushFinalBlock();
+
+            return Encoding.Unicode.GetString( ms.ToArray() );
         }
 
         [NotNull]
@@ -204,7 +197,7 @@ namespace LibrainianCore.Security {
 
             var rsaCryptoServiceProvider = new RSACryptoServiceProvider( dwKeySize: keySize );
             rsaCryptoServiceProvider.FromXmlString( xmlString: xmlString );
-            var base64BlockSize = keySize / 8 % 3 != 0 ? ( keySize / 8 / 3 * 4 ) + 4 : keySize / 8 / 3 * 4;
+            var base64BlockSize = keySize / 8 % 3 != 0 ? keySize / 8 / 3 * 4 + 4 : keySize / 8 / 3 * 4;
             var iterations = inputString.Length / base64BlockSize;
             var arrayList = new ArrayList(); //ugh
 
@@ -222,18 +215,6 @@ namespace LibrainianCore.Security {
             return !( arrayList.ToArray( type: typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( bytes: ba );
         }
 
-        [NotNull]
-        public static SecureString DecryptString( this String encryptedData ) {
-            try {
-                var decryptedData = ProtectedData.Unprotect( encryptedData: Convert.FromBase64String( s: encryptedData ), optionalEntropy: Entropy,
-                    scope: DataProtectionScope.CurrentUser );
-
-                return ToSecureString( input: Encoding.Unicode.GetString( bytes: decryptedData ) );
-            }
-            catch {
-                return new SecureString();
-            }
-        }
 
         [NotNull]
         public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
@@ -295,16 +276,16 @@ namespace LibrainianCore.Security {
                 var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
                 var inputbyteArray = Encoding.UTF8.GetBytes( value );
 
-                using ( var des = new DESCryptoServiceProvider() ) {
-                    using ( var ms = new MemoryStream() ) {
-                        using ( var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write ) ) {
-                            cs.Write( inputbyteArray, 0, inputbyteArray.Length );
-                            cs.FlushFinalBlock();
-                        }
+                using var des = new DESCryptoServiceProvider();
 
-                        return Convert.ToBase64String( ms.ToArray() );
-                    }
-                }
+                using var ms = new MemoryStream();
+
+                using var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write );
+
+                cs.Write( inputbyteArray, 0, inputbyteArray.Length );
+                cs.FlushFinalBlock();
+
+                return Convert.ToBase64String( ms.ToArray() );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -313,28 +294,26 @@ namespace LibrainianCore.Security {
             return default;
         }
 
-        /// <summary>
-        ///     To decrypt use <see cref="DecryptDES" />.
-        /// </summary>
+        /// <summary>To decrypt use <see cref="DecryptDES" />.</summary>
         /// <param name="textToEncrypt"></param>
         /// <returns></returns>
         [NotNull]
         public static String EncryptDES( [NotNull] this String textToEncrypt ) {
             if ( textToEncrypt is null ) {
-                throw new ArgumentNullException( paramName: nameof( textToEncrypt ) );
+                throw new ArgumentNullException( nameof( textToEncrypt ) );
             }
 
-            using ( var ms = new MemoryStream() ) {
-                using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor() ) {
-                    using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
-                        var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
-                        cs.Write( buffer, 0, buffer.Length );
-                        cs.FlushFinalBlock();
+            using var ms = new MemoryStream();
 
-                        return Convert.ToBase64String( ms.ToArray() );
-                    }
-                }
-            }
+            using var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor();
+
+            using var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write );
+
+            var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
+            cs.Write( buffer, 0, buffer.Length );
+            cs.FlushFinalBlock();
+
+            return Convert.ToBase64String( ms.ToArray() );
         }
 
         [NotNull]
@@ -362,7 +341,7 @@ namespace LibrainianCore.Security {
             var stringBuilder = new StringBuilder();
 
             for ( var i = 0; i <= iterations; i++ ) {
-                var tempBytes = new Byte[ dataLength - ( maxLength * i ) > maxLength ? maxLength : dataLength - ( maxLength * i ) ];
+                var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
                 Buffer.BlockCopy( src: bytes, srcOffset: maxLength * i, dst: tempBytes, dstOffset: 0, count: tempBytes.Length );
                 var encryptedBytes = rsaCryptoServiceProvider.Encrypt( rgb: tempBytes, fOAEP: true );
 
@@ -380,22 +359,6 @@ namespace LibrainianCore.Security {
             return stringBuilder.ToString();
         }
 
-        /// <summary>
-        ///     Converts the given string ( <paramref name="input" />) to an encrypted Base64 string.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String EncryptString( [NotNull] this SecureString input ) {
-            if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
-            }
-
-            var encryptedData = ProtectedData.Protect( userData: Encoding.Unicode.GetBytes( s: ToInsecureString( input: input ) ), optionalEntropy: Entropy,
-                scope: DataProtectionScope.CurrentUser );
-
-            return Convert.ToBase64String( inArray: encryptedData );
-        }
 
         [NotNull]
         public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
@@ -478,20 +441,17 @@ namespace LibrainianCore.Security {
             return s;
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <param name="s"></param>
         /// <returns></returns>
         [NotNull]
         public static String GetMD5Hash( [NotNull] this String s ) {
-            using ( MD5 md5 = new MD5CryptoServiceProvider() ) {
-                return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString();
-            }
+            using MD5 md5 = new MD5CryptoServiceProvider();
+
+            return md5.ComputeHash( Encoding.Unicode.GetBytes( s ) ).ToHexString();
         }
 
-        /// <summary>
-        ///     Uses the md5sum.exe to obtain the md5 string.
-        /// </summary>
+        /// <summary>Uses the md5sum.exe to obtain the md5 string.</summary>
         /// <param name="file"></param>
         /// <returns></returns>
         [CanBeNull]
@@ -500,7 +460,7 @@ namespace LibrainianCore.Security {
                 return null;
             }
 
-            var p = new Process {
+            using var p = new Process {
                 StartInfo = {
                     FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true
                 }
@@ -509,6 +469,7 @@ namespace LibrainianCore.Security {
             p.Start();
             p.WaitForExit();
             var output = p.StandardOutput.ReadToEnd();
+
             var result = output.Split( ' ' )[ 0 ].Substring( startIndex: 1 ).ToUpper();
 
             return String.IsNullOrWhiteSpace( result ) ? null : result;
@@ -612,6 +573,7 @@ namespace LibrainianCore.Security {
             return sb.ToString();
         }
 
+        [NotNull]
         public static String ToInsecureString( [NotNull] this SecureString input ) {
             if ( input is null ) {
                 throw new ArgumentNullException( nameof( input ) );
@@ -652,7 +614,7 @@ namespace LibrainianCore.Security {
 
             try {
                 if ( document is null || !File.Exists( "md5sum.exe" ) || document.Exists() == false ) {
-                    return false;
+                    return default;
                 }
 
                 var p = new Process {
@@ -672,12 +634,10 @@ namespace LibrainianCore.Security {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
-        /// <summary>
-        ///     Attempt to decrypt an encrypted version of the file with the given key and salt.
-        /// </summary>
+        /// <summary>Attempt to decrypt an encrypted version of the file with the given key and salt.</summary>
         /// <param name="input">            </param>
         /// <param name="output">           </param>
         /// <param name="key">              Must be between 1 and 32767 bytes.</param>
@@ -687,19 +647,19 @@ namespace LibrainianCore.Security {
         /// <param name="reportEveryXBytes"></param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryDecryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes,
-            Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            [CanBeNull] Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( input ) ) );
 
-                return false;
+                return default;
             }
 
             if ( input.Exists() == false ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-                return false;
+                return default;
             }
 
             var size = input.Size();
@@ -707,7 +667,7 @@ namespace LibrainianCore.Security {
             if ( !size.HasValue || size <= 0 ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-                return false;
+                return default;
             }
 
             var inputFileSize = ( Single )size.Value;
@@ -715,25 +675,25 @@ namespace LibrainianCore.Security {
             if ( output is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
 
-                return false;
+                return default;
             }
 
             if ( output.Exists() ) {
                 exceptions.Add( item: new IOException( $"The output file {output.FullPath} already exists." ) );
 
-                return false;
+                return default;
             }
 
             if ( key is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( key ) ) );
 
-                return false;
+                return default;
             }
 
             if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
                 exceptions.Add( item: new ArgumentOutOfRangeException( nameof( key ) ) );
 
-                return false;
+                return default;
             }
 
             try {
@@ -742,7 +702,7 @@ namespace LibrainianCore.Security {
                 if ( !containingingFolder.Create() ) {
                     exceptions.Add( item: new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-                    return false;
+                    return default;
                 }
 
                 using ( var aes = new AesCryptoServiceProvider() ) {
@@ -783,18 +743,16 @@ namespace LibrainianCore.Security {
             catch ( AggregateException exceptionss ) {
                 exceptions.AddRange( collection: exceptionss.InnerExceptions );
 
-                return false;
+                return default;
             }
             catch ( Exception exception ) {
                 exceptions.Add( item: exception );
 
-                return false;
+                return default;
             }
         }
 
-        /// <summary>
-        ///     Create an encrypted version of the given file with the given key and salt.
-        /// </summary>
+        /// <summary>Create an encrypted version of the given file with the given key and salt.</summary>
         /// <param name="input">            </param>
         /// <param name="output">           </param>
         /// <param name="key">              Must be between 1 and 32767 bytes.</param>
@@ -804,19 +762,19 @@ namespace LibrainianCore.Security {
         /// <param name="exceptions">       List of exceptions encountered.</param>
         /// <returns>Returns true if all is successful</returns>
         public static Boolean TryEncryptFile( [CanBeNull] this Document input, [CanBeNull] Document output, [CanBeNull] String key, Int32 salt, UInt64? reportEveryXBytes,
-            Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
+            [CanBeNull] Action<Single> reportProgress, [NotNull] out List<Exception> exceptions ) {
             exceptions = new List<Exception>( capacity: 1 );
 
             if ( input is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( input ) ) );
 
-                return false;
+                return default;
             }
 
             if ( input.Exists() == false ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-                return false;
+                return default;
             }
 
             var size = input.Size();
@@ -824,7 +782,7 @@ namespace LibrainianCore.Security {
             if ( !size.HasValue || size <= 0 ) {
                 exceptions.Add( item: new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-                return false;
+                return default;
             }
 
             var inputFileSize = ( Single )size.Value;
@@ -832,25 +790,25 @@ namespace LibrainianCore.Security {
             if ( output is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
 
-                return false;
+                return default;
             }
 
             if ( output.Exists() ) {
                 exceptions.Add( item: new IOException( $"The output file {output.FullPath} already exists." ) );
 
-                return false;
+                return default;
             }
 
             if ( key is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( key ) ) );
 
-                return false;
+                return default;
             }
 
             if ( !key.Length.Between( startInclusive: 1, endInclusive: Int16.MaxValue ) ) {
                 exceptions.Add( item: new ArgumentOutOfRangeException( nameof( key ) ) );
 
-                return false;
+                return default;
             }
 
             try {
@@ -861,7 +819,7 @@ namespace LibrainianCore.Security {
                 if ( !containingingFolder.Create() ) {
                     exceptions.Add( item: new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-                    return false;
+                    return default;
                 }
 
                 using ( var aes = new AesCryptoServiceProvider() ) {
@@ -876,7 +834,7 @@ namespace LibrainianCore.Security {
                     if ( !outputStream.CanWrite ) {
                         exceptions.Add( item: new IOException( $"Unable to write to {output.FullPath}." ) );
 
-                        return false;
+                        return default;
                     }
 
                     using ( var encryptor = aes.CreateEncryptor() ) {
@@ -885,7 +843,7 @@ namespace LibrainianCore.Security {
                                 if ( !inputStream.CanRead || !inputStream.CanSeek ) {
                                     exceptions.Add( item: new IOException( $"Unable to read from {input.FullPath}." ) );
 
-                                    return false;
+                                    return default;
                                 }
 
                                 inputStream.Seek( offset: 0, origin: SeekOrigin.Begin );
@@ -914,12 +872,12 @@ namespace LibrainianCore.Security {
             catch ( AggregateException exceptionss ) {
                 exceptions.AddRange( collection: exceptionss.InnerExceptions );
 
-                return false;
+                return default;
             }
             catch ( Exception exception ) {
                 exceptions.Add( item: exception );
 
-                return false;
+                return default;
             }
         }
     }

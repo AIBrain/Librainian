@@ -22,12 +22,12 @@ namespace LibrainianCore.Threading {
 
 	using System;
 	using System.Collections.Generic;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
-	using System.Runtime.CompilerServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
+	using JetBrains.Annotations;
+	using Logging;
 	using Measurement.Time;
 
 	/// <summary>Execute an <see cref="Action" /> on a <see cref="Timer" />.</summary>
@@ -213,27 +213,12 @@ namespace LibrainianCore.Threading {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
 
-			await Task.Delay( delay: delay );
-
-			await Task.Run( action: job );
-		}
-
-		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <param name="job"></param>
-		/// <returns></returns>
-		public static async Task Then( this Span delay, [NotNull] Action job ) {
-			if ( job == null ) {
-				throw new ArgumentNullException( paramName: nameof( job ) );
-			}
-
 			await Task.Delay( delay: delay ).ConfigureAwait( false );
 
 			await Task.Run( action: job ).ConfigureAwait( false );
 		}
 
+	
 		/// <summary>
 		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
 		/// </summary>
@@ -292,21 +277,21 @@ namespace LibrainianCore.Threading {
 				pre?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 			try {
 				action?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 			try {
 				post?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 		};
@@ -513,7 +498,7 @@ namespace LibrainianCore.Threading {
 			}
 
 			if ( !target.Post( item: item ) ) {
-				target.TryPost( item: item, delay: TimeExtensions.GetAverageDateTimePrecision() ); //retry
+				target.TryPost( item: item, delay: TimeExtensions.GetTimePrecision() );
 			}
 		}
 
@@ -537,7 +522,7 @@ namespace LibrainianCore.Threading {
 				return delay.CreateTimer( () => target.TryPost( item: item ) ).AndStart();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 				throw;
 			}
 		}
@@ -566,12 +551,12 @@ namespace LibrainianCore.Threading {
 								 .AndStart();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 				return null;
 			}
 		}
 
-		public static ConfiguredTaskAwaitable Multitude( params Action[] actions ) => Task.Run( () => { Parallel.Invoke( actions ); } ).ConfigureAwait( false );
+		public static Task Multitude( params Action[] actions ) => Task.Run( () => Parallel.Invoke( actions ) );
 
 	}
 

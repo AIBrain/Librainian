@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Instantiator.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Instantiator.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,22 +28,22 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Instantiator.cs" was last formatted by Protiguous on 2019/10/23 at 12:21 PM.
+// Project: "Librainian", "Instantiator.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Magic {
 
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
+    using JetBrains.Annotations;
 
     /// <typeparam name="T"></typeparam>
     /// <example>
@@ -54,13 +52,13 @@ namespace LibrainianCore.Magic {
     public static class Instantiator<T> {
 
         static Instantiator() =>
-            Debug.Assert( typeof( T ).IsValueType || ( typeof( T ).IsClass && !typeof( T ).IsAbstract ),
+            Debug.Assert( typeof( T ).IsValueType || typeof( T ).IsClass && !typeof( T ).IsAbstract,
                 String.Concat( "The type ", typeof( T ).Name, " is not constructable." ) );
 
         [NotNull]
         private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( [NotNull] params Type[] argTypes ) {
             if ( argTypes is null ) {
-                throw new ArgumentNullException( paramName: nameof( argTypes ) );
+                throw new ArgumentNullException( nameof( argTypes ) );
             }
 
             var paramExpressions = new ParameterExpression[ argTypes.Length ];
@@ -80,25 +78,19 @@ namespace LibrainianCore.Magic {
             return Expression.Lambda<TDelegate>( Expression.New( ctorInfo, paramExpressions.Select( expression => expression as Expression ) ), paramExpressions );
         }
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with no parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with no parameters.</summary>
         /// <returns></returns>
         [NotNull]
         public static T New() => InstantiatorImpl.CtorFunc();
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with one parameter.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with one parameter.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <param name="valueA"></param>
         /// <returns></returns>
         [NotNull]
         public static T New<TA>( [CanBeNull] TA valueA ) => InstantiatorImpl<TA>.CtorFunc( valueA );
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with two parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with two parameters.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <param name="valueA"></param>
@@ -107,9 +99,7 @@ namespace LibrainianCore.Magic {
         [NotNull]
         public static T New<TA, TB>( [CanBeNull] TA valueA, [CanBeNull] TB valueB ) => InstantiatorImpl<TA, TB>.CtorFunc( valueA, valueB );
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with three parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with three parameters.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <typeparam name="TC"></typeparam>
@@ -121,9 +111,7 @@ namespace LibrainianCore.Magic {
         public static T New<TA, TB, TC>( [CanBeNull] TA valueA, [CanBeNull] TB valueB, [CanBeNull] TC valueC ) =>
             InstantiatorImpl<TA, TB, TC>.CtorFunc( valueA, valueB, valueC );
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with four parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with four parameters.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <typeparam name="TC"></typeparam>
@@ -137,9 +125,7 @@ namespace LibrainianCore.Magic {
         public static T New<TA, TB, TC, TD>( [CanBeNull] TA valueA, [CanBeNull] TB valueB, [CanBeNull] TC valueC, [CanBeNull] TD valueD ) =>
             InstantiatorImpl<TA, TB, TC, TD>.CtorFunc( valueA, valueB, valueC, valueD );
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with five parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with five parameters.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <typeparam name="TC"></typeparam>
@@ -155,9 +141,7 @@ namespace LibrainianCore.Magic {
         public static T New<TA, TB, TC, TD, TE>( [CanBeNull] TA valueA, [CanBeNull] TB valueB, [CanBeNull] TC valueC, [CanBeNull] TD valueD, [CanBeNull] TE valueE ) =>
             InstantiatorImpl<TA, TB, TC, TD, TE>.CtorFunc( valueA, valueB, valueC, valueD, valueE );
 
-        /// <summary>
-        ///     Create a new instance of type <see cref="T" /> with six parameters.
-        /// </summary>
+        /// <summary>Create a new instance of type <see cref="T" /> with six parameters.</summary>
         /// <typeparam name="TA"></typeparam>
         /// <typeparam name="TB"></typeparam>
         /// <typeparam name="TC"></typeparam>

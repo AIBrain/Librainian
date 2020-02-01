@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Address.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Address.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Address.cs" was last formatted by Protiguous on 2019/08/08 at 8:38 AM.
+// Project: "Librainian", "Address.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Measurement.Currency.BTC {
 
@@ -45,15 +43,17 @@ namespace LibrainianCore.Measurement.Currency.BTC {
     using System.Linq;
     using System.Security.Cryptography;
     using System.Threading;
+    using JetBrains.Annotations;
     using Parsing;
 
-    /// <summary>
-    /// </summary>
+    /// <summary></summary>
     /// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
     public class Address {
 
+        [CanBeNull]
         private String _address;
 
+        [CanBeNull]
         private Hash _pubKeyHash;
 
         private Hash _scriptHash;
@@ -70,6 +70,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
+        [NotNull]
         public Hash EitherHash {
             get {
                 if ( this._pubKeyHash is null && this._scriptHash is null ) {
@@ -84,6 +85,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
         }
 
+        [CanBeNull]
         public Hash PubKeyHash {
             get {
                 if ( this._pubKeyHash is null && this.CalcHash() != Pubkeyhash ) {
@@ -94,6 +96,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
         }
 
+        [CanBeNull]
         public Hash ScriptHash {
             get {
                 if ( this._pubKeyHash is null && this.CalcHash() != Scripthash ) {
@@ -118,37 +121,9 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
         }
 
-        public Address( Byte[] data, Byte version = Pubkey ) {
-            RIPEMD160 ripemd160 = new RIPEMD160Managed();
+    
 
-            switch ( version ) {
-                case Pubkey:
-                    this._pubKeyHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Pubkeyhash;
-
-                    break;
-
-                case Script:
-                    this._scriptHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Scripthash;
-
-                    break;
-
-                case Pubkeyhash:
-                    this._pubKeyHash = data;
-
-                    break;
-
-                case Scripthash:
-                    this._scriptHash = data;
-
-                    break;
-            }
-
-            this._type = version;
-        }
-
-        public Address( String address ) => this._address = address;
+        public Address( [CanBeNull] String address ) => this._address = address;
 
         private void CalcBase58() {
             if ( this._pubKeyHash != null ) {
@@ -184,11 +159,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is Address ) ) {
-                return false;
-            }
-
-            if ( this.EitherHash is null || ( ( Address )obj ).EitherHash is null ) {
-                return false;
+                return default;
             }
 
             return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );
@@ -201,7 +172,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 this.CalcBase58();
             }
 
-            return this._address;
+            return this._address ?? throw new InvalidOperationException();
         }
     }
 }

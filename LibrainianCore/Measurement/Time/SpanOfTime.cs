@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,28 +28,30 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SpanOfTime.cs" was last formatted by Protiguous on 2019/11/20 at 6:11 AM.
+// Project: "Librainian", "SpanOfTime.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace LibrainianCore.Measurement.Time {
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Numerics;
     using Collections.Extensions;
     using Extensions;
+    using JetBrains.Annotations;
+    using JM.LinqFaster.SIMD;
     using Maths;
     using Maths.Hashings;
+    using Newtonsoft.Json;
     using Parsing;
+    using Rationals;
 
     /// <summary>
     ///     <para><see cref="SpanOfTime" /> represents the smallest <see cref="PlanckTimes" /> to an absurd huge(!) duration of time.</para>
@@ -74,22 +74,22 @@ namespace LibrainianCore.Measurement.Time {
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Attoseconds Attoseconds { get; }
 
         /// <summary>How many <see cref="Days" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Days Days { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Femtoseconds Femtoseconds { get; }
 
         /// <summary>How many <see cref="Hours" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Hours Hours { get; }
 
         /// <summary>
@@ -98,63 +98,62 @@ namespace LibrainianCore.Measurement.Time {
         /// </summary>
         /// <trivia>One microsecond is to one second as one second is to 11.574 days.</trivia>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Microseconds Microseconds { get; }
 
         /// <summary>How many <see cref="Milliseconds" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Milliseconds Milliseconds { get; }
 
         /// <summary>How many <see cref="Minutes" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Minutes Minutes { get; }
 
         /// <summary>How many <see cref="Months" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Months Months { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Nanoseconds Nanoseconds { get; }
 
         /// <summary>A picosecond is an SI unit of time equal to 10E−12 of a second.</summary>
         /// <see cref="http://wikipedia.org/wiki/Picosecond" />
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Picoseconds Picoseconds { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
         public PlanckTimes PlanckTimes { get; }
 
         /// <summary>How many <see cref="Seconds" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Seconds Seconds { get; }
 
         /// <summary>How many <see cref="Weeks" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Weeks Weeks { get; }
 
         /// <summary>How many <see cref="Years" /> does this <see cref="SpanOfTime" /> span?</summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Years Years { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Yoctoseconds Yoctoseconds { get; }
 
         /// <summary></summary>
         [JsonProperty]
-        [CanBeNull]
+        [NotNull]
         public Zeptoseconds Zeptoseconds { get; }
 
         public SpanOfTime( BigInteger planckTimes ) {
@@ -234,11 +233,11 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="planckTimes"></param>
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
-        public SpanOfTime( [CanBeNull] PlanckTimes planckTimes = default, [CanBeNull] Yoctoseconds yoctoseconds = default, [CanBeNull] Zeptoseconds zeptoseconds = default,
+        public SpanOfTime( PlanckTimes planckTimes = default, [CanBeNull] Yoctoseconds yoctoseconds = default, [CanBeNull] Zeptoseconds zeptoseconds = default,
             [CanBeNull] Attoseconds attoseconds = default, [CanBeNull] Femtoseconds femtoseconds = default, [CanBeNull] Picoseconds picoseconds = default,
             [CanBeNull] Nanoseconds nanoseconds = default, [CanBeNull] Microseconds microseconds = default, [CanBeNull] Milliseconds milliseconds = default,
             [CanBeNull] Seconds seconds = default, [CanBeNull] Minutes minutes = default, [CanBeNull] Hours hours = default, [CanBeNull] Days days = default,
-            [CanBeNull] Weeks weeks = default, [CanBeNull] Months months = default, [CanBeNull] Years years = default ) : this( planckTimes: planckTimes?.Value,
+            [CanBeNull] Weeks weeks = default, [CanBeNull] Months months = default, [CanBeNull] Years years = default ) : this( planckTimes: planckTimes.Value,
             yoctoseconds: yoctoseconds?.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value,
             picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds?.Value, milliseconds: milliseconds?.Value, seconds: seconds?.Value,
             minutes: minutes?.Value, hours: hours.Value, days: days.Value, weeks: weeks.Value, months: months.Value, years: years?.Value ) { }
@@ -345,25 +344,32 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         [NotNull]
-        public static SpanOfTime Combine( SpanOfTime left, SpanOfTime right ) {
+        public static SpanOfTime Combine( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( nameof( right ) );
+            }
 
             //TODO do some overflow handling with BigInteger math
 
             //var planckTimes = left.PlanckTimes + right.PlanckTimes;
-            var yoctoseconds = left?.Yoctoseconds + right?.Yoctoseconds;
-            var zeptoseconds = left?.Zeptoseconds + right?.Zeptoseconds;
-            var attoseconds = left?.Attoseconds + right?.Attoseconds;
-            var femtoseconds = left?.Femtoseconds + right?.Femtoseconds;
-            var picoseconds = left?.Picoseconds + right?.Picoseconds;
-            var nanoseconds = left?.Nanoseconds + right?.Nanoseconds;
-            var microseconds = left?.Microseconds + right?.Microseconds;
-            var milliseconds = left?.Milliseconds + right?.Milliseconds;
-            var seconds = left?.Seconds + right?.Seconds;
-            var minutes = left?.Minutes + right?.Minutes;
-            var hours = left?.Hours + right?.Hours;
-            var days = left?.Days + right?.Days;
-            var months = left?.Months + right?.Months;
-            var years = left?.Years + right?.Years;
+            var yoctoseconds = left.Yoctoseconds + right.Yoctoseconds;
+            var zeptoseconds = left.Zeptoseconds + right.Zeptoseconds;
+            var attoseconds = left.Attoseconds + right.Attoseconds;
+            var femtoseconds = left.Femtoseconds + right.Femtoseconds;
+            var picoseconds = left.Picoseconds + right.Picoseconds;
+            var nanoseconds = left.Nanoseconds + right.Nanoseconds;
+            var microseconds = left.Microseconds + right.Microseconds;
+            var milliseconds = left.Milliseconds + right.Milliseconds;
+            var seconds = left.Seconds + right.Seconds;
+            var minutes = left.Minutes + right.Minutes;
+            var hours = left.Hours + right.Hours;
+            var days = left.Days + right.Days;
+            var months = left.Months + right.Months;
+            var years = left.Years + right.Years;
 
             return new SpanOfTime( yoctoseconds: yoctoseconds, zeptoseconds: zeptoseconds, attoseconds: attoseconds, femtoseconds: femtoseconds, picoseconds: picoseconds,
                 nanoseconds: nanoseconds, microseconds: microseconds, milliseconds: milliseconds, seconds: seconds, minutes: minutes, hours: hours, days: days, months: months,
@@ -383,7 +389,15 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Int32 CompareTo( SpanOfTime left, SpanOfTime right ) {
+        public static Int32 CompareTo( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( nameof( right ) );
+            }
+
             var leftPlancks = left.CalcTotalPlanckTimes();
             var rightPlancks = right.CalcTotalPlanckTimes();
 
@@ -431,14 +445,8 @@ namespace LibrainianCore.Measurement.Time {
             return result <= BigInteger.Zero ? Zero : new SpanOfTime( result );
         }
 
-        //public Span( When min, When max ) {
-        //    var difference = max - min; // difference.Value now has the total number of planckTimes since the big bang (difference.Value is a BigInteger).
-        //    var bo = 5.850227064E+53;
         public static Boolean operator !=( [CanBeNull] SpanOfTime t1, [CanBeNull] SpanOfTime t2 ) => !Equals( t1, t2 );
 
-        //    //BigInteger.DivRem
-        //    //var  = difference % Attoseconds.One.Value;
-        //}
         /// <summary>
         ///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
         ///     <para>add (+) the <paramref name="right" /><see cref="SpanOfTime" />.</para>
@@ -447,7 +455,17 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="right"></param>
         /// <returns></returns>
         [NotNull]
-        public static SpanOfTime operator +( [CanBeNull] SpanOfTime left, [CanBeNull] SpanOfTime right ) => Combine( left, right );
+        public static SpanOfTime operator +( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return Combine( left, right );
+        }
 
         public static Boolean operator <( SpanOfTime left, SpanOfTime right ) => left.CalcTotalPlanckTimes() < right.CalcTotalPlanckTimes();
 
@@ -524,9 +542,7 @@ namespace LibrainianCore.Measurement.Time {
             return Zero;
         }
 
-        [CanBeNull]
         public PlanckTimes CalcTotalPlanckTimes() {
-
             var sum = new[] {
                 this.PlanckTimes.ToPlanckTimes(), this.Yoctoseconds.ToPlanckTimes(), this.Zeptoseconds.ToPlanckTimes(), this.Attoseconds.ToPlanckTimes(),
                 this.Femtoseconds.ToPlanckTimes(), this.Picoseconds.ToPlanckTimes(), this.Nanoseconds.ToPlanckTimes(), this.Microseconds.ToPlanckTimes(),
@@ -534,12 +550,14 @@ namespace LibrainianCore.Measurement.Time {
                 this.Weeks.ToPlanckTimes(), this.Months.ToPlanckTimes(), this.Years.ToPlanckTimes()
             };
 
-            return sum.Aggregate( PlanckTimes.Zero, ( current, timese ) => current + timese );
+            return sum.SumS();
+
+            //return sum.Aggregate( PlanckTimes.Zero, ( current, timese ) => current + timese );
         }
 
         public Int32 CompareTo( [NotNull] SpanOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
             return CompareTo( this, other );
@@ -553,13 +571,11 @@ namespace LibrainianCore.Measurement.Time {
         /// <filterpriority>2</filterpriority>
         public override Boolean Equals( [CanBeNull] Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is SpanOfTime span && Equals( this, span );
         }
-
-        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( this, obj );
 
         /// <summary>
         ///     <para>Return a <see cref="TimeSpan" />'s worth of <see cref="Milliseconds" />.</para>
@@ -601,40 +617,28 @@ namespace LibrainianCore.Measurement.Time {
         public override String ToString() {
             var bob = new Queue<String>( 20 );
 
-            var years = this.Years;
-
-            if ( years != null && years.Value != 0 ) {
-                bob.Enqueue( years.ToString() );
+            if ( this.Years.Value != 0 ) {
+                bob.Enqueue( this.Years.ToString() );
             }
 
-            var months = this.Months;
-
-            if ( months != null && months.Value != 0 ) {
-                bob.Enqueue( months.ToString() );
+            if ( this.Months.Value != 0 ) {
+                bob.Enqueue( this.Months.ToString() );
             }
 
-            var weeks = this.Weeks;
-
-            if ( weeks != null && weeks.Value != 0 ) {
-                bob.Enqueue( weeks.ToString() );
+            if ( this.Weeks.Value != 0 ) {
+                bob.Enqueue( this.Weeks.ToString() );
             }
 
-            var days = this.Days;
-
-            if ( days != null && days.Value != 0 ) {
-                bob.Enqueue( days.ToString() );
+            if ( this.Days.Value != 0 ) {
+                bob.Enqueue( this.Days.ToString() );
             }
 
-            var hours = this.Hours;
-
-            if ( hours != null && hours.Value != 0 ) {
-                bob.Enqueue( hours.ToString() );
+            if ( this.Hours.Value != 0 ) {
+                bob.Enqueue( this.Hours.ToString() );
             }
 
-            var minutes = this.Minutes;
-
-            if ( minutes != null && minutes.Value != 0 ) {
-                bob.Enqueue( minutes.ToString() );
+            if ( this.Minutes.Value != 0 ) {
+                bob.Enqueue( this.Minutes.ToString() );
             }
 
             if ( this.Seconds.Value != 0 ) {
@@ -679,6 +683,8 @@ namespace LibrainianCore.Measurement.Time {
 
             return bob.ToStrings( ", ", ", and " );
         }
+
+        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( this, obj );
 
         Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
 

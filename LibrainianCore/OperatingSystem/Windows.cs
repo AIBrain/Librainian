@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Windows.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "Windows.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,32 +26,31 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2019/09/12 at 4:18 PM.
+//
+// Project: "Librainian", "Windows.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace LibrainianCore.OperatingSystem {
 
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Net.Mime;
     using System.Runtime;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Forms;
     using Collections.Extensions;
     using FileSystem;
-    using LibrainianCore.Extensions;
+    using JetBrains.Annotations;
     using Logging;
     using Maths;
     using Measurement.Time;
@@ -111,9 +108,7 @@ namespace LibrainianCore.OperatingSystem {
         public static readonly Lazy<Folder> WindowsSystem32Folder =
             new Lazy<Folder>( () => FindFolder( fullname: Path.Combine( path1: WindowsFolder.Value.FullName, path2: "System32" ) ), isThreadSafe: true );
 
-        /// <summary>
-        ///     Cleans and sorts the Windows <see cref="Environment" /> path variable.
-        /// </summary>
+        /// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
         /// <returns></returns>
         public static void CleanUpPATH( Boolean reportToConsole = false ) {
             if ( reportToConsole ) {
@@ -196,11 +191,11 @@ namespace LibrainianCore.OperatingSystem {
             }
             catch ( Exception ) { }
 
-            return false;
+            return default;
         }
 
         [NotNull]
-        public static Task<Process> ExecuteCommandPromptAsync( String arguments ) =>
+        public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String arguments ) =>
             Task.Run( () => {
                 try {
                     if ( CommandPrompt != null ) {
@@ -228,7 +223,7 @@ namespace LibrainianCore.OperatingSystem {
             } );
 
         [NotNull]
-        public static Task<Boolean> ExecutePowershellCommandAsync( String arguments, Boolean elevated = false ) =>
+        public static Task<Boolean> ExecutePowershellCommandAsync( [CanBeNull] String arguments, Boolean elevated = false ) =>
             Task.Run( () => {
                 try {
                     var startInfo = new ProcessStartInfo {
@@ -249,10 +244,10 @@ namespace LibrainianCore.OperatingSystem {
                     if ( null == process ) {
                         "failure.".Info();
 
-                        return false;
+                        return default;
                     }
 
-                    process.WaitForExit( milliseconds: ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
+                    process.WaitForExit( milliseconds: ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
                     "success.".Info();
 
                     return true;
@@ -261,19 +256,27 @@ namespace LibrainianCore.OperatingSystem {
                     exception.Log();
                 }
 
-                return false;
+                return default;
             } );
 
         [NotNull]
-        public static Task<Process> ExecuteProcessAsync( Document filename, Folder workingFolder, String arguments, Boolean elevate ) =>
-            Task.Run( () => {
+        public static Task<Process> ExecuteProcessAsync( [NotNull] Document filename, [NotNull] Folder workingFolder, [CanBeNull] String arguments, Boolean elevate ) {
+            if ( filename == null ) {
+                throw new ArgumentNullException( paramName: nameof( filename ) );
+            }
+
+            if ( workingFolder == null ) {
+                throw new ArgumentNullException( paramName: nameof( workingFolder ) );
+            }
+
+            return Task.Run( () => {
                 try {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
                         WorkingDirectory = workingFolder.FullName,
                         FileName = filename.FullPath,
                         Verb = elevate ? null : "runas", //demand elevated permissions
-                        Arguments = arguments,
+                        Arguments = arguments ?? String.Empty,
                         CreateNoWindow = false,
                         ErrorDialog = true,
                         WindowStyle = ProcessWindowStyle.Normal
@@ -289,6 +292,7 @@ namespace LibrainianCore.OperatingSystem {
 
                 return null;
             } );
+        }
 
         [CanBeNull]
         public static Document FindDocument( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
@@ -346,7 +350,7 @@ namespace LibrainianCore.OperatingSystem {
             ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullName}\" \"{baseFolder.FullName}\" /E /T" );
 
         [CanBeNull]
-        public static Process OpenWithExplorer( String value ) {
+        public static Process OpenWithExplorer( [CanBeNull] String value ) {
             try {
 
                 //Verb = "runas", //demand elevated permissions
@@ -371,14 +375,23 @@ namespace LibrainianCore.OperatingSystem {
             return default;
         }
 
-        public static async Task<Boolean> RestartServiceAsync( String serviceName, TimeSpan timeout ) =>
-            await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
-            await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
+        public static async Task<Boolean> RestartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
 
-        public static async Task<Boolean> StartServiceAsync( String serviceName, TimeSpan timeout ) {
+            return await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
+                   await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
+        }
+
+        public static async Task<Boolean> StartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
+
             try {
                 return await Task.Run( () => {
-                    using ( var service = new ServiceController( name: serviceName ) ) {
+                    using ( var service = new ServiceController( serviceName ) ) {
                         if ( service.Status != ServiceControllerStatus.Running ) {
                             service.Start();
                         }
@@ -393,13 +406,17 @@ namespace LibrainianCore.OperatingSystem {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
-        public static async Task<Boolean> StopServiceAsync( String serviceName, TimeSpan timeout ) {
+        public static async Task<Boolean> StopServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
+            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            }
+
             try {
                 return await Task.Run( () => {
-                    using ( var service = new ServiceController( name: serviceName ) ) {
+                    using ( var service = new ServiceController( serviceName ) ) {
                         service.Stop();
                         service.WaitForStatus( desiredStatus: ServiceControllerStatus.Stopped, timeout: timeout );
 
@@ -411,12 +428,20 @@ namespace LibrainianCore.OperatingSystem {
                 exception.Log();
             }
 
-            return false;
+            return default;
         }
 
         [CanBeNull]
-        public static Task<Process> TryConvert_WithIrfanviewAsync( Document inDocument, Document outDocument ) =>
-            Task.Run( () => {
+        public static Task<Process> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
+            if ( inDocument == null ) {
+                throw new ArgumentNullException( paramName: nameof( inDocument ) );
+            }
+
+            if ( outDocument == null ) {
+                throw new ArgumentNullException( paramName: nameof( outDocument ) );
+            }
+
+            return Task.Run( () => {
 
                 if ( IrfanView64?.Value.Exists() != true ) {
                     return null;
@@ -447,18 +472,15 @@ namespace LibrainianCore.OperatingSystem {
 
                 return null;
             } );
+        }
 
-        /// <summary>
-        ///     <see cref="MediaTypeNames.Application.DoEvents()" /> and then <see cref="Thread.Yield()" />.
-        /// </summary>
+        /// <summary><see cref="Application.DoEvents()" /> and then <see cref="Thread.Yield()" />.</summary>
         public static void Yield() {
-            MediaTypeNames.Application.DoEvents();
+            Application.DoEvents();
 
             if ( Randem.NextBooleanFast() ) {
                 Thread.Yield();
             }
         }
-
     }
-
 }

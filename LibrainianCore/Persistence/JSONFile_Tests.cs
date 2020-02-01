@@ -21,7 +21,6 @@
 namespace LibrainianCore.Persistence {
 
     using System;
-    using Magic;
 
     [TestFixture]
     public static class JSONFile_Tests {

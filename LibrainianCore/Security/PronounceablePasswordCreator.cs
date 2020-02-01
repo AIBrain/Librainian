@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PronounceablePasswordCreator.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "PronounceablePasswordCreator.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,21 +28,21 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PronounceablePasswordCreator.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
+// Project: "Librainian", "PronounceablePasswordCreator.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Security {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Text;
+    using JetBrains.Annotations;
     using Maths;
 
     //  This password generator gives you a list of "pronounceable" passwords. It is modeled after Morrie Gasser's original generator described in
@@ -57,17 +55,13 @@ namespace LibrainianCore.Security {
     // The first digraph-based password generator I know of was written by Daniel J. Edwards about 1965 for MIT's CTSS
     // timesharing system. Over the years I have implemented versions in Multics PL/I, Tandem TAL, C++, Java, and JavaScript.
     // C# version by Richard Hazrrison : http://chateau-logic.com http://zaretto.com
-    /// <summary>
-    ///     Random Password Generator, see http://www.multicians.org/thvv/gpw.html
-    /// </summary>
+    /// <summary>Random Password Generator, see http://www.multicians.org/thvv/gpw.html</summary>
     public static class PronounceablePasswordCreator {
 
         [NotNull]
         public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz";
 
-        /// <summary>
-        ///     create a prounouncable word of the required length using third-order approximation.
-        /// </summary>
+        /// <summary>create a prounouncable word of the required length using third-order approximation.</summary>
         /// <param name="requiredLength"></param>
         /// <returns></returns>
         [NotNull]
@@ -77,7 +71,7 @@ namespace LibrainianCore.Security {
             Int32 c3;
 
             var password = new StringBuilder( capacity: requiredLength );
-            var weightedRandom = ( Int64 ) ( Randem.NextDouble() * GpwData.Sigma );
+            var weightedRandom = ( Int64 )( Randem.NextDouble() * GpwData.Sigma );
             Int64 sum = 0;
 
             var finished = false;
@@ -116,7 +110,7 @@ namespace LibrainianCore.Security {
                     break;
                 }
 
-                weightedRandom = ( Int64 ) ( Randem.NextDouble() * sum );
+                weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
 
                 sum = 0;
 
@@ -138,9 +132,7 @@ namespace LibrainianCore.Security {
             return password.ToString();
         }
 
-        /// <summary>
-        ///     generate a pass phrase built from pronouncable words
-        /// </summary>
+        /// <summary>generate a pass phrase built from pronouncable words</summary>
         /// <param name="minLength"></param>
         /// <param name="minWordLength"></param>
         /// <param name="maxWordLength"></param>

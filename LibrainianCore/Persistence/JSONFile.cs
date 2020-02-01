@@ -24,14 +24,13 @@ namespace LibrainianCore.Persistence {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Linq;
-	using System.Text.Json;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using System.Xml;
+	using JetBrains.Annotations;
 	using Maths;
+	using Newtonsoft.Json;
 	using Threading;
 
 	/// <summary>
@@ -168,15 +167,15 @@ namespace LibrainianCore.Persistence {
 									 return result.IsCompleted;
 								 }
 								 catch ( JsonException exception ) {
-									 exception.More();
+									 exception.Log();
 								 }
 								 catch ( IOException exception ) {
 									 //file in use by another app
-									 exception.More();
+									 exception.Log();
 								 }
 								 catch ( OutOfMemoryException exception ) {
 									 //file is huge
-									 exception.More();
+									 exception.Log();
 								 }
 
 								 return false;
@@ -261,7 +260,7 @@ namespace LibrainianCore.Persistence {
 				if ( retries.Any() ) {
 					goto TryAgain;
 				}
-				exception.More();
+				exception.Log();
 			}
 			return false;
 		}

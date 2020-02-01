@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ResourceScanner.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ResourceScanner.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,21 +28,21 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ResourceScanner.cs" was last formatted by Protiguous on 2019/11/07 at 2:06 PM.
+// Project: "Librainian", "ResourceScanner.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Persistence {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
     using Threading;
     using Utilities;
 
@@ -63,24 +61,21 @@ namespace LibrainianCore.Persistence {
 
         public Boolean Waiting { get; private set; }
 
-        /// <summary>
-        ///     await on this after creation.
-        /// </summary>
+        /// <summary>await on this after creation.</summary>
+        [CanBeNull]
         public Task<Status> Completion => this.CompletionSource.Task;
 
-        /// <summary>
-        ///     Starts scanning the resource via <paramref name="discovery" /> function parameter.
-        /// </summary>
+        /// <summary>Starts scanning the resource via <paramref name="discovery" /> function parameter.</summary>
         /// <param name="discovery">The function to run in a task.</param>
         /// <param name="cancellationSource"></param>
         /// <param name="timeout">Defaults to <see cref="Timeout.InfiniteTimeSpan" /></param>
         public ResourceScanner( [NotNull] Func<Status> discovery, [NotNull] CancellationTokenSource cancellationSource, TimeSpan? timeout = null ) {
             if ( discovery is null ) {
-                throw new ArgumentNullException( paramName: nameof( discovery ) );
+                throw new ArgumentNullException( nameof( discovery ) );
             }
 
             if ( cancellationSource is null ) {
-                throw new ArgumentNullException( paramName: nameof( cancellationSource ) );
+                throw new ArgumentNullException( nameof( cancellationSource ) );
             }
 
             this.CancellationSource =
@@ -101,10 +96,8 @@ namespace LibrainianCore.Persistence {
         ///     <para>Then waits (blocking) for the <see cref="DiscoveryTask" /> to complete.</para>
         ///     <para>Dispose any disposable managed fields or properties.</para>
         ///     <para>
-        ///         Providing the object inside a using construct will then call <see cref="ABetterClassDispose.Dispose()" />,
-        ///         which
-        ///         in turn calls
-        ///         <see cref="ABetterClassDispose.DisposeManaged" /> and <see cref="ABetterClassDispose.DisposeNative" />.
+        ///     Providing the object inside a using construct will then call <see cref="ABetterClassDispose.Dispose()" />, which in turn calls
+        ///     <see cref="ABetterClassDispose.DisposeManaged" /> and <see cref="ABetterClassDispose.DisposeNative" />.
         ///     </para>
         ///     <para>
         ///         <example>Example usage: <code>using ( this.Sink ) { this.Sink=null; }</code></example>
@@ -122,17 +115,13 @@ namespace LibrainianCore.Persistence {
 
         public void RequestStop() => this.CancellationSource.Cancel( throwOnFirstException: false );
 
-        /// <summary>
-        ///     Blocks while waiting for the <see cref="DiscoveryTask" /> to finish.
-        /// </summary>
+        /// <summary>Blocks while waiting for the <see cref="DiscoveryTask" /> to finish.</summary>
         public void Wait() {
             this.Waiting = true;
             this.DiscoveryTask?.Wait( this.CancellationSource.Token ); //eh? or ok?
         }
 
-        /// <summary>
-        ///     awaits for the <see cref="CompletionSource" /> to finish.
-        /// </summary>
+        /// <summary>awaits for the <see cref="CompletionSource" /> to finish.</summary>
         /// <returns></returns>
         public async Task WaitAsync() {
             this.Waiting = true;

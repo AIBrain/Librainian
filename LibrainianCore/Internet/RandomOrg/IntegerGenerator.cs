@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IntegerGenerator.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "IntegerGenerator.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IntegerGenerator.cs" was last formatted by Protiguous on 2019/08/08 at 7:58 AM.
+// Project: "Librainian", "IntegerGenerator.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Internet.RandomOrg {
 
@@ -45,14 +43,18 @@ namespace LibrainianCore.Internet.RandomOrg {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Parsing;
 
     public static class RandomDotOrg {
 
-        internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( num: 1 ) );
+        internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( 1, CancellationTokenSource.Token ) );
+
+        public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
         [ItemNotNull]
         public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
@@ -75,7 +77,7 @@ namespace LibrainianCore.Internet.RandomOrg {
 
             var url = new Uri( "https" + "://random.org/sequences/?min=" + minValue + "&max=" + maxValue + "&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
 
-            var task = url.GetWebPageAsync( Seconds.Two );
+            var task = url.GetWebPageAsync( Seconds.Seven );
 
             if ( task is null ) {
                 throw new InvalidOperationException( "Unable to pull any data from random.org." );
@@ -86,8 +88,7 @@ namespace LibrainianCore.Internet.RandomOrg {
             return responseFromServer.Split( '\n' ).Where( s => s.Any() ).Select( Int32.Parse );
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <see cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
         public class IntegerGenerator {
 
@@ -102,63 +103,66 @@ namespace LibrainianCore.Internet.RandomOrg {
 
             private List<Int32> Ints { get; } = new List<Int32>();
 
-            public IntegerGenerator() => this.Init( NumMax, Min, Max, ColDefault, BaseDefault );
+            public IntegerGenerator( CancellationToken token ) {
+                this.Init( NumMax, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
+            }
 
-            public IntegerGenerator( Int32 num ) => this.Init( num, Min, Max, ColDefault, BaseDefault );
+            public IntegerGenerator( Int32 num, CancellationToken token ) => this.Init( num, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
 
-            public IntegerGenerator( Int32 num, Int32 min ) => this.Init( num, min, Max, ColDefault, BaseDefault );
+            public IntegerGenerator( Int32 num, Int32 min, CancellationToken token ) => this.Init( num, min, Max, ColDefault, BaseDefault, token ).Wait( token );
 
-            public IntegerGenerator( Int32 num, Int32 min, Int32 max ) => this.Init( num, min, max, ColDefault, BaseDefault );
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max, CancellationToken token ) => this.Init( num, min, max, ColDefault, BaseDefault, token ).Wait( token );
 
-            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col ) => this.Init( num, min, max, col, BaseDefault );
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, CancellationToken token ) =>
+                this.Init( num, min, max, col, BaseDefault, token ).Wait( token );
 
-            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) => this.Init( num, min, max, col, inbase );
+            public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) =>
+                this.Init( num, min, max, col, inbase, token ).Wait( token );
 
-            private void Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase ) {
-                if ( num >= NumMin && num <= NumMax ) {
-                    if ( min >= Min ) {
-                        if ( max <= Max ) {
-                            if ( max > min ) {
-                                if ( col > 0 && col <= ColMax ) {
-                                    if ( inbase == 2 || inbase == 8 || inbase == 10 || inbase == 16 ) {
-                                        var toParse =
-                                            $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPage();
-
-                                        if ( toParse is null ) {
-                                            return;
-                                        }
-
-                                        foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
-                                            try {
-                                                if ( !s.IsNullOrWhiteSpace() ) {
-                                                    this.Ints.Add( Convert.ToInt32( s, inbase ) );
-                                                }
-                                            }
-                                            catch { }
-                                        }
-                                    }
-                                    else {
-                                        throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." );
-                                    }
-                                }
-                                else {
-                                    throw new ArgumentOutOfRangeException( nameof( col ), "The column count must be between 1 and 1000000000." );
-                                }
-                            }
-                            else {
-                                throw new ArgumentOutOfRangeException( nameof( min ), "The random number upper bound must be greater than the lower bound." );
-                            }
-                        }
-                        else {
-                            throw new ArgumentOutOfRangeException( nameof( max ), "The random number upper bound must be between -1000000000 and 1000000000." );
-                        }
-                    }
-                    else {
-                        throw new ArgumentOutOfRangeException( nameof( min ), "The random number lower bound must be between -1000000000 and 1000000000." );
-                    }
-                }
-                else {
+            private async Task Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) {
+                if ( num < NumMin || num > NumMax ) {
                     throw new ArgumentOutOfRangeException( nameof( num ), "The number of random numbers to generate must be between 1 and 10000." );
+                }
+
+                if ( min < Min ) {
+                    throw new ArgumentOutOfRangeException( nameof( min ), "The random number lower bound must be between -1000000000 and 1000000000." );
+                }
+
+                if ( max > Max ) {
+                    throw new ArgumentOutOfRangeException( nameof( max ), "The random number upper bound must be between -1000000000 and 1000000000." );
+                }
+
+                if ( max <= min ) {
+                    throw new ArgumentOutOfRangeException( nameof( min ), "The random number upper bound must be greater than the lower bound." );
+                }
+
+                if ( col <= 0 || col > ColMax ) {
+                    throw new ArgumentOutOfRangeException( nameof( col ), "The column count must be between 1 and 1000000000." );
+                }
+
+                if ( inbase != 2 && inbase != 8 && inbase != 10 && inbase != 16 ) {
+                    throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." );
+                }
+
+                var job = $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPageAsync( Minutes.One );
+
+                if ( job == null ) {
+                    throw new InvalidOperationException( "Unable to pull random numbers from Random.Org." );
+                }
+
+                var toParse = await job.ConfigureAwait( false );
+
+                if ( toParse is null ) {
+                    return;
+                }
+
+                foreach ( var s in Regex.Split( toParse, @"\D" ) ) {
+                    try {
+                        if ( !s.IsNullOrWhiteSpace() ) {
+                            this.Ints.Add( Convert.ToInt32( s, inbase ) );
+                        }
+                    }
+                    catch { }
                 }
             }
 

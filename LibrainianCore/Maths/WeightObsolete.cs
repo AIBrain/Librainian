@@ -42,8 +42,10 @@
 namespace LibrainianCore.Maths {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
+    
     using System.Threading;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</para>

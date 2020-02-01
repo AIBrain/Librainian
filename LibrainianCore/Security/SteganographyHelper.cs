@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SteganographyHelper.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "SteganographyHelper.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,20 +28,20 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SteganographyHelper.cs" was last formatted by Protiguous on 2019/08/08 at 9:34 AM.
+// Project: "Librainian", "SteganographyHelper.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Security {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
+    using JetBrains.Annotations;
 
     public static class SteganographyHelper {
 
@@ -55,7 +53,7 @@ namespace LibrainianCore.Security {
         }
 
         [NotNull]
-        public static Bitmap EmbedText( [NotNull] this Bitmap bmp, String text ) {
+        public static Bitmap EmbedText( [NotNull] this Bitmap bmp, [CanBeNull] String text ) {
 
             // initially, we'll be hiding characters in the image
             var state = State.Hiding;
@@ -84,9 +82,9 @@ namespace LibrainianCore.Security {
                     var pixel = bmp.GetPixel( x: j, y: i );
 
                     // now, clear the least significant bit (LSB) from each pixel element
-                    var r = pixel.R - (pixel.R % 2);
-                    var g = pixel.G - (pixel.G % 2);
-                    var b = pixel.B - (pixel.B % 2);
+                    var r = pixel.R - pixel.R % 2;
+                    var g = pixel.G - pixel.G % 2;
+                    var b = pixel.B - pixel.B % 2;
 
                     // for each pixel, pass through its elements (RGB)
                     for ( var n = 0; n < 3; n++ ) {
@@ -124,42 +122,42 @@ namespace LibrainianCore.Security {
                         // check which pixel element has the turn to hide a bit in its LSB
                         switch ( pixelElementIndex % 3 ) {
                             case 0: {
-                                if ( state == State.Hiding ) {
+                                    if ( state == State.Hiding ) {
 
-                                    // the rightmost bit in the character will be (charValue % 2)
-                                    // to put this value instead of the LSB of the pixel element
-                                    // just add it to it
-                                    // recall that the LSB of the pixel element had been cleared
-                                    // before this operation
-                                    r += charValue % 2;
+                                        // the rightmost bit in the character will be (charValue % 2)
+                                        // to put this value instead of the LSB of the pixel element
+                                        // just add it to it
+                                        // recall that the LSB of the pixel element had been cleared
+                                        // before this operation
+                                        r += charValue % 2;
 
-                                    // removes the added rightmost bit of the character
-                                    // such that next time we can reach the next one
-                                    charValue /= 2;
+                                        // removes the added rightmost bit of the character
+                                        // such that next time we can reach the next one
+                                        charValue /= 2;
+                                    }
                                 }
-                            }
 
                                 break;
 
                             case 1: {
-                                if ( state == State.Hiding ) {
-                                    g += charValue % 2;
+                                    if ( state == State.Hiding ) {
+                                        g += charValue % 2;
 
-                                    charValue /= 2;
+                                        charValue /= 2;
+                                    }
                                 }
-                            }
 
                                 break;
 
                             case 2: {
-                                if ( state == State.Hiding ) {
-                                    b += charValue % 2;
+                                    if ( state == State.Hiding ) {
+                                        b += charValue % 2;
 
-                                    charValue /= 2;
+                                        charValue /= 2;
+                                    }
+
+                                    bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
                                 }
-
-                                bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
-                            }
 
                                 break;
                         }
@@ -198,25 +196,25 @@ namespace LibrainianCore.Security {
                         switch ( colorUnitIndex % 3 ) {
                             case 0: {
 
-                                // get the LSB from the pixel element (will be pixel.R % 2)
-                                // then add one bit to the right of the current character
-                                // this can be done by (charValue = charValue * 2)
-                                // replace the added bit (which value is by default 0) with
-                                // the LSB of the pixel element, simply by addition
-                                charValue = (charValue * 2) + (pixel.R % 2);
-                            }
+                                    // get the LSB from the pixel element (will be pixel.R % 2)
+                                    // then add one bit to the right of the current character
+                                    // this can be done by (charValue = charValue * 2)
+                                    // replace the added bit (which value is by default 0) with
+                                    // the LSB of the pixel element, simply by addition
+                                    charValue = charValue * 2 + pixel.R % 2;
+                                }
 
                                 break;
 
                             case 1: {
-                                charValue = (charValue * 2) + (pixel.G % 2);
-                            }
+                                    charValue = charValue * 2 + pixel.G % 2;
+                                }
 
                                 break;
 
                             case 2: {
-                                charValue = (charValue * 2) + (pixel.B % 2);
-                            }
+                                    charValue = charValue * 2 + pixel.B % 2;
+                                }
 
                                 break;
                         }
@@ -235,7 +233,7 @@ namespace LibrainianCore.Security {
                             }
 
                             // convert the character value from int to char
-                            var c = ( Char ) charValue;
+                            var c = ( Char )charValue;
 
                             // add the current character to the result text
                             extractedText += c.ToString();
@@ -251,7 +249,7 @@ namespace LibrainianCore.Security {
             var result = 0;
 
             for ( var i = 0; i < 8; i++ ) {
-                result = (result * 2) + (n % 2);
+                result = result * 2 + n % 2;
 
                 n /= 2;
             }

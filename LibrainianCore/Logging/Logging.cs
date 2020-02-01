@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "Logging.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,21 +26,20 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2019/11/25 at 4:08 PM.
+//
+// Project: "Librainian", "Logging.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Logging {
 
     using System;
-    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Drawing;
     using Extensions;
@@ -54,11 +51,8 @@ namespace LibrainianCore.Logging {
 
     public static class Logging {
 
-        [System.Diagnostics.CodeAnalysis.NotNull]
+        [NotNull]
         public static Logger Logger { get; } = LogManager.GetCurrentClassLogger() ?? throw new InvalidOperationException( $"{nameof( Logger )} is invalid!" );
-
-        [System.Diagnostics.CodeAnalysis.NotNull]
-        public static ConcurrentDictionary<Control, Target> Targets { get; } = new ConcurrentDictionary<Control, Target>();
 
         /// <summary>
         ///     <para>Prints the <paramref name="message" /></para>
@@ -91,47 +85,47 @@ namespace LibrainianCore.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                    return ( Color.Blue, Color.Aqua );
-                }
+                        return (Color.Blue, Color.Aqua);
+                    }
 
                 case LoggingLevel.SubspaceTear: {
-                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
-                }
+                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
+                    }
 
                 case LoggingLevel.Fatal: {
 
-                    return ( Color.DarkRed, Color.Aqua );
-                }
+                        return (Color.DarkRed, Color.Aqua);
+                    }
 
                 case LoggingLevel.Critical: {
 
-                    return ( Color.Red, Color.Aqua );
-                }
+                        return (Color.Red, Color.Aqua);
+                    }
 
                 case LoggingLevel.Error: {
 
-                    return ( Color.Red, Color.White );
-                }
+                        return (Color.Red, Color.White);
+                    }
 
                 case LoggingLevel.Warning: {
 
-                    return ( Color.Goldenrod, Color.White );
-                }
+                        return (Color.Goldenrod, Color.White);
+                    }
 
                 case LoggingLevel.Diagnostic: {
 
-                    return ( Color.Green, Color.White );
-                }
+                        return (Color.Green, Color.White);
+                    }
 
                 case LoggingLevel.Debug: {
 
-                    return ( Color.DarkSeaGreen, Color.White );
-                }
+                        return (Color.DarkSeaGreen, Color.White);
+                    }
 
                 case LoggingLevel.Exception: {
 
-                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
-                }
+                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
+                    }
 
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
@@ -156,7 +150,7 @@ namespace LibrainianCore.Logging {
         public static void Info( [CanBeNull] this String message ) => Logger.Info( message );
 
         [DebuggerStepThrough]
-        [System.Diagnostics.CodeAnalysis.NotNull]
+        [NotNull]
         public static String LevelName( this LoggingLevel loggingLevel ) {
             switch ( loggingLevel ) {
                 case LoggingLevel.Diagnostic: return nameof( LoggingLevel.Diagnostic );
@@ -197,25 +191,9 @@ namespace LibrainianCore.Logging {
             }
         }
 
-        /// <summary></summary>
-        /// <param name="exception"></param>
-        /// <param name="breakinto"></param>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        [System.Diagnostics.CodeAnalysis.NotNull]
-        public static Exception Log( [CanBeNull] this Exception exception, Boolean breakinto = false ) {
-            if ( exception is null ) {
-                $"Null {nameof( Exception )}".Log( breakinto: true );
-            }
-
-            exception.ToStringDemystified().Log( breakinto: breakinto );
-
-            return exception ?? new NullReferenceException( $"Null {nameof( Exception )}" );
-        }
-
         [DebuggerStepThrough]
         [CanBeNull]
-        public static T Log<T>( [CanBeNull] this T message, Boolean breakinto ) {
+        public static T Log<T>( [CanBeNull] this T message, Boolean breakinto = true ) {
             if ( message is null ) {
                 if ( breakinto && Debugger.IsAttached ) {
                     Debugger.Break();
@@ -265,37 +243,21 @@ namespace LibrainianCore.Logging {
             return self;
         }
 
-        /// <summary>Add a <see cref="Target" /> or a <see cref="RichTextBox" />.</summary>
-        /// <param name="minLogLevel"></param>
-        /// <param name="maxLogLevel"></param>
-        /// <param name="target">     </param>
-        /// <param name="rtb">        </param>
         [DebuggerStepThrough]
-        public static Boolean Setup( [System.Diagnostics.CodeAnalysis.NotNull] LogLevel minLogLevel, [System.Diagnostics.CodeAnalysis.NotNull] LogLevel maxLogLevel, [CanBeNull] Target target = null, [CanBeNull] RichTextBox rtb = null ) {
+        public static Boolean Setup( [NotNull] LogLevel minLogLevel, [NotNull] LogLevel maxLogLevel, [CanBeNull] Target target = null ) {
             if ( minLogLevel is null ) {
-                throw new ArgumentNullException( paramName: nameof( minLogLevel ) );
+                throw new ArgumentNullException( nameof( minLogLevel ) );
             }
 
             if ( maxLogLevel is null ) {
-                throw new ArgumentNullException( paramName: nameof( maxLogLevel ) );
+                throw new ArgumentNullException( nameof( maxLogLevel ) );
             }
 
-            switch ( target ) {
-                case null when rtb is null:
-                    "No target or control specified to setup!".Break();
-
-                    return false;
-
-                case null:
-                    target = rtb.ToTarget();
-
-                    break;
-            }
 
             if ( target is null ) {
                 $"Unable to set up target for {minLogLevel} to {maxLogLevel}".Break();
 
-                return false;
+                return default;
             }
 
             LogManager.Configuration?.AddTarget( target );
@@ -303,7 +265,6 @@ namespace LibrainianCore.Logging {
 
             return LogManager.Configuration?.AllTargets?.Contains( target ) == true;
         }
-
 
         [DebuggerStepThrough]
         public static void Trace( [CanBeNull] this String message ) => Logger.Trace( message );
@@ -319,7 +280,8 @@ namespace LibrainianCore.Logging {
         public static void Verbose( [CanBeNull] this String message ) {
             if ( Logger.IsTraceEnabled ) {
                 Logger.Trace( message );
-            } else if ( Logger.IsDebugEnabled ) {
+            }
+            else if ( Logger.IsDebugEnabled ) {
                 Logger.Debug( message );
             }
         }
@@ -332,7 +294,5 @@ namespace LibrainianCore.Logging {
 
         [DebuggerStepThrough]
         public static void Warn<T>( [CanBeNull] this T message ) => Logger.Warn( message );
-
     }
-
 }

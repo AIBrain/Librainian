@@ -129,7 +129,7 @@ namespace LibrainianCore.OperatingSystem {
             PlatformIDVms = 700
         }
 
-        public enum Sv101Types : uint {
+        public enum Sv101Types : UInt32 {
             SvTypeWorkstation = 0x00000001,
 
             SvTypeServer = 0x00000002,
@@ -218,9 +218,7 @@ namespace LibrainianCore.OperatingSystem {
         [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode, IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-        public static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) {
-            return deviceType << 16 | access << 14 | function << 2 | method;
-        }
+        public static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => deviceType << 16 | access << 14 | function << 2 | method;
 
         [DllImport( "kernel32.dll", CharSet = CharSet.Auto, SetLastError = true )]
         public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize, out Int32 pBytesReturned, IntPtr lpOverlapped );
@@ -375,7 +373,7 @@ namespace LibrainianCore.OperatingSystem {
         public static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, Int32 dwDesiredAccess, Int32 dwFileOffsetHigh, Int32 dwFileOffsetLow, IntPtr dwNumBytesToMap );
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        public static extern Boolean MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, NativeMethods.CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
+        public static extern Boolean MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, Pri.LongPathCore.NativeMethods.CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
 
         /// <summary>
         ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the
@@ -532,14 +530,11 @@ namespace LibrainianCore.OperatingSystem {
             ///     use only when QuadPart cannot be passed
             /// </summary>
             /// <returns></returns>
-            public Int64 ToInt64() {
-                return ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
-            }
+            public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
 
             // just for demonstration
-            public static LargeInteger FromInt64( Int64 value ) {
-                return new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
-            }
+            public static LargeInteger FromInt64( Int64 value ) => new LargeInteger { Low = ( Int32 )value, High = ( Int32 )( value >> 32 ) };
+
         }
 
         [StructLayout( LayoutKind.Sequential )]

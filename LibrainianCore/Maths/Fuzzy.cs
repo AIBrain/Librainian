@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Fuzzy.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Fuzzy.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,18 +28,20 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2019/08/08 at 8:18 AM.
+// Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Maths {
 
     using System;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
     using Numbers;
 
     public enum LowMiddleHigh {
@@ -53,33 +53,23 @@ namespace LibrainianCore.Maths {
         High
     }
 
-    /// <summary>
-    ///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
-    /// </summary>
+    /// <summary>A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked</summary>
     [JsonObject]
     public class Fuzzy : ICloneable {
 
-        /// <summary>
-        ///     ONLY used in the getter and setter.
-        /// </summary>
+        /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private AtomicDouble _value;
 
         public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
-        /// <summary>
-        ///     1
-        /// </summary>
+        /// <summary>1</summary>
         public const Double MaxValue = 1D;
 
-        /// <summary>
-        ///     0
-        /// </summary>
+        /// <summary>0</summary>
         public const Double MinValue = 0D;
 
-        /// <summary>
-        ///     ~25 to 75% probability.
-        /// </summary>
+        /// <summary>~25 to 75% probability.</summary>
         private static PairOfDoubles Undecided { get; } = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
 
         public static Fuzzy Empty { get; }
@@ -99,14 +89,7 @@ namespace LibrainianCore.Maths {
             }
         }
 
-        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
-        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
-        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
-        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
-
-        /// <summary>
-        ///    If <paramref name="value"/> is null, then Initializes to a random number between 0 and 1.
-        /// </summary>
+        /// <summary>If <paramref name="value" /> is null, then Initializes to a random number between 0 and 1.</summary>
         public Fuzzy( Double? value = null ) {
             if ( value.HasValue ) {
                 this.Value = value.Value;
@@ -116,16 +99,20 @@ namespace LibrainianCore.Maths {
             }
         }
 
-        public static Double Combine( Double left, Double rhs ) {
+        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
+        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
+        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
+        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
+        public static Double Combine( Double left, Double right ) {
             if ( !left.IsNumber() ) {
                 throw new ArgumentOutOfRangeException( nameof( left ) );
             }
 
-            if ( !rhs.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( nameof( rhs ) );
+            if ( !right.IsNumber() ) {
+                throw new ArgumentOutOfRangeException( nameof( right ) );
             }
 
-            return ( left + rhs ) / 2D;
+            return ( left + right ) / 2D;
         }
 
         [CanBeNull]
@@ -164,9 +151,7 @@ namespace LibrainianCore.Maths {
 
         public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
 
-        /// <summary>
-        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
-        /// </summary>
+        /// <summary>Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)</summary>
         public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
             switch ( lmh ) {
                 case null:

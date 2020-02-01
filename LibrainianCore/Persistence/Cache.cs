@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Cache.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Cache.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,24 +28,24 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Cache.cs" was last formatted by Protiguous on 2019/11/01 at 11:24 PM.
+// Project: "Librainian", "Cache.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Persistence {
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Collections.Extensions;
     using Extensions;
+    using JetBrains.Annotations;
     using Logging;
     using Parsing;
 
@@ -58,29 +56,25 @@ namespace LibrainianCore.Persistence {
     /// </summary>
     public static class Cache {
 
-        /// <summary>
-        ///     Gets a reference to the default <see cref="T:System.Runtime.Caching.MemoryCache" /> instance.
-        /// </summary>
+        /// <summary>Gets a reference to the default <see cref="MemoryCache" /> instance.</summary>
         /// <remarks></remarks>
         [NotNull]
         private static MemoryCache Memory { get; } = MemoryCache.Default;
 
         static Cache() => $"{Memory.CacheMemoryLimit.SizeSuffix()} memory available for caching.".Log();
 
-        /// <summary>
-        ///     Build a key from combining 1 or more <see cref="T" /> (converted to Strings).
-        /// </summary>
+        /// <summary>Build a key from combining 1 or more <see cref="T" /> (converted to Strings).</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="things"></param>
         [NotNull]
         [DebuggerStepThrough]
         public static String BuildKey<T>( [NotNull] params T[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( paramName: nameof( things ) );
+                throw new ArgumentNullException( nameof( things ) );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( things ) );
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
@@ -105,19 +99,17 @@ namespace LibrainianCore.Persistence {
             return parts.ToStrings( Symbols.TwoPipes ).Trim();
         }
 
-        /// <summary>
-        ///     Build a key from combining 1 or more Objects.
-        /// </summary>
+        /// <summary>Build a key from combining 1 or more Objects.</summary>
         /// <param name="things"></param>
         [NotNull]
         [DebuggerStepThrough]
         public static String BuildKey( [NotNull] params Object[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( paramName: nameof( things ) ).Log( true );
+                throw new ArgumentNullException( nameof( things ) ).Log( true );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( things ) );
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
@@ -137,29 +129,25 @@ namespace LibrainianCore.Persistence {
             return parts.ToStrings( Symbols.TwoPipes ).Trim();
         }
 
-        /// <summary>
-        ///     Remove <paramref name="key" /> from the cache.
-        /// </summary>
+        /// <summary>Remove <paramref name="key" /> from the cache.</summary>
         /// <param name="key"></param>
         public static void Forget( [NotNull] String key ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
             }
 
             Memory.Remove( key );
         }
 
-        /// <summary>
-        ///     Remove <paramref name="keys" /> from the cache.
-        /// </summary>
+        /// <summary>Remove <paramref name="keys" /> from the cache.</summary>
         /// <param name="keys"></param>
         public static void Forget( [NotNull] params Object[] keys ) {
             if ( keys is null ) {
-                throw new ArgumentNullException( paramName: nameof( keys ) );
+                throw new ArgumentNullException( nameof( keys ) );
             }
 
             if ( !keys.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keys ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( keys ) );
             }
 
             var key = BuildKey( keys );
@@ -167,32 +155,28 @@ namespace LibrainianCore.Persistence {
             Memory.Remove( key );
         }
 
-        /// <summary>
-        ///     Remove <paramref name="keyBuilder" /> from the cache.
-        /// </summary>
+        /// <summary>Remove <paramref name="keyBuilder" /> from the cache.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="keyBuilder"></param>
         public static void Forget<T>( [NotNull] params T[] keyBuilder ) {
             if ( keyBuilder is null ) {
-                throw new ArgumentNullException( paramName: nameof( keyBuilder ) );
+                throw new ArgumentNullException( nameof( keyBuilder ) );
             }
 
             if ( !keyBuilder.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keyBuilder ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( keyBuilder ) );
             }
 
             Memory.Remove( BuildKey( keyBuilder ) );
         }
 
-        /// <summary>
-        ///     Attempt to pull <paramref name="key" /> from cache.
-        /// </summary>
+        /// <summary>Attempt to pull <paramref name="key" /> from cache.</summary>
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
         public static Object Recall( [NotNull] String key ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
             }
 
             return Memory[ key ];
@@ -215,7 +199,7 @@ namespace LibrainianCore.Persistence {
         [CanBeNull]
         public static T Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
             if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
             }
 
             if ( value is null ) {
@@ -229,23 +213,17 @@ namespace LibrainianCore.Persistence {
             return value;
         }
 
-        /// <summary>
-        ///     These expire at a given time from Now.
-        /// </summary>
+        /// <summary>These expire at a given time from Now.</summary>
         public static class Absolute {
 
-            /// <summary>
-            ///     <paramref name="hours" /> from now.
-            /// </summary>
+            /// <summary><paramref name="hours" /> from now.</summary>
             [NotNull]
             public static CacheItemPolicy Hours( Double hours ) =>
                 new CacheItemPolicy {
                     AbsoluteExpiration = DateTime.Now.AddHours( hours )
                 };
 
-            /// <summary>
-            ///     <paramref name="milliseconds" /> from now.
-            /// </summary>
+            /// <summary><paramref name="milliseconds" /> from now.</summary>
             /// <param name="milliseconds"></param>
             /// <returns></returns>
             [NotNull]
@@ -254,9 +232,7 @@ namespace LibrainianCore.Persistence {
                     AbsoluteExpiration = DateTime.Now.AddMilliseconds( milliseconds )
                 };
 
-            /// <summary>
-            ///     <paramref name="minutes" /> from now.
-            /// </summary>
+            /// <summary><paramref name="minutes" /> from now.</summary>
             /// <param name="minutes"></param>
             /// <returns></returns>
             [NotNull]
@@ -265,9 +241,7 @@ namespace LibrainianCore.Persistence {
                     AbsoluteExpiration = DateTime.Now.AddMinutes( minutes )
                 };
 
-            /// <summary>
-            ///     <paramref name="seconds" /> from now.
-            /// </summary>
+            /// <summary><paramref name="seconds" /> from now.</summary>
             /// <param name="seconds"></param>
             /// <returns></returns>
             [NotNull]
@@ -277,23 +251,17 @@ namespace LibrainianCore.Persistence {
                 };
         }
 
-        /// <summary>
-        ///     A span of time within which a cache entry must be accessed before the cache entry is evicted from the cache.
-        /// </summary>
+        /// <summary>A span of time within which a cache entry must be accessed before the cache entry is evicted from the cache.</summary>
         public static class Sliding {
 
-            /// <summary>
-            ///     <paramref name="hours" /> from now.
-            /// </summary>
+            /// <summary><paramref name="hours" /> from now.</summary>
             [NotNull]
             public static CacheItemPolicy Hours( Double hours ) =>
                 new CacheItemPolicy {
                     SlidingExpiration = TimeSpan.FromHours( hours )
                 };
 
-            /// <summary>
-            ///     <paramref name="milliseconds" /> from now.
-            /// </summary>
+            /// <summary><paramref name="milliseconds" /> from now.</summary>
             /// <param name="milliseconds"></param>
             /// <returns></returns>
             [NotNull]
@@ -302,9 +270,7 @@ namespace LibrainianCore.Persistence {
                     SlidingExpiration = TimeSpan.FromMilliseconds( milliseconds )
                 };
 
-            /// <summary>
-            ///     <paramref name="minutes" /> from now.
-            /// </summary>
+            /// <summary><paramref name="minutes" /> from now.</summary>
             /// <param name="minutes"></param>
             /// <returns></returns>
             [NotNull]
@@ -313,9 +279,7 @@ namespace LibrainianCore.Persistence {
                     SlidingExpiration = TimeSpan.FromMinutes( minutes )
                 };
 
-            /// <summary>
-            ///     <paramref name="seconds" /> from now.
-            /// </summary>
+            /// <summary><paramref name="seconds" /> from now.</summary>
             /// <param name="seconds"></param>
             /// <returns></returns>
             [NotNull]

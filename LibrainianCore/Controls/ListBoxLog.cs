@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ListBoxLog.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ListBoxLog.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,22 +28,26 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2019/11/25 at 3:45 PM.
+// Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace LibrainianCore.Controls {
 
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Drawing;
     using System.Text;
+    using System.Windows.Forms;
+    using JetBrains.Annotations;
     using Logging;
+    using Maths;
+    using NLog;
     using Utilities;
 
     /// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
@@ -74,17 +76,17 @@ namespace LibrainianCore.Controls {
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
             if ( listBox is null ) {
-                throw new ArgumentNullException( paramName: nameof( listBox ) );
+                throw new ArgumentNullException( nameof( listBox ) );
             }
 
             if ( messageFormat is null ) {
-                throw new ArgumentNullException( paramName: nameof( messageFormat ) );
+                throw new ArgumentNullException( nameof( messageFormat ) );
             }
         }
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
             if ( String.IsNullOrWhiteSpace( value: messageFormat ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( messageFormat ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( messageFormat ) );
             }
 
             this.Box = listBox ?? throw new ArgumentNullException( nameof( listBox ) );
@@ -128,6 +130,10 @@ namespace LibrainianCore.Controls {
         }
 
         private void AddALogEntry( [CanBeNull] Object item ) {
+            if ( item == null ) {
+                return;
+            }
+
             var items = this.Box.Items;
 
             if ( items.Count == 0 ) {
@@ -136,7 +142,7 @@ namespace LibrainianCore.Controls {
                 return;
             }
 
-            var currentText = items[ items.Count - 1 ] as String ?? String.Empty;
+            var currentText = items[ ^1 ] as String ?? String.Empty;
             currentText += item as String ?? String.Empty;
             this.Box.Items[ items.Count - 1 ] = currentText;
         }
@@ -272,10 +278,10 @@ namespace LibrainianCore.Controls {
 
         public void LogLine( [CanBeNull] String message ) => this.LogLine( LoggingLevel.Debug, message );
 
-        public void LogLine( [CanBeNull] String format, [CanBeNull] params Object[] args ) =>
+        public void LogLine( [CanBeNull] String format, [NotNull] params Object[] args ) =>
             this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, [CanBeNull] params Object[] args ) =>
+        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, [NotNull] params Object[] args ) =>
             this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
         public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );

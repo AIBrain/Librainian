@@ -21,7 +21,8 @@
 namespace LibrainianCore.Parsing {
 
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
 
     [JsonObject]
     public class Sequence<TType> {

@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ParallelAlgorithms.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ParallelAlgorithms.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,32 +28,27 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ParallelAlgorithms.cs" was last formatted by Protiguous on 2019/08/08 at 9:37 AM.
+// Project: "Librainian", "ParallelAlgorithms.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace LibrainianCore.Threading {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Copyright (c) Microsoft Corporation. All rights reserved.
-    ///     File: ParallelAlgorithms_Wavefront.cs
-    /// </summary>
+    /// <summary>Copyright (c) Microsoft Corporation. All rights reserved. File: ParallelAlgorithms_Wavefront.cs</summary>
     public static class ParallelAlgorithms {
 
-        /// <summary>
-        ///     Executes a function for each value in a range, returning the first result achieved and ceasing execution.
-        /// </summary>
+        /// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
         /// <param name="fromInclusive">The start of the range, inclusive.</param>
         /// <param name="toExclusive">  The end of the range, exclusive.</param>
@@ -65,9 +58,7 @@ namespace LibrainianCore.Threading {
         public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) =>
             fromInclusive.SpeculativeFor( toExclusive, CPU.AllCPUExceptOne, body );
 
-        /// <summary>
-        ///     Executes a function for each value in a range, returning the first result achieved and ceasing execution.
-        /// </summary>
+        /// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
         /// <param name="fromInclusive">The start of the range, inclusive.</param>
         /// <param name="toExclusive">  The end of the range, exclusive.</param>
@@ -96,9 +87,7 @@ namespace LibrainianCore.Threading {
             return ( TResult )result;
         }
 
-        /// <summary>
-        ///     Executes a function for each element in a source, returning the first result achieved and ceasing execution.
-        /// </summary>
+        /// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TSource">The type of the data in the source.</typeparam>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
         /// <param name="source">The input elements to be processed.</param>
@@ -108,9 +97,7 @@ namespace LibrainianCore.Threading {
         public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) =>
             source.SpeculativeForEach( CPU.AllCPUExceptOne, body );
 
-        /// <summary>
-        ///     Executes a function for each element in a source, returning the first result achieved and ceasing execution.
-        /// </summary>
+        /// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TSource">The type of the data in the source.</typeparam>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
         /// <param name="source"> The input elements to be processed.</param>
@@ -140,18 +127,14 @@ namespace LibrainianCore.Threading {
             return ( TResult )result;
         }
 
-        /// <summary>
-        ///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.
-        /// </summary>
+        /// <summary>Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.</summary>
         /// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
         /// <param name="functions">The functions to be executed.</param>
         /// <returns>A result from executing one of the functions.</returns>
         [CanBeNull]
         public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllCPUExceptOne.SpeculativeInvoke( functions );
 
-        /// <summary>
-        ///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.
-        /// </summary>
+        /// <summary>Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.</summary>
         /// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
         /// <param name="options">  The options to use for the execution.</param>
         /// <param name="functions">The functions to be executed.</param>
@@ -172,13 +155,8 @@ namespace LibrainianCore.Threading {
             return functions.SpeculativeForEach( options, function => function() );
         }
 
-        /// <summary>
-        ///     Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.
-        /// </summary>
-        /// <param name="processBlock">
-        ///     The action to invoke for every block, supplied with the start and end indices of the
-        ///     rows and columns.
-        /// </param>
+        /// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
+        /// <param name="processBlock">The action to invoke for every block, supplied with the start and end indices of the rows and columns.</param>
         /// <param name="numRows">           The number of rows in the matrix.</param>
         /// <param name="numColumns">        The number of columns in the matrix.</param>
         /// <param name="numBlocksPerRow">   Partition the matrix into this number of blocks along the rows.</param>
@@ -222,9 +200,7 @@ namespace LibrainianCore.Threading {
             }, numBlocksPerRow, numBlocksPerColumn );
         }
 
-        /// <summary>
-        ///     Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.
-        /// </summary>
+        /// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
         /// <param name="processRowColumnCell">The action to invoke for every cell, supplied with the row and column indices.</param>
         /// <param name="numRows">             The number of rows in the matrix.</param>
         /// <param name="numColumns">          The number of columns in the matrix.</param>

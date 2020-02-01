@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "UInt256.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "UInt256.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,24 +28,23 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "UInt256.cs" was last formatted by Protiguous on 2019/08/08 at 8:32 AM.
+// Project: "Librainian", "UInt256.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Maths.Numbers {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.Net;
     using System.Numerics;
     using Hashings;
+    using JetBrains.Annotations;
 
     /// <summary>
     ///     <para>Pulled from the BitcoinSharp project.</para>
@@ -124,7 +121,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public static explicit operator BigInteger( UInt256 value ) => value.ToBigInteger();
 
-        public static explicit operator Double( UInt256 value ) => ( Double ) value.ToBigInteger();
+        public static explicit operator Double( UInt256 value ) => ( Double )value.ToBigInteger();
 
         //TODO properly taken into account host endianness
         public static UInt256 FromByteArray( [NotNull] Byte[] buffer ) {
@@ -133,10 +130,10 @@ namespace LibrainianCore.Maths.Numbers {
                     throw new ArgumentException();
                 }
 
-                var part1 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
-                var part2 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 8 ) );
-                var part3 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 16 ) );
-                var part4 = ( UInt64 ) IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 24 ) );
+                var part1 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
+                var part2 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 8 ) );
+                var part3 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 16 ) );
+                var part4 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 24 ) );
 
                 return new UInt256( part1, part2, part3, part4 );
             }
@@ -247,13 +244,14 @@ namespace LibrainianCore.Maths.Numbers {
 
         public static UInt256 operator >>( UInt256 value, Int32 shift ) => new UInt256( value.ToBigInteger() >> shift );
 
-        public static UInt256 Parse( String value ) => new UInt256( BigInteger.Parse( "0" + value ).ToByteArray() );
+        public static UInt256 Parse( [CanBeNull] String value ) => new UInt256( BigInteger.Parse( "0" + value ).ToByteArray() );
 
-        public static UInt256 Parse( String value, IFormatProvider provider ) => new UInt256( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
+        public static UInt256 Parse( [CanBeNull] String value, [CanBeNull] IFormatProvider provider ) =>
+            new UInt256( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-        public static UInt256 Parse( String value, NumberStyles style ) => new UInt256( BigInteger.Parse( "0" + value, style ).ToByteArray() );
+        public static UInt256 Parse( [CanBeNull] String value, NumberStyles style ) => new UInt256( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
-        public static UInt256 Parse( String value, NumberStyles style, IFormatProvider provider ) =>
+        public static UInt256 Parse( [CanBeNull] String value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
             new UInt256( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
         public static UInt256 Pow( UInt256 value, Int32 exponent ) => new UInt256( BigInteger.Pow( value.ToBigInteger(), exponent ) );
@@ -276,10 +274,10 @@ namespace LibrainianCore.Maths.Numbers {
 
         public override Boolean Equals( Object obj ) {
             if ( !( obj is UInt256 ) ) {
-                return false;
+                return default;
             }
 
-            var other = ( UInt256 ) obj;
+            var other = ( UInt256 )obj;
 
             return other._part1 == this._part1 && other._part2 == this._part2 && other._part3 == this._part3 && other._part4 == this._part4;
         }
@@ -312,10 +310,10 @@ namespace LibrainianCore.Maths.Numbers {
         public Byte[] ToByteArrayBe() {
             unchecked {
                 var buffer = new Byte[ 32 ];
-                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 ) this._part1 ) ), 0, buffer, 0, 8 );
-                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 ) this._part2 ) ), 0, buffer, 8, 8 );
-                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 ) this._part3 ) ), 0, buffer, 16, 8 );
-                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 ) this._part4 ) ), 0, buffer, 24, 8 );
+                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part1 ) ), 0, buffer, 0, 8 );
+                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part2 ) ), 0, buffer, 8, 8 );
+                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part3 ) ), 0, buffer, 16, 8 );
+                Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part4 ) ), 0, buffer, 24, 8 );
 
                 return buffer;
             }

@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "D.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "D.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,22 +28,23 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "D.cs" was last formatted by Protiguous on 2019/08/08 at 9:28 AM.
+// Project: "Librainian", "D.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Persistence {
 
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
+    using JetBrains.Annotations;
     using Microsoft.VisualBasic;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     <para>[D]ata([K]ey=[V]alue)</para>
@@ -58,16 +57,12 @@ namespace LibrainianCore.Persistence {
         ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
     public class D : IEqualityComparer<D> {
 
-        /// <summary>
-        ///     The key.
-        /// </summary>
+        /// <summary>The key.</summary>
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         [NotNull]
         public String K { get; }
 
-        /// <summary>
-        ///     The value.
-        /// </summary>
+        /// <summary>The value.</summary>
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         [CanBeNull]
         public String V { get; set; }
@@ -80,7 +75,7 @@ namespace LibrainianCore.Persistence {
         public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
         public D( [NotNull] String key, [CanBeNull] String value ) {
-            this.K = key ?? throw new ArgumentNullException( paramName: nameof( key ) );
+            this.K = key ?? throw new ArgumentNullException( nameof( key ) );
             this.V = value;
         }
 
@@ -121,17 +116,17 @@ namespace LibrainianCore.Persistence {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( D left, D right ) {
+        public static Boolean Equals( [CanBeNull] D left, [CanBeNull] D right ) {
             if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
-                return false;
+                return default;
             }
 
             if ( ReferenceEquals( left.V, right.V ) ) {
@@ -139,7 +134,7 @@ namespace LibrainianCore.Persistence {
             }
 
             if ( left.V is null || right.V is null ) {
-                return false;
+                return default;
             }
 
             return left.V.Equals( right.V, StringComparison.Ordinal );

@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2019/11/25 at 3:09 PM.
+//
+// Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Extensions {
 
@@ -45,30 +43,30 @@ namespace LibrainianCore.Extensions {
     using System.Collections;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
+    using JetBrains.Annotations;
     using Logging;
 
     //using System.Runtime.InteropServices;
 
     public static class Types {
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
         public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
-
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
         private delegate Object ObjectActivator();
 
         public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) {
             if ( p is null ) {
-                throw new ArgumentNullException( paramName: nameof( p ) );
+                throw new ArgumentNullException( nameof( p ) );
             }
 
             return value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
@@ -80,15 +78,15 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => item != null ).Select( item => ( T ) item.Clone() ).ToList();
+            list.Where( item => item != null ).Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException( nameof( source ) );
             }
 
             if ( destination is null ) {
-                throw new ArgumentNullException( paramName: nameof( destination ) );
+                throw new ArgumentNullException( nameof( destination ) );
             }
 
             if ( field is null ) {
@@ -125,7 +123,7 @@ namespace LibrainianCore.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyFields<TSource>( this TSource source, TSource destination ) {
+        public static Boolean CopyFields<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             try {
                 var sourceFields = source.GetType().GetAllFields();
                 var destFields = destination.GetType().GetAllFields();
@@ -137,7 +135,7 @@ namespace LibrainianCore.Extensions {
                 return true;
             }
             catch ( Exception ) {
-                return false;
+                return default;
             }
         }
 
@@ -146,7 +144,7 @@ namespace LibrainianCore.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean CopyProperties<TSource>( this TSource source, TSource destination ) {
+        public static Boolean CopyProperties<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             try {
                 var sourceProps = source.GetType().GetAllProperties().Where( prop => prop.CanRead );
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
@@ -158,11 +156,11 @@ namespace LibrainianCore.Extensions {
                 return true;
             }
             catch ( Exception ) {
-                return false;
+                return default;
             }
         }
 
-        public static void CopyProperty<TSource>( this TSource source, TSource destination, [NotNull] PropertyInfo prop ) {
+        public static void CopyProperty<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination, [NotNull] PropertyInfo prop ) {
             if ( prop is null ) {
                 throw new ArgumentNullException( nameof( prop ) );
             }
@@ -197,17 +195,17 @@ namespace LibrainianCore.Extensions {
         /// <param name="source">     </param>
         /// <param name="destination"></param>
         /// <returns></returns>
-        public static Boolean DeepClone<TSource>( this TSource source, TSource destination ) {
+        public static Boolean DeepClone<TSource>( [CanBeNull] this TSource source, [CanBeNull] TSource destination ) {
             if ( ReferenceEquals( source, destination ) ) {
                 return true;
             }
 
             if ( Equals( source, default ) ) {
-                return false;
+                return default;
             }
 
             if ( Equals( destination, default ) ) {
-                return false;
+                return default;
             }
 
             //copy all settable fields
@@ -245,7 +243,7 @@ namespace LibrainianCore.Extensions {
         }
 
         [ItemCanBeNull]
-        public static IEnumerable<T> GetEnumerableOfType<T>( params Object[] constructorArgs ) where T : class, IComparable<T> {
+        public static IEnumerable<T> GetEnumerableOfType<T>( [CanBeNull] params Object[] constructorArgs ) where T : class, IComparable<T> {
             if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out var list ) ) {
                 list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
                 EnumerableOfTypeCache[ typeof( T ) ] = list;
@@ -257,7 +255,7 @@ namespace LibrainianCore.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -300,15 +298,15 @@ namespace LibrainianCore.Extensions {
 
         public static Boolean HasDefaultConstructor( [NotNull] this Type t ) {
             if ( t is null ) {
-                throw new ArgumentNullException( paramName: nameof( t ) );
+                throw new ArgumentNullException( nameof( t ) );
             }
 
             return t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;
         }
 
         /// <summary>
-        /// Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory without potential segmentation faults (i.e. the type contains no
-        /// managed references such as <see cref="String" /> s). This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
+        /// Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory without potential segmentation faults (i.e. the type
+        /// contains no managed references such as <see cref="String" /> s). This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
         /// </summary>
         /// <returns>True if the type can be copied (blitted), or false if not.</returns>
         public static Boolean IsBlittable( [NotNull] this Type self ) {
@@ -343,7 +341,7 @@ namespace LibrainianCore.Extensions {
         /// <param name="type">   </param>
         /// <param name="generic"></param>
         /// <returns></returns>
-        public static Boolean IsSubclassOfRawGeneric( this Type type, Type generic ) {
+        public static Boolean IsSubclassOfRawGeneric( this Type type, [CanBeNull] Type generic ) {
             while ( type != typeof( Object ) ) {
                 var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
@@ -354,16 +352,16 @@ namespace LibrainianCore.Extensions {
                 type = type?.BaseType;
             }
 
-            return false;
+            return default;
         }
 
-        public static Boolean MergeDictionaries<TSource>( [CanBeNull] this IDictionary sourceValue, FieldInfo field, TSource destination ) {
+        public static Boolean MergeDictionaries<TSource>( [CanBeNull] this IDictionary sourceValue, [CanBeNull] FieldInfo field, [CanBeNull] TSource destination ) {
             if ( null == sourceValue ) {
-                return false;
+                return default;
             }
 
             if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) {
-                return false;
+                return default;
             }
 
             foreach ( var key in sourceValue.Keys ) {
@@ -414,11 +412,11 @@ namespace LibrainianCore.Extensions {
 
                 ilGenerator.Emit( OpCodes.Ret );
 
-                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
                 ObjectActivators.Add( type, activator );
             }
 
-            return ( T ) activator.Invoke();
+            return ( T )activator.Invoke();
         }
 
         [NotNull]
@@ -508,26 +506,26 @@ namespace LibrainianCore.Extensions {
                 if ( underlyingType == typeof( Guid ) ) {
                     switch ( value ) {
                         case String s: {
-                            value = new Guid( s );
+                                value = new Guid( s );
 
-                            break;
-                        }
+                                break;
+                            }
                         case Byte[] bytes: {
-                            value = new Guid( bytes );
+                                value = new Guid( bytes );
 
-                            break;
-                        }
+                                break;
+                            }
                     }
                 }
 
-                result = ( T ) Convert.ChangeType( value, underlyingType );
+                result = ( T )Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
             catch ( Exception ) {
                 result = default;
 
-                return false;
+                return default;
             }
         }
 
@@ -601,7 +599,5 @@ namespace LibrainianCore.Extensions {
         //            }
         //    }
         //}
-
     }
-
 }

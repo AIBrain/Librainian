@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-// 
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+//
+// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
+//
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+//
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,31 +26,34 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2019/11/25 at 3:17 PM.
+//
+// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Converters {
 
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
     using System.IO;
     using System.Numerics;
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Windows.Forms;
     using Collections.Extensions;
+    using Controls;
+    using Databases;
     using Extensions;
+    using JetBrains.Annotations;
     using Logging;
     using Maths;
     using Maths.Numbers;
@@ -100,7 +101,7 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
+                return ( T )Convert.ChangeType( scalar, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -152,7 +153,7 @@ namespace LibrainianCore.Converters {
         [Pure]
         public static String StripLetters( [NotNull] this String s ) {
             if ( s is null ) {
-                throw new ArgumentNullException( paramName: nameof( s ) );
+                throw new ArgumentNullException( nameof( s ) );
             }
 
             return Regex.Replace( s, "[a-zA-Z]", String.Empty );
@@ -174,24 +175,24 @@ namespace LibrainianCore.Converters {
         [Pure]
         public static Boolean ToBoolean<T>( [CanBeNull] this T value ) {
             switch ( value ) {
-                case null: return false;
+                case null: return default;
                 case Boolean b: return b;
                 case Char c: return c.In( TrueChars );
                 case Int32 i: return i >= 1;
-                case String s when String.IsNullOrWhiteSpace( s ): return false;
+                case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s.In( TrueStrings ) ) {
-                        return true;
+                        if ( s.In( TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
                 case Control control: return control.Text().ToBoolean();
             }
 
@@ -205,7 +206,7 @@ namespace LibrainianCore.Converters {
                 }
 
                 if ( t.In( FalseStrings ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( Boolean.TryParse( t, out var rest ) ) {
@@ -213,7 +214,7 @@ namespace LibrainianCore.Converters {
                 }
             }
 
-            return false;
+            return default;
         }
 
         [DebuggerStepThrough]
@@ -251,7 +252,7 @@ namespace LibrainianCore.Converters {
                 }
 
                 if ( s.In( ParsingConstants.FalseStrings ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( Boolean.TryParse( s, out var result ) ) {
@@ -272,7 +273,7 @@ namespace LibrainianCore.Converters {
             }
 
             if ( t.In( ParsingConstants.FalseStrings ) ) {
-                return false;
+                return default;
             }
 
             if ( Boolean.TryParse( t, out var rest ) ) {
@@ -340,7 +341,7 @@ namespace LibrainianCore.Converters {
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
             return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
+                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -447,17 +448,17 @@ namespace LibrainianCore.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
-                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
-                        , c: ( UInt16 ) dateTime.Millisecond //6,7
-                        , d: ( Byte ) dateTime.DayOfWeek //8
-                        , e: ( Byte ) dateTime.Day //9
-                        , f: ( Byte ) dateTime.Hour //10
-                        , g: ( Byte ) dateTime.Minute //11
-                        , h: ( Byte ) dateTime.Second //12
-                        , i: ( Byte ) dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
+                        , b: ( UInt16 )dateTime.DayOfYear //4,5
+                        , c: ( UInt16 )dateTime.Millisecond //6,7
+                        , d: ( Byte )dateTime.DayOfWeek //8
+                        , e: ( Byte )dateTime.Day //9
+                        , f: ( Byte )dateTime.Hour //10
+                        , g: ( Byte )dateTime.Minute //11
+                        , h: ( Byte )dateTime.Second //12
+                        , i: ( Byte )dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte ) dateTime.Kind ); //15
+                        , k: ( Byte )dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -502,13 +503,13 @@ namespace LibrainianCore.Converters {
                     s = value.ToString();
                 }
 
-                s = s.StripLetters();
-                s = s.Replace( "$", String.Empty );
-                s = s.Replace( ")", String.Empty );
-                s = s.Replace( "(", "-" );
-                s = s.Replace( "..", "." );
-                s = s.Replace( " ", "" );
-                s = s.Trim();
+                s = s?.StripLetters();
+                s = s?.Replace( "$", String.Empty );
+                s = s?.Replace( ")", String.Empty );
+                s = s?.Replace( "(", "-" );
+                s = s?.Replace( "..", "." );
+                s = s?.Replace( " ", "" );
+                s = s?.Trimmed() ?? String.Empty;
 
                 var pos = s.LastIndexOf( '.' );
 
@@ -516,15 +517,9 @@ namespace LibrainianCore.Converters {
                     s = s.Substring( 0, pos );
                 }
 
-                if ( String.IsNullOrEmpty( s ) ) {
-                    return null;
+                if ( !String.IsNullOrEmpty( s ) ) {
+                    return Int32.TryParse( s, out var result ) ? result : Convert.ToInt32( s );
                 }
-
-                if ( Int32.TryParse( s, out var result ) ) {
-                    return result;
-                }
-
-                return Convert.ToInt32( s );
             }
             catch ( FormatException exception ) {
                 exception.Log();
@@ -556,23 +551,6 @@ namespace LibrainianCore.Converters {
         [Pure]
         public static Int32 ToIntOrZero<T>( [CanBeNull] this T value ) => value.ToIntOrNull() ?? 0;
 
-        [NotNull]
-        public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
-            if ( systemPath is null ) {
-                throw new ArgumentNullException( paramName: nameof( systemPath ) );
-            }
-
-            var fullPath = systemPath.FullName;
-
-            while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
-                fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
-            }
-
-            fullPath = "Win32_Directory.Name=\"" + fullPath.Replace( "\\", "\\\\" ) + "\"";
-            var managed = new ManagementPath( fullPath );
-
-            return managed;
-        }
 
         /// <summary>Convert string to Guid</summary>
         /// <param name="value">the string value</param>
@@ -592,7 +570,15 @@ namespace LibrainianCore.Converters {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Decimal? ToMoneyOrNull( [CanBeNull] this SqlDataReader bob, [CanBeNull] String columnName ) {
+        public static Decimal? ToMoneyOrNull( [NotNull] this SqlDataReader bob, [NotNull] String columnName ) {
+            if ( bob == null ) {
+                throw new ArgumentNullException( paramName: nameof( bob ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: columnName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( columnName ) );
+            }
+
             try {
                 var ordinal = bob.Ordinal( columnName );
 
@@ -700,7 +686,5 @@ namespace LibrainianCore.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
-
     }
-
 }

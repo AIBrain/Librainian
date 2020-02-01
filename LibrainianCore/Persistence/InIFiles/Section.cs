@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Section.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Section.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Section.cs" was last formatted by Protiguous on 2019/08/08 at 9:29 AM.
+// Project: "Librainian", "Section.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace LibrainianCore.Persistence.InIFiles {
 
@@ -45,20 +43,16 @@ namespace LibrainianCore.Persistence.InIFiles {
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
-    using System.Xml;
     using Collections.Extensions;
+    using JetBrains.Annotations;
     using Logging;
+    using Newtonsoft.Json;
 
     /// <summary>
-    ///     <para>
-    ///         This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" />
-    ///         without throwing exceptions on missing or null keys.
-    ///     </para>
+    ///     <para>This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" /> without throwing exceptions on missing or null keys.</para>
     ///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -68,9 +62,7 @@ namespace LibrainianCore.Persistence.InIFiles {
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
-        /// <summary>
-        ///     Automatically remove any key where there is no value. Defaults to true.
-        /// </summary>
+        /// <summary>Automatically remove any key where there is no value. Defaults to true.</summary>
         [JsonIgnore]
         public Boolean AutoCleanup { get; set; } = true;
 
@@ -108,9 +100,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             }
         }
 
-        /// <summary>
-        ///     Static comparison. Checks references and then keys and then values.
-        /// </summary>
+        /// <summary>Static comparison. Checks references and then keys and then values.</summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
@@ -120,7 +110,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             }
 
             if ( left is null || right is null ) {
-                return false;
+                return default;
             }
 
             if ( ReferenceEquals( left.Data, right.Data ) ) {
@@ -134,9 +124,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left: left, right: right );
 
-        /// <summary>
-        ///     Remove any key where there is no value.
-        /// </summary>
+        /// <summary>Remove any key where there is no value.</summary>
         /// <returns></returns>
         [NotNull]
         public Task CleanupAsync() =>
@@ -154,15 +142,13 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-        /// <summary>
-        ///     Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.
-        /// </summary>
+        /// <summary>Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.</summary>
         /// <param name="reader"></param>
         /// <returns></returns>
         [NotNull]
         public Task<Boolean> ReadAsync( [NotNull] TextReader reader ) {
             if ( reader is null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException( nameof( reader ) );
             }
 
             try {
@@ -175,7 +161,7 @@ namespace LibrainianCore.Persistence.InIFiles {
                         return true;
                     }
 
-                    return false;
+                    return default;
                 } );
             }
             catch ( Exception exception ) {
@@ -187,14 +173,13 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
 
-        /// <summary>
-        ///     Write this <see cref="Section" /> to the <paramref name="writer" />.
-        /// </summary>
+        /// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
         /// <param name="writer"></param>
         /// <returns></returns>
+        [CanBeNull]
         public Task Write( [NotNull] TextWriter writer ) {
             if ( writer is null ) {
-                throw new ArgumentNullException( paramName: nameof( writer ) );
+                throw new ArgumentNullException( nameof( writer ) );
             }
 
             try {

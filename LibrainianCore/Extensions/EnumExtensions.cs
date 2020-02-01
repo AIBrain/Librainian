@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "EnumExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "EnumExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,33 +28,28 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "EnumExtensions.cs" was last formatted by Protiguous on 2019/10/02 at 9:31 AM.
+// Project: "Librainian", "EnumExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Extensions {
 
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Pulled from <see cref="http://stackoverflow.com/a/944352/956364" />
-    /// </summary>
+    /// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
     public static class EnumExtensions {
 
-        /// <summary>
-        ///     Determines whether the enum value contains a specific value. The enum itself must be decorated with the
-        ///     FlagsAttribute.
-        /// </summary>
+        /// <summary>Determines whether the enum value contains a specific value. The enum itself must be decorated with the FlagsAttribute.</summary>
         /// <param name="value">  The value.</param>
         /// <param name="request">The request.</param>
         /// <returns><c>true</c> if value contains the specified value; otherwise, <c>false</c>.</returns>
@@ -69,16 +62,14 @@ namespace LibrainianCore.Extensions {
         /// }
         /// </code>
         /// </example>
-        public static Boolean Contains<T>( this Enum value, T request ) {
+        public static Boolean Contains<T>( [CanBeNull] this Enum value, [CanBeNull] T request ) {
             var valueAsInt = Convert.ToInt32( value );
             var requestAsInt = Convert.ToInt32( request );
 
             return requestAsInt == ( valueAsInt & requestAsInt ); //TODO what??
         }
 
-        /// <summary>
-        ///     Returns the text of the [Description("text")] attribute on an enum. Or null if not found.
-        /// </summary>
+        /// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
         /// <param name="element"></param>
         /// <returns></returns>
         [CanBeNull]
@@ -96,15 +87,13 @@ namespace LibrainianCore.Extensions {
             return attributes.Any() ? ( attributes[ 0 ] as DescriptionAttribute )?.Description : null; //element.ToString();
         }
 
-        /// <summary>
-        ///     Gets all combined items from an enum value.
-        /// </summary>
+        /// <summary>Gets all combined items from an enum value.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value">The value.</param>
         /// <returns></returns>
         /// <example>
-        ///     Displays ValueA and ValueB.
-        ///     <code>
+        /// Displays ValueA and ValueB.
+        /// <code>
         /// EnumExample dummy = EnumExample.Combi;
         /// foreach (var item in dummy.GetAllSelectedItems /\EnumExample/\())
         /// {
@@ -113,36 +102,33 @@ namespace LibrainianCore.Extensions {
         /// </code>
         /// </example>
         [NotNull]
-        public static IEnumerable<T> GetAllSelectedItems<T>( this Enum value ) {
+        public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
             var valueAsInt = Convert.ToInt32( value );
 
             return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
         }
 
-        /// <summary>
-        ///     Gets all items for an enum value.
-        /// </summary>
+        /// <summary>Gets all items for an enum value.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value">The value.</param>
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<T> GetAllValues<T>( [NotNull] this Enum value ) {
             if ( value is null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
         }
 
-        /// <summary>
-        ///     Gets all values for an enum type.
-        /// </summary>
+        /// <summary>Gets all values for an enum type.</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
         // This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
+        [CanBeNull]
         public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
             var type = value.GetType();
             var memberInfo = type.GetMember( value.ToString() );
@@ -152,7 +138,7 @@ namespace LibrainianCore.Extensions {
         }
 
         [CanBeNull]
-        public static String GetDescription<T>( this T e ) where T : IConvertible {
+        public static String GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
             if ( !( e is Enum ) ) {
                 return default;
             }
@@ -182,6 +168,6 @@ namespace LibrainianCore.Extensions {
         }
 
         [NotNull]
-        public static IEnumerable<T> GetEnums<T>( this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+        public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
     }
 }

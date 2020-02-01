@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Combiner.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "Combiner.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,21 +28,21 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2019/10/21 at 3:08 PM.
+// Project: "Librainian", "Combiner.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Extensions {
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using JetBrains.Annotations;
 
     public static class Combiner {
 
@@ -63,9 +61,7 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        /// <summary>
-        ///     add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" />
-        /// </summary>
+        /// <summary>add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" /></summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -81,9 +77,7 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        /// <summary>
-        ///     add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" />
-        /// </summary>
+        /// <summary>add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" /></summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -97,6 +91,7 @@ namespace LibrainianCore.Extensions {
             yield return b;
         }
 
+        [CanBeNull]
         public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
             IEnumerable<IEnumerable<T>> emptyProduct = new[] {
                 Enumerable.Empty<T>()
@@ -118,7 +113,7 @@ namespace LibrainianCore.Extensions {
         [CanBeNull]
         public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( paramName: nameof( input ) );
+                throw new ArgumentNullException( nameof( input ) );
             }
 
             IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
@@ -154,7 +149,8 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
             var found = false;
 
             foreach ( var bGroup in b ) {
@@ -168,7 +164,8 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, IEnumerable<T> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] IEnumerable<T> b ) {
             var found = false;
 
             foreach ( var aGroup in a ) {
@@ -182,7 +179,8 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
             var found = false;
 
             foreach ( var bGroup in b ) {
@@ -198,7 +196,8 @@ namespace LibrainianCore.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, T b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] T b ) {
             var found = false;
 
             foreach ( var aGroup in a ) {
@@ -245,7 +244,8 @@ namespace LibrainianCore.Extensions {
             return powerSet;
         }
 
-        public static IEnumerable<T> Group<T>( this T a, T b ) {
+        [ItemCanBeNull]
+        public static IEnumerable<T> Group<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
             yield return a;
             yield return b;
         }

@@ -73,7 +73,7 @@ namespace LibrainianCore.Parsing {
                     return this.WGGW[ word ];
                 }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
                 }
                 return Guid.Empty;
             }
@@ -89,7 +89,7 @@ namespace LibrainianCore.Parsing {
                     return !this.WGGW.Contains( guid ) ? String.Empty : this.WGGW[ guid ];
                 }
                 catch ( Exception exception ) {
-                    exception.More();
+                    exception.Log();
                 }
                 return String.Empty;
             }

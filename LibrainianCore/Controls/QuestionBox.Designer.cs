@@ -1,4 +1,4 @@
-﻿namespace Librainian.Controls {
+﻿namespace LibrainianCore.Controls {
     partial class QuestionBox {
         /// <summary>
         /// Required designer variable.

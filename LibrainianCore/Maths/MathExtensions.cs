@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2019/11/07 at 1:57 PM.
+// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Maths {
 
@@ -45,23 +43,19 @@ namespace LibrainianCore.Maths {
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Diagnostics.Contracts;
     using System.Drawing;
     using System.Linq;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
     using Collections.Extensions;
+    using JetBrains.Annotations;
     using Measurement.Time;
     using Numbers;
     using Parsing;
+    using Rationals;
 
     public static class MathExtensions {
-
-        private static Byte[] RGBRGB565565 = {
-            5, 6, 5, 5, 6, 5
-        };
 
         /// <summary>
         ///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
@@ -69,9 +63,7 @@ namespace LibrainianCore.Maths {
         public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
         // you may want to pass this and use generics to allow more or less bits
-        /// <summary>
-        ///     Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.
-        /// </summary>
+        /// <summary>Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.</summary>
         [NotNull]
         private static UInt32[] FibonacciLookup { get; } = {
             1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040,
@@ -81,9 +73,7 @@ namespace LibrainianCore.Maths {
 
         public delegate Int32 FibonacciCalculator( Int32 n );
 
-        /// <summary>
-        ///     Add two <see cref="UInt64" />.
-        /// </summary>
+        /// <summary>Add two <see cref="UInt64" />.</summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <param name="overflowed">True if the two values added to more than <see cref="UInt64.MaxValue" /></param>
@@ -95,9 +85,7 @@ namespace LibrainianCore.Maths {
             return result;
         }
 
-        /// <summary>
-        ///     Allow <paramref name="left" /> to increase or decrease by a signed number;
-        /// </summary>
+        /// <summary>Allow <paramref name="left" /> to increase or decrease by a signed number;</summary>
         /// <param name="left">      </param>
         /// <param name="right">     </param>
         /// <param name="overflowed">True if the two values added to more than <see cref="UInt64.MaxValue" /></param>
@@ -112,8 +100,7 @@ namespace LibrainianCore.Maths {
         /// <summary>
         ///     <para>Add <paramref name="tax" /> of <paramref name="number" /> to <paramref name="number" />.</para>
         ///     <para>If the tax is 6% on $50, then you would call this function like this:</para>
-        ///     <code>var withTax = 50.AddTax( 0.06 );</code>
-        ///     <code>Assert( withTax == 53.00 );</code>
+        ///     <code>var withTax = 50.AddTax( 0.06 );</code> <code>Assert( withTax == 53.00 );</code>
         /// </summary>
         /// <param name="number"></param>
         /// <param name="tax">   </param>
@@ -125,19 +112,16 @@ namespace LibrainianCore.Maths {
         /// <summary>
         ///     <para>Add <paramref name="percentTax" /> of <paramref name="number" /> to <paramref name="number" />.</para>
         ///     <para>If the tax is 6% on $50, then you would call this function like this:</para>
-        ///     <code>var withTax = AddTaxPercent( 50.00, 6.0 );</code>
-        ///     <code>Assert( withTax == 53.00 );</code>
+        ///     <code>var withTax = AddTaxPercent( 50.00, 6.0 );</code> <code>Assert( withTax == 53.00 );</code>
         /// </summary>
         /// <param name="number">    </param>
         /// <param name="percentTax"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + ( percentTax / 100.0m ) );
+        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
 
-        /// <summary>
-        ///     Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.
-        /// </summary>
+        /// <summary>Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.</summary>
         /// <param name="high"></param>
         /// <param name="low"> </param>
         /// <returns></returns>
@@ -145,9 +129,7 @@ namespace LibrainianCore.Maths {
         [Pure]
         public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 )high << 32 ) | low;
 
-        /// <summary>
-        ///     Combine two bytes into one <see cref="UInt16" />.
-        /// </summary>
+        /// <summary>Combine two bytes into one <see cref="UInt16" />.</summary>
         /// <param name="low"> </param>
         /// <param name="high"></param>
         /// <returns></returns>
@@ -160,9 +142,7 @@ namespace LibrainianCore.Maths {
                     low, high
                 }, startIndex: 0 );
 
-        /// <summary>
-        ///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
-        /// </summary>
+        /// <summary>Combine two bytes into one <see cref="UInt16" /> with little endianess.</summary>
         /// <param name="low"> </param>
         /// <param name="high"></param>
         /// <returns></returns>
@@ -171,9 +151,7 @@ namespace LibrainianCore.Maths {
         [Pure]
         public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 )( high + ( low << 8 ) );
 
-        /// <summary>
-        ///     Combine two bytes into one <see cref="UInt16" /> with little endianess.
-        /// </summary>
+        /// <summary>Combine two bytes into one <see cref="UInt16" /> with little endianess.</summary>
         /// <param name="low"> </param>
         /// <param name="high"></param>
         /// <returns></returns>
@@ -182,9 +160,8 @@ namespace LibrainianCore.Maths {
         [Pure]
         public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 )( low + ( high << 8 ) );
 
-        /// <summary>
-        ///     Combine two byte arrays into one byte array.
-        ///     <para>Warning: this allocates a new array.</para>
+        /// <summary>Combine two byte arrays into one byte array.
+        /// <para>Warning: this allocates a new array.</para>
         /// </summary>
         /// <param name="first"></param>
         /// <param name="second"></param>
@@ -198,9 +175,8 @@ namespace LibrainianCore.Maths {
             return buffer;
         }
 
-        /// <summary>
-        ///     Add a byte onto the end of the <paramref name="first" /> array.
-        ///     <para>Warning: this allocates a new array.</para>
+        /// <summary>Add a byte onto the end of the <paramref name="first" /> array.
+        /// <para>Warning: this allocates a new array.</para>
         /// </summary>
         /// <param name="first"></param>
         /// <param name="second"></param>
@@ -209,14 +185,12 @@ namespace LibrainianCore.Maths {
         public static Byte[] Concat( [NotNull] this Byte[] first, Byte second ) {
             var buffer = new Byte[ first.Length + 1 ];
             Buffer.BlockCopy( src: first, srcOffset: 0, dst: buffer, dstOffset: 0, count: first.Length );
-            buffer[ buffer.Length - 1 ] = second;
+            buffer[ ^1 ] = second;
 
             return buffer;
         }
 
-        /// <summary>
-        ///     ConvertBigIntToBcd
-        /// </summary>
+        /// <summary>ConvertBigIntToBcd</summary>
         /// <param name="numberToConvert"></param>
         /// <param name="howManyBytes">   </param>
         /// <returns></returns>
@@ -252,54 +226,42 @@ namespace LibrainianCore.Maths {
             return convertedNumber;
         }
 
-        /// <summary>
-        ///     Remove everything after the decimal point.
-        /// </summary>
+        /// <summary>Remove everything after the decimal point.</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
         public static Double Crop( this Double x ) => Math.Truncate( d: x * 100.0D ) / 100.0D;
 
-        /// <summary>
-        ///     Remove everything after the decimal point.
-        /// </summary>
+        /// <summary>Remove everything after the decimal point.</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
         public static Single Crop( this Single x ) => ( Single )( Math.Truncate( d: x * 100.0f ) / 100.0f );
 
-        /// <summary>
-        ///     Return the cube (^3) of the number.
-        /// </summary>
+        /// <summary>Return the cube (^3) of the number.</summary>
         /// <param name="number"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
         public static Single Cubed( this Single number ) => number * number * number;
 
-        /// <summary>
-        ///     Return the cube (^3) of the number.
-        /// </summary>
+        /// <summary>Return the cube (^3) of the number.</summary>
         /// <param name="number"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
         public static Double Cubed( this Double number ) => number * number * number;
 
-        /// <summary>
-        ///     Return the cube (^3) of the number.
-        /// </summary>
+        /// <summary>Return the cube (^3) of the number.</summary>
         /// <param name="number"></param>
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
         public static Decimal Cubed( this Decimal number ) => number * number * number;
 
-        /// <summary>
-        ///     Needs tested.
-        /// </summary>
+        /// <summary>Needs tested.</summary>
         /// <param name="d"></param>
         /// <returns></returns>
         [NotNull]
@@ -311,7 +273,7 @@ namespace LibrainianCore.Maths {
                 var a = ( Int32 )( ( Int32 )d / Math.Pow( x: 10, y: i ) ) % 10;
 
                 for ( var j = 0; j < 4; j++ ) {
-                    input[ j + ( i * 4 ) ] = ( a & ( 1 << j ) ) != 0;
+                    input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
                 }
             }
 
@@ -343,6 +305,8 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
+
+        // ReSharper disable once UnusedParameter.Global
         public static Decimal Epsilon( this Decimal _ ) => EpsilonDecimal;
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -362,16 +326,13 @@ namespace LibrainianCore.Maths {
             x = Math.Abs( x );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + ( p * x ) );
-            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( d: -x * x ) );
+            var t = 1.0 / ( 1.0 + p * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
             return sign * y;
         }
 
-        /// <summary>
-        ///     Compute fibonacci series up to Max (&gt; 1).
-        ///     Example: foreach (int i in Fib(10)) { Console.WriteLine(i); }
-        /// </summary>
+        /// <summary>Compute fibonacci series up to Max (&gt; 1). Example: foreach (int i in Fib(10)) { Console.WriteLine(i); }</summary>
         /// <param name="max"></param>
         /// <returns></returns>
         public static IEnumerable<Int32> Fib( Int32 max ) {
@@ -448,9 +409,7 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) => top * x / bottom;
 
-        /// <summary>
-        ///     Greatest Common Divisor for int
-        /// </summary>
+        /// <summary>Greatest Common Divisor for int</summary>
         /// <remarks>Uses recursion, passing a remainder each time.</remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -467,9 +426,7 @@ namespace LibrainianCore.Maths {
             }
         }
 
-        /// <summary>
-        ///     Greatest Common Divisor for long
-        /// </summary>
+        /// <summary>Greatest Common Divisor for long</summary>
         /// <remarks>Uses recursion, passing a remainder each time.</remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -486,9 +443,7 @@ namespace LibrainianCore.Maths {
             }
         }
 
-        /// <summary>
-        ///     Greatest Common Divisor for int
-        /// </summary>
+        /// <summary>Greatest Common Divisor for int</summary>
         /// <remarks>Uses a while loop and remainder.</remarks>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -503,9 +458,7 @@ namespace LibrainianCore.Maths {
             return a;
         }
 
-        /// <summary>
-        ///     Greatest Common Divisor for long
-        /// </summary>
+        /// <summary>Greatest Common Divisor for long</summary>
         /// <remarks>Uses a while loop and remainder.</remarks>
         /// <param name="a"></param>
         /// <param name="b"></param>
@@ -520,9 +473,7 @@ namespace LibrainianCore.Maths {
             return a;
         }
 
-        /// <summary>
-        ///     Greatest Common Divisor for int
-        /// </summary>
+        /// <summary>Greatest Common Divisor for int</summary>
         /// <remarks>More like the ancient greek Euclid originally devised. It uses a while loop with subtraction.</remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -540,9 +491,7 @@ namespace LibrainianCore.Maths {
             return x;
         }
 
-        /// <summary>
-        ///     Greatest Common Divisor for long
-        /// </summary>
+        /// <summary>Greatest Common Divisor for long</summary>
         /// <remarks>More like the ancient greek Euclid originally devised. It uses a while loop with subtraction.</remarks>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -634,10 +583,7 @@ namespace LibrainianCore.Maths {
         public static Decimal Half( this Decimal number ) => number / 2.0m;
 
         /// <summary>
-        ///     <para>
-        ///         If the <paramref name="number" /> is less than <see cref="Decimal.Zero" />, then return
-        ///         <see cref="Decimal.Zero" />.
-        ///     </para>
+        ///     <para>If the <paramref name="number" /> is less than <see cref="Decimal.Zero" />, then return <see cref="Decimal.Zero" />.</para>
         ///     <para>Otherwise return the <paramref name="number" />.</para>
         /// </summary>
         /// <param name="number"></param>
@@ -648,10 +594,7 @@ namespace LibrainianCore.Maths {
         public static Decimal IfLessThanZeroThenZero( this Decimal number ) => number < Decimal.Zero ? Decimal.Zero : number;
 
         /// <summary>
-        ///     <para>
-        ///         If the <paramref name="number" /> is less than <see cref="BigInteger.Zero" />, then return
-        ///         <see cref="Decimal.Zero" />.
-        ///     </para>
+        ///     <para>If the <paramref name="number" /> is less than <see cref="BigInteger.Zero" />, then return <see cref="Decimal.Zero" />.</para>
         ///     <para>Otherwise return the <paramref name="number" />.</para>
         /// </summary>
         /// <param name="number"></param>
@@ -662,10 +605,7 @@ namespace LibrainianCore.Maths {
         public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
         /// <summary>
-        ///     <para>
-        ///         If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return
-        ///         <see cref="Decimal.Zero" />.
-        ///     </para>
+        ///     <para>If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return <see cref="Decimal.Zero" />.</para>
         ///     <para>Otherwise return the <paramref name="number" />.</para>
         /// </summary>
         /// <param name="number"></param>
@@ -676,10 +616,7 @@ namespace LibrainianCore.Maths {
         public static Rational IfLessThanZeroThenZero( this Rational number ) => number < Rational.Zero ? Rational.Zero : number;
 
         /// <summary>
-        ///     <para>
-        ///         If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return
-        ///         <see cref="Decimal.Zero" />.
-        ///     </para>
+        ///     <para>If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return <see cref="Decimal.Zero" />.</para>
         ///     <para>Otherwise return the <paramref name="number" />.</para>
         /// </summary>
         /// <param name="number"></param>
@@ -720,7 +657,7 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsNumber( this Double value ) {
             if ( Double.IsNaN( d: value ) ) {
-                return false;
+                return default;
             }
 
             return !Double.IsInfinity( d: value );
@@ -746,49 +683,41 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsPowerOfTwo( this Int32 number ) => ( number & -number ) == number;
 
-        /// <summary>
-        ///     Linearly interpolates between two values.
-        /// </summary>
+        /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
         /// <param name="target">Target value.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( ( target - source ) * amount );
+        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
 
-        /// <summary>
-        ///     Linearly interpolates between two values.
-        /// </summary>
+        /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
         /// <param name="target">Target value.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( ( target - source ) * amount );
+        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
 
-        /// <summary>
-        ///     Linearly interpolates between two values.
-        /// </summary>
+        /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
         /// <param name="target">Target value.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( ( target - source ) * amount ) );
+        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( target - source ) * amount );
 
-        /// <summary>
-        ///     Linearly interpolates between two values.
-        /// </summary>
+        /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
         /// <param name="target">Target value.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( ( target - source ) * amount ) );
+        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( target - source ) * amount );
 
         [DebuggerStepThrough]
         [Pure]
@@ -804,12 +733,10 @@ namespace LibrainianCore.Maths {
 
             var x = n + 1d;
 
-            return ( ( x - 0.5 ) * Math.Log( d: x ) ) - x + ( 0.5 * Math.Log( d: 2 * Math.PI ) ) + ( 1.0 / ( 12.0 * x ) );
+            return ( x - 0.5 ) * Math.Log( d: x ) - x + 0.5 * Math.Log( d: 2 * Math.PI ) + 1.0 / ( 12.0 * x );
         }
 
-        /// <summary>
-        ///     compute log(1+x) without losing precision for small values of x
-        /// </summary>
+        /// <summary>compute log(1+x) without losing precision for small values of x</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -827,7 +754,7 @@ namespace LibrainianCore.Maths {
             }
 
             // Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 since |x| < 10^-4, |x|^3 < 10^-12, relative error less than 10^-8
-            return ( ( -0.5 * x ) + 1.0 ) * x;
+            return ( -0.5 * x + 1.0 ) * x;
         }
 
         [DebuggerStepThrough]
@@ -850,10 +777,6 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean Near( this Point here, Point there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
 
-        [DebuggerStepThrough]
-        [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Boolean Near( this Point3D here, Point3D there ) => here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
 
         [DebuggerStepThrough]
         [Pure]
@@ -909,9 +832,7 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Single Nested( this Single x ) => ( Single )( Math.Sqrt( d: x * 100.0 ) / 100.0f );
 
-        /// <summary>
-        ///     Remove all the trailing zeros from the decimal
-        /// </summary>
+        /// <summary>Remove all the trailing zeros from the decimal</summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -919,8 +840,7 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Decimal Normalize( this Decimal value ) => value / 1.000000000000000000000000000000000m;
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <param name="baseValue"></param>
         /// <param name="n">        </param>
         /// <returns></returns>
@@ -937,7 +857,7 @@ namespace LibrainianCore.Maths {
             var x = 0.1M;
 
             do {
-                deltaX = ( ( baseValue / x.Pow( n: n - 1 ) ) - x ) / n;
+                deltaX = ( baseValue / x.Pow( n: n - 1 ) - x ) / n;
                 x += deltaX;
             } while ( Math.Abs( deltaX ) > 0 );
 
@@ -971,7 +891,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt32 PackBitFields( [NotNull] UInt16[] values, [NotNull] Byte[] bitFields ) {
             if ( bitFields is null ) {
-                throw new ArgumentNullException( paramName: nameof( bitFields ) );
+                throw new ArgumentNullException( nameof( bitFields ) );
             }
 
             UInt32 retVal = values[ 0 ]; //we set the first value right away
@@ -1002,10 +922,10 @@ namespace LibrainianCore.Maths {
             x = Math.Abs( x ) / Math.Sqrt( d: 2.0 );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + ( p * x ) );
-            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( d: -x * x ) );
+            var t = 1.0 / ( 1.0 + p * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
-            return 0.5 * ( 1.0 + ( sign * y ) );
+            return 0.5 * ( 1.0 + sign * y );
         }
 
         [DebuggerStepThrough]
@@ -1018,9 +938,7 @@ namespace LibrainianCore.Maths {
             return baseValue;
         }
 
-        /// <summary>
-        ///     <see cref="Decimal" /> raised to the nth power.
-        /// </summary>
+        /// <summary><see cref="Decimal" /> raised to the nth power.</summary>
         /// <param name="x"></param>
         /// <param name="n"></param>
         /// <returns></returns>
@@ -1078,9 +996,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt64 RotateRight( this UInt64 original, Int32 bits ) => ( original >> bits ) | ( original << ( 64 - bits ) );
 
-        /// <summary>
-        ///     Truncate, don't round. Just chop it off.
-        /// </summary>
+        /// <summary>Truncate, don't round. Just chop it off.</summary>
         /// <param name="number">       </param>
         /// <param name="decimalPlaces"></param>
         /// <returns>Bitcoin ftw!</returns>
@@ -1094,9 +1010,7 @@ namespace LibrainianCore.Maths {
             return number;
         }
 
-        /// <summary>
-        ///     Smooths a value to between 0 and 1.
-        /// </summary>
+        /// <summary>Smooths a value to between 0 and 1.</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -1104,9 +1018,7 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Double Sigmoid0To1( this Double x ) => 1.0D / ( 1.0D + Math.Exp( -x ) );
 
-        /// <summary>
-        ///     Smooths a value to between 0 and 1.
-        /// </summary>
+        /// <summary>Smooths a value to between 0 and 1.</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -1114,16 +1026,14 @@ namespace LibrainianCore.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Decimal Sigmoid0To1( this Decimal x ) => 1.0M / ( 1.0M + ( Decimal )Math.Exp( ( Double )( -x ) ) );
 
-        /// <summary>
-        ///     Smooths a value to between -1 and 1.
-        /// </summary>
+        /// <summary>Smooths a value to between -1 and 1.</summary>
         /// <param name="x"></param>
         /// <returns></returns>
         /// <see cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - ( 2.0D / ( 1.0D + Math.Exp( x ) ) );
+        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( x ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data is null ) {
@@ -1139,9 +1049,7 @@ namespace LibrainianCore.Maths {
             return a / b;
         }
 
-        /// <summary>
-        ///     Return the integer part and the fraction parts of a <see cref="Decimal" />.
-        /// </summary>
+        /// <summary>Return the integer part and the fraction parts of a <see cref="Decimal" />.</summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [NotNull]
@@ -1152,9 +1060,7 @@ namespace LibrainianCore.Maths {
             return result;
         }
 
-        /// <summary>
-        ///     Return the integer part and the fraction parts of a <see cref="Double" />.
-        /// </summary>
+        /// <summary>Return the integer part and the fraction parts of a <see cref="Double" />.</summary>
         /// <param name="value"></param>
         /// <returns></returns>
         [NotNull]
@@ -1164,10 +1070,7 @@ namespace LibrainianCore.Maths {
             return new Tuple<Double, Double>( item1: Double.Parse( s: parts[ 0 ] ), item2: Double.Parse( s: "0." + parts[ 1 ] ) );
         }
 
-        /// <summary>
-        ///     Split one <see cref="UInt64" /> value into two <see cref="UInt32" /> values. Use <see cref="Combine" /> for the
-        ///     reverse.
-        /// </summary>
+        /// <summary>Split one <see cref="UInt64" /> value into two <see cref="UInt32" /> values. Use <see cref="Combine" /> for the reverse.</summary>
         /// <param name="value"></param>
         /// <param name="high"> </param>
         /// <param name="low">  </param>
@@ -1221,11 +1124,10 @@ namespace LibrainianCore.Maths {
             return ( Decimal )Math.Sqrt( d: ( Double )aggregate );
         }
 
-        /// <summary>
-        ///     Subtract <paramref name="tax" /> of <paramref name="total" /> from <paramref name="total" />.
-        ///     <para>If the tax was 6% on $53, then you would call this function like this:</para>
-        ///     <para>var withTax = SubtractTax( 53.00, 0.06 );</para>
-        ///     <para>Assert( withTax == 50.00 );</para>
+        /// <summary>Subtract <paramref name="tax" /> of <paramref name="total" /> from <paramref name="total" />.
+        /// <para>If the tax was 6% on $53, then you would call this function like this:</para>
+        /// <para>var withTax = SubtractTax( 53.00, 0.06 );</para>
+        /// <para>Assert( withTax == 50.00 );</para>
         /// </summary>
         /// <param name="total"></param>
         /// <param name="tax">  </param>
@@ -1237,9 +1139,8 @@ namespace LibrainianCore.Maths {
         }
 
         /// <summary>
-        ///     Subtract <paramref name="right" /> away from <paramref name="left" /> without the chance of "throw new
-        ///     ArgumentOutOfRangeException( "amount", String.Format( "Values {0} and {1} are loo small to handle.", amount,
-        ///     uBigInteger ) );"
+        /// Subtract <paramref name="right" /> away from <paramref name="left" /> without the chance of "throw new ArgumentOutOfRangeException( "amount", String.Format( "Values {0}
+        /// and {1} are loo small to handle.", amount, uBigInteger ) );"
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
@@ -1302,8 +1203,7 @@ namespace LibrainianCore.Maths {
         //}
 
         /// <summary>
-        ///     <see
-        ///         cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-String-in-c-sharp-without-using-tostring" />
+        ///     <see cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-String-in-c-sharp-without-using-tostring" />
         /// </summary>
         /// <param name="number">   </param>
         /// <param name="base">     </param>
@@ -1367,25 +1267,25 @@ namespace LibrainianCore.Maths {
             result = Rational.Zero;
 
             if ( null == numberString ) {
-                return false;
+                return default;
             }
 
             numberString = numberString.Trim();
 
             if ( numberString.IsNullOrEmpty() ) {
-                return false;
+                return default;
             }
 
             var parts = numberString.Split( '/' ).ToList();
 
             if ( parts.Count != 2 ) {
-                return false;
+                return default;
             }
 
             var top = parts.TakeFirst();
 
             if ( top.IsNullOrWhiteSpace() ) {
-                return false;
+                return default;
             }
 
             top = top.Trim();
@@ -1393,11 +1293,11 @@ namespace LibrainianCore.Maths {
             var bottom = parts.TakeLast();
 
             if ( String.IsNullOrWhiteSpace( bottom ) ) {
-                return false;
+                return default;
             }
 
             if ( parts.Count > 0 ) {
-                return false;
+                return default;
             }
 
             BigInteger.TryParse( top, result: out var numerator );

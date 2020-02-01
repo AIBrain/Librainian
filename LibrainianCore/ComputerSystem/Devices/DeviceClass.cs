@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DeviceClass.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "DeviceClass.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,49 +28,40 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DeviceClass.cs" was last formatted by Protiguous on 2019/08/08 at 6:41 AM.
+// Project: "Librainian", "DeviceClass.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace LibrainianCore.ComputerSystem.Devices {
 
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;
+    using JetBrains.Annotations;
     using OperatingSystem;
     using Utilities;
 
-    /// <summary>
-    ///     A generic base class for physical device classes.
-    /// </summary>
+    /// <summary>A generic base class for physical device classes.</summary>
     public abstract class DeviceClass : ABetterClassDispose {
 
         private Guid _classGuid;
 
         private IntPtr _deviceInfoSet;
 
-        /// <summary>
-        ///     Gets the device class's guid.
-        /// </summary>
+        /// <summary>Gets the device class's guid.</summary>
         public Guid ClassGuid => this._classGuid;
 
-        /// <summary>
-        ///     Initializes a new instance of the DeviceClass class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the DeviceClass class.</summary>
         /// <param name="classGuid"> A device class Guid.</param>
-        /// <param name="hwndParent">
-        ///     The handle of the top-level window to be used for any user interface or IntPtr.Zero for no
-        ///     handle.
-        /// </param>
+        /// <param name="hwndParent">The handle of the top-level window to be used for any user interface or IntPtr.Zero for no handle.</param>
         private DeviceClass( Guid classGuid, IntPtr hwndParent ) {
             this._classGuid = classGuid;
 
@@ -89,8 +78,8 @@ namespace LibrainianCore.ComputerSystem.Devices {
         protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
         [NotNull]
-        protected virtual Device
-            CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
+        protected virtual Device CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index,
+            Int32 disknum = -1 ) =>
             new Device( deviceClass, deviceInfoData, path, index, disknum );
 
         internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
@@ -111,7 +100,8 @@ namespace LibrainianCore.ComputerSystem.Devices {
             return devData;
         }
 
-        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String defaultValue ) {
+        [CanBeNull]
+        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
 
             const Int32 propertyBufferSize = 1024;
 
@@ -187,14 +177,10 @@ namespace LibrainianCore.ComputerSystem.Devices {
             //return value;
         }
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() { }
 
-        /// <summary>
-        ///     Dispose of COM objects, etc...
-        /// </summary>
+        /// <summary>Dispose of COM objects, etc...</summary>
         public override void DisposeNative() {
             if ( this._deviceInfoSet != IntPtr.Zero ) {
                 NativeMethods.SetupDiDestroyDeviceInfoList( this._deviceInfoSet );
@@ -202,11 +188,9 @@ namespace LibrainianCore.ComputerSystem.Devices {
             }
         }
 
-        /// <summary>
-        ///     Gets the list of devices of this device class.
-        /// </summary>
+        /// <summary>Gets the list of devices of this device class.</summary>
         /// <returns>The devices.</returns>
-        /// <exception cref="System.ComponentModel.Win32Exception"></exception>
+        /// <exception cref="Win32Exception"></exception>
         [NotNull]
         public IEnumerable<Device> GetDevices() {
             var devices = new HashSet<Device>();

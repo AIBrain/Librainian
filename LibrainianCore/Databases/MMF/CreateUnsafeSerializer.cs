@@ -1,26 +1,20 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "CreateUnsafeSerializer.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "CreateUnsafeSerializer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,29 +22,25 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2019/08/08 at 6:56 AM.
+// 
+// Project: "LibrainianCore", File: "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2020/02/01 at 11:47 AM.
 
 namespace LibrainianCore.Databases.MMF {
 
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Text;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).
-    /// </summary>
+    /// <summary>Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).</summary>
     /// <typeparam name="T"></typeparam>
     public class CreateUnsafeSerializer<T> {
 
@@ -64,7 +54,7 @@ namespace LibrainianCore.Databases.MMF {
 
         private Type Type { get; } = typeof( T );
 
-        private static void BytesToObjectCode( [NotNull] StringBuilder sb, String typeFullName ) {
+        private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String typeFullName ) {
             sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
             sb.Append( "{" );
 
@@ -81,24 +71,10 @@ namespace LibrainianCore.Databases.MMF {
                 this._size = Marshal.SizeOf<T>();
             }
             catch ( ArgumentException ) {
-                return false;
+                return default;
             }
 
             return true;
-        }
-
-        [NotNull]
-        private CompilerResults CompileCode() {
-            var providerOptions = new Dictionary<String, String> {
-                {
-                    "CompilerVersion", "v3.5"
-                }
-            };
-
-            CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
-            var compilerParameters = this.GetCompilerParameters();
-
-            return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
         }
 
         [NotNull]
@@ -136,23 +112,7 @@ namespace LibrainianCore.Databases.MMF {
             } while ( length > 0 );
         }
 
-        [NotNull]
-        private CompilerParameters GetCompilerParameters() {
-            var cParameters = new CompilerParameters {
-                GenerateInMemory = true,
-                GenerateExecutable = false,
-                TreatWarningsAsErrors = false,
-                IncludeDebugInformation = false,
-                CompilerOptions = "/optimize /unsafe"
-            };
-
-            cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
-            cParameters.ReferencedAssemblies.Add( this.Type.Assembly.Location );
-
-            return cParameters;
-        }
-
-        private void MovePointers( StringBuilder sb ) {
+        private void MovePointers( [CanBeNull] StringBuilder sb ) {
             var modifer = this._addCount / this._ptrSize;
 
             if ( modifer >= this._ptrSize ) {
@@ -162,7 +122,7 @@ namespace LibrainianCore.Databases.MMF {
             }
         }
 
-        private void ObjectToBytesCode( [NotNull] StringBuilder sb, String typeFullName ) {
+        private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String typeFullName ) {
             sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
             sb.Append( "{" );
             sb.Append( $"byte[] buffer = new byte[{this._size}];" );
@@ -200,25 +160,6 @@ namespace LibrainianCore.Databases.MMF {
             }
         }
 
-        [CanBeNull]
-        public ISerializeDeserialize<T> GetSerializer() {
-            if ( !this.CanGetSize() ) {
-                return null;
-            }
-
-            var checker = new ValueTypeCheck( typeof( T ) );
-
-            if ( !checker.OnlyValueTypes() ) {
-                return null;
-            }
-
-            var res = this.CompileCode();
-
-            if ( res.Errors.Count > 0 ) {
-                throw new SerializerException( res.Errors[ 0 ].ErrorText );
-            }
-
-            return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
-        }
     }
+
 }

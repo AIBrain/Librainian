@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PlanckTimes.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "PlanckTimes.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,21 +28,23 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PlanckTimes.cs" was last formatted by Protiguous on 2019/11/20 at 5:49 AM.
+// Project: "Librainian", "PlanckTimes.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace LibrainianCore.Measurement.Time {
 
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
+    using JetBrains.Annotations;
+    using Newtonsoft.Json;
+    using Rationals;
 
     /// <summary>
     ///     <para>In physics, the Planck time (tP) is the unit of time in the system of natural units known as Planck units.</para>
@@ -59,7 +59,7 @@ namespace LibrainianCore.Measurement.Time {
     /// <see cref="http://wikipedia.org/wiki/Planck_time" />
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    public class PlanckTimes : IQuantityOfTime {
+    public struct PlanckTimes : IQuantityOfTime {
 
         public const Double InOneAttosecond = InOneFemtosecond / Attoseconds.InOneFemtosecond;
 
@@ -95,15 +95,12 @@ namespace LibrainianCore.Measurement.Time {
         public const Double InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
 
         /// <summary>One <see cref="PlanckTimes" />.</summary>
-        [NotNull]
         public static PlanckTimes One { get; } = new PlanckTimes( 1 );
 
         /// <summary>Two <see cref="PlanckTimes" />.</summary>
-        [NotNull]
         public static PlanckTimes Two { get; } = new PlanckTimes( 2 );
 
         /// <summary>Zero <see cref="PlanckTimes" />.</summary>
-        [NotNull]
         public static PlanckTimes Zero { get; } = new PlanckTimes( 0 );
 
         [JsonProperty]
@@ -119,27 +116,9 @@ namespace LibrainianCore.Measurement.Time {
 
         public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
-        [NotNull]
-        public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
+        public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( left.Value + right.Value );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
-
-            return new PlanckTimes( left.Value + right.Value );
-        }
-
-        [NotNull]
-        public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            return new PlanckTimes( left.Value + planckTimes );
-        }
+        public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new PlanckTimes( left.Value + planckTimes );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -147,129 +126,44 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] PlanckTimes left, [CanBeNull] PlanckTimes right ) {
-            if ( left is null && right is null ) {
-                return true;
-            }
-
-            if ( left is null || right is null ) {
-                return false;
-            }
-
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
 
         [NotNull]
-        public static implicit operator SpanOfTime( [NotNull] PlanckTimes planckTimes ) {
-            if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
-            }
-
-            return new SpanOfTime( planckTimes );
-        }
+        public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
 
         /// <summary>Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.</summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static implicit operator Yoctoseconds( [NotNull] PlanckTimes planckTimes ) {
-            if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
-            }
+        [CanBeNull]
+        public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) => ToYoctoseconds( planckTimes );
 
-            return ToYoctoseconds( planckTimes );
-        }
+        public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
 
-        [NotNull]
-        public static PlanckTimes operator -( [CanBeNull] PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
+        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) => !Equals( left, right );
 
-        public static Boolean operator !=( [CanBeNull] PlanckTimes left, [CanBeNull] PlanckTimes right ) => !Equals( left, right );
+        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) => Combine( left, right );
 
-        [NotNull]
-        public static PlanckTimes operator +( [CanBeNull] PlanckTimes left, [CanBeNull] PlanckTimes right ) => Combine( left, right );
+        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) => Combine( left, planckTimes );
 
-        [NotNull]
-        public static PlanckTimes operator +( [CanBeNull] PlanckTimes left, BigInteger planckTimes ) => Combine( left, planckTimes );
+        public static Boolean operator <( PlanckTimes left, PlanckTimes right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
+        public static Boolean operator <=( PlanckTimes left, PlanckTimes right ) => left.Value <= right.Value;
 
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
+        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) => Equals( left, right );
 
-            return left.Value < right.Value;
-        }
+        public static Boolean operator >( PlanckTimes left, PlanckTimes right ) => left.Value > right.Value;
 
-        public static Boolean operator <=( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
-
-            return left.Value <= right.Value;
-        }
-
-        public static Boolean operator ==( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
-
-            return Equals( left, right );
-        }
-
-        public static Boolean operator >( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public static Boolean operator >=( [NotNull] PlanckTimes left, [NotNull] PlanckTimes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
-
-            return left.Value >= right.Value;
-        }
+        public static Boolean operator >=( PlanckTimes left, PlanckTimes right ) => left.Value >= right.Value;
 
         /// <summary>
         ///     <para>Convert to a larger unit.</para>
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static Yoctoseconds ToYoctoseconds( [NotNull] PlanckTimes planckTimes ) {
-            if ( planckTimes is null ) {
-                throw new ArgumentNullException( paramName: nameof( planckTimes ) );
-            }
+        [NotNull]
+        public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new Yoctoseconds( planckTimes.Value / ( Rational )InOneYoctosecond );
 
-            return new Yoctoseconds( planckTimes.Value / ( Rational )InOneYoctosecond );
-        }
-
-        public Int32 CompareTo( [NotNull] PlanckTimes other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -283,17 +177,17 @@ namespace LibrainianCore.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
         }
 
-        public Boolean Equals( [CanBeNull] PlanckTimes other ) => Equals( this, other );
+        public Boolean Equals( PlanckTimes other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
-                return false;
+                return default;
             }
 
             return obj is PlanckTimes times && this.Equals( times );
@@ -301,7 +195,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public PlanckTimes ToPlanckTimes() => this;
 
         [NotNull]

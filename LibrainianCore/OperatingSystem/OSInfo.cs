@@ -21,7 +21,8 @@
 namespace LibrainianCore.OperatingSystem {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
+    using JetBrains.Annotations;
+    using Microsoft.Win32;
 
     /// <summary>
     ///     Static class that adds convenient methods for getting information on the running computers basic hardware and os
@@ -37,9 +38,8 @@ namespace LibrainianCore.OperatingSystem {
         /// </summary>
         [CanBeNull]
         public static String BuildBranch() {
-            dynamic value;
 
-            if ( TryGeRegistryKey( CurrentVersion, "BuildBranch", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "BuildBranch", out var value ) ) {
                 return value;
             }
 
@@ -50,9 +50,8 @@ namespace LibrainianCore.OperatingSystem {
         ///     Returns the Windows build.
         /// </summary>
         public static UInt32? BuildMajor() {
-            dynamic value;
 
-            if ( TryGeRegistryKey( CurrentVersion, "CurrentBuildNumber", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "CurrentBuildNumber", out var value ) ) {
                 return Convert.ToUInt32( value );
             }
 
@@ -67,9 +66,8 @@ namespace LibrainianCore.OperatingSystem {
         ///     Returns the Windows build.
         /// </summary>
         public static UInt32? BuildMinor() {
-            dynamic value;
 
-            if ( TryGeRegistryKey( CurrentVersion, "UBR", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "UBR", out var value ) ) {
                 return Convert.ToUInt32( value );
             }
 
@@ -80,8 +78,7 @@ namespace LibrainianCore.OperatingSystem {
         ///     Returns whether or not the current computer is a server or not.
         /// </summary>
         public static Boolean? IsServer() {
-            dynamic installationType;
-            if ( TryGeRegistryKey( CurrentVersion, "InstallationType", out installationType ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "InstallationType", out var installationType ) ) {
                 return !installationType.Equals( "Client" );
             }
 
@@ -92,9 +89,8 @@ namespace LibrainianCore.OperatingSystem {
         ///     Returns the Windows build.
         /// </summary>
         public static UInt32? ReleaseID() {
-            dynamic value;
 
-            if ( TryGeRegistryKey( CurrentVersion, "ReleaseId", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "ReleaseId", out var value ) ) {
                 return Convert.ToUInt32( value );
             }
 
@@ -105,11 +101,10 @@ namespace LibrainianCore.OperatingSystem {
         ///     Returns the Windows major version number for this computer.
         /// </summary>
         public static UInt32? WinMajorVersion() {
-            dynamic value;
 
             // The 'CurrentMajorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
             // and will most likely (hopefully) be there for some time before MS decides to change this - again...
-            if ( TryGeRegistryKey( CurrentVersion, "CurrentMajorVersionNumber", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "CurrentMajorVersionNumber", out var value ) ) {
                 return ( UInt32 )value;
             }
 
@@ -122,19 +117,18 @@ namespace LibrainianCore.OperatingSystem {
             if ( versionParts.Length != 2 ) {
                 return null;
             }
-            UInt32 majorAsUInt;
-            return UInt32.TryParse( versionParts[ 0 ], out majorAsUInt ) ? ( UInt32? )majorAsUInt : null;
+
+            return UInt32.TryParse( versionParts[ 0 ], out var majorAsUInt ) ? ( UInt32? )majorAsUInt : null;
         }
 
         /// <summary>
         ///     Returns the Windows minor version number for this computer.
         /// </summary>
         public static UInt32? WinMinorVersion() {
-            dynamic value;
 
             // The 'CurrentMinorVersionNumber' string value in the CurrentVersion key is new for Windows 10,
             // and will most likely (hopefully) be there for some time before MS decides to change this - again...
-            if ( TryGeRegistryKey( CurrentVersion, "CurrentMinorVersionNumber", out value ) ) {
+            if ( TryGeRegistryKey( CurrentVersion, "CurrentMinorVersionNumber", out var value ) ) {
                 return ( UInt32 )value;
             }
 
@@ -147,8 +141,8 @@ namespace LibrainianCore.OperatingSystem {
             if ( versionParts.Length != 2 ) {
                 return null;
             }
-            UInt32 minorAsUInt;
-            return UInt32.TryParse( versionParts[ 1 ], out minorAsUInt ) ? ( UInt32? )minorAsUInt : null;
+
+            return UInt32.TryParse( versionParts[ 1 ], out var minorAsUInt ) ? ( UInt32? )minorAsUInt : null;
         }
 
         private static Boolean TryGeRegistryKey( [NotNull] String path, [NotNull] String key, out dynamic value ) {

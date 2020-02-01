@@ -19,16 +19,16 @@
 // "Librainian/Extensions.cs" was last cleaned by Rick on 2018/03/08 at 9:07 PM
 
 namespace LibrainianCore.OperatingSystem {
-
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
 
     public static class Extensions {
         [ CanBeNull ]
         public static String Execute( String command ) {
-            var str = "";
+            String str;
 
-            using ( var process = Process.Start( startInfo: new ProcessStartInfo( "cmd", arguments: "/c " + command ) { RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true } ) ) {
+            using ( var process = Process.Start( startInfo: new ProcessStartInfo( "cmd", arguments: $"/c {command}" ) { RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true } ) ) {
                 using ( var standardOutput = process?.StandardOutput ) {
                     str = standardOutput?.ReadToEnd();
                 }

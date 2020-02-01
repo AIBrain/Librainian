@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ByteSize.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ByteSize.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,24 +28,22 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ByteSize.cs" was last formatted by Protiguous on 2019/09/05 at 3:35 PM.
+// Project: "Librainian", "ByteSize.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Maths {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Represents a byte size value.
-    /// </summary>
+    /// <summary>Represents a byte size value.</summary>
     /// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs </remarks>
     public struct ByteSize : IComparable<ByteSize>, IEquatable<ByteSize> {
 
@@ -288,7 +284,7 @@ namespace LibrainianCore.Maths {
             }
         }
 
-        public static Boolean TryParse( String s, out ByteSize result ) {
+        public static Boolean TryParse( [CanBeNull] String s, out ByteSize result ) {
             try {
                 result = Parse( s );
 
@@ -297,7 +293,7 @@ namespace LibrainianCore.Maths {
             catch {
                 result = new ByteSize();
 
-                return false;
+                return default;
             }
         }
 
@@ -328,15 +324,15 @@ namespace LibrainianCore.Maths {
         public ByteSize Subtract( ByteSize bs ) => new ByteSize( this.Bytes - bs.Bytes );
 
         /// <summary>
-        ///     Converts the value of the current ByteSize object to a string.
-        ///     The metric prefix symbol (bit, byte, kilo, mega, giga, tera) used is
-        ///     the largest metric prefix such that the corresponding value is greater
-        ///     than or equal to one.
+        /// Converts the value of the current ByteSize object to a string. The metric prefix symbol (bit, byte, kilo, mega, giga, tera) used is the largest metric prefix such that
+        /// the corresponding value is greater than or equal to one.
         /// </summary>
         public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
-        public String ToString( String format ) => this.ToString( format, CultureInfo.CurrentCulture );
+        [NotNull]
+        public String ToString( [CanBeNull] String format ) => this.ToString( format, CultureInfo.CurrentCulture );
 
+        [NotNull]
         public String ToString( String format, IFormatProvider provider ) {
             if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) {
                 format = "0.## " + format;

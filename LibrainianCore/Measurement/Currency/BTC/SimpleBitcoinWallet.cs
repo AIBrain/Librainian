@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SimpleBitcoinWallet.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "SimpleBitcoinWallet.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,23 +28,26 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2019/12/10 at 7:16 AM.
+// Project: "Librainian", "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace LibrainianCore.Measurement.Currency.BTC {
 
     using System;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Reflection.Emit;
+    
     using System.Threading;
+    using System.Windows.Forms;
+    using Controls;
+    using JetBrains.Annotations;
     using Maths;
+    using Newtonsoft.Json;
     using Time;
     using Utilities;
 
@@ -55,7 +56,6 @@ namespace LibrainianCore.Measurement.Currency.BTC {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
-    [SuppressMessage( "ReSharper", "InconsistentNaming" )]
     public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
 
         [NonSerialized]
@@ -140,11 +140,22 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         /// <summary>
         ///     <para>Static comparison.</para>
         ///     <para>Returns true if the wallets are the same instance.</para>
+        ///     <para>Returns true if the balances match! (Even if different wallets)</para>
         /// </summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) => ReferenceEquals( left, right );
+        public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet left, [CanBeNull] SimpleBitcoinWallet right ) {
+            if ( ReferenceEquals( left, right ) ) {
+                return true;
+            }
+
+            if ( left is null || right is null ) {
+                return default;
+            }
+
+            return left.Balance == right.Balance;
+        }
 
         public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
             if ( otherWallet is null ) {
@@ -161,7 +172,12 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         /// <summary>Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.</summary>
         /// <param name="otherWallet">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( left: this, right: otherWallet );
+        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( this, otherWallet );
+
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals( this, obj as SimpleBitcoinWallet );
 
         public override Int32 GetHashCode() => this._hashcode;
 
@@ -169,57 +185,51 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount">  </param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryAdd( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
-
+        public Boolean TryAdd( Decimal amount ) {
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                if ( this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                    try {
+                        this._balance += amount;
+                        this.LabelToFlashOnChanges.Flash();
+                    }
+                    finally {
+                        this._access.ExitWriteLock();
+                    }
+
+                    return true;
                 }
-
-                this._balance += amount;
-                this.LabelToFlashOnChanges.Flash();
-
-                return true;
+                else {
+                    return default;
+                }
             }
             finally {
-                if ( this._access.IsWriteLockHeld ) {
-                    this._access.ExitWriteLock();
-                }
-
                 this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
-        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet, Boolean sanitize = true ) {
+        public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet ) {
             if ( wallet is null ) {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
-            return this.TryAdd( amount: wallet.Balance, sanitize: sanitize );
+            return this.TryAdd( amount: wallet.Balance );
         }
 
-        /// <summary>Attempt to deposit amoount (larger than zero) to the <see cref="Balance" /> .</summary>
+        /// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" /> .</summary>
         /// <param name="amount">  </param>
         /// <param name="sanitize"></param>
         /// <returns></returns>
         public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             this.OnBeforeDeposit?.Invoke( amount );
 
             if ( !this.TryAdd( amount: amount ) ) {
-                return false;
+                return default;
             }
 
             this.OnAfterDeposit?.Invoke( amount );
@@ -227,24 +237,24 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             return true;
         }
 
-        public Boolean TryTransfer( Decimal amount, ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
+        public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
             if ( sanitize ) {
                 amount = amount.Sanitize();
             }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             Decimal? withdrewAmount = null;
 
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( this._balance < amount ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance -= amount;
@@ -276,7 +286,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
@@ -309,16 +319,16 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
 
             if ( amount <= Decimal.Zero ) {
-                return false;
+                return default;
             }
 
             try {
                 if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
-                    return false;
+                    return default;
                 }
 
                 if ( this._balance < amount ) {
-                    return false;
+                    return default;
                 }
 
                 this._balance -= amount;

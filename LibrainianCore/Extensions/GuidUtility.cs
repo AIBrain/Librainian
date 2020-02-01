@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GuidUtility.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "GuidUtility.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,71 +28,48 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GuidUtility.cs" was last formatted by Protiguous on 2019/08/08 at 7:14 AM.
+// Project: "Librainian", "GuidUtility.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace LibrainianCore.Extensions {
 
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Security.Cryptography;
     using System.Text;
+    using JetBrains.Annotations;
 
-    /// <summary>
-    ///     Helper methods for working with <see cref="Guid" />.
-    /// </summary>
+    /// <summary>Helper methods for working with <see cref="Guid" />.</summary>
     /// <see cref="http://github.com/LogosBible/Logos.Utility/blob/master/src/Logos.Utility/GuidUtility.cs" />
     public static class GuidUtility {
 
-        /// <summary>
-        ///     The namespace for fully-qualified domain names (from RFC 4122, Appendix C).
-        /// </summary>
+        /// <summary>The namespace for fully-qualified domain names (from RFC 4122, Appendix C).</summary>
         public static Guid DnsNamespace { get; } = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
 
-        /// <summary>
-        ///     The namespace for ISO OIDs (from RFC 4122, Appendix C).
-        /// </summary>
+        /// <summary>The namespace for ISO OIDs (from RFC 4122, Appendix C).</summary>
         public static Guid IsoOidNamespace { get; } = new Guid( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
 
-        /// <summary>
-        ///     The namespace for URLs (from RFC 4122, Appendix C).
-        /// </summary>
+        /// <summary>The namespace for URLs (from RFC 4122, Appendix C).</summary>
         public static Guid UrlNamespace { get; } = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
 
-        /// <summary>
-        ///     Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
-        /// </summary>
+        /// <summary>Creates a name-based UUID using the algorithm from RFC 4122 §4.3.</summary>
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">       The name (within that namespace).</param>
         /// <returns>A UUID derived from the namespace and name.</returns>
-        /// <remarks>
-        ///     See
-        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a>
-        ///     .
-        /// </remarks>
+        /// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a> .</remarks>
         public static Guid Create( Guid namespaceId, [NotNull] String name ) => Create( namespaceId, name, 5 );
 
-        /// <summary>
-        ///     Creates a name-based UUID using the algorithm from RFC 4122 §4.3.
-        /// </summary>
+        /// <summary>Creates a name-based UUID using the algorithm from RFC 4122 §4.3.</summary>
         /// <param name="namespaceId">The ID of the namespace.</param>
         /// <param name="name">       The name (within that namespace).</param>
-        /// <param name="version">
-        ///     The version number of the UUID to create; this value must be either 3 (for MD5 hashing) or 5
-        ///     (for SHA-1 hashing).
-        /// </param>
+        /// <param name="version">The version number of the UUID to create; this value must be either 3 (for MD5 hashing) or 5 (for SHA-1 hashing).</param>
         /// <returns>A UUID derived from the namespace and name.</returns>
-        /// <remarks>
-        ///     See
-        ///     <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a>
-        ///     .
-        /// </remarks>
+        /// <remarks>See <a href="http://code.logos.com/blog/2011/04/generating_a_deterministic_guid.html"> Generating a deterministic GUID </a> .</remarks>
         public static Guid Create( Guid namespaceId, [NotNull] String name, Int32 version ) {
             if ( name is null ) {
                 throw new ArgumentNullException( nameof( name ) );

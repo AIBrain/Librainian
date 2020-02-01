@@ -21,9 +21,7 @@
 namespace LibrainianCore.OperatingSystem {
 
     using System;
-    using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using Maths;
 
     public static class DetectSSD {
 
@@ -38,7 +36,7 @@ namespace LibrainianCore.OperatingSystem {
             var hDrive = NativeMethods.CreateFileW( sDrive, 0, // No access to drive
                                                   NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive == null || hDrive.IsInvalid ) {
+            if ( hDrive?.IsInvalid != false ) {
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
@@ -72,7 +70,7 @@ namespace LibrainianCore.OperatingSystem {
             var hDrive = NativeMethods.CreateFileW( sDrive, NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
                                                   NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive == null || hDrive.IsInvalid ) {
+            if ( hDrive?.IsInvalid != false ) {
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
                 return null;
             }
@@ -113,36 +111,7 @@ namespace LibrainianCore.OperatingSystem {
             return true;
         }
 
-        public static Boolean? IsDiskSSD( this Byte diskNumber ) {
-
-            //test 1
-            var incursSeekPenalty = diskNumber.IncursSeekPenalty();
-            if ( incursSeekPenalty != null && !incursSeekPenalty.Value ) {
-                return true;
-            }
-
-            //test 2 (must be admin)
-            var isARotateDevice = diskNumber.IsRotateDevice();
-            if ( isARotateDevice != null && !isARotateDevice.Value ) {
-                return true;
-            }
-
-
-            return null;    //could not determine
-        }
-
-        [Test]
-        public static void Test_Search_For_SSD() {
-            foreach ( var disk in Byte.MinValue.To( 10 ) ) {
-                var isp = disk.IncursSeekPenalty();
-                if ( isp.HasValue && !isp.Value ) {
-                    Debug.WriteLine( $"Disk {disk} is an SSD." );
-                }
-                else {
-                    Debug.WriteLine( $"Disk {disk} is not an SSD." );
-                }
-            }
-        }
+        public static Boolean? IsDiskSSD( this Byte diskNumber ) => diskNumber.IncursSeekPenalty() == false ? ( Boolean? ) true : null;
 
         private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) => ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
 
