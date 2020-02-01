@@ -394,22 +394,6 @@ namespace LibrainianCore.Threading {
         /// </summary>
         /// <param name="delay"></param>
         /// <param name="job">  </param>
-        /// <returns></returns>
-        [NotNull]
-        public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
-            if ( job is null ) {
-                throw new ArgumentNullException( nameof( job ) );
-            }
-
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
-            await Task.Run( job ).ConfigureAwait( false );
-        }
-
-        /// <summary>
-        ///     <para>Continue the task with the <paramref name="job" /> after a <paramref name="delay" />.</para>
-        /// </summary>
-        /// <param name="delay"></param>
-        /// <param name="job">  </param>
         /// <param name="token"></param>
         /// <returns></returns>
         [NotNull]

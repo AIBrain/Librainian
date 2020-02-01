@@ -146,6 +146,7 @@ namespace LibrainianCore.Measurement.Length {
 
         public Rational ToMeters() => throw new NotImplementedException();
 
+        [NotNull]
         public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
     }
 }

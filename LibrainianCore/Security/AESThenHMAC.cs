@@ -136,7 +136,7 @@ namespace LibrainianCore.Security {
                     var iv = new Byte[ ivLength ];
                     Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: iv, destinationIndex: 0, iv.Length );
 
-                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv: iv ) ) {
+                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv ) ) {
                         var plainTextStream = new MemoryStream();
                         var decrypterStream = new CryptoStream( stream: plainTextStream, transform: decrypter, mode: CryptoStreamMode.Write );
 
@@ -285,7 +285,7 @@ namespace LibrainianCore.Security {
                 aes.GenerateIV();
                 iv = aes.IV;
 
-                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv: iv ) ) {
+                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv ) ) {
                     var cipherStream = new MemoryStream();
 
                     using ( var binaryWriter = new BinaryWriter( output: new CryptoStream( stream: cipherStream, transform: encrypter, mode: CryptoStreamMode.Write ) ) ) {

@@ -50,7 +50,6 @@ namespace LibrainianCore.Databases {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Librainian;
     using Logging;
     using Parsing;
     using Persistence;
@@ -96,10 +95,7 @@ namespace LibrainianCore.Databases {
 
             var key = reader.Key();
 
-            if ( !( Recall( key ) is Fields fields ) ) {
-                fields = reader.GetFieldNames();
-                Remember( key, fields, Sliding.Minutes( 1 ) );
-            }
+               var fields = reader.GetFieldNames();
 
             return fields;
         }

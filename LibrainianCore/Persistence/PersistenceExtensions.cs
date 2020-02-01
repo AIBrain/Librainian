@@ -42,10 +42,8 @@ namespace LibrainianCore.Persistence {
     using System.IO;
     using System.IO.IsolatedStorage;
     using System.Linq;
-    using System.Reflection;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
-    using System.Security;
     using System.Text;
     using System.Threading;
     using System.Windows.Forms;
@@ -56,9 +54,7 @@ namespace LibrainianCore.Persistence {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
     using OperatingSystem.FileSystem;
-    using Parsing;
     using Threading;
-    using DirectoryInfo = Pri.LongPathCore.DirectoryInfo;
     using File = Pri.LongPathCore.File;
 
     // ReSharper disable RedundantUsingDirective
@@ -227,47 +223,6 @@ namespace LibrainianCore.Persistence {
 
                 return ( T ) binaryFormatter.Deserialize( memoryStream );
             }
-        }
-
-        [Obsolete( "Will this ever be used in the future?" )]
-        public static Boolean EnableIsolatedStorageCompression() {
-            using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
-                var myType = isf.GetType();
-                var myFields = myType.GetFields( bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
-
-                var myField = myFields.FirstOrDefault( f => f.Name.Like( "m_RootDir" ) );
-
-                var path = myField?.GetValue( isf ) as String;
-
-                if ( String.IsNullOrWhiteSpace( path ) ) {
-                    return default;
-                }
-
-                try {
-                    var dir = new DirectoryInfo( path );
-
-                    if ( dir.Exists ) {
-                        var result = dir.SetCompression( true );
-
-                        if ( result ) {
-                            $"Enabled compression in IsolatedStorage @ {path}".Info();
-                        }
-
-                        return result;
-                    }
-                }
-                catch ( SecurityException exception ) {
-                    exception.Log();
-                }
-                catch ( ArgumentException exception ) {
-                    exception.Log();
-                }
-                catch ( PathTooLongException exception ) {
-                    exception.Log();
-                }
-            }
-
-            return default;
         }
 
         /// <summary>Can the file be read from at this moment in time ?</summary>

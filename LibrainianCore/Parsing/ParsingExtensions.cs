@@ -61,13 +61,8 @@ namespace LibrainianCore.Parsing {
     using Newtonsoft.Json;
     using Rationals;
     using Threading;
-    using static Persistence.Cache;
 
     public static class ParsingExtensions {
-
-        [NotNull]
-        private static Lazy<PluralizationService> LazyPluralizationService { get; } =
-            new Lazy<PluralizationService>( () => PluralizationService.CreateService( CultureInfo.CurrentCulture ) );
 
         [NotNull]
         private static String[] OrdinalSuffixes { get; } = {
@@ -1010,48 +1005,7 @@ namespace LibrainianCore.Parsing {
             return $"{left}{new String( middlePadding, count )}{right}";
         }
 
-        /// <summary>Attempt at pluralizing <paramref name="self" />.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="self"></param>
-        /// <param name="singular"></param>
-        /// <returns></returns>
-        [NotNull]
-        [Pure]
-        public static String PluralOf<T>( [NotNull] this T self, [NotNull] String singular ) {
-            if ( self is null ) {
-                throw new ArgumentNullException( nameof( self ) );
-            }
-
-            if ( singular is null ) {
-                throw new ArgumentNullException( nameof( singular ) );
-            }
-
-            var key = BuildKey( self.ToString().Trim(), nameof( PluralOf ) );
-
-            if ( Recall( key ) is String result ) {
-                return result;
-            }
-
-            var service = LazyPluralizationService.Value;
-
-            if ( service is null ) {
-                throw new NullReferenceException( $"{nameof( LazyPluralizationService )} is null." );
-            }
-
-            if ( service.IsPlural( singular ) ) {
-                Remember( key, singular, Sliding.Hours( 24 ) );
-
-                return singular;
-            }
-
-            var pluralized = service.Pluralize( singular );
-
-            if ( pluralized != null ) {
-                Remember( key, pluralized, Sliding.Hours( 24 ) );
-            }
-
-            return pluralized ?? singular;
-        }
+     
 
         [NotNull]
         [Pure]
@@ -1982,5 +1936,52 @@ namespace LibrainianCore.Parsing {
 
             return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text.Substring( 1 );
         }
+
+        [DebuggerStepThrough]
+        [CanBeNull]
+        [Pure]
+        public static String PluralOf( this BigInteger number, [CanBeNull] String singular ) {
+            if ( String.IsNullOrEmpty( singular ) ) {
+                return default;
+            }
+
+            if ( number == BigInteger.One ) {
+                return singular;
+            }
+
+            return singular + "s";  //TODO find .NET Core plural nuget
+        }
+
+        [DebuggerStepThrough]
+        [CanBeNull]
+        [Pure]
+        public static String PluralOf( this Decimal number, [CanBeNull] String singular ) {
+            if ( String.IsNullOrEmpty( singular ) ) {
+                return default;
+            }
+
+            if ( number == 1 ) {
+                return singular;
+            }
+
+            return singular + "s";  //TODO find .NET Core plural nuget
+        }
+
+        [DebuggerStepThrough]
+        [CanBeNull]
+        [Pure]
+        public static String PluralOf( this Rational number, [CanBeNull] String singular ) {
+            if ( String.IsNullOrEmpty( singular ) ) {
+                return default;
+            }
+
+            if ( number == 1 ) {
+                return singular;
+            }
+
+            return singular + "s";  //TODO find .NET Core plural nuget
+        }
+
+
     }
 }

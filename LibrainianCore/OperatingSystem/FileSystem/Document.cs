@@ -289,16 +289,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         Task<T> LoadJSONAsync<T>( CancellationToken token );
 
-        /// <summary>
-        ///     <para>Starts a task to <see cref="MoveAsync" /> a file to the <paramref name="destination" />.</para>
-        ///     <para>Returns -1 if an exception happened.</para>
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [NotNull]
-        Task<UInt64?> MoveAsync( [NotNull] IDocument destination, CancellationToken token );
-
         Task<String> ReadStringAsync();
 
         /// <summary>

@@ -41,6 +41,7 @@ namespace LibrainianCore.Persistence {
 
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Linq;
     using Collections.Extensions;
@@ -49,19 +50,8 @@ namespace LibrainianCore.Persistence {
     using Logging;
     using Parsing;
 
-    /// <summary>
-    ///     <para><see cref="Recall{T}" /> to retrieve and value from <see cref="Memory" />.</para>
-    ///     <para><see cref="Remember{T}" /> to store any value into <see cref="Memory" />.</para>
-    ///     <para><see cref="Forget{T}" /> to remove any value from <see cref="Memory" />.</para>
-    /// </summary>
     public static class Cache {
 
-        /// <summary>Gets a reference to the default <see cref="MemoryCache" /> instance.</summary>
-        /// <remarks></remarks>
-        [NotNull]
-        private static MemoryCache Memory { get; } = MemoryCache.Default;
-
-        static Cache() => $"{Memory.CacheMemoryLimit.SizeSuffix()} memory available for caching.".Log();
 
         /// <summary>Build a key from combining 1 or more <see cref="T" /> (converted to Strings).</summary>
         /// <typeparam name="T"></typeparam>
@@ -129,164 +119,7 @@ namespace LibrainianCore.Persistence {
             return parts.ToStrings( Symbols.TwoPipes ).Trim();
         }
 
-        /// <summary>Remove <paramref name="key" /> from the cache.</summary>
-        /// <param name="key"></param>
-        public static void Forget( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
-            }
 
-            Memory.Remove( key );
-        }
 
-        /// <summary>Remove <paramref name="keys" /> from the cache.</summary>
-        /// <param name="keys"></param>
-        public static void Forget( [NotNull] params Object[] keys ) {
-            if ( keys is null ) {
-                throw new ArgumentNullException( nameof( keys ) );
-            }
-
-            if ( !keys.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( keys ) );
-            }
-
-            var key = BuildKey( keys );
-
-            Memory.Remove( key );
-        }
-
-        /// <summary>Remove <paramref name="keyBuilder" /> from the cache.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="keyBuilder"></param>
-        public static void Forget<T>( [NotNull] params T[] keyBuilder ) {
-            if ( keyBuilder is null ) {
-                throw new ArgumentNullException( nameof( keyBuilder ) );
-            }
-
-            if ( !keyBuilder.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( keyBuilder ) );
-            }
-
-            Memory.Remove( BuildKey( keyBuilder ) );
-        }
-
-        /// <summary>Attempt to pull <paramref name="key" /> from cache.</summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static Object Recall( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
-            }
-
-            return Memory[ key ];
-        }
-
-        [CanBeNull]
-        public static Object Recall( [NotNull] params Object[] keys ) => Recall( BuildKey( keys ) );
-
-        [CanBeNull]
-        public static Object Recall<T>( [NotNull] params T[] keys ) => Recall( BuildKey( keys ) );
-
-        /// <summary>
-        ///     <para>If <paramref name="policy" /> is not given, it will default to <see cref="Sliding.Minutes" /> (1 minute).</para>
-        ///     <para>If <paramref name="value" /> is null, the cache for <paramref name="key" /> is released.</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key">   A unique string, or built using <see cref="BuildKey{T}" />.</param>
-        /// <param name="value"> </param>
-        /// <param name="policy"></param>
-        [CanBeNull]
-        public static T Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
-            }
-
-            if ( value is null ) {
-                Forget( key: key );
-
-                return default;
-            }
-
-            Memory.Set( key, value, policy ?? Sliding.Minutes( 1 ) );
-
-            return value;
-        }
-
-        /// <summary>These expire at a given time from Now.</summary>
-        public static class Absolute {
-
-            /// <summary><paramref name="hours" /> from now.</summary>
-            [NotNull]
-            public static CacheItemPolicy Hours( Double hours ) =>
-                new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddHours( hours )
-                };
-
-            /// <summary><paramref name="milliseconds" /> from now.</summary>
-            /// <param name="milliseconds"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Milliseconds( Double milliseconds ) =>
-                new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddMilliseconds( milliseconds )
-                };
-
-            /// <summary><paramref name="minutes" /> from now.</summary>
-            /// <param name="minutes"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Minutes( Double minutes ) =>
-                new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddMinutes( minutes )
-                };
-
-            /// <summary><paramref name="seconds" /> from now.</summary>
-            /// <param name="seconds"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Seconds( Double seconds ) =>
-                new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddSeconds( seconds )
-                };
-        }
-
-        /// <summary>A span of time within which a cache entry must be accessed before the cache entry is evicted from the cache.</summary>
-        public static class Sliding {
-
-            /// <summary><paramref name="hours" /> from now.</summary>
-            [NotNull]
-            public static CacheItemPolicy Hours( Double hours ) =>
-                new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromHours( hours )
-                };
-
-            /// <summary><paramref name="milliseconds" /> from now.</summary>
-            /// <param name="milliseconds"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Milliseconds( Double milliseconds ) =>
-                new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromMilliseconds( milliseconds )
-                };
-
-            /// <summary><paramref name="minutes" /> from now.</summary>
-            /// <param name="minutes"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Minutes( Double minutes ) =>
-                new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromMinutes( minutes )
-                };
-
-            /// <summary><paramref name="seconds" /> from now.</summary>
-            /// <param name="seconds"></param>
-            /// <returns></returns>
-            [NotNull]
-            public static CacheItemPolicy Seconds( Double seconds ) =>
-                new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromSeconds( seconds )
-                };
-        }
     }
 }

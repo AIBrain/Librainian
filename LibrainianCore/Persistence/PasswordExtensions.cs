@@ -61,17 +61,7 @@ namespace LibrainianCore.Persistence {
             return new Document( destinationFile );
         }
 
-        /// <summary>Set a static <paramref name="key" /> to the <paramref name="value" />.</summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static Boolean Settings( String key, String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
 
-        /// <summary>Return the value of the given <paramref name="key" />.</summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static String Settings( String key ) => Environment.SpecialFolder.LocalApplicationData.Settings( key );
 
     }
 

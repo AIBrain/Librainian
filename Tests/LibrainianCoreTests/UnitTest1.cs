@@ -1,10 +1,10 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SystemRestorePoints.cs" belongs to Protiguous@Protiguous.com
+// This source code contained in "UnitTest1.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 //
@@ -16,8 +16,8 @@
 // Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal:Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,34 +28,22 @@
 // =========================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// For business inquiries, please contact me at Protiguous@Protiguous.com
 //
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SystemRestorePoints.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// Project: "LibrainianCoreTests", "UnitTest1.cs" was last formatted by Protiguous on 2019/12/22 at 6:23 AM.
 
-namespace LibrainianCore.OperatingSystem {
+namespace LibrainianCoreTests {
 
-    using System;
-    using Microsoft.VisualBasic;
+    using Xunit;
 
-    public static class SystemRestorePoints {
+    public class UnitTest1 {
 
-        /// <summary>Untested.</summary>
-        /// <param name="title"></param>
-        /// <returns></returns>
-        public static Boolean CreateRestorePoint( String title = null ) {
-            if ( String.IsNullOrWhiteSpace( title ) ) {
-                var now = DateTime.Now;
-                title = "Restore point at " + now.ToLongDateString() + " " + now.ToLongTimeString();
-            }
-
-            dynamic restorePoint = Interaction.GetObject( "winmgmts:\\\\.\\root\\default:Systemrestore" );
-
-            return restorePoint?.CreateRestorePoint( title, 0, 100 ) == 0;
-        }
+        [Fact]
+        public void Test1() { }
     }
 }

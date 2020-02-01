@@ -51,11 +51,11 @@ namespace LibrainianCore.OperatingSystem {
     using Collections.Extensions;
     using FileSystem;
     using JetBrains.Annotations;
+    using LibrainianCore.Extensions;
     using Logging;
     using Maths;
     using Measurement.Time;
     using Parsing;
-    using TimeoutException = System.ServiceProcess.TimeoutException;
 
     public static class Windows {
 
@@ -168,31 +168,6 @@ namespace LibrainianCore.OperatingSystem {
             Environment.SetEnvironmentVariable( variable: PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
         }
 
-        public static Boolean CreateRestorePoint( String description = null ) {
-            try {
-                if ( String.IsNullOrWhiteSpace( description ) ) {
-                    description = DateTime.Now.ToLongDateTime();
-                }
-
-                var oScope = new ManagementScope( @"\\localhost\root\default" );
-                var oPath = new ManagementPath( "SystemRestore" );
-                var oGetOp = new ObjectGetOptions();
-
-                using ( var oProcess = new ManagementClass( scope: oScope, oPath, options: oGetOp ) ) {
-                    var oInParams = oProcess.GetMethodParameters( "CreateRestorePoint" );
-                    oInParams[ "Description" ] = description;
-                    oInParams[ "RestorePointType" ] = 12; // MODIFY_SETTINGS
-                    oInParams[ "EventType" ] = 100;
-
-                    var oOutParams = oProcess.InvokeMethod( "CreateRestorePoint", inParameters: oInParams, options: null );
-
-                    return oOutParams != null;
-                }
-            }
-            catch ( Exception ) { }
-
-            return default;
-        }
 
         [NotNull]
         public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String arguments ) =>
@@ -375,61 +350,8 @@ namespace LibrainianCore.OperatingSystem {
             return default;
         }
 
-        public static async Task<Boolean> RestartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
-            }
 
-            return await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false ) &&
-                   await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( false );
-        }
 
-        public static async Task<Boolean> StartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
-            }
-
-            try {
-                return await Task.Run( () => {
-                    using ( var service = new ServiceController( serviceName ) ) {
-                        if ( service.Status != ServiceControllerStatus.Running ) {
-                            service.Start();
-                        }
-
-                        service.WaitForStatus( desiredStatus: ServiceControllerStatus.Running, timeout: timeout );
-
-                        return service.Status == ServiceControllerStatus.Running;
-                    }
-                } ).ConfigureAwait( false );
-            }
-            catch ( TimeoutException exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
-
-        public static async Task<Boolean> StopServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
-            }
-
-            try {
-                return await Task.Run( () => {
-                    using ( var service = new ServiceController( serviceName ) ) {
-                        service.Stop();
-                        service.WaitForStatus( desiredStatus: ServiceControllerStatus.Stopped, timeout: timeout );
-
-                        return service.Status == ServiceControllerStatus.Stopped;
-                    }
-                } ).ConfigureAwait( false );
-            }
-            catch ( TimeoutException exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
 
         [CanBeNull]
         public static Task<Process> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {

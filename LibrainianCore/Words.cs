@@ -37,7 +37,7 @@
 //
 // Project: "Librainian", "Words.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
-namespace Librainian {
+namespace LibrainianCore {
 
     using System;
 

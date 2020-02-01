@@ -25,7 +25,6 @@ namespace LibrainianCore.Threading {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using System.Threading.Tasks.Dataflow;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
@@ -39,6 +38,7 @@ namespace LibrainianCore.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -81,70 +81,6 @@ namespace LibrainianCore.Threading {
 			}
 		}
 
-		//private static readonly BufferBlock<OneJob> JobsBlock = new BufferBlock<OneJob>( dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
-
-		//public static readonly TransformBlock<OneJob, OneJob> PriorityBlock = new TransformBlock<OneJob, OneJob>();
-
-		///// <summary>
-		/////     dataflowBlockOptions: <see cref="Blocks.ManyProducers.ConsumeSensible" />
-		///// </summary>
-		//private static readonly ActionBlock<Action> FireAndForget = new ActionBlock<Action>( action: action => {
-		//    if ( null == action ) {
-		//        return;
-		//    }
-		//    try {
-		//        if ( !CancelJobs ) {
-		//            action();
-		//        }
-		//    }
-		//    catch ( Exception exception ) {
-		//        exception.Error();
-		//    }
-		//    finally {
-		//        Interlocked.Decrement( ref spawnCounter );
-		//    }
-		//}, dataflowBlockOptions: Blocks.ManyProducers.ConsumeSensible );
-
-		//private static long spawnCounter;
-
-		///// <summary>
-		///// <para>
-		///// Cancel has been requested. Don't queue or start any more spawns. If we're in a method,
-		///// try to check the token.
-		///// </para>
-		///// </summary>
-		//public static readonly CancellationTokenSource CancelJobsTokenSource = new CancellationTokenSource();
-
-		/*
-				public static readonly PriorityBlock JobPriorityBlock = new PriorityBlock( CancelAllJobsToken );
-		*/
-
-		/*
-
-				/// <summary>
-				/// <para>Cancel has been requested. Don't queue any more spawns.</para></summary>
-				public static readonly CancellationToken CancelNewJobsToken = new CancellationToken( false );
-		*/
-
-		//public static UInt64 GetSpawnsWaiting() {
-		//    return ( UInt64 )Interlocked.Read( ref spawnCounter );
-		//}
-
-		/*
-				[Obsolete( "use Task.Run()" )]
-				public static void Spawn( this Action job, Single priority = 0.50f, Span? delay = null ) {
-					if ( CancelNewJobsToken.IsCancellationRequested ) {
-						return;
-					}
-					if ( !delay.HasValue ) {
-						var onejob = new OneJob( priority, job );
-						JobPriorityBlock.Add( onejob );
-					}
-					else {
-						delay.Value.Create( () => job.Spawn( priority ) ).AndStart();
-					}
-				}
-		*/
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
@@ -157,6 +93,7 @@ namespace LibrainianCore.Threading {
 		///     foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t;
 		///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
+		[NotNull]
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
 			if ( tasks == null ) {
 				throw new ArgumentNullException( paramName: nameof( tasks ) );
@@ -175,8 +112,7 @@ namespace LibrainianCore.Threading {
 
 			var nextTaskIndex = -1;
 
-			void Continuation( Task<T> completed )
-			{
+			void Continuation( Task<T> completed ) {
 				var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
 				bucket.TrySetResult( result: completed );
 			}
@@ -218,7 +154,7 @@ namespace LibrainianCore.Threading {
 			await Task.Run( action: job ).ConfigureAwait( false );
 		}
 
-	
+
 		/// <summary>
 		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
 		/// </summary>
@@ -272,6 +208,7 @@ namespace LibrainianCore.Threading {
 		/// <param name="pre"></param>
 		/// <param name="post"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
 			try {
 				pre?.Invoke();
@@ -482,79 +419,6 @@ namespace LibrainianCore.Threading {
 		//    } );
 		//}
 
-		/// <summary>
-		///     Keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="target"></param>
-		/// <param name="item"></param>
-		public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
-			if ( target == null ) {
-#if DEBUG
-				throw new ArgumentNullException( paramName: nameof( target ) );
-#else
-                return;
-#endif
-			}
-
-			if ( !target.Post( item: item ) ) {
-				target.TryPost( item: item, delay: TimeExtensions.GetTimePrecision() );
-			}
-		}
-
-		/// <summary>
-		///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="target"></param>
-		/// <param name="item"></param>
-		/// <param name="delay"></param>
-		public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
-			if ( target == null ) {
-				throw new ArgumentNullException( paramName: nameof( target ) );
-			}
-
-			try {
-				if ( delay < Milliseconds.One ) {
-					delay = Milliseconds.One;
-				}
-
-				return delay.CreateTimer( () => target.TryPost( item: item ) ).AndStart();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-				throw;
-			}
-		}
-
-		/// <summary>
-		///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do
-		///     the <paramref name="action" />.
-		/// </summary>
-		/// <param name="afterDelay"></param>
-		/// <param name="action"></param>
-		/// <param name="condition"></param>
-		public static System.Timers.Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
-			if ( condition == null ) {
-				throw new ArgumentNullException( paramName: nameof( condition ) );
-			}
-			if ( action == null ) {
-				throw new ArgumentNullException( paramName: nameof( action ) );
-			}
-			try {
-				return afterDelay.CreateTimer( () => {
-					if ( condition() ) {
-						action();
-					}
-				} )
-								 .Once()
-								 .AndStart();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-				return null;
-			}
-		}
 
 		public static Task Multitude( params Action[] actions ) => Task.Run( () => Parallel.Invoke( actions ) );
 

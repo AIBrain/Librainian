@@ -74,15 +74,15 @@ namespace LibrainianCore.Persistence {
         [CanBeNull]
         public static T Get<T>( [NotNull] this String key ) {
 
-            if ( LibrainianCore.App is null ) {
-                throw new ArgumentNullException( nameof( LibrainianCore.App ) );
+            if ( App is null ) {
+                throw new ArgumentNullException( nameof( App ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            var value = LibrainianCore.App.GetValue( key );
+            var value = App.GetValue( key );
 
             if ( value is T result ) {
                 return result;
@@ -98,8 +98,8 @@ namespace LibrainianCore.Persistence {
         /// <returns></returns>
         public static Boolean Set<T>( [NotNull] this String key, [CanBeNull] T value ) {
 
-            if ( LibrainianCore.App is null ) {
-                throw new ArgumentNullException( nameof( LibrainianCore.App ) );
+            if ( App is null ) {
+                throw new ArgumentNullException( nameof( App ) );
             }
 
             if ( String.IsNullOrWhiteSpace( value: key ) ) {
@@ -109,19 +109,19 @@ namespace LibrainianCore.Persistence {
             try {
                 switch ( value ) {
                     case String[] _: {
-                            LibrainianCore.App.SetValue( key, value, RegistryValueKind.MultiString );
+                            App.SetValue( key, value, RegistryValueKind.MultiString );
 
                             return true;
                         }
 
                     case String _:
-                        LibrainianCore.App.SetValue( key, value, RegistryValueKind.String );
+                        App.SetValue( key, value, RegistryValueKind.String );
 
                         return true;
 
                     case UInt64 _:
                     case Int64 _:
-                        LibrainianCore.App.SetValue( key, value, RegistryValueKind.QWord );
+                        App.SetValue( key, value, RegistryValueKind.QWord );
 
                         return true;
 
@@ -131,19 +131,19 @@ namespace LibrainianCore.Persistence {
                     case Int16 _:
                     case SByte _:
                     case Byte _:
-                        LibrainianCore.App.SetValue( key, value, RegistryValueKind.DWord );
+                        App.SetValue( key, value, RegistryValueKind.DWord );
 
                         return true;
 
                     case Byte[] _:
-                        LibrainianCore.App.SetValue( key, value, RegistryValueKind.Binary );
+                        App.SetValue( key, value, RegistryValueKind.Binary );
 
                         return true;
 
                     default: {
 
                             // ReSharper disable once AssignNullToNotNullAttribute
-                            LibrainianCore.App.SetValue( key, value, RegistryValueKind.Unknown );
+                            App.SetValue( key, value, RegistryValueKind.Unknown );
 
                             return true;
                         }

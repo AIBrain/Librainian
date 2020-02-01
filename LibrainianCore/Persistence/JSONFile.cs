@@ -29,9 +29,10 @@ namespace LibrainianCore.Persistence {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
+	using Logging;
 	using Maths;
 	using Newtonsoft.Json;
-	using Threading;
+	using OperatingSystem.FileSystem;
 
 	/// <summary>
 	///     Persist a document to and from a JSON formatted text document.
@@ -44,9 +45,9 @@ namespace LibrainianCore.Persistence {
 		/// <param name="document"></param>
 		public JSONFile( Document document ) : this() {
 			this.Document = document;
-			if ( !this.Document.Folder.Exists() ) {
-				this.Document.Folder.Create();
-			}
+			
+				this.Document.ContainingingFolder().Create();
+			
 			this.Read().Wait();
 		}
 
@@ -116,33 +117,13 @@ namespace LibrainianCore.Persistence {
 			}
 		}
 
-		/// <summary>
-		///     <para>Add in all of the sections, and key-value-pairs from the <see cref="INIFile" />.</para>
-		///     <para>Performs a file save.</para>
-		/// </summary>
-		/// <param name="iniFile"></param>
-		/// <returns></returns>
-		public Boolean Add( INIFile iniFile ) {
-			if ( null == iniFile ) {
-				return false;
-			}
-
-			Parallel.ForEach( iniFile.Sections.AsParallel(), ThreadingExtensions.CPUIntensive, section => {
-																								   var dictionary = iniFile[ section ];
-																								   if ( null != dictionary ) {
-																									   Parallel.ForEach( dictionary.AsParallel(), ThreadingExtensions.CPUIntensive, pair => { this.Add( section, pair ); } );
-																								   }
-																							   } );
-
-			return true;
-		}
 
 		/// <summary>
 		///     Removes all data from all sections.
 		/// </summary>
 		/// <returns></returns>
 		public Boolean Clear() {
-			Parallel.ForEach( this.Data.Keys, section => { this.TryRemove( section ); } );
+			Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
 			return !this.Data.Keys.Any();
 		}
 
@@ -163,7 +144,9 @@ namespace LibrainianCore.Persistence {
 										 return false;
 									 }
 
-									 var result = Parallel.ForEach( data.Keys.AsParallel(), ThreadingExtensions.CPUIntensive, section => { Parallel.ForEach( data[ section ].Keys.AsParallel(), ThreadingExtensions.CPUIntensive, key => { this.Add( section, new KeyValuePair< String, String >( key, data[ section ][ key ] ) ); } ); } );
+									 var result = Parallel.ForEach( data.Keys.AsParallel(),
+										 section => Parallel.ForEach( data[ section ].Keys.AsParallel().AsUnordered(),
+											 key => this.Add( section, new KeyValuePair<String, String>( key, data[ section ][ key ] ) ) ) );
 									 return result.IsCompleted;
 								 }
 								 catch ( JsonException exception ) {
@@ -227,7 +210,7 @@ namespace LibrainianCore.Persistence {
 									 document.Delete();
 								 }
 
-								 return this.Data.Save( document, true, Formatting.Indented );
+								 return this.Data.TrySave( document, true, Formatting.Indented );
 							 }, cancellationToken );
 		}
 
