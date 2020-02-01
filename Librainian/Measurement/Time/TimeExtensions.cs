@@ -1,25 +1,23 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "TimeExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "TimeExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 // 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 // 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "TimeExtensions.cs" was last formatted by Protiguous on 2019/11/25 at 4:08 PM.
+// Project: "Librainian", "TimeExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -226,7 +224,7 @@ namespace Librainian.Measurement.Time {
             }
 
             var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
-            var remainingTime = ( milliseconds / progress ) - milliseconds; // should be 15 seconds ( 20 - 5)
+            var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
 
             return TimeSpan.FromMilliseconds( remainingTime );
         }
@@ -288,8 +286,8 @@ namespace Librainian.Measurement.Time {
         public static Years GetAge( this DateTime dateOfBirth ) {
             var today = DateTime.Today;
 
-            var a = ( ( ( today.Year * 100 ) + today.Month ) * 100 ) + today.Day;
-            var b = ( ( ( dateOfBirth.Year * 100 ) + dateOfBirth.Month ) * 100 ) + dateOfBirth.Day;
+            var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
+            var b = ( dateOfBirth.Year * 100 + dateOfBirth.Month ) * 100 + dateOfBirth.Day;
 
             return new Years( ( a - b ) / 10000 );
         }
@@ -306,7 +304,7 @@ namespace Librainian.Measurement.Time {
             return AverageDateTimePrecision.GetValueOrDefault( Measurement.Time.Milliseconds.One );
         }
 
-        public static Int32 GetQuarter( this DateTime date ) => ( ( date.Month - 1 ) / 3 ) + 1;
+        public static Int32 GetQuarter( this DateTime date ) => ( date.Month - 1 ) / 3 + 1;
 
         /// <summary>Accurate to within how many nanoseconds?</summary>
         /// <returns></returns>
@@ -511,7 +509,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate( [NotNull] this String input, [CanBeNull] CultureInfo culture ) {
             if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( input ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( input ) );
             }
 
             input = input.Replace( "\n", "" );

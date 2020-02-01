@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Attoseconds.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "Attoseconds.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Attoseconds.cs" was last formatted by Protiguous on 2019/12/04 at 10:27 PM.
+// 
+// Project: "Librainian", "Attoseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -56,9 +54,26 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public class Attoseconds : IQuantityOfTime {
 
-        /// <summary>1000</summary>
-        /// <see cref="Femtoseconds" />
-        public const UInt16 InOneFemtosecond = 1000;
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneAttosecond * this.Value );
+
+        [NotNull]
+        public Seconds ToSeconds() => throw new NotImplementedException();
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "as" )}";
+            }
+
+            var dec = ( Decimal ) this.Value;
+
+            return $"{dec} {dec.PluralOf( "as" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.ToSeconds().Value );
 
         /// <summary>Ten <see cref="Attoseconds" /> s.</summary>
         public static Attoseconds Fifteen { get; } = new Attoseconds( 15 );
@@ -130,7 +145,11 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        public Attoseconds( Decimal value ) => this.Value = ( Rational )value;
+        /// <summary>1000</summary>
+        /// <see cref="Femtoseconds" />
+        public const UInt16 InOneFemtosecond = 1000;
+
+        public Attoseconds( Decimal value ) => this.Value = ( Rational ) value;
 
         public Attoseconds( Rational value ) => this.Value = value;
 
@@ -141,11 +160,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds Combine( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException(  nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             return new Attoseconds( left.Value + right.Value );
@@ -154,10 +173,10 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds Combine( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
-            return new Attoseconds( left.Value + ( Rational )attoseconds );
+            return new Attoseconds( left.Value + ( Rational ) attoseconds );
         }
 
         /// <summary>
@@ -181,7 +200,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator Femtoseconds( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException(  nameof( attoseconds ) );
+                throw new ArgumentNullException( nameof( attoseconds ) );
             }
 
             return attoseconds.ToFemtoseconds();
@@ -190,7 +209,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator SpanOfTime( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException(  nameof( attoseconds ) );
+                throw new ArgumentNullException( nameof( attoseconds ) );
             }
 
             return new SpanOfTime( planckTimes: attoseconds.ToPlanckTimes().Value );
@@ -199,7 +218,7 @@ namespace Librainian.Measurement.Time {
         [CanBeNull]
         public static implicit operator Zeptoseconds( [NotNull] Attoseconds attoseconds ) {
             if ( attoseconds is null ) {
-                throw new ArgumentNullException(  nameof( attoseconds ) );
+                throw new ArgumentNullException( nameof( attoseconds ) );
             }
 
             return attoseconds.ToZeptoseconds();
@@ -208,7 +227,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator -( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             return Combine( left, -attoseconds );
@@ -219,11 +238,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator +( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException(  nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             return Combine( left, right );
@@ -232,7 +251,7 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static Attoseconds operator +( [NotNull] Attoseconds left, Decimal attoseconds ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             return Combine( left, attoseconds );
@@ -240,11 +259,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException(  nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             return left.Value < right.Value;
@@ -254,11 +273,11 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException(  nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             return left.Value > right.Value;
@@ -266,7 +285,7 @@ namespace Librainian.Measurement.Time {
 
         public Int32 CompareTo( [NotNull] Attoseconds other ) {
             if ( other is null ) {
-                throw new ArgumentNullException(  nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
             return this.Value.CompareTo( other.Value );
@@ -284,7 +303,7 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException(  nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
@@ -300,7 +319,7 @@ namespace Librainian.Measurement.Time {
         /// <paramref name="obj" /> in the sort order. Zero This instance occurs in the same position in the sort order as <paramref name="obj" />. Greater than zero This instance follows
         /// <paramref name="obj" /> in the sort order.
         /// </returns>
-        /// <exception cref="System.ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
+        /// <exception cref="ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
             if ( obj is null ) {
                 return 1;
@@ -311,35 +330,16 @@ namespace Librainian.Measurement.Time {
 
         public override Boolean Equals( [CanBeNull] Object obj ) => obj is Attoseconds attoseconds && Equals( this, attoseconds );
 
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
         /// <summary>Convert to a larger unit.</summary>
         /// <returns></returns>
         [NotNull]
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
-
-        [NotNull]
-        public Seconds ToSeconds() => throw new NotImplementedException();
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "as" )}";
-            }
-
-            var dec = ( Decimal )this.Value;
-
-            return $"{dec} {dec.PluralOf( "as" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.ToSeconds().Value );
-
         /// <summary>Convert to a smaller unit.</summary>
         /// <returns></returns>
         [NotNull]
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
+
     }
+
 }

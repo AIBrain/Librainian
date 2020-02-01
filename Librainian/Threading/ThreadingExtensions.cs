@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ThreadingExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "ThreadingExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ThreadingExtensions.cs" was last formatted by Protiguous on 2019/08/08 at 9:38 AM.
+// 
+// Project: "Librainian", "ThreadingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace Librainian.Threading {
 
@@ -60,15 +58,11 @@ namespace Librainian.Threading {
         public static Boolean IsRunningFromNUnit { get; } =
             AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
 
-        /// <summary>
-        ///     Only allow a delegate to run X times.
-        /// </summary>
+        /// <summary>Only allow a delegate to run X times.</summary>
         /// <param name="action">      </param>
         /// <param name="callsAllowed"></param>
         /// <returns></returns>
-        /// <example>
-        ///     var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );
-        /// </example>
+        /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
         /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
         [NotNull]
         public static Action ActionBarrier( [CanBeNull] this Action action, Int64? callsAllowed = null ) {
@@ -81,17 +75,12 @@ namespace Librainian.Threading {
             };
         }
 
-        /// <summary>
-        ///     Only allow a delegate to run X times.
-        /// </summary>
+        /// <summary>Only allow a delegate to run X times.</summary>
         /// <param name="action">      </param>
         /// <param name="parameter">   </param>
         /// <param name="callsAllowed"></param>
         /// <returns></returns>
-        /// <example>
-        ///     var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar,
-        ///     remainingCallsAllowed: 2 );
-        /// </example>
+        /// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
         /// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
         [NotNull]
         public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, [CanBeNull] T1 parameter, Int64? callsAllowed = null ) {
@@ -119,9 +108,7 @@ namespace Librainian.Threading {
             }
         }
 
-        /// <summary>
-        ///     About X bytes by polling the object's fields.
-        /// </summary>
+        /// <summary>About X bytes by polling the object's fields.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -206,9 +193,7 @@ namespace Librainian.Threading {
             return sizeInBytes;
         }
 
-        /// <summary>
-        ///     Has attributes <see cref="MethodImplOptions.NoInlining" /> and <see cref="MethodImplOptions.NoOptimization" /> .
-        /// </summary>
+        /// <summary>Has attributes <see cref="MethodImplOptions.NoInlining" /> and <see cref="MethodImplOptions.NoOptimization" /> .</summary>
         [MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
         public static void DoNothing() { }
 
@@ -225,10 +210,7 @@ namespace Librainian.Threading {
             Thread.EndCriticalRegion();
         }
 
-        /// <summary>
-        ///     Split the given <paramref name="timeSpan" /> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)" />
-        ///     and <see cref="Thread.Yield" />
-        /// </summary>
+        /// <summary>Split the given <paramref name="timeSpan" /> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)" /> and <see cref="Thread.Yield" /></summary>
         /// <param name="thread">  </param>
         /// <param name="timeSpan"></param>
         public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
@@ -266,7 +248,7 @@ namespace Librainian.Threading {
 
         public static Boolean GetSizeOfPrimitives<T>( [CanBeNull] this T obj, out UInt64 total ) {
             if ( obj is String s ) {
-                total = ( UInt64 )s.Length;
+                total = ( UInt64 ) s.Length;
 
                 return true;
             }
@@ -346,17 +328,13 @@ namespace Librainian.Threading {
             return default; //unknown type
         }
 
-        /// <summary>
-        ///     returns Marshal.SizeOf( typeof( T ) );
-        /// </summary>
+        /// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [DebuggerStepThrough]
         public static Int32 MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
-        /// <summary>
-        ///     boxed returns Marshal.SizeOf( obj )
-        /// </summary>
+        /// <summary>boxed returns Marshal.SizeOf( obj )</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
@@ -367,16 +345,12 @@ namespace Librainian.Threading {
             return Marshal.SizeOf( obj );
         }
 
-        /// <summary>
-        ///     generic returns Marshal.SizeOf( obj )
-        /// </summary>
+        /// <summary>generic returns Marshal.SizeOf( obj )</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static Int32 MarshalSizeOf<T>( [CanBeNull] this T obj ) => Marshal.SizeOf( obj );
 
-        /// <summary>
-        ///     Repeat the <paramref name="action" /><paramref name="times" /> .
-        /// </summary>
+        /// <summary>Repeat the <paramref name="action" /><paramref name="times" /> .</summary>
         /// <param name="times"> </param>
         /// <param name="action"></param>
         public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
@@ -407,10 +381,7 @@ namespace Librainian.Threading {
             Parallel.For( 1, counter, i => action() );
         }
 
-        /// <summary>
-        ///     Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback through an
-        ///     action.
-        /// </summary>
+        /// <summary>Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback through an action.</summary>
         /// <param name="actions">      </param>
         /// <param name="output">     </param>
         /// <param name="description"></param>
@@ -419,7 +390,7 @@ namespace Librainian.Threading {
         public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( actions is null ) {
-                throw new ArgumentNullException(  nameof( actions ) );
+                throw new ArgumentNullException( nameof( actions ) );
             }
 
             if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -439,9 +410,7 @@ namespace Librainian.Threading {
             return true;
         }
 
-        /// <summary>
-        ///     Run each <see cref="Func{Boolean}" /> in parallel, optionally printing feedback through an action.
-        /// </summary>
+        /// <summary>Run each <see cref="Func{Boolean}" /> in parallel, optionally printing feedback through an action.</summary>
         /// <param name="functions">      </param>
         /// <param name="output">     </param>
         /// <param name="description"></param>
@@ -450,7 +419,7 @@ namespace Librainian.Threading {
         public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( functions is null ) {
-                throw new ArgumentNullException(  nameof( functions ) );
+                throw new ArgumentNullException( nameof( functions ) );
             }
 
             if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -481,6 +450,7 @@ namespace Librainian.Threading {
 
                 this.CallsAllowed = times;
             }
+
         }
 
         /*
@@ -521,5 +491,7 @@ namespace Librainian.Threading {
                     next.Spawn();
                 }
         */
+
     }
+
 }

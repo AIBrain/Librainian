@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2019/08/08 at 9:17 AM.
+// 
+// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -49,9 +47,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Runtime.InteropServices;
     using JetBrains.Annotations;
 
-    /// <summary>
-    ///     defrag stuff
-    /// </summary>
+    /// <summary>defrag stuff</summary>
     /// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
     public static class IOWrapper {
 
@@ -63,11 +59,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             /// <summary>The right to delete the object.</summary>
             DELETE = 0x00010000,
 
-            /// <summary>
-            ///     The right to read the information in the object's security descriptor, not including the information in the system
-            ///     access control
-            ///     list (SACL).
-            /// </summary>
+            /// <summary>The right to read the information in the object's security descriptor, not including the information in the system access control list (SACL).</summary>
             READ_CONTROL = 0x00020000,
 
             /// <summary>The right to modify the discretionary access control list (DACL) in the object's security descriptor.</summary>
@@ -77,9 +69,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             WRITE_OWNER = 0x00080000,
 
             /// <summary>
-            ///     The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled
-            ///     state. Some
-            ///     object types do not support this access right.
+            /// The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled state. Some object types do not support this access
+            /// right.
             /// </summary>
             SYNCHRONIZE = 0x00100000,
 
@@ -102,9 +93,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             SPECIFIC_RIGHTS_ALL = 0x0000FFFF,
 
             /// <summary>
-            ///     Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right
-            ///     only if the
-            ///     SE_SECURITY_NAME privilege is enabled in the access token of the requesting thread.
+            /// Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right only if the SE_SECURITY_NAME privilege is enabled in
+            /// the access token of the requesting thread.
             /// </summary>
             ACCESS_SYSTEM_SECURITY = 0x01000000,
 
@@ -122,6 +112,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             /// <summary>All possible access rights.</summary>
             GENERIC_ALL = 0x10000000
+
         }
 
         /// <summary>Enumerates the that may apply to files.</summary>
@@ -142,29 +133,21 @@ namespace Librainian.OperatingSystem.FileSystem {
             /// <summary>All possible access rights.</summary>
             GENERIC_ALL = ACCESS_MASK.GENERIC_ALL,
 
-            /// <summary>
-            ///     For a file object, the right to read the corresponding file data. For a directory object, the right to read the
-            ///     corresponding directory data.
-            /// </summary>
+            /// <summary>For a file object, the right to read the corresponding file data. For a directory object, the right to read the corresponding directory data.</summary>
             FILE_READ_DATA = 0x0001, // file & pipe
 
             /// <summary>For a directory, the right to list the contents of the directory.</summary>
             FILE_LIST_DIRECTORY = 0x0001, // directory
 
-            /// <summary>
-            ///     For a file object, the right to write data to the file. For a directory object, the right to create a file in the
-            ///     directory ( <see cref="FILE_ADD_FILE" />).
-            /// </summary>
+            /// <summary>For a file object, the right to write data to the file. For a directory object, the right to create a file in the directory ( <see cref="FILE_ADD_FILE" />).</summary>
             FILE_WRITE_DATA = 0x0002, // file & pipe
 
             /// <summary>For a directory, the right to create a file in the directory.</summary>
             FILE_ADD_FILE = 0x0002, // directory
 
             /// <summary>
-            ///     For a file object, the right to append data to the file. (For local files, write operations will not overwrite
-            ///     existing data if this flag is
-            ///     specified without <see cref="FILE_WRITE_DATA" />.) For a directory object, the right to create a subdirectory (
-            ///     <see cref="FILE_ADD_SUBDIRECTORY" />).
+            /// For a file object, the right to append data to the file. (For local files, write operations will not overwrite existing data if this flag is specified without
+            /// <see cref="FILE_WRITE_DATA" />.) For a directory object, the right to create a subdirectory ( <see cref="FILE_ADD_SUBDIRECTORY" />).
             /// </summary>
             FILE_APPEND_DATA = 0x0004, // file
 
@@ -180,18 +163,10 @@ namespace Librainian.OperatingSystem.FileSystem {
             /// <summary>The right to write extended file attributes.</summary>
             FILE_WRITE_EA = 0x0010, // file & directory
 
-            /// <summary>
-            ///     For a native code file, the right to execute the file. this access right given to scripts may cause the script to
-            ///     be executable, depending on the
-            ///     script interpreter.
-            /// </summary>
+            /// <summary>For a native code file, the right to execute the file. this access right given to scripts may cause the script to be executable, depending on the script interpreter.</summary>
             FILE_EXECUTE = 0x0020, // file
 
-            /// <summary>
-            ///     For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING
-            ///     privilege, which ignores the
-            ///     FILE_TRAVERSE access right.
-            /// </summary>
+            /// <summary>For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING privilege, which ignores the FILE_TRAVERSE access right.</summary>
             FILE_TRAVERSE = 0x0020, // directory
 
             /// <summary>For a directory, the right to delete a directory and all the files it contains, including read-only files.</summary>
@@ -212,6 +187,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
 
             FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
+
         }
 
         private const UInt32 ErrorInsufficientBuffer = 122;
@@ -235,9 +211,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         private const UInt32 OpenExisting = 3;
 
-        /// <summary>
-        ///     returns a 2*number of extents array - the vcn and the lcn as pairs
-        /// </summary>
+        /// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
         /// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
         /// <returns>An array of [virtual cluster, physical cluster]</returns>
         [NotNull]
@@ -277,7 +251,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
                 */
 
-                var extentCount =  ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
+                var extentCount = ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
@@ -320,15 +294,13 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
-        /// <summary>
-        ///     Get cluster usage for a device
-        /// </summary>
+        /// <summary>Get cluster usage for a device</summary>
         /// <param name="deviceName">use "c:"</param>
         /// <returns>a bitarray for each cluster</returns>
         [NotNull]
         public static BitArray GetVolumeMap( [NotNull] String deviceName ) {
             if ( String.IsNullOrWhiteSpace( value: deviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( deviceName ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( deviceName ) );
             }
 
             var pAlloc = IntPtr.Zero;
@@ -403,9 +375,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
-        /// <summary>
-        ///     move a virtual cluster for a file to a logical cluster on disk, repeat for count clusters
-        /// </summary>
+        /// <summary>move a virtual cluster for a file to a logical cluster on disk, repeat for count clusters</summary>
         /// <param name="deviceName">device to move on"c:"</param>
         /// <param name="path">file to muck with "c:\windows\explorer.exe"</param>
         /// <param name="vcn">cluster number in file to move</param>
@@ -465,9 +435,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             return hDevice.DangerousGetHandle();
         }
 
-        /// <summary>
-        ///     input structure for use in MoveFile
-        /// </summary>
+        /// <summary>input structure for use in MoveFile</summary>
         public struct MoveFileData {
 
             public Int32 ClusterCount;
@@ -477,6 +445,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             public Int64 StartingLcn;
 
             public Int64 StartingVcn;
+
         }
+
     }
+
 }

@@ -16,8 +16,8 @@
 // Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2020/01/21 at 10:37 AM.
+// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
 
@@ -120,7 +120,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + ( percentTax / 100.0m ) );
+        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
 
         /// <summary>Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.</summary>
         /// <param name="high"></param>
@@ -274,7 +274,7 @@ namespace Librainian.Maths {
                 var a = ( Int32 ) ( ( Int32 ) d / Math.Pow( x: 10, y: i ) ) % 10;
 
                 for ( var j = 0; j < 4; j++ ) {
-                    input[ j + ( i * 4 ) ] = ( a & ( 1 << j ) ) != 0;
+                    input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
                 }
             }
 
@@ -327,8 +327,8 @@ namespace Librainian.Maths {
             x = Math.Abs( x );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + ( p * x ) );
-            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( d: -x * x ) );
+            var t = 1.0 / ( 1.0 + p * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
             return sign * y;
         }
@@ -691,7 +691,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( ( target - source ) * amount );
+        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -700,7 +700,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( ( target - source ) * amount );
+        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -709,7 +709,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 ) ( source + ( ( target - source ) * amount ) );
+        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 ) ( source + ( target - source ) * amount );
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -718,7 +718,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 ) ( source + ( ( target - source ) * amount ) );
+        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 ) ( source + ( target - source ) * amount );
 
         [DebuggerStepThrough]
         [Pure]
@@ -734,7 +734,7 @@ namespace Librainian.Maths {
 
             var x = n + 1d;
 
-            return ( ( x - 0.5 ) * Math.Log( d: x ) ) - x + ( 0.5 * Math.Log( d: 2 * Math.PI ) ) + ( 1.0 / ( 12.0 * x ) );
+            return ( x - 0.5 ) * Math.Log( d: x ) - x + 0.5 * Math.Log( d: 2 * Math.PI ) + 1.0 / ( 12.0 * x );
         }
 
         /// <summary>compute log(1+x) without losing precision for small values of x</summary>
@@ -755,7 +755,7 @@ namespace Librainian.Maths {
             }
 
             // Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 since |x| < 10^-4, |x|^3 < 10^-12, relative error less than 10^-8
-            return ( ( -0.5 * x ) + 1.0 ) * x;
+            return ( -0.5 * x + 1.0 ) * x;
         }
 
         [DebuggerStepThrough]
@@ -862,7 +862,7 @@ namespace Librainian.Maths {
             var x = 0.1M;
 
             do {
-                deltaX = ( ( baseValue / x.Pow( n: n - 1 ) ) - x ) / n;
+                deltaX = ( baseValue / x.Pow( n: n - 1 ) - x ) / n;
                 x += deltaX;
             } while ( Math.Abs( deltaX ) > 0 );
 
@@ -927,10 +927,10 @@ namespace Librainian.Maths {
             x = Math.Abs( x ) / Math.Sqrt( d: 2.0 );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + ( p * x ) );
-            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( d: -x * x ) );
+            var t = 1.0 / ( 1.0 + p * x );
+            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( d: -x * x );
 
-            return 0.5 * ( 1.0 + ( sign * y ) );
+            return 0.5 * ( 1.0 + sign * y );
         }
 
         [DebuggerStepThrough]
@@ -1038,7 +1038,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - ( 2.0D / ( 1.0D + Math.Exp( x ) ) );
+        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( x ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data is null ) {

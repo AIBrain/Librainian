@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ArbitraryDecimal.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "ArbitraryDecimal.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ArbitraryDecimal.cs" was last formatted by Protiguous on 2019/08/08 at 8:16 AM.
+// 
+// Project: "Librainian", "ArbitraryDecimal.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
 
@@ -53,10 +51,7 @@ namespace Librainian.Maths {
         /// <summary>Digits in the System.Decimal expansion, one byte per digit</summary>
         private Byte[] _digits;
 
-        /// <summary>
-        ///     Constructs an arbitrary System.Decimal expansion from the given long. The long must
-        ///     not be negative.
-        /// </summary>
+        /// <summary>Constructs an arbitrary System.Decimal expansion from the given long. The long must not be negative.</summary>
         public ArbitraryDecimal( Int64 x ) {
             var tmp = x.ToString( CultureInfo.CurrentCulture );
             this._digits = new Byte[ tmp.Length ];
@@ -68,14 +63,12 @@ namespace Librainian.Maths {
             this.Normalize();
         }
 
-        /// <summary>
-        ///     Multiplies the current expansion by the given amount, which should only be 2 or 5.
-        /// </summary>
+        /// <summary>Multiplies the current expansion by the given amount, which should only be 2 or 5.</summary>
         public void MultiplyBy( Int32 amount ) {
             var result = new Byte[ this._digits.Length + 1 ];
 
             for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
-                var resultDigit = (this._digits[ i ] * amount) + result[ i + 1 ];
+                var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
                 result[ i ] = ( Byte ) ( resultDigit / 10 );
                 result[ i + 1 ] = ( Byte ) ( resultDigit % 10 );
             }
@@ -123,9 +116,8 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Shifts the System.Decimal point; a negative value makes the System.Decimal expansion
-        ///     bigger (as fewer digits come after the System.Decimal place) and a positive value
-        ///     makes the System.Decimal expansion smaller.
+        /// Shifts the System.Decimal point; a negative value makes the System.Decimal expansion bigger (as fewer digits come after the System.Decimal place) and a positive value
+        /// makes the System.Decimal expansion smaller.
         /// </summary>
         public void Shift( Int32 amount ) => this._decimalPoint += amount;
 
@@ -159,5 +151,7 @@ namespace Librainian.Maths {
             return
                 $"{new String( digitString, 0, digitString.Length - this._decimalPoint )}.{new String( digitString, digitString.Length - this._decimalPoint, this._decimalPoint )}";
         }
+
     }
+
 }

@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2019/10/23 at 11:33 PM.
+// 
+// Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -244,7 +242,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source );
 
         /// <summary>
-        ///     <para>Computes the extension of the <see cref="IDocument.FileName" />, including the prefix ".".</para>
+        ///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
         String Extension();
 
@@ -297,7 +295,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Task<T> LoadJSONAsync<T>( CancellationToken token );
 
         /// <summary>
-        ///     <para>Starts a task to <see cref="IDocument.MoveAsync" /> a file to the <paramref name="destination" />.</para>
+        ///     <para>Starts a task to <see cref="MoveAsync" /> a file to the <paramref name="destination" />.</para>
         ///     <para>Returns -1 if an exception happened.</para>
         /// </summary>
         /// <param name="destination"></param>
@@ -325,11 +323,11 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         Task<Boolean> SameContent( [CanBeNull] Document right );
 
-        /// <summary>Open the file for reading and return a <see cref="IDocument.StreamReader" />.</summary>
+        /// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
         /// <returns></returns>
         StreamReader StreamReader();
 
-        /// <summary>Open the file for writing and return a <see cref="IDocument.StreamWriter" />.</summary>
+        /// <summary>Open the file for writing and return a <see cref="StreamWriter" />.</summary>
         /// <returns></returns>
         StreamWriter StreamWriter( [CanBeNull] Encoding encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
 
@@ -539,7 +537,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ sizeof( Byte ) ];
 
-                using ( var buffered = new BufferedStream(  stream ) ) {
+                using ( var buffered = new BufferedStream( stream ) ) {
                     while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
                         yield return buffer[ 0 ];
                     }
@@ -553,8 +551,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Int32 CalculateHarkerHashInt32() {
             this.ThrowIfNotExists();
 
-            return this.AsInt32().AsParallel().WithMergeOptions( ParallelMergeOptions.NotBuffered )
-                .Aggregate( 0, ( current, i ) => unchecked( current + i ) );
+            return this.AsInt32().AsParallel().WithMergeOptions( ParallelMergeOptions.NotBuffered ).Aggregate( 0, ( current, i ) => unchecked( current + i ) );
         }
 
         /// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
@@ -576,7 +573,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ sizeof( Int32 ) ];
 
-                using ( var buffered = new BufferedStream(  stream, sizeof( Int32 ) ) ) {
+                using ( var buffered = new BufferedStream( stream, sizeof( Int32 ) ) ) {
                     while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
                         yield return BitConverter.ToInt32( buffer, 0 );
                     }
@@ -604,7 +601,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var buffer = new Byte[ sizeof( Int64 ) ];
                 var length = buffer.Length;
 
-                using ( var buffered = new BufferedStream(  stream, MathConstants.Sizes.OneGigaByte ) ) {
+                using ( var buffered = new BufferedStream( stream, MathConstants.Sizes.OneGigaByte ) ) {
                     while ( buffered.Read( buffer, 0, length ).Any() ) {
                         yield return BitConverter.ToInt64( buffer, 0 );
                     }
@@ -631,7 +628,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var buffer = new Byte[ sizeof( Decimal ) ]; //sizeof( Decimal ) == sizeof( Guid ) right?
 
-                using ( var buffered = new BufferedStream(  stream, sizeof( Decimal ) ) ) {
+                using ( var buffered = new BufferedStream( stream, sizeof( Decimal ) ) ) {
                     while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
                         yield return new Guid( buffer );
                     }
@@ -656,7 +653,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var bytes = new Byte[ sizeof( UInt64 ) ];
 
-                using ( var buffered = new BufferedStream(  stream, sizeof( UInt64 ) ) ) {
+                using ( var buffered = new BufferedStream( stream, sizeof( UInt64 ) ) ) {
                     while ( buffered.Read( bytes, 0, bytes.Length ).Any() ) {
                         yield return BitConverter.ToUInt64( bytes, 0 );
                     }
@@ -1197,8 +1194,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     this.Delete();
                 }
                 else {
-                    thisComputer.FileSystem.MoveFile( this.FullPath, destination.FullPath, UIOption.OnlyErrorDialogs,
-                        UICancelOption.DoNothing );
+                    thisComputer.FileSystem.MoveFile( this.FullPath, destination.FullPath, UIOption.OnlyErrorDialogs, UICancelOption.DoNothing );
 
                     if ( destination.Exists() ) {
                         var documentInfo = new DocumentInfo( this );
@@ -1274,7 +1270,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         [Pure]
-        public StreamReader StreamReader() => new StreamReader(  File.OpenRead( this.FullPath ) );
+        public StreamReader StreamReader() => new StreamReader( File.OpenRead( this.FullPath ) );
 
         /// <summary>Open the file for writing and return a <see cref="StreamWriter" />.
         /// <para>Optionally the <paramref name="encoding" /> can be given. Defaults to <see cref="Encoding.UTF8" />.</para>
@@ -1282,7 +1278,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [CanBeNull]
-        
         public StreamWriter StreamWriter( [CanBeNull] Encoding encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte ) {
             try {
                 this.ReleaseWriterStream();
@@ -1292,7 +1287,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 if ( this.Writer == default ) {
                     return default;
                 }
-                return this.WriterStream = new StreamWriter(  this.Writer, encoding ?? Encoding.UTF8, ( Int32 ) bufferSize, false );
+
+                return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.UTF8, ( Int32 ) bufferSize, false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1457,7 +1453,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException"></exception>
-        
         public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
             if ( String.IsNullOrWhiteSpace( fullPath ) ) {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
@@ -1526,14 +1521,12 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName ?? throw new InvalidOperationException(),
             deleteAfterClose ) { }
 
-        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullName, filename,
-            deleteAfterClose ) { }
+        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullName, filename, deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
             Path.Combine( folder.FullName, document.FileName ) ?? throw new InvalidOperationException(), deleteAfterClose ) { }
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-        
         public override void DisposeManaged() {
             using ( this.Bitmap ) {
                 this.Bitmap = default;
@@ -1582,7 +1575,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return Status.Exception;
                 }
 
-                using ( var buffered = new BufferedStream(  stream ) ) {
+                using ( var buffered = new BufferedStream( stream ) ) {
                     Int32 bytesRead;
 
                     do {
@@ -1617,8 +1610,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Int64 CalculateHarkerHashInt64() {
             this.ThrowIfNotExists();
 
-            return this.AsInt64().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered )
-                .Aggregate( 0L, ( current, i ) => unchecked( current + i ) );
+            return this.AsInt64().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).Aggregate( 0L, ( current, i ) => unchecked( current + i ) );
         }
 
         /// <summary>"poor mans Int64 hash"</summary>
@@ -1627,11 +1619,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Decimal CalculateHarkerHashDecimal() {
             this.ThrowIfNotExists();
 
-            return this.AsDecimal().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered )
-                .Aggregate( 0M, ( current, i ) => current + i );
+            return this.AsDecimal().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).Aggregate( 0M, ( current, i ) => current + i );
         }
 
-        
         private void ThrowIfNotExists() {
             if ( !this.Exists() ) {
                 throw new FileNotFoundException( $"Could find document {this.FullPath.DoubleQuote()}." );
@@ -1679,7 +1669,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}." );
                 }
 
-                using ( var buffered = new BufferedStream(  stream, MathConstants.Sizes.OneGigaByte ) ) {
+                using ( var buffered = new BufferedStream( stream, MathConstants.Sizes.OneGigaByte ) ) {
 
                     using ( var br = new BinaryReader( buffered ) ) {
 
@@ -1840,9 +1830,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         public Status TurnOffReadonly() => this.SetReadOnly( false );
 
-        
         public virtual void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context ) =>
-            info.AddValue( nameof(this.FullPath), this.FullPath, typeof( String ) );
+            info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
 
         /*
         [StructLayout( layoutKind: LayoutKind.Sequential )]
@@ -1936,7 +1925,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         //[Pure] private static WebClient WebClientInstance() => WebClients.Value.Value;
 
         /// <summary>Returns a unique file in the user's temp folder.
-        /// <para>If an extension is not provided, a random extension (a <see cref="System.Guid" />) will be used.</para>
+        /// <para>If an extension is not provided, a random extension (a <see cref="Guid" />) will be used.</para>
         /// <para><b>Note</b>: Does not create a 0-byte file like <see cref="Path.GetTempFileName" />.</para>
         /// <para>If the temp folder is not found, one attempt will be made to create it.</para>
         /// </summary>
@@ -1999,8 +1988,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         internal static Boolean IsExtended( [NotNull] String path ) =>
-            path.Length >= 4 && path[ 0 ] == PathInternal.Constants.Backslash && ( path[ 1 ] == PathInternal.Constants.Backslash || path[ 1 ] == '?' ) &&
-            path[ 2 ] == '?' && path[ 3 ] == PathInternal.Constants.Backslash;
+            path.Length >= 4 && path[ 0 ] == PathInternal.Constants.Backslash && ( path[ 1 ] == PathInternal.Constants.Backslash || path[ 1 ] == '?' ) && path[ 2 ] == '?' &&
+            path[ 3 ] == PathInternal.Constants.Backslash;
 
         /// <summary>Returns the path with any invalid filename characters replaced with <paramref name="replacement" />. (Defaults to <see cref="String.Empty" />.)</summary>
         /// <param name="filename"></param>

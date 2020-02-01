@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "D.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "D.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "D.cs" was last formatted by Protiguous on 2019/08/08 at 9:28 AM.
+// 
+// Project: "Librainian", "D.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -59,16 +57,16 @@ namespace Librainian.Persistence {
         ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
     public class D : IEqualityComparer<D> {
 
-        /// <summary>
-        ///     The key.
-        /// </summary>
+        public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+
+        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
+
+        /// <summary>The key.</summary>
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         [NotNull]
         public String K { get; }
 
-        /// <summary>
-        ///     The value.
-        /// </summary>
+        /// <summary>The value.</summary>
         [JsonProperty( IsReference = false, ItemIsReference = false )]
         [CanBeNull]
         public String V { get; set; }
@@ -81,36 +79,8 @@ namespace Librainian.Persistence {
         public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
         public D( [NotNull] String key, [CanBeNull] String value ) {
-            this.K = key ?? throw new ArgumentNullException(  nameof( key ) );
+            this.K = key ?? throw new ArgumentNullException( nameof( key ) );
             this.V = value;
-        }
-
-        public override Int32 GetHashCode() => this.K.GetHashCode();
-
-        public override String ToString() {
-            var keypart = String.Empty;
-
-            if ( this.K.Length > 42 ) {
-                var left = Strings.Left( this.K, 20 );
-                var right = Strings.Right( this.K, 20 );
-
-                keypart = $"{left}..{right}";
-            }
-
-            if ( this.V is null ) {
-                return $"{keypart}=";
-            }
-
-            var valuepart = String.Empty;
-
-            if ( this.V.Length > 42 ) {
-                var left = Strings.Left( this.V, 20 );
-                var right = Strings.Right( this.V, 20 );
-
-                valuepart = $"{left}..{right}";
-            }
-
-            return $"{keypart}={valuepart}";
         }
 
         /// <summary>
@@ -148,8 +118,34 @@ namespace Librainian.Persistence {
 
         public override Boolean Equals( Object obj ) => Equals( this, obj as D );
 
-        public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+        public override Int32 GetHashCode() => this.K.GetHashCode();
 
-        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
+        public override String ToString() {
+            var keypart = String.Empty;
+
+            if ( this.K.Length > 42 ) {
+                var left = Strings.Left( this.K, 20 );
+                var right = Strings.Right( this.K, 20 );
+
+                keypart = $"{left}..{right}";
+            }
+
+            if ( this.V is null ) {
+                return $"{keypart}=";
+            }
+
+            var valuepart = String.Empty;
+
+            if ( this.V.Length > 42 ) {
+                var left = Strings.Left( this.V, 20 );
+                var right = Strings.Right( this.V, 20 );
+
+                valuepart = $"{left}..{right}";
+            }
+
+            return $"{keypart}={valuepart}";
+        }
+
     }
+
 }

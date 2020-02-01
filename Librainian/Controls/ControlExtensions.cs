@@ -1,25 +1,23 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
 // 
-// This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
 // 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
 // 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -30,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2019/12/04 at 10:35 PM.
+// Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Controls {
 
@@ -65,11 +63,11 @@ namespace Librainian.Controls {
         [DebuggerStepThrough]
         public static void Append( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [CanBeNull] params Object[] args ) {
             if ( box is null ) {
-                throw new ArgumentNullException(  nameof( box ) );
+                throw new ArgumentNullException( nameof( box ) );
             }
 
             if ( text is null ) {
-                throw new ArgumentNullException(  nameof( text ) );
+                throw new ArgumentNullException( nameof( text ) );
             }
 
             box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
@@ -78,11 +76,11 @@ namespace Librainian.Controls {
         [DebuggerStepThrough]
         public static void AppendLine( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [NotNull] params Object[] args ) {
             if ( box is null ) {
-                throw new ArgumentNullException(  nameof( box ) );
+                throw new ArgumentNullException( nameof( box ) );
             }
 
             if ( text is null ) {
-                throw new ArgumentNullException(  nameof( text ) );
+                throw new ArgumentNullException( nameof( text ) );
             }
 
             box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
@@ -91,11 +89,11 @@ namespace Librainian.Controls {
         [DebuggerStepThrough]
         public static void AppendText( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [CanBeNull] params Object[] args ) {
             if ( box is null ) {
-                throw new ArgumentNullException(  nameof( box ) );
+                throw new ArgumentNullException( nameof( box ) );
             }
 
             if ( String.IsNullOrEmpty( value: text ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.",  nameof( text ) );
+                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( text ) );
             }
 
             if ( args != null ) {
@@ -129,11 +127,11 @@ namespace Librainian.Controls {
 
             return Color.FromArgb( red(), green(), blue() );
 
-            Byte red() => ( Byte ) ( ( thisColor.R * blendToPercent ) + ( blendToColor.R * i() ) );
+            Byte red() => ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * i() );
 
-            Byte green() => ( Byte ) ( ( thisColor.G * blendToPercent ) + ( blendToColor.G * i() ) );
+            Byte green() => ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * i() );
 
-            Byte blue() => ( Byte ) ( ( thisColor.B * blendToPercent ) + ( blendToColor.B * i() ) );
+            Byte blue() => ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * i() );
 
             Double i() => 1 - blendToPercent;
         }
@@ -143,7 +141,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static void BusyCursor( [NotNull] this Control control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( method );
@@ -158,7 +156,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Boolean Checked( [NotNull] this CheckBox control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( control.InvokeRequired ) {
@@ -175,7 +173,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Checked( [NotNull] this CheckBox control, Boolean value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( control.InvokeRequired ) {
@@ -199,7 +197,7 @@ namespace Librainian.Controls {
         /// <see cref="Push" />
         public static void Click( [NotNull] this Button control, TimeSpan? delay = null ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.Push( delay );
@@ -214,7 +212,7 @@ namespace Librainian.Controls {
             // Counting the perceptive luminance - human eye favors green color...
             return a() < 0.5 ? darkForeColor : lightForeColor;
 
-            Double a() => ( 1 - ( ( 0.299 * thisColor.R ) + ( 0.587 * thisColor.G ) + ( 0.114 * thisColor.B ) ) ) / 255;
+            Double a() => ( 1 - ( 0.299 * thisColor.R + 0.587 * thisColor.G + 0.114 * thisColor.B ) ) / 255;
         }
 
         /// <summary>
@@ -229,7 +227,7 @@ namespace Librainian.Controls {
         /// <param name="refresh"></param>
         public static void Enabled( [NotNull] this Control control, Boolean value, Boolean refresh = true ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( () => {
@@ -253,7 +251,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Enabled( [NotNull] this ToolStripProgressBar control, Boolean value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( control.ProgressBar?.InvokeRequired == true ) {
@@ -277,7 +275,7 @@ namespace Librainian.Controls {
         /// <param name="spanOff">How long to keep the control off before it resets.</param>
         public static void Flash( [NotNull] this Control control, TimeSpan? spanOff = null ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( !spanOff.HasValue ) {
@@ -316,7 +314,7 @@ namespace Librainian.Controls {
         [DebuggerStepThrough]
         public static void Fokus( [NotNull] this Control control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( () => {
@@ -331,7 +329,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Color ForeColor( [NotNull] this Control control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return control.InvokeRequired ? ( Color ) control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
@@ -343,7 +341,7 @@ namespace Librainian.Controls {
         [DebuggerStepThrough]
         public static void ForeColor( [NotNull] this Control control, Color value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( control.InvokeRequired ) {
@@ -423,11 +421,11 @@ namespace Librainian.Controls {
         public static T InvokeFunction<T>( [NotNull] this T invokable, [NotNull] Func<T> function, [CanBeNull] Object[] arguments = null )
             where T : class, ISynchronizeInvoke {
             if ( invokable is null ) {
-                throw new ArgumentNullException(  nameof( invokable ) );
+                throw new ArgumentNullException( nameof( invokable ) );
             }
 
             if ( function is null ) {
-                throw new ArgumentNullException(  nameof( function ) );
+                throw new ArgumentNullException( nameof( function ) );
             }
 
             return invokable.Invoke( function, arguments ) as T ?? throw new InvalidOperationException();
@@ -446,9 +444,9 @@ namespace Librainian.Controls {
         }
 
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-            transparentPercent = 255 - ( transparentPercent.ForceBounds( 0, 1 ) * 255 );
+            transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-            return Color.FromArgb( thisColor.ToArgb() + ( ( Int32 ) transparentPercent * 0x1000000 ) );
+            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
         }
 
         [NotNull]
@@ -472,7 +470,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Int32 Maximum( [NotNull] this ProgressBar control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
@@ -483,7 +481,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Maximum( [NotNull] this ProgressBar control, Int32 value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -503,7 +501,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Int32 Minimum( [NotNull] this ProgressBar control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
@@ -514,7 +512,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Minimum( [NotNull] this ProgressBar control, Int32 value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( () => {
@@ -538,7 +536,7 @@ namespace Librainian.Controls {
         /// <see cref="Push" />
         public static void PerformClickThreadSafe( [NotNull] this Button control, TimeSpan? delay = null ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.Push( delay );
@@ -548,7 +546,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Press( [NotNull] this Button control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( control.PerformClick );
@@ -564,7 +562,7 @@ namespace Librainian.Controls {
         [NotNull]
         public static Timer Push( [NotNull] this Button control, TimeSpan? delay = null, [CanBeNull] Action afterDelay = null ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return FluentTimer.Start( ( delay ?? Milliseconds.One ).Create( () => control.InvokeAction( () => {
@@ -578,7 +576,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static void Redraw( [NotNull] this Control control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( control.Refresh );
@@ -586,7 +584,7 @@ namespace Librainian.Controls {
 
         public static Boolean RemoveTags( [NotNull] this WebBrowser browser, [CanBeNull] String tagName, Int32 keepAtMost = 50 ) {
             if ( browser is null ) {
-                throw new ArgumentNullException(  nameof( browser ) );
+                throw new ArgumentNullException( nameof( browser ) );
             }
 
             if ( browser.Document is null ) {
@@ -607,7 +605,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Reset( [NotNull] this ProgressBar control, Int32? value = null ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.Value( value ?? control.Minimum() );
@@ -641,7 +639,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Step( [NotNull] this ProgressBar control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -663,7 +661,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         public static void Step( [NotNull] this ToolStripProgressBar control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -686,7 +684,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Step( [NotNull] this ProgressBar control, Int32 value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -706,7 +704,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Style( [NotNull] this ProgressBar control, ProgressBarStyle value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -740,7 +738,7 @@ namespace Librainian.Controls {
         /// <param name="value">        </param>
         public static void Text( [NotNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
             if ( toolStripItem is null ) {
-                throw new ArgumentNullException(  nameof( toolStripItem ) );
+                throw new ArgumentNullException( nameof( toolStripItem ) );
             }
 
             void Action() {
@@ -769,11 +767,11 @@ namespace Librainian.Controls {
 
         public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String message ) {
             if ( textBox is null ) {
-                throw new ArgumentNullException(  nameof( textBox ) );
+                throw new ArgumentNullException( nameof( textBox ) );
             }
 
             if ( message is null ) {
-                throw new ArgumentNullException(  nameof( message ) );
+                throw new ArgumentNullException( nameof( message ) );
             }
 
             if ( textBox.IsDisposed ) {
@@ -836,7 +834,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Usable( [NotNull] this Control control, Boolean value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             control.InvokeAction( () => {
@@ -851,7 +849,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Decimal Value( [NotNull] this NumericUpDown control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return control.InvokeRequired ? ( Decimal ) control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
@@ -862,7 +860,7 @@ namespace Librainian.Controls {
         /// <returns></returns>
         public static Int32 Value( [NotNull] this ProgressBar control ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
@@ -873,7 +871,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Value( [NotNull] this ProgressBar control, Int32 value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             void Action() {
@@ -902,7 +900,7 @@ namespace Librainian.Controls {
         /// <param name="maximum"></param>
         public static void Values( [NotNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             var lowEnd = Math.Min( minimum, maximum );
@@ -917,7 +915,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         public static void Visible( [NotNull] this Control control, Boolean value ) {
             if ( control is null ) {
-                throw new ArgumentNullException(  nameof( control ) );
+                throw new ArgumentNullException( nameof( control ) );
             }
 
             if ( control.InvokeRequired ) {

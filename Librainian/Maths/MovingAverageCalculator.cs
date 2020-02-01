@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "MovingAverageCalculator.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "MovingAverageCalculator.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,30 +26,25 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "MovingAverageCalculator.cs" was last formatted by Protiguous on 2019/08/08 at 8:24 AM.
+// 
+// Project: "Librainian", "MovingAverageCalculator.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
 
     using System;
 
-    /// <summary>
-    ///     Calculates a moving average value over a specified window. The window size must be specified
-    ///     upon creation of this object.
-    /// </summary>
+    /// <summary>Calculates a moving average value over a specified window. The window size must be specified upon creation of this object.</summary>
     /// <remarks>
-    ///     Authored by Drew Noakes, February 2005. Use freely, though keep this message intact and
-    ///     report any bugs to me. I also appreciate seeing extensions, or simply hearing that you're
-    ///     using these classes. You may not copyright this work, though may use it in
-    ///     commercial/copyrighted works. Happy coding. Updated 29 March 2007. Added a Reset() method.
+    /// Authored by Drew Noakes, February 2005. Use freely, though keep this message intact and report any bugs to me. I also appreciate seeing extensions, or simply hearing that
+    /// you're using these classes. You may not copyright this work, though may use it in commercial/copyrighted works. Happy coding. Updated 29 March 2007. Added a Reset() method.
     /// </remarks>
     /// <see cref="http://drewnoakes.com/code/util/MovingAverageCalculator.html" />
     public sealed class MovingAverageCalculator {
@@ -67,17 +60,13 @@ namespace Librainian.Maths {
         private Int32 _valuesIn;
 
         /// <summary>
-        ///     Gets a value indicating whether enough values have been provided to fill the speicified
-        ///     window size. Values returned from NextValue may still be used prior to IsMature
-        ///     returning true, however such values are not subject to the intended smoothing effect of
-        ///     the moving average's window size.
+        /// Gets a value indicating whether enough values have been provided to fill the speicified window size. Values returned from NextValue may still be used prior to IsMature
+        /// returning true, however such values are not subject to the intended smoothing effect of the moving average's window size.
         /// </summary>
         public Boolean IsMature => this._valuesIn == this._windowSize;
 
         /// <summary>Create a new moving average calculator.</summary>
-        /// <param name="windowSize">
-        ///     The maximum number of values to be considered by this moving average calculation.
-        /// </param>
+        /// <param name="windowSize">The maximum number of values to be considered by this moving average calculation.</param>
         /// <exception cref="ArgumentOutOfRangeException">If windowSize less than one.</exception>
         public MovingAverageCalculator( Int32 windowSize ) {
             if ( windowSize < 1 ) {
@@ -91,9 +80,8 @@ namespace Librainian.Maths {
         }
 
         /// <summary>
-        ///     Updates the moving average with its next value, and returns the updated average value.
-        ///     When IsMature is true and NextValue is called, a previous value will 'fall out' of the
-        ///     moving average.
+        /// Updates the moving average with its next value, and returns the updated average value. When IsMature is true and NextValue is called, a previous value will 'fall out' of
+        /// the moving average.
         /// </summary>
         /// <param name="nextValue">The next value to be considered within the moving average.</param>
         /// <returns>The updated moving average value.</returns>
@@ -130,14 +118,13 @@ namespace Librainian.Maths {
             return this._sum / this._valuesIn;
         }
 
-        /// <summary>
-        ///     Clears any accumulated state and resets the calculator to its initial configuration.
-        ///     Calling this method is the equivalent of creating a new instance.
-        /// </summary>
+        /// <summary>Clears any accumulated state and resets the calculator to its initial configuration. Calling this method is the equivalent of creating a new instance.</summary>
         public void Reset() {
             this._nextValueIndex = 0;
             this._sum = 0;
             this._valuesIn = 0;
         }
+
     }
+
 }

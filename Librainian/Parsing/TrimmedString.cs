@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "TrimmedString.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "TrimmedString.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2019/10/22 at 5:24 PM.
+// 
+// Project: "Librainian", "TrimmedString.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.Parsing {
 
@@ -52,18 +50,14 @@ namespace Librainian.Parsing {
     using Maths;
     using Newtonsoft.Json;
 
-    /// <summary>
-    ///     This <see cref="String" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.
-    /// </summary>
+    /// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
     [Immutable]
     public struct TrimmedString : IConvertible, IEquatable<TrimmedString>, IComparable<TrimmedString>, IComparable<String> {
 
-        /// <summary>
-        ///     An immutable empty <see cref="TrimmedString" /> ( our version of <see cref="String.Empty" />).
-        /// </summary>
+        /// <summary>An immutable empty <see cref="TrimmedString" /> ( our version of <see cref="String.Empty" />).</summary>
         public static readonly TrimmedString Empty;
 
         [JsonProperty]
@@ -123,16 +117,12 @@ namespace Librainian.Parsing {
             this.Value = value.Trim();
         }
 
-        /// <summary>
-        ///     Calls <see cref="Object.ToString" /> on the <paramref name="value" /> and calls <see cref="String.Trim(Char[])" />.
-        /// </summary>
+        /// <summary>Calls <see cref="Object.ToString" /> on the <paramref name="value" /> and calls <see cref="String.Trim(Char[])" />.</summary>
         /// <param name="value"></param>
         [DebuggerStepThrough]
         public TrimmedString( [CanBeNull] Object value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
 
-        /// <summary>
-        ///     Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)
-        /// </summary>
+        /// <summary>Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)</summary>
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
@@ -163,17 +153,13 @@ namespace Librainian.Parsing {
 
         public Boolean IsNotEmpty() => !this.IsEmpty();
 
-        /// <summary>
-        ///     Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)
-        /// </summary>
+        /// <summary>Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)</summary>
         /// <param name="right"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
         public Boolean Like( [CanBeNull] String right ) => this.Value.Like( right );
 
-        /// <summary>
-        ///     Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)
-        /// </summary>
+        /// <summary>Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)</summary>
         /// <param name="right"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
@@ -243,9 +229,7 @@ namespace Librainian.Parsing {
         [DebuggerStepThrough]
         public TrimmedString ToUpper() => this.Value.ToUpper( CultureInfo.CurrentCulture );
 
-        /// <summary>
-        ///     Strings to be replaced with <see cref="Replacements" />,
-        /// </summary>
+        /// <summary>Strings to be replaced with <see cref="Replacements" />,</summary>
         internal static class Patterns {
 
             public const String Feeds = Replacements.Feed + Replacements.Feed;
@@ -257,6 +241,7 @@ namespace Librainian.Parsing {
             public const String Spaces = Replacements.Space + Replacements.Space;
 
             public const String Tabs = Replacements.Tab + Replacements.Tab;
+
         }
 
         internal static class Replacements {
@@ -270,6 +255,9 @@ namespace Librainian.Parsing {
             public const String Space = " ";
 
             public const String Tab = "\t";
+
         }
+
     }
+
 }

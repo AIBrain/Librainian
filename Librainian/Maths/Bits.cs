@@ -16,8 +16,8 @@
 // Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Bits.cs" was last formatted by Protiguous on 2020/01/26 at 4:33 PM.
+// Project: "Librainian", "Bits.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
 
@@ -47,6 +47,14 @@ namespace Librainian.Maths {
     public static class Bits {
 
         public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
+
+        private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
+            if ( value == null ) {
+                throw new ArgumentNullException( paramName: nameof( value ) );
+            }
+
+            return BitConverter.ToUInt64( Order( value ), startIndex );
+        }
 
         [NotNull]
         public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
@@ -117,14 +125,6 @@ namespace Librainian.Maths {
             }
 
             return BitConverter.ToUInt32( Order( value ), startIndex );
-        }
-
-        private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
-            if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
-            }
-
-            return BitConverter.ToUInt64( Order( value ), startIndex );
         }
 
     }

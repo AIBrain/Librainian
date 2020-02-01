@@ -16,8 +16,8 @@
 // Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "Frame.cs" was last formatted by Protiguous on 2020/01/27 at 4:22 PM.
+// Project: "Librainian", "Frame.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -86,7 +86,7 @@ namespace Librainian.Graphics.Imaging {
                 return true;
             }
 
-            if ( ( left is null ) || ( right is null ) ) {
+            if ( left is null || right is null ) {
                 return default;
             }
 
@@ -109,13 +109,13 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static bool operator !=( [CanBeNull] Frame left, [CanBeNull] Frame right ) => !left.Equals( right );
+        public static Boolean operator !=( [CanBeNull] Frame left, [CanBeNull] Frame right ) => !left.Equals( right );
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="T:Librainian.Graphics.Imaging.Frame" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static bool operator ==( [CanBeNull] Frame left, [CanBeNull] Frame right ) => left.Equals( right );
+        public static Boolean operator ==( [CanBeNull] Frame left, [CanBeNull] Frame right ) => left.Equals( right );
 
         /// <summary>Indicates whether this instance and a specified object are equal.</summary>
         /// <param name="obj">The object to compare with the current instance.</param>
@@ -125,7 +125,7 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         [SuppressMessage( "ReSharper", "NonReadonlyMemberInGetHashCode" )]
-        public override int GetHashCode() {
+        public override Int32 GetHashCode() {
             unchecked {
                 var hashCode = this.Checksum.GetHashCode();
                 hashCode = ( hashCode * 397 ) ^ this.Identity.GetHashCode();

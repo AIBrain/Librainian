@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2019/08/08 at 9:28 AM.
+// 
+// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -58,19 +56,17 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class DocumentInfo : IEquatable<DocumentInfo> {
 
+        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
+
         [JsonIgnore]
         private UInt64? _length;
 
-        /// <summary>
-        ///     "drive:\folder\file.ext"
-        /// </summary>
+        /// <summary>"drive:\folder\file.ext"</summary>
         [NotNull]
         [JsonProperty]
         public String AbsolutePath { get; private set; }
 
-        /// <summary>
-        ///     The result of the Add-Hashing function.
-        /// </summary>
+        /// <summary>The result of the Add-Hashing function.</summary>
         [JsonProperty]
         public Int32? AddHash { get; private set; }
 
@@ -86,17 +82,14 @@ namespace Librainian.Persistence {
         [JsonProperty]
         public DateTime? CreationTimeUtc { get; private set; }
 
-        /// <summary>
-        ///     The most recent UTC datetime this info was updated.
-        /// </summary>
+        /// <summary>The most recent UTC datetime this info was updated.</summary>
         [JsonProperty]
         public DateTime? LastScanned { get; private set; }
 
         [JsonProperty]
         public DateTime? LastWriteTimeUtc { get; private set; }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         [JsonProperty]
         public UInt64? Length {
             get => this._length;
@@ -106,7 +99,7 @@ namespace Librainian.Persistence {
 
         public DocumentInfo( [NotNull] Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException(  nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             this.Reset();
@@ -122,11 +115,11 @@ namespace Librainian.Persistence {
 
         public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
             if ( left is null ) {
-                throw new ArgumentNullException(  nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException(  nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             if ( !left.Length.HasValue || !right.Length.HasValue ) {
@@ -161,10 +154,7 @@ namespace Librainian.Persistence {
 
         /// <summary>
         ///     <para>Static comparison test. Compares file lengths and hashes.</para>
-        ///     <para>
-        ///         If the hashes have not been computed yet on either file, the
-        ///         <see cref="Equals(Librainian.Persistence.DocumentInfo,Librainian.Persistence.DocumentInfo)" /> is false.
-        ///     </para>
+        ///     <para>If the hashes have not been computed yet on either file, the <see cref="Equals(DocumentInfo,DocumentInfo)" /> is false.</para>
         ///     <para>Unless <paramref name="left" /> is the same object as <paramref name="right" />.</para>
         /// </summary>
         /// <param name="left"></param>
@@ -204,22 +194,18 @@ namespace Librainian.Persistence {
 
         public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
-        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
-
         public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         public override Int32 GetHashCode() => this.Length.GetHashCode();
 
-        /// <summary>
-        ///     Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
-        /// </summary>
+        /// <summary>Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)</summary>
         /// <param name="document"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
             if ( document is null ) {
-                throw new ArgumentNullException(  nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             Debug.Write( $"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}..." );
@@ -260,9 +246,7 @@ namespace Librainian.Persistence {
             this.CRC64 = null;
         }
 
-        /// <summary>
-        ///     Looks at the entire document.
-        /// </summary>
+        /// <summary>Looks at the entire document.</summary>
         /// <returns></returns>
         public async Task ScanAsync( CancellationToken token ) {
 
@@ -289,10 +273,7 @@ namespace Librainian.Persistence {
                     this.LastScanned = DateTime.UtcNow;
 
                     var copy = new DocumentInfo( document ) {
-                        LastScanned = this.LastScanned,
-                        CRC32 = this.CRC32,
-                        CRC64 = this.CRC64,
-                        AddHash = this.AddHash
+                        LastScanned = this.LastScanned, CRC32 = this.CRC32, CRC64 = this.CRC64, AddHash = this.AddHash
                     };
 
                     MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] = copy;
@@ -304,5 +285,7 @@ namespace Librainian.Persistence {
         }
 
         public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
+
     }
+
 }

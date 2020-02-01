@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "LockfreeQueue.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "LockfreeQueue.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "LockfreeQueue.cs" was last formatted by Protiguous on 2019/08/08 at 6:35 AM.
+// 
+// Project: "Librainian", "LockfreeQueue.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Collections.Queues {
 
@@ -48,12 +46,28 @@ namespace Librainian.Collections.Queues {
     using JetBrains.Annotations;
     using Trees;
 
-    /// <summary>
-    ///     Represents a lock-free, thread-safe, first-in, first-out collection of objects.
-    /// </summary>
+    /// <summary>Represents a lock-free, thread-safe, first-in, first-out collection of objects.</summary>
     /// <typeparam name="T">specifies the type of the elements in the queue</typeparam>
     /// <remarks>Enumeration and clearing are not thread-safe.</remarks>
     public class LockfreeQueue<T> : IEnumerable<T> where T : class {
+
+        /// <summary>Returns an enumerator that iterates through the queue.</summary>
+        /// <returns>an enumerator for the queue</returns>
+        public IEnumerator<T> GetEnumerator() {
+            var currentNode = this._head;
+
+            do {
+                if ( currentNode.Item is null ) {
+                    yield break;
+                }
+
+                yield return currentNode.Item;
+            } while ( ( currentNode = currentNode.Next ) != null );
+        }
+
+        /// <summary>Returns an enumerator that iterates through the queue.</summary>
+        /// <returns>an enumerator for the queue</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         private Int32 _count;
 
@@ -61,14 +75,10 @@ namespace Librainian.Collections.Queues {
 
         private SingleLinkNode<T> _tail;
 
-        /// <summary>
-        ///     Gets the number of elements contained in the queue.
-        /// </summary>
+        /// <summary>Gets the number of elements contained in the queue.</summary>
         public Int32 Count => Thread.VolatileRead( address: ref this._count );
 
-        /// <summary>
-        ///     Default constructor.
-        /// </summary>
+        /// <summary>Default constructor.</summary>
         public LockfreeQueue() => this._tail = this._head;
 
         public LockfreeQueue( [NotNull] IEnumerable<T> items ) : this() {
@@ -77,9 +87,7 @@ namespace Librainian.Collections.Queues {
             }
         }
 
-        /// <summary>
-        ///     Clears the queue.
-        /// </summary>
+        /// <summary>Clears the queue.</summary>
         /// <remarks>This method is not thread-safe.</remarks>
         public void Clear() {
             var currentNode = this._head;
@@ -97,9 +105,7 @@ namespace Librainian.Collections.Queues {
             this._count = 0;
         }
 
-        /// <summary>
-        ///     Removes and returns the object at the beginning of the queue.
-        /// </summary>
+        /// <summary>Removes and returns the object at the beginning of the queue.</summary>
         /// <returns>the object that is removed from the beginning of the queue</returns>
         [CanBeNull]
         public T Dequeue() {
@@ -110,9 +116,7 @@ namespace Librainian.Collections.Queues {
             return result;
         }
 
-        /// <summary>
-        ///     Adds an object to the end of the queue.
-        /// </summary>
+        /// <summary>Adds an object to the end of the queue.</summary>
         /// <param name="item">the object to add to the queue</param>
         public void Enqueue( [CanBeNull] T item ) {
             SingleLinkNode<T> oldTail = null;
@@ -143,22 +147,6 @@ namespace Librainian.Collections.Queues {
             Interlocked.Increment( location: ref this._count );
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the queue.
-        /// </summary>
-        /// <returns>an enumerator for the queue</returns>
-        public IEnumerator<T> GetEnumerator() {
-            var currentNode = this._head;
-
-            do {
-                if ( currentNode.Item is null ) {
-                    yield break;
-                }
-
-                yield return currentNode.Item;
-            } while ( ( currentNode = currentNode.Next ) != null );
-        }
-
         [CanBeNull]
         public T TryDequeue() {
             this.TryDequeue( item: out var item );
@@ -166,12 +154,10 @@ namespace Librainian.Collections.Queues {
             return item;
         }
 
-        /// <summary>
-        ///     Removes and returns the object at the beginning of the queue.
-        /// </summary>
+        /// <summary>Removes and returns the object at the beginning of the queue.</summary>
         /// <param name="item">
-        ///     when the method returns, contains the object removed from the beginning of the queue, if the queue
-        ///     is not empty; otherwise it is the default value for the element type
+        /// when the method returns, contains the object removed from the beginning of the queue, if the queue is not empty; otherwise it is the default value for the
+        /// element type
         /// </param>
         /// <returns>true if an object from removed from the beginning of the queue; false if the queue is empty</returns>
         public Boolean TryDequeue( [CanBeNull] out T item ) {
@@ -207,10 +193,6 @@ namespace Librainian.Collections.Queues {
             return true;
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the queue.
-        /// </summary>
-        /// <returns>an enumerator for the queue</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
+
 }

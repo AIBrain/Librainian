@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Computer.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "Computer.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Computer.cs" was last formatted by Protiguous on 2019/08/08 at 6:40 AM.
+// 
+// Project: "Librainian", "Computer.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.ComputerSystem {
 
@@ -63,8 +61,7 @@ namespace Librainian.ComputerSystem {
         [NotNull]
         public ComputerInfo Info { get; }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
         /// <returns></returns>
         public UInt64 RAM {
@@ -89,8 +86,7 @@ namespace Librainian.ComputerSystem {
             }
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx" />
         public UInt64 TotalPhysicalMemory {
             get {
@@ -121,10 +117,7 @@ namespace Librainian.ComputerSystem {
 
         public void AbortShutdown() => Process.Start( "shutdown", "/a" );
 
-        /// <summary>
-        ///     //TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real
-        ///     time? How fast/slow is this method?
-        /// </summary>
+        /// <summary>//TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real time? How fast/slow is this method?</summary>
         /// <returns></returns>
         public UInt64 GetAvailableMemeory() {
             var info = this.Info;
@@ -132,8 +125,7 @@ namespace Librainian.ComputerSystem {
             return Math.Min( info.AvailablePhysicalMemory, info.AvailableVirtualMemory );
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
         /// <returns></returns>
         public UInt64 GetAvailableVirtualMemory() {
@@ -152,9 +144,7 @@ namespace Librainian.ComputerSystem {
             }
         }
 
-        /// <summary>
-        ///     Use WMI (System.Managment) to get the CPU type
-        /// </summary>
+        /// <summary>Use WMI (System.Managment) to get the CPU type</summary>
         /// <remarks>http: //msdn2.microsoft.com/en-us/Library/aa394373(VS.85).aspx</remarks>
         /// <returns></returns>
         [NotNull]
@@ -175,14 +165,12 @@ namespace Librainian.ComputerSystem {
             }
         }
 
-        /// <summary>
-        ///     Get the average percent of all cpu cores being used.
-        /// </summary>
+        /// <summary>Get the average percent of all cpu cores being used.</summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         public Single? GetCPUUsage() {
             var cpuTimes = this.PerfFormattedDataManagementObjectSearcher?.Get().Cast<ManagementObject>().Select( managementObject => new {
-                Name = managementObject?[ "Name" ], Usage =  managementObject?[ "PercentProcessorTime" ].Cast<Single>()  / 100.0f
+                Name = managementObject?[ "Name" ], Usage = managementObject?[ "PercentProcessorTime" ].Cast<Single>() / 100.0f
             } ); //.ToList();
 
             //The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
@@ -201,15 +189,10 @@ namespace Librainian.ComputerSystem {
 
         public void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );
 
-        /// <summary>
-        ///     Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating
-        ///     system. (Uses the VisualBasic library)
-        /// </summary>
+        /// <summary>Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system. (Uses the VisualBasic library)</summary>
         public void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 ) delay.Value.TotalSeconds}" );
 
-        /// <summary>
-        ///     Send a reboot request.
-        /// </summary>
+        /// <summary>Send a reboot request.</summary>
         public void Restart( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 ) delay.Value.TotalSeconds}" );
 
         public void RestartFast( TimeSpan? delay = null ) =>
@@ -217,9 +200,7 @@ namespace Librainian.ComputerSystem {
 
         public void Shutdown( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 ) delay.Value.TotalSeconds}" );
 
-        /// <summary>
-        ///     Turn off the local computer with no time-out or warning.
-        /// </summary>
+        /// <summary>Turn off the local computer with no time-out or warning.</summary>
         public void ShutdownNow() => Process.Start( "shutdown", "/p" );
 
     }

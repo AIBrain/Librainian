@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "CollectionExtensions.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "CollectionExtensions.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2019/11/17 at 4:32 PM.
+// 
+// Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -110,8 +108,8 @@ namespace Librainian.Collections.Extensions {
         /// <param name="minInstances">The number of elements that must satisfy the <paramref name="predicate" />.</param>
         /// <param name="predicate">   The function that determines whether or not an element is counted.</param>
         /// <returns>
-        /// This method will immediately return true upon finding the <paramref name="minInstances" /> th element that satisfies the predicate, or if <paramref name="minInstances" /> is 0.
-        /// Otherwise, if <paramref name="minInstances" /> is greater than the size of the source sequence, or less than <paramref name="minInstances" /> elements are found to match the
+        /// This method will immediately return true upon finding the <paramref name="minInstances" /> th element that satisfies the predicate, or if <paramref name="minInstances" />
+        /// is 0. Otherwise, if <paramref name="minInstances" /> is greater than the size of the source sequence, or less than <paramref name="minInstances" /> elements are found to match the
         /// <paramref name="predicate" />, it will return false.
         /// </returns>
         [Pure]
@@ -370,7 +368,6 @@ namespace Librainian.Collections.Extensions {
             }
 
             return dict.All( kvp => kvp.Value == 0 );
-
         }
 
         /// <summary>Returns the first two items to in the source collection that satisfy the given <paramref name="relationshipFunc" /> , or <c>null</c> if no match was found.</summary>
@@ -459,7 +456,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
+            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
         }
 
         [Pure]
@@ -484,7 +481,8 @@ namespace Librainian.Collections.Extensions {
             return items.Contains( value );
         }
 
-        [Pure] public static Int32 IndexOf<T>( [NotNull] this T[] self, [CanBeNull] T item ) => Array.IndexOf( array: self, item );
+        [Pure]
+        public static Int32 IndexOf<T>( [NotNull] this T[] self, [CanBeNull] T item ) => Array.IndexOf( array: self, item );
 
         /// <summary></summary>
         /// <typeparam name="T"></typeparam>
@@ -598,9 +596,11 @@ namespace Librainian.Collections.Extensions {
         /// <param name="source">The IEnumerable to check if empty.</param>
         /// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
         [DebuggerStepThrough]
-        [Pure] public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
+        [Pure]
+        public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
-        [Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
+        [Pure]
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 ) u );
 
         [CanBeNull]
         [Pure]
@@ -781,7 +781,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( T )( ValueType )( ( Int32 )( ValueType )type & ~( Int32 )( ValueType )value );
+            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
         }
 
         /// <summary>Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many <paramref name="specificItem" /> or null were removed.</summary>
@@ -1019,7 +1019,7 @@ namespace Librainian.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( count: ( Int32 )( x * sources.Count ) );
+            return sources.Take( count: ( Int32 ) ( x * sources.Count ) );
         }
 
         [NotNull]
@@ -1040,8 +1040,8 @@ namespace Librainian.Collections.Extensions {
 
         /// <summary>
         ///     <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="items" />.</para>
-        /// <para>If no separator is given, it defaults to ", ".</para>
-        /// <para>Additonally, <paramref name="atTheEnd"/> can optionally be added to the returned string.</para>
+        ///     <para>If no separator is given, it defaults to ", ".</para>
+        ///     <para>Additonally, <paramref name="atTheEnd" /> can optionally be added to the returned string.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
@@ -1076,7 +1076,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
 
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         /// <summary>Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" /></summary>
@@ -1111,9 +1111,8 @@ namespace Librainian.Collections.Extensions {
             return stack.TryPop( result: out item );
         }
 
-
-        [Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 )( collection as Int32[] ).SumS();
-
+        [Pure]
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 ) ( collection as Int32[] ).SumS();
 
         /// <summary>why?</summary>
         /// <typeparam name="TKey"></typeparam>
@@ -1157,5 +1156,7 @@ namespace Librainian.Collections.Extensions {
                 }
             }
         }
+
     }
+
 }

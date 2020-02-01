@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Line.cs" was last formatted by Protiguous on 2019/08/08 at 7:43 AM.
+// 
+// Project: "Librainian", "Line.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -63,8 +61,8 @@ namespace Librainian.Graphics.Imaging {
 
         /// <summary>Returns a hash code for the specified object.</summary>
         /// <returns>A hash code for the specified object.</returns>
-        /// <param name="obj">The <see cref="System.Object" /> for which a hash code is to be returned.</param>
-        /// <exception cref="System.ArgumentNullException">The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is null.</exception>
+        /// <param name="obj">The <see cref="Object" /> for which a hash code is to be returned.</param>
+        /// <exception cref="ArgumentNullException">The type of <paramref name="obj" /> is a reference type and <paramref name="obj" /> is null.</exception>
         public Int32 GetHashCode( Line obj ) => this.Pixels.GetHashCode();
 
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
@@ -74,29 +72,26 @@ namespace Librainian.Graphics.Imaging {
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>
-        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Line);
-
-
-       
+        /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Line );
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
-        // ReSharper disable 3 NonReadonlyMemberInGetHashCode
-        public override int GetHashCode() => ( this.Count, this.Pixels, this._checksum ).GetHashCode();
 
-        /// <summary>Returns a value that indicates whether the values of two <see cref="Librainian.Graphics.Imaging.Line" /> objects are equal.</summary>
+        // ReSharper disable 3 NonReadonlyMemberInGetHashCode
+        public override Int32 GetHashCode() => ( this.Count, this.Pixels, this._checksum ).GetHashCode();
+
+        /// <summary>Returns a value that indicates whether the values of two <see cref="Line" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static bool operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left, right );
 
-        /// <summary>Returns a value that indicates whether two <see cref="Librainian.Graphics.Imaging.Line" /> objects have different values.</summary>
+        /// <summary>Returns a value that indicates whether two <see cref="Line" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static bool operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left, right );
 
         /// <summary>How many pixels should be in this line?</summary>
         [JsonProperty]
@@ -186,7 +181,7 @@ namespace Librainian.Graphics.Imaging {
             }
 
             if ( left.Checksum().Result != right.Checksum().Result || left.Count != right.Count ) {
-                return default;   //TODO ugh... .Result
+                return default; //TODO ugh... .Result
             }
 
             return left.Pixels.SequenceEqual( right.Pixels );

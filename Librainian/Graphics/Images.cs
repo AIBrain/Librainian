@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2019/11/07 at 2:07 PM.
+// 
+// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Graphics {
 
@@ -60,14 +58,13 @@ namespace Librainian.Graphics {
     using Measurement.Time;
     using OperatingSystem.FileSystem;
     using Parsing;
+    using File = Pri.LongPath.File;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Pri.LongPath.Path;
-    using Directory = Pri.LongPath.Directory;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using File = Pri.LongPath.File;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using FileInfo = Pri.LongPath.FileInfo;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class Images {
@@ -974,6 +971,86 @@ namespace Librainian.Graphics {
 
         }
 
+        /// <summary>if the image file contains a 'valid' date, use that.</summary>
+        /// <param name="info">     </param>
+        /// <param name="bestGuess"></param>
+        /// <returns></returns>
+        private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
+            if ( info is null ) {
+                throw new ArgumentNullException( nameof( info ) );
+            }
+
+            bestGuess = null;
+
+            try {
+                info.Refresh();
+
+                if ( !info.Exists ) {
+                    return default;
+                }
+
+                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
+                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
+
+                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
+                            {
+                                bestGuess = asDateTime.Value;
+
+                                return true;
+                            }
+                        }
+                    }
+
+                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
+                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
+
+                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
+                            {
+                                bestGuess = asDateTime.Value;
+
+                                return true;
+                            }
+                        }
+                    }
+
+                    //if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
+                    //    var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
+                    //    if ( asDateTime.HasValue && asDateTime.Value.IsDateRecentEnough() && asDateTime.Value.IsDateNotTooNew() ) {
+                    //        {
+                    //            bestGuess = asDateTime.Value;
+                    //            return true;
+                    //        }
+                    //    }
+                    //}
+                }
+            }
+            catch ( Exception ) {
+                /*swallow*/
+            }
+
+            return default;
+        }
+
+        [CanBeNull]
+        public static BitmapImage BitmapFromUri( [CanBeNull] this Uri source ) {
+            try {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = source;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                return bitmap;
+            }
+            catch ( IOException ) { }
+            catch ( FileFormatException ) { }
+            catch ( NotSupportedException ) { }
+
+            return null;
+        }
+
         [NotNull]
         public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
             if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
@@ -1085,13 +1162,14 @@ namespace Librainian.Graphics {
                 bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
                 if ( bestGuesses.Any() ) {
-//#if DEBUG
-//                    var first4 = justName.Left( 4 ).ToIntOrNull();
 
-//                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
-//                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
-//                    }
-//#endif
+                    //#if DEBUG
+                    //                    var first4 = justName.Left( 4 ).ToIntOrNull();
+
+                    //                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
+                    //                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
+                    //                    }
+                    //#endif
 
                     return bestGuesses.Min();
                 }
@@ -1177,15 +1255,16 @@ namespace Librainian.Graphics {
                 }
 
                 if ( bestGuesses.Any() ) {
-//#if DEBUG
-//                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
-//                        "".Break();
-//                    }
 
-//                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
-//                        "".Break();
-//                    }
-//#endif
+                    //#if DEBUG
+                    //                    if ( justName.StartsWith( "2015" ) && bestGuesses.Min().Year != 2015 ) {
+                    //                        "".Break();
+                    //                    }
+
+                    //                    if ( justName.StartsWith( "2016" ) && bestGuesses.Min().Year != 2016 ) {
+                    //                        "".Break();
+                    //                    }
+                    //#endif
 
                     return bestGuesses.Min();
 
@@ -1217,6 +1296,7 @@ namespace Librainian.Graphics {
         }
 
         /*
+
         /// <summary>
         ///     <para>Returns true if the file could be loaded as an image.</para>
         ///     <para>Uses <see cref="BitmapImage" /> first, and then</para>
@@ -1233,28 +1313,9 @@ namespace Librainian.Graphics {
         }
         */
 
-        [CanBeNull]
-        public static BitmapImage BitmapFromUri( [CanBeNull] this Uri source ) {
-            try {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = source;
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
-
-                return bitmap;
-            }
-            catch ( IOException ) { }
-            catch ( FileFormatException ) { }
-            catch ( NotSupportedException ) { }
-
-            return null;
-        }
-
         public static async Task<Boolean> IsaValidImage( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException(  nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             if ( !document.IsBufferLoaded ) {
@@ -1319,24 +1380,19 @@ namespace Librainian.Graphics {
             return default;
         }
 
-        /// <summary>
-        ///     Returns true if the date is 'recent' enough.
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
-        public static Boolean IsDateRecentEnough( this DateTime dateTime ) => dateTime.Year >= 1825;
-
-        /// <summary>
-        ///     Returns true if the date is 'old' enough.
-        /// </summary>
+        /// <summary>Returns true if the date is 'old' enough.</summary>
         /// <param name="dateTime"></param>
         /// <param name="byYears"> </param>
         /// <returns></returns>
         /// <remarks>Any time travelers in the house?</remarks>
         public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
 
-        /// <summary>
-        /// </summary>
+        /// <summary>Returns true if the date is 'recent' enough.</summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static Boolean IsDateRecentEnough( this DateTime dateTime ) => dateTime.Year >= 1825;
+
+        /// <summary></summary>
         /// <param name="fileA"></param>
         /// <param name="fileB"></param>
         /// <returns></returns>
@@ -1403,69 +1459,6 @@ namespace Librainian.Graphics {
 
                 return bitmap;
             }
-        }
-
-        /// <summary>
-        ///     if the image file contains a 'valid' date, use that.
-        /// </summary>
-        /// <param name="info">     </param>
-        /// <param name="bestGuess"></param>
-        /// <returns></returns>
-        private static Boolean InternalImageGetDateTime( [NotNull] this FileSystemInfo info, out DateTime? bestGuess ) {
-            if ( info is null ) {
-                throw new ArgumentNullException( nameof( info ) );
-            }
-
-            bestGuess = null;
-
-            try {
-                info.Refresh();
-
-                if ( !info.Exists ) {
-                    return default;
-                }
-
-                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
-                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
-
-                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
-                            {
-                                bestGuess = asDateTime.Value;
-
-                                return true;
-                            }
-                        }
-                    }
-
-                    if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
-                        var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
-
-                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
-                            {
-                                bestGuess = asDateTime.Value;
-
-                                return true;
-                            }
-                        }
-                    }
-
-                    //if ( image.PropertyIdList.Contains( PropertyList.PropertyTagDateTime ) ) {
-                    //    var asDateTime = image.GetPropertyItem( PropertyList.PropertyTagDateTime ).GetProperteryAsDateTime();
-                    //    if ( asDateTime.HasValue && asDateTime.Value.IsDateRecentEnough() && asDateTime.Value.IsDateNotTooNew() ) {
-                    //        {
-                    //            bestGuess = asDateTime.Value;
-                    //            return true;
-                    //        }
-                    //    }
-                    //}
-                }
-            }
-            catch ( Exception ) {
-                /*swallow*/
-            }
-
-            return default;
         }
 
         internal static class FileNameExtension {

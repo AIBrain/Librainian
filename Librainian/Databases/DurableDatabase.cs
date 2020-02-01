@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "DurableDatabase.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "DurableDatabase.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "DurableDatabase.cs" was last formatted by Protiguous on 2019/09/12 at 10:39 AM.
+// 
+// Project: "Librainian", "DurableDatabase.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Databases {
 
@@ -46,14 +44,13 @@ namespace Librainian.Databases {
     using System.Data;
     using System.Data.Common;
     using System.Diagnostics.CodeAnalysis;
-    using Microsoft.Data.SqlClient;
-    
     using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
+    using Microsoft.Data.SqlClient;
     using Parsing;
     using Utilities;
 
@@ -69,15 +66,13 @@ namespace Librainian.Databases {
 
         public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
 
-        /// <summary>
-        ///     A database connection attempts to stay connected in the event of an unwanted disconnect.
-        /// </summary>
+        /// <summary>A database connection attempts to stay connected in the event of an unwanted disconnect.</summary>
         /// <param name="connectionString"></param>
         /// <param name="retries">         </param>
         /// <exception cref="InvalidOperationException"></exception>
         public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
             if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( connectionString ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( connectionString ) );
             }
 
             this.Retries = retries;
@@ -118,9 +113,7 @@ namespace Librainian.Databases {
             return null;
         }
 
-        /// <summary>
-        ///     Return true if connected.
-        /// </summary>
+        /// <summary>Return true if connected.</summary>
         /// <param name="sender"></param>
         /// <returns></returns>
         private Boolean ReOpenConnection( [CanBeNull] Object sender ) {
@@ -225,9 +218,7 @@ namespace Librainian.Databases {
             }
         }
 
-        /// <summary>
-        ///     Opens and then closes a <see cref="SqlConnection" />.
-        /// </summary>
+        /// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
         /// <returns></returns>
         public Int32? ExecuteNonQuery( [CanBeNull] String query, [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
@@ -296,8 +287,7 @@ namespace Librainian.Databases {
             return default;
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <returns></returns>
         public Boolean ExecuteNonQuery( [CanBeNull] String query ) {
             if ( query.IsNullOrWhiteSpace() ) {
@@ -353,9 +343,7 @@ namespace Librainian.Databases {
             return default;
         }
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="table">      </param>
@@ -400,9 +388,7 @@ namespace Librainian.Databases {
             return default;
         }
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
@@ -445,8 +431,7 @@ namespace Librainian.Databases {
             return table;
         }
 
-        /// <summary>
-        /// </summary>
+        /// <summary></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
@@ -480,9 +465,7 @@ namespace Librainian.Databases {
             return null;
         }
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">      </param>
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
@@ -548,18 +531,18 @@ namespace Librainian.Databases {
                     var scalar = command.ExecuteScalar();
 
                     if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-                        return (Status.Success, default);
+                        return ( Status.Success, default );
                     }
 
                     if ( scalar is TResult result1 ) {
-                        return (Status.Success, result1);
+                        return ( Status.Success, result1 );
                     }
 
                     if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return (Status.Success, result);
+                        return ( Status.Success, result );
                     }
 
-                    return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
+                    return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
                 }
             }
             catch ( SqlException exception ) {
@@ -579,15 +562,15 @@ namespace Librainian.Databases {
         /// <param name="commandType"></param>
         /// <param name="parameters"> </param>
         /// <returns></returns>
-        public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [CanBeNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+        public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [CanBeNull] String query, CommandType commandType,
+            [CanBeNull] params SqlParameter[] parameters ) {
             if ( query.IsNullOrWhiteSpace() ) {
                 throw new ArgumentNullException( nameof( query ) );
             }
 
             try {
                 using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-                    CommandType = commandType,
-                    CommandTimeout = 0
+                    CommandType = commandType, CommandTimeout = 0
                 } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
@@ -608,18 +591,18 @@ namespace Librainian.Databases {
                     }
 
                     if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-                        return (Status.Success, default);
+                        return ( Status.Success, default );
                     }
 
                     if ( scalar is TResult scalarAsync ) {
-                        return (Status.Success, scalarAsync);
+                        return ( Status.Success, scalarAsync );
                     }
 
                     if ( scalar.TryCast<TResult>( out var result ) ) {
-                        return (Status.Success, result);
+                        return ( Status.Success, result );
                     }
 
-                    return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
+                    return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
                 }
             }
             catch ( InvalidCastException exception ) {
@@ -634,9 +617,7 @@ namespace Librainian.Databases {
             return default;
         }
 
-        /// <summary>
-        ///     Returns a <see cref="DataTable" />
-        /// </summary>
+        /// <summary>Returns a <see cref="DataTable" /></summary>
         /// <param name="query">     </param>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -674,5 +655,7 @@ namespace Librainian.Databases {
 
             return default;
         }
+
     }
+
 }

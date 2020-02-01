@@ -1,26 +1,24 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "NetworkAdapter.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "NetworkAdapter.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "NetworkAdapter.cs" was last formatted by Protiguous on 2019/08/08 at 6:42 AM.
+// 
+// Project: "Librainian", "NetworkAdapter.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -50,30 +48,19 @@ namespace Librainian.ComputerSystem.Devices {
     using Measurement.Time;
     using OperatingSystem.WMI;
 
-    /// <summary>
-    ///     Module Name: NetworkAdapter.cs
-    ///     Project: CSWMIEnableDisableNetworkAdapter Copyright (c) Microsoft Corporation.
-    /// </summary>
+    /// <summary>Module Name: NetworkAdapter.cs Project: CSWMIEnableDisableNetworkAdapter Copyright (c) Microsoft Corporation.</summary>
     public class NetworkAdapter {
 
-        /// <summary>
-        ///     The DeviceID of the NetworkAdapter
-        /// </summary>
+        /// <summary>The DeviceID of the NetworkAdapter</summary>
         public Int32 DeviceId { get; }
 
-        /// <summary>
-        ///     The ProductName of the NetworkAdapter
-        /// </summary>
+        /// <summary>The ProductName of the NetworkAdapter</summary>
         public String Name { get; }
 
-        /// <summary>
-        ///     The Net Connection Status Value
-        /// </summary>
+        /// <summary>The Net Connection Status Value</summary>
         public Int32 NetConnectionStatus { get; }
 
-        /// <summary>
-        ///     The NetEnabled status of the NetworkAdapter
-        /// </summary>
+        /// <summary>The NetEnabled status of the NetworkAdapter</summary>
         public Int32 NetEnabled { get; }
 
         public NetworkAdapter( Int32 deviceId, [CanBeNull] String name, Int32 netEnabled, Int32 netConnectionStatus ) {
@@ -116,9 +103,7 @@ namespace Librainian.ComputerSystem.Devices {
             }
         }
 
-        /// <summary>
-        ///     Enum the Operation result of Enable and Disable Network Adapter
-        /// </summary>
+        /// <summary>Enum the Operation result of Enable and Disable Network Adapter</summary>
         private enum EnumEnableDisableResult {
 
             Fail = -1,
@@ -126,11 +111,10 @@ namespace Librainian.ComputerSystem.Devices {
             Unknow,
 
             Success
+
         }
 
-        /// <summary>
-        ///     Enum the NetEnabled Status
-        /// </summary>
+        /// <summary>Enum the NetEnabled Status</summary>
         private enum EnumNetEnabledStatus {
 
             Disabled = -1,
@@ -138,11 +122,10 @@ namespace Librainian.ComputerSystem.Devices {
             Unknown,
 
             Enabled
+
         }
 
-        /// <summary>
-        ///     List all the NetworkAdapters
-        /// </summary>
+        /// <summary>List all the NetworkAdapters</summary>
         /// <returns>The list of all NetworkAdapter of the machine</returns>
         [NotNull]
         [ItemNotNull]
@@ -159,13 +142,11 @@ namespace Librainian.ComputerSystem.Devices {
             }
         }
 
-        /// <summary>
-        ///     Enable Or Disable The NetworkAdapter
-        /// </summary>
+        /// <summary>Enable Or Disable The NetworkAdapter</summary>
         /// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
         public Int32 EnableOrDisableNetworkAdapter( [NotNull] String strOperation ) {
             if ( String.IsNullOrWhiteSpace( value: strOperation ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.",  nameof( strOperation ) );
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( strOperation ) );
             }
 
             strOperation = strOperation.Trim();
@@ -206,9 +187,7 @@ namespace Librainian.ComputerSystem.Devices {
             return resultEnableDisableNetworkAdapter;
         }
 
-        /// <summary>
-        ///     Get the NetworkAdapter NetEnabled Property
-        /// </summary>
+        /// <summary>Get the NetworkAdapter NetEnabled Property</summary>
         /// <returns>Whether the NetworkAdapter is enabled</returns>
         public Int32 GetNetEnabled() {
             var netEnabled = ( Int32 ) EnumNetEnabledStatus.Unknown;
@@ -230,5 +209,7 @@ namespace Librainian.ComputerSystem.Devices {
 
             return netEnabled;
         }
+
     }
+
 }

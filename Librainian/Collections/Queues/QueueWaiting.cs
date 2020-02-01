@@ -1,26 +1,24 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
+// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "QueueWaiting.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
+// 
+// This source code contained in "QueueWaiting.cs" belongs to Protiguous@Protiguous.com
+// unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
+// 
+// If you want to use any of our code in a commercial project, you must contact
+// Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -28,16 +26,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "QueueWaiting.cs" was last formatted by Protiguous on 2019/08/08 at 6:36 AM.
+// 
+// Project: "Librainian", "QueueWaiting.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Collections.Queues {
 
@@ -53,13 +51,18 @@ namespace Librainian.Collections.Queues {
 
     public class QueueWaiting<T> : ABetterClassDispose, IEnumerable<T> where T : class {
 
+        public IEnumerator<T> GetEnumerator() => this.Queue.GetEnumerator();
+
+        /// <summary>Returns an enumerator that iterates through a collection.</summary>
+        /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
+        /// <filterpriority>2</filterpriority>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
         private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
 
         private AutoResetEvent Wait { get; } = new AutoResetEvent( initialState: false );
 
-        /// <summary>
-        ///     Adds the data to the queue.
-        /// </summary>
+        /// <summary>Adds the data to the queue.</summary>
         /// <param name="item"></param>
         /// <returns>Returns the DateTime the data was queued.</returns>
         [NotNull]
@@ -81,46 +84,36 @@ namespace Librainian.Collections.Queues {
             return this;
         }
 
-        /// <summary>
-        ///     Dispose any disposable members.
-        /// </summary>
+        /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
-            using ( this.Wait ) {
-            }
+            using ( this.Wait ) { }
         }
 
-        public IEnumerator<T> GetEnumerator() => this.Queue.GetEnumerator();
-
-        /// <summary>
-        ///     Pulls out the next <see cref="T" /> in the <see cref="Queue" /> or null.
-        /// </summary>
+        /// <summary>Pulls out the next <see cref="T" /> in the <see cref="Queue" /> or null.</summary>
         /// <returns></returns>
         [CanBeNull]
         public T Next() => this.Queue.TryDequeue( result: out var temp ) ? temp : default;
 
-        /// <summary>
-        ///     Does a Dequeue for each item in the <see cref="Queue" /> ?or null?
-        /// </summary>
+        /// <summary>Does a Dequeue for each item in the <see cref="Queue" /> ?or null?</summary>
         /// <returns></returns>
         [NotNull]
         public IEnumerable<T> NextAll() => this.Queue.Select( selector: o => this.Next() ).Where( o => default( T ) != o );
 
         /// <summary>
-        ///     Wait until:
-        ///     <list type="bullet">
-        ///         <item>
-        ///             <description>Any <see cref="T" /> are already in the <see cref="Queue" />.</description>
-        ///         </item>
-        ///         <item>
-        ///             <description>Any <see cref="T" /> is added to the <see cref="Queue" />.</description>
-        ///         </item>
-        ///         <item>
-        ///             <description>
-        ///                 Until the
-        ///                 <param name="timeToStall">(default is 1 second)</param>
-        ///             </description>
-        ///         </item>
-        ///     </list>
+        /// Wait until:
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>Any <see cref="T" /> are already in the <see cref="Queue" />.</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>Any <see cref="T" /> is added to the <see cref="Queue" />.</description>
+        ///     </item>
+        ///     <item>
+        ///         <description>Until the
+        ///         <param name="timeToStall">(default is 1 second)</param>
+        ///         </description>
+        ///     </item>
+        /// </list>
         /// </summary>
         public void Stall( TimeSpan? timeToStall = null ) {
             if ( this.Any() || null == this.Wait ) {
@@ -130,11 +123,6 @@ namespace Librainian.Collections.Queues {
             this.Wait.WaitOne( timeout: timeToStall ?? Seconds.One );
         }
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>An <see cref="System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        /// <filterpriority>2</filterpriority>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
+
 }

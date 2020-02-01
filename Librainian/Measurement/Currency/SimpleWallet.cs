@@ -16,8 +16,8 @@
 // Protiguous@Protiguous.com for permission and a quote.
 // 
 // Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
+//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
+//     PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -28,14 +28,14 @@
 // =========================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2020/01/21 at 10:58 AM.
+// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Measurement.Currency {
 
@@ -260,11 +260,10 @@ namespace Librainian.Measurement.Currency {
             return this.TryWithdraw( wallet.Balance );
         }
 
-        //TODO TODO add in support for automatic persisting?
-
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
+        //TODO TODO add in support for automatic persisting?
         [JsonProperty]
         private Decimal _balance;
 
@@ -303,13 +302,13 @@ namespace Librainian.Measurement.Currency {
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static bool operator !=( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => !Equals( left, right );
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static bool operator ==( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => Equals( left, right );
 
         /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
@@ -323,7 +322,7 @@ namespace Librainian.Measurement.Currency {
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
-        public override int GetHashCode() => this._access.GetHashCode();
+        public override Int32 GetHashCode() => this._access.GetHashCode();
 
         public override String ToString() => $"{this.Balance:F8}";
 
