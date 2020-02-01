@@ -69,13 +69,12 @@ namespace Librainian.Persistence {
     using OperatingSystem.Streams;
     using Parsing;
     using Threading;
-    using Directory = Pri.LongPath.Directory;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using File = Pri.LongPath.File;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Pri.LongPath.Path;
-
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class PersistenceExtensions {
