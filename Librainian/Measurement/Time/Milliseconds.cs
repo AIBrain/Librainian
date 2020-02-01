@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Milliseconds.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Milliseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -54,34 +54,8 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public class Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
 
-        public Int32 CompareTo( [NotNull] Milliseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneMillisecond * this.Value );
-
-        [NotNull]
-        public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "millisecond" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "millisecond" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => this;
+        /// <summary>1000</summary>
+        public const UInt16 InOneSecond = 1000;
 
         [NotNull]
         public static Milliseconds Default { get; } = new Milliseconds( default );
@@ -157,11 +131,8 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        /// <summary>1000</summary>
-        public const UInt16 InOneSecond = 1000;
-
         //faster WPM than a female (~240wpm)
-        public Milliseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public Milliseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Milliseconds( Rational value ) => this.Value = value;
 
@@ -169,7 +140,7 @@ namespace Librainian.Measurement.Time {
 
         public Milliseconds( BigInteger value ) => this.Value = value;
 
-        public Milliseconds( Double value ) => this.Value = ( Rational ) value;
+        public Milliseconds( Double value ) => this.Value = ( Rational )value;
 
         [NotNull]
         public static Milliseconds Combine( [NotNull] Milliseconds left, Rational milliseconds ) {
@@ -212,7 +183,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( milliseconds ) );
             }
 
-            return ( Double ) milliseconds.Value;
+            return ( Double )milliseconds.Value;
         }
 
         /// <summary>Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.</summary>
@@ -258,7 +229,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( milliseconds ) );
             }
 
-            return TimeSpan.FromMilliseconds( ( Double ) milliseconds.Value );
+            return TimeSpan.FromMilliseconds( ( Double )milliseconds.Value );
         }
 
         [NotNull]
@@ -289,7 +260,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) ( -milliseconds ) );
+            return Combine( left, ( Rational )( -milliseconds ) );
         }
 
         public static Boolean operator !=( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) {
@@ -323,7 +294,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) milliseconds );
+            return Combine( left, ( Rational )milliseconds );
         }
 
         [NotNull]
@@ -356,7 +327,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
-            return ( Seconds ) left < right;
+            return ( Seconds )left < right;
         }
 
         public static Boolean operator ==( [CanBeNull] Milliseconds left, [CanBeNull] Milliseconds right ) => Equals( left, right );
@@ -383,16 +354,43 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
-            return ( Seconds ) left > right;
+            return ( Seconds )left > right;
+        }
+
+        public Int32 CompareTo( [NotNull] Milliseconds other ) {
+            if ( other is null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
+
+            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( [CanBeNull] Milliseconds other ) => Equals( this, other );
 
         public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this, obj as Milliseconds );
 
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
         [NotNull]
         public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
 
-    }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMillisecond * this.Value );
 
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "millisecond" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "millisecond" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => this;
+    }
 }

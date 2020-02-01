@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Picoseconds.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Picoseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -53,31 +53,6 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     [Immutable]
     public class Picoseconds : IComparable<Picoseconds>, IQuantityOfTime {
-
-        public Int32 CompareTo( Picoseconds other ) => this.Value.CompareTo( other.Value );
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOnePicosecond * this.Value );
-
-        public Seconds ToSeconds() => throw new NotImplementedException();
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "ps" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "ps" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-        [JsonProperty]
-        public Rational Value { get; }
 
         /// <summary>1000</summary>
         public const UInt16 InOneNanosecond = 1000;
@@ -124,7 +99,10 @@ namespace Librainian.Measurement.Time {
         /// <summary>Zero <see cref="Picoseconds" />.</summary>
         public static readonly Picoseconds Zero = new Picoseconds( 0 );
 
-        public Picoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        [JsonProperty]
+        public Rational Value { get; }
+
+        public Picoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Picoseconds( Rational value ) => this.Value = value;
 
@@ -178,7 +156,7 @@ namespace Librainian.Measurement.Time {
         public static Picoseconds operator -( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Combine( left, -right );
 
         [NotNull]
-        public static Picoseconds operator -( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) ( -nanoseconds ) );
+        public static Picoseconds operator -( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
 
         public static Boolean operator !=( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => !Equals( left, right );
 
@@ -186,13 +164,15 @@ namespace Librainian.Measurement.Time {
         public static Picoseconds operator +( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Combine( left, right );
 
         [NotNull]
-        public static Picoseconds operator +( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) nanoseconds );
+        public static Picoseconds operator +( [CanBeNull] Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
 
         public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
 
         public static Boolean operator ==( [CanBeNull] Picoseconds left, [CanBeNull] Picoseconds right ) => Equals( left, right );
 
         public static Boolean operator >( Picoseconds left, Picoseconds right ) => left.Value > right.Value;
+
+        public Int32 CompareTo( Picoseconds other ) => this.Value.CompareTo( other.Value );
 
         public Boolean Equals( [CanBeNull] Picoseconds other ) => Equals( this, other );
 
@@ -204,12 +184,30 @@ namespace Librainian.Measurement.Time {
             return obj is Picoseconds picoseconds && this.Equals( picoseconds );
         }
 
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
         [NotNull]
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value * Femtoseconds.InOnePicosecond );
 
         [NotNull]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value / InOneNanosecond );
 
-    }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOnePicosecond * this.Value );
 
+        public Seconds ToSeconds() => throw new NotImplementedException();
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "ps" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "ps" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
+    }
 }

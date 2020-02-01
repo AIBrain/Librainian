@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Unique.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
@@ -68,11 +68,19 @@ namespace Librainian.OperatingSystem.FileSystem {
     [Serializable]
     public class Unique : IEquatable<Unique> {
 
-        public Boolean Equals( Unique other ) => Equals( this, other );
+        private const Int32 EOFMarker = -1;
 
         [NotNull]
         [JsonProperty]
         private readonly Uri u;
+
+        /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
+        public static readonly Unique Empty = new Unique();
+
+        /// <summary>Just an easier to use mnemonic.</summary>
+        [NotNull]
+        [JsonIgnore]
+        public String AbsolutePath => this.U.AbsolutePath;
 
         /// <summary>The location/directory/path/file/name/whatever.ext
         /// <para>Has been filtered through Uri.AbsoluteUri already.</para>
@@ -80,16 +88,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         [JsonIgnore]
         public Uri U => this.u;
-
-        /// <summary>Just an easier to use mnemonic.</summary>
-        [NotNull]
-        [JsonIgnore]
-        public String AbsolutePath => this.U.AbsolutePath;
-
-        private const Int32 EOFMarker = -1;
-
-        /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-        public static readonly Unique Empty = new Unique();
 
         /// <summary>What effect will this have down the road?</summary>
         private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -186,7 +184,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             yield break;
                         }
 
-                        yield return ( Byte ) a;
+                        yield return ( Byte )a;
                     }
                 }
             }
@@ -282,6 +280,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
+        public Boolean Equals( Unique other ) => Equals( this, other );
+
         public override Boolean Equals( Object obj ) => Equals( this, obj as Unique );
 
         public override Int32 GetHashCode() => this.U.GetHashCode();
@@ -357,7 +357,5 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() => $"{this.AbsolutePath}";
-
     }
-
 }

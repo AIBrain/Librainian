@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "MathStatistics.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "MathStatistics.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
@@ -84,7 +84,7 @@ namespace Librainian.Maths {
         public static Decimal GeometricMean( [NotNull] this IEnumerable<Decimal> data, Int32 items ) {
             var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
-            return ( Decimal ) Math.Pow( ( Double ) aggregate, ( Double ) ( 1.0m / items ) ); //BUG possible conversion errors here
+            return ( Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) ); //BUG possible conversion errors here
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Librainian.Maths {
         public static Rational GeometricMean( [NotNull] this IEnumerable<Rational> data, Int32 items ) {
             var aggregate = data.Aggregate( Rational.One, ( current, d ) => current * d );
 
-            return Rational.Pow( aggregate, ( Int32 ) ( 1.0 / items ) ); //BUG possible conversion errors here
+            return Rational.Pow( aggregate, ( Int32 )( 1.0 / items ) ); //BUG possible conversion errors here
         }
 
         public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
@@ -123,13 +123,13 @@ namespace Librainian.Maths {
         public static Int32 MeanGeometric( [NotNull] this IEnumerable<Int32> numbers ) {
             var enumerable = numbers as IList<Int32> ?? numbers.ToList();
 
-            return ( Int32 ) Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
+            return ( Int32 )Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
         }
 
         public static Single MeanGeometric( [NotNull] this IEnumerable<Single> numbers ) {
             var enumerable = numbers as IList<Single> ?? numbers.ToList();
 
-            return ( Single ) Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
+            return ( Single )Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
         }
 
         public static Decimal MeanGeometric( [NotNull] this IEnumerable<Decimal> numbers ) {
@@ -148,7 +148,7 @@ namespace Librainian.Maths {
                 result *= @decimal;
             }
 
-            return ( Decimal ) Math.Pow( ( Double ) result, 1.0 / enumerable.Count );
+            return ( Decimal )Math.Pow( ( Double )result, 1.0 / enumerable.Count );
         }
 
         public static Double MeanHarmonic( [NotNull] this IEnumerable<Double> numbers ) {
@@ -235,7 +235,7 @@ namespace Librainian.Maths {
         /// <example>var f = 7000.OneIn();</example>
         public static Double OneIn( this SByte possible ) => 1d / possible;
 
-        public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 ) ( x * percent / 100.0f );
+        public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 )( x * percent / 100.0f );
 
         public static Single Percent( this Single x, Single percent ) => x * percent / 100.0f;
 
@@ -243,7 +243,7 @@ namespace Librainian.Maths {
 
         public static Decimal Percent( this Decimal x, Decimal percent ) => x * percent / 100.0m;
 
-        public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 ) ( x * percent / 100.0f );
+        public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 )( x * percent / 100.0f );
 
         /// <summary>Returns true if this probability happens.</summary>
         /// <param name="probability"></param>
@@ -333,9 +333,7 @@ namespace Librainian.Maths {
             var decimals = values as Decimal[] ?? values.ToArray();
             var avg = decimals.Average();
 
-            return ( Decimal ) Math.Sqrt( decimals.Average( v => Math.Pow( ( Double ) ( v - avg ), 2 ) ) );
+            return ( Decimal )Math.Sqrt( decimals.Average( v => Math.Pow( ( Double )( v - avg ), 2 ) ) );
         }
-
     }
-
 }

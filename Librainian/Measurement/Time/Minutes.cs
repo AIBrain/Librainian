@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Minutes.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Minutes.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -53,39 +53,6 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public class Minutes : IComparable<Minutes>, IQuantityOfTime {
-
-        public Int32 CompareTo( [NotNull] Minutes other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational ) PlanckTimes.InOneMinute * this.Value );
-
-        [NotNull]
-        [Pure]
-        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "minute" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "minute" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-        [JsonProperty]
-        public Rational Value { get; }
 
         /// <summary>60</summary>
         public const Byte InOneHour = 60;
@@ -108,7 +75,10 @@ namespace Librainian.Measurement.Time {
         /// <summary>Zero <see cref="Minutes" /></summary>
         public static Minutes Zero = new Minutes( 0 );
 
-        public Minutes( Decimal value ) => this.Value = ( Rational ) value;
+        [JsonProperty]
+        public Rational Value { get; }
+
+        public Minutes( Decimal value ) => this.Value = ( Rational )value;
 
         public Minutes( Rational value ) => this.Value = value;
 
@@ -196,7 +166,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( minutes ) );
             }
 
-            return TimeSpan.FromMinutes( ( Double ) minutes.Value );
+            return TimeSpan.FromMinutes( ( Double )minutes.Value );
         }
 
         [NotNull]
@@ -227,7 +197,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) ( -minutes ) );
+            return Combine( left, ( Rational )( -minutes ) );
         }
 
         public static Boolean operator !=( [NotNull] Minutes left, [NotNull] Minutes right ) {
@@ -261,7 +231,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) minutes );
+            return Combine( left, ( Rational )minutes );
         }
 
         [NotNull]
@@ -290,7 +260,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return ( Hours ) left < right;
+            return ( Hours )left < right;
         }
 
         public static Boolean operator <( [NotNull] Minutes left, [NotNull] Seconds right ) {
@@ -302,7 +272,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
-            return left < ( Minutes ) right;
+            return left < ( Minutes )right;
         }
 
         public static Boolean operator ==( [NotNull] Minutes left, [NotNull] Minutes right ) {
@@ -317,7 +287,7 @@ namespace Librainian.Measurement.Time {
             return Equals( left, right );
         }
 
-        public static Boolean operator >( [CanBeNull] Minutes left, [CanBeNull] Hours right ) => ( Hours ) left > right;
+        public static Boolean operator >( [CanBeNull] Minutes left, [CanBeNull] Hours right ) => ( Hours )left > right;
 
         public static Boolean operator >( [NotNull] Minutes left, [NotNull] Minutes right ) {
             if ( left is null ) {
@@ -340,7 +310,15 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( right ) );
             }
 
-            return left > ( Minutes ) right;
+            return left > ( Minutes )right;
+        }
+
+        public Int32 CompareTo( [NotNull] Minutes other ) {
+            if ( other is null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
+
+            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( [NotNull] Minutes other ) {
@@ -359,9 +337,29 @@ namespace Librainian.Measurement.Time {
             return obj is Minutes minutes && this.Equals( minutes );
         }
 
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
         [NotNull]
         public Hours ToHours() => new Hours( this.Value / InOneHour );
 
-    }
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMinute * this.Value );
 
+        [NotNull]
+        [Pure]
+        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "minute" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "minute" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
+    }
 }

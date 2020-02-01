@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "SpanOfTime.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "SpanOfTime.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -62,17 +62,15 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public class SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
-        public Int32 CompareTo( [NotNull] SpanOfTime other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
+        /// <summary></summary>
+        /// <summary>
+        ///     <para>1 of each measure of time</para>
+        /// </summary>
+        public static SpanOfTime Identity = new SpanOfTime( planckTimes: 1, yoctoseconds: 1, zeptoseconds: 1, attoseconds: 1, femtoseconds: 1, picoseconds: 1, nanoseconds: 1,
+            microseconds: 1, milliseconds: 1, seconds: 1, minutes: 1, hours: 1, days: 1, weeks: 1, months: 1, years: 1 );
 
-            return CompareTo( this, other );
-        }
-
-        public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
-
-        Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
+        /// <summary></summary>
+        public static SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
 
         /// <summary></summary>
         [JsonProperty]
@@ -157,16 +155,6 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         [NotNull]
         public Zeptoseconds Zeptoseconds { get; }
-
-        /// <summary></summary>
-        /// <summary>
-        ///     <para>1 of each measure of time</para>
-        /// </summary>
-        public static SpanOfTime Identity = new SpanOfTime( planckTimes: 1, yoctoseconds: 1, zeptoseconds: 1, attoseconds: 1, femtoseconds: 1, picoseconds: 1, nanoseconds: 1,
-            microseconds: 1, milliseconds: 1, seconds: 1, minutes: 1, hours: 1, days: 1, weeks: 1, months: 1, years: 1 );
-
-        /// <summary></summary>
-        public static SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
 
         public SpanOfTime( BigInteger planckTimes ) {
 
@@ -436,8 +424,8 @@ namespace Librainian.Measurement.Time {
         /// <param name="spanOfTime"></param>
         /// <returns></returns>
         public static implicit operator TimeSpan( SpanOfTime spanOfTime ) =>
-            new TimeSpan( ( Int32 ) spanOfTime.Days.Value, ( Int32 ) spanOfTime.Hours.Value, ( Int32 ) spanOfTime.Minutes.Value, ( Int32 ) spanOfTime.Seconds.Value,
-                ( Int32 ) spanOfTime.Milliseconds.Value );
+            new TimeSpan( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
+                ( Int32 )spanOfTime.Milliseconds.Value );
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
@@ -510,7 +498,7 @@ namespace Librainian.Measurement.Time {
                 }
 
                 if ( text.TryGetDecimal( out var units ) ) {
-                    return new SpanOfTime( seconds: ( Rational ) units ); //assume seconds given
+                    return new SpanOfTime( seconds: ( Rational )units ); //assume seconds given
                 }
 
                 if ( text.EndsWith( "milliseconds", StringComparison.InvariantCultureIgnoreCase ) ) {
@@ -533,7 +521,7 @@ namespace Librainian.Measurement.Time {
                     text = text.Before( "seconds" );
 
                     if ( text.TryGetDecimal( out units ) ) {
-                        return new SpanOfTime( seconds: ( Rational ) units );
+                        return new SpanOfTime( seconds: ( Rational )units );
                     }
                 }
 
@@ -541,7 +529,7 @@ namespace Librainian.Measurement.Time {
                     text = text.Before( "second" );
 
                     if ( text.TryGetDecimal( out units ) ) {
-                        return new SpanOfTime( seconds: ( Rational ) units );
+                        return new SpanOfTime( seconds: ( Rational )units );
                     }
                 }
 
@@ -567,6 +555,16 @@ namespace Librainian.Measurement.Time {
             //return sum.Aggregate( PlanckTimes.Zero, ( current, timese ) => current + timese );
         }
 
+        public Int32 CompareTo( [NotNull] SpanOfTime other ) {
+            if ( other is null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
+
+            return CompareTo( this, other );
+        }
+
+        public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
+
         /// <summary>Indicates whether this instance and a specified object are equal.</summary>
         /// <returns>true if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, false.</returns>
         /// <param name="obj">Another object to compare to.</param>
@@ -578,8 +576,6 @@ namespace Librainian.Measurement.Time {
 
             return obj is SpanOfTime span && Equals( this, span );
         }
-
-        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( this, obj );
 
         /// <summary>
         ///     <para>Return a <see cref="TimeSpan" />'s worth of <see cref="Milliseconds" />.</para>
@@ -599,7 +595,7 @@ namespace Librainian.Measurement.Time {
             mill += this.Hours.ToMinutes().ToSeconds().ToMilliseconds();
             mill += this.Days.ToHours().ToMinutes().ToSeconds().ToMilliseconds();
 
-            return ( Double ) mill.Value;
+            return ( Double )mill.Value;
         }
 
         /// <summary>Returns the hash code for this instance.</summary>
@@ -688,6 +684,10 @@ namespace Librainian.Measurement.Time {
             return bob.ToStrings( ", ", ", and " );
         }
 
+        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( this, obj );
+
+        Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
+
         /*
                 public String ApproximatelySeconds() {
                     BigDecimal bigSeconds = this.Seconds.Value;
@@ -774,7 +774,5 @@ namespace Librainian.Measurement.Time {
                     return String.Format( "{0} seconds", asSeconds );
                 }
         */
-
     }
-
 }

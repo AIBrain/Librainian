@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ValidatedString.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "ValidatedString.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.Parsing.Validation {
@@ -61,20 +61,6 @@ namespace Librainian.Parsing.Validation {
 
         [NotNull]
         public String Value { get; }
-
-        public Int32 CompareTo( [CanBeNull] String other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
-
-        public Int32 CompareTo( [NotNull] IValidatedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
-
-        public Boolean Equals( String other ) => Equals( this, other );
-
-        public Boolean Equals( IValidatedString other ) => Equals( this.Value, other );
-
-        public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> ) this.Value ).GetEnumerator();
-
-        Int32 IComparable.CompareTo( [CanBeNull] Object obj ) => this.Value.CompareTo( obj );
-
-        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Value ).GetEnumerator();
 
         public Int32 Length => this.Value.Length;
 
@@ -181,12 +167,24 @@ namespace Librainian.Parsing.Validation {
 
         public static Boolean operator ==( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => Equals( left, right?.Value );
 
+        public Int32 CompareTo( [CanBeNull] String other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
+
+        public Int32 CompareTo( [NotNull] IValidatedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
+
+        public Boolean Equals( String other ) => Equals( this, other );
+
+        public Boolean Equals( IValidatedString other ) => Equals( this.Value, other );
+
         public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this.Value, obj as IValidatedString );
+
+        public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         public override String ToString() => this.Value;
 
-    }
+        Int32 IComparable.CompareTo( [CanBeNull] Object obj ) => this.Value.CompareTo( obj );
 
+        IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
+    }
 }

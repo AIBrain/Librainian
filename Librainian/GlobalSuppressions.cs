@@ -35,7 +35,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "GlobalSuppressions.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", "GlobalSuppressions.cs" was last formatted by Protiguous on 2020/01/31 at 8:22 PM.
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -63,3 +63,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Design", "CA1054:Uri parameters should not be strings", Justification = "Maybe. When I have time!" )]
 [assembly: SuppressMessage( "Design", "CA1066:Type {0} should implement IEquatable<T> because it overrides Equals", Justification = "No." )]
 [assembly: SuppressMessage( "Design", "CA1055:Uri return values should not be strings", Justification = "Maybe" )]
+[assembly: SuppressMessage( "Performance", "HAA0401:Possible allocation of reference type enumerator", Justification = "Yada yada yada" )]

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "FlexibleMessageBox.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "FlexibleMessageBox.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Controls {
@@ -208,6 +208,15 @@ namespace Librainian.Controls {
         /// <summary>The form to show the customized message box. It is defined as an internal class to keep the public interface of the FlexibleMessageBox clean.</summary>
         private class FlexibleMessageBoxForm : Form {
 
+            //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
+            private const String STANDARD_MESSAGEBOX_SEPARATOR_LINES = "---------------------------\n";
+
+            private const String STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
+
+            private static readonly String[] BUTTON_TEXTS_ENGLISH_EN = {
+                "&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
+            };
+
             private Button _button1;
 
             private Button _button2;
@@ -234,15 +243,6 @@ namespace Librainian.Controls {
 
             /// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
             public String MessageText { get; set; }
-
-            //These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
-            private const String STANDARD_MESSAGEBOX_SEPARATOR_LINES = "---------------------------\n";
-
-            private const String STANDARD_MESSAGEBOX_SEPARATOR_SPACES = "   ";
-
-            private static readonly String[] BUTTON_TEXTS_ENGLISH_EN = {
-                "&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
-            };
 
             //Note: This is also the fallback language
 
@@ -273,7 +273,6 @@ namespace Librainian.Controls {
                 RETRY,
 
                 IGNORE
-
             }
 
             //These are the buttons texts for different languages.
@@ -287,7 +286,6 @@ namespace Librainian.Controls {
                 es,
 
                 it
-
             }
 
             /// <summary>Gets the button text for the CurrentUICulture language. Note: The fallback language is English</summary>
@@ -596,22 +594,22 @@ namespace Librainian.Controls {
 
                 switch ( buttonIndexToFocus ) {
                     case 3: {
-                        buttonToFocus = this._button3;
+                            buttonToFocus = this._button3;
 
-                        break;
-                    }
+                            break;
+                        }
 
                     case 2: {
-                        buttonToFocus = this._button2;
+                            buttonToFocus = this._button2;
 
-                        break;
-                    }
+                            break;
+                        }
 
                     default: {
-                        buttonToFocus = this._button1;
+                            buttonToFocus = this._button1;
 
-                        break;
-                    }
+                            break;
+                        }
                 }
 
                 buttonToFocus.Focus();
@@ -627,9 +625,9 @@ namespace Librainian.Controls {
                 this._pictureBoxForIcon = new PictureBox();
                 this._button2 = new Button();
                 this._button3 = new Button();
-                ( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).BeginInit();
+                ( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).BeginInit();
                 this._panel1.SuspendLayout();
-                ( ( ISupportInitialize ) this._pictureBoxForIcon ).BeginInit();
+                ( ( ISupportInitialize )this._pictureBoxForIcon ).BeginInit();
                 this.SuspendLayout();
 
                 // button1
@@ -726,9 +724,9 @@ namespace Librainian.Controls {
                 this.StartPosition = FormStartPosition.CenterParent;
                 this.Text = "<Caption>";
                 this.Shown += this.FlexibleMessageBoxForm_Shown;
-                ( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).EndInit();
+                ( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).EndInit();
                 this._panel1.ResumeLayout( false );
-                ( ( ISupportInitialize ) this._pictureBoxForIcon ).EndInit();
+                ( ( ISupportInitialize )this._pictureBoxForIcon ).EndInit();
                 this.ResumeLayout( false );
                 this.PerformLayout();
             }
@@ -757,7 +755,9 @@ namespace Librainian.Controls {
 
                     //Create a new instance of the FlexibleMessageBox form
                     var flexibleMessageBoxForm = new FlexibleMessageBoxForm {
-                        ShowInTaskbar = false, CaptionText = caption, MessageText = text
+                        ShowInTaskbar = false,
+                        CaptionText = caption,
+                        MessageText = text
                     };
 
                     flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
@@ -783,14 +783,11 @@ namespace Librainian.Controls {
                 } );
 
                 if ( owner is Control control && control.InvokeRequired ) {
-                    return ( DialogResult ) control.Invoke( func );
+                    return ( DialogResult )control.Invoke( func );
                 }
 
                 return func();
             }
-
         }
-
     }
-
 }

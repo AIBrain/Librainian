@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Document.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Document.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
@@ -360,7 +360,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         FileInfo GetFreshInfo();
-
     }
 
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -494,7 +493,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             get {
                 var info = this.GetFreshInfo();
 
-                return info.Exists ? ( UInt64? ) info.Length : default;
+                return info.Exists ? ( UInt64? )info.Length : default;
             }
         }
 
@@ -551,7 +550,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Int32 CalculateHarkerHashInt32() {
             this.ThrowIfNotExists();
 
-            return this.AsInt32().AsParallel().WithMergeOptions( ParallelMergeOptions.NotBuffered ).Aggregate( 0, ( current, i ) => unchecked( current + i ) );
+            return this.AsInt32().AsParallel().WithMergeOptions( ParallelMergeOptions.NotBuffered ).Aggregate( 0, ( current, i ) => unchecked(current + i) );
         }
 
         /// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
@@ -753,7 +752,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             await task.ConfigureAwait( false );
                         }
 
-                        return ( true, stopwatch.Elapsed );
+                        return (true, stopwatch.Elapsed);
                     }
                 }
             }
@@ -761,7 +760,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 exception.Log();
             }
 
-            return ( false, stopwatch.Elapsed );
+            return (false, stopwatch.Elapsed);
         }
 
         /// <summary>Start copying this document to the <paramref name="destination" />.</summary>
@@ -780,7 +779,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 if ( !( args is null ) ) {
-                    onProgress?.Invoke( ( ( UInt64 ) args.BytesReceived, ( UInt64 ) args.TotalBytesToReceive ) );
+                    onProgress?.Invoke( (( UInt64 )args.BytesReceived, ( UInt64 )args.TotalBytesToReceive) );
                 }
             };
 
@@ -797,7 +796,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 if ( size?.Any() == true ) {
                     using ( var fileStream = File.OpenRead( this.FullPath ) ) {
-                        using var crc32 = new CRC32( ( UInt32 ) size, ( UInt32 ) size );
+                        using var crc32 = new CRC32( ( UInt32 )size, ( UInt32 )size );
 
                         var result = crc32.ComputeHash( fileStream );
 
@@ -853,7 +852,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 using ( var fileStream = File.OpenRead( this.FullPath ) ) {
 
-                    using var crc32 = new CRC32( ( UInt32 ) size.Value, ( UInt32 ) size.Value );
+                    using var crc32 = new CRC32( ( UInt32 )size.Value, ( UInt32 )size.Value );
 
                     return crc32.ComputeHash( fileStream ).Aggregate( String.Empty, ( current, b ) => current + $"{b:X}" );
                 }
@@ -1003,7 +1002,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             try {
                 if ( !source.IsWellFormedOriginalString() ) {
-                    return ( new Exception( $"Could not use source Uri '{source}'." ), null );
+                    return (new Exception( $"Could not use source Uri '{source}'." ), null);
                 }
 
                 using var webClient = new WebClient(); //from what I've read, Dispose should NOT be being called on a WebClient???
@@ -1013,10 +1012,10 @@ namespace Librainian.OperatingSystem.FileSystem {
                     await task.ConfigureAwait( false );
                 }
 
-                return ( null, webClient.ResponseHeaders );
+                return (null, webClient.ResponseHeaders);
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1116,7 +1115,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( oursize <= Int32.MaxValue ) {
-                return ( Int32 ) oursize;
+                return ( Int32 )oursize;
             }
 
             return Int32.MaxValue;
@@ -1132,7 +1131,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Task<Process> Launch( [CanBeNull] String arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( this.FullPath ) {
-                    Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
+                    Arguments = arguments ?? String.Empty,
+                    UseShellExecute = useShell,
+                    Verb = verb
                 };
 
                 return Task.Run( () => Process.Start( info ) );
@@ -1158,7 +1159,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 using ( var textReader = File.OpenText( this.FullPath ) ) {
                     using ( var jsonReader = new JsonTextReader( textReader ) ) {
                         return new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         }.Deserialize<T>( jsonReader );
                     }
                 }
@@ -1288,7 +1290,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return default;
                 }
 
-                return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.UTF8, ( Int32 ) bufferSize, false );
+                return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.UTF8, ( Int32 )bufferSize, false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -1352,7 +1354,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( !destination.IsWellFormedOriginalString() ) {
-                return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null );
+                return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null);
             }
 
             try {
@@ -1364,10 +1366,10 @@ namespace Librainian.OperatingSystem.FileSystem {
                     await task.ConfigureAwait( false );
                 }
 
-                return ( null, webClient.ResponseHeaders );
+                return (null, webClient.ResponseHeaders);
             }
             catch ( Exception exception ) {
-                return ( exception, null );
+                return (exception, null);
             }
         }
 
@@ -1494,7 +1496,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( watchFile ) {
                 this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullName, this.FileName ) {
-                    IncludeSubdirectories = false, EnableRaisingEvents = true
+                    IncludeSubdirectories = false,
+                    EnableRaisingEvents = true
                 } );
 
                 this.WatchEvents = new Lazy<FileWatchingEvents>( () => new FileWatchingEvents(), false );
@@ -1561,7 +1564,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return Status.Exception;
             }
 
-            var filelength = ( Int32 ) size.Value; //will we EVER have an image (or whatever) larger than Int32? (yes, probably)
+            var filelength = ( Int32 )size.Value; //will we EVER have an image (or whatever) larger than Int32? (yes, probably)
             var bytesLeft = filelength;
             this.Buffer = new Byte[ filelength ];
 
@@ -1610,7 +1613,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Int64 CalculateHarkerHashInt64() {
             this.ThrowIfNotExists();
 
-            return this.AsInt64().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).Aggregate( 0L, ( current, i ) => unchecked( current + i ) );
+            return this.AsInt64().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).Aggregate( 0L, ( current, i ) => unchecked(current + i) );
         }
 
         /// <summary>"poor mans Int64 hash"</summary>
@@ -1744,33 +1747,33 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( !this.Exists() ) {
-                return ( default, default );
+                return (default, default);
             }
 
             if ( destination.Exists() ) {
                 destination.Delete();
 
                 if ( destination.Exists() ) {
-                    return ( default, default );
+                    return (default, default);
                 }
             }
 
             if ( !this.Length.HasValue || !this.Length.Any() ) {
                 using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
-                    return ( default, true ); //just create an empty file?
+                    return (default, true); //just create an empty file?
                 }
             }
 
             var webClient = new WebClient();
             webClient.DownloadProgressChanged += ( sender, args ) => progress?.Invoke( args );
-            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, ( this, destination ) );
+            webClient.DownloadFileCompleted += ( sender, args ) => onComplete?.Invoke( args, (this, destination) );
             var task = webClient.DownloadFileTaskAsync( this.FullPath, destination.FullPath );
 
             if ( task != null ) {
                 await task.ConfigureAwait( false );
             }
 
-            return ( webClient, destination.Exists() && destination.Size() == this.Size() );
+            return (webClient, destination.Exists() && destination.Size() == this.Size());
         }
 
         /// <summary>I *really* dislike filenames starting with a period. Here's looking at you java..</summary>
@@ -1898,7 +1901,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
                 if ( pe?.UserState == tcs ) {
-                    progress?.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+                    progress?.Report( (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
                 }
             }
 
@@ -2003,7 +2006,5 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             return file ?? throw new InvalidOperationException( $"Invalid file name {filename.DoubleQuote()}." );
         }
-
     }
-
 }

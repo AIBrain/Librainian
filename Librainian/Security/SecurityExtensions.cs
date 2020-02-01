@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "SecurityExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "SecurityExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
 
 namespace Librainian.Security {
@@ -62,6 +62,19 @@ namespace Librainian.Security {
     // ReSharper restore RedundantUsingDirective
 
     public static class SecurityExtensions {
+
+        private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
+
+        private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
+
+        private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
+                    new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
+
+        public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
+
+        public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
+
+        public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
         /// <summary></summary>
         [NotNull]
@@ -93,25 +106,12 @@ namespace Librainian.Security {
         public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Lazy { get; } =
             new ThreadLocal<Lazy<SHA256Managed>>( valueFactory: () => new Lazy<SHA256Managed>( valueFactory: () => new SHA256Managed() ) );
 
-        private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
-
-        private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
-
-        public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
-
-        public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
-
-        public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
-
-        private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
-            new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
-
         [NotNull]
         private static Byte[] Uid( [NotNull] String s ) {
             var numArray = new Byte[ s.Length ];
 
             for ( var i = 0; i < s.Length; i++ ) {
-                numArray[ i ] = ( Byte ) ( s[ index: i ] & '\u007F' );
+                numArray[ i ] = ( Byte )( s[ index: i ] & '\u007F' );
             }
 
             return numArray;
@@ -252,7 +252,8 @@ namespace Librainian.Security {
             // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) {
-                KeyContainerName = privateKey, ProviderName = "Microsoft Strong Cryptographic Provider"
+                KeyContainerName = privateKey,
+                ProviderName = "Microsoft Strong Cryptographic Provider"
             };
 
             // Registry key name containing the RSA private/public key
@@ -409,7 +410,8 @@ namespace Librainian.Security {
             // Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
             // - 13 would indicate DSA provider
             var csp = new CspParameters( dwTypeIn: 1 ) {
-                KeyContainerName = publicKey, ProviderName = "Microsoft Strong Cryptographic Provider"
+                KeyContainerName = publicKey,
+                ProviderName = "Microsoft Strong Cryptographic Provider"
             };
 
             // Registry key name containing the RSA private/public key
@@ -451,14 +453,14 @@ namespace Librainian.Security {
                 var n2 = ( n >> 4 ) & 15;
 
                 if ( n2 > 9 ) {
-                    s += ( ( Char ) ( n2 - 10 + 'A' ) ).ToString();
+                    s += ( ( Char )( n2 - 10 + 'A' ) ).ToString();
                 }
                 else {
                     s += n2.ToString();
                 }
 
                 if ( n1 > 9 ) {
-                    s += ( ( Char ) ( n1 - 10 + 'A' ) ).ToString();
+                    s += ( ( Char )( n1 - 10 + 'A' ) ).ToString();
                 }
                 else {
                     s += n1.ToString();
@@ -701,7 +703,7 @@ namespace Librainian.Security {
                 return default;
             }
 
-            var inputFileSize = ( Single ) size.Value;
+            var inputFileSize = ( Single )size.Value;
 
             if ( output is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
@@ -754,7 +756,7 @@ namespace Librainian.Security {
 
                                 while ( ( data = cs.ReadByte() ) != -1 ) {
                                     if ( null != reportEveryXBytes && null != reportProgress ) {
-                                        var position = ( UInt64 ) inputStream.Position;
+                                        var position = ( UInt64 )inputStream.Position;
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
@@ -762,7 +764,7 @@ namespace Librainian.Security {
                                         }
                                     }
 
-                                    outputStream.WriteByte( ( Byte ) data );
+                                    outputStream.WriteByte( ( Byte )data );
                                 }
                             }
                         }
@@ -816,7 +818,7 @@ namespace Librainian.Security {
                 return default;
             }
 
-            var inputFileSize = ( Single ) size.Value;
+            var inputFileSize = ( Single )size.Value;
 
             if ( output is null ) {
                 exceptions.Add( item: new ArgumentNullException( nameof( output ) ) );
@@ -883,7 +885,7 @@ namespace Librainian.Security {
                                 //TODO put a 64k buffer here instead of byte-by-byte
                                 while ( ( data = inputStream.ReadByte() ) != -1 ) {
                                     if ( null != reportEveryXBytes && null != reportProgress ) {
-                                        var position = ( UInt64 ) inputStream.Position;
+                                        var position = ( UInt64 )inputStream.Position;
 
                                         if ( position % reportEveryXBytes.Value == 0 ) {
                                             var progress = position / inputFileSize;
@@ -891,7 +893,7 @@ namespace Librainian.Security {
                                         }
                                     }
 
-                                    cryptoStream.WriteByte( ( Byte ) data );
+                                    cryptoStream.WriteByte( ( Byte )data );
                                 }
                             }
                         }
@@ -911,7 +913,5 @@ namespace Librainian.Security {
                 return default;
             }
         }
-
     }
-
 }

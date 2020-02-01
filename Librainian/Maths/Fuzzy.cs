@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Fuzzy.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths {
@@ -51,18 +51,23 @@ namespace Librainian.Maths {
         Middle,
 
         High
-
     }
 
     /// <summary>A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked</summary>
     [JsonObject]
     public class Fuzzy : ICloneable {
 
-        public Object Clone() => new Fuzzy( this.Value );
-
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private AtomicDouble _value;
+
+        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
+
+        /// <summary>1</summary>
+        public const Double MaxValue = 1D;
+
+        /// <summary>0</summary>
+        public const Double MinValue = 0D;
 
         /// <summary>~25 to 75% probability.</summary>
         private static PairOfDoubles Undecided { get; } = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
@@ -84,19 +89,6 @@ namespace Librainian.Maths {
             }
         }
 
-        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
-
-        /// <summary>1</summary>
-        public const Double MaxValue = 1D;
-
-        /// <summary>0</summary>
-        public const Double MinValue = 0D;
-
-        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
-        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
-        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
-        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
-
         /// <summary>If <paramref name="value" /> is null, then Initializes to a random number between 0 and 1.</summary>
         public Fuzzy( Double? value = null ) {
             if ( value.HasValue ) {
@@ -107,6 +99,10 @@ namespace Librainian.Maths {
             }
         }
 
+        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
+        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
+        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
+        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
         public static Double Combine( Double left, Double right ) {
             if ( !left.IsNumber() ) {
                 throw new ArgumentOutOfRangeException( nameof( left ) );
@@ -145,6 +141,8 @@ namespace Librainian.Maths {
         public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
         public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
+
+        public Object Clone() => new Fuzzy( this.Value );
 
         //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
         public Boolean IsFalseish() => this.Value < Undecided.Low;
@@ -199,7 +197,5 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() => $"{this.Value:R}";
-
     }
-
 }

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.Parsing {
@@ -122,7 +122,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         [Pure]
-        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter );
+        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter );
 
         /// <summary>Return <paramref name="self" />, up the <paramref name="maxlength" />.
         /// <para>Does not do any string trimming. Just truncate.</para>
@@ -380,7 +380,7 @@ namespace Librainian.Parsing {
         /// <param name="character"></param>
         /// <returns></returns>
         [Pure]
-        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
+        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
 
         /// <summary>
         /// Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each integer represents the code point of a character in the
@@ -1084,7 +1084,7 @@ namespace Librainian.Parsing {
 
             var stringInfo = new StringInfo( s );
 
-            return ( UInt64 ) stringInfo.LengthInTextElements;
+            return ( UInt64 )stringInfo.LengthInTextElements;
         }
 
         [NotNull]
@@ -1414,7 +1414,7 @@ namespace Librainian.Parsing {
             }
 
             Single threshold = Math.Max( source.Length, compare.Length );
-            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 ) threshold );
+            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source: source, compare, threshold: ( Int32 )threshold );
 
             //TODO votes.ForB ???
             similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1476,7 +1476,8 @@ namespace Librainian.Parsing {
             }
 
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                index, ch = s[ index ]
+                index,
+                ch = s[ index ]
             } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
             return res;
@@ -1817,9 +1818,9 @@ namespace Librainian.Parsing {
                 return "minus " + ToVerbalWord( Math.Abs( number ) );
             }
 
-            var intPortion = ( Int32 ) number;
+            var intPortion = ( Int32 )number;
             var fraction = ( number - intPortion ) * 100;
-            var decPortion = ( Int32 ) fraction;
+            var decPortion = ( Int32 )fraction;
 
             var words = ToVerbalWord( intPortion );
 
@@ -1982,7 +1983,5 @@ namespace Librainian.Parsing {
 
             return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text.Substring( 1 );
         }
-
     }
-
 }

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "CollectionExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "CollectionExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Collections.Extensions {
@@ -84,7 +84,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( self ), "AnyDuplicates<T> called on a null IEnumerable<T>." );
             }
 
-            return AnyRelationship( self: self, relationshipFunc: ( arg1, arg2 ) => arg1.Equals( arg2 ) );
+            return AnyRelationship( self: self, relationshipFunc: ( arg1, arg2 ) => Equals( arg1, arg2 ) );
         }
 
         /// <summary>Determines whether or not a given relationship exists between any two elements in the sequence.</summary>
@@ -456,7 +456,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
+            return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
         }
 
         [Pure]
@@ -600,7 +600,7 @@ namespace Librainian.Collections.Extensions {
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]
-        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 ) u );
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
 
         [CanBeNull]
         [Pure]
@@ -749,7 +749,7 @@ namespace Librainian.Collections.Extensions {
 
             var rank = 0;
             var itemCount = 0;
-            var ordered = source.OrderBy( keySelector: keySelector ).ToArray();
+            var ordered = source.OrderBy(  keySelector ).ToArray();
             var previous = keySelector( ordered[ 0 ] );
 
             foreach ( var t in ordered ) {
@@ -781,7 +781,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
+            return ( T )( ValueType )( ( Int32 )( ValueType )type & ~( Int32 )( ValueType )value );
         }
 
         /// <summary>Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many <paramref name="specificItem" /> or null were removed.</summary>
@@ -1019,7 +1019,7 @@ namespace Librainian.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( count: ( Int32 ) ( x * sources.Count ) );
+            return sources.Take( count: ( Int32 )( x * sources.Count ) );
         }
 
         [NotNull]
@@ -1076,7 +1076,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
 
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         /// <summary>Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" /></summary>
@@ -1112,7 +1112,7 @@ namespace Librainian.Collections.Extensions {
         }
 
         [Pure]
-        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 ) ( collection as Int32[] ).SumS();
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 )( collection as Int32[] ).SumS();
 
         /// <summary>why?</summary>
         /// <typeparam name="TKey"></typeparam>
@@ -1156,7 +1156,5 @@ namespace Librainian.Collections.Extensions {
                 }
             }
         }
-
     }
-
 }

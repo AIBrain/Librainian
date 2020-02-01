@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Matrix3X2.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Matrix3X2.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Graphics {
@@ -46,13 +46,17 @@ namespace Librainian.Graphics {
     /// <see cref="http://stackoverflow.com/a/8696503/956364" />
     public class Matrix3X2 : ICloneable {
 
-        /// <summary>Creates a new object that is a copy of the current instance.</summary>
-        /// <returns>A new object that is a copy of this instance.</returns>
-        public Object Clone() {
-            var coeffCopy = ( Double[] ) this._coeffs.Clone();
+        private const Int32 _M11 = 0;
 
-            return new Matrix3X2( coeffCopy );
-        }
+        private const Int32 _M12 = 1;
+
+        private const Int32 _M21 = 2;
+
+        private const Int32 _M22 = 3;
+
+        private const Int32 _M31 = 4;
+
+        private const Int32 _M32 = 5;
 
         private readonly Double[] _coeffs;
 
@@ -131,18 +135,6 @@ namespace Librainian.Graphics {
             set => this._coeffs[ _M32 ] = value;
         }
 
-        private const Int32 _M11 = 0;
-
-        private const Int32 _M12 = 1;
-
-        private const Int32 _M21 = 2;
-
-        private const Int32 _M22 = 3;
-
-        private const Int32 _M31 = 4;
-
-        private const Int32 _M32 = 5;
-
         /// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
         public Matrix3X2() => this._coeffs = new Double[ 6 ];
 
@@ -157,9 +149,17 @@ namespace Librainian.Graphics {
         }
 
         public Matrix3X2( Double m11, Double m12, Double m21, Double m22, Double m31, Double m32 ) =>
-            this._coeffs = new[] {
+                    this._coeffs = new[] {
                 m11, m12, m21, m22, m31, m32
-            };
+                    };
+
+        /// <summary>Creates a new object that is a copy of the current instance.</summary>
+        /// <returns>A new object that is a copy of this instance.</returns>
+        public Object Clone() {
+            var coeffCopy = ( Double[] )this._coeffs.Clone();
+
+            return new Matrix3X2( coeffCopy );
+        }
 
         /*
 
@@ -215,7 +215,5 @@ namespace Librainian.Graphics {
             this._coeffs[ _M31 ] = g * j + h * l + i * n;
             this._coeffs[ _M32 ] = g * k + h * m + i * o;
         }
-
     }
-
 }

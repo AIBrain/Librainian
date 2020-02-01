@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "DetectSSD.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "DetectSSD.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.OperatingSystem.Storage {
@@ -66,13 +66,14 @@ namespace Librainian.OperatingSystem.Storage {
                 CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED, NativeMethods.FILE_ANY_ACCESS ); // From winioctl.h
 
             var querySeekPenalty = new NativeMethods.STORAGE_PROPERTY_QUERY {
-                PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty, QueryType = NativeMethods.PropertyStandardQuery
+                PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty,
+                QueryType = NativeMethods.PropertyStandardQuery
             };
 
             var querySeekPenaltyDesc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
-            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 ) Marshal.SizeOf( querySeekPenalty ),
-                ref querySeekPenaltyDesc, ( UInt32 ) Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
+            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 )Marshal.SizeOf( querySeekPenalty ),
+                ref querySeekPenaltyDesc, ( UInt32 )Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
 
             hDrive.Close();
 
@@ -125,17 +126,17 @@ namespace Librainian.OperatingSystem.Storage {
                 data = new UInt16[ 256 ]
             };
 
-            idQuery.header.Length = ( UInt16 ) Marshal.SizeOf( idQuery.header );
-            idQuery.header.AtaFlags = ( UInt16 ) NativeMethods.ATA_FLAGS_DATA_IN;
-            idQuery.header.DataTransferLength = ( UInt32 ) ( idQuery.data.Length * 2 ); // Size of "data" in bytes
+            idQuery.header.Length = ( UInt16 )Marshal.SizeOf( idQuery.header );
+            idQuery.header.AtaFlags = ( UInt16 )NativeMethods.ATA_FLAGS_DATA_IN;
+            idQuery.header.DataTransferLength = ( UInt32 )( idQuery.data.Length * 2 ); // Size of "data" in bytes
             idQuery.header.TimeOutValue = 3; // Sec
             idQuery.header.DataBufferOffset = Marshal.OffsetOf( typeof( NativeMethods.ATAIdentifyDeviceQuery ), "data" );
             idQuery.header.PreviousTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile[ 6 ] = 0xec; // ATA IDENTIFY DEVICE
 
-            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 ) Marshal.SizeOf( idQuery ), ref idQuery,
-                ( UInt32 ) Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
+            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 )Marshal.SizeOf( idQuery ), ref idQuery,
+                ( UInt32 )Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
 
             hDrive.Close();
 
@@ -158,7 +159,5 @@ namespace Librainian.OperatingSystem.Storage {
             //Debug.WriteLine( "This disk is ROTATE device." );
             return true;
         }
-
     }
-
 }

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Internet.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace Librainian.Internet {
@@ -110,7 +110,6 @@ namespace Librainian.Internet {
             /// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
             /// <exception cref="Exception"></exception>
             Boolean Wait( TimeSpan forHowLong, CancellationToken token );
-
         }
 
         public class FileDownloader : UnderlyingDownloader {
@@ -157,10 +156,17 @@ namespace Librainian.Internet {
 
                 return base.Start();
             }
-
         }
 
         public abstract class UnderlyingDownloader : IDownloader {
+
+            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
+
+            /// <summary>-1 milliseconds</summary>
+            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
+
+            [NotNull]
+            public WebClientWithTimeout Client { get; }
 
             [CanBeNull]
             public ICredentials Credentials { get; set; }
@@ -171,8 +177,13 @@ namespace Librainian.Internet {
             [NotNull]
             public Document DestinationDocument { get; set; }
 
+            public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( false );
+
             /// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
             public Stopwatch Elasped { get; set; }
+
+            /// <summary>The unique identifier assigned to this download.</summary>
+            public Guid Id { get; }
 
             [CanBeNull]
             public Action OnCancelled { get; set; }
@@ -197,78 +208,6 @@ namespace Librainian.Internet {
 
             /// <summary>The UTC date & time when the download was started.</summary>
             public DateTime WhenStarted { get; set; }
-
-            public virtual Boolean Cancel() {
-                try {
-                    this.Client.CancelAsync();
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
-
-                return this.IsBusy();
-            }
-
-            /// <summary>Returns true if the web request is in progress.</summary>
-            /// <returns></returns>
-            public Boolean IsBusy() => this.Client.IsBusy;
-
-            public virtual Boolean Start() {
-                this.WhenStarted = DateTime.UtcNow;
-                this.Elasped = Stopwatch.StartNew();
-
-                return true;
-            }
-
-            /// <summary>this blocks until <see cref="Downloaded" /> signals.</summary>
-            /// <exception cref="ArgumentOutOfRangeException"><paramref name="forHowLong" /> must be -1 milliseconds or greater.</exception>
-            /// <exception cref="ObjectDisposedException"></exception>
-            /// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
-            /// <exception cref="Exception"></exception>
-            public Boolean Wait( TimeSpan forHowLong, CancellationToken token ) {
-                try {
-                    if ( forHowLong < Forever ) {
-                        forHowLong = Forever;
-                    }
-
-                    return this.Downloaded.Wait( forHowLong, token );
-                }
-                catch ( Exception exception ) {
-                    switch ( exception ) {
-                        case ArgumentOutOfRangeException _: {
-                            return default;
-                        }
-                        case ObjectDisposedException _: {
-                            return default;
-                        }
-                        case AbandonedMutexException _: {
-                            return default;
-                        }
-                        case InvalidOperationException _: {
-                            return default;
-                        }
-
-                        default: {
-                            exception.Log();
-
-                            throw;
-                        }
-                    }
-                }
-            }
-
-            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
-
-            /// <summary>-1 milliseconds</summary>
-            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
-
-            [NotNull]
-            public WebClientWithTimeout Client { get; }
-
-            public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( false );
-
-            /// <summary>The unique identifier assigned to this download.</summary>
-            public Guid Id { get; }
 
             /// <summary>ctor</summary>
             /// <param name="source"></param>
@@ -303,6 +242,17 @@ namespace Librainian.Internet {
                 this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
             }
 
+            public virtual Boolean Cancel() {
+                try {
+                    this.Client.CancelAsync();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+
+                return this.IsBusy();
+            }
+
             public (Status responseCode, Int64 fileLength) GetContentLength() {
 
                 if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
@@ -310,14 +260,59 @@ namespace Librainian.Internet {
 
                     using var response = request.GetResponse();
 
-                    return ( Status.Success, response.ContentLength );
+                    return (Status.Success, response.ContentLength);
                 }
 
-                return ( Status.Error, default );
+                return (Status.Error, default);
             }
 
+            /// <summary>Returns true if the web request is in progress.</summary>
+            /// <returns></returns>
+            public Boolean IsBusy() => this.Client.IsBusy;
+
+            public virtual Boolean Start() {
+                this.WhenStarted = DateTime.UtcNow;
+                this.Elasped = Stopwatch.StartNew();
+
+                return true;
+            }
+
+            /// <summary>this blocks until <see cref="Downloaded" /> signals.</summary>
+            /// <exception cref="ArgumentOutOfRangeException"><paramref name="forHowLong" /> must be -1 milliseconds or greater.</exception>
+            /// <exception cref="ObjectDisposedException"></exception>
+            /// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
+            /// <exception cref="Exception"></exception>
+            public Boolean Wait( TimeSpan forHowLong, CancellationToken token ) {
+                try {
+                    if ( forHowLong < Forever ) {
+                        forHowLong = Forever;
+                    }
+
+                    return this.Downloaded.Wait( forHowLong, token );
+                }
+                catch ( Exception exception ) {
+                    switch ( exception ) {
+                        case ArgumentOutOfRangeException _: {
+                                return default;
+                            }
+                        case ObjectDisposedException _: {
+                                return default;
+                            }
+                        case AbandonedMutexException _: {
+                                return default;
+                            }
+                        case InvalidOperationException _: {
+                                return default;
+                            }
+
+                        default: {
+                                exception.Log();
+
+                                throw;
+                            }
+                    }
+                }
+            }
         }
-
     }
-
 }

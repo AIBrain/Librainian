@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
@@ -62,7 +62,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Maths;
     using Measurement.Time;
     using Parsing;
-    using Pri.LongPath;
     using Threading;
     using Directory = Pri.LongPath.Directory;
     using DirectoryInfo = Pri.LongPath.DirectoryInfo;
@@ -175,7 +174,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         yield break;
                     }
 
-                    yield return ( Byte ) b;
+                    yield return ( Byte )b;
                 } while ( true );
             }
         }
@@ -211,7 +210,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             yield break;
                         }
 
-                        yield return ( Byte ) b;
+                        yield return ( Byte )b;
                     } while ( true );
                 }
             }
@@ -222,7 +221,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public static Folder AskUserForStorageFolder( [CanBeNull] String hint ) {
             using ( var folderBrowserDialog = new FolderBrowserDialog {
-                ShowNewFolderButton = true, Description = $"Please direct me to a storage folder for {hint}.", RootFolder = Environment.SpecialFolder.MyComputer
+                ShowNewFolderButton = true,
+                Description = $"Please direct me to a storage folder for {hint}.",
+                RootFolder = Environment.SpecialFolder.MyComputer
             } ) {
                 var owner = WindowWrapper.CreateWindowWrapper( Process.GetCurrentProcess().MainWindowHandle );
 
@@ -269,12 +270,12 @@ namespace Librainian.OperatingSystem.FileSystem {
                     var high = buffered.ReadByte();
 
                     if ( high == -1 ) {
-                        yield return ( ( Byte ) low ).CombineBytes( high: 0 );
+                        yield return ( ( Byte )low ).CombineBytes( high: 0 );
 
                         yield break;
                     }
 
-                    yield return ( ( Byte ) low ).CombineBytes( high: ( Byte ) high );
+                    yield return ( ( Byte )low ).CombineBytes( high: ( Byte )high );
                 }
             }
         }
@@ -386,7 +387,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public static DirectoryInfo ChooseDirectoryDialog( this Environment.SpecialFolder startFolder, [CanBeNull] String description = "Please select a folder." ) {
             using ( var folderDialog = new FolderBrowserDialog {
-                Description = description, RootFolder = startFolder, ShowNewFolderButton = false
+                Description = description,
+                RootFolder = startFolder,
+                ShowNewFolderButton = false
             } ) {
                 if ( folderDialog.ShowDialog() == DialogResult.OK ) {
                     return new DirectoryInfo( folderDialog.SelectedPath );
@@ -667,7 +670,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             using ( var searcher = new ManagementObjectSearcher( $"select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{driveLetter}'" ) ) {
                 var bob = searcher.Get().Cast<ManagementObject>().First();
-                clusterSize = ( UInt32 ) bob[ "BlockSize" ];
+                clusterSize = ( UInt32 )bob[ "BlockSize" ];
             }
 
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var hosize );
@@ -695,9 +698,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out var sizeHigh );
-            var size = ( ( Int64 ) sizeHigh << 32 ) | losize;
+            var size = ( ( Int64 )sizeHigh << 32 ) | losize;
 
-            return ( UInt64 ) ( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
+            return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
         }
 
         [CanBeNull]
@@ -1168,7 +1171,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 ) right.Length;
+            var rightLength = ( UInt64 )right.Length;
 
             if ( !rightLength.Any() ) {
                 return default;
@@ -1205,7 +1208,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 ) left.Length;
+            var rightLength = ( UInt64 )left.Length;
 
             if ( !rightLength.Any() ) {
                 return default;
@@ -1258,8 +1261,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                         case DirectoryNotFoundException _:
                         case IOException _:
                         case SecurityException _: {
-                            return true;
-                        }
+                                return true;
+                            }
                     }
 
                     ex.Log();
@@ -1404,7 +1407,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             try {
                 if ( File.Exists( filePath ) ) {
                     using ( var fileStream = File.Open( filePath, mode: fileMode, access: fileAccess, share: fileShare ) ) {
-                        var length = ( Int32 ) fileStream.Length;
+                        var length = ( Int32 )fileStream.Length;
 
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
@@ -1671,7 +1674,5 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         //}
         ///// </summary>
-
     }
-
 }

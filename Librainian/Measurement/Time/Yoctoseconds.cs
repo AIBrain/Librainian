@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Yoctoseconds.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Yoctoseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -55,40 +55,6 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public class Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
-
-        public Int32 CompareTo( [NotNull] Yoctoseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
-
-        [NotNull]
-        public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
-
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
-
-                return $"{whole} {whole.PluralOf( "ys" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "ys" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-        public static Rational InOneSecond { get; } = new BigInteger( 10E24 );
-
-        [JsonProperty]
-        public Rational Value { get; }
 
         /// <summary>1000</summary>
         public const UInt16 InOneZeptosecond = 1000;
@@ -120,7 +86,12 @@ namespace Librainian.Measurement.Time {
         /// <summary></summary>
         public static Yoctoseconds Zero = new Yoctoseconds( 0 );
 
-        public Yoctoseconds( Decimal value ) => this.Value = ( Rational ) value;
+        public static Rational InOneSecond { get; } = new BigInteger( 10E24 );
+
+        [JsonProperty]
+        public Rational Value { get; }
+
+        public Yoctoseconds( Decimal value ) => this.Value = ( Rational )value;
 
         public Yoctoseconds( Rational value ) => this.Value = value;
 
@@ -228,7 +199,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) ( -seconds ) );
+            return Combine( left, ( Rational )( -seconds ) );
         }
 
         public static Boolean operator !=( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
@@ -262,7 +233,7 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( left ) );
             }
 
-            return Combine( left, ( Rational ) yoctoseconds );
+            return Combine( left, ( Rational )yoctoseconds );
         }
 
         public static Boolean operator <( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
@@ -296,7 +267,15 @@ namespace Librainian.Measurement.Time {
                 throw new ArgumentNullException( nameof( yoctoseconds ) );
             }
 
-            return new PlanckTimes( yoctoseconds.Value * ( Rational ) PlanckTimes.InOneYoctosecond );
+            return new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+        }
+
+        public Int32 CompareTo( [NotNull] Yoctoseconds other ) {
+            if ( other is null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
+
+            return this.Value.CompareTo( other.Value );
         }
 
         public Boolean Equals( [CanBeNull] Yoctoseconds other ) => Equals( this, other );
@@ -309,9 +288,28 @@ namespace Librainian.Measurement.Time {
             return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
         }
 
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "ys" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "ys" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
+
         [NotNull]
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
-
     }
-
 }

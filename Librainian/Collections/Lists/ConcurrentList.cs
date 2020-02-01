@@ -245,7 +245,7 @@ namespace Librainian.Collections.Lists {
         /// <summary></summary>
         /// <exception cref="ObjectDisposedException"></exception>
         private void ThrowIfDisposed() {
-            if ( this.IsDisposed() && this.ThrowExceptions == ThrowSetting.Throw ) {
+            if ( this.IsDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
                 throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
             }
         }

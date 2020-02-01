@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ListBoxLog.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "ListBoxLog.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Controls {
@@ -53,6 +53,13 @@ namespace Librainian.Controls {
     /// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
     public sealed class ListBoxLog : ABetterClassDispose {
 
+        private const Int32 DefaultMaxLinesInListbox = 2048;
+
+        /// <summary>
+        ///     <see cref="FormatALogEventMessage" />
+        /// </summary>
+        private const String DefaultMessageFormat = "{4}>{8}";
+
         [NotNull]
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger() ?? throw new InvalidOperationException( $"Invalid {nameof( LogManager )}" );
 
@@ -66,13 +73,6 @@ namespace Librainian.Controls {
         private String MessageFormat { get; }
 
         public Boolean Paused { get; }
-
-        private const Int32 DefaultMaxLinesInListbox = 2048;
-
-        /// <summary>
-        ///     <see cref="FormatALogEventMessage" />
-        /// </summary>
-        private const String DefaultMessageFormat = "{4}>{8}";
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
             if ( listBox is null ) {
@@ -126,7 +126,7 @@ namespace Librainian.Controls {
                 logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
                 logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
                 logEvent.LoggingLevel.LevelName()[ 0 ], /* {6} */
-                logEvent.LoggingLevel.LevelName(), /* {7} */ ( Int32 ) logEvent.LoggingLevel, /* {8} */ message );
+                logEvent.LoggingLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LoggingLevel, /* {8} */ message );
         }
 
         private void AddALogEntry( [CanBeNull] Object item ) {
@@ -181,7 +181,7 @@ namespace Librainian.Controls {
             foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
 
                 selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LoggingLevel == LoggingLevel.Critical ? 2 : 1,
-                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 ) logEvent.LoggingLevel > 5 ? 6 : ( Int32 ) logEvent.LoggingLevel + 1 );
+                    logEvent.LoggingLevel == LoggingLevel.Critical ? 1 : ( Int32 )logEvent.LoggingLevel > 5 ? 6 : ( Int32 )logEvent.LoggingLevel + 1 );
 
                 selectedItemsAsRTFText.Append( FormatALogEventMessage( logEvent, this.MessageFormat ) );
                 selectedItemsAsRTFText.AppendLine( @"\par}" );
@@ -209,7 +209,7 @@ namespace Librainian.Controls {
             LogEvent logEvent;
 
             if ( listbox.Items[ e.Index ] is LogEvent ) {
-                logEvent = ( LogEvent ) listbox.Items[ e.Index ];
+                logEvent = ( LogEvent )listbox.Items[ e.Index ];
             }
             else {
                 logEvent = new LogEvent( LoggingLevel.Critical, listbox.Items[ e.Index ]?.ToString() );
@@ -299,9 +299,6 @@ namespace Librainian.Controls {
                 this.LoggingLevel = loggingLevel;
                 this.Message = message;
             }
-
         }
-
     }
-
 }

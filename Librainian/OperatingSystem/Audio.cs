@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Audio.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Audio.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
 
 namespace Librainian.OperatingSystem {
@@ -55,7 +55,6 @@ namespace Librainian.OperatingSystem {
             eAll,
 
             EDataFlow_enum_count
-
         }
 
         public enum ERole {
@@ -67,7 +66,6 @@ namespace Librainian.OperatingSystem {
             eCommunications,
 
             ERole_enum_count
-
         }
 
         [Guid( "F4B1A599-7266-4319-A8CA-E70ACB11E8CD" )]
@@ -80,7 +78,6 @@ namespace Librainian.OperatingSystem {
             Int32 NotImpl1();
 
             // the rest is not implemented
-
         }
 
         [Guid( "E2F5BB11-0570-40CA-ACDD-3AA01277DEE8" )]
@@ -92,7 +89,6 @@ namespace Librainian.OperatingSystem {
 
             [PreserveSig]
             Int32 GetSession( Int32 SessionCount, out IAudioSessionControl Session );
-
         }
 
         [Guid( "77AA99A0-1BD6-484F-8BC7-2C654C9A9B6F" )]
@@ -107,7 +103,6 @@ namespace Librainian.OperatingSystem {
             Int32 NotImpl2();
 
             // the rest is not implemented
-
         }
 
         [Guid( "D666063F-1587-4E43-81F1-B948E807363F" )]
@@ -118,7 +113,6 @@ namespace Librainian.OperatingSystem {
             Int32 Activate( ref Guid iid, Int32 dwClsCtx, IntPtr pActivationParams, [MarshalAs( UnmanagedType.IUnknown )] out Object ppInterface );
 
             // the rest is not implemented
-
         }
 
         [Guid( "A95664D2-9614-4F35-A746-DE8DB63617E6" )]
@@ -131,7 +125,6 @@ namespace Librainian.OperatingSystem {
             Int32 NotImpl1();
 
             // the rest is not implemented
-
         }
 
         [Guid( "87CE5498-68D6-44E5-9215-6DA47EF883D8" )]
@@ -149,7 +142,6 @@ namespace Librainian.OperatingSystem {
 
             [PreserveSig]
             Int32 SetMute( Boolean bMute, ref Guid eventContext );
-
         }
 
         public static IEnumerable<String> EnumerateApplications() {
@@ -227,7 +219,7 @@ namespace Librainian.OperatingSystem {
             // activate the session manager. we need the enumerator
             var iidIAudioSessionManager2 = typeof( IAudioSessionManager2 ).GUID;
             speakers.Activate( ref iidIAudioSessionManager2, 0, IntPtr.Zero, out var o );
-            var mgr = ( IAudioSessionManager2 ) o;
+            var mgr = ( IAudioSessionManager2 )o;
 
             // enumerate sessions for on this device
             mgr.GetSessionEnumerator( out var sessionEnumerator );
@@ -285,7 +277,5 @@ namespace Librainian.OperatingSystem {
         [ComImport]
         [Guid( "BCDE0395-E52F-467C-8E3D-C4579291692E" )]
         public class MMDeviceEnumerator { }
-
     }
-
 }

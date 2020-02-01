@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "Seconds.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "Seconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
 
 namespace Librainian.Measurement.Time {
@@ -60,28 +60,23 @@ namespace Librainian.Measurement.Time {
     [Immutable]
     public class Seconds : IQuantityOfTime, IEquatable<Seconds> {
 
-        public Boolean Equals( Seconds other ) => other != null && this.Value.Equals( other.Value );
+        /// <summary>31536000</summary>
+        public const UInt32 InOneCommonYear = 31536000;
 
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
+        /// <summary>86400</summary>
+        public const UInt32 InOneDay = 86400;
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational ) PlanckTimes.InOneSecond );
+        /// <summary>3600</summary>
+        public const UInt16 InOneHour = 3600;
 
-        [NotNull]
-        public Seconds ToSeconds() => new Seconds( this.Value );
+        /// <summary>60</summary>
+        public const Byte InOneMinute = 60;
 
-        public override String ToString() {
-            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-                var whole = this.Value.WholePart;
+        /// <summary>2635200 (30.5 days)</summary>
+        public const UInt32 InOneMonth = 2635200;
 
-                return $"{whole} {whole.PluralOf( "second" )}";
-            }
-
-            var dec = ( Decimal ) this.Value;
-
-            return $"{dec} {dec.PluralOf( "second" )}";
-        }
-
-        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.Value );
+        /// <summary>604800</summary>
+        public const UInt32 InOneWeek = 604800;
 
         /// <summary><see cref="Five" /><see cref="Seconds" />.</summary>
         public static Seconds Five { get; } = new Seconds( 5 );
@@ -119,27 +114,9 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Rational Value { get; }
 
-        /// <summary>31536000</summary>
-        public const UInt32 InOneCommonYear = 31536000;
+        public Seconds( Decimal value ) => this.Value = ( Rational )value;
 
-        /// <summary>86400</summary>
-        public const UInt32 InOneDay = 86400;
-
-        /// <summary>3600</summary>
-        public const UInt16 InOneHour = 3600;
-
-        /// <summary>60</summary>
-        public const Byte InOneMinute = 60;
-
-        /// <summary>2635200 (30.5 days)</summary>
-        public const UInt32 InOneMonth = 2635200;
-
-        /// <summary>604800</summary>
-        public const UInt32 InOneWeek = 604800;
-
-        public Seconds( Decimal value ) => this.Value = ( Rational ) value;
-
-        public Seconds( Double value ) => this.Value = ( Rational ) value;
+        public Seconds( Double value ) => this.Value = ( Rational )value;
 
         public Seconds( Rational value ) => this.Value = value;
 
@@ -194,15 +171,15 @@ namespace Librainian.Measurement.Time {
         /// <param name="seconds"></param>
         public static implicit operator TimeSpan( [NotNull] Seconds seconds ) {
 
-            if ( seconds.Value >= ( Int64 ) TimeSpan.MaxValue.TotalSeconds ) {
+            if ( seconds.Value >= ( Int64 )TimeSpan.MaxValue.TotalSeconds ) {
                 return TimeSpan.MaxValue;
             }
 
-            if ( seconds.Value <= ( Int64 ) TimeSpan.MinValue.TotalSeconds ) {
+            if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) {
                 return TimeSpan.MinValue;
             }
 
-            return TimeSpan.FromSeconds( ( Double ) seconds.Value );
+            return TimeSpan.FromSeconds( ( Double )seconds.Value );
         }
 
         [NotNull]
@@ -212,7 +189,7 @@ namespace Librainian.Measurement.Time {
         public static Seconds operator -( [NotNull] Seconds left, [CanBeNull] Seconds right ) => Combine( left: left, right: -right );
 
         [NotNull]
-        public static Seconds operator -( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
+        public static Seconds operator -( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
 
         public static Boolean operator !=( [NotNull] Seconds left, [NotNull] Seconds right ) => !Equals( left, right );
 
@@ -220,16 +197,16 @@ namespace Librainian.Measurement.Time {
         public static Seconds operator +( [NotNull] Seconds left, [NotNull] Seconds right ) => Combine( left, right );
 
         [NotNull]
-        public static Seconds operator +( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
+        public static Seconds operator +( [NotNull] Seconds left, Decimal seconds ) => Combine( left, ( Rational )seconds );
 
         [NotNull]
         public static Seconds operator +( [NotNull] Seconds left, BigInteger seconds ) => Combine( left, seconds );
 
         public static Boolean operator <( [NotNull] Seconds left, [NotNull] Seconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Seconds left, [CanBeNull] Milliseconds right ) => left < ( Seconds ) right;
+        public static Boolean operator <( [CanBeNull] Seconds left, [CanBeNull] Milliseconds right ) => left < ( Seconds )right;
 
-        public static Boolean operator <( [CanBeNull] Seconds left, [CanBeNull] Minutes right ) => ( Minutes ) left < right;
+        public static Boolean operator <( [CanBeNull] Seconds left, [CanBeNull] Minutes right ) => ( Minutes )left < right;
 
         public static Boolean operator ==( [NotNull] Seconds left, [NotNull] Seconds right ) {
             if ( left is null ) {
@@ -243,11 +220,11 @@ namespace Librainian.Measurement.Time {
             return Equals( left, right );
         }
 
-        public static Boolean operator >( [CanBeNull] Seconds left, [CanBeNull] Minutes right ) => ( Minutes ) left > right;
+        public static Boolean operator >( [CanBeNull] Seconds left, [CanBeNull] Minutes right ) => ( Minutes )left > right;
 
         public static Boolean operator >( [NotNull] Seconds left, [NotNull] Seconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( [CanBeNull] Seconds left, [CanBeNull] Milliseconds right ) => left > ( Seconds ) right;
+        public static Boolean operator >( [CanBeNull] Seconds left, [CanBeNull] Milliseconds right ) => left > ( Seconds )right;
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -267,7 +244,11 @@ namespace Librainian.Measurement.Time {
             return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
         }
 
+        public Boolean Equals( Seconds other ) => other != null && this.Value.Equals( other.Value );
+
         public override Boolean Equals( Object obj ) => Equals( this, obj as Seconds );
+
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         [NotNull]
         public Milliseconds ToMilliseconds() => new Milliseconds( this.Value * Milliseconds.InOneSecond );
@@ -275,12 +256,29 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public Minutes ToMinutes() => new Minutes( this.Value / InOneMinute );
 
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneSecond );
+
+        [NotNull]
+        public Seconds ToSeconds() => new Seconds( this.Value );
+
+        public override String ToString() {
+            if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+                var whole = this.Value.WholePart;
+
+                return $"{whole} {whole.PluralOf( "second" )}";
+            }
+
+            var dec = ( Decimal )this.Value;
+
+            return $"{dec} {dec.PluralOf( "second" )}";
+        }
+
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.Value );
+
         [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
 
         [NotNull]
         public Years ToYears() => new Years( this.Value / InOneCommonYear );
-
     }
-
 }

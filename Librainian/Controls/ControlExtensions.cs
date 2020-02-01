@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ControlExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "ControlExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.Controls {
@@ -127,11 +127,11 @@ namespace Librainian.Controls {
 
             return Color.FromArgb( red(), green(), blue() );
 
-            Byte red() => ( Byte ) ( thisColor.R * blendToPercent + blendToColor.R * i() );
+            Byte red() => ( Byte )( thisColor.R * blendToPercent + blendToColor.R * i() );
 
-            Byte green() => ( Byte ) ( thisColor.G * blendToPercent + blendToColor.G * i() );
+            Byte green() => ( Byte )( thisColor.G * blendToPercent + blendToColor.G * i() );
 
-            Byte blue() => ( Byte ) ( thisColor.B * blendToPercent + blendToColor.B * i() );
+            Byte blue() => ( Byte )( thisColor.B * blendToPercent + blendToColor.B * i() );
 
             Double i() => 1 - blendToPercent;
         }
@@ -162,7 +162,7 @@ namespace Librainian.Controls {
             if ( control.InvokeRequired ) {
 
                 // ReSharper disable once PossibleNullReferenceException
-                return ( Boolean ) control.Invoke( new Func<Boolean>( () => control.Checked ) );
+                return ( Boolean )control.Invoke( new Func<Boolean>( () => control.Checked ) );
             }
 
             return control.Checked;
@@ -332,7 +332,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Color ) control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
+            return control.InvokeRequired ? ( Color )control.Invoke( new Func<Color>( () => control.ForeColor ) ) : control.ForeColor;
         }
 
         /// <summary>Safely set the <see cref="Control.ForeColor" /> of the control across threads.</summary>
@@ -446,7 +446,7 @@ namespace Librainian.Controls {
         public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
             transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-            return Color.FromArgb( thisColor.ToArgb() + ( Int32 ) transparentPercent * 0x1000000 );
+            return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
         }
 
         [NotNull]
@@ -473,7 +473,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Maximum ) ) : control.Maximum;
         }
 
         /// <summary>Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.</summary>
@@ -504,7 +504,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Minimum ) ) : control.Minimum;
         }
 
         /// <summary>Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.</summary>
@@ -784,7 +784,7 @@ namespace Librainian.Controls {
                 textBox.AppendText( message );
 
                 while ( textBox.Lines?.Length > 20 ) {
-                    ( ( IList ) textBox.Lines ).RemoveAt( 0 );
+                    ( ( IList )textBox.Lines ).RemoveAt( 0 );
                 }
 
                 textBox.Invalidate();
@@ -852,7 +852,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Decimal ) control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Decimal )control.Invoke( new Func<Decimal>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>Threadsafe Value get.</summary>
@@ -863,7 +863,7 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( control ) );
             }
 
-            return control.InvokeRequired ? ( Int32 ) control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
+            return control.InvokeRequired ? ( Int32 )control.Invoke( new Func<Int32>( () => control.Value ) ) : control.Value;
         }
 
         /// <summary>Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.</summary>
@@ -935,7 +935,5 @@ namespace Librainian.Controls {
         }
 
         public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
-
     }
-
 }

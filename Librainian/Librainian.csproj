@@ -507,9 +507,6 @@
     <Compile Include="Controls\AutoLayoutWindow.Designer.cs">
       <DependentUpon>AutoLayoutWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DoubleBufferPanel.cs">
-      <SubType>component</SubType>
-    </Compile>
     <Compile Include="Controls\VerticalProgressBar.cs">
       <SubType>component</SubType>
     </Compile>
@@ -963,7 +960,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

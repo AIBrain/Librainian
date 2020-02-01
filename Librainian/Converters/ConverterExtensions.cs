@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Converters {
@@ -102,7 +102,7 @@ namespace Librainian.Converters {
             }
 
             try {
-                return ( T ) Convert.ChangeType( scalar, typeof( T ) );
+                return ( T )Convert.ChangeType( scalar, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -182,18 +182,18 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s.In( TrueStrings ) ) {
-                        return true;
+                        if ( s.In( TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
                 case Control control: return control.Text().ToBoolean();
             }
 
@@ -342,7 +342,7 @@ namespace Librainian.Converters {
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
             return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
+                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -449,17 +449,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
-                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
-                        , c: ( UInt16 ) dateTime.Millisecond //6,7
-                        , d: ( Byte ) dateTime.DayOfWeek //8
-                        , e: ( Byte ) dateTime.Day //9
-                        , f: ( Byte ) dateTime.Hour //10
-                        , g: ( Byte ) dateTime.Minute //11
-                        , h: ( Byte ) dateTime.Second //12
-                        , i: ( Byte ) dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
+                        , b: ( UInt16 )dateTime.DayOfYear //4,5
+                        , c: ( UInt16 )dateTime.Millisecond //6,7
+                        , d: ( Byte )dateTime.DayOfWeek //8
+                        , e: ( Byte )dateTime.Day //9
+                        , f: ( Byte )dateTime.Hour //10
+                        , g: ( Byte )dateTime.Minute //11
+                        , h: ( Byte )dateTime.Second //12
+                        , i: ( Byte )dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte ) dateTime.Kind ); //15
+                        , k: ( Byte )dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -704,7 +704,5 @@ namespace Librainian.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
-
     }
-
 }

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "OAuthBase.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "OAuthBase.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
 namespace Librainian.Internet {
@@ -48,19 +48,6 @@ namespace Librainian.Internet {
     using JetBrains.Annotations;
 
     public class OAuthBase {
-
-        /// <summary>Provides a predefined set of algorithms that are supported officially by the protocol</summary>
-        public enum SignatureTypes {
-
-            Hmacsha1,
-
-            Plaintext,
-
-            Rsasha1
-
-        }
-
-        protected readonly Random Random = new Random();
 
         protected const String Hmacsha1SignatureType = "HMAC-SHA1";
 
@@ -94,6 +81,18 @@ namespace Librainian.Internet {
         protected const String Rsasha1SignatureType = "RSA-SHA1";
 
         protected const String UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+
+        protected readonly Random Random = new Random();
+
+        /// <summary>Provides a predefined set of algorithms that are supported officially by the protocol</summary>
+        public enum SignatureTypes {
+
+            Hmacsha1,
+
+            Plaintext,
+
+            Rsasha1
+        }
 
         /// <summary>Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")</summary>
         /// <param name="parameters">The query string part of the Url</param>
@@ -180,7 +179,7 @@ namespace Librainian.Internet {
                     result.Append( symbol );
                 }
                 else {
-                    result.Append( $"{'%'}{( Int32 ) symbol:X2}" );
+                    result.Append( $"{'%'}{( Int32 )symbol:X2}" );
                 }
             }
 
@@ -379,7 +378,6 @@ namespace Librainian.Internet {
                 this.Name = name;
                 this.Value = value;
             }
-
         }
 
         /// <summary>Comparer class used to perform the sorting of the query parameters</summary>
@@ -387,9 +385,6 @@ namespace Librainian.Internet {
 
             public Int32 Compare( QueryParameter x, QueryParameter y ) =>
                 x?.Name == y?.Name ? String.CompareOrdinal( x?.Value, y?.Value ) : String.CompareOrdinal( x?.Name, y?.Name );
-
         }
-
     }
-
 }

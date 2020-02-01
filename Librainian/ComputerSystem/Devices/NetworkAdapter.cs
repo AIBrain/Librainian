@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "NetworkAdapter.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "NetworkAdapter.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
 namespace Librainian.ComputerSystem.Devices {
@@ -87,8 +87,8 @@ namespace Librainian.ComputerSystem.Devices {
                 this.Name = crtNetworkAdapter[ "ProductName" ].ToString();
 
                 this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter[ "NetEnabled" ].ToString() ) ?
-                    ( Int32 ) EnumNetEnabledStatus.Enabled :
-                    ( Int32 ) EnumNetEnabledStatus.Disabled;
+                    ( Int32 )EnumNetEnabledStatus.Enabled :
+                    ( Int32 )EnumNetEnabledStatus.Disabled;
 
                 this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
             }
@@ -111,7 +111,6 @@ namespace Librainian.ComputerSystem.Devices {
             Unknow,
 
             Success
-
         }
 
         /// <summary>Enum the NetEnabled Status</summary>
@@ -122,7 +121,6 @@ namespace Librainian.ComputerSystem.Devices {
             Unknown,
 
             Enabled
-
         }
 
         /// <summary>List all the NetworkAdapters</summary>
@@ -136,7 +134,7 @@ namespace Librainian.ComputerSystem.Devices {
             foreach ( var o in networkAdapters ) {
                 if ( o is ManagementObject moNetworkAdapter ) {
                     yield return new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(),
-                        Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 ) EnumNetEnabledStatus.Enabled : ( Int32 ) EnumNetEnabledStatus.Disabled,
+                        Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled,
                         Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) );
                 }
             }
@@ -169,18 +167,18 @@ namespace Librainian.ComputerSystem.Devices {
                     Task.Delay( Milliseconds.OneHundred ).Wait();
 
                     while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ?
-                                ( Int32 ) EnumNetEnabledStatus.Enabled :
-                                ( Int32 ) EnumNetEnabledStatus.Disabled ) ) {
+                                ( Int32 )EnumNetEnabledStatus.Enabled :
+                                ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
                         Task.Delay( Milliseconds.OneHundred ).Wait();
                     }
 
-                    resultEnableDisableNetworkAdapter = ( Int32 ) EnumEnableDisableResult.Success;
+                    resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Success;
                 }
                 catch ( NullReferenceException ) {
 
                     // If there is a NullReferenceException, the result of the enable or disable network
                     // adapter operation will be fail
-                    resultEnableDisableNetworkAdapter = ( Int32 ) EnumEnableDisableResult.Fail;
+                    resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Fail;
                 }
             }
 
@@ -190,7 +188,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>Get the NetworkAdapter NetEnabled Property</summary>
         /// <returns>Whether the NetworkAdapter is enabled</returns>
         public Int32 GetNetEnabled() {
-            var netEnabled = ( Int32 ) EnumNetEnabledStatus.Unknown;
+            var netEnabled = ( Int32 )EnumNetEnabledStatus.Unknown;
 
             try {
                 var networkAdapters = WMIExtensions.WmiQuery( $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
@@ -198,10 +196,10 @@ namespace Librainian.ComputerSystem.Devices {
                 foreach ( var o in networkAdapters ) {
 
                     if ( o is ManagementObject networkAdapter && Convert.ToBoolean( networkAdapter[ "NetEnabled" ].ToString() ) ) {
-                        netEnabled = ( Int32 ) EnumNetEnabledStatus.Enabled;
+                        netEnabled = ( Int32 )EnumNetEnabledStatus.Enabled;
                     }
                     else {
-                        netEnabled = ( Int32 ) EnumNetEnabledStatus.Disabled;
+                        netEnabled = ( Int32 )EnumNetEnabledStatus.Disabled;
                     }
                 }
             }
@@ -209,7 +207,5 @@ namespace Librainian.ComputerSystem.Devices {
 
             return netEnabled;
         }
-
     }
-
 }

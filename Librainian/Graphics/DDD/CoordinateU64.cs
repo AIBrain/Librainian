@@ -1,24 +1,24 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "CoordinateU64.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "CoordinateU64.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
 
 namespace Librainian.Graphics.DDD {
@@ -63,7 +63,7 @@ namespace Librainian.Graphics.DDD {
 
         /// <summary>The largest value a <see cref="CoordinateU64" /> will hold.</summary>
         /// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
-        public static readonly UInt64 Maximum = ( UInt64 ) Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
+        public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
         public static readonly CoordinateU64 MaxValue = new CoordinateU64( x: UInt64.MaxValue, y: UInt64.MaxValue, z: UInt64.MaxValue );
 
@@ -110,7 +110,7 @@ namespace Librainian.Graphics.DDD {
             var num2 = left.Y - right.Y;
             var num3 = left.Z - right.Z;
 
-            return ( UInt64 ) Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
+            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>static comparison.</summary>
@@ -119,7 +119,7 @@ namespace Librainian.Graphics.DDD {
         /// <returns></returns>
         public static Boolean Equals( CoordinateU64 left, CoordinateU64 right ) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
-        public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 ) coordinate.X, y: ( Int32 ) coordinate.Y );
+        public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
 
         public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
@@ -130,7 +130,7 @@ namespace Librainian.Graphics.DDD {
         public static CoordinateU64 Normalize( CoordinateU64 coordinate ) {
             var num = 1.0D / coordinate.SquareLength;
 
-            return new CoordinateU64( ( UInt64 ) ( coordinate.X * num ), ( UInt64 ) ( coordinate.Y * num ), ( UInt64 ) ( coordinate.Z * num ) );
+            return new CoordinateU64( ( UInt64 )( coordinate.X * num ), ( UInt64 )( coordinate.Y * num ), ( UInt64 )( coordinate.Z * num ) );
         }
 
         public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
@@ -155,7 +155,7 @@ namespace Librainian.Graphics.DDD {
             var num2 = this.Y - right.Y;
             var num3 = this.Z - right.Z;
 
-            return ( UInt64 ) Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
+            return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
         }
 
         /// <summary>Calls the static comparison.</summary>
@@ -175,7 +175,5 @@ namespace Librainian.Graphics.DDD {
         public override Int32 GetHashCode() => this.X.GetHashMerge( this.Y.GetHashMerge( this.Z ) );
 
         public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
-
     }
-
 }

@@ -1,24 +1,24 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible
 // in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "VotallyD.cs" belongs to Protiguous@Protiguous.com
 // unless otherwise specified or the original license has been overwritten by formatting.
 // (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original
 // license and our thanks goes to those Authors. If you find your code in this source code, please
 // let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact
 // Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,15 +26,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", "VotallyD.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
 
 namespace Librainian.Maths.Numbers {
@@ -52,8 +52,6 @@ namespace Librainian.Maths.Numbers {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyD : ICloneable {
 
-        Object ICloneable.Clone() => this.Clone();
-
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _aVotes;
@@ -61,6 +59,9 @@ namespace Librainian.Maths.Numbers {
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _bVotes;
+
+        /// <summary>No vote for either.</summary>
+        public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
 
         public Double A {
             get => Thread.VolatileRead( ref this._aVotes );
@@ -82,8 +83,6 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
-        public Boolean IsAWinning => this.A > this.B;
-
         public Boolean IsBWinning => this.B > this.A;
 
         public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
@@ -93,8 +92,7 @@ namespace Librainian.Maths.Numbers {
         /// <summary><see cref="A" /> + <see cref="B" /></summary>
         public Double Votes => this.A + this.B;
 
-        /// <summary>No vote for either.</summary>
-        public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
+        public Boolean IsAWinning => this.A > this.B;
 
         public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
             this.A = votesForA;
@@ -123,9 +121,6 @@ namespace Librainian.Maths.Numbers {
 
             return votes.Near( 0 ) ? 0 : this.A / votes;
         }
-
-        [NotNull]
-        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -177,6 +172,9 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
-    }
+        [NotNull]
+        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
 
+        Object ICloneable.Clone() => this.Clone();
+    }
 }
