@@ -35,7 +35,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", "ABetterClassDispose.cs" was last formatted by Protiguous on 2020/01/31 at 7:12 PM.
 
 namespace Librainian.Utilities {
 
@@ -45,14 +45,11 @@ namespace Librainian.Utilities {
     using System.Threading;
 
     /// <summary>
-    ///     <para>A non-sealed class for easier implementation the <see cref="IDisposable" /> pattern.</para>
-    ///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> if needed.</para>
+    ///     <para>A class for easier implementation the proper <see cref="IDisposable" /> pattern.</para>
+    ///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> as needed.</para>
     ///     <code></code>
     /// </summary>
-    /// <remarks>ABCD (hehe).
-    /// <para>I wanted to make the <see cref="GC.SuppressFinalize" /> be called only once, but the rules were complaining..</para>
-    /// <para>I also wanted to add in the optional dispose hint, so we could diagnose which object was being disposed..</para>
-    /// </remarks>
+    /// <remarks>ABCD (hehe).</remarks>
     /// <copyright>Created by Protiguous.</copyright>
     public abstract class ABetterClassDispose : IDisposable {
 
@@ -66,7 +63,59 @@ namespace Librainian.Utilities {
 
         private Int32 _hasDisposedNative;
 
-        protected ABetterClassDispose() => GC.SuppressFinalize( this );
+        private Int32 _hasSuppressedFinalize;
+
+        public Boolean HasDisposedManaged {
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            get => Interlocked.CompareExchange( ref this._hasDisposedManaged, 0, 0 ) == 1;
+
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            set {
+                if ( this.HasDisposedManaged ) {
+                    return; //don't allow the setting to be changed once it has been set.
+                }
+
+                Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
+            }
+        }
+
+        public Boolean HasDisposedNative {
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            get => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
+
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            set {
+                if ( this.HasDisposedNative ) {
+                    return; //don't allow the setting to be changed once it has been set.
+                }
+
+                Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
+            }
+        }
+
+        public Boolean HasSuppressedFinalize {
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            get => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
+
+            [MethodImpl( MethodImplOptions.AggressiveInlining )]
+            [DebuggerStepThrough]
+            set {
+                if ( this.HasSuppressedFinalize ) {
+                    return; //don't allow the setting to be changed once it has been set.
+                }
+
+                Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
+            }
+        }
+
+        /// <summary>Can easily be changed to a property, if desired.</summary>
+        /// <returns></returns>
+        public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
         /// <summary>
         ///     <para>If cleanupManaged, the method has been called by user's code. Managed and unmanaged resources can be disposed.</para>
@@ -78,30 +127,44 @@ namespace Librainian.Utilities {
         /// <param name="cleanupManaged"></param>
         [DebuggerStepThrough]
         protected void Dispose( Boolean cleanupManaged ) {
-            if ( cleanupManaged ) {
-
-                if ( Interlocked.Exchange( ref this._hasDisposedManaged, 1 ) == 0 /*allow once*/ ) {
-                    try {
-                        this.DisposeManaged(); //Any derived class should have overloaded this method and disposed of any managed objects inside.
-                    }
-                    catch ( Exception exception ) {
-                        Debug.WriteLine( exception );
-                    }
+            if ( cleanupManaged && !this.HasDisposedManaged ) {
+                try {
+                    this.DisposeManaged(); //Any derived class should have overloaded this method and disposed of any managed objects inside.
+                }
+                catch ( Exception exception ) {
+                    Debug.WriteLine( exception );
+                }
+                finally {
+                    this.HasDisposedManaged = true;
                 }
             }
 
-            if ( Interlocked.Exchange( ref this._hasDisposedNative, 1 ) == 0 /*allow once*/ ) {
+            if ( !this.HasDisposedNative ) {
                 try {
                     this.DisposeNative(); //Any derived class should overload this method.
                 }
                 catch ( Exception exception ) {
                     Debug.WriteLine( exception );
                 }
+                finally {
+                    this.HasDisposedNative = true;
+                }
+            }
+
+            if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
+                try {
+                    GC.SuppressFinalize( this );
+                }
+                catch ( Exception exception ) {
+                    Debug.WriteLine( exception );
+                }
+                finally {
+                    this.HasSuppressedFinalize = true;
+                }
             }
         }
 
         /*
-
         /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
         [CanBeNull]
         private String DisposeHint { get; set; }
@@ -116,27 +179,8 @@ namespace Librainian.Utilities {
         [DebuggerStepThrough]
         public virtual void DisposeNative() {
             /*make this virtual so it is optional*/
+            this.HasDisposedNative = true;
         }
-
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [DebuggerStepThrough]
-        public Boolean HasDisposedManaged() => Interlocked.CompareExchange( ref this._hasDisposedManaged, 0, 0 ) == 1;
-
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [DebuggerStepThrough]
-        public Boolean HasDisposedNative() => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
-
-        /*
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [DebuggerStepThrough]
-        public Boolean HasSuppressedFinalize() => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
-        */
-
-        /// <summary>Can easily be changed to a property, if desired.</summary>
-        /// <returns></returns>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [DebuggerStepThrough]
-        public Boolean IsDisposed() => this.HasDisposedManaged() && this.HasDisposedNative();
 
         /*
 
