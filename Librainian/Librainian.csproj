@@ -95,7 +95,7 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Properties\Libranian.ico</ApplicationIcon>
+    <ApplicationIcon>Librainian.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -871,7 +871,7 @@
       <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Fody">
-      <Version>6.0.8</Version>
+      <Version>6.1.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -954,13 +954,14 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Librainian.ico" />
     <Content Include="Properties\Libranian.ico" />
     <Content Include="Misc\brain.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
