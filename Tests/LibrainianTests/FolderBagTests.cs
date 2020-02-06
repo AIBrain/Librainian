@@ -51,8 +51,8 @@ namespace LibrainianTests {
     using Librainian.Measurement.Time;
     using Librainian.OperatingSystem.FileSystem;
     using Librainian.Persistence;
-    using Newtonsoft.Json;
     using Xunit;
+    using Formatting = Newtonsoft.Json.Formatting;
 
     public static class FolderBagTests {
 
@@ -62,7 +62,7 @@ namespace LibrainianTests {
             var ram = 1;
 
             foreach ( var o in searcher.Get() ) {
-                var managementObject = ( ManagementObject ) o;
+                var managementObject = ( ManagementObject )o;
                 Console.WriteLine( $"RAM #{ram}:" );
 
                 foreach ( var property in managementObject.Properties ) {
@@ -105,7 +105,7 @@ namespace LibrainianTests {
             Console.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
 
             var temp = Document.GetTempDocument();
-            pathTree.TrySave( temp, formatting: Formatting.None );
+            pathTree.TrySave( temp, true, Formatting.None );
             File.WriteAllLines( temp.ContainingingFolder() + @"\allLines.txt", allPaths.Select( folder => folder.FullName ) );
         }
     }
