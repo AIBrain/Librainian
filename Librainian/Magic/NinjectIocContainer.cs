@@ -106,14 +106,7 @@ namespace Librainian.Magic {
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public T TryGet<T>() {
-            var tryGet = this.Kernel.TryGet<T>();
+        public T TryGet<T>() => this.Kernel.TryGet<T>();
 
-            if ( Equals( default, tryGet ) ) {
-                tryGet = this.Kernel.TryGet<T>(); //HACK wtf??
-            }
-
-            return tryGet;
-        }
     }
 }

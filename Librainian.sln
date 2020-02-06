@@ -21,6 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pri.LongPath", "..\Pri.Long
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pri.LongPathCore", "..\Pri.LongPath\Pri.LongPathCore\Pri.LongPathCore.csproj", "{BC5428E7-65D4-4BD7-B417-984B0FFB8EA9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB457724-4B25-4B12-A356-7E1233E029CA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,7 +121,7 @@ Global
 		{BC5428E7-65D4-4BD7-B417-984B0FFB8EA9} = {F8172E22-C9C9-44D7-8290-510BD90DA89D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 	EndGlobalSection
 EndGlobal
