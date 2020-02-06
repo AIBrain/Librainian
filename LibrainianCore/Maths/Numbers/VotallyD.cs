@@ -125,29 +125,34 @@ namespace LibrainianCore.Maths.Numbers {
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void ForA( Double votes = 1 ) {
+        public Double ForA( Double votes = 1 ) {
             this.A += votes;
 
             if ( this.A <= 0 ) {
                 this.A = 0;
             }
+
+            return votes;
         }
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="B" /> by <paramref name="votes" />.</para>
         /// </summary>
-        public void ForB( Double votes = 1 ) {
+        public Double ForB( Double votes = 1 ) {
             this.B += votes;
 
             if ( this.B <= 0 ) {
                 this.B = 0;
             }
+
+            return votes;
         }
 
         public Double HalfOfVotes() => this.Votes / 2;
 
         public Boolean IsTied() => this.A.Near( this.B );
 
+        [NotNull]
         public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 
         /// <summary>

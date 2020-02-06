@@ -42,6 +42,7 @@ namespace LibrainianCore.Persistence {
     using System.IO;
     using System.IO.IsolatedStorage;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
@@ -300,6 +301,7 @@ namespace LibrainianCore.Persistence {
         /// has not been applied to the type.
         /// </exception>
         /// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [CanBeNull]
         public static String Serialize<T>( [NotNull] this T obj ) {
             if ( Equals( obj, default ) ) {
@@ -330,7 +332,7 @@ namespace LibrainianCore.Persistence {
         /// <param name="progress">  </param>
         /// <param name="extension"> </param>
         /// <returns></returns>
-        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder,
+        public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this IDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder,
             [CanBeNull] String calledWhat, [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
             if ( null == dictionary ) {
                 return default;
@@ -348,12 +350,8 @@ namespace LibrainianCore.Persistence {
 
                 //Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
-
-                if ( !folder.Exists() ) {
-                    folder.Create();
-                }
-
-                if ( !folder.Exists() ) {
+               
+                if ( !folder.Create() ) {
                     throw new DirectoryNotFoundException( folder.FullName );
                 }
 
@@ -376,9 +374,7 @@ namespace LibrainianCore.Persistence {
                 foreach ( var pair in dictionary ) {
                     currentLine++;
 
-                    var tuple = new Tuple<TKey, TValue>( pair.Key, pair.Value ); //convert the struct to a class
-
-                    var data = tuple.Serialize();
+                    var data = ( pair.Key, pair.Value ).Serialize();
 
                     var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -391,8 +387,8 @@ namespace LibrainianCore.Persistence {
                         using ( writer ) { }
 
                         fileName = $"{hereNow}.xml"; //let the file name change over time so we don't have bigHuge monolithic files.
-                        document = new Document( folder, fileName );
-                        writer = File.AppendText( document.FullPath );
+                        using var newdocument = new Document( folder, fileName );
+                        writer = File.AppendText( newdocument.FullPath );
                         fileCount++;
                         backThen = DateTime.UtcNow.ToGuid();
                     }
@@ -485,6 +481,7 @@ namespace LibrainianCore.Persistence {
         /// <param name="obj">       </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [CanBeNull]
         public static String ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
 

@@ -81,12 +81,13 @@ namespace LibrainianCore.Persistence {
 
         public override Int32 GetHashCode() => this.K.GetHashCode();
 
+        [NotNull]
         public override String ToString() {
             var keypart = String.Empty;
 
-            if ( this.K.Length > 42 ) {
-                var left = Strings.Left( this.K, 20 );
-                var right = Strings.Right( this.K, 20 );
+            if ( this.K.Length > 22 ) {
+                var left = Strings.Left( this.K, 10 );
+                var right = Strings.Right( this.K, 10 );
 
                 keypart = $"{left}..{right}";
             }
@@ -97,9 +98,9 @@ namespace LibrainianCore.Persistence {
 
             var valuepart = String.Empty;
 
-            if ( this.V.Length > 42 ) {
-                var left = Strings.Left( this.V, 20 );
-                var right = Strings.Right( this.V, 20 );
+            if ( this.V.Length > 22 ) {
+                var left = Strings.Left( this.V, 10 );
+                var right = Strings.Right( this.V, 10 );
 
                 valuepart = $"{left}..{right}";
             }

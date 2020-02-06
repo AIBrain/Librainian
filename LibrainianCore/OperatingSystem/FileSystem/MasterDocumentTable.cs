@@ -47,7 +47,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Persistence;
-    using DocumentInfo = LibrainianCore.Persistence.DocumentInfo;
+    using DocumentInfo = Persistence.DocumentInfo;
 
     /// <summary>A persisted cache of all found <see cref="Document" />.</summary>
     public static class MasterDocumentTable {

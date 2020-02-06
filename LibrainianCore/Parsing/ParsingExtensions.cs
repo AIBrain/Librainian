@@ -56,11 +56,13 @@ namespace LibrainianCore.Parsing {
     using JetBrains.Annotations;
     using Linguistics;
     using Logging;
+    using Maths;
     using Maths.Numbers;
     using Measurement.Time;
     using Newtonsoft.Json;
     using Rationals;
     using Threading;
+    using static System.String;
 
     public static class ParsingExtensions {
 
@@ -188,11 +190,11 @@ namespace LibrainianCore.Parsing {
             self = self.Trimmed();
 
             if ( String.IsNullOrEmpty( self ) ) {
-                return String.Empty;
+                return Empty;
             }
 
             return
-                $"{( self.StartsWith( "[", StringComparison.Ordinal ) ? String.Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? String.Empty : "]" )}";
+                $"{( self.StartsWith( "[", StringComparison.Ordinal ) ? Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? Empty : "]" )}";
         }
 
         /// <summary>Trim the ToString() of the object; returning null if null, empty, or whitespace.</summary>
@@ -292,7 +294,7 @@ namespace LibrainianCore.Parsing {
 
         [NotNull]
         [Pure]
-        public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) => $"{result ?? String.Empty}{appendThis ?? String.Empty}";
+        public static String Append( [CanBeNull] this String result, [CanBeNull] String appendThis ) => $"{result ?? Empty}{appendThis ?? Empty}";
 
         /// <summary>Return an integer formatted as 1st, 2nd, 3rd, etc...</summary>
         /// <param name="number"></param>
@@ -593,17 +595,17 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String FirstSentence( [CanBeNull] this String text ) {
             if ( text.IsNullOrWhiteSpace() ) {
-                return String.Empty;
+                return Empty;
             }
 
             var sentences = text.ToSentences().FirstOrDefault();
 
-            return sentences?.ToString() ?? String.Empty;
+            return sentences?.ToString() ?? Empty;
         }
 
         [NotNull]
         [Pure]
-        public static String FirstWord( [CanBeNull] this String sentence ) => sentence.ToWords().FirstOrDefault() ?? String.Empty;
+        public static String FirstWord( [CanBeNull] this String sentence ) => sentence.ToWords().FirstOrDefault() ?? Empty;
 
         /// <summary></summary>
         /// <param name="rational">      </param>
@@ -675,7 +677,7 @@ namespace LibrainianCore.Parsing {
             var coded = new StringBuilder();
 
             // do the encoding
-            foreach ( var index in s.Select( t => ParsingConstants.EnglishAlphabetUppercase.IndexOf( t ) ).Where( index => index >= 0 ) ) {
+            foreach ( var index in s.Select( t => ParsingConstants.EnglishAlphabetUppercase.IndexOf( t, StringComparison.CurrentCulture ) ).Where( index => index >= 0 ) ) {
                 coded.Append( codes[ index ] );
             }
 
@@ -686,11 +688,11 @@ namespace LibrainianCore.Parsing {
             var result = new Regex( @"(\d)\1*D?\1+" ).Replace( coded.ToString(), "$1" ).Substring( 1 );
 
             // now i need to remove any characters coded as D from the front of the String because they're not really valid as the first code because they don't have an actual soundex code value
-            result = new Regex( "^D+" ).Replace( result, String.Empty );
+            result = new Regex( "^D+" ).Replace( result, Empty );
 
             // i used the char D to indicate that an h or w existed so that if to similar sounds were separated by an h or a w that I could remove one of them. if the h or w does not separate two similar sounds, then i
             // need to remove it now
-            result = new Regex( "[D0]" ).Replace( result, String.Empty );
+            result = new Regex( "[D0]" ).Replace( result, Empty );
 
             // return the first character followed by the coded String
             return $"{s[ 0 ]}{result}";
@@ -765,7 +767,7 @@ namespace LibrainianCore.Parsing {
 
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean TryGetDecimal( [CanBeNull] this String text, out Decimal result ) => Decimal.TryParse( text ?? String.Empty, out result );
+        public static Boolean TryGetDecimal( [CanBeNull] this String text, out Decimal result ) => Decimal.TryParse( text ?? Empty, out result );
 
         [DebuggerStepThrough]
         [Pure]
@@ -889,9 +891,9 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String MakeInitialLowerCase( [NotNull] this String word ) {
             switch ( word.Length ) {
-                case 0: return String.Empty;
+                case 0: return Empty;
                 case 1: return Char.ToLower( word[ 0 ], CultureInfo.CurrentCulture ).ToString();
-                default: return String.Concat( Char.ToLower( word[ 0 ], CultureInfo.CurrentCulture ).ToString(), word.Substring( 1 ) );
+                default: return Concat( Char.ToLower( word[ 0 ], CultureInfo.CurrentCulture ).ToString(), word.Substring( 1 ) );
             }
         }
 
@@ -914,7 +916,7 @@ namespace LibrainianCore.Parsing {
             return 0;
         }
 
-        /// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.</summary>
+        /// <summary>Returns null if <paramref name="self" /> is <see cref="string.IsNullOrWhiteSpace" />.</summary>
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
@@ -929,7 +931,7 @@ namespace LibrainianCore.Parsing {
             return String.IsNullOrEmpty( self ) ? default : self;
         }
 
-        /// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrEmpty" />.</summary>
+        /// <summary>Returns null if <paramref name="self" /> is <see cref="string.IsNullOrEmpty" />.</summary>
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
@@ -938,7 +940,7 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String NullIfEmpty( [CanBeNull] this String self ) => String.IsNullOrEmpty( self ) ? null : self;
 
-        /// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.</summary>
+        /// <summary>Returns null if <paramref name="self" /> is <see cref="string.IsNullOrWhiteSpace" />.</summary>
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
@@ -1042,7 +1044,7 @@ namespace LibrainianCore.Parsing {
 
         [NotNull]
         [Pure]
-        public static String RemoveNullChars( [NotNull] this String text ) => text.Replace( "\0", String.Empty );
+        public static String RemoveNullChars( [NotNull] this String text ) => text.Replace( "\0", Empty, StringComparison.Ordinal );
 
         /// <summary>Remove leading and trailing " from a string.</summary>
         /// <param name="input">String to parse</param>
@@ -1080,7 +1082,7 @@ namespace LibrainianCore.Parsing {
             }
 
             if ( repetitions == 0 ) {
-                return String.Empty;
+                return Empty;
             }
 
             var builder = new StringBuilder( self.Length * repetitions + separator.Length * ( repetitions - 1 ) );
@@ -1103,7 +1105,7 @@ namespace LibrainianCore.Parsing {
                 return haystack;
             }
 
-            replacement = replacement.NullIfEmpty() ?? String.Empty;
+            replacement = replacement.NullIfEmpty() ?? Empty;
 
             // Avoid a possible infinite loop
             if ( String.Equals( needle, replacement, StringComparison.Ordinal ) ) {
@@ -1191,7 +1193,7 @@ namespace LibrainianCore.Parsing {
         /// <returns></returns>
         [Pure]
         public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) =>
-            ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.Ordinal );
+            ( left ?? Empty ).Equals( right ?? Empty, StringComparison.Ordinal );
 
         /// <summary>Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br /></summary>
         /// <param name="source">      </param>
@@ -1325,20 +1327,8 @@ namespace LibrainianCore.Parsing {
                 return similarity; //no more time for comparison
             }
 
-            tempcounter = 0;
-
-            foreach ( var c in compare ) {
-                votes.ForB();
-
-                if ( !source.Contains( c ) ) {
-                    continue;
-                }
-
-                votes.ForA();
-                tempcounter++;
-            }
-
-            if ( tempcounter > 0 ) {
+            votes.ForB( compare.Length );
+            if ( (tempcounter = ( Int32 ) votes.ForA( compare.Count( c => source.Contains( c, StringComparison.Ordinal ) ) )).Any() ) {
                 matchReasons?.Add( $"{tempcounter} characters found in compare from source" );
             }
 
@@ -1393,11 +1383,11 @@ namespace LibrainianCore.Parsing {
                 .Substring( 0, length ); // and no longer than length
         }
 
-        /// <summary>Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator" />.</summary>
+        /// <summary>Same as calling <see cref="string.Split(string[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator" />.</summary>
         /// <param name="self">        The extended string.</param>
         /// <param name="separator">   The delimiter that splits substrings in the given string. Must not be null.</param>
         /// <param name="splitOptions">RemoveEmptyEntries to omit empty array elements from the array returned; or None to include empty array elements in the array returned.</param>
-        /// <returns>See: <see cref="String.Split(String[], StringSplitOptions)" />.</returns>
+        /// <returns>See: <see cref="string.Split(string[], StringSplitOptions)" />.</returns>
         [NotNull]
         [Pure]
         public static IEnumerable<String> Split( [NotNull] this String self, [NotNull] String separator,
@@ -1431,7 +1421,7 @@ namespace LibrainianCore.Parsing {
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
                 index,
                 ch = s[ index ]
-            } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
+            } ).GroupBy( f => f.index / chunks ).Select( g => Join( "", g.Select( z => z.ch ) ) );
 
             return res;
         }
@@ -1442,7 +1432,7 @@ namespace LibrainianCore.Parsing {
             using var restream = response?.GetResponseStream();
 
             if ( restream is null ) {
-                return String.Empty;
+                return Empty;
             }
 
             using var reader = new StreamReader( restream );
@@ -1463,7 +1453,7 @@ namespace LibrainianCore.Parsing {
 
         [NotNull]
         [Pure]
-        public static String StripHTML( [NotNull] this String s ) => Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
+        public static String StripHTML( [NotNull] this String s ) => Regex.Replace( s, @"<(.|\n)*?>", Empty ).Replace( "&nbsp;", " " );
 
         [NotNull]
         [Pure]
@@ -1542,7 +1532,7 @@ namespace LibrainianCore.Parsing {
             return output;
         }
 
-        /// <summary>Just <see cref="String.Substring(Int32)" /> with a length check.</summary>
+        /// <summary>Just <see cref="string.Substring(int)" /> with a length check.</summary>
         /// <param name="s">    </param>
         /// <param name="count"></param>
         /// <returns></returns>
@@ -1554,7 +1544,7 @@ namespace LibrainianCore.Parsing {
             return s.Substring( 0, length );
         }
 
-        /// <summary>Performs the same action as <see cref="String.Substring(Int32)" /> but counting from the end of the string (instead of the start).</summary>
+        /// <summary>Performs the same action as <see cref="string.Substring(int)" /> but counting from the end of the string (instead of the start).</summary>
         /// <param name="self">    The extended string.</param>
         /// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
         /// <returns>Returns the original string with <paramref name="endIndex" /> characters removed from the end.</returns>
@@ -1573,7 +1563,7 @@ namespace LibrainianCore.Parsing {
             return self.Substring( 0, self.Length - endIndex );
         }
 
-        /// <summary>Performs the same action as <see cref="String.Substring(Int32, Int32)" /> but counting from the end of the string (instead of the start).</summary>
+        /// <summary>Performs the same action as <see cref="string.Substring(int, int)" /> but counting from the end of the string (instead of the start).</summary>
         /// <param name="self">    The extended string.</param>
         /// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
         /// <param name="length">  The number of characters in the substring.</param>
@@ -1605,7 +1595,7 @@ namespace LibrainianCore.Parsing {
                 encoding = Encoding.Unicode;
             }
 
-            return Convert.ToBase64String( encoding.GetBytes( text ?? String.Empty ) );
+            return Convert.ToBase64String( encoding.GetBytes( text ?? Empty ) );
         }
 
         /// <summary>Date plus Time</summary>
@@ -1642,14 +1632,14 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String ToPascalCase( this String text, Boolean removeUnderscores = true ) {
             if ( String.IsNullOrEmpty( text ) ) {
-                return String.Empty;
+                return Empty;
             }
 
             if ( removeUnderscores ) {
                 text = text.Replace( Symbols.Underscore, Symbols.Singlespace );
             }
 
-            text = text.Trimmed() ?? String.Empty;
+            text = text.Trimmed() ?? Empty;
 
             var sb = new StringBuilder( text.Length );
 
@@ -1696,7 +1686,7 @@ namespace LibrainianCore.Parsing {
                 paragraph = paragraph.Replace( oldValue: ParsingConstants.Doublespace, newValue: Symbols.Singlespace );
             }
 
-            var results = RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trimmed() )
+            var results = RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, Empty ).Trimmed() )
                 .Where( ts => !String.IsNullOrEmpty( ts ) && !ts.Equals( ".", StringComparison.Ordinal ) );
 
             return results.Select( Sentence.Parse );
@@ -1717,7 +1707,7 @@ namespace LibrainianCore.Parsing {
                 return "minus " + ToVerbalWord( Math.Abs( number ) );
             }
 
-            var words = String.Empty;
+            var words = Empty;
 
             if ( number / 1000000 > 0 ) {
                 words += ToVerbalWord( number / 1000000 ) + " million ";
@@ -1839,7 +1829,7 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String RemoveDuplicateWords( [CanBeNull] String s ) {
             if ( String.IsNullOrEmpty( s ) ) {
-                return String.Empty;
+                return Empty;
             }
 
             var words = s.ToWords();

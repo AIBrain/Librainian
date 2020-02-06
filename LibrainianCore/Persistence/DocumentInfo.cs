@@ -44,8 +44,8 @@ namespace LibrainianCore.Persistence {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using LibrainianCore.Logging;
-    using LibrainianCore.OperatingSystem.FileSystem;
+    using Logging;
+    using OperatingSystem.FileSystem;
     using Newtonsoft.Json;
 
     /// <summary>

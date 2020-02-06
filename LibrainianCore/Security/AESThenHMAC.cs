@@ -1,24 +1,20 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "AESThenHMAC.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "AESThenHMAC.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +22,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "AESThenHMAC.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "LibrainianCore", File: "AESThenHMAC.cs" was last formatted by Protiguous on 2020/02/02 at 3:35 PM.
 
 namespace LibrainianCore.Security {
 
@@ -46,9 +42,9 @@ namespace LibrainianCore.Security {
     using JetBrains.Annotations;
     using Maths;
 
-    /// <summary>
-    /// This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright restrictions. https: //gist.github.com/4336842 http:
-    /// //creativecommons.org/publicdomain/mark/1.0/
+    /// <summary>This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright restrictions.
+    /// <remarks>https://gist.github.com/4336842</remarks>
+    /// <remarks>http://creativecommons.org/publicdomain/mark/1.0/</remarks>
     /// </summary>
     public static class AESThenHmac {
 
@@ -126,30 +122,28 @@ namespace LibrainianCore.Security {
                 }
 
                 using ( var aes = new AesManaged {
-                    KeySize = KeyBitSize,
-                    BlockSize = BlockBitSize,
-                    Mode = CipherMode.CBC,
-                    Padding = PaddingMode.PKCS7
+                    KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
                 } ) {
 
                     //Grab IV from message
                     var iv = new Byte[ ivLength ];
                     Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: iv, destinationIndex: 0, iv.Length );
 
-                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv ) ) {
-                        var plainTextStream = new MemoryStream();
-                        var decrypterStream = new CryptoStream( stream: plainTextStream, transform: decrypter, mode: CryptoStreamMode.Write );
+                    using var decrypter = aes.CreateDecryptor( cryptKey, iv );
 
-                        using ( var binaryWriter = new BinaryWriter( output: decrypterStream ) ) {
+                    using var plainTextStream = new MemoryStream();
 
-                            //Decrypt Cipher Text from Message
-                            binaryWriter.Write( buffer: encryptedMessage, index: nonSecretPayloadLength + iv.Length,
-                                count: encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
-                        }
+                    using var decrypterStream = new CryptoStream( stream: plainTextStream, transform: decrypter, mode: CryptoStreamMode.Write );
 
-                        //Return Plain Text
-                        return plainTextStream.ToArray();
-                    }
+                    using var binaryWriter = new BinaryWriter( output: decrypterStream );
+
+                    //Decrypt Cipher Text from Message
+                    binaryWriter.Write( buffer: encryptedMessage, index: nonSecretPayloadLength + iv.Length,
+                        count: encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
+
+                    //Return Plain Text
+                    return plainTextStream.ToArray();
+
                 }
             }
         }
@@ -269,25 +263,20 @@ namespace LibrainianCore.Security {
             }
 
             //non-secret payload optional
-            nonSecretPayload ??= new Byte[] { };
+            if ( nonSecretPayload == null ) {
+                nonSecretPayload = Array.Empty<Byte>();
+            }
 
             Byte[] cipherText;
-            Byte[] iv;
 
-            using ( var aes = new AesManaged {
-                KeySize = KeyBitSize,
-                BlockSize = BlockBitSize,
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
-            } ) {
+            using var aes = new AesManaged {
+                KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+            };
 
-                //Use random IV
-                aes.GenerateIV();
-                iv = aes.IV;
+            aes.GenerateIV();
 
-                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv ) ) {
-                    var cipherStream = new MemoryStream();
-
+            using ( var encrypter = aes.CreateEncryptor( cryptKey, aes.IV ) ) {
+                using ( var cipherStream = new MemoryStream() ) {
                     using ( var binaryWriter = new BinaryWriter( output: new CryptoStream( stream: cipherStream, transform: encrypter, mode: CryptoStreamMode.Write ) ) ) {
                         binaryWriter.Write( buffer: secretMessage );
                     }
@@ -298,28 +287,28 @@ namespace LibrainianCore.Security {
 
             //Assemble encrypted message and add authentication
             using ( var hmac = new HMACSHA256( authKey ) ) {
-                var encryptedStream = new MemoryStream();
+                using ( var encryptedStream = new MemoryStream() ) {
+                    using ( var binaryWriter = new BinaryWriter( output: encryptedStream ) ) {
 
-                using ( var binaryWriter = new BinaryWriter( output: encryptedStream ) ) {
+                        //Prepend non-secret payload if any
+                        binaryWriter.Write( buffer: nonSecretPayload );
 
-                    //Prepend non-secret payload if any
-                    binaryWriter.Write( buffer: nonSecretPayload );
+                        //Prepend IV
+                        binaryWriter.Write( buffer: aes.IV );
 
-                    //Prepend IV
-                    binaryWriter.Write( buffer: iv );
+                        //Write Ciphertext
+                        binaryWriter.Write( buffer: cipherText );
+                        binaryWriter.Flush(); //why?
 
-                    //Write Ciphertext
-                    binaryWriter.Write( buffer: cipherText );
-                    binaryWriter.Flush(); //why?
+                        //Authenticate all data
+                        var tag = hmac.ComputeHash( buffer: encryptedStream.ToArray() );
 
-                    //Authenticate all data
-                    var tag = hmac.ComputeHash( buffer: encryptedStream.ToArray() );
+                        //Postpend tag
+                        binaryWriter.Write( buffer: tag );
+                    }
 
-                    //Postpend tag
-                    binaryWriter.Write( buffer: tag );
+                    return encryptedStream.ToArray();
                 }
-
-                return encryptedStream.ToArray();
             }
         }
 
@@ -371,7 +360,7 @@ namespace LibrainianCore.Security {
         /// <remarks>Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.</remarks>
         [NotNull]
         public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[] nonSecretPayload = null ) {
-            nonSecretPayload ??= new Byte[] { };
+            nonSecretPayload ??= Array.Empty<Byte>();
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
@@ -419,5 +408,7 @@ namespace LibrainianCore.Security {
 
             return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
         }
+
     }
+
 }

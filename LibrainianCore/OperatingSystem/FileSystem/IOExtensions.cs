@@ -1286,8 +1286,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        public static MemoryStream TryCopyStream( [CanBeNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open,
+        public static MemoryStream TryCopyStream( [NotNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open,
             FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+            if ( String.IsNullOrWhiteSpace( value: filePath ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filePath ) );
+            }
 
             //TODO
             TryAgain:
@@ -1398,8 +1401,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public static FileStream TryOpenForReading( [CanBeNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open,
+        public static FileStream TryOpenForReading( [NotNull] String filePath, Boolean bePatient = true, FileMode fileMode = FileMode.Open,
             FileAccess fileAccess = FileAccess.Read, FileShare fileShare = FileShare.ReadWrite ) {
+            if ( String.IsNullOrWhiteSpace( value: filePath ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filePath ) );
+            }
 
             //TODO
             TryAgain:
@@ -1488,80 +1494,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return new DirectoryInfo( path );
         }
 
-        // return default; } exception.Log(); catch ( Exception exception ) { } }
-
-        // return true; notifier.Show( toast );
-
-        // // Send the toast. toast.SuppressPopup = !popup; // center without producing a popup.
-
-        //            // Set SuppressPopup = true on the toast in order to send it directly to action
-        //            var toast = CreateTextOnlyToast( header, body, longDuration );
-        //        if ( notifier.Setting == NotificationSetting.Enabled ) {
-        //    try {
-        //    var notifier = ToastNotificationManager.CreateToastNotifier( applicationId );
-        //public static Boolean TryToast( this String applicationId, String header, String body, Boolean longDuration = false, Boolean popup = true ) {
-        ///// <returns></returns>
-        ///// <param name="popup"></param>
-        ///// <param name="longDuration"></param>
-        ///// <param name="body"></param>
-        ///// <param name="header"></param>
-        ///// <param name="applicationId"></param>
-        ///// </summary>
-        /////     Where does this method belong?
-
-        ///// <summary>
-        //}
-        //    return new ToastNotification( xml );
-
-        // // Create the actual toast object using this toast specification. } toastNode?.SetAttribute( "duration", "long" ); var toastNode = xml.SelectSingleNode( "/toast" ) as XmlElement; // Set the duration on the toast
-
-        // if ( longDuration ) { textElements[ 1 ].AppendChild( xml.CreateTextNode( body ) ); textElements[ 0 ].AppendChild( xml.CreateTextNode( heading ) ); // treated as header text, and will be bold.
-
-        // // Set the text on the toast. The first line of text in the ToastText02 template is var textElements = xml.GetElementsByTagName( "text" );
-
-        //    //Find the text component of the content
-        //    var xml = ToastNotificationManager.GetTemplateContent( ToastTemplateType.ToastText02 );
-        //    // can change the text.
-        //    // Using the ToastText02 toast template. Retrieve the content part of the toast so we
-        //public static ToastNotification CreateTextOnlyToast( this String heading, String body, Boolean longDuration = false ) {
-        ///// </remarks>
-        /////     (http://msdn.microsoft.com/en-us/Library/windows/apps/hh761494.aspx)
-        /////     Note: All toast templates available in the Toast Template Catalog
-        ///// <remarks>
-        ///// <returns></returns>
-        ///// <param name="longDuration"></param>
-        ///// <param name="body"></param>
-        ///// <param name="heading"></param>
-
-        /*
-                public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
-                    if ( null == item ) {
-                        return null;
-                    }
-
-                    var value = Encoding.ASCII.GetString( item.Value );
-                    if ( value.EndsWith( "\0" ) ) {
-                        value = value.Replace( "\0", String.Empty );
-                    }
-
-                    if ( value == "0000:00:00 00:00:00" ) {
-                        return null;
-                    }
-
-                    DateTime result;
-                    if ( DateTime.TryParse( value, out result ) ) {
-                        return result;
-                    }
-
-                    if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.Ordinal, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
-                        return result;
-                    }
-
-                    return null;
-                }
-        */
-
-        //}
-        ///// </summary>
+     
     }
 }

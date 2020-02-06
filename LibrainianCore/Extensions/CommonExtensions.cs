@@ -71,10 +71,6 @@ namespace LibrainianCore.Extensions {
                 throw new ArgumentNullException( nameof( endInclusive ) );
             }
 
-            if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
-                return target.CompareTo( startInclusive ) <= 0 && target.CompareTo( endInclusive ) >= 0;
-            }
-
             return target.CompareTo( startInclusive ) >= 0 && target.CompareTo( endInclusive ) <= 0;
         }
 

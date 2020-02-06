@@ -73,7 +73,7 @@ namespace LibrainianCore.Threading {
                 throw new ArgumentNullException( nameof( task ) );
             }
 
-            var bgWorker = new BackgroundWorker();
+            using var bgWorker = new BackgroundWorker();
 
             bgWorker.DoWork += async ( sender, args ) => {
                 try {
@@ -214,7 +214,7 @@ namespace LibrainianCore.Threading {
 
             var tcs = new TaskCompletionSource<TResult>( TaskCreationOptions.RunContinuationsAsynchronously );
 
-            var cts = new CancellationTokenSource( timeout );
+            using var cts = new CancellationTokenSource( timeout );
             cts.Token.Register( () => tcs.TrySetCanceled() );
 
             var del = createDelegate( tcs );
@@ -956,8 +956,8 @@ namespace LibrainianCore.Threading {
                 return task;
             }
 
-            var token = new CancellationTokenSource( timeout ).Token;
-            var delay = Task.Delay( timeout, token );
+            using var cts = new CancellationTokenSource( timeout );
+            var delay = Task.Delay( timeout, cts.Token );
             var winner = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
             return winner == task ? task : Task.FromException( new OperationCanceledException( "timeout" ) );

@@ -44,8 +44,8 @@ namespace LibrainianCore.Persistence {
     using System.Threading;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using LibrainianCore.Measurement.Time;
-    using LibrainianCore.Utilities;
+    using Measurement.Time;
+    using Utilities;
     using Threading;
 
     public sealed class DeserializeReportStats : ABetterClassDispose {

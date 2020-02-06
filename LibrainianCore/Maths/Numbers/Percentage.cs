@@ -58,6 +58,29 @@ namespace LibrainianCore.Maths.Numbers {
         [JsonProperty]
         public Rational Quotient { get; }
 
+        /// <summary>Determines whether the specified object is equal to the current object.</summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns>
+        /// <see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object? obj ) => Equals(this, obj as Percentage);
+
+
+        /// <summary>Serves as the default hash function.</summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode() => this.Quotient.GetHashCode();
+
+        /// <summary>Returns a value that indicates whether the values of two <see cref="T:LibrainianCore.Maths.Numbers.Percentage" /> objects are equal.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+        public static bool operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
+
+        /// <summary>Returns a value that indicates whether two <see cref="T:LibrainianCore.Maths.Numbers.Percentage" /> objects have different values.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+        public static bool operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
+
         /// <summary></summary>
         /// <param name="numerator">The part of a fraction that is above the line and signifies the number to be divided by the denominator.</param>
         /// <param name="denominator">The part of a fraction that is below the line and that functions as the divisor of the numerator.</param>
@@ -90,11 +113,7 @@ namespace LibrainianCore.Maths.Numbers {
                 return true;
             }
 
-            if ( left is null ) {
-                return default;
-            }
-
-            if ( right is null ) {
+            if ( left is null || right is null ) {
                 return default;
             }
 
@@ -171,6 +190,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Boolean Equals( Percentage other ) => Equals( this, other );
 
-        public override String ToString() => $"{this.Quotient}";
+        [NotNull]
+        public override String ToString() => $"{this.Quotient.ToString()}";
     }
 }

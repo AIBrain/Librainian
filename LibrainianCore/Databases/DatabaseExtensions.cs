@@ -55,7 +55,7 @@ namespace LibrainianCore.Databases {
     using Persistence;
     using static Persistence.Cache;
     using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
-    
+
 
     public static class DatabaseExtensions {
 
@@ -95,7 +95,7 @@ namespace LibrainianCore.Databases {
 
             var key = reader.Key();
 
-               var fields = reader.GetFieldNames();
+            var fields = reader.GetFieldNames();
 
             return fields;
         }
@@ -259,7 +259,7 @@ namespace LibrainianCore.Databases {
             }
         }
 
-      
+
 
         [CanBeNull]
         public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
@@ -299,18 +299,14 @@ namespace LibrainianCore.Databases {
                 return serviceName;
             }
 
-            return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
+            return serviceName.Substring( serviceName.IndexOf( '$', StringComparison.OrdinalIgnoreCase ) + 1,
+                serviceName.Length - serviceName.IndexOf( '$', StringComparison.OrdinalIgnoreCase ) - 1 );
         }
 
         [CanBeNull]
         public static IList<PropertyInfo> GetPropertiesForType<T>() {
             var type = typeof( T );
-
-            if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) {
-                TypeDictionary.Add( type, type.GetProperties().ToList() );
-            }
-
-            return TypeDictionary[ type ];
+            return TypeDictionary[ type ] = type.GetProperties();
         }
 
         /// <summary>Returns the ordinal or null.</summary>
@@ -407,7 +403,7 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( exception ) );
             }
 
-            return exception.Message?.Contains( "The server was not found or was not accessible" ) == true;
+            return exception.Message?.Contains( "The server was not found or was not accessible", StringComparison.CurrentCultureIgnoreCase ) == true;
         }
 
         /// <summary>Convert our IList to a DataSet</summary>

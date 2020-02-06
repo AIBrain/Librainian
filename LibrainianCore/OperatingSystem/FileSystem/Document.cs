@@ -729,7 +729,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             try {
                 if ( this.Length.Any() ) {
                     if ( Uri.TryCreate( this.FullPath, UriKind.Absolute, out var sourceAddress ) ) {
-                        var client = new WebClient().Add( token );
+
+                        using var client = new WebClient().Add( token );
 
                         var task = client.DownloadFileTaskAsync( sourceAddress, destination.FullPath );
 
@@ -760,7 +761,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( destination ) );
             }
 
-            var webClient = new WebClient();
+            using var webClient = new WebClient();
 
             webClient.DownloadProgressChanged += ( sender, args ) => {
                 if ( !( args is null ) ) {
@@ -1061,7 +1062,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>(file name, not contents)</summary>
         /// <returns></returns>
         [Pure]
-        public override Int32 GetHashCode() => this.FullPath.GetHashCode();
+        public override Int32 GetHashCode() => this.FullPath.GetHashCode( StringComparison.Ordinal );
 
 
         /// <summary>Returns the filename, without the extension.</summary>
@@ -1288,7 +1289,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             try {
-                var webClient = new WebClient();
+                using var webClient = new WebClient();
 
                 var task = webClient.UploadFileTaskAsync( destination, this.FullPath );
 

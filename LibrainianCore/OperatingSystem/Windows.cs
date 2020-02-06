@@ -275,7 +275,7 @@ namespace LibrainianCore.OperatingSystem {
                 $"Finding {fullname}...".Info();
             }
 
-            var mainDocument = new Document( fullname );
+            using var mainDocument = new Document( fullname );
 
             if ( mainDocument.Exists() ) {
                 okayMessage.Info();

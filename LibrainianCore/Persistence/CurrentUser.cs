@@ -42,7 +42,7 @@ namespace LibrainianCore.Persistence {
     using System;
     using System.Windows.Forms;
     using JetBrains.Annotations;
-    using LibrainianCore.Logging;
+    using Logging;
     using Microsoft.Win32;
 
     public static class CurrentUser {

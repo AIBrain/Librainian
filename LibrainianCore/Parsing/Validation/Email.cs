@@ -69,9 +69,12 @@ namespace LibrainianCore.Parsing.Validation {
         protected Email( [NotNull] String value ) : base( value, s => s?.IsEmailValid() == true ) { }
 
         [NotNull]
-        public static explicit operator Email( [NotNull] String str ) => new Email( str );
+        public static implicit operator Email( [NotNull] String str ) => new Email( str );
 
         [NotNull]
-        public static explicit operator MailAddress( [NotNull] Email email ) => new MailAddress( email );
+        public static implicit operator String( [NotNull] Email email ) => email.Value;
+
+        [NotNull]
+        public static implicit operator MailAddress( [NotNull] Email email ) => new MailAddress( email );
     }
 }
