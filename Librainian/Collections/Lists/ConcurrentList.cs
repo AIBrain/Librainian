@@ -48,6 +48,7 @@ namespace Librainian.Collections.Lists {
     using System.Runtime.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
+    using Extensions;
     using JetBrains.Annotations;
     using Librainian.Extensions;
     using Logging;
@@ -70,6 +71,13 @@ namespace Librainian.Collections.Lists {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class ConcurrentList<T> : ABetterClassDispose, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
 
+        
+        /// <summary>Returns a string that represents the current object.</summary>
+        /// <returns>A string that represents the current object.</returns>
+        [NotNull]
+        public override String ToString() => $"{this.Take( 30 ).ToStrings( atTheEnd: this.Count > 30 ? "..." : String.Empty )}";
+
+
         private volatile Boolean _isReadOnly;
 
         /// <summary>Threadsafe item counter (so we don't have to enter and exit the readerwriter).</summary>
@@ -77,7 +85,7 @@ namespace Librainian.Collections.Lists {
         private Int64 ItemCount;
 
         [NotNull]
-        private ConcurrentQueue<T> InputBuffer { get; set; } = new ConcurrentQueue<T>();
+        private ConcurrentQueue<T> InputBuffer { get; } = new ConcurrentQueue<T>();
 
         [JsonIgnore]
         [NotNull]
@@ -88,7 +96,7 @@ namespace Librainian.Collections.Lists {
         /// </summary>
         [NotNull]
         [JsonProperty]
-        private List<T> TheList { get; set; } = new List<T>();
+        private List<T> TheList { get; } = new List<T>();
 
         /// <summary>
         ///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
@@ -104,7 +112,7 @@ namespace Librainian.Collections.Lists {
             private set => this._isReadOnly = value;
         }
 
-        /// <summary>If set to false, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
+        /// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
         public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
 
         [JsonProperty]

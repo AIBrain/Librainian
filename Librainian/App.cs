@@ -165,28 +165,29 @@ namespace Librainian {
         public static void Run<TForm>( [CanBeNull] IEnumerable<String> arguments ) where TForm : Form, new() {
             RunInternalCommon();
 
-            using ( var form = new TForm() ) {
-                if ( arguments != null ) {
-                    form.Tag = arguments.Where( s => !String.IsNullOrWhiteSpace( s ) );
-                }
+            using var form = new TForm();
 
-                form.SuspendLayout();
-                form.WindowState = FormWindowState.Normal;
-                form.StartPosition = FormStartPosition.WindowsDefaultBounds;
-                form.LoadLocation();
-                form.LoadSize();
-
-                if ( !form.IsFullyVisibleOnAnyScreen() ) {
-                    form.WindowState = FormWindowState.Normal;
-                    form.StartPosition = FormStartPosition.CenterScreen;
-                }
-
-                form.ResumeLayout( true );
-                form.LocationChanged += ( sender, args ) => form.SaveLocation();
-                form.SizeChanged += ( sender, args ) => form.SaveSize();
-
-                Application.Run( form );
+            if ( arguments != null ) {
+                form.Tag = arguments.Where( s => !String.IsNullOrWhiteSpace( s ) );
             }
+
+            form.SuspendLayout();
+            form.WindowState = FormWindowState.Normal;
+            form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+            form.LoadLocation();
+            form.LoadSize();
+
+            if ( !form.IsFullyVisibleOnAnyScreen() ) {
+                form.WindowState = FormWindowState.Normal;
+                form.StartPosition = FormStartPosition.CenterScreen;
+            }
+
+            form.ResumeLayout( true );
+            form.LocationChanged += ( sender, args ) => form.SaveLocation();
+            form.SizeChanged += ( sender, args ) => form.SaveSize();
+
+            Application.Run( form );
+
         }
     }
 }
