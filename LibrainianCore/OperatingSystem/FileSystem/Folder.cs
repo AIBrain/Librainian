@@ -49,7 +49,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using Collections.Extensions;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
@@ -58,20 +57,19 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
-    using DirectoryInfo = Pri.LongPathCore.DirectoryInfo;
-    using FileSystemInfo = Pri.LongPathCore.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPathCore.Path;
-
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
     // ReSharper restore RedundantUsingDirective
 
     public interface IFolder : IEquatable<IFolder> {
 
         [NotNull]
-        String FullName { get; }
+        String FullPath { get; }
 
-        /// <summary>The <see cref="IFolder" /> class is built around <see cref="Pri.LongPathCore.DirectoryInfo" />.</summary>
+        /// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
         [NotNull]
         DirectoryInfo Info { get; }
 
@@ -114,9 +112,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         Boolean Delete();
 
         /// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         /// <exception cref="SecurityException"></exception>
-        /// <exception cref="System.IO.PathTooLongException"></exception>
+        /// <exception cref="PathTooLongException"></exception>
         Boolean Exists();
 
         /// <summary>Free space available to the current user.</summary>
@@ -207,7 +205,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         [JsonIgnore]
         [NotNull]
-        public String FullName => this.Info.FullName;
+        public String FullPath => this.Info.FullPath;
 
         [JsonIgnore]
         [NotNull]
@@ -255,7 +253,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String applicationName, [NotNull] String subFolder ) : this(
-            Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
+            Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
         /// <summary>
         ///     <para>Pass null to automatically fill in <paramref name="companyName" /> and <paramref name="applicationName" /> .</para>
@@ -271,8 +269,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [DebuggerStepThrough]
         public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, [NotNull] params String[] subFolders ) :
             this( Path.Combine( Environment.GetFolderPath( specialFolder ),
-                companyName ?? Application.CompanyName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.CompanyName}." ),
-                applicationName ?? Application.ProductName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.ProductName}." ),
+                companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName)}." ),
+                applicationName ?? throw new InvalidOperationException( $"Empty {nameof( applicationName )}." ),
                 subFolders.ToStrings( @"\" ) ) ) { }
 
         [DebuggerStepThrough]
@@ -291,21 +289,21 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( [NotNull] IFolder folder, [NotNull] String subFolder ) : this( Path.Combine( folder.FullName, subFolder ) ) { }
+        public Folder( [NotNull] IFolder folder, [NotNull] String subFolder ) : this( Path.Combine( folder.FullPath, subFolder ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( [NotNull] IDocument document, [NotNull] String subFolder ) : this( Path.Combine( document.ContainingingFolder().FullName, subFolder ) ) { }
+        public Folder( [NotNull] IDocument document, [NotNull] String subFolder ) : this( Path.Combine( document.ContainingingFolder().FullPath, subFolder ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( [NotNull] FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { }
+        public Folder( [NotNull] FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullPath ) { }
 
         /// <summary>Returns the path with any invalid characters replaced with <paramref name="replacement" /> and then trimmed. (Defaults to "" />.)</summary>
         /// <param name="fullpath"></param>
@@ -367,7 +365,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return default;
             }
 
-            return left.FullName.Is( right.FullName );
+            return left.FullPath.Is( right.FullPath );
         }
 
         /// <summary>Throws Exception if unable to obtain the Temp path.</summary>
@@ -386,7 +384,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             var windowsFolder = Environment.GetFolderPath( Environment.SpecialFolder.Windows );
 
-            Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullName}\"" );
+            Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullPath}\"" );
         }
 
         public static Boolean TryParse( [CanBeNull] String path, [CanBeNull] out IFolder folder ) {
@@ -438,12 +436,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             if ( randomize ) {
                 foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( info => Randem.Next() ) ) {
-                    yield return new Folder( fileInfo.FullName );
+                    yield return new Folder( fileInfo.FullPath );
                 }
             }
             else {
                 foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) {
-                    yield return new Folder( fileInfo.FullName );
+                    yield return new Folder( fileInfo.FullPath );
                 }
             }
         }
@@ -459,7 +457,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             Task.Run( () => {
                 var folders = new List<Folder>();
 
-                folders.AddRange( this.Info.BetterEnumerateDirectories( searchPattern ).Select( fileInfo => new Folder( fileInfo.FullName ) ) );
+                folders.AddRange( this.Info.BetterEnumerateDirectories( searchPattern ).Select( fileInfo => new Folder( fileInfo.FullPath ) ) );
 
                 folders.RemoveAll( folder => folder is null ); //just in case. probably will never happen, unless BetterEnumerateDirectories() gets goofed up.
 
@@ -489,7 +487,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
                 try {
                     if ( this.Info.Parent.Exists == false ) {
-                        new Folder( this.Info.Parent.FullName ).Create();
+                        new Folder( this.Info.Parent.FullPath ).Create();
                     }
                 }
                 catch ( Exception exception ) {
@@ -562,18 +560,18 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 }
             }
 
-            return this.Info.BetterEnumerateFiles().Select( fileInfo => new Document( fileInfo.FullName ) );
+            return this.Info.BetterEnumerateFiles().Select( fileInfo => new Document( fileInfo.FullPath ) );
         }
 
         [NotNull]
         public IEnumerable<Document> GetDocuments( [NotNull] String searchPattern ) =>
-            this.Info.BetterEnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullName ) );
+            this.Info.BetterEnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullPath ) );
 
         [NotNull]
         public IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns ) => searchPatterns.SelectMany( this.GetDocuments );
 
         [NotNull]
-        public Disk GetDrive() => new Disk( this.Info.Root.FullName );
+        public Disk GetDrive() => new Disk( this.Info.Root.FullPath );
 
         [ItemNotNull]
         [NotNull]
@@ -583,11 +581,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
-                yield return new Folder( fileInfo.FullName );
+                yield return new Folder( fileInfo.FullPath );
             }
         }
 
-        public override Int32 GetHashCode() => this.FullName.GetHashCode();
+        public override Int32 GetHashCode() => this.FullPath.GetHashCode();
 
         [CanBeNull]
         public IFolder GetParent() => new Folder( this.Info.Parent );
@@ -599,7 +597,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
         public void OpenWithExplorer() {
-            using var _ = Windows.OpenWithExplorer( value: this.FullName );
+            using var _ = Windows.OpenWithExplorer( value: this.FullPath );
         }
 
         public void Refresh() => this.Info.Refresh();
@@ -611,7 +609,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [NotNull]
         public String ToCompactFormat() {
             var sb = new StringBuilder();
-            NativeMethods.PathCompactPathEx( sb, this.FullName, this.FullName.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
+            NativeMethods.PathCompactPathEx( sb, this.FullPath, this.FullPath.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
 
             return sb.ToString();
         }
@@ -622,6 +620,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>Returns a String that represents the current object.</summary>
         /// <returns>A String that represents the current object.</returns>
         [NotNull]
-        public override String ToString() => this.FullName;
+        public override String ToString() => this.FullPath;
     }
 }

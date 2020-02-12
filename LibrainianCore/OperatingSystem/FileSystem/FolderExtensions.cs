@@ -47,18 +47,18 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
     using Parsing;
     using Threading;
-    using Directory = Pri.LongPathCore.Directory;
-    using DirectoryInfo = Pri.LongPathCore.DirectoryInfo;
-    using File = Pri.LongPathCore.File;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPathCore.Path;
-
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class FolderExtensions {
@@ -238,7 +238,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( info ) );
             }
 
-            return SplitPath( info.FullName );
+            return SplitPath( info.FullPath );
         }
 
         /// <summary>
@@ -261,9 +261,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     return true;
                 }
 
-                Directory.Delete( folder.FullName );
+                Directory.Delete( folder.FullPath );
 
-                return !Directory.Exists( folder.FullName );
+                return !Directory.Exists( folder.FullPath );
             }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
@@ -272,7 +272,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 // IOExcception is thrown when the file is in use by any process.
                 if ( stopwatch.Elapsed <= tryFor ) {
                     Thread.Yield();
-                    Application.DoEvents();
+                    
 
                     goto TryAgain;
                 }

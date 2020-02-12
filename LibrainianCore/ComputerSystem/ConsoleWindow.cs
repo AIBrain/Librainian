@@ -43,10 +43,8 @@ namespace LibrainianCore.ComputerSystem {
     using System.Diagnostics;
     using System.Drawing;
     using System.IO;
-    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Text;
-    using System.Windows.Forms;
 
     public static class ConsoleWindow {
 
@@ -148,34 +146,7 @@ namespace LibrainianCore.ComputerSystem {
             var errStream = Console.OpenStandardError();
             var encoding = Encoding.GetEncoding( MY_CODE_PAGE );
             StreamWriter standardOutput = new StreamWriter( outStream, encoding ), standardError = new StreamWriter( errStream, encoding );
-            Screen screen = null;
-
-            try {
-                if ( screenNum < 0 ) {
-                    screen = Screen.AllScreens.FirstOrDefault( s => !s.Primary );
-                }
-                else {
-                    screen = Screen.AllScreens[ Math.Min( screenNum, Screen.AllScreens.Length - 1 ) ];
-                }
-            }
-            catch ( Exception ) { }
-
-            if ( bufferWidth == -1 ) {
-                if ( screen is null ) {
-                    bufferWidth = 180;
-                }
-                else {
-                    bufferWidth = screen.WorkingArea.Width / 10;
-
-                    if ( bufferWidth > 15 ) {
-                        bufferWidth -= 5;
-                    }
-                    else {
-                        bufferWidth = 10;
-                    }
-                }
-            }
-
+            
             try {
                 standardOutput.AutoFlush = true;
                 standardError.AutoFlush = true;
@@ -199,17 +170,7 @@ namespace LibrainianCore.ComputerSystem {
                 Debug.WriteLine( e.ToString() );
             }
 
-            try {
-                if ( screen != null ) {
-                    var workingArea = screen.WorkingArea;
-                    var hConsole = GetConsoleWindow();
-                    MoveWindow( hConsole, workingArea.Left, workingArea.Top, workingArea.Width / 2, workingArea.Height / 2, true );
-                }
-            }
-            catch ( Exception e ) // Could be redirected
-            {
-                Debug.WriteLine( e.ToString() );
-            }
+
         }
 
         [DllImport( "user32.dll" )]

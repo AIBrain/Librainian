@@ -40,15 +40,11 @@
 namespace LibrainianCore.Measurement.Currency {
 
     using System;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
 
     public interface ISimpleWallet {
 
         Decimal Balance { get; }
-
-        [CanBeNull]
-        Label LabelToFlashOnChanges { get; set; }
 
         [CanBeNull]
         Action<Decimal> OnAfterDeposit { get; set; }

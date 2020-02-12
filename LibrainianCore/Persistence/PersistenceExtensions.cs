@@ -47,7 +47,6 @@ namespace LibrainianCore.Persistence {
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
     using System.Threading;
-    using System.Windows.Forms;
     using Converters;
     using JetBrains.Annotations;
     using Logging;
@@ -56,36 +55,17 @@ namespace LibrainianCore.Persistence {
     using Newtonsoft.Json.Serialization;
     using OperatingSystem.FileSystem;
     using Threading;
-    using File = Pri.LongPathCore.File;
 
     // ReSharper disable RedundantUsingDirective
-
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class PersistenceExtensions {
-
-        [NotNull]
-        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
-
-            //ContractResolver = new MyContractResolver(),
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
-        }, true );
-
-        public static readonly Lazy<Document> DataDocument = new Lazy<Document>( () => {
-            var document = new Document( LocalDataFolder.Value, Application.ExecutablePath + ".data" );
-
-            if ( !document.Exists() ) {
-
-                // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                document.AppendText( String.Empty );
-            }
-
-            return document;
-        } );
 
         /// <summary>
         ///     <para><see cref="Folder" /> to store application data.</para>
@@ -105,21 +85,23 @@ namespace LibrainianCore.Persistence {
 
         [NotNull]
         public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.All
         }, true );
 
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
 
         [NotNull]
-        private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
-            var document = new Document( new Folder( specialFolder, nameof( Settings ) ), "StaticSettings.exe" );
-            document.ContainingingFolder().Create();
-            using var stream = document.GetFreshInfo().Create();
+        public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
 
-            return document;
-        }
-
+            //ContractResolver = new MyContractResolver(),
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
+        }, true );
         /// <summary></summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="storedAsString"></param>
@@ -352,12 +334,12 @@ namespace LibrainianCore.Persistence {
                 var stopwatch = Stopwatch.StartNew();
                
                 if ( !folder.Create() ) {
-                    throw new DirectoryNotFoundException( folder.FullName );
+                    throw new DirectoryNotFoundException( folder.FullPath );
                 }
 
                 var itemCount = ( UInt64 ) dictionary.LongCount();
 
-                String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ).Info();
+                String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
                 var currentLine = 0f;
 
@@ -505,7 +487,7 @@ namespace LibrainianCore.Persistence {
             value = default;
 
             try {
-                if (location.IsNullOrWhiteSpace()) { location = LocalDataFolder.Value.FullName; }
+                if (location.IsNullOrWhiteSpace()) { location = LocalDataFolder.Value.FullPath; }
 
                 var filename = $"{location}:{attribute}";
 

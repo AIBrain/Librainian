@@ -373,7 +373,7 @@ namespace LibrainianCore.OperatingSystem {
         public static extern IntPtr MapViewOfFile( IntPtr hFileMappingObject, Int32 dwDesiredAccess, Int32 dwFileOffsetHigh, Int32 dwFileOffsetLow, IntPtr dwNumBytesToMap );
 
         [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        public static extern Boolean MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, Pri.LongPathCore.NativeMethods.CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
+        public static extern Boolean MoveFileWithProgress( String lpExistingFileName, String lpNewFileName, NativeMethods.CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
 
         /// <summary>
         ///     Netapi32.dll : The NetApiBufferFree function frees the memory that the

@@ -41,18 +41,10 @@ namespace LibrainianCore.Graphics.Imaging {
 
     using System;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Collections.Sets;
     using JetBrains.Annotations;
-    using Logging;
-    using Maths.Hashings;
     using Newtonsoft.Json;
-    using OperatingSystem.FileSystem;
 
     /// <summary> Experimental Resilient Graphics </summary>
     /// <remarks>Just for fun & learning.</remarks>
@@ -81,12 +73,15 @@ namespace LibrainianCore.Graphics.Imaging {
         public UInt32 Height { get; private set; }
 
         [JsonProperty]
+        [NotNull]
         public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
 
         [JsonProperty]
+        [NotNull]
         public ConcurrentSet<Int32> PropertyIdList { get; } = new ConcurrentSet<Int32>();
 
         [JsonProperty]
+        [NotNull]
         public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
 
         public UInt32 Width { get; private set; }
@@ -97,81 +92,9 @@ namespace LibrainianCore.Graphics.Imaging {
         public Task<UInt64> CalculateChecksumAsync() =>
             Task.Run( () => {
                 unchecked {
-                    return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
+                    return ( UInt64 ) this.Pixels.GetHashCode();
                 }
             } );
 
-        public async Task<Boolean> TryAdd( [CanBeNull] Document document, TimeSpan delay, CancellationToken cancellationToken ) {
-            try {
-                return await this.TryAddAsync( new Bitmap( document.FullPath ), delay, cancellationToken ).ConfigureAwait( false );
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
-
-        public async Task<Boolean> TryAddAsync( [CanBeNull] Bitmap bitmap, TimeSpan timeout, CancellationToken cancellationToken ) {
-            if ( bitmap is null ) {
-                return default;
-            }
-
-            var stopwatch = Stopwatch.StartNew();
-
-            return await Task.Run( () => {
-                var width = bitmap.Width;
-
-                if ( width < UInt32.MinValue ) {
-                    return default;
-                }
-
-                var height = bitmap.Height;
-
-                if ( height < UInt32.MinValue ) {
-                    return default;
-                }
-
-                this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
-
-                this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem {
-                    Id = item.Id,
-                    Len = item.Len,
-                    Type = item.Type,
-                    Value = item.Value
-                } ) );
-
-                this.Width = ( UInt32 )bitmap.Width;
-                this.Height = ( UInt32 )bitmap.Height;
-
-                var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
-
-                var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
-
-                Parallel.For( 0, this.Height, y => {
-                    if ( stopwatch.Elapsed > timeout ) {
-                        return;
-                    }
-
-                    if ( cancellationToken.IsCancellationRequested ) {
-                        return;
-                    }
-
-                    for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
-                        var pixel = new Pixel( color, x, ( UInt32 )y );
-                        this.Pixels.TryAdd( pixel );
-                    }
-                } );
-
-                bitmap.UnlockBits( data );
-
-                //TODO animated gif RE: image.FrameDimensionsList;
-
-                //image.Palette?
-
-                return false; //TODO add frame
-            }, cancellationToken ).ConfigureAwait( false );
-        }
     }
 }

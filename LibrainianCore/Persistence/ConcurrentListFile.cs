@@ -44,7 +44,6 @@ namespace LibrainianCore.Persistence {
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using Collections.Lists;
     using JetBrains.Annotations;
     using Logging;
@@ -71,11 +70,7 @@ namespace LibrainianCore.Persistence {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var folder = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
-
-            if ( !folder.Exists() ) {
-                folder.Create();
-            }
+            document.ContainingingFolder().Create();
 
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
             this.Read().Wait(); //TODO I don't like this Wait being here.

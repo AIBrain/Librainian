@@ -40,9 +40,9 @@
 namespace LibrainianCore.OperatingSystem {
 
     using System;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
     using Logging;
+    using Magic;
     using Microsoft.Win32;
 
     public static class RegistryContext {
@@ -76,8 +76,9 @@ namespace LibrainianCore.OperatingSystem {
                         command = "command";
                     }
 
+                    action.ThrowIfNull();
                     if ( String.IsNullOrEmpty( action ) ) {
-                        action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
+                        //action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
                     }
 
                     using ( var commandKey = registryKey.CreateSubKey( command ) ) {

@@ -49,7 +49,6 @@ namespace LibrainianCore.OperatingSystem {
     using System.Security;
     using System.Text;
     using System.Threading;
-    using System.Windows.Forms;
     using ComputerSystem.Devices;
     using FileSystem;
     using Graphics;
@@ -541,19 +540,6 @@ namespace LibrainianCore.OperatingSystem {
         [return: MarshalAs( UnmanagedType.Bool )]
         public static extern Boolean DeleteFileW( String lpFileName );
 
-        /// <summary>
-        ///     <para>Returns the <see cref="NativeWindow" /> for <see cref="GetDesktopWindow" />.</para>
-        /// </summary>
-        /// <returns></returns>
-        [NotNull]
-        public static NativeWindow Desktop() {
-            var desktopWindow = GetDesktopWindow();
-            var nativeWindow = new NativeWindow();
-            nativeWindow.AssignHandle( desktopWindow );
-
-            return nativeWindow;
-        }
-
         [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize,
             out Int32 pBytesReturned, IntPtr lpOverlapped );
@@ -911,14 +897,6 @@ namespace LibrainianCore.OperatingSystem {
         [DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
         public static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent,
             Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
-
-        public static Boolean SetWindowIcon( this IntPtr window, [NotNull] Icon icon ) {
-            if ( icon is null ) {
-                throw new ArgumentNullException( nameof( icon ) );
-            }
-
-            return window.SendMessage( WM_SETICON, IconSize.Big, icon.Handle ) != default;
-        }
 
         /// <summary>
         ///     <code>

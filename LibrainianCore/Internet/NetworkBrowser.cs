@@ -42,8 +42,8 @@ namespace LibrainianCore.Internet {
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
+    using Logging;
     using OperatingSystem;
 
     /// <summary>
@@ -134,7 +134,7 @@ namespace LibrainianCore.Internet {
                 }
             }
             catch ( Exception ex ) {
-                MessageBox.Show( $"Problem with acessing network computers in NetworkBrowser().\r\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error );
+                ex.Log();
             }
             finally {
 

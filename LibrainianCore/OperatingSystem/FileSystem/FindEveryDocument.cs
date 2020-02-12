@@ -93,14 +93,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 Int64 counter = 0;
 
                 this.DrivesFound = new ActionBlock<Disk>( disk => {
-                    var root = new Folder( disk.Info.RootDirectory.FullName );
+                    var root = new Folder( disk.Info.RootDirectory.FullName);
 
                     Parallel.ForEach( root.BetterGetFolders().AsParallel(), folder => {
                         if ( this.CancellationTokenSource.IsCancellationRequested ) {
                             return;
                         }
 
-                        this.Status = $"Found folder `{folder.FullName}`.";
+                        this.Status = $"Found folder `{folder.FullPath}`.";
                         this.FoldersFound.Post( folder );
                         Interlocked.Increment( ref counter );
                         this.Progress.Report( counter );
@@ -113,7 +113,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                             return;
                         }
 
-                        this.Status = $"Found folder `{folder.FullName}`.";
+                        this.Status = $"Found folder `{folder.FullPath}`.";
                         this.FoldersFound.Post( folder );
                         Interlocked.Increment( ref counter );
                         this.Progress.Report( counter );

@@ -49,9 +49,7 @@ namespace LibrainianCore.Threading {
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Measurement.Time;
 
     public static class ThreadingExtensions {
 
@@ -208,36 +206,6 @@ namespace LibrainianCore.Threading {
         public static void End() {
             Thread.EndThreadAffinity();
             Thread.EndCriticalRegion();
-        }
-
-        /// <summary>Split the given <paramref name="timeSpan" /> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)" /> and <see cref="Thread.Yield" /></summary>
-        /// <param name="thread">  </param>
-        /// <param name="timeSpan"></param>
-        public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
-            if ( null == thread ) {
-                throw new ArgumentNullException( nameof( thread ) );
-            }
-
-            var stopwatch = Stopwatch.StartNew();
-            var portion = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
-
-            if ( portion > Seconds.One ) {
-                portion = Seconds.One;
-            }
-
-            var toggle = true;
-
-            do {
-                Application.DoEvents();
-                toggle = !toggle;
-
-                if ( toggle ) {
-                    Thread.Sleep( portion );
-                }
-                else {
-                    Thread.Yield();
-                }
-            } while ( stopwatch.Elapsed < timeSpan );
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {

@@ -49,7 +49,7 @@ namespace LibrainianCore.Persistence {
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     <para>Computes the various hashes of the given <see cref="DocumentInfo.AbsolutePath" />.</para>
+    ///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
     /// </summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]

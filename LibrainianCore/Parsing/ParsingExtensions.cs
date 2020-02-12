@@ -1207,14 +1207,12 @@ namespace LibrainianCore.Parsing {
             TimeSpan? timeout = null ) {
             var similarity = new PotentialF( 0 );
 
-            if ( source is null && compare is null ) {
-                similarity.Add( 1 );
+            switch ( source ) {
+                case null when compare is null:
+                    similarity.Add( 1 );
 
-                return similarity;
-            }
-
-            if ( source is null ) {
-                return similarity;
+                    return similarity;
+                case null: return similarity;
             }
 
             if ( compare is null ) {

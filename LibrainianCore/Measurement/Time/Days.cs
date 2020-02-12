@@ -183,15 +183,12 @@ namespace LibrainianCore.Measurement.Time {
         /// </returns>
         /// <exception cref="ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( obj is null ) {
-                return 1;
+            switch ( obj ) {
+                case null: return 1;
+                case Days other: return this.CompareTo( other );
+                default: throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
             }
 
-            if ( obj is Days other ) {
-                return this.CompareTo( other );
-            }
-
-            throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
         }
 
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );

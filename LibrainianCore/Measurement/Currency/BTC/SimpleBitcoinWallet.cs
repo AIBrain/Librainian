@@ -43,8 +43,6 @@ namespace LibrainianCore.Measurement.Currency.BTC {
     using System.Diagnostics;
     
     using System.Threading;
-    using System.Windows.Forms;
-    using Controls;
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
@@ -103,8 +101,6 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 }
             }
         }
-
-        public Label LabelToFlashOnChanges { get; set; }
 
         public Action<Decimal> OnAfterDeposit { get; set; }
 
@@ -191,7 +187,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 if ( this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
                     try {
                         this._balance += amount;
-                        this.LabelToFlashOnChanges.Flash();
+                        
                     }
                     finally {
                         this._access.ExitWriteLock();
@@ -258,7 +254,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 }
 
                 this._balance -= amount;
-                this.LabelToFlashOnChanges.Flash();
+                
                 withdrewAmount = amount;
 
                 return true;
@@ -291,7 +287,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
 
-                this.LabelToFlashOnChanges.Flash();
+                
 
                 return true;
             }
@@ -332,7 +328,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 }
 
                 this._balance -= amount;
-                this.LabelToFlashOnChanges.Flash();
+                
 
                 return true;
             }

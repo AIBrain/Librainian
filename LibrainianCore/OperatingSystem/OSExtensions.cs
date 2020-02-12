@@ -41,9 +41,7 @@ namespace LibrainianCore.OperatingSystem {
 
     using System;
     using System.Diagnostics;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Logging;
 
     public static class OSExtensions {
 
@@ -64,25 +62,6 @@ namespace LibrainianCore.OperatingSystem {
             }
         }
 
-        /// <summary>Copy the ToString() of <paramref name="value" /> to the <see cref="Clipboard" />.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <param name="format"></param>
-        public static void CopyToClipboard<T>( [CanBeNull] this T value, TextDataFormat format = TextDataFormat.UnicodeText ) {
-            try {
-                if ( value is null ) {
-                    return;
-                }
 
-                var text = value.ToString();
-
-                if ( !String.IsNullOrEmpty( text ) ) {
-                    Clipboard.SetText( text, format );
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-        }
     }
 }

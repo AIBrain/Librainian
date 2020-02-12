@@ -42,8 +42,6 @@ namespace LibrainianCore.Measurement.Currency {
     using System;
     using System.Diagnostics;
     using System.Threading;
-    using System.Windows.Forms;
-    using Controls;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
     using Time;
@@ -75,9 +73,6 @@ namespace LibrainianCore.Measurement.Currency {
                 return Decimal.Zero;
             }
         }
-
-        [CanBeNull]
-        public Label LabelToFlashOnChanges { get; set; }
 
         [CanBeNull]
         public Action<Decimal> OnAfterDeposit { get; set; }
@@ -166,7 +161,7 @@ namespace LibrainianCore.Measurement.Currency {
                 if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
                     try {
                         this._balance += amount;
-                        this.LabelToFlashOnChanges?.Flash();
+         
 
                         return true;
                     }
@@ -227,7 +222,7 @@ namespace LibrainianCore.Measurement.Currency {
                         }
 
                         this._balance -= amount;
-                        this.LabelToFlashOnChanges?.Flash();
+         
 
                         intoWallet?.TryDeposit( amount );
 
@@ -259,7 +254,7 @@ namespace LibrainianCore.Measurement.Currency {
                     try {
                         this._balance = amount;
 
-                        this.LabelToFlashOnChanges?.Flash();
+         
 
                         return true;
                     }
@@ -299,7 +294,7 @@ namespace LibrainianCore.Measurement.Currency {
                         }
 
                         this._balance -= amount;
-                        this.LabelToFlashOnChanges?.Flash();
+         
 
                         return true;
                     }

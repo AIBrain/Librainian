@@ -55,8 +55,14 @@ namespace LibrainianCore.Security {
     using Logging;
     using OperatingSystem.FileSystem;
 
-    using File = Pri.LongPathCore.File;
-    using FileInfo = Pri.LongPathCore.FileInfo;
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
 
     public static class SecurityExtensions {
 
@@ -462,7 +468,7 @@ namespace LibrainianCore.Security {
 
             using var p = new Process {
                 StartInfo = {
-                    FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true
+                    FileName = "md5sum.exe", Arguments = file.FullPath, UseShellExecute = false, RedirectStandardOutput = true
                 }
             };
 

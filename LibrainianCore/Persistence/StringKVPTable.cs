@@ -236,9 +236,9 @@ namespace LibrainianCore.Persistence {
         public StringKVPTable( Byte specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this(
             folder: new Folder( ( Environment.SpecialFolder )specialFolder, subFolder, tableName ) ) { }
 
-        public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullName, path2: tableName ) ) { }
+        public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullPath, path2: tableName ) ) { }
 
-        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullName, subFolder,
+        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullPath, subFolder,
             tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
@@ -250,7 +250,7 @@ namespace LibrainianCore.Persistence {
                 this.Folder = folder;
 
                 if ( !this.Folder.Create() ) {
-                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
+                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
                 }
 
                 var customConfig = new DatabaseConfig {
@@ -259,10 +259,10 @@ namespace LibrainianCore.Persistence {
                     DefragmentSequentialBTrees = true
                 };
 
-                this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullName, customConfig: customConfig );
+                this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullPath, customConfig: customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
-                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullName}." );
+                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
                 }
             }
             catch ( Exception exception ) {
@@ -309,7 +309,7 @@ namespace LibrainianCore.Persistence {
         public void Initialize() {
 
             if ( this.Dictionary.Database.ToString().IsNullOrWhiteSpace() ) {
-                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullName}`." );
+                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
             }
         }
 

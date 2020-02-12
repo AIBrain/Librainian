@@ -46,9 +46,9 @@ namespace LibrainianCore.Databases {
     using System.Data.SqlClient;
     using System.Diagnostics;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using Collections.Extensions;
     using Collections.Sets;
     using Converters;
@@ -57,6 +57,7 @@ namespace LibrainianCore.Databases {
     using Logging;
     using Maths;
     using Measurement.Time;
+    using OperatingSystem.FileSystem.Pri.LongPath;
     using Parsing;
     using Utilities;
 
@@ -751,7 +752,7 @@ namespace LibrainianCore.Databases {
             var builder = new SqlConnectionStringBuilder {
                 DataSource = $@"{serverName}\{instanceName}",
                 ApplicationIntent = ApplicationIntent.ReadWrite,
-                ApplicationName = Application.ProductName,
+                ApplicationName = Assembly.GetEntryAssembly()?.Location.GetFileNameWithoutExtension(),
                 ConnectRetryCount = 3,
                 ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
                 ConnectRetryInterval = 1,

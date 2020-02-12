@@ -40,8 +40,6 @@
 namespace LibrainianCore.Graphics.Video {
 
     using System;
-    using System.Drawing;
-    using System.Drawing.Imaging;
     using System.Runtime.InteropServices;
     using JetBrains.Annotations;
     using OperatingSystem;
@@ -108,33 +106,6 @@ namespace LibrainianCore.Graphics.Video {
             if ( result != 0 ) {
                 throw new Exception( "Error in AVIStreamSetFormat: " + result );
             }
-        }
-
-        /// <summary>Adds a new frame to the AVI stream</summary>
-        /// <param name="bmp">The image to add</param>
-        public void AddFrame( [NotNull] Bitmap bmp ) {
-            bmp.RotateFlip( RotateFlipType.RotateNoneFlipY );
-
-            var bmpDat = bmp.LockBits( new Rectangle( 0, 0, bmp.Width, bmp.Height ), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb );
-
-            if ( this._countFrames == 0 ) {
-
-                //this is the first frame - get size and create a new stream
-                this._stride = ( UInt32 )bmpDat.Stride;
-                this._width = bmp.Width;
-                this._height = bmp.Height;
-                this.CreateStream();
-            }
-
-            var result = NativeMethods.AVIStreamWrite( this._aviStream, this._countFrames, 1, bmpDat.Scan0, //pointer to the beginning of the image data
-                ( Int32 )( this._stride * this._height ), 0, 0, 0 );
-
-            if ( result != 0 ) {
-                throw new Exception( "Error in AVIStreamWrite: " + result );
-            }
-
-            bmp.UnlockBits( bmpDat );
-            this._countFrames++;
         }
 
         /// <summary>Closes stream, file and AVI Library</summary>

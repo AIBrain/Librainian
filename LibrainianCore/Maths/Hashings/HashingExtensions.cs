@@ -46,8 +46,12 @@ namespace LibrainianCore.Maths.Hashings {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using FileInfo = Pri.LongPathCore.FileInfo;
-
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class HashingExtensions {

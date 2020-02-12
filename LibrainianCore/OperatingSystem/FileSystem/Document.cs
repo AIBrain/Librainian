@@ -44,7 +44,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics;
-    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -63,14 +62,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Parsing;
     using Security;
     using Utilities;
-    using Directory = Pri.LongPathCore.Directory;
-    using File = Pri.LongPathCore.File;
-    using FileInfo = Pri.LongPathCore.FileInfo;
-    using FileSystemInfo = Pri.LongPathCore.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPathCore.Path;
-
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
@@ -1037,8 +1036,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             var folder = this.ContainingingFolder();
 
             if ( !folder.Exists() ) {
-                if ( !Directory.CreateDirectory( folder.FullName ).Exists ) {
-                    throw new DirectoryNotFoundException( $"Could not create folder \"{folder.FullName}\"." );
+                if ( !Directory.CreateDirectory( folder.FullPath ).Exists ) {
+                    throw new DirectoryNotFoundException( $"Could not create folder \"{folder.FullPath}\"." );
                 }
             }
 
@@ -1364,9 +1363,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new Lazy<Regex>( () =>
             new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-        [CanBeNull]
-        public Bitmap Bitmap { get; set; }
-
         protected Document( [NotNull] SerializationInfo info ) {
             if ( info is null ) {
                 throw new ArgumentNullException( nameof( info ) );
@@ -1423,7 +1419,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             if ( watchFile ) {
-                this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullName, this.FileName ) {
+                this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullPath, this.FileName ) {
                     IncludeSubdirectories = false,
                     EnableRaisingEvents = true
                 } );
@@ -1449,19 +1445,17 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
             Path.Combine( justPath, filename ), deleteAfterClose ) { }
 
-        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName ?? throw new InvalidOperationException(),
+        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullPath,
             deleteAfterClose ) { }
 
-        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullName, filename, deleteAfterClose ) { }
+        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
-            Path.Combine( folder.FullName, document.FileName ), deleteAfterClose ) { }
+            Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {
-            using ( this.Bitmap ) {
-                this.Bitmap = default;
-            }
+            
 
             this.Buffer = default;
 

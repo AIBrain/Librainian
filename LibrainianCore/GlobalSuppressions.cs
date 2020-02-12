@@ -61,3 +61,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Design", "CA1055:Uri return values should not be strings", Justification = "Maybe" )]
 [assembly: SuppressMessage( "Performance", "HAA0401:Possible allocation of reference type enumerator", Justification = "Yada yada yada" )]
 [assembly: SuppressMessage( "Style", "IDE0048:Add parentheses for clarity", Justification = "What a stupid rule." )]
+[assembly: SuppressMessage( "Redundancy", "RCS1036:Remove redundant empty line.", Justification = "What a stupid rule." )]
+[assembly: SuppressMessage( "Performance", "RCS1080:Use 'Count/Length' property instead of 'Any' method.", Justification = "This is the opposite of a Performance boost." )]
+[assembly: SuppressMessage( "Design", "CA1067:Override Object.Equals(object) when implementing IEquatable<T>", Justification = "Code smell." )]

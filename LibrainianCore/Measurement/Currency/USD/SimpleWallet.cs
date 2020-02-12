@@ -42,7 +42,6 @@ namespace LibrainianCore.Measurement.Currency.USD {
     using System;
     using System.Diagnostics;
     using System.Threading;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
     using Utilities;
 
@@ -89,8 +88,6 @@ namespace LibrainianCore.Measurement.Currency.USD {
         [NotNull]
         public String Formatted => this.ToString();
 
-        public Label LabelToFlashOnChanges { get; set; }
-
         public Action<Decimal> OnAfterDeposit { get; set; }
 
         public Action<Decimal> OnAfterWithdraw { get; set; }
@@ -114,6 +111,7 @@ namespace LibrainianCore.Measurement.Currency.USD {
             using ( this._access ) { }
         }
 
+        [NotNull]
         public override String ToString() => this.Balance.ToString( "C" );
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>

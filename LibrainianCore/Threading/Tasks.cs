@@ -124,27 +124,27 @@ namespace LibrainianCore.Threading {
 			return results;
 		}
 
-		///// <summary>
-		/////     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
-		///// </summary>
-		///// <param name="job"></param>
-		///// <param name="delay"></param>
-		///// <param name="priority"></param>
-		//public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
-		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
-		//    }
-		//    AddThenFireAndForget( job: job, delay: delay );
-		//}
+        ///// <summary>
+        /////     <para>Post the <paramref name="job" /> to the <see cref="FireAndForget" /> dataflow.</para>
+        ///// </summary>
+        ///// <param name="job"></param>
+        ///// <param name="delay"></param>
+        ///// <param name="priority"></param>
+        //public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
+        //    if ( job == null ) {
+        //        throw new ArgumentNullException( "job" );
+        //    }
+        //    AddThenFireAndForget( job: job, delay: delay );
+        //}
 
-		/// <summary>
-		///     Do the <paramref name="job" /> with a dataflow after a
-		///     <see cref="System.Threading.Timer" /> .
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <param name="job"></param>
-		/// <returns></returns>
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
+        /// <summary>
+        ///     Do the <paramref name="job" /> with a dataflow after a
+        ///     <see cref="Timer" /> .
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
 			if ( job == null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
@@ -155,13 +155,13 @@ namespace LibrainianCore.Threading {
 		}
 
 
-		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <param name="job"></param>
-		/// <returns></returns>
-		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
+        /// <summary>
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" />.</para>
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
 			if ( job == null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
@@ -171,13 +171,13 @@ namespace LibrainianCore.Threading {
 			await Task.Run( action: job ).ConfigureAwait( false );
 		}
 
-		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <param name="job"></param>
-		/// <returns></returns>
-		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
+        /// <summary>
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" />.</para>
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then( this Seconds delay, [NotNull] Action job ) {
 			if ( job == null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}
@@ -187,13 +187,13 @@ namespace LibrainianCore.Threading {
 			await Task.Run( action: job ).ConfigureAwait( false );
 		}
 
-		/// <summary>
-		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
-		/// </summary>
-		/// <param name="delay"></param>
-		/// <param name="job"></param>
-		/// <returns></returns>
-		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
+        /// <summary>
+        ///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" />.</para>
+        /// </summary>
+        /// <param name="delay"></param>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public static async Task Then( this Minutes delay, [NotNull] Action job ) {
 			if ( job == null ) {
 				throw new ArgumentNullException( paramName: nameof( job ) );
 			}

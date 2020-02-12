@@ -45,9 +45,12 @@ namespace LibrainianCore.Graphics.Imaging {
     using JetBrains.Annotations;
 
     // ReSharper disable RedundantUsingDirective
-    using File = Pri.LongPathCore.File;
-    using FileInfo = Pri.LongPathCore.FileInfo;
-
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>Untested. Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/</summary>

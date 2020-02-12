@@ -68,7 +68,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
 
         public Disk( [NotNull] Document document ) : this( document.FullPath[ 0 ] ) { }
 
-        public Disk( [NotNull] Folder folder ) : this( folder.FullName[ 0 ] ) { }
+        public Disk( [NotNull] Folder folder ) : this( folder.FullPath[ 0 ] ) { }
 
         public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
 
@@ -97,7 +97,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
 
         [NotNull]
         public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern = "*" ) {
-            var root = new Folder( this.Info.RootDirectory.FullName );
+            var root = new Folder( this.Info.RootDirectory.FullName);
 
             return root.GetFolders( searchPattern );
         }

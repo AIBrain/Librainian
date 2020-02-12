@@ -46,7 +46,15 @@ namespace LibrainianCore.Extensions {
     using Logging;
     using Maths.Numbers;
     using OperatingSystem.FileSystem;
-    using Pri.LongPathCore;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
 
     /// <summary>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</summary>
     /// <remarks>I just love guids!</remarks>

@@ -45,10 +45,8 @@ namespace LibrainianCore {
     using System.Linq;
     using System.Runtime;
     using System.Threading;
-    using System.Windows.Forms;
     using Collections.Extensions;
     using CommandLine;
-    using Controls;
     using JetBrains.Annotations;
     using Logging;
     using NLog;
@@ -112,29 +110,9 @@ namespace LibrainianCore {
 
         private static void RunInternalCommon() {
             AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( breakinto: true );
-            Application.ThreadException += ( sender, e ) => e?.Exception?.Log( breakinto: true );
-
-            ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
-            ProfileOptimization.StartProfile( Application.ExecutablePath );
 
             Debug.AutoFlush = true;
             Trace.AutoFlush = true;
-
-            Application.EnableVisualStyles();
-
-            try {
-                Application.SetCompatibleTextRenderingDefault( defaultValue: false );
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.Log();
-            }
-
-            try {
-                Thread.CurrentThread.Name = "UI";
-            }
-            catch ( InvalidOperationException exception ) {
-                exception.Log();
-            }
 
             InternalLogger.Reset();
 
@@ -162,31 +140,6 @@ namespace LibrainianCore {
             }
         }
 
-        public static void Run<TForm>( [CanBeNull] IEnumerable<String> arguments ) where TForm : Form, new() {
-            RunInternalCommon();
-
-            using ( var form = new TForm() ) {
-                if ( arguments != null ) {
-                    form.Tag = arguments.Where( s => !String.IsNullOrWhiteSpace( s ) );
-                }
-
-                form.SuspendLayout();
-                form.WindowState = FormWindowState.Normal;
-                form.StartPosition = FormStartPosition.WindowsDefaultBounds;
-                form.LoadLocation();
-                form.LoadSize();
-
-                if ( !form.IsFullyVisibleOnAnyScreen() ) {
-                    form.WindowState = FormWindowState.Normal;
-                    form.StartPosition = FormStartPosition.CenterScreen;
-                }
-
-                form.ResumeLayout( true );
-                form.LocationChanged += ( sender, args ) => form.SaveLocation();
-                form.SizeChanged += ( sender, args ) => form.SaveSize();
-
-                Application.Run( form );
-            }
-        }
+        
     }
 }

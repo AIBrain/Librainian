@@ -53,9 +53,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Parsing;
 
     // ReSharper disable RedundantUsingDirective
-    using DirectoryInfo = Pri.LongPathCore.DirectoryInfo;
-    using FileInfo = Pri.LongPathCore.FileInfo;
-
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>

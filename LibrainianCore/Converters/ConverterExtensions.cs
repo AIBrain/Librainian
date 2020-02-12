@@ -1,24 +1,20 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +22,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "LibrainianCore", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/02/09 at 1:54 PM.
 
 namespace LibrainianCore.Converters {
 
@@ -43,14 +39,11 @@ namespace LibrainianCore.Converters {
     using System.Collections.Generic;
     using System.Data.SqlClient;
     using System.Diagnostics;
-    using System.IO;
     using System.Numerics;
     using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Windows.Forms;
     using Collections.Extensions;
-    using Controls;
     using Databases;
     using Extensions;
     using JetBrains.Annotations;
@@ -61,47 +54,48 @@ namespace LibrainianCore.Converters {
     using Parsing;
     using Security;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
+
     public static class ConverterExtensions {
 
         [NotNull]
-        private static readonly String[] FalseStrings;
+        private static readonly String[] FalseStrings = new[] {
+            "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
+        };
 
         [NotNull]
-        private static readonly Char[] TrueChars;
+        private static readonly Char[] TrueChars = new[] {
+            'Y', '1'
+        };
 
         [NotNull]
-        private static readonly String[] TrueStrings;
-
-        static ConverterExtensions() {
-            FalseStrings = new[] {
-                "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
-            };
-
-            TrueChars = new[] {
-                'Y', '1'
-            };
-
-            TrueStrings = new[] {
-                "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
-            };
-        }
+        private static readonly String[] TrueStrings = new[] {
+            "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
+        };
 
         [CanBeNull]
-        public static T Cast<T>( [CanBeNull] this Object scalar ) {
-            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
+        public static T Cast<T>( [CanBeNull] this Object self ) {
+            if ( self is null || Convert.IsDBNull( self ) ) {
                 return default;
             }
 
-            if ( scalar is T executeScalar ) {
-                return executeScalar;
+            if ( self is T cast ) {
+                return cast;
             }
 
-            if ( scalar.TryCast<T>( out var result ) ) {
+            if ( self.TryCast<T>( out var result ) ) {
                 return result;
             }
 
             try {
-                return ( T )Convert.ChangeType( scalar, typeof( T ) );
+                return ( T ) Convert.ChangeType( self, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -129,9 +123,9 @@ namespace LibrainianCore.Converters {
                 return Decimal.Zero;
             }
 
-            amount = amount.Replace( "$", String.Empty );
-            amount = amount.Replace( ")", String.Empty );
-            amount = amount.Replace( "(", "-" );
+            amount = amount.Replace( "$", String.Empty, StringComparison.Ordinal );
+            amount = amount?.Replace( ")", String.Empty, StringComparison.Ordinal );
+            amount = amount?.Replace( "(", "-" , StringComparison.Ordinal);
 
             try {
                 if ( Decimal.TryParse( amount, out var v ) ) {
@@ -181,19 +175,19 @@ namespace LibrainianCore.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
-                        s = s.Trimmed();
+                    s = s.Trimmed();
 
-                        if ( s.In( TrueStrings ) ) {
-                            return true;
-                        }
-
-                        if ( Boolean.TryParse( s, out var result ) ) {
-                            return result;
-                        }
-
-                        break;
+                    if ( s.In( TrueStrings ) ) {
+                        return true;
                     }
-                case Control control: return control.Text().ToBoolean();
+
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
+
+                    break;
+                }
+                
             }
 
             var t = value.ToString();
@@ -220,43 +214,32 @@ namespace LibrainianCore.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
-            if ( value is null ) {
-                return default;
-            }
+            switch ( value ) {
+                case null: return default;
+                case Boolean b: return b;
+                case Char c: return c.In( ParsingConstants.TrueChars );
+                case Int32 i: return i >= 1;
+                case String s when String.IsNullOrWhiteSpace( s ): return null;
+                case String s: {
+                    s = s.Trimmed();
 
-            if ( value is Boolean b ) {
-                return b;
-            }
+                    if ( s is null ) {
+                        return default;
+                    }
 
-            if ( value is Char c ) {
-                return c.In( ParsingConstants.TrueChars );
-            }
+                    if ( s.In( ParsingConstants.TrueStrings ) ) {
+                        return true;
+                    }
 
-            if ( value is Int32 i ) {
-                return i >= 1;
-            }
+                    if ( s.In( ParsingConstants.FalseStrings ) ) {
+                        return default;
+                    }
 
-            if ( value is String s ) {
-                if ( String.IsNullOrWhiteSpace( s ) ) {
-                    return null;
-                }
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
 
-                s = s.Trimmed();
-
-                if ( s is null ) {
-                    return default;
-                }
-
-                if ( s.In( ParsingConstants.TrueStrings ) ) {
-                    return true;
-                }
-
-                if ( s.In( ParsingConstants.FalseStrings ) ) {
-                    return default;
-                }
-
-                if ( Boolean.TryParse( s, out var result ) ) {
-                    return result;
+                    break;
                 }
             }
 
@@ -341,7 +324,7 @@ namespace LibrainianCore.Converters {
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
             return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
+                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
         }
 
         [Pure]
@@ -380,8 +363,11 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty ).Replace( ")", String.Empty ).Replace( "(", "-" ).Replace( "..", "." )
-                    .Replace( " ", String.Empty ).Trimmed();
+                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty , StringComparison.Ordinal)
+                    ?.Replace( ")", String.Empty, StringComparison.Ordinal )
+                    ?.Replace( "(", "-", StringComparison.Ordinal )
+                    ?.Replace( "..", ".", StringComparison.Ordinal )
+                    ?.Replace( " ", String.Empty , StringComparison.Ordinal).Trimmed();
 
                 if ( String.IsNullOrEmpty( s ) ) {
                     return null;
@@ -448,17 +434,17 @@ namespace LibrainianCore.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
-                        , b: ( UInt16 )dateTime.DayOfYear //4,5
-                        , c: ( UInt16 )dateTime.Millisecond //6,7
-                        , d: ( Byte )dateTime.DayOfWeek //8
-                        , e: ( Byte )dateTime.Day //9
-                        , f: ( Byte )dateTime.Hour //10
-                        , g: ( Byte )dateTime.Minute //11
-                        , h: ( Byte )dateTime.Second //12
-                        , i: ( Byte )dateTime.Month //13
+                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
+                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
+                        , c: ( UInt16 ) dateTime.Millisecond //6,7
+                        , d: ( Byte ) dateTime.DayOfWeek //8
+                        , e: ( Byte ) dateTime.Day //9
+                        , f: ( Byte ) dateTime.Hour //10
+                        , g: ( Byte ) dateTime.Minute //11
+                        , h: ( Byte ) dateTime.Second //12
+                        , i: ( Byte ) dateTime.Month //13
                         , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte )dateTime.Kind ); //15
+                        , k: ( Byte ) dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -494,21 +480,15 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                String s;
 
-                if ( value is Control control ) {
-                    s = control.Text();
-                }
-                else {
-                    s = value.ToString();
-                }
+                var s = value.ToString();
 
                 s = s?.StripLetters();
-                s = s?.Replace( "$", String.Empty );
-                s = s?.Replace( ")", String.Empty );
-                s = s?.Replace( "(", "-" );
-                s = s?.Replace( "..", "." );
-                s = s?.Replace( " ", "" );
+                s = s?.Replace( "$", String.Empty , StringComparison.Ordinal);
+                s = s?.Replace( ")", String.Empty , StringComparison.Ordinal);
+                s = s?.Replace( "(", "-" , StringComparison.Ordinal);
+                s = s?.Replace( "..", "." , StringComparison.Ordinal);
+                s = s?.Replace( " ", String.Empty , StringComparison.Ordinal);
                 s = s?.Trimmed() ?? String.Empty;
 
                 var pos = s.LastIndexOf( '.' );
@@ -550,7 +530,6 @@ namespace LibrainianCore.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Int32 ToIntOrZero<T>( [CanBeNull] this T value ) => value.ToIntOrNull() ?? 0;
-
 
         /// <summary>Convert string to Guid</summary>
         /// <param name="value">the string value</param>
@@ -636,30 +615,26 @@ namespace LibrainianCore.Converters {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
 
-            return directoryInfo.FullName.Split( new[] {
+            return directoryInfo.FullPath.Split( new[] {
                 Path.DirectorySeparatorChar
             }, StringSplitOptions.RemoveEmptyEntries );
         }
 
-        /// <summary>Returns the trimmed <paramref name="obj" /> ToString() or null.
-        /// <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
+        /// <summary>Returns the trimmed <paramref name="self" /> ToString() or null.
+        /// <para>If <paramref name="self" /> is null, empty, or whitespace then return null, else return <paramref name="self" />.ToString().</para>
         /// </summary>
-        /// <remarks>If the <paramref name="obj" /> is a <see cref="Control" /> then the <see cref="Control.Text" /> will be returned.</remarks>
-        /// <param name="obj"></param>
+        /// <param name="self"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
         [CanBeNull]
         [Pure]
-        public static String ToStringOrNull<T>( [CanBeNull] this T obj ) {
-            switch ( obj ) {
-                case null: return default;
-                case Control control: return control.Text().Trimmed();
-                case String s: return s.Trimmed();
-                case DBNull _: return default;
-            }
-
-            return Equals( obj, DBNull.Value ) ? default : obj.ToString().Trimmed();
-        }
+        public static String ToStringOrNull<T>( [CanBeNull] this T self ) =>
+            self switch {
+                null => default,
+                DBNull _ => default,
+                String s => s.Trimmed(),
+                _ => Equals( self, DBNull.Value ) ? default : self.ToString().Trimmed()
+            };
 
         /// <summary>Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.</summary>
         /// <typeparam name="T"></typeparam>
@@ -686,5 +661,7 @@ namespace LibrainianCore.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
+
     }
+
 }

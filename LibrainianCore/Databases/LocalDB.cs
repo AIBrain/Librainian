@@ -43,13 +43,14 @@ namespace LibrainianCore.Databases {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
+    using System.Reflection;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
     
     using OperatingSystem.FileSystem;
+    using OperatingSystem.FileSystem.Pri.LongPath;
     using Utilities;
 
     public class LocalDb : ABetterClassDispose {
@@ -82,7 +83,7 @@ namespace LibrainianCore.Databases {
             }
 
             if ( databaseLocation is null ) {
-                databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
+                databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Assembly.GetEntryAssembly()?.Location.GetDirectoryName() ?? nameof(LocalDb) );
             }
 
             this.ReadTimeout = timeoutForReads.GetValueOrDefault( Seconds.Thirty );
