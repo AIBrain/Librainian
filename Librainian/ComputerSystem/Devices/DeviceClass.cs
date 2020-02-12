@@ -100,8 +100,11 @@ namespace Librainian.ComputerSystem.Devices {
             return devData;
         }
 
-        [CanBeNull]
-        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
+        [NotNull]
+        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [NotNull] String defaultValue ) {
+            if ( defaultValue == null ) {
+                throw new ArgumentNullException( paramName: nameof( defaultValue ) );
+            }
 
             const Int32 propertyBufferSize = 1024;
 

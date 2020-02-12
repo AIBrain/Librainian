@@ -233,10 +233,10 @@ namespace Librainian.Measurement.Time {
         /// <param name="planckTimes"></param>
         /// <param name="yoctoseconds"></param>
         /// <param name="zeptoseconds"></param>
-        public SpanOfTime( PlanckTimes planckTimes = default, [CanBeNull] Yoctoseconds yoctoseconds = default, [CanBeNull] Zeptoseconds zeptoseconds = default,
+        public SpanOfTime( PlanckTimes planckTimes = default, [CanBeNull] Yoctoseconds? yoctoseconds = default, [CanBeNull] Zeptoseconds zeptoseconds = default,
             [CanBeNull] Attoseconds attoseconds = default, [CanBeNull] Femtoseconds femtoseconds = default, [CanBeNull] Picoseconds picoseconds = default,
             [CanBeNull] Nanoseconds nanoseconds = default, [CanBeNull] Microseconds microseconds = default, [CanBeNull] Milliseconds milliseconds = default,
-            [CanBeNull] Seconds seconds = default, [CanBeNull] Minutes minutes = default, [CanBeNull] Hours hours = default, [CanBeNull] Days days = default,
+            [CanBeNull] Seconds seconds = default, [CanBeNull] Minutes? minutes = default, [CanBeNull] Hours? hours = default, [CanBeNull] Days days = default,
             [CanBeNull] Weeks weeks = default, [CanBeNull] Months months = default, [CanBeNull] Years years = default ) : this( planckTimes: planckTimes.Value,
             yoctoseconds: yoctoseconds?.Value, zeptoseconds: zeptoseconds.Value, attoseconds: attoseconds.Value, femtoseconds: femtoseconds.Value,
             picoseconds: picoseconds.Value, nanoseconds: nanoseconds.Value, microseconds: microseconds?.Value, milliseconds: milliseconds?.Value, seconds: seconds?.Value,

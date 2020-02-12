@@ -130,7 +130,7 @@ namespace Librainian.Persistence {
                     RootPath.Create();
 
                     if ( !RootPath.Exists() ) {
-                        throw new DirectoryNotFoundException( RootPath.FullName );
+                        throw new DirectoryNotFoundException( RootPath.FullPath );
                     }
                 }
 

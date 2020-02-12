@@ -58,12 +58,12 @@ namespace Librainian.Graphics {
     using Measurement.Time;
     using OperatingSystem.FileSystem;
     using Parsing;
-    using File = Pri.LongPath.File;
-    using FileInfo = Pri.LongPath.FileInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
 
     // ReSharper restore RedundantUsingDirective
 
@@ -988,7 +988,7 @@ namespace Librainian.Graphics {
                     return default;
                 }
 
-                using ( var image = Image.FromFile( filename: info.FullName, useEmbeddedColorManagement: false ) ) {
+                using ( var image = Image.FromFile( filename: info.FullPath, useEmbeddedColorManagement: false ) ) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
 
@@ -1166,7 +1166,7 @@ namespace Librainian.Graphics {
                     //                    var first4 = justName.Left( 4 ).ToIntOrNull();
 
                     //                    if ( justName.StartsWith( first4.ToString() ) && bestGuesses.Min().Year != first4 ) {
-                    //                        $"I need your decision. File={info.FullName.DoubleQuote()}.".Break();
+                    //                        $"I need your decision. File={info.FullPath.DoubleQuote()}.".Break();
                     //                    }
                     //#endif
 
@@ -1179,7 +1179,7 @@ namespace Librainian.Graphics {
 
                 //example 1, "blahblahblah_20040823_173454" == "August 23rd, 2010 at 10:34am"
 
-                var justName = Path.GetFileNameWithoutExtension( info.FullName );
+                var justName = Path.GetFileNameWithoutExtension( info.FullPath );
 
                 if ( justName != null ) {
                     var mostlyDigits = new StringBuilder( justName.Length );
@@ -1249,8 +1249,8 @@ namespace Librainian.Graphics {
                 bestGuesses.RemoveAll( time => !time.Between( oldestDate, youngestDate ) );
 
                 if ( !bestGuesses.Any() ) {
-                    bestGuesses.Add( File.GetLastWriteTime( info.FullName ) );
-                    bestGuesses.Add( File.GetCreationTime( info.FullName ) );
+                    bestGuesses.Add( File.GetLastWriteTime( info.FullPath ) );
+                    bestGuesses.Add( File.GetCreationTime( info.FullPath ) );
                 }
 
                 if ( bestGuesses.Any() ) {
@@ -1360,7 +1360,7 @@ namespace Librainian.Graphics {
             }
 
             try {
-                using ( var _ = Image.FromFile( file.FullName ) ) {
+                using ( var _ = Image.FromFile( file.FullPath ) ) {
                     return true;
                 }
             }

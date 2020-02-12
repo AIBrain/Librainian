@@ -45,8 +45,8 @@ namespace Librainian.Graphics.Imaging {
     using JetBrains.Annotations;
 
     // ReSharper disable RedundantUsingDirective
-    using File = Pri.LongPath.File;
-    using FileInfo = Pri.LongPath.FileInfo;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
 
     // ReSharper restore RedundantUsingDirective
 

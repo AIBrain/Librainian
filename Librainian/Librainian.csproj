@@ -33,6 +33,9 @@
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
   </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -42,9 +45,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>latest</LangVersion>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>
@@ -67,7 +69,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <FileAlignment>512</FileAlignment>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
@@ -81,7 +82,6 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
@@ -106,7 +106,6 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <WarningsAsErrors>4014,1998,618,8073</WarningsAsErrors>
-    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
@@ -118,7 +117,6 @@
     <DebugType>embedded</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
@@ -131,11 +129,13 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -197,6 +197,25 @@
     <Compile Include="Maths\Numbers\PairOfDoubles.cs" />
     <Compile Include="Measurement\Currency\USD\SimpleWallet.cs" />
     <Compile Include="OperatingSystem\FileSystem\PathTypeAttributes.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\Common.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\Directory.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\DirectoryInfo.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\DLL.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\File.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\FileInfo.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\FileSystemInfo.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\FILE_TIME.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\JunctionPoint.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\LUID.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\LUID_AND_ATTRIBUTES.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\NativeMethods.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\Path.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\Privilege.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\SafeFindHandle.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\SafeTokenHandle.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\TOKEN_PRIVILEGE.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\WIN32_FILE_ATTRIBUTE_DATA.cs" />
+    <Compile Include="OperatingSystem\FileSystem\Pri.LongPath\WIN32_FIND_DATA.cs" />
     <Compile Include="Parsing\LeanStringBuilder.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="OperatingSystem\FileSystem\FileAttributeData.cs" />
@@ -825,7 +844,6 @@
     <Compile Include="Threading\PriorityScheduler.cs" />
     <Compile Include="Threading\Releaser.cs" />
     <Compile Include="Logging\LoggingOld.cs" />
-    <Compile Include="Extensions\DirectoryInfos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\TaskExtensions.cs" />
     <Compile Include="Threading\ThreadingExtensions.cs" />
@@ -842,7 +860,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Controls\QuestionBox.resx">
       <DependentUpon>QuestionBox.cs</DependentUpon>
@@ -913,9 +930,6 @@
     <PackageReference Include="NLog.Windows.Forms">
       <Version>4.3.0</Version>
     </PackageReference>
-    <PackageReference Include="Pri.LongPath">
-      <Version>2.0.53</Version>
-    </PackageReference>
     <PackageReference Include="RandomNameGeneratorLibrary">
       <Version>1.2.2</Version>
     </PackageReference>
@@ -958,6 +972,7 @@
     <Content Include="Properties\Libranian.ico" />
     <Content Include="Misc\brain.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

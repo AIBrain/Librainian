@@ -40,7 +40,6 @@
 namespace Librainian.Threading {
 
     using System;
-    using System.IO;
     using System.Threading;
     using JetBrains.Annotations;
     using Logging;
@@ -49,6 +48,15 @@ namespace Librainian.Threading {
     using Persistence;
     using Security;
     using Utilities;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
 
     /// <summary>Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
     /// <para></para>
@@ -97,7 +105,7 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.FullName.GetMD5Hash() );
+                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.FullPath.GetMD5Hash() );
                 this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {

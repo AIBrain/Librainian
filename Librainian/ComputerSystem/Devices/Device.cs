@@ -171,7 +171,7 @@ namespace Librainian.ComputerSystem.Devices {
 
         /// <summary>Gets a value indicating whether this device is a USB device.</summary>
         public virtual Boolean IsUsb() {
-            if ( this.GetClass().ToUpper().Contains( "USB" ) ) {
+            if ( this.GetClass().Contains( "USB" ) ) {
                 return true;
             }
 

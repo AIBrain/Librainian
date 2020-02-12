@@ -45,6 +45,7 @@ namespace Librainian.Databases {
     using System.Linq.Expressions;
     using JetBrains.Annotations;
     using Microsoft.Data.SqlClient;
+    using Parsing;
 
     public static class GenericPopulator<T> {
 
@@ -83,7 +84,7 @@ namespace Librainian.Databases {
                 if ( prop.PropertyType.IsValueType ) {
                     defaultValue = Activator.CreateInstance( prop.PropertyType );
                 }
-                else if ( prop.PropertyType.Name.ToLower().Equals( "string" ) ) {
+                else if ( prop.PropertyType.Name.Like( "string" ) ) {
                     defaultValue = String.Empty;
                 }
 

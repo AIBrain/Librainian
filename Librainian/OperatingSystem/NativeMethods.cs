@@ -1345,7 +1345,7 @@ namespace Librainian.OperatingSystem {
             /// <summary>Determines whether the specified <see cref="Object" />, is equal to this instance.</summary>
             /// <param name="obj">The <see cref="Object" /> to compare with this instance.</param>
             /// <returns><c>true</c> if the specified <see cref="Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-            public override Boolean Equals( Object obj ) => Equals( this, obj as HANDLE );
+            public override Boolean Equals( Object? obj ) => Equals( this, obj as HANDLE );
 
             // ReSharper disable once NonReadonlyMemberInGetHashCode
             public override Int32 GetHashCode() => this.handle.GetHashCode();

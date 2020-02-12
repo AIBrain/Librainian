@@ -71,10 +71,10 @@ namespace Librainian.Persistence {
     using Threading;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
-    using Directory = Pri.LongPath.Directory;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using File = Pri.LongPath.File;
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class PersistenceExtensions {
@@ -740,7 +740,7 @@ namespace Librainian.Persistence {
                 using ( var _ = new SingleAccess( "IsolatedStorageFile.GetMachineStoreForDomain()" ) ) {
                     using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
                         try {
-                            var dir = Path.GetDirectoryName( fileName ) ?? String.Empty;
+                            var dir = Path.GetDirectoryName( fileName );
 
                             if ( !String.IsNullOrWhiteSpace( dir ) && !isf.DirectoryExists( dir ) ) {
                                 isf.CreateDirectory( dir );
@@ -988,12 +988,12 @@ namespace Librainian.Persistence {
                 }
 
                 if ( !folder.Exists() ) {
-                    throw new DirectoryNotFoundException( folder.FullName );
+                    throw new DirectoryNotFoundException( folder.FullPath );
                 }
 
                 var itemCount = ( UInt64 )dictionary.LongCount();
 
-                String.Format( "Serializing {1} {2} to {0} ...", folder.FullName, itemCount, calledWhat ).Info();
+                String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
                 var currentLine = 0f;
 
@@ -1230,7 +1230,7 @@ namespace Librainian.Persistence {
             value = default;
 
             try {
-                if (location.IsNullOrWhiteSpace()) { location = LocalDataFolder.Value.FullName; }
+                if (location.IsNullOrWhiteSpace()) { location = LocalDataFolder.Value.FullPath; }
 
                 var filename = $"{location}:{attribute}";
 

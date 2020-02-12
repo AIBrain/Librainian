@@ -50,6 +50,15 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Parsing;
     using Utilities;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
+
     public class FindEveryDocument : ABetterClassDispose {
 
         private BufferBlock<Document> DocumentsFound { get; }
@@ -93,14 +102,14 @@ namespace Librainian.OperatingSystem.FileSystem {
                 Int64 counter = 0;
 
                 this.DrivesFound = new ActionBlock<Disk>( disk => {
-                    var root = new Folder( disk.Info.RootDirectory.FullName );
+                    var root = new Folder( disk.Info.RootDirectory.FullName);
 
                     Parallel.ForEach( root.BetterGetFolders().AsParallel(), folder => {
                         if ( this.CancellationTokenSource.IsCancellationRequested ) {
                             return;
                         }
 
-                        this.Status = $"Found folder `{folder.FullName}`.";
+                        this.Status = $"Found folder `{folder.FullPath}`.";
                         this.FoldersFound.Post( folder );
                         Interlocked.Increment( ref counter );
                         this.Progress.Report( counter );
@@ -113,7 +122,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             return;
                         }
 
-                        this.Status = $"Found folder `{folder.FullName}`.";
+                        this.Status = $"Found folder `{folder.FullPath}`.";
                         this.FoldersFound.Post( folder );
                         Interlocked.Increment( ref counter );
                         this.Progress.Report( counter );

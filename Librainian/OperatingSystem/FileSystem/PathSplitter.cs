@@ -62,7 +62,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [CanBeNull]
         public String OriginalPath { get; }
 
-        public PathSplitter( [NotNull] Folder folder ) : this( new Document( folder.FullName ), default ) { }
+        public PathSplitter( [NotNull] Folder folder ) : this( new Document( folder.FullPath ), default ) { }
 
         public PathSplitter( [NotNull] IDocument document, String newExtension = default ) {
             if ( document == null ) {
@@ -117,9 +117,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( path ) );
             }
 
-            this.Parts.Insert( 1, path.FullName );
+            this.Parts.Insert( 1, path.FullPath );
 
-            if ( path.FullName[ 1 ] == ':' ) {
+            if ( path.FullPath[ 1 ] == ':' ) {
                 this.Parts.RemoveAt( 0 ); //inserting a drive:\folder? remove the original drive:\folder part
             }
 
@@ -147,7 +147,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             this.Parts.Clear();
-            this.Parts.AddRange( Split( replacement.FullName ) );
+            this.Parts.AddRange( Split( replacement.FullPath ) );
             this.Parts.TrimExcess();
 
             return true;

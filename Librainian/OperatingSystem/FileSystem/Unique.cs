@@ -75,6 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         private readonly Uri u;
 
         /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
+        [NotNull]
         public static readonly Unique Empty = new Unique();
 
         /// <summary>Just an easier to use mnemonic.</summary>
@@ -170,114 +171,117 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
         /// <returns></returns>
-        public IEnumerable<Byte> AsBytes( CancellationToken token, TimeSpan timeout ) {
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
-                    if ( stream?.CanRead != true ) {
-                        yield break;
-                    }
+        public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken token ) {
+            using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
-                    while ( true ) {
-                        var a = stream.ReadByte();
+            using var stream = client.OpenRead( this.U );
 
-                        if ( a == EOFMarker ) {
-                            yield break;
-                        }
-
-                        yield return ( Byte )a;
-                    }
-                }
+            if ( stream?.CanRead != true ) {
+                yield break;
             }
+
+            while ( true ) {
+                var a = stream.ReadByte();
+
+                if ( a == EOFMarker ) {
+                    yield break;
+                }
+
+                yield return ( Byte )a;
+            }
+
         }
 
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
         /// <returns></returns>
-        public IEnumerable<Int32> AsInt16( CancellationToken token, TimeSpan timeout ) {
+        public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken token ) {
 
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
-                    if ( stream?.CanRead != true ) {
-                        yield break;
-                    }
+            using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
-                    while ( true ) {
-                        var a = stream.ReadByte();
+            using var stream = client.OpenRead( this.U );
 
-                        if ( a == EOFMarker ) {
-                            yield break;
-                        }
-
-                        var b = stream.ReadByte();
-
-                        if ( b == EOFMarker ) {
-                            yield return BitConverter.ToInt16( new[] {
-                                ( Byte ) a
-                            }, 0 );
-
-                            yield break;
-                        }
-
-                        yield return BitConverter.ToInt16( new[] {
-                            ( Byte ) a, ( Byte ) b
-                        }, 0 );
-                    }
-                }
+            if ( stream?.CanRead != true ) {
+                yield break;
             }
+
+            while ( true ) {
+                var a = stream.ReadByte();
+
+                if ( a == EOFMarker ) {
+                    yield break;
+                }
+
+                var b = stream.ReadByte();
+
+                if ( b == EOFMarker ) {
+                    yield return BitConverter.ToInt16( new[] {
+                        ( Byte ) a
+                    }, 0 );
+
+                    yield break;
+                }
+
+                yield return BitConverter.ToInt16( new[] {
+                    ( Byte ) a, ( Byte ) b
+                }, 0 );
+            }
+
         }
 
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
         /// <returns></returns>
-        public IEnumerable<Int32> AsInt32( CancellationToken token, TimeSpan timeout ) {
+        public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken token ) {
 
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
-                    if ( stream?.CanRead != true ) {
-                        yield break;
-                    }
+            using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
-                    while ( true ) {
-                        var a = stream.ReadByte();
+            using var stream = client.OpenRead( this.U );
 
-                        if ( a == EOFMarker ) {
-                            yield break;
-                        }
-
-                        var b = stream.ReadByte();
-
-                        if ( b == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
-                                ( Byte ) a
-                            }, 0 );
-
-                            yield break;
-                        }
-
-                        var c = stream.ReadByte();
-
-                        if ( c == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
-                                ( Byte ) a, ( Byte ) b
-                            }, 0 );
-
-                            yield break;
-                        }
-
-                        var d = stream.ReadByte();
-
-                        if ( d == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
-                                ( Byte ) a, ( Byte ) b, ( Byte ) c
-                            }, 0 );
-
-                            yield break;
-                        }
-
-                        yield return BitConverter.ToInt32( new[] {
-                            ( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
-                        }, 0 );
-                    }
-                }
+            if ( stream?.CanRead != true ) {
+                yield break;
             }
+
+            while ( true ) {
+                var a = stream.ReadByte();
+
+                if ( a == EOFMarker ) {
+                    yield break;
+                }
+
+                var b = stream.ReadByte();
+
+                if ( b == EOFMarker ) {
+                    yield return BitConverter.ToInt32( new[] {
+                        ( Byte ) a
+                    }, 0 );
+
+                    yield break;
+                }
+
+                var c = stream.ReadByte();
+
+                if ( c == EOFMarker ) {
+                    yield return BitConverter.ToInt32( new[] {
+                        ( Byte ) a, ( Byte ) b
+                    }, 0 );
+
+                    yield break;
+                }
+
+                var d = stream.ReadByte();
+
+                if ( d == EOFMarker ) {
+                    yield return BitConverter.ToInt32( new[] {
+                        ( Byte ) a, ( Byte ) b, ( Byte ) c
+                    }, 0 );
+
+                    yield break;
+                }
+
+                yield return BitConverter.ToInt32( new[] {
+                    ( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
+                }, 0 );
+            }
+
         }
 
         public Boolean Equals( Unique other ) => Equals( this, other );
@@ -299,25 +303,25 @@ namespace Librainian.OperatingSystem.FileSystem {
         ///     <para>Gets the size in bytes of the location.</para>
         ///     <para>A value of -1 indicates an error, timeout, or exception.</para>
         /// </summary>
-        /// <param name="token"></param>
         /// <param name="timeout"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<Int64> Length( CancellationToken token, TimeSpan timeout ) {
+        public async Task<Int64> Length( TimeSpan timeout, CancellationToken token ) {
             try {
-                using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                    try {
-                        await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
+                try {
+                    using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
+                    await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
 
-                        var header = client.ResponseHeaders[ "Content-Length" ];
+                    var header = client.ResponseHeaders[ "Content-Length" ];
 
-                        if ( Int64.TryParse( header, out var result ) ) {
-                            return result;
-                        }
-                    }
-                    catch ( WebException exception ) {
-                        exception.Log();
+                    if ( Int64.TryParse( header, out var result ) ) {
+                        return result;
                     }
                 }
+                catch ( WebException exception ) {
+                    exception.Log();
+                }
+
             }
             catch ( Exception exception ) {
                 exception.Log();

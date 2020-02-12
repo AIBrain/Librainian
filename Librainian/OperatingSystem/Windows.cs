@@ -66,7 +66,7 @@ namespace Librainian.OperatingSystem {
 
         [CanBeNull]
         public static readonly Lazy<Document> CommandPrompt =
-            new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullName, path2: "cmd.exe" ) ), isThreadSafe: true );
+            new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "cmd.exe" ) ), isThreadSafe: true );
 
         [CanBeNull]
         public static readonly Lazy<Document> IrfanView64 =
@@ -80,7 +80,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Document> PowerShell = new Lazy<Document>( () => {
-            var document = FindDocument( fullname: Path.Combine( path1: PowerShellFolder.Value.FullName, path2: "powershell.exe" ) );
+            var document = FindDocument( fullname: Path.Combine( path1: PowerShellFolder.Value.FullPath, path2: "powershell.exe" ) );
 
             if ( null == document ) {
                 throw new FileNotFoundException( "Unable to locate powershell.exe." );
@@ -91,7 +91,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Folder> PowerShellFolder = new Lazy<Folder>( () => {
-            var folder = FindFolder( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullName, path2: @"WindowsPowerShell\v1.0" ) );
+            var folder = FindFolder( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: @"WindowsPowerShell\v1.0" ) );
 
             if ( null == folder ) {
                 throw new DirectoryNotFoundException( "Unable to locate Windows PowerShell folder." );
@@ -109,7 +109,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Folder> WindowsSystem32Folder =
-            new Lazy<Folder>( () => FindFolder( fullname: Path.Combine( path1: WindowsFolder.Value.FullName, path2: "System32" ) ), isThreadSafe: true );
+            new Lazy<Folder>( () => FindFolder( fullname: Path.Combine( path1: WindowsFolder.Value.FullPath, path2: "System32" ) ), isThreadSafe: true );
 
         /// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
         /// <returns></returns>
@@ -148,13 +148,13 @@ namespace Librainian.OperatingSystem {
 
             foreach ( var pair in pathsData.Where( pair => !pair.Value.Exists() ) ) {
                 if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-                    $"Removing nonexistent folder `{dummy.FullName}` from PATH".Info();
+                    $"Removing nonexistent folder `{dummy.FullPath}` from PATH".Info();
                 }
             }
 
             foreach ( var pair in pathsData.Where( pair => !pair.Value.GetFolders( "*" ).Any() && !pair.Value.GetDocuments().Any() ) ) {
                 if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-                    $"Removing empty folder {dummy.FullName} from PATH".Info();
+                    $"Removing empty folder {dummy.FullPath} from PATH".Info();
                 }
             }
 
@@ -162,7 +162,7 @@ namespace Librainian.OperatingSystem {
                 "Rebuilding PATH entries...".Info();
             }
 
-            var rebuiltPath = pathsData.Values.OrderByDescending( info => info.FullName.Length ).Select( info => info.FullName ).ToStrings( ";" );
+            var rebuiltPath = pathsData.Values.OrderByDescending( info => info.FullPath.Length ).Select( info => info.FullPath ).ToStrings( ";" );
 
             if ( reportToConsole ) {
                 "Applying new PATH entries...".Info();
@@ -204,7 +204,7 @@ namespace Librainian.OperatingSystem {
                     if ( CommandPrompt != null ) {
                         var proc = new ProcessStartInfo {
                             UseShellExecute = false,
-                            WorkingDirectory = WindowsSystem32Folder.Value.FullName,
+                            WorkingDirectory = WindowsSystem32Folder.Value.FullPath,
                             FileName = CommandPrompt.Value.FullPath,
                             Verb = "runas", //demand elevated permissions
                             Arguments = $"/C \"{arguments}\"",
@@ -231,7 +231,7 @@ namespace Librainian.OperatingSystem {
                 try {
                     var startInfo = new ProcessStartInfo {
                         UseShellExecute = false,
-                        WorkingDirectory = PowerShellFolder.Value.FullName,
+                        WorkingDirectory = PowerShellFolder.Value.FullPath,
                         FileName = PowerShell.Value.FullPath,
                         Verb = elevated ? "runas" : null, //demand elevated permissions
                         Arguments = $"-EncodedCommand {arguments.ToBase64()}",
@@ -276,7 +276,7 @@ namespace Librainian.OperatingSystem {
                 try {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
-                        WorkingDirectory = workingFolder.FullName,
+                        WorkingDirectory = workingFolder.FullPath,
                         FileName = filename.FullPath,
                         Verb = elevate ? null : "runas", //demand elevated permissions
                         Arguments = arguments ?? String.Empty,
@@ -350,7 +350,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static Task<Boolean> MirrorFolderStructureAsync( [NotNull] Folder folder, [NotNull] Folder baseFolder ) =>
-            ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullName}\" \"{baseFolder.FullName}\" /E /T" );
+            ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
 
         [CanBeNull]
         public static Process OpenWithExplorer( [CanBeNull] String value ) {
@@ -360,7 +360,7 @@ namespace Librainian.OperatingSystem {
                 var proc = new ProcessStartInfo {
                     UseShellExecute = false,
                     WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullName, "explorer.exe" ),
+                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullPath, "explorer.exe" ),
                     Arguments = $" /separate /select,\"{value}\" ",
                     CreateNoWindow = false,
                     ErrorDialog = true,
@@ -455,7 +455,7 @@ namespace Librainian.OperatingSystem {
 
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
-                        WorkingDirectory = Folder.GetTempFolder().FullName,
+                        WorkingDirectory = Folder.GetTempFolder().FullPath,
                         FileName = IrfanView64.Value.FullPath,
 
                         //Verb = "runas", //demand elevated permissions

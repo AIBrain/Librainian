@@ -49,6 +49,7 @@ namespace Librainian.Controls {
     using System.Threading.Tasks;
     using System.Windows.Forms;
     using Collections.Extensions;
+    using Converters;
     using JetBrains.Annotations;
     using Maths;
     using Measurement.Time;
@@ -813,19 +814,11 @@ namespace Librainian.Controls {
         /// <summary>Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1. Otherwise <see cref="CheckState.Unchecked" />.</summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static CheckState ToCheckState( [NotNull] this String s ) {
-            if ( !String.IsNullOrWhiteSpace( s ) ) {
-                s = s.Trim().ToLower();
-
-                if ( s.Like( Boolean.TrueString ) || s.Like( "true" ) || s.Like( "on" ) || s.Like( "checked" ) || s.Like( "set" ) || s.Like( "1" ) ) {
-                    return CheckState.Checked;
-                }
-
-                return Boolean.TryParse( s, out _ ) ? CheckState.Checked : CheckState.Unchecked;
-            }
-
-            return CheckState.Unchecked;
-        }
+        public static CheckState ToCheckState( [NotNull] this String s ) =>
+            !String.IsNullOrWhiteSpace( s ) ?
+                s.ToBoolean() ? CheckState.Checked :
+                Boolean.TryParse( s, out _ ) ? CheckState.Checked : CheckState.Unchecked :
+                CheckState.Unchecked;
 
         public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
 

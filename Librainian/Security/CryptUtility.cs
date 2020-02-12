@@ -697,26 +697,25 @@ namespace Librainian.Security {
         }
 
         private static void SaveBitmap( [NotNull] Bitmap bitmap, [NotNull] String fileName ) {
-            var fileNameLower = fileName.ToLower();
+            
 
             var format = ImageFormat.Bmp;
 
-            if ( fileNameLower.EndsWith( "tif" ) || fileNameLower.EndsWith( "tiff" ) ) {
+            if ( fileName.EndsWith( "tif", StringComparison.CurrentCultureIgnoreCase ) ) {
                 format = ImageFormat.Tiff;
             }
-            else if ( fileNameLower.EndsWith( "png" ) ) {
+            else if ( fileName.EndsWith( "tiff", StringComparison.CurrentCultureIgnoreCase ) ) {
+                format = ImageFormat.Tiff;
+            }
+            else if ( fileName.EndsWith( "png", StringComparison.CurrentCultureIgnoreCase ) ) {
                 format = ImageFormat.Png;
             }
 
             //copy the bitmap
-            Image img = new Bitmap( original: bitmap );
+            using Image img = new Bitmap( original: bitmap );
 
-            //close bitmap file
-            bitmap.Dispose();
-
-            //save new bitmap
             img.Save( filename: fileName, format: format );
-            img.Dispose();
+
         }
 
         /// <summary>Set a bit to [newBitValue]</summary>

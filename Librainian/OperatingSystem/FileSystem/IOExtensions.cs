@@ -63,12 +63,15 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Measurement.Time;
     using Parsing;
     using Threading;
-    using Directory = Pri.LongPath.Directory;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
     using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using File = Pri.LongPath.File;
     using FileInfo = Pri.LongPath.FileInfo;
     using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Path = Pri.LongPath.Path;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
 
     public static class IOExtensions {
 
@@ -105,7 +108,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var encodedText = Encoding.Unicode.GetBytes( text );
                 var length = encodedText.Length;
 
-                using var sourceStream = new FileStream( fileInfo.FullName, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length,
+                using var sourceStream = new FileStream( fileInfo.FullPath, mode: FileMode.Append, access: FileAccess.Write, share: FileShare.Write, bufferSize: length,
                     useAsync: true );
 
                 var write = sourceStream.WriteAsync( buffer: encodedText, offset: 0, count: length );
@@ -154,14 +157,14 @@ namespace Librainian.OperatingSystem.FileSystem {
                 yield break;
             }
 
-            using var stream = ReTry( () => new FileStream( fileInfo.FullName, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+            using var stream = ReTry( () => new FileStream( fileInfo.FullPath, mode: FileMode.Open, access: FileAccess.Read ), Seconds.Seven, CancellationToken.None );
 
             if ( stream is null ) {
                 yield break;
             }
 
             if ( !stream.CanRead ) {
-                throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
+                throw new NotSupportedException( $"Cannot read from file {fileInfo.FullPath}" );
             }
 
             using ( stream ) {
@@ -255,9 +258,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
             }
 
-            using ( var stream = new FileStream( fileInfo.FullName, FileMode.Open ) ) {
+            using ( var stream = new FileStream( fileInfo.FullPath, FileMode.Open ) ) {
                 if ( !stream.CanRead ) {
-                    throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
+                    throw new NotSupportedException( $"Cannot read from file {fileInfo.FullPath}" );
                 }
 
                 using ( var buffered = new BufferedStream( stream ) ) {
@@ -296,7 +299,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 searchPattern = "*";
             }
 
-            var searchPath = Path.Combine( target.FullName, searchPattern );
+            var searchPath = Path.Combine( target.FullPath, searchPattern );
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
                 if ( hFindFile is null ) {
@@ -324,7 +327,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         continue;
                     }
 
-                    var subFolder = Path.Combine( target.FullName, findData.cFileName );
+                    var subFolder = Path.Combine( target.FullPath, findData.cFileName );
 
                     // Fix with @"\\?\" +System.IO.PathTooLongException?
                     if ( subFolder.Length >= 260 ) {
@@ -357,7 +360,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             searchPattern = searchPattern.NullIfEmptyOrWhiteSpace() ?? "*.*";
 
-            var searchPath = Path.Combine( target.FullName, searchPattern );
+            var searchPath = Path.Combine( target.FullPath, searchPattern );
 
             using ( var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData ) ) {
                 do {
@@ -377,7 +380,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                         continue;
                     }
 
-                    var newfName = Path.Combine( target.FullName, findData.cFileName );
+                    var newfName = Path.Combine( target.FullPath, findData.cFileName );
 
                     yield return new FileInfo( newfName );
                 } while ( NativeMethods.FindNextFile( hFindFile, out findData ) );
@@ -442,7 +445,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase: toBase );
             var fileName = $"{now}{withExtension ?? info.Extension}";
-            var path = Path.Combine( info.FullName, fileName );
+            var path = Path.Combine( info.FullPath, fileName );
 
             return new FileInfo( path );
         }
@@ -479,7 +482,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 if ( requestWriteAccess.HasValue ) {
-                    var temp = Path.Combine( directoryInfo.FullName, Path.GetRandomFileName() );
+                    var temp = Path.Combine( directoryInfo.FullPath, Path.GetRandomFileName() );
                     File.WriteAllText( temp, "Delete Me!" );
                     File.Delete( temp );
                     directoryInfo.Refresh();
@@ -666,14 +669,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public static UInt32? GetFileSizeOnDisk( [NotNull] this FileInfo info ) {
             UInt32 clusterSize;
-            var driveLetter = info.Directory.Root.FullName.TrimEnd( '\\' );
+            var driveLetter = info.Directory.Root.FullPath.TrimEnd( '\\' );
 
             using ( var searcher = new ManagementObjectSearcher( $"select BlockSize,NumberOfBlocks from Win32_Volume WHERE DriveLetter = '{driveLetter}'" ) ) {
                 var bob = searcher.Get().Cast<ManagementObject>().First();
                 clusterSize = ( UInt32 )bob[ "BlockSize" ];
             }
 
-            var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var hosize );
+            var losize = NativeMethods.GetCompressedFileSizeW( info.FullPath, out var hosize );
             var size = ( hosize << 32 ) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
@@ -689,7 +692,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
         public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
-            var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory?.Root.FullName, lpSectorsPerCluster: out var sectorsPerCluster,
+            var result = NativeMethods.GetDiskFreeSpaceW( lpRootPathName: info.Directory.Root.FullPath, lpSectorsPerCluster: out var sectorsPerCluster,
                 lpBytesPerSector: out var bytesPerSector, lpNumberOfFreeClusters: out _, lpTotalNumberOfClusters: out _ );
 
             if ( result == 0 ) {
@@ -697,7 +700,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
-            var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullName, lpFileSizeHigh: out var sizeHigh );
+            var losize = NativeMethods.GetCompressedFileSizeW( lpFileName: info.FullPath, lpFileSizeHigh: out var sizeHigh );
             var size = ( ( Int64 )sizeHigh << 32 ) | losize;
 
             return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
@@ -707,7 +710,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static DriveInfo GetLargestEmptiestDrive() =>
             DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
 
-        /// <summary>Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the <see cref="Pri.LongPath.FileSystemInfo.FullName" /> .</summary>
+        /// <summary>Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the <see cref="Pri.LongPath.FileSystemInfo.FullPath" /> .</summary>
         /// <param name="path">         </param>
         /// <param name="searchPattern"></param>
         /// <param name="searchOption"> </param>
@@ -724,11 +727,11 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return String.Empty;
             }
 
-            var files = Directory.EnumerateFiles( dir.FullName, searchPattern: searchPattern, searchOption );
+            var files = Directory.EnumerateFiles( dir.FullPath, searchPattern: searchPattern, searchOption );
             var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
 
             if ( pickedfile != null && File.Exists( pickedfile ) ) {
-                return new FileInfo( pickedfile ).FullName;
+                return new FileInfo( pickedfile ).FullPath;
             }
 
             return String.Empty;
@@ -762,7 +765,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 /* quick little trick, but doesn't handle unicode properly
                 var tempfile = Document.GetTempDocument();
 
-                var bob = Windows.ExecuteCommandPrompt( $"DIR {startingFolder.FullName} /B /S /AD > {tempfile.FullPathWithFileName}" )
+                var bob = Windows.ExecuteCommandPrompt( $"DIR {startingFolder.FullPath} /B /S /AD > {tempfile.FullPathWithFileName}" )
                        .Result;
                 bob.WaitForExit();
 
@@ -774,13 +777,13 @@ namespace Librainian.OperatingSystem.FileSystem {
                 tempfile.Delete();
                 */
 
-                //foldersFound.Add( startingFolder.FullName );
+                //foldersFound.Add( startingFolder.FullPath );
 
-                //Parallel.ForEach( startingFolder.Info.BetterEnumerateDirectories().AsParallel(), ThreadingExtensions.CPUIntensive, info => GrabAllFolders( new Folder( info.FullName ), foldersFound, cancellation ) );
+                //Parallel.ForEach( startingFolder.Info.BetterEnumerateDirectories().AsParallel(), ThreadingExtensions.CPUIntensive, info => GrabAllFolders( new Folder( info.FullPath ), foldersFound, cancellation ) );
                 foreach ( var info in startingFolder.Info.EnumerateDirectories( "*.*", SearchOption.AllDirectories ) ) {
 
-                    //GrabAllFolders( new Folder( info.FullName ), foldersFound, cancellation );
-                    foldersFound.Add( info.FullName );
+                    //GrabAllFolders( new Folder( info.FullPath ), foldersFound, cancellation );
+                    foldersFound.Add( info.FullPath );
                 }
 
                 return true;
@@ -889,7 +892,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             DirectorySecurity ds;
 
             try {
-                ds = new DirectorySecurity( fileSystemInfo.FullName, AccessControlSections.Access );
+                ds = new DirectorySecurity( fileSystemInfo.FullPath, AccessControlSections.Access );
             }
             catch ( UnauthorizedAccessException ) {
                 return true;
@@ -917,8 +920,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
-                arguments: $" /separate /select,\"{folder.FullName}\" " );
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
+                arguments: $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -930,8 +933,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
-                arguments: $" /separate /select,\"{folder.FullName}\" " );
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
+                arguments: $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -942,7 +945,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullName, "explorer.exe" )}",
+            var proc = Process.Start( fileName: $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
                 arguments: $" /separate /select,\"{document.FullPath}\" " );
 
             return proc?.Responding == true;
@@ -964,7 +967,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase: 16 );
             var formatted = $"{Path.GetFileNameWithoutExtension( info.Name )} {now}{newExtension ?? info.Extension}";
-            var path = Path.Combine( info.Directory.FullName, formatted );
+            var path = Path.Combine( info.Directory.FullPath, formatted );
 
             return new FileInfo( path );
         }
@@ -1375,7 +1378,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static ManagementPath ToManagementPath( [NotNull] this DirectoryInfo systemPath ) {
-            var fullPath = systemPath.FullName;
+            var fullPath = systemPath.FullPath;
 
             while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
                 fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
@@ -1484,7 +1487,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 extension = $".{extension}";
             }
 
-            return new Document( folder.FullName, $"{randomFileName}{extension}", deleteAfterClose );
+            return new Document( folder.FullPath, $"{randomFileName}{extension}", deleteAfterClose );
         }
 
         /// <summary>Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.</summary>
@@ -1569,7 +1572,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             var lpBytesReturned = 0;
             Int16 compressionFormatDefault = 1;
 
-            using ( var fileStream = File.Open( info.FullName, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
+            using ( var fileStream = File.Open( info.FullPath, mode: FileMode.Open, access: FileAccess.ReadWrite, share: FileShare.None ) ) {
                 var success = false;
 
                 try {
@@ -1594,7 +1597,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static DirectoryInfo WithShortDatePath( [NotNull] this DirectoryInfo basePath, DateTime d ) {
-            var path = Path.Combine( basePath.FullName, d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
+            var path = Path.Combine( basePath.FullPath, d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
 
             return new DirectoryInfo( path );
         }

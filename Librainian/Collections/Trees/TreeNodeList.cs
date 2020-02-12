@@ -60,7 +60,7 @@ namespace Librainian.Collections.Trees {
                 throw new ArgumentNullException( nameof( node ) );
             }
 
-            base.Add( item: node );
+            this.Add( node );
             node.Parent = this.Parent;
 
             return node;

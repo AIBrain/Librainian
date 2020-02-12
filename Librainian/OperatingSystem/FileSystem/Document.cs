@@ -1051,8 +1051,8 @@ namespace Librainian.OperatingSystem.FileSystem {
             var folder = this.ContainingingFolder();
 
             if ( !folder.Exists() ) {
-                if ( !Directory.CreateDirectory( folder.FullName ).Exists ) {
-                    throw new DirectoryNotFoundException( $"Could not create folder \"{folder.FullName}\"." );
+                if ( !Directory.CreateDirectory( folder.FullPath ).Exists ) {
+                    throw new DirectoryNotFoundException( $"Could not create folder \"{folder.FullPath}\"." );
                 }
             }
 
@@ -1430,7 +1430,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Computer thisComputer { get; } = new Computer();
 
         [NotNull]
-        public static String InvalidFileNameCharacters { get; } = new String( Path.GetInvalidFileNameChars() );
+        public static String InvalidFileNameCharacters { get; } = new String( ( Char[] ) Path.GetInvalidFileNameChars() );
 
         [NotNull]
         public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new Lazy<Regex>( () =>
@@ -1495,7 +1495,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( watchFile ) {
-                this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullName, this.FileName ) {
+                this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullPath, this.FileName ) {
                     IncludeSubdirectories = false,
                     EnableRaisingEvents = true
                 } );
@@ -1519,15 +1519,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         private Document() => throw new NotImplementedException( "Private contructor is not allowed." );
 
         public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this(
-            Path.Combine( justPath, filename ) ?? throw new InvalidOperationException(), deleteAfterClose ) { }
+            Path.Combine( justPath, filename ), deleteAfterClose ) { }
 
-        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName ?? throw new InvalidOperationException(),
+        public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullPath,
             deleteAfterClose ) { }
 
-        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullName, filename, deleteAfterClose ) { }
+        public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
 
         public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
-            Path.Combine( folder.FullName, document.FileName ) ?? throw new InvalidOperationException(), deleteAfterClose ) { }
+            Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {

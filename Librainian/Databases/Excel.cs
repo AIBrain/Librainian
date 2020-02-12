@@ -47,6 +47,7 @@ namespace Librainian.Databases {
 
     public class Excel {
 
+        [NotNull]
         private String ConnectionString { get; }
 
         private String Path { get; }
@@ -56,7 +57,7 @@ namespace Librainian.Databases {
 
             var strBuilder = new OleDbConnectionStringBuilder {
                 Provider = "Microsoft.Jet.OLEDB.4.0",
-                DataSource = path
+                DataSource = this.Path
             };
 
             strBuilder.Add( "Extended Properties", String.Format( "Excel 8.0;HDR={0}{1}Imex={2}{1}", hasHeaders ? "Yes" : "No", ';', hasMixedData ? "2" : "0" ) );
@@ -65,18 +66,17 @@ namespace Librainian.Databases {
 
         [NotNull]
         public String[] GetColumnsList( [CanBeNull] String worksheet ) {
-            String[] columns = { };
+            var columns = Array.Empty<String>();
 
             try {
-                DataTable tableColumns;
 
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    connection.Open();
+                using var connection = new OleDbConnection( this.ConnectionString );
 
-                    tableColumns = connection.GetSchema( "Columns", new[] {
-                        null, null, worksheet + '$', null
-                    } );
-                }
+                connection.Open();
+
+                var tableColumns = connection.GetSchema( "Columns", new[] {
+                    null, null, worksheet + '$', null
+                } );
 
                 columns = new String[ tableColumns.Rows.Count ];
 
@@ -94,15 +94,16 @@ namespace Librainian.Databases {
         [CanBeNull]
         public DataSet GetWorkplace() {
             try {
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
-                        var workplace = new DataSet();
-                        adaptor.FillSchema( workplace, SchemaType.Source );
-                        adaptor.Fill( workplace );
+                using var connection = new OleDbConnection( this.ConnectionString );
 
-                        return workplace;
-                    }
-                }
+                using var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection );
+
+                var workplace = new DataSet();
+                adaptor.FillSchema( workplace, SchemaType.Source );
+                adaptor.Fill( workplace );
+
+                return workplace;
+
             }
             catch ( OleDbException exception ) {
                 exception.Log();
@@ -114,18 +115,19 @@ namespace Librainian.Databases {
         [CanBeNull]
         public DataTable GetWorksheet( [CanBeNull] String worksheet ) {
             try {
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) {
-                        SelectCommand = new OleDbCommand( worksheet )
-                    } ) {
+                using var connection = new OleDbConnection( this.ConnectionString );
 
-                        var ws = new DataTable( worksheet );
-                        adaptor.FillSchema( ws, SchemaType.Source );
-                        adaptor.Fill( ws );
+                using var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) {
+                    SelectCommand = new OleDbCommand( worksheet )
+                };
 
-                        return ws;
-                    }
-                }
+                using var ws = new DataTable( worksheet );
+
+                adaptor.FillSchema( ws, SchemaType.Source );
+                adaptor.Fill( ws );
+
+                return ws;
+
             }
             catch ( OleDbException exception ) {
                 exception.Log();
@@ -136,15 +138,14 @@ namespace Librainian.Databases {
 
         [NotNull]
         public String[] GetWorksheetList() {
-            String[] worksheets = { };
+            var worksheets = Array.Empty<String>();
 
             try {
-                DataTable tableWorksheets;
 
-                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
-                    connection.Open();
-                    tableWorksheets = connection.GetSchema( "Tables" );
-                }
+                using var connection = new OleDbConnection( this.ConnectionString );
+
+                connection.Open();
+                var tableWorksheets = connection.GetSchema( "Tables" );
 
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
@@ -153,7 +154,7 @@ namespace Librainian.Databases {
                     worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
 
                     // removes the trailing $ and other characters appended in the table name
-                    while ( worksheets[ i ].EndsWith( "$" ) ) {
+                    while ( worksheets[ i ].EndsWith( "$", StringComparison.OrdinalIgnoreCase ) ) {
                         worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
                     }
                 }

@@ -64,7 +64,7 @@ namespace Librainian.Extensions {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( format ) );
             }
 
-            if ( format.StartsWith( FileSizeFormat ) != true ) {
+            if ( !format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) ) {
                 return DefaultFormat( format, arg, formatProvider );
             }
 

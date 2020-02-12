@@ -56,8 +56,8 @@ namespace Librainian.Security {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using File = Pri.LongPath.File;
-    using FileInfo = Pri.LongPath.FileInfo;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
 
     // ReSharper restore RedundantUsingDirective
 
@@ -67,6 +67,7 @@ namespace Librainian.Security {
 
         private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
 
+        [NotNull]
         private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
                     new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
 
@@ -324,15 +325,16 @@ namespace Librainian.Security {
 
             using var ms = new MemoryStream();
 
-            using var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor();
+            using ( var transform = _tripleDesCryptoServiceProvider.Value.CreateEncryptor() ) {
 
-            using var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write );
+                using ( var cs = new CryptoStream( ms, transform, CryptoStreamMode.Write ) ) {
+                    var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
+                    cs.Write( buffer, 0, buffer.Length );
+                    cs.FlushFinalBlock();
+                }
 
-            var buffer = Encoding.Unicode.GetBytes( textToEncrypt );
-            cs.Write( buffer, 0, buffer.Length );
-            cs.FlushFinalBlock();
-
-            return Convert.ToBase64String( ms.ToArray() );
+                return Convert.ToBase64String( ms.ToArray() );
+            }
         }
 
         [NotNull]
@@ -495,7 +497,7 @@ namespace Librainian.Security {
 
             using var p = new Process {
                 StartInfo = {
-                    FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true
+                    FileName = "md5sum.exe", Arguments = file.FullPath, UseShellExecute = false, RedirectStandardOutput = true
                 }
             };
 

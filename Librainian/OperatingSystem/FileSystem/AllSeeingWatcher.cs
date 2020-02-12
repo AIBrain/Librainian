@@ -48,6 +48,15 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Logging;
     using Utilities;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = Pri.LongPath.Path;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileInfo = Pri.LongPath.FileInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
+
     /// <summary></summary>
     public class AllSeeingWatcher : ABetterClassDispose {
 

@@ -53,13 +53,13 @@ namespace Librainian.OperatingSystem.FileSystem {
     using JetBrains.Annotations;
     using Parsing;
     using Threading;
-    using Directory = Pri.LongPath.Directory;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using File = Pri.LongPath.File;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Pri.LongPath.Path;
-
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+    using Directory = Pri.LongPath.Directory;
+    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class FolderExtensions {
@@ -247,7 +247,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( info ) );
             }
 
-            return SplitPath( info.FullName );
+            return SplitPath( info.FullPath );
         }
 
         /// <summary>
@@ -270,9 +270,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return true;
                 }
 
-                Directory.Delete( folder.FullName );
+                Directory.Delete( folder.FullPath );
 
-                return !Directory.Exists( folder.FullName );
+                return !Directory.Exists( folder.FullPath );
             }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }

@@ -87,14 +87,36 @@ namespace Librainian.Measurement.Time {
         public Days( BigInteger value ) => this.Value = value;
 
         [CanBeNull]
-        public static Days Combine( [CanBeNull] Days left, Days right ) => Combine( left, right.Value );
+        public static Days Combine( [NotNull] Days left, [NotNull] Days right ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
 
-        //public const Byte InOneMonth = 31;
+            if ( right == null ) {
+                throw new ArgumentNullException( paramName: nameof( right ) );
+            }
+
+            return Combine( left, right.Value );
+        }
+
+        
         [NotNull]
-        public static Days Combine( Days left, Rational days ) => new Days( left.Value + days );
+        public static Days Combine( [NotNull] Days left, Rational days ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return new Days( left.Value + days );
+        }
 
         [NotNull]
-        public static Days Combine( Days left, BigInteger days ) => new Days( left.Value + days );
+        public static Days Combine( [NotNull] Days left, BigInteger days ) {
+            if ( left == null ) {
+                throw new ArgumentNullException( paramName: nameof( left ) );
+            }
+
+            return new Days( left.Value + days );
+        }
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -102,30 +124,70 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
+        public static Boolean Equals( [CanBeNull] Days left, [CanBeNull] Days right ) {
+            if ( ReferenceEquals(left, right) ) {
+                return true;
+            }
+
+            if ( left is null || right is null) {
+                return false;
+            }
+
+            return left.Value == right.Value;
+        }
 
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static implicit operator Hours( Days days ) => days.ToHours();
+        public static implicit operator Hours( [NotNull] Days days ) {
+            if ( days == null ) {
+                throw new ArgumentNullException( paramName: nameof( days ) );
+            }
+
+            return days.ToHours();
+        }
 
         [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Days days ) => new SpanOfTime( days: days );
+        public static implicit operator SpanOfTime( [NotNull] Days days ) {
+            if ( days == null ) {
+                throw new ArgumentNullException( paramName: nameof( days ) );
+            }
 
-        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
+            return new SpanOfTime( days: days );
+        }
+
+        public static implicit operator TimeSpan( [NotNull] Days days ) {
+            if ( days == null ) {
+                throw new ArgumentNullException( paramName: nameof( days ) );
+            }
+
+            return TimeSpan.FromDays( ( Double ) days.Value );
+        }
 
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static implicit operator Weeks( Days days ) => days.ToWeeks();
+        public static implicit operator Weeks( [NotNull] Days days ) {
+            if ( days == null ) {
+                throw new ArgumentNullException( paramName: nameof( days ) );
+            }
+
+            return days.ToWeeks();
+        }
 
         [NotNull]
-        public static Days operator -( Days days ) => new Days( days.Value * -1 );
+        public static Days operator -( [NotNull] Days days ) {
+            if ( days == null ) {
+                throw new ArgumentNullException( paramName: nameof( days ) );
+            }
+
+            return new Days( days.Value * -1 );
+        }
 
         [CanBeNull]
-        public static Days operator -( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left: left, right: -right );
+        public static Days operator -( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine(  left,  -right );
 
         [NotNull]
         public static Days operator -( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
@@ -183,26 +245,17 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         /// <exception cref="ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
         public Int32 CompareTo( [CanBeNull] Object obj ) {
-            if ( obj is null ) {
-                return 1;
+            switch ( obj ) {
+                case null: return 1;
+                case Days other: return this.CompareTo( other );
+                default: throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
             }
 
-            if ( obj is Days other ) {
-                return this.CompareTo( other );
-            }
-
-            throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
         }
 
-        public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
+        public Boolean Equals( Days other ) => Equals( this, other );
 
-        public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return default;
-            }
-
-            return obj is Days days && this.Equals( days );
-        }
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Days );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 

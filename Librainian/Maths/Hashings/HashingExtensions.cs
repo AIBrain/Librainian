@@ -46,7 +46,7 @@ namespace Librainian.Maths.Hashings {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using FileInfo = Pri.LongPath.FileInfo;
+    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
 
     // ReSharper restore RedundantUsingDirective
 

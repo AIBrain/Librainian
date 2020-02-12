@@ -42,7 +42,6 @@ namespace Librainian.Converters {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.IO;
     using System.Management;
     using System.Numerics;
     using System.Security.Cryptography;
@@ -62,47 +61,47 @@ namespace Librainian.Converters {
     using Parsing;
     using Security;
 
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+    // ReSharper restore RedundantUsingDirective
+
     public static class ConverterExtensions {
 
         [NotNull]
-        private static readonly String[] FalseStrings;
+        private static readonly String[] FalseStrings = new[] {
+            "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
+        };
 
         [NotNull]
-        private static readonly Char[] TrueChars;
+        private static readonly Char[] TrueChars = new[] {
+            'Y', '1'
+        };
 
         [NotNull]
-        private static readonly String[] TrueStrings;
-
-        static ConverterExtensions() {
-            FalseStrings = new[] {
-                "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
-            };
-
-            TrueChars = new[] {
-                'Y', '1'
-            };
-
-            TrueStrings = new[] {
-                "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
-            };
-        }
+        private static readonly String[] TrueStrings = new[] {
+            "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
+        };
 
         [CanBeNull]
-        public static T Cast<T>( [CanBeNull] this Object scalar ) {
-            if ( null == scalar || Convert.IsDBNull( scalar ) || Convert.IsDBNull( scalar ) ) {
+        public static T Cast<T>( [CanBeNull] this Object self ) {
+            if ( self is null || Convert.IsDBNull( self ) ) {
                 return default;
             }
 
-            if ( scalar is T executeScalar ) {
-                return executeScalar;
+            if ( self is T cast ) {
+                return cast;
             }
 
-            if ( scalar.TryCast<T>( out var result ) ) {
+            if ( self.TryCast<T>( out var result ) ) {
                 return result;
             }
 
             try {
-                return ( T )Convert.ChangeType( scalar, typeof( T ) );
+                return ( T )Convert.ChangeType( self, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -221,43 +220,32 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
-            if ( value is null ) {
-                return default;
-            }
+            switch ( value ) {
+                case null: return default;
+                case Boolean b: return b;
+                case Char c: return c.In( ParsingConstants.TrueChars );
+                case Int32 i: return i >= 1;
+                case String s when String.IsNullOrWhiteSpace( s ): return null;
+                case String s: {
+                    s = s.Trimmed();
 
-            if ( value is Boolean b ) {
-                return b;
-            }
+                    if ( s is null ) {
+                        return default;
+                    }
 
-            if ( value is Char c ) {
-                return c.In( ParsingConstants.TrueChars );
-            }
+                    if ( s.In( ParsingConstants.TrueStrings ) ) {
+                        return true;
+                    }
 
-            if ( value is Int32 i ) {
-                return i >= 1;
-            }
+                    if ( s.In( ParsingConstants.FalseStrings ) ) {
+                        return default;
+                    }
 
-            if ( value is String s ) {
-                if ( String.IsNullOrWhiteSpace( s ) ) {
-                    return null;
-                }
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
 
-                s = s.Trimmed();
-
-                if ( s is null ) {
-                    return default;
-                }
-
-                if ( s.In( ParsingConstants.TrueStrings ) ) {
-                    return true;
-                }
-
-                if ( s.In( ParsingConstants.FalseStrings ) ) {
-                    return default;
-                }
-
-                if ( Boolean.TryParse( s, out var result ) ) {
-                    return result;
+                    break;
                 }
             }
 
@@ -558,7 +546,7 @@ namespace Librainian.Converters {
                 throw new ArgumentNullException( nameof( systemPath ) );
             }
 
-            var fullPath = systemPath.FullName;
+            var fullPath = systemPath.FullPath;
 
             while ( fullPath.EndsWith( @"\", StringComparison.Ordinal ) ) {
                 fullPath = fullPath.Substring( 0, fullPath.Length - 1 );
@@ -654,29 +642,29 @@ namespace Librainian.Converters {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
 
-            return directoryInfo.FullName.Split( new[] {
+            return directoryInfo.FullPath.Split( new[] {
                 Path.DirectorySeparatorChar
             }, StringSplitOptions.RemoveEmptyEntries );
         }
 
-        /// <summary>Returns the trimmed <paramref name="obj" /> ToString() or null.
-        /// <para>If <paramref name="obj" /> is null, empty, or whitespace then return null, else return obj.ToString().</para>
+        /// <summary>Returns the trimmed <paramref name="self" /> ToString() or null.
+        /// <para>If <paramref name="self" /> is null, empty, or whitespace then return null, else return <paramref name="self"/>.ToString().</para>
         /// </summary>
-        /// <remarks>If the <paramref name="obj" /> is a <see cref="Control" /> then the <see cref="Control.Text" /> will be returned.</remarks>
-        /// <param name="obj"></param>
+        /// <remarks>If the <paramref name="self" /> is a <see cref="Control" /> then the <see cref="Control.Text" /> will be returned.</remarks>
+        /// <param name="self"></param>
         /// <returns></returns>
         [DebuggerStepThrough]
         [CanBeNull]
         [Pure]
-        public static String ToStringOrNull<T>( [CanBeNull] this T obj ) {
-            switch ( obj ) {
-                case null: return default;
-                case Control control: return control.Text().Trimmed();
+        public static String ToStringOrNull<T>( [CanBeNull] this T self ) {
+            switch ( self ) {
+                case null:
+                case DBNull _:
+                    return default;
                 case String s: return s.Trimmed();
-                case DBNull _: return default;
+                case Control control: return control.Text().Trimmed();
+                default: return Equals( self, DBNull.Value ) ? default : self.ToString().Trimmed();
             }
-
-            return Equals( obj, DBNull.Value ) ? default : obj.ToString().Trimmed();
         }
 
         /// <summary>Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.</summary>

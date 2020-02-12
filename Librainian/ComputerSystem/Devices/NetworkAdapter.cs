@@ -44,6 +44,7 @@ namespace Librainian.ComputerSystem.Devices {
     using System.Linq;
     using System.Management;
     using System.Threading.Tasks;
+    using Converters;
     using JetBrains.Annotations;
     using Measurement.Time;
     using OperatingSystem.WMI;
@@ -84,13 +85,13 @@ namespace Librainian.ComputerSystem.Devices {
 
                 this.DeviceId = deviceId;
 
-                this.Name = crtNetworkAdapter[ "ProductName" ].ToString();
+                this.Name = crtNetworkAdapter[ "ProductName" ]?.ToString();
 
-                this.NetEnabled = Convert.ToBoolean( crtNetworkAdapter[ "NetEnabled" ].ToString() ) ?
+                this.NetEnabled = crtNetworkAdapter[ nameof( this.NetEnabled ) ].ToBoolean() ?
                     ( Int32 )EnumNetEnabledStatus.Enabled :
                     ( Int32 )EnumNetEnabledStatus.Disabled;
 
-                this.NetConnectionStatus = Convert.ToInt32( crtNetworkAdapter[ "NetConnectionStatus" ].ToString() );
+                this.NetConnectionStatus = crtNetworkAdapter[ nameof( this.NetConnectionStatus ) ].ToIntOrThrow();
             }
             catch ( NullReferenceException ) {
 
@@ -133,9 +134,9 @@ namespace Librainian.ComputerSystem.Devices {
 
             foreach ( var o in networkAdapters ) {
                 if ( o is ManagementObject moNetworkAdapter ) {
-                    yield return new NetworkAdapter( Convert.ToInt32( moNetworkAdapter[ "DeviceID" ].ToString() ), moNetworkAdapter[ "ProductName" ].ToString(),
-                        Convert.ToBoolean( moNetworkAdapter[ "NetEnabled" ].ToString() ) ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled,
-                        Convert.ToInt32( moNetworkAdapter[ "NetConnectionStatus" ].ToString() ) );
+                    yield return new NetworkAdapter( moNetworkAdapter[ "DeviceID" ].ToIntOrThrow(), moNetworkAdapter[ "ProductName" ]?.ToString(),
+                        moNetworkAdapter[ nameof( NetEnabled ) ].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled,
+                        moNetworkAdapter[ nameof( NetConnectionStatus ) ].ToIntOrThrow() );
                 }
             }
         }
@@ -191,16 +192,12 @@ namespace Librainian.ComputerSystem.Devices {
             var netEnabled = ( Int32 )EnumNetEnabledStatus.Unknown;
 
             try {
-                var networkAdapters = WMIExtensions.WmiQuery( $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" );
 
-                foreach ( var o in networkAdapters ) {
+                foreach ( var o in WMIExtensions.WmiQuery( $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}" ) ) {
 
-                    if ( o is ManagementObject networkAdapter && Convert.ToBoolean( networkAdapter[ "NetEnabled" ].ToString() ) ) {
-                        netEnabled = ( Int32 )EnumNetEnabledStatus.Enabled;
-                    }
-                    else {
-                        netEnabled = ( Int32 )EnumNetEnabledStatus.Disabled;
-                    }
+                    netEnabled = o is ManagementObject networkAdapter && networkAdapter[ nameof( netEnabled ) ].ToBoolean() ?
+                        ( Int32 )EnumNetEnabledStatus.Enabled :
+                        ( Int32 )EnumNetEnabledStatus.Disabled;
                 }
             }
             catch ( NullReferenceException ) { }

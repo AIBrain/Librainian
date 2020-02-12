@@ -46,7 +46,7 @@ namespace Librainian.Extensions {
     using Logging;
     using Maths.Numbers;
     using OperatingSystem.FileSystem;
-    using Pri.LongPath;
+    using OperatingSystem.FileSystem.Pri.LongPath;
 
     /// <summary>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</summary>
     /// <remarks>I just love guids!</remarks>

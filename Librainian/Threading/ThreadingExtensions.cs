@@ -56,7 +56,7 @@ namespace Librainian.Threading {
     public static class ThreadingExtensions {
 
         public static Boolean IsRunningFromNUnit { get; } =
-            AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
+            AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly != null && assembly.FullName.StartsWith( "nunit.framework", StringComparison.CurrentCultureIgnoreCase ) );
 
         /// <summary>Only allow a delegate to run X times.</summary>
         /// <param name="action">      </param>

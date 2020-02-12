@@ -37,6 +37,7 @@
 //
 // Project: "Librainian", "Disk.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
+
 namespace Librainian.ComputerSystem.Devices {
 
     using System;
@@ -49,6 +50,11 @@ namespace Librainian.ComputerSystem.Devices {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
+    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>
@@ -60,15 +66,14 @@ namespace Librainian.ComputerSystem.Devices {
 
         public Char DriveLetter { get; }
 
-        [NotNull]
-        public DriveInfo Info { get; }
+        [NotNull] public DriveInfo Info { get; }
 
         [NotNull]
         public String RootDirectory => this.Info.RootDirectory.Name;
 
         public Disk( [NotNull] Document document ) : this( document.FullPath[ 0 ] ) { }
 
-        public Disk( [NotNull] Folder folder ) : this( folder.FullName[ 0 ] ) { }
+        public Disk( [NotNull] Folder folder ) : this( folder.FullPath[ 0 ] ) { }
 
         public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
 

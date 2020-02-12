@@ -49,14 +49,14 @@ namespace Librainian.Linguistics {
 
     public class Person {
 
-        public String FullName { get; }
+        public String FullPath { get; }
 
         public Person( [NotNull] String fullName ) {
             if ( String.IsNullOrWhiteSpace( value: fullName ) ) {
                 throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullName ) );
             }
 
-            this.FullName = fullName;
+            this.FullPath = fullName;
         }
     }
 }

@@ -45,26 +45,35 @@ namespace Librainian.Graphics.Video {
     public struct CarrierImage {
 
         //count of frames in the video stream, or 0
-        public Int32 AviCountFrames;
+        public readonly Int32 AviCountFrames;
 
         public Int64[] AviMessageBytesToHide;
 
         //width * height
-        public Int64 CountPixels;
+        public readonly Int64 CountPixels;
 
         //how many bytes will be hidden in this image - this field is set by CryptUtility.HideOrExtract()
         public Int64 MessageBytesToHide;
 
         //file name to save the new image
-        public String ResultFileName;
+        public readonly String ResultFileName;
 
         //file name of the clean image
-        public String SourceFileName;
+        [NotNull]
+        public readonly String SourceFileName;
 
         //produce colorful (false) or grayscale noise (true) for this picture
-        public Boolean UseGrayscale;
+        public readonly Boolean UseGrayscale;
 
-        public CarrierImage( [CanBeNull] String sourceFileName, [CanBeNull] String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
+        public CarrierImage( [NotNull] String sourceFileName, [NotNull] String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
+            if ( String.IsNullOrWhiteSpace( value: sourceFileName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( sourceFileName ) );
+            }
+
+            if ( String.IsNullOrWhiteSpace( value: resultFileName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( resultFileName ) );
+            }
+
             this.SourceFileName = sourceFileName;
             this.ResultFileName = resultFileName;
             this.CountPixels = countPixels;
@@ -77,7 +86,7 @@ namespace Librainian.Graphics.Video {
         public void SetCountBytesToHide( Int64 messageBytesToHide ) {
             this.MessageBytesToHide = messageBytesToHide;
 
-            if ( this.SourceFileName.ToLower().EndsWith( ".avi" ) ) {
+            if ( this.SourceFileName.EndsWith( ".avi", StringComparison.CurrentCultureIgnoreCase ) ) {
                 this.AviMessageBytesToHide = new Int64[ this.AviCountFrames ];
 
                 //calculate count of message-bytes to hide in (or extract from) each image

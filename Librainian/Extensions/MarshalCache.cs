@@ -102,7 +102,7 @@ namespace Librainian.Extensions {
             //Debug.WriteLine("Type " + typeof(T).Name + " requires marshaling: " + TypeRequiresMarshal);
 
             // Generate a method to get the address of a generic type. We'll be using this for RtlMoveMemory later for much faster structure reads.
-            var method = new DynamicMethod( $"GetPinnedPtr<{typeof( T ).FullName.Replace( ".", "<>" )}>", typeof( void* ), new[] { typeof( T ).MakeByRefType() }, typeof( MarshalCache<> ).Module );
+            var method = new DynamicMethod( $"GetPinnedPtr<{typeof( T ).FullPath.Replace( ".", "<>" )}>", typeof( void* ), new[] { typeof( T ).MakeByRefType() }, typeof( MarshalCache<> ).Module );
             var generator = method.GetILGenerator();
             generator.Emit( OpCodes.Ldarg_0 );
             generator.Emit( OpCodes.Conv_U );
