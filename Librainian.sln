@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librainian Tests", "Tests\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianCore Tests", "Tests\LibrainianCoreTests\LibrainianCore Tests.csproj", "{4CE02369-2341-45AD-BEFC-35950F0D9BE6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0212244B-6438-4E5F-91EB-3E84A88DDC34}"
+	ProjectSection(SolutionItems) = preProject
+		Code of Conduct.md = Code of Conduct.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,7 +85,7 @@ Global
 		{4CE02369-2341-45AD-BEFC-35950F0D9BE6} = {BF64697B-F69C-41BF-B252-412FF1804598}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
 		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal
