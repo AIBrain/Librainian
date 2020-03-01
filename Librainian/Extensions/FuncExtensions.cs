@@ -53,7 +53,7 @@ namespace Librainian.Extensions {
         [CanBeNull]
         public static TResult ApplyMemoized<TSource, TResult, TParam>( [NotNull] this TSource source, [NotNull] Func<TSource, TParam, TResult> selector,
             [NotNull] TParam param ) {
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( paramName: nameof( source ) );
             }
 
@@ -61,7 +61,7 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( paramName: nameof( selector ) );
             }
 
-            if ( param == null ) {
+            if ( param is null ) {
                 throw new ArgumentNullException( paramName: nameof( param ) );
             }
 
@@ -74,7 +74,7 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( paramName: nameof( selector ) );
             }
 
-            if ( source == null ) {
+            if ( source is null ) {
                 throw new ArgumentNullException( paramName: nameof( source ) );
             }
 

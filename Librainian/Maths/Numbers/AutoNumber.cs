@@ -45,7 +45,7 @@ namespace Librainian.Maths.Numbers {
 
 #pragma warning disable IDE0015 // Use framework type
 
-    /// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="ulong" /> )</summary>
+    /// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
     [JsonObject]
 #pragma warning restore IDE0015 // Use framework type
     public sealed class AutoNumber {

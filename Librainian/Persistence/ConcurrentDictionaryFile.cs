@@ -68,6 +68,7 @@ namespace Librainian.Persistence {
             set => this._isLoading = value;
         }
 
+        [NotNull]
         public CancellationTokenSource MainCTS { get; } = new CancellationTokenSource();
 
         // ReSharper disable once NotNullMemberIsNotInitialized
@@ -120,7 +121,9 @@ namespace Librainian.Persistence {
             IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( this.Count );
 
             foreach ( var pair in this ) {
-                me[ pair.Key ] = pair.Value;
+                if ( !(pair.Key is null) ) {
+                    me[ pair.Key ] = pair.Value;
+                }
             }
 
             return me.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
@@ -129,7 +132,7 @@ namespace Librainian.Persistence {
         public Boolean Load( CancellationToken token = default ) {
             var document = this.Document;
 
-            if ( document.Exists() == false ) {
+            if ( !document.Exists() ) {
                 return default;
             }
 
@@ -187,6 +190,6 @@ namespace Librainian.Persistence {
         public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [CanBeNull] TKey key ) => key != null && this.TryRemove( key, out _ );
+        public Boolean TryRemove( [CanBeNull] TKey key ) => !(key is null) && this.TryRemove( key, out _ );
     }
 }

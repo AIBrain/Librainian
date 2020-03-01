@@ -173,7 +173,7 @@ namespace Librainian.Threading {
         /// <summary>Uses a named semaphore to allow only ONE of <paramref name="self" />.</summary>
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] T self, TimeSpan? timeout = null ) {
-            if ( self == null ) {
+            if ( self is null ) {
                 throw new ArgumentNullException( paramName: nameof( self ) );
             }
 

@@ -141,11 +141,11 @@ namespace Librainian.Collections.Sets {
         /// <returns></returns>
         public void Replace( [CanBeNull] T left, [CanBeNull] T right ) {
 
-            if ( left != null ) {
+            if ( !(left is null) ) {
                 this.Remove( left );
             }
 
-            if ( right != null ) {
+            if ( !(right is null) ) {
                 this.Add( right );
             }
         }

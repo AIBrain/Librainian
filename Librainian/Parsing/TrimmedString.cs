@@ -50,7 +50,7 @@ namespace Librainian.Parsing {
     using Maths;
     using Newtonsoft.Json;
 
-    /// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
+    /// <summary>This <see cref="String" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]

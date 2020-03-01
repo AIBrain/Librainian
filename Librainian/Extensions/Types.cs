@@ -78,7 +78,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => item != null ).Select( item => ( T )item.Clone() ).ToList();
+            list.Where( item => !(item is null) ).Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {

@@ -277,12 +277,14 @@ namespace Librainian.Collections.Extensions {
 
             IDictionary<T, Int32> result = new Dictionary<T, Int32>();
 
-            foreach ( var element in self.Where( t => t != null ) ) {
-                if ( result.ContainsKey( element ) ) {
-                    ++result[ element ];
-                }
-                else {
-                    result[ element ] = 1;
+            foreach ( var element in self ) {
+                if ( !( element is null ) ) {
+                    if ( result.ContainsKey( element ) ) {
+                        ++result[ element ];
+                    }
+                    else {
+                        result[ element ] = 1;
+                    }
                 }
             }
 

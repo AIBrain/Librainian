@@ -80,7 +80,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( things ) );
             }
 
-            var parts = things.Where( o => o != null ).Select( o => {
+            var parts = things.Where( o => !(o is null) ).Select( o => {
                 if ( o is IEnumerable<SqlParameter> parameters ) {
                     var kvp = parameters.Where( parameter => parameter != default ).Select( parameter => new {
                         parameter.ParameterName,

@@ -44,7 +44,7 @@ namespace Librainian.Converters {
 
 #pragma warning disable IDE0015 // Use framework type
 
-    /// <summary>Struct for combining two <see cref="ushort" /> (or <see cref="short" />) to and from a <see cref="uint" /> (or <see cref="int" />) as easily as possible.</summary>
+    /// <summary>Struct for combining two <see cref="UInt16" /> (or <see cref="Int16" />) to and from a <see cref="UInt32" /> (or <see cref="Int32" />) as easily as possible.</summary>
     [StructLayout( LayoutKind.Explicit, Pack = 0 )]
 #pragma warning restore IDE0015 // Use framework type
     public struct Translate32 {

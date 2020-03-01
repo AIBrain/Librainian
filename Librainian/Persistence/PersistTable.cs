@@ -229,14 +229,12 @@ namespace Librainian.Persistence {
         public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
-            if ( item.Value != null ) {
+            
                 var value = item.Value.ToJSON()?.ToCompressedBase64();
                 var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
                 return this.Dictionary.Remove( asItem );
-            }
-
-            return default;
+            
         }
 
         /// <summary>Returns a string that represents the current object.</summary>

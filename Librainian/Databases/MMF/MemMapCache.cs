@@ -53,45 +53,37 @@ namespace Librainian.Databases.MMF {
     public class MemMapCache<T> : ABetterClassDispose {
 
         private const String Delim = "[!@#]";
-        private BinaryFormatter _formatter;
+
+        [NotNull]
+        private BinaryFormatter _formatter { get; } = new BinaryFormatter();
 
         private NetworkStream _networkStream;
 
-        private TcpClient _tcpClient;
+        [NotNull]
+        private TcpClient _tcpClient { get; } = new TcpClient();
 
-        private Dictionary<String, DateTime> _keyExpirations { get; }
+        [NotNull]
+        private Dictionary<String, DateTime> _keyExpirations { get; } = new Dictionary<String, DateTime>();
 
         public static Int32 MaxKeyLength => 4096 - 32;
 
-        public Boolean CacheHitAlwaysMiss { get; }
+        public Boolean CacheHitAlwaysMiss { get; } = false;
 
-        public Int64 ChunkSize { get; }
+        public Int64 ChunkSize { get; } = 1024 * 1024 * 30;
 
-        public Encoding Encoding { get; }
+        public Encoding Encoding { get; } = Encoding.Unicode;
 
         public Boolean IsConnected => this._tcpClient.Connected;
 
-        public Int32 Port { get; }
+        public Int32 Port { get; } = 57742;
 
-        public String Server { get; }
-
-        public MemMapCache() {
-            this.Encoding = Encoding.Unicode;
-            this.ChunkSize = 1024 * 1024 * 30;
-
-            this.Server = "127.0.0.1"; //limited to local
-            this.Port = 57742;
-
-            this.CacheHitAlwaysMiss = false;
-
-            this._keyExpirations = new Dictionary<String, DateTime>();
-        }
+        [NotNull]
+        public String Server { get; } = "127.0.0.1";
 
         public void Connect() {
-            this._tcpClient = new TcpClient();
+        
             this._tcpClient.Connect( hostname: this.Server, port: this.Port );
             this._networkStream = this._tcpClient.GetStream();
-            this._formatter = new BinaryFormatter();
         }
 
         /// <summary>Dispose any disposable members.</summary>
@@ -128,7 +120,7 @@ namespace Librainian.Databases.MMF {
 
                     var o = this._formatter.Deserialize( serializationStream: viewStream );
 
-                    return ( T )o;
+                    return o is T o1 ? o1 : default;
                 }
             }
             catch ( SerializationException ) {
@@ -147,7 +139,7 @@ namespace Librainian.Databases.MMF {
 
         //ideal for Unit Testing of classes that depend upon this Library.
         public void Set( [NotNull] String key, [NotNull] T obj ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 
@@ -167,7 +159,7 @@ namespace Librainian.Databases.MMF {
                 throw new Exception( "The key has exceeded the maximum length." );
             }
 
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 
@@ -209,7 +201,7 @@ namespace Librainian.Databases.MMF {
         }
 
         public void Set( [NotNull] String key, [NotNull] T obj, DateTime expire ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 
@@ -221,7 +213,7 @@ namespace Librainian.Databases.MMF {
         }
 
         public void Set( [NotNull] String key, [NotNull] T obj, TimeSpan expire ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 
@@ -234,7 +226,7 @@ namespace Librainian.Databases.MMF {
         }
 
         public void Set( [NotNull] String key, [NotNull] T obj, Int64 size ) {
-            if ( obj == null ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException( paramName: nameof( obj ) );
             }
 
@@ -262,12 +254,17 @@ namespace Librainian.Databases.MMF {
 
             var obj = this.Get( key );
 
-            if ( obj != null ) {
+            if ( !(obj is null) ) {
                 return obj;
             }
 
-            obj = cacheMiss.Invoke();
-            this.Set( key, obj, expire: expire );
+            if ( cacheMiss != null ) {
+                obj = cacheMiss.Invoke();
+
+                if ( !(obj is null) ) {
+                    this.Set( key, obj, expire: expire );
+                }
+            }
 
             return obj;
         }
