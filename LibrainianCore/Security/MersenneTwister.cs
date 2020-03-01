@@ -73,7 +73,7 @@ namespace LibrainianCore.Security {
         }
 
         /// <summary>a default initial seed is used</summary>
-        public MersenneTwister() : this( seed: 4357 ) { }
+        public MersenneTwister() : this( 4357 ) { }
 
         private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
 
@@ -107,15 +107,15 @@ namespace LibrainianCore.Security {
             }
 
             y = this._mt[ this._mti++ ];
-            y ^= TEMPERING_SHIFT_U( y: y );
-            y ^= TEMPERING_SHIFT_S( y: y ) & TemperingMaskB;
-            y ^= TEMPERING_SHIFT_T( y: y ) & TemperingMaskC;
-            y ^= TEMPERING_SHIFT_L( y: y );
+            y ^= TEMPERING_SHIFT_U( y );
+            y ^= TEMPERING_SHIFT_S( y ) & TemperingMaskB;
+            y ^= TEMPERING_SHIFT_T( y ) & TemperingMaskC;
+            y ^= TEMPERING_SHIFT_L( y );
 
             return y;
         }
 
-        public override Int32 Next() => this.Next( maxValue: Int32.MaxValue );
+        public override Int32 Next() => this.Next( Int32.MaxValue );
 
         public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( maxValue > 1 ) {
@@ -138,7 +138,7 @@ namespace LibrainianCore.Security {
                 return minValue;
             }
 
-            return this.Next( maxValue: maxValue - minValue ) + minValue;
+            return this.Next( maxValue - minValue ) + minValue;
         }
 
         /// <summary></summary>
@@ -152,7 +152,7 @@ namespace LibrainianCore.Security {
             var bufLen = buffer.Length;
 
             for ( var idx = 0; idx < bufLen; ++idx ) {
-                buffer[ idx ] = ( Byte )this.Next( maxValue: 256 );
+                buffer[ idx ] = ( Byte )this.Next( 256 );
             }
         }
 

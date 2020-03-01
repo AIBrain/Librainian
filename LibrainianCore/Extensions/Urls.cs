@@ -64,8 +64,8 @@ namespace LibrainianCore.Extensions {
 
         [CanBeNull]
         public static Uri UrlDecode( [NotNull] this String input ) {
-            if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
+            if ( String.IsNullOrWhiteSpace( input ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
             }
 
             return new Uri( HttpUtility.UrlDecode( input ) );

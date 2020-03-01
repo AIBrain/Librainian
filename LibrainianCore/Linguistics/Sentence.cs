@@ -68,10 +68,10 @@ namespace LibrainianCore.Linguistics {
         public static Sentence Empty { get; }
 
         [NotNull]
-        public static String EndOfSentence { get; }
+        public static String EndOfSentence { get; } = new String( Char.MaxValue, 2 );
 
         [NotNull]
-        public static String StartOfSentence { get; }
+        public static String StartOfSentence { get; } = new String( Char.MinValue, 2 );
 
         private Sentence() => throw new InvalidOperationException( "No." );
 
@@ -79,11 +79,7 @@ namespace LibrainianCore.Linguistics {
         /// <param name="sentence"></param>
         private Sentence( [NotNull] String sentence ) : this( sentence.ToWords().Select( word => new Word( word ) ) ) { }
 
-        static Sentence() {
-            StartOfSentence = new String( Char.MinValue, 2 );
-            EndOfSentence = new String( Char.MaxValue, 2 );
-            Empty = Parse( $"{StartOfSentence}{EndOfSentence}" );
-        }
+        static Sentence() => Empty = Parse( $"{StartOfSentence}{EndOfSentence}" );
 
         /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
         /// <param name="words"></param>
@@ -102,8 +98,12 @@ namespace LibrainianCore.Linguistics {
                 return 0;
             }
 
-            if ( ReferenceEquals( left, null ) ) {
-                return -1;
+            if ( left is null ) {
+                return 1;   //TODO needs tested
+            }
+
+            if ( right is null ) {
+                return -1; //TODO needs tested
             }
 
             return left.CompareTo( right );
@@ -139,13 +139,14 @@ namespace LibrainianCore.Linguistics {
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
+        public override Boolean Equals( Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
 
         public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
         public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-        public override String ToString() => this.Words.ToStrings( Symbols.Singlespace );
+        [NotNull]
+        public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 

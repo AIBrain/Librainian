@@ -50,7 +50,7 @@ namespace LibrainianCore.OperatingSystem {
         /// <returns></returns>
         [CanBeNull]
         public static String CmdExecute( [CanBeNull] this String command ) {
-            using ( var process = Process.Start( startInfo: new ProcessStartInfo( fileName: "cmd.exe", arguments: $"/c {command}" ) {
+            using ( var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 RedirectStandardError = true,
@@ -61,7 +61,5 @@ namespace LibrainianCore.OperatingSystem {
                 }
             }
         }
-
-
     }
 }

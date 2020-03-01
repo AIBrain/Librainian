@@ -56,10 +56,10 @@ namespace LibrainianCore.Parsing.Validation {
         }
 
         [NotNull]
-        public override Object ReadJson( [NotNull] JsonReader reader, [NotNull] Type objectType, [CanBeNull] Object existingValue, [CanBeNull] JsonSerializer serializer ) =>
+        public override Object ReadJson( [NotNull] JsonReader reader, [NotNull] Type objectType, [CanBeNull] Object? existingValue, [CanBeNull] JsonSerializer serializer ) =>
             Activator.CreateInstance( objectType, reader.Value );
 
-        public override void WriteJson( [NotNull] JsonWriter writer, [CanBeNull] Object value, [CanBeNull] JsonSerializer serializer ) =>
+        public override void WriteJson( [NotNull] JsonWriter writer, [CanBeNull] Object? value, [CanBeNull] JsonSerializer serializer ) =>
             writer.WriteValue( ( ( ValidatedString )value ).Value );
     }
 }

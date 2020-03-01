@@ -79,8 +79,7 @@ namespace LibrainianCore.Measurement.Currency.USD {
 
                 this._balance = value;
                 this._access.ExitWriteLock();
-                var onAnyUpdate = this.OnAnyUpdate;
-                onAnyUpdate?.Invoke( value );
+                this.OnAnyUpdate?.Invoke( value );
             }
         }
 
@@ -88,15 +87,15 @@ namespace LibrainianCore.Measurement.Currency.USD {
         [NotNull]
         public String Formatted => this.ToString();
 
-        public Action<Decimal> OnAfterDeposit { get; set; }
+        public Action<Decimal>? OnAfterDeposit { get; set; }
 
-        public Action<Decimal> OnAfterWithdraw { get; set; }
+        public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-        public Action<Decimal> OnAnyUpdate { get; set; }
+        public Action<Decimal>? OnAnyUpdate { get; set; }
 
-        public Action<Decimal> OnBeforeDeposit { get; set; }
+        public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-        public Action<Decimal> OnBeforeWithdraw { get; set; }
+        public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>
         ///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
@@ -134,7 +133,7 @@ namespace LibrainianCore.Measurement.Currency.USD {
                 return true;
             }
             finally {
-                this.OnAfterDeposit( amount );
+                this.OnAfterDeposit?.Invoke( amount );
             }
         }
 
@@ -157,8 +156,7 @@ namespace LibrainianCore.Measurement.Currency.USD {
                     this._access.ExitWriteLock();
                 }
 
-                var onAnyUpdate = this.OnAnyUpdate;
-                onAnyUpdate?.Invoke( amount );
+                this.OnAnyUpdate?.Invoke( amount );
             }
         }
 
@@ -184,8 +182,7 @@ namespace LibrainianCore.Measurement.Currency.USD {
                     this._access.ExitWriteLock();
                 }
 
-                var onAfterWithdraw = this.OnAfterWithdraw;
-                onAfterWithdraw?.Invoke( amount );
+                this.OnAfterWithdraw?.Invoke( amount );
             }
         }
 

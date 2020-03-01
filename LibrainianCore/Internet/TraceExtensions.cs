@@ -79,9 +79,9 @@ namespace LibrainianCore.Internet {
             do {
                 replyTime.Start();
 
-                pingReply = ping.Send( address: address, timeout: timeout, buffer: new Byte[] {
+                pingReply = ping.Send( address, timeout, new Byte[] {
                     0
-                }, options: pingOptions );
+                }, pingOptions );
 
                 replyTime.Stop();
 
@@ -132,6 +132,7 @@ namespace LibrainianCore.Internet {
             /// <summary>The reply time it took for the host to receive and reply to the request in milliseconds.</summary>
             public Int64 ReplyTime { get; set; }
 
+            [NotNull]
             public override String ToString() =>
                 $"{this.HopID} | {( String.IsNullOrEmpty( this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
         }

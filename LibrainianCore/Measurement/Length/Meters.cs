@@ -45,9 +45,9 @@ namespace LibrainianCore.Measurement.Length {
 
     public class Meters {
 
-        public static readonly Meters One = new Meters( meters: 1 );
+        public static readonly Meters One = new Meters( 1 );
 
-        public static readonly Meters Two = new Meters( meters: 2 );
+        public static readonly Meters Two = new Meters( 2 );
 
         [JsonProperty]
         public readonly Rational Value;

@@ -66,7 +66,7 @@ namespace LibrainianCore.OperatingSystem.Compression {
         public RandomnessFeeding() {
             this.HowManyBytesAsCompressed = BigInteger.Zero;
             this.HowManyBytesFed = BigInteger.Zero;
-            this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
+            this.GZipStream = new GZipStream( this.NullStream, CompressionLevel.Optimal );
         }
 
         public override void DisposeManaged() {

@@ -40,6 +40,7 @@
 namespace LibrainianCore.Internet {
 
     using System;
+    using JetBrains.Annotations;
 
     public struct UriLinkItem {
 
@@ -47,6 +48,7 @@ namespace LibrainianCore.Internet {
 
         public String Text;
 
+        [NotNull]
         public override String ToString() => $"{this.Href}->{this.Text}";
     }
 }

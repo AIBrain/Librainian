@@ -47,7 +47,7 @@ namespace LibrainianCore.Security {
 
     public static class Crypto {
 
-        private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( s: "evatuewot8evtet8e8paaa40aqtab60w489uvmw" );
+        private static readonly Byte[] Salt = Encoding.ASCII.GetBytes( "evatuewot8evtet8e8paaa40aqtab60w489uvmw" );
 
         /// <summary>Decrypt the given string. Assumes the string was encrypted using EncryptStringAES(), using an identical sharedSecret.</summary>
         /// <param name="cipherText">The text to decrypt.</param>
@@ -71,23 +71,23 @@ namespace LibrainianCore.Security {
             try {
 
                 // generate the key from the shared secret and the salt
-                var key = new Rfc2898DeriveBytes( password: sharedSecret, salt: Salt );
+                var key = new Rfc2898DeriveBytes( sharedSecret, Salt );
 
                 // Create the streams used for decryption.
-                var bytes = Convert.FromBase64String( s: cipherText );
-                var msDecrypt = new MemoryStream( buffer: bytes );
+                var bytes = Convert.FromBase64String( cipherText );
+                var msDecrypt = new MemoryStream( bytes );
 
                 // Create a RijndaelManaged object with the specified key and IV.
                 aesAlg = new RijndaelManaged();
-                aesAlg.Key = key.GetBytes( cb: aesAlg.KeySize / 8 );
+                aesAlg.Key = key.GetBytes( aesAlg.KeySize / 8 );
 
                 // Get the initialization vector from the encrypted stream
                 aesAlg.IV = msDecrypt.ReadByteArray();
 
                 // Create a decrytor to perform the stream transform.
-                var decryptor = aesAlg.CreateDecryptor( rgbKey: aesAlg.Key, rgbIV: aesAlg.IV );
+                var decryptor = aesAlg.CreateDecryptor( aesAlg.Key, aesAlg.IV );
 
-                using ( var srDecrypt = new StreamReader( stream: new CryptoStream( stream: msDecrypt, transform: decryptor, mode: CryptoStreamMode.Read ) ) ) {
+                using ( var srDecrypt = new StreamReader( new CryptoStream( msDecrypt, decryptor, CryptoStreamMode.Read ) ) ) {
 
                     // Read the decrypted bytes from the decrypting stream and place them in
                     // a string.
@@ -122,31 +122,31 @@ namespace LibrainianCore.Security {
             try {
 
                 // generate the key from the shared secret and the salt
-                var key = new Rfc2898DeriveBytes( password: sharedSecret, salt: Salt );
+                var key = new Rfc2898DeriveBytes( sharedSecret, Salt );
 
                 // Create a RijndaelManaged object
                 aesAlg = new RijndaelManaged();
-                aesAlg.Key = key.GetBytes( cb: aesAlg.KeySize / 8 );
+                aesAlg.Key = key.GetBytes( aesAlg.KeySize / 8 );
 
                 // Create a decryptor to perform the stream transform.
-                var encryptor = aesAlg.CreateEncryptor( rgbKey: aesAlg.Key, rgbIV: aesAlg.IV );
+                var encryptor = aesAlg.CreateEncryptor( aesAlg.Key, aesAlg.IV );
 
                 // Create the streams used for encryption.
                 var msEncrypt = new MemoryStream();
 
                 // prepend the IV
-                msEncrypt.Write( buffer: BitConverter.GetBytes( aesAlg.IV.Length ), offset: 0, count: sizeof( Int32 ) );
-                msEncrypt.Write( buffer: aesAlg.IV, offset: 0, count: aesAlg.IV.Length );
+                msEncrypt.Write( BitConverter.GetBytes( aesAlg.IV.Length ), 0, sizeof( Int32 ) );
+                msEncrypt.Write( aesAlg.IV, 0, aesAlg.IV.Length );
 
-                var csEncrypt = new CryptoStream( stream: msEncrypt, transform: encryptor, mode: CryptoStreamMode.Write );
+                var csEncrypt = new CryptoStream( msEncrypt, encryptor, CryptoStreamMode.Write );
 
-                using ( var swEncrypt = new StreamWriter( stream: csEncrypt ) ) {
+                using ( var swEncrypt = new StreamWriter( csEncrypt ) ) {
 
                     //Write all data to the stream.
                     swEncrypt.Write( plainText );
                 }
 
-                outStr = Convert.ToBase64String( inArray: msEncrypt.ToArray() );
+                outStr = Convert.ToBase64String( msEncrypt.ToArray() );
             }
             finally {
 
@@ -162,13 +162,13 @@ namespace LibrainianCore.Security {
         public static Byte[] ReadByteArray( [NotNull] this Stream s ) {
             var rawLength = new Byte[ sizeof( Int32 ) ];
 
-            if ( s.Read( buffer: rawLength, offset: 0, count: rawLength.Length ) != rawLength.Length ) {
+            if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {
                 throw new SystemException( "Stream did not contain properly formatted byte array" );
             }
 
-            var buffer = new Byte[ BitConverter.ToInt32( rawLength, startIndex: 0 ) ];
+            var buffer = new Byte[ BitConverter.ToInt32( rawLength, 0 ) ];
 
-            if ( s.Read( buffer: buffer, offset: 0, count: buffer.Length ) != buffer.Length ) {
+            if ( s.Read( buffer, 0, buffer.Length ) != buffer.Length ) {
                 throw new SystemException( "Did not read byte array properly" );
             }
 

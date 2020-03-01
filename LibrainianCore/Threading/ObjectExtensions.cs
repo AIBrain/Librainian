@@ -50,7 +50,7 @@ namespace LibrainianCore.Threading {
 
         private static MethodInfo CloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
-        private static void CopyFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited, [CanBeNull] Object cloneObject,
+        private static void CopyFields( [CanBeNull] Object? originalObject, [CanBeNull] IDictionary<Object, Object> visited, [CanBeNull] Object? cloneObject,
             [NotNull] Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
             [CanBeNull] Func<FieldInfo, Boolean> filter = null ) {
             foreach ( var fieldInfo in typeToReflect.GetFields( bindingFlags ) ) {
@@ -69,7 +69,7 @@ namespace LibrainianCore.Threading {
         }
 
         [CanBeNull]
-        private static Object InternalCopy( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited ) {
+        private static Object InternalCopy( [CanBeNull] Object? originalObject, [CanBeNull] IDictionary<Object, Object> visited ) {
             if ( originalObject is null ) {
                 return null;
             }
@@ -106,8 +106,8 @@ namespace LibrainianCore.Threading {
             return cloneObject;
         }
 
-        private static void RecursiveCopyBaseTypePrivateFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited,
-            [CanBeNull] Object cloneObject, [NotNull] Type typeToReflect ) {
+        private static void RecursiveCopyBaseTypePrivateFields( [CanBeNull] Object? originalObject, [CanBeNull] IDictionary<Object, Object> visited,
+            [CanBeNull] Object? cloneObject, [NotNull] Type typeToReflect ) {
             if ( null == typeToReflect.BaseType ) {
                 return;
             }
@@ -132,8 +132,8 @@ namespace LibrainianCore.Threading {
                 throw new ArgumentNullException( nameof( instance ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: fieldName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fieldName ) );
+            if ( String.IsNullOrWhiteSpace( fieldName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
             }
 
             var type = instance.GetType();

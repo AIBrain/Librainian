@@ -54,7 +54,7 @@ namespace LibrainianCore.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public class Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
+    public struct Femtoseconds : IComparable<Femtoseconds>, IQuantityOfTime {
 
         /// <summary>1000</summary>
         public const UInt16 InOnePicosecond = 1000;
@@ -112,10 +112,8 @@ namespace LibrainianCore.Measurement.Time {
 
         public Femtoseconds( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Femtoseconds Combine( [CanBeNull] Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
+        public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 
-        [NotNull]
         public static Femtoseconds Combine( Femtoseconds left, Rational femtoseconds ) => new Femtoseconds( left.Value + femtoseconds );
 
         /// <summary>
@@ -126,43 +124,35 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Femtoseconds left, Femtoseconds right ) => left.Value == right.Value;
 
-        [NotNull]
         public static implicit operator Attoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToAttoseconds();
 
-        [NotNull]
         public static implicit operator Picoseconds( Femtoseconds femtoseconds ) => femtoseconds.ToPicoseconds();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Femtoseconds femtoseconds ) => new SpanOfTime( femtoseconds: femtoseconds );
+        public static implicit operator SpanOfTime( Femtoseconds femtoseconds ) => new SpanOfTime( femtoseconds: femtoseconds );
 
-        [NotNull]
         public static Femtoseconds operator -( Femtoseconds femtoseconds ) => new Femtoseconds( femtoseconds.Value * -1 );
 
-        [CanBeNull]
-        public static Femtoseconds operator -( [CanBeNull] Femtoseconds left, [CanBeNull] Femtoseconds right ) => Combine( left, -right );
+        public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Femtoseconds operator -( [CanBeNull] Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )( -femtoseconds ) );
+        public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )( -femtoseconds ) );
 
-        public static Boolean operator !=( [CanBeNull] Femtoseconds left, [CanBeNull] Femtoseconds right ) => !Equals( left, right );
+        public static Boolean operator !=( Femtoseconds left, Femtoseconds right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static Femtoseconds operator +( [CanBeNull] Femtoseconds left, [CanBeNull] Femtoseconds right ) => Combine( left, right );
+        public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) => Combine( left, right );
 
-        [NotNull]
-        public static Femtoseconds operator +( [CanBeNull] Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )femtoseconds );
+        public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational )femtoseconds );
 
         public static Boolean operator <( Femtoseconds left, Femtoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( [CanBeNull] Femtoseconds left, [CanBeNull] Femtoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( Femtoseconds left, Femtoseconds right ) => Equals( left, right );
 
         public static Boolean operator >( Femtoseconds left, Femtoseconds right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Femtoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( [CanBeNull] Femtoseconds other ) => Equals( this, other );
+        public Boolean Equals( Femtoseconds other ) => Equals( this, other );
 
-        public override Boolean Equals( [CanBeNull] Object obj ) {
+        public override Boolean Equals( [CanBeNull] Object? obj ) {
             if ( obj is null ) {
                 return default;
             }
@@ -174,12 +164,10 @@ namespace LibrainianCore.Measurement.Time {
 
         /// <summary>Convert to a smaller unit.</summary>
         /// <returns></returns>
-        [NotNull]
         public Attoseconds ToAttoseconds() => new Attoseconds( this.Value * Attoseconds.InOneFemtosecond );
 
         /// <summary>Convert to a larger unit.</summary>
         /// <returns></returns>
-        [NotNull]
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value / InOnePicosecond );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneFemtosecond );

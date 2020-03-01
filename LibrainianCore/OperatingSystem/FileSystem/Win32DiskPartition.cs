@@ -41,6 +41,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
 
     /// <summary></summary>
 
@@ -116,6 +117,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         public String Type;
 
+        [NotNull]
         public override String ToString() => this.Name;
     }
 }

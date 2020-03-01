@@ -45,7 +45,6 @@ namespace LibrainianCore.Graphics {
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Threading;
     using System.Threading.Tasks;
-    using Extensions;
     using Imaging;
     using JetBrains.Annotations;
     using Moving;
@@ -92,9 +91,7 @@ namespace LibrainianCore.Graphics {
         public static void SetGamma( Int32 gamma ) {
             if ( gamma.Between( 1, 256 ) ) {
                 var ramp = new RAMP {
-                    Red = new UInt16[ 256 ],
-                    Green = new UInt16[ 256 ],
-                    Blue = new UInt16[ 256 ]
+                    Red = new UInt16[ 256 ], Green = new UInt16[ 256 ], Blue = new UInt16[ 256 ]
                 };
 
                 for ( var i = 1; i < 256; i++ ) {
@@ -104,7 +101,7 @@ namespace LibrainianCore.Graphics {
                         iArrayValue = 65535;
                     }
 
-                    ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 )iArrayValue;
+                    ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 ) iArrayValue;
                 }
 
                 NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp );
@@ -114,7 +111,7 @@ namespace LibrainianCore.Graphics {
         [NotNull]
         public static Task<Erg> TryConvertToERG( [NotNull] this Document document, CancellationToken token ) {
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {
@@ -130,11 +127,11 @@ namespace LibrainianCore.Graphics {
         [NotNull]
         public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document, CancellationToken token ) {
             if ( erg == null ) {
-                throw new ArgumentNullException( paramName: nameof( erg ) );
+                throw new ArgumentNullException( nameof( erg ) );
             }
 
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {
@@ -149,11 +146,11 @@ namespace LibrainianCore.Graphics {
         [NotNull]
         public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document, CancellationToken token ) {
             if ( efv == null ) {
-                throw new ArgumentNullException( paramName: nameof( efv ) );
+                throw new ArgumentNullException( nameof( efv ) );
             }
 
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {
@@ -179,6 +176,9 @@ namespace LibrainianCore.Graphics {
 
             [MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
             public UInt16[] Blue;
+
         }
+
     }
+
 }

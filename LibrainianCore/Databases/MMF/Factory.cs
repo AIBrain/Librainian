@@ -55,7 +55,7 @@ namespace LibrainianCore.Databases.MMF {
 
         private static Int32 BenchMarkSerializer( [NotNull] ISerializeDeserialize<T> serDeser ) {
             if ( serDeser == null ) {
-                throw new ArgumentNullException( paramName: nameof( serDeser ) );
+                throw new ArgumentNullException( nameof( serDeser ) );
             }
 
             Object[] args = null;
@@ -115,8 +115,6 @@ namespace LibrainianCore.Databases.MMF {
             return benchmarkTimes;
         }
 
-       
-
         [NotNull]
         private static IEnumerable<Type> GetListOfGenericSerializers() {
             var interfaceGenricType = typeof( ISerializeDeserialize<T> );
@@ -152,12 +150,8 @@ namespace LibrainianCore.Databases.MMF {
             return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
         }
 
-        
-
         [CanBeNull]
         public ISerializeDeserialize<T> GetSerializer( [CanBeNull] String name ) =>
             ( from pair in DictionaryCache where pair.Value.GetType().AssemblyQualifiedName == name select pair.Value ).FirstOrDefault();
-
-        
     }
 }

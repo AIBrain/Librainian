@@ -144,6 +144,7 @@ namespace LibrainianCore.OperatingSystem {
             Int32 SetMute( Boolean bMute, ref Guid eventContext );
         }
 
+        [ItemCanBeNull]
         public static IEnumerable<String> EnumerateApplications() {
 
             // get the speakers (1st render + multimedia) device
@@ -183,10 +184,6 @@ namespace LibrainianCore.OperatingSystem {
         public static Boolean? GetApplicationMute( [CanBeNull] String name ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume is null ) {
-                return null;
-            }
-
             volume.GetMute( out var mute );
 
             return mute;
@@ -194,10 +191,6 @@ namespace LibrainianCore.OperatingSystem {
 
         public static Single? GetApplicationVolume( [CanBeNull] String name ) {
             var volume = GetVolumeObject( name );
-
-            if ( volume is null ) {
-                return null;
-            }
 
             volume.GetMasterVolume( out var level );
 
@@ -255,20 +248,12 @@ namespace LibrainianCore.OperatingSystem {
         public static void SetApplicationMute( [CanBeNull] String name, Boolean mute ) {
             var volume = GetVolumeObject( name );
 
-            if ( volume is null ) {
-                return;
-            }
-
             var guid = Guid.Empty;
             volume.SetMute( mute, ref guid );
         }
 
         public static void SetApplicationVolume( [CanBeNull] String name, Single level ) {
             var volume = GetVolumeObject( name );
-
-            if ( volume is null ) {
-                return;
-            }
 
             var guid = Guid.Empty;
             volume.SetMasterVolume( level / 100, ref guid );

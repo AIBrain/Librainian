@@ -52,7 +52,7 @@ namespace LibrainianCore.Measurement.Time {
 
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
+    public struct Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
 
         /// <summary>365</summary>
         public const UInt16 InOneCommonYear = 365;
@@ -86,14 +86,11 @@ namespace LibrainianCore.Measurement.Time {
 
         public Days( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Days Combine( [CanBeNull] Days left, Days right ) => Combine( left, right.Value );
+        public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
         //public const Byte InOneMonth = 31;
-        [NotNull]
         public static Days Combine( Days left, Rational days ) => new Days( left.Value + days );
 
-        [NotNull]
         public static Days Combine( Days left, BigInteger days ) => new Days( left.Value + days );
 
         /// <summary>
@@ -107,47 +104,38 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Hours( Days days ) => days.ToHours();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Days days ) => new SpanOfTime( days: days );
+        public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days );
 
         public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
-        [NotNull]
         public static Days operator -( Days days ) => new Days( days.Value * -1 );
 
-        [CanBeNull]
-        public static Days operator -( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left: left, right: -right );
+        public static Days operator -( Days left, Days right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Days operator -( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
+        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
 
-        public static Boolean operator !=( [CanBeNull] Days left, [CanBeNull] Days right ) => !Equals( left, right );
+        public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static Days operator +( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left, right );
+        public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        [NotNull]
-        public static Days operator +( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )days );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
 
-        [NotNull]
-        public static Days operator +( [CanBeNull] Days left, BigInteger days ) => Combine( left, days );
+        public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Days left, [CanBeNull] Hours right ) => left < ( Days )right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
-        public static Boolean operator ==( [CanBeNull] Days left, [CanBeNull] Days right ) => Equals( left, right );
+        public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( [CanBeNull] Days left, [CanBeNull] Hours right ) => left > ( Days )right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
@@ -182,13 +170,12 @@ namespace LibrainianCore.Measurement.Time {
         /// <paramref name="obj" /> in the sort order.
         /// </returns>
         /// <exception cref="ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
-        public Int32 CompareTo( [CanBeNull] Object obj ) {
+        public Int32 CompareTo( [CanBeNull] Object? obj ) {
             switch ( obj ) {
                 case null: return 1;
                 case Days other: return this.CompareTo( other );
                 default: throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
             }
-
         }
 
         public Boolean Equals( Days other ) => Equals( this.Value, other.Value );
@@ -203,12 +190,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( ( Rational )TimeSpan.FromDays( ( Double )this.Value ).TotalSeconds );
 
         public override String ToString() {
@@ -225,7 +210,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }
 }

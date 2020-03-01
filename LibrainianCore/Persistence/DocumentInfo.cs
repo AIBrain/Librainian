@@ -287,6 +287,7 @@ namespace LibrainianCore.Persistence {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
     }
 }

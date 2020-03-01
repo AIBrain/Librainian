@@ -62,7 +62,7 @@ namespace LibrainianCore.Threading {
             }
 
             if ( timeout.HasValue ) {
-                semaphore.WaitOne( timeout: timeout.Value );
+                semaphore.WaitOne( timeout.Value );
             }
             else {
                 semaphore.WaitOne();

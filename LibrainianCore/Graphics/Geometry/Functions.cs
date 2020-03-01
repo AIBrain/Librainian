@@ -176,13 +176,12 @@ namespace LibrainianCore.Graphics.Geometry {
             var numer = d1343 * d4321 - d1321 * d4343;
 
             var mua = numer / denom;
-            resultSegmentPoint1 = new CoordinateF( x: p1.X + mua * p21.X, y: p1.Y + mua * p21.Y, z: p1.Z + mua * p21.Z );
+            resultSegmentPoint1 = new CoordinateF( p1.X + mua * p21.X, p1.Y + mua * p21.Y, p1.Z + mua * p21.Z );
 
             var mub = ( d1343 + d4321 * mua ) / d4343;
-            resultSegmentPoint2 = new CoordinateF( x: p3.X + mub * p43.X, y: p3.Y + mub * p43.Y, z: p3.Z + mub * p43.Z );
+            resultSegmentPoint2 = new CoordinateF( p3.X + mub * p43.X, p3.Y + mub * p43.Y, p3.Z + mub * p43.Z );
 
             return true;
         }
-
     }
 }

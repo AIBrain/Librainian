@@ -171,12 +171,14 @@ namespace LibrainianCore.Maths.Hashings {
         /// <param name="objects"></param>
         /// <returns></returns>
         [Pure]
+        [Obsolete]
         public static Int32 GetHashCodes<T>( [CanBeNull] params T[] objects ) => objects?.GetHashCode() ?? 0;
 
         /// <summary>Returns the combined <see cref="Object.GetHashCode" /> of all <paramref name="objects" />.</summary>
         /// <param name="objects"></param>
         /// <returns></returns>
         [Pure]
+        [Obsolete]
         public static Int32 GetHashCodes( [CanBeNull] params Object[] objects ) => objects?.GetHashCode() ?? 0;
 
         /// <summary>Returns a combined <see cref="Object.GetHashCode" /> based on <paramref name="objectA" /> and <paramref name="objectB" />.</summary>
@@ -185,6 +187,7 @@ namespace LibrainianCore.Maths.Hashings {
         /// <param name="objectA"></param>
         /// <param name="objectB"></param>
         /// <returns></returns>
+        [Obsolete]
         public static Int32 GetHashCodes<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => (objectA, objectB).GetHashCode();
 
         public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA ) => ( UInt16 )objectA.GetHashCode();
@@ -200,6 +203,7 @@ namespace LibrainianCore.Maths.Hashings {
         /// <param name="objectB"></param>
         /// <returns></returns>
         [Pure]
+        [Obsolete]
         public static Int32 GetHashMerge<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => (objectA, objectB).GetHashCode();
     }
 }

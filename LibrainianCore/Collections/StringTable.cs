@@ -92,8 +92,8 @@ namespace LibrainianCore.Collections {
                 throw new ArgumentNullException( nameof( commonName ) );
             }
 
-            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
-            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
+            this.Ints = new PersistTable<UInt64, String>( new Folder( commonName, nameof( this.Ints ) ), true );
+            this.Words = new PersistTable<String, UInt64>( new Folder( commonName, nameof( this.Words ) ), true );
         }
 
         public void Clear() {

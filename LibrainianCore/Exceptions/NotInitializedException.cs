@@ -46,7 +46,7 @@ namespace LibrainianCore.Exceptions {
     using Newtonsoft.Json;
 
     /// <summary>Throw when the object has not been initialized.
-    /// <para><see cref="Logging.Log(string,bool)" /> gets called.</para>
+    /// <para><see cref="Logging.Log(String,Boolean)" /> gets called.</para>
     /// </summary>
     [Serializable]
     [JsonObject]
@@ -61,7 +61,7 @@ namespace LibrainianCore.Exceptions {
         /// <param name="context">The <see cref="StreamingContext" /> instance that contains contextual information about the source or destination.</param>
         /// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
         protected NotInitializedException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) =>
-            $"{nameof( NotInitializedException )} serialization exception.".Log( breakinto: true );
+            $"{nameof( NotInitializedException )} serialization exception.".Log( true );
 
         public NotInitializedException( [CanBeNull] String message ) : base( message ) => message.Log();
 

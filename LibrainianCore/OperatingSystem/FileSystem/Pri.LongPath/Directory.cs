@@ -65,8 +65,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         [ItemNotNull]
         private static IEnumerable<String> EnumerateFileSystemIterator( [NotNull] String normalizedPath, [NotNull] String normalizedSearchPattern, Boolean includeDirectories,
             Boolean includeFiles ) {
-            if ( String.IsNullOrWhiteSpace( value: normalizedPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( normalizedPath ) );
+            if ( String.IsNullOrWhiteSpace( normalizedPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( normalizedPath ) );
             }
 
             // NOTE: Any exceptions thrown from this method are thrown on a call to IEnumerator<string>.MoveNext()
@@ -74,9 +74,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
             var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
             using ( var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData ) ) {
-                if ( handle == null ) {
-                    yield break;
-                }
 
                 do {
                     if ( findData.dwFileAttributes.IsDirectory() ) {
@@ -124,9 +121,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
                 var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
                 using ( var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData ) ) {
-                    if ( handle == null ) {
-                        continue;
-                    }
 
                     do {
                         var fullPath = path.Combine( findData.cFileName );
@@ -179,8 +173,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         }
 
         private static Boolean IsCurrentOrParentDirectory( [NotNull]  this String directoryName ) {
-            if ( String.IsNullOrEmpty( value: directoryName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( directoryName ) );
+            if ( String.IsNullOrEmpty( directoryName ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( directoryName ) );
             }
 
             return directoryName.Equals( ".", StringComparison.OrdinalIgnoreCase ) || directoryName.Equals( "..", StringComparison.OrdinalIgnoreCase );
@@ -191,7 +185,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
             normalizedPathWithSearchPattern = normalizedPathWithSearchPattern.TrimEnd( '\\' ).ThrowIfBlank();
             var handle = NativeMethods.FindFirstFile( normalizedPathWithSearchPattern, out findData );
 
-            if ( handle?.IsInvalid == false ) {
+            if ( !handle.IsInvalid ) {
                 return handle;
             }
 
@@ -244,13 +238,13 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         ///     <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
         /// <remarks>
-        ///     Note: Unlike <see cref="CreateDirectory(string)" />, this method only creates
+        ///     Note: Unlike <see cref="CreateDirectory(String)" />, this method only creates
         ///     the last directory in <paramref name="path" />.
         /// </remarks>
         [NotNull]
         public static DirectoryInfo CreateDirectory( [NotNull]  this String path ) {
-            if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             if ( path.IsPathUnc() ) {
@@ -466,6 +460,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         ///     </para>
         ///     <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path ) => EnumerateFileSystemEntries( path.ThrowIfBlank(), "*", true, false, SearchOption.TopDirectoryOnly );
 
         /// <summary>
@@ -517,9 +512,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         ///     </para>
         ///     <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path, [NotNull] String searchPattern ) =>
             EnumerateFileSystemEntries( path.ThrowIfBlank(), searchPattern, true, false, SearchOption.TopDirectoryOnly );
 
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path, [NotNull] String searchPattern, SearchOption options ) =>
             EnumerateFileSystemEntries( path.ThrowIfBlank(), searchPattern, true, false, options );
 
@@ -791,7 +788,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
             var handle = NativeMethods.CreateFile( normalizedPath, NativeMethods.EFileAccess.GenericWrite, ( UInt32 )( FileShare.Write | FileShare.Delete ), IntPtr.Zero,
                 ( Int32 )FileMode.Open, NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero );
 
-            if ( handle?.IsInvalid == false ) {
+            if ( !handle.IsInvalid  ) {
                 return handle;
             }
 
@@ -810,8 +807,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
 
         [NotNull]
         public static IEnumerable<String> GetFiles( [NotNull]  this String path ) {
-            if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return EnumerateFileSystemEntries( path.ThrowIfBlank(), "*", false, true, SearchOption.TopDirectoryOnly );
@@ -875,8 +872,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
         }
 
         public static void SetAttributes( [NotNull] String path, FileAttributes fileAttributes ) {
-            if ( !Enum.IsDefined( enumType: typeof( FileAttributes ), value: fileAttributes ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( fileAttributes ), invalidValue: ( Int32 )fileAttributes, enumClass: typeof( FileAttributes ) );
+            if ( !Enum.IsDefined( typeof( FileAttributes ), fileAttributes ) ) {
+                throw new InvalidEnumArgumentException( nameof( fileAttributes ), ( Int32 )fileAttributes, typeof( FileAttributes ) );
             }
 
             path.ThrowIfBlank().SetAttributes( fileAttributes );

@@ -54,7 +54,7 @@ namespace LibrainianCore.OperatingSystem.Streams {
 
         public ProgressChangedEventHandler ProgressChanged { get; set; }
 
-        public ProgressStream( [NotNull] Stream stream ) : base( stream: stream ) {
+        public ProgressStream( [NotNull] Stream stream ) : base( stream ) {
             if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) {
                 return;
             }
@@ -75,8 +75,7 @@ namespace LibrainianCore.OperatingSystem.Streams {
 
             this._lastProgressUpdate = DateTime.UtcNow;
             this._lastProgress = newProgress;
-            var progressChanged = this.ProgressChanged;
-            progressChanged?.Invoke( this, new ProgressChangedEventArgs( this._lastProgress, null ) );
+            this.ProgressChanged( this, new ProgressChangedEventArgs( this._lastProgress, null ) );
 
             return amountRead;
         }
@@ -89,7 +88,7 @@ namespace LibrainianCore.OperatingSystem.Streams {
         /// <exception cref="NotSupportedException">The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</exception>
         /// <exception cref="ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset, origin );
 
         /// <summary>When overridden in a derived class, sets the length of the current stream.</summary>
         /// <param name="value">The desired length of the current stream in bytes.</param>
@@ -110,6 +109,6 @@ namespace LibrainianCore.OperatingSystem.Streams {
         /// <exception cref="NotSupportedException">The stream does not support writing.</exception>
         /// <exception cref="ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
     }
 }

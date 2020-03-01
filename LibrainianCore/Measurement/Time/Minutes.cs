@@ -52,7 +52,7 @@ namespace LibrainianCore.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Minutes : IComparable<Minutes>, IQuantityOfTime {
+    public struct Minutes : IComparable<Minutes>, IQuantityOfTime {
 
         /// <summary>60</summary>
         public const Byte InOneHour = 60;
@@ -86,36 +86,11 @@ namespace LibrainianCore.Measurement.Time {
 
         public Minutes( BigInteger value ) => this.Value = value;
 
-        [NotNull]
-        public static Minutes Combine( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Minutes Combine( Minutes left, Rational minutes ) => new Minutes( left.Value + minutes );
 
-            return Combine( left, right.Value );
-        }
-
-        [NotNull]
-        public static Minutes Combine( [NotNull] Minutes left, Rational minutes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Minutes( left.Value + minutes );
-        }
-
-        [NotNull]
-        public static Minutes Combine( [NotNull] Minutes left, BigInteger minutes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Minutes( left.Value + minutes );
-        }
+        public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( left.Value + minutes );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -123,213 +98,58 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Minutes left, [CanBeNull] Minutes right ) => left?.Value == right?.Value;
+        public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
         /// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.</summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static implicit operator Hours( [NotNull] Minutes minutes ) {
-            if ( minutes is null ) {
-                throw new ArgumentNullException( nameof( minutes ) );
-            }
-
-            return minutes.ToHours();
-        }
+        public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
         /// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.</summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        [NotNull]
-        public static implicit operator Seconds( [NotNull] Minutes minutes ) {
-            if ( minutes is null ) {
-                throw new ArgumentNullException( nameof( minutes ) );
-            }
-
-            return minutes.ToSeconds();
-        }
+        public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
         /// <summary>Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.</summary>
         /// <param name="minutes"></param>
         /// <returns></returns>
-        [NotNull]
-        public static implicit operator SpanOfTime( [NotNull] Minutes minutes ) {
-            if ( minutes is null ) {
-                throw new ArgumentNullException( nameof( minutes ) );
-            }
+        public static implicit operator SpanOfTime( Minutes minutes ) => new SpanOfTime( minutes );
 
-            return new SpanOfTime( minutes );
-        }
+        public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
 
-        public static implicit operator TimeSpan( [NotNull] Minutes minutes ) {
-            if ( minutes is null ) {
-                throw new ArgumentNullException( nameof( minutes ) );
-            }
+        public static Minutes operator -( Minutes minutes ) => new Minutes( minutes.Value * -1 );
 
-            return TimeSpan.FromMinutes( ( Double )minutes.Value );
-        }
+        public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Minutes operator -( [NotNull] Minutes minutes ) {
-            if ( minutes is null ) {
-                throw new ArgumentNullException( nameof( minutes ) );
-            }
+        public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, ( Rational )( -minutes ) );
 
-            return new Minutes( minutes.Value * -1 );
-        }
+        public static Boolean operator !=( Minutes left, Minutes right ) => !Equals( left, right );
 
-        [NotNull]
-        public static Minutes operator -( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, ( Rational )minutes );
 
-            return Combine( left: left, right: -right );
-        }
+        public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
 
-        [NotNull]
-        public static Minutes operator -( [NotNull] Minutes left, Decimal minutes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
 
-            return Combine( left, ( Rational )( -minutes ) );
-        }
+        public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
 
-        public static Boolean operator !=( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Boolean operator ==( Minutes left, Minutes right ) => Equals( left, right );
 
-            return !Equals( left, right );
-        }
+        public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
 
-        [NotNull]
-        public static Minutes operator +( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
 
-            return Combine( left, right );
-        }
+        public Int32 CompareTo( Minutes other ) => this.Value.CompareTo( other.Value );
 
-        [NotNull]
-        public static Minutes operator +( [NotNull] Minutes left, Decimal minutes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public Boolean Equals( Minutes other ) => Equals( this, other );
 
-            return Combine( left, ( Rational )minutes );
-        }
-
-        [NotNull]
-        public static Minutes operator +( [NotNull] Minutes left, BigInteger minutes ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return Combine( left, minutes );
-        }
-
-        public static Boolean operator <( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value < right.Value;
-        }
-
-        public static Boolean operator <( [NotNull] Minutes left, [CanBeNull] Hours right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return ( Hours )left < right;
-        }
-
-        public static Boolean operator <( [NotNull] Minutes left, [NotNull] Seconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left < ( Minutes )right;
-        }
-
-        public static Boolean operator ==( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Equals( left, right );
-        }
-
-        public static Boolean operator >( [CanBeNull] Minutes left, [CanBeNull] Hours right ) => ( Hours )left > right;
-
-        public static Boolean operator >( [NotNull] Minutes left, [NotNull] Minutes right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public static Boolean operator >( [NotNull] Minutes left, [NotNull] Seconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left > ( Minutes )right;
-        }
-
-        public Int32 CompareTo( [NotNull] Minutes other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public Boolean Equals( [NotNull] Minutes other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( Object obj ) {
+        public override Boolean Equals( [CanBeNull] Object? obj ) {
             if ( obj is null ) {
                 return default;
             }
@@ -339,12 +159,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Hours ToHours() => new Hours( this.Value / InOneHour );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMinute * this.Value );
 
-        [NotNull]
         [Pure]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
 

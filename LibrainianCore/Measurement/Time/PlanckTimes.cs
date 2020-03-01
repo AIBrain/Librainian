@@ -112,7 +112,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public PlanckTimes( BigInteger value ) => this.Value = value;
 
-        public PlanckTimes( [NotNull] Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
         public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
@@ -128,13 +128,11 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
 
-        [NotNull]
         public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
 
         /// <summary>Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.</summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) => ToYoctoseconds( planckTimes );
 
         public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
@@ -160,7 +158,6 @@ namespace LibrainianCore.Measurement.Time {
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        [NotNull]
         public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new Yoctoseconds( planckTimes.Value / ( Rational )InOneYoctosecond );
 
         public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
@@ -197,7 +194,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public PlanckTimes ToPlanckTimes() => this;
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * ( Rational )InOneSecond );
 
         public override String ToString() => $"{this.Value} tP";

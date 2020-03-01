@@ -67,7 +67,7 @@ namespace LibrainianCore.Internet {
             //using (WebResponse response = await responseTask)
             {
                 // Get the data stream that is associated with the specified url.
-                using ( var responseStream = response.GetResponseStream() ) {
+                await using ( var responseStream = response.GetResponseStream() ) {
 
                     // Read the bytes in responseStream and copy them to content.
                     if ( responseStream != null ) {

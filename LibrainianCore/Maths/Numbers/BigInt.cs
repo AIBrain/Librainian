@@ -97,6 +97,7 @@ namespace LibrainianCore.Maths.Numbers {
             return new BigInt( result );
         }
 
+        [NotNull]
         public override String ToString() {
             var sb = new StringBuilder();
 

@@ -102,6 +102,7 @@ namespace LibrainianCore.Linguistics.PoS {
         public override Int32 GetHashCode() => this.Tokens.GetHashCode();
 
         [Pure]
+        [NotNull]
         public override String ToString() => this.Tokens.ToStrings( " " );
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>

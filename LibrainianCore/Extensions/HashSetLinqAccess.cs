@@ -61,7 +61,7 @@ namespace LibrainianCore.Extensions {
             }
 
             foreach ( var item in range ) {
-                hashSet.Add( item: item );
+                hashSet.Add( item );
             }
 
             return hashSet;

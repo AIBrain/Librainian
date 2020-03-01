@@ -114,13 +114,14 @@ namespace LibrainianCore.Extensions {
             // ReSharper restore DelegateSubtraction
         }
 
+        [ItemCanBeNull]
         private static IEnumerable<RegistryKey> GetAllSubkeys( [NotNull] RegistryKey startkeyIn, [NotNull] String nodeKey ) {
             if ( startkeyIn == null ) {
-                throw new ArgumentNullException( paramName: nameof( startkeyIn ) );
+                throw new ArgumentNullException( nameof( startkeyIn ) );
             }
 
             if ( nodeKey == null ) {
-                throw new ArgumentNullException( paramName: nameof( nodeKey ) );
+                throw new ArgumentNullException( nameof( nodeKey ) );
             }
 
             Instance.InvokePopulateProgress();
@@ -140,7 +141,7 @@ namespace LibrainianCore.Extensions {
 
         private static void Initialize( [NotNull] RegistryKey registryStartKey ) {
             if ( registryStartKey == null ) {
-                throw new ArgumentNullException( paramName: nameof( registryStartKey ) );
+                throw new ArgumentNullException( nameof( registryStartKey ) );
             }
 
             if ( Instance._isInitialized ) {
@@ -154,15 +155,15 @@ namespace LibrainianCore.Extensions {
             Instance._isInitialized = true;
         }
 
-        private static void InvokePopulateProgressItemError( [CanBeNull] PopulateProgressEventArgs args ) => Instance._populateError?.Invoke( Instance, args );
+        private static void InvokePopulateProgressItemError( [CanBeNull] PopulateProgressEventArgs args ) => Instance._populateError.Invoke( Instance, args );
 
         private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, [NotNull] String name, [CanBeNull] out RegistryKey itemOut ) {
             if ( startFrom == null ) {
-                throw new ArgumentNullException( paramName: nameof( startFrom ) );
+                throw new ArgumentNullException( nameof( startFrom ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             var bIsOk = false;
@@ -184,10 +185,6 @@ namespace LibrainianCore.Extensions {
 
         private void InvokePopulateProgress() {
             var populateProgressDelegate = Instance._populateEventOk;
-
-            if ( populateProgressDelegate is null ) {
-                return;
-            }
 
             this._eventArgStatus.ItemCount = Interlocked.Increment( ref _iCounter );
             populateProgressDelegate( this, this._eventArgStatus );

@@ -63,6 +63,7 @@ namespace LibrainianCore.Databases {
 
         public String Version { get; set; }
 
+        [NotNull]
         public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
     }
 }

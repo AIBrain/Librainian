@@ -55,17 +55,11 @@ namespace LibrainianCore.Collections.Lists {
     [Immutable]
     public sealed class ImmutableList<T> : IList<T>, IPossibleThrowable {
 
-        [NotNull]
-        private T[] Array { get; }
-
         /// <summary>Retrieves the immutable count of the list.</summary>
         public Int32 Count => this.Array.Length;
 
         /// <summary>Whether the list is read only: because the list is immutable, this is always true.</summary>
         public Boolean IsReadOnly => true;
-
-        /// <summary>If set to false, anything that would normally try to mutate this, the <see cref="Exception" /> is ignored.</summary>
-        public ThrowSetting ThrowExceptions { get; set; }
 
         /// <summary>Accesses the element at the specified index. Because the list is immutable, the setter will always throw an exception.</summary>
         /// <param name="index">The index to access.</param>
@@ -77,6 +71,54 @@ namespace LibrainianCore.Collections.Lists {
             // ReSharper disable once ValueParameterNotUsed
             set => this.ThrowNotMutable();
         }
+
+        /// <summary>Checks whether the specified item is contained in the list.</summary>
+        /// <param name="item">The item to search for.</param>
+        /// <returns>True if the item is found, false otherwise.</returns>
+        public Boolean Contains( T item ) => System.Array.IndexOf( this.Array, item ) != -1;
+
+        /// <summary>Copies the contents of this list to a destination array.</summary>
+        /// <param name="array">The array to copy elements to.</param>
+        /// <param name="index">The index at which copying begins.</param>
+        public void CopyTo( T[] array, Int32 index ) => this.Array.CopyTo( array, index );
+
+        /// <summary>Retrieves an enumerator for the list’s collections.</summary>
+        /// <returns>An enumerator.</returns>
+        public IEnumerator<T> GetEnumerator() => ( ( IEnumerable<T> ) this.Array ).GetEnumerator();
+
+        /// <summary>Finds the index of the specified element.</summary>
+        /// <param name="item">An item to search for.</param>
+        /// <returns>The index of the item, or -1 if it was not found.</returns>
+        public Int32 IndexOf( T item ) => System.Array.IndexOf( this.Array, item );
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        void ICollection<T>.Add( T item ) => this.ThrowNotMutable();
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        void ICollection<T>.Clear() => this.ThrowNotMutable();
+
+        /// <summary>Retrieves an enumerator for the list’s collections.</summary>
+        /// <returns>An enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        void IList<T>.Insert( Int32 index, T item ) => this.ThrowNotMutable();
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        Boolean ICollection<T>.Remove( T item ) {
+            this.ThrowNotMutable();
+
+            return default;
+        }
+
+        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
+        void IList<T>.RemoveAt( Int32 index ) => this.ThrowNotMutable();
+
+        /// <summary>If set to false, anything that would normally try to mutate this, the <see cref="Exception" /> is ignored.</summary>
+        public ThrowSetting ThrowExceptions { get; set; }
+
+        [NotNull]
+        private T[] Array { get; }
 
         /// <summary>Create a new list.</summary>
         public ImmutableList() => this.Array = new T[ 0 ];
@@ -102,27 +144,22 @@ namespace LibrainianCore.Collections.Lists {
             }
         }
 
-        /// <summary>Checks whether the specified item is contained in the list.</summary>
-        /// <param name="item">The item to search for.</param>
-        /// <returns>True if the item is found, false otherwise.</returns>
-        public Boolean Contains( T item ) => System.Array.IndexOf( array: this.Array, item ) != -1;
-
         /// <summary>Copies the list and adds a new value at the end.</summary>
         /// <param name="value">The value to add.</param>
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
         public ImmutableList<T> CopyAndAdd( [CanBeNull] T value ) {
             var newArray = new T[ this.Array.Length + 1 ];
-            this.Array.CopyTo( array: newArray, index: 0 );
+            this.Array.CopyTo( newArray, 0 );
             newArray[ this.Array.Length ] = value;
 
-            return new ImmutableList<T>( arrayToCopy: newArray );
+            return new ImmutableList<T>( newArray );
         }
 
         /// <summary>Returns a new, cleared (empty) immutable list.</summary>
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
-        public ImmutableList<T> CopyAndClear() => new ImmutableList<T>( arrayToCopy: new T[ 0 ] );
+        public ImmutableList<T> CopyAndClear() => new ImmutableList<T>( new T[ 0 ] );
 
         /// <summary>Copies the list and inserts a particular element.</summary>
         /// <param name="index">The index at which to insert an element.</param>
@@ -135,7 +172,7 @@ namespace LibrainianCore.Collections.Lists {
             newArray[ index ] = item;
             Buffer.BlockCopy( this.Array, index, newArray, index + 1, this.Array.Length - index );
 
-            return new ImmutableList<T>( arrayToCopy: newArray );
+            return new ImmutableList<T>( newArray );
         }
 
         /// <summary>Copies the list and removes a particular element.</summary>
@@ -143,13 +180,13 @@ namespace LibrainianCore.Collections.Lists {
         /// <returns>A modified copy of this list.</returns>
         [NotNull]
         public ImmutableList<T> CopyAndRemove( [CanBeNull] T item ) {
-            var index = this.IndexOf( item: item );
+            var index = this.IndexOf( item );
 
             if ( index == -1 ) {
                 throw new ArgumentException( "Item not found in list." );
             }
 
-            return this.CopyAndRemoveAt( index: index );
+            return this.CopyAndRemoveAt( index );
         }
 
         /// <summary>Copies the list and removes a particular element.</summary>
@@ -161,7 +198,7 @@ namespace LibrainianCore.Collections.Lists {
             Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
             Buffer.BlockCopy( this.Array, index + 1, newArray, index, this.Array.Length - index - 1 );
 
-            return new ImmutableList<T>( arrayToCopy: newArray );
+            return new ImmutableList<T>( newArray );
         }
 
         /// <summary>Copies the list and modifies the specific value at the index provided.</summary>
@@ -171,47 +208,12 @@ namespace LibrainianCore.Collections.Lists {
         [NotNull]
         public ImmutableList<T> CopyAndSet( Int32 index, [CanBeNull] T item ) {
             var newArray = new T[ this.Array.Length ];
-            this.Array.CopyTo( array: newArray, index: 0 );
+            this.Array.CopyTo( newArray, 0 );
             newArray[ index ] = item;
 
-            return new ImmutableList<T>( arrayToCopy: newArray );
+            return new ImmutableList<T>( newArray );
         }
 
-        /// <summary>Copies the contents of this list to a destination array.</summary>
-        /// <param name="array">The array to copy elements to.</param>
-        /// <param name="index">The index at which copying begins.</param>
-        public void CopyTo( T[] array, Int32 index ) => this.Array.CopyTo( array: array, index: index );
-
-        /// <summary>Retrieves an enumerator for the list’s collections.</summary>
-        /// <returns>An enumerator.</returns>
-        public IEnumerator<T> GetEnumerator() => ( ( IEnumerable<T> )this.Array ).GetEnumerator();
-
-        /// <summary>Finds the index of the specified element.</summary>
-        /// <param name="item">An item to search for.</param>
-        /// <returns>The index of the item, or -1 if it was not found.</returns>
-        public Int32 IndexOf( T item ) => System.Array.IndexOf( array: this.Array, item );
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        void ICollection<T>.Add( T item ) => this.ThrowNotMutable();
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        void ICollection<T>.Clear() => this.ThrowNotMutable();
-
-        /// <summary>Retrieves an enumerator for the list’s collections.</summary>
-        /// <returns>An enumerator.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        void IList<T>.Insert( Int32 index, T item ) => this.ThrowNotMutable();
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        Boolean ICollection<T>.Remove( T item ) {
-            this.ThrowNotMutable();
-
-            return default;
-        }
-
-        /// <summary>This method is unsupported on this type, because it is immutable.</summary>
-        void IList<T>.RemoveAt( Int32 index ) => this.ThrowNotMutable();
     }
+
 }

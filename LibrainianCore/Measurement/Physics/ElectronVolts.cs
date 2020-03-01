@@ -41,6 +41,7 @@ namespace LibrainianCore.Measurement.Physics {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using LibrainianCore.Extensions;
     using Maths;
     using Rationals;
@@ -52,18 +53,27 @@ namespace LibrainianCore.Measurement.Physics {
     [Immutable]
     public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
-        public const Decimal InOneElectronVolt = 1E0m;
+        public static class InOne {
 
-        public const Decimal InOneGigaElectronVolt = 1E9m;
+            public static readonly Rational ElectronVolt = ( Rational ) 1E0m;
 
-        public const Decimal InOneKiloElectronVolt = 1E3m;
+            public static readonly Rational GigaElectronVolt = ( Rational ) 1E9m;
 
-        public const Decimal InOneMegaElectronVolt = 1E6m;
+            public static readonly Rational KiloElectronVolt = ( Rational ) 1E3m;
 
-        public const Decimal InOneMilliElectronVolt = 1E-3m;
+            public static readonly Rational MegaElectronVolt = ( Rational ) 1E6m;
 
-        public const Decimal InOneTeraElectronVolt = 1E12m;
+            public static readonly Rational MilliElectronVolt = ( Rational ) 1E-3m;
 
+            public static readonly Rational TeraElectronVolt = ( Rational ) 1E12m;
+
+        }
+
+        
+
+        
+
+        
         /// <summary>About 79228162514264337593543950335.</summary>
         public static readonly ElectronVolts MaxValue = new ElectronVolts( Decimal.MaxValue );
 
@@ -83,9 +93,9 @@ namespace LibrainianCore.Measurement.Physics {
 
         public static readonly ElectronVolts Zero = new ElectronVolts( 0m );
 
-        public Rational Value { get; }
-
         public ElectronVolts( Decimal value ) : this() => this.Value = ( Rational )value;
+
+        public Rational Value { get; }
 
         public ElectronVolts( Double value ) : this() => this.Value = ( Rational )value;
 
@@ -135,20 +145,21 @@ namespace LibrainianCore.Measurement.Physics {
 
         public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToElectronVolts().Value );
 
-        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational )InOneElectronVolt );
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value *  InOne.ElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational )InOneGigaElectronVolt );
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * InOne.GigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational )InOneKiloElectronVolt );
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * InOne.KiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational )InOneMegaElectronVolt );
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * InOne.MegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOne.MilliElectronVolt );
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+        [NotNull]
         public override String ToString() => $"{this.Value} eV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOne.TeraElectronVolt );
     }
 }

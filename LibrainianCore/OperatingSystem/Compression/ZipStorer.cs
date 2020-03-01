@@ -736,6 +736,7 @@ namespace LibrainianCore.OperatingSystem.Compression {
 
             /// <summary>Overridden method</summary>
             /// <returns>Filename in Zip</returns>
+            [NotNull]
             public override String ToString() => this.FilenameInZip;
         }
 

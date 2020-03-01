@@ -40,7 +40,6 @@
 namespace LibrainianCore.Measurement.Time {
 
     using System;
-    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>Represents a Single range with minimum and maximum values</summary>
@@ -59,10 +58,10 @@ namespace LibrainianCore.Measurement.Time {
         [JsonProperty]
         public SpanOfTime Min { get; }
 
-        /// <summary>Initializes a new instance of the <see cref="SpanRange" /> class</summary>
+        /// <summary>Initializes a new instance of the <see cref="SpanRange" /> struct</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
-        public SpanRange( [CanBeNull] SpanOfTime min, [CanBeNull] SpanOfTime max ) {
+        public SpanRange( SpanOfTime min, SpanOfTime max ) {
             if ( min < max ) {
                 this.Min = min;
                 this.Max = max;
@@ -83,7 +82,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>Check if the specified value is inside this range</summary>
         /// <param name="x">Value to check</param>
         /// <returns><b>True</b> if the specified value is inside this range or <b>false</b> otherwise.</returns>
-        public Boolean IsInside( [CanBeNull] SpanOfTime x ) => this.Min <= x && x <= this.Max;
+        public Boolean IsInside( SpanOfTime x ) => this.Min <= x && x <= this.Max;
 
         /// <summary>Check if the specified range overlaps with this range</summary>
         /// <param name="range">Range to check for overlapping</param>

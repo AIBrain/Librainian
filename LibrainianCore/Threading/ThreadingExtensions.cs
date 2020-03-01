@@ -209,14 +209,14 @@ namespace LibrainianCore.Threading {
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {
-            ThreadPool.GetMaxThreads( workerThreads: out _, completionPortThreads: out var maxPortThreads );
+            ThreadPool.GetMaxThreads( out _, out var maxPortThreads );
 
             return maxPortThreads;
         }
 
         public static Boolean GetSizeOfPrimitives<T>( [CanBeNull] this T obj, out UInt64 total ) {
             if ( obj is String s ) {
-                total = ( UInt64 )s.Length;
+                total = ( UInt64 ) s.Length;
 
                 return true;
             }
@@ -418,6 +418,7 @@ namespace LibrainianCore.Threading {
 
                 this.CallsAllowed = times;
             }
+
         }
 
         /*
@@ -458,5 +459,7 @@ namespace LibrainianCore.Threading {
                     next.Spawn();
                 }
         */
+
     }
+
 }

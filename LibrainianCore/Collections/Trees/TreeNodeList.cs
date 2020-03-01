@@ -52,7 +52,7 @@ namespace LibrainianCore.Collections.Trees {
         public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
         [NotNull]
-        public TreeNode<T> Add( [CanBeNull] T value ) => this.Add( node: new TreeNode<T>( value ) );
+        public TreeNode<T> Add( [CanBeNull] T value ) => this.Add( new TreeNode<T>( value ) );
 
         [NotNull]
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {
@@ -60,12 +60,13 @@ namespace LibrainianCore.Collections.Trees {
                 throw new ArgumentNullException( nameof( node ) );
             }
 
-            base.Add( item: node );
+            base.Add( node );
             node.Parent = this.Parent;
 
             return node;
         }
 
+        [NotNull]
         public override String ToString() => $"Count={this.Count}";
     }
 }

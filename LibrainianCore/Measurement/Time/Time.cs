@@ -89,13 +89,13 @@ namespace LibrainianCore.Measurement.Time {
 
         /// <summary></summary>
         /// <param name="dateTime"></param>
-        public Time( DateTime dateTime ) : this( hour: ( SByte )dateTime.Hour, minute: ( SByte )dateTime.Minute, second: ( SByte )dateTime.Second,
-            millisecond: ( Int16 )dateTime.Millisecond ) { }
+        public Time( DateTime dateTime ) : this( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second,
+            ( Int16 )dateTime.Millisecond ) { }
 
         /// <summary></summary>
         /// <param name="spanOfTime"></param>
-        public Time( SpanOfTime spanOfTime ) : this( hour: ( SByte )spanOfTime.Hours.Value, minute: ( SByte )spanOfTime.Minutes.Value,
-            second: ( SByte )spanOfTime.Seconds.Value, millisecond: ( Int16 )spanOfTime.Milliseconds.Value, microsecond: ( Int16 )spanOfTime.Microseconds.Value ) { }
+        public Time( SpanOfTime spanOfTime ) : this( ( SByte )spanOfTime.Hours.Value, ( SByte )spanOfTime.Minutes.Value,
+            ( SByte )spanOfTime.Seconds.Value, ( Int16 )spanOfTime.Milliseconds.Value, ( Int16 )spanOfTime.Microseconds.Value ) { }
 
         public static explicit operator Time( DateTime dateTime ) =>
             new Time( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second, ( Int16 )dateTime.Millisecond );
@@ -104,20 +104,20 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="date"></param>
         /// <returns></returns>
         public static implicit operator DateTime( Time date ) =>
-            new DateTime( year: DateTime.MinValue.Year, month: DateTime.MinValue.Month, day: DateTime.MinValue.Day, hour: date.Hour.Value, minute: date.Minute.Value,
-                second: date.Second.Value, millisecond: date.Millisecond.Value );
+            new DateTime( DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value,
+                date.Second.Value, date.Millisecond.Value );
 
         /// <summary>Get the local system's computer time.</summary>
         public static Time Now() {
             var now = DateTime.Now;
 
-            return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
+            return new Time( ( SByte )now.Hour, ( SByte )now.Minute, ( SByte )now.Second, ( Int16 )now.Millisecond );
         }
 
         public static Time UtcNow() {
             var now = DateTime.UtcNow;
 
-            return new Time( hour: ( SByte )now.Hour, minute: ( SByte )now.Minute, second: ( SByte )now.Second, millisecond: ( Int16 )now.Millisecond );
+            return new Time( ( SByte )now.Hour, ( SByte )now.Minute, ( SByte )now.Second, ( Int16 )now.Millisecond );
         }
     }
 }

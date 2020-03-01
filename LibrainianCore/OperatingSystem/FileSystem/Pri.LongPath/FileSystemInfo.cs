@@ -10,12 +10,12 @@
     public abstract class FileSystemInfo {
 
         [CanBeNull]
-        protected FileAttributeData data;
+        protected FileAttributeData? data;
 
         protected Int32 errorCode;
 
         [NotNull]
-        public String FullPath;
+        public readonly String FullPath;
 
         protected State state;
 
@@ -279,16 +279,11 @@
 
                 var normalizedPathWithSearchPattern = this.FullPath.NormalizeLongPath();
 
-                using ( var handle = Directory.BeginFind( normalizedPathWithSearchPattern, out var findData ) ) {
-                    if ( handle == null ) {
-                        this.state = State.Error;
-                        this.errorCode = Marshal.GetLastWin32Error();
-                    }
-                    else {
-                        this.data = new FileAttributeData( findData );
-                        this.state = State.Initialized;
-                    }
-                }
+                using var handle = Directory.BeginFind( normalizedPathWithSearchPattern, out var findData );
+
+                this.data = new FileAttributeData( findData );
+                this.state = State.Initialized;
+
             }
             catch ( DirectoryNotFoundException ) {
                 this.state = State.Error;

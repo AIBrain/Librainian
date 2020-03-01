@@ -50,8 +50,8 @@ namespace LibrainianCore.Internet {
         public String Email { get; }
 
         public EmailClass( [NotNull] String email ) {
-            if ( String.IsNullOrWhiteSpace( value: email ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( email ) );
+            if ( String.IsNullOrWhiteSpace( email ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( email ) );
             }
 
             this.Email = email;

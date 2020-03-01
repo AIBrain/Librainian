@@ -78,7 +78,7 @@ namespace LibrainianCore.Security {
         private UInt32 _i = 15;
 
         /// <summary>Create a random number generator seed by system time.</summary>
-        public C5Random() : this( seed: DateTime.Now.Ticks ) { }
+        public C5Random() : this( DateTime.Now.Ticks ) { }
 
         /// <summary>Create a random number generator with a given seed</summary>
         /// <exception cref="ArgumentException">If seed is zero</exception>

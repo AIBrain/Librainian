@@ -44,7 +44,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using System.IO;
     using Collections.Lists;
     using JetBrains.Annotations;
-    using LibrainianCore.Extensions;
     using Logging;
     using Utilities;
 
@@ -56,24 +55,24 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new ConcurrentList<FileSystemWatcher>();
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Created { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Deleted { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } =
-            new ConcurrentDictionary<DateTime, RenamedEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, RenamedEventArgs>( Environment.ProcessorCount, 512 );
 
-        private void OnChanged( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
+        private void OnChanged( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
 
-        private void OnCreated( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Created[ DateTime.UtcNow ] = args;
+        private void OnCreated( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Created[ DateTime.UtcNow ] = args;
 
-        private void OnDeleted( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Deleted[ DateTime.UtcNow ] = args;
+        private void OnDeleted( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Deleted[ DateTime.UtcNow ] = args;
 
-        private void OnRenamed( [CanBeNull] Object sender, [CanBeNull] RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
+        private void OnRenamed( [CanBeNull] Object? sender, [CanBeNull] RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
 
         public override void DisposeManaged() {
             this.Nop();

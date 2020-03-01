@@ -41,7 +41,7 @@ namespace LibrainianCore.Measurement.Time {
 
     using System;
 
-    /// <summary>Used when calculating the difference between two <see cref="DateTime" /> instances with the <see cref="DateSpan" /> class.</summary>
+    /// <summary>Used when calculating the difference between two <see cref="DateTime" /> instances with the <see cref="DateSpan" /> struct.</summary>
     /// <remarks>Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateInterval.cs" /></remarks>
     public enum DateInterval {
 

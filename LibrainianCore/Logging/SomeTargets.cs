@@ -55,7 +55,7 @@ namespace LibrainianCore.Logging {
                 WithHeader = false,
                 Delimiter = CsvColumnDelimiterMode.Space,
                 Columns = {
-                    new CsvColumn( "Time", layout: "${longdate}" ), new CsvColumn( "Message", layout: "${message}" )
+                    new CsvColumn( "Time", "${longdate}" ), new CsvColumn( "Message", "${message}" )
                 }
             },
             UseDefaultRowHighlightingRules = true

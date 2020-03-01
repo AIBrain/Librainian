@@ -40,7 +40,7 @@
 namespace LibrainianCore.Graphics {
 
     using System;
-    using Maths.Hashings;
+    using JetBrains.Annotations;
 
     /// <summary>Represents a location in 3D integer space.</summary>
     /// <remarks>Culled from the file CPI.Plot3D.cs I don't know where that file came from otherwise I'd attribute it!</remarks>
@@ -129,10 +129,11 @@ namespace LibrainianCore.Graphics {
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer hash code.</returns>
-        public override Int32 GetHashCode() => HashingExtensions.GetHashCodes( this.X, this.Y, this.Z );
+        public override Int32 GetHashCode() => ( this.X, this.Y, this.Z ).GetHashCode();
 
         /// <summary>Returns a String representation of the point in [X,Y,Z] format.</summary>
         /// <returns>A String representing the point's XYZ coordinates.</returns>
+        [NotNull]
         public override String ToString() => $"[{this.X}, {this.Y}, {this.Z}]";
     }
 }

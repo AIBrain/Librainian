@@ -41,20 +41,18 @@ namespace LibrainianCore.Maths.Numbers {
 
     using System;
     using System.Threading;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
-#pragma warning disable IDE0015 // Use framework type
-
-    /// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="ulong" /> )</summary>
+    /// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
     [JsonObject]
-#pragma warning restore IDE0015 // Use framework type
     public sealed class AutoNumber {
 
         [JsonProperty]
         private Int64 _identity;
 
         /// <summary>The current value of the AutoNumber</summary>
-        public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
+        public UInt64 Identity => ( UInt64 ) Interlocked.Read( ref this._identity );
 
         /// <summary>Initialize the Identity with the specified seed value.</summary>
         /// <param name="seed"></param>
@@ -70,12 +68,15 @@ namespace LibrainianCore.Maths.Numbers {
 
         /// <summary>Returns the incremented Identity</summary>
         /// <returns></returns>
-        public UInt64 Next() => ( UInt64 )Interlocked.Increment( ref this._identity );
+        public UInt64 Next() => ( UInt64 ) Interlocked.Increment( ref this._identity );
 
         /// <summary>Resets the Identity to the specified seed value</summary>
         /// <param name="newIdentity"></param>
-        public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 )newIdentity );
+        public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 ) newIdentity );
 
+        [NotNull]
         public override String ToString() => $"{this.Identity}";
+
     }
+
 }

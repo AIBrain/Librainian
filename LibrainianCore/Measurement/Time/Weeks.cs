@@ -42,7 +42,6 @@ namespace LibrainianCore.Measurement.Time {
     using System;
     using System.Diagnostics;
     using System.Numerics;
-    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -50,7 +49,7 @@ namespace LibrainianCore.Measurement.Time {
 
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class Weeks : IComparable<Weeks>, IQuantityOfTime {
+    public struct Weeks : IComparable<Weeks>, IQuantityOfTime {
 
         /// <summary>52</summary>
         public const Decimal InOneCommonYear = 52m;
@@ -81,13 +80,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public Weeks( BigInteger value ) => this.Value = value;
 
-        [NotNull]
         public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( left.Value + right.Value );
 
-        [NotNull]
         public static Weeks Combine( Weeks left, Rational weeks ) => new Weeks( left.Value + weeks );
 
-        [NotNull]
         public static Weeks Combine( Weeks left, BigInteger weeks ) => new Weeks( left.Value + weeks );
 
         /// <summary>
@@ -101,49 +97,41 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="weeks" /> to <see cref="Days" />.</summary>
         /// <param name="weeks"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Days( Weeks weeks ) => weeks.ToDays();
 
-        [CanBeNull]
         public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Weeks weeks ) => new SpanOfTime( weeks: weeks );
+        public static implicit operator SpanOfTime( Weeks weeks ) => new SpanOfTime( weeks: weeks );
 
-        [NotNull]
         public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
 
-        [NotNull]
-        public static Weeks operator -( [CanBeNull] Weeks left, [CanBeNull] Weeks right ) => Combine( left: left, right: -right );
+        public static Weeks operator -( Weeks left, Weeks right ) => Combine( left, -right );
 
-        public static Boolean operator !=( [CanBeNull] Weeks left, [CanBeNull] Weeks right ) => !Equals( left, right );
+        public static Boolean operator !=( Weeks left, Weeks right ) => !Equals( left, right );
 
-        [NotNull]
-        public static Weeks operator +( [CanBeNull] Weeks left, [CanBeNull] Weeks right ) => Combine( left, right );
+        public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
 
-        [NotNull]
-        public static Weeks operator +( [CanBeNull] Weeks left, Decimal weeks ) => Combine( left, ( Rational )weeks );
+        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational )weeks );
 
-        [NotNull]
-        public static Weeks operator +( [CanBeNull] Weeks left, BigInteger weeks ) => Combine( left, weeks );
+        public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
 
         public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Weeks left, [CanBeNull] Days right ) => left < ( Weeks )right;
+        public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
 
-        public static Boolean operator <( [CanBeNull] Weeks left, [CanBeNull] Months right ) => ( Months )left < right;
+        public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
-        public static Boolean operator ==( [CanBeNull] Weeks left, [CanBeNull] Weeks right ) => Equals( left, right );
+        public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
 
-        public static Boolean operator >( [CanBeNull] Weeks left, [CanBeNull] Months right ) => ( Months )left > right;
+        public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
 
-        public static Boolean operator >( [CanBeNull] Weeks left, [CanBeNull] Days right ) => left > ( Weeks )right;
+        public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
 
         public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Weeks other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( [CanBeNull] Weeks other ) => Equals( this, other );
+        public Boolean Equals( Weeks other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -155,15 +143,12 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Days ToDays() => new Days( this.Value * Days.InOneWeek );
 
-        [NotNull]
         public Months ToMonths() => new Months( this.Value / ( Rational )InOneMonth );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneWeek );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneWeek );
 
         public override String ToString() {

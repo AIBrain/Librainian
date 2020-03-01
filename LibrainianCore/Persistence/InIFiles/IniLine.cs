@@ -116,6 +116,7 @@ namespace LibrainianCore.Persistence.InIFiles {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() {
             switch ( this.LineType ) {
                 case LineTipe.Text: {

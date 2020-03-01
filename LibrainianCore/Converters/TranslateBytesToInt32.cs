@@ -43,15 +43,17 @@ namespace LibrainianCore.Converters {
     using System.Runtime.InteropServices;
 
     /// <summary>Using this struct probably won't end too well.</summary>
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct TranslateBytesToInt32 {
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Byte[] ByteArray;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Int32[] IntArray;
+
     }
+
 }

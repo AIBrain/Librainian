@@ -43,7 +43,7 @@ namespace LibrainianCore.Persistence {
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    
+
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -154,7 +154,7 @@ namespace LibrainianCore.Persistence {
             var value = item.Value.ToJSON()?.ToCompressedBase64();
             var asItem = new KeyValuePair<String, String>( item.Key, value );
 
-            return this.Dictionary.Remove( item: asItem );
+            return this.Dictionary.Remove( asItem );
         }
 
         /// <summary>Gets the value associated with the specified key.</summary>
@@ -227,18 +227,18 @@ namespace LibrainianCore.Persistence {
 
         private StringKVPTable() => throw new NotImplementedException();
 
-        public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder,
-            applicationName: null, subFolder: tableName ) ) { }
+        public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
+            null, tableName ) ) { }
 
-        public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder,
+        public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
             subFolder, tableName ) ) { }
 
         public StringKVPTable( Byte specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this(
-            folder: new Folder( ( Environment.SpecialFolder )specialFolder, subFolder, tableName ) ) { }
+            new Folder( ( Environment.SpecialFolder )specialFolder, subFolder, tableName ) ) { }
 
-        public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullPath, path2: tableName ) ) { }
+        public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
 
-        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullPath, subFolder,
+        public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, subFolder,
             tableName ) ) { }
 
         public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
@@ -259,7 +259,7 @@ namespace LibrainianCore.Persistence {
                     DefragmentSequentialBTrees = true
                 };
 
-                this.Dictionary = new PersistentDictionary<String, String>( directory: this.Folder.FullPath, customConfig: customConfig );
+                this.Dictionary = new PersistentDictionary<String, String>( this.Folder.FullPath, customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
                     throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
@@ -270,7 +270,7 @@ namespace LibrainianCore.Persistence {
             }
         }
 
-        public StringKVPTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
+        public StringKVPTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
 
         /// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
         /// <returns></returns>
@@ -278,8 +278,8 @@ namespace LibrainianCore.Persistence {
             try {
                 var document = this.Folder.TryGetTempDocument();
 
-                var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
-                document.AppendText( text: text );
+                var text = Randem.NextString( 64, true, true, true, true );
+                document.AppendText( text );
 
                 using var cancel = new CancellationTokenSource( Seconds.Ten );
 
@@ -317,12 +317,13 @@ namespace LibrainianCore.Persistence {
         /// <returns></returns>
         [NotNull]
         public IEnumerable<KeyValuePair<String, String>> Items() =>
-            this.Dictionary.Select( selector: pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
+            this.Dictionary.Select( pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
 
         public void Save() => this.Flush();
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() => $"{this.Count} items";
 
         //should be all that's needed..

@@ -90,7 +90,7 @@ namespace LibrainianCore.Maths.Numbers {
             }
 
             var bytesWith00Attheendnd = new Byte[ bytes.Length + 1 ];
-            bytes.CopyTo( array: bytesWith00Attheendnd, index: 0 );
+            bytes.CopyTo( bytesWith00Attheendnd, 0 );
             bytesWith00Attheendnd[ bytes.Length ] = 0;
             this._internalValue = new BigInteger( bytesWith00Attheendnd );
 
@@ -112,7 +112,7 @@ namespace LibrainianCore.Maths.Numbers {
             this._internalValue = value;
         }
 
-        public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Add( left: left._internalValue, right: right._internalValue ) );
+        public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Add( left._internalValue, right._internalValue ) );
 
         public static explicit operator Decimal( UBigInteger number ) => ( Decimal )number._internalValue;
 
@@ -127,7 +127,7 @@ namespace LibrainianCore.Maths.Numbers {
         public static implicit operator UBigInteger( Int64 number ) => new UBigInteger( number );
 
         public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) =>
-            new UBigInteger( BigInteger.Multiply( left: left._internalValue, right: right._internalValue ) );
+            new UBigInteger( BigInteger.Multiply( left._internalValue, right._internalValue ) );
 
         public static UBigInteger operator -( UBigInteger number ) => new UBigInteger( -number._internalValue );
 
@@ -144,7 +144,7 @@ namespace LibrainianCore.Maths.Numbers {
         public static Double operator /( Double left, UBigInteger right ) {
 
             //right.Should().BeGreaterThan(expected: Zero);
-            var rational = new Rational( numerator: new BigInteger( left ), denominator: right._internalValue );
+            var rational = new Rational( new BigInteger( left ), right._internalValue );
 
             return ( Double )rational;
         }
@@ -182,10 +182,10 @@ namespace LibrainianCore.Maths.Numbers {
                 throw new ArgumentNullException( nameof( number ) );
             }
 
-            return new UBigInteger( BigInteger.Parse( number, style: style ) );
+            return new UBigInteger( BigInteger.Parse( number, style ) );
         }
 
-        public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new UBigInteger( BigInteger.Pow( number._internalValue, exponent: exponent ) );
+        public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new UBigInteger( BigInteger.Pow( number._internalValue, exponent ) );
 
         [Pure]
         public Int32 CompareTo( [NotNull] Object obj ) {
@@ -197,24 +197,25 @@ namespace LibrainianCore.Maths.Numbers {
                 throw new InvalidCastException();
             }
 
-            return this._internalValue.CompareTo( other: ( UBigInteger )obj );
+            return this._internalValue.CompareTo( ( UBigInteger )obj );
         }
 
-        public Int32 CompareTo( UBigInteger number ) => this._internalValue.CompareTo( other: number._internalValue );
+        public Int32 CompareTo( UBigInteger number ) => this._internalValue.CompareTo( number._internalValue );
 
         // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-        public Int32 CompareTo( Int64 other ) => this._internalValue.CompareTo( other: other );
+        public Int32 CompareTo( Int64 other ) => this._internalValue.CompareTo( other );
 
         // ReSharper disable once ImpureMethodCallOnReadonlyValueField
-        public Int32 CompareTo( UInt64 other ) => this._internalValue.CompareTo( other: other );
+        public Int32 CompareTo( UInt64 other ) => this._internalValue.CompareTo( other );
 
         // ReSharper disable once ImpureMethodCallOnReadonlyValueField
         [NotNull]
         public Byte[] ToByteArray() => this._internalValue.ToByteArray();
 
+        [CanBeNull]
         public override String ToString() => this._internalValue.ToString();
 
         [CanBeNull]
-        public String ToString( [NotNull] String format ) => this._internalValue.ToString( format: format );
+        public String ToString( [NotNull] String format ) => this._internalValue.ToString( format );
     }
 }

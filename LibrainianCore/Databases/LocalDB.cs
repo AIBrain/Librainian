@@ -136,7 +136,7 @@ namespace LibrainianCore.Databases {
                     await this.Connection.OpenAsync().ConfigureAwait( false );
                 }
 
-                using var cmd = this.Connection.CreateCommand();
+                await using var cmd = this.Connection.CreateCommand();
 
                 if ( cmd != null ) {
                     cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );

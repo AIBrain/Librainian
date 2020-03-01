@@ -56,15 +56,15 @@ namespace LibrainianCore.Extensions {
 
     public static class Types {
 
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
-
         public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
         private delegate Object ObjectActivator();
 
-        public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object value ) {
+        public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object? value ) {
             if ( p is null ) {
                 throw new ArgumentNullException( nameof( p ) );
             }
@@ -78,7 +78,7 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => item != null ).Select( item => ( T )item.Clone() ).ToList();
+            list.Where( item => !(item is null) ).Select( item => ( T ) item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
@@ -129,7 +129,7 @@ namespace LibrainianCore.Extensions {
                 var destFields = destination.GetType().GetAllFields();
 
                 foreach ( var field in sourceFields.Where( destFields.Contains ) ) {
-                    CopyField( source: source, destination: destination, field: field );
+                    CopyField( source, destination, field );
                 }
 
                 return true;
@@ -150,7 +150,7 @@ namespace LibrainianCore.Extensions {
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
 
                 foreach ( var prop in sourceProps.Where( destProps.Contains ) ) {
-                    CopyProperty( source: source, destination: destination, prop: prop );
+                    CopyProperty( source, destination, prop );
                 }
 
                 return true;
@@ -211,7 +211,7 @@ namespace LibrainianCore.Extensions {
             //copy all settable fields
             // then
             //copy all settable properties (going on the assumption that properties should be modifiying their private fields).
-            return CopyFields( source: source, destination: destination ) && CopyProperties( source: source, destination: destination );
+            return CopyFields( source, destination ) && CopyProperties( source, destination );
         }
 
         /// <summary>Enumerate all fields of the <paramref name="type" /></summary>
@@ -255,13 +255,14 @@ namespace LibrainianCore.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
 
                     foreach ( var _ in declaredCtor.Select( constructorInfo => constructorInfo.GetParameters() )
-                        .SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ), ( parms, parameterInfo ) => parms ) ) {
+                                                   .SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ),
+                                                       ( parms, parameterInfo ) => parms ) ) {
                         yield return Activator.CreateInstance( myType, Guid.NewGuid() ) as T;
                     }
                 }
@@ -293,7 +294,7 @@ namespace LibrainianCore.Extensions {
             }
 
             return CurrentDomainGetAssemblies.Value.SelectMany( assembly => assembly.GetTypes(), ( assembly, type ) => type )
-                .Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
+                                             .Where( arg => baseType.IsAssignableFrom( arg ) && arg.IsClass && !arg.IsAbstract );
         }
 
         public static Boolean HasDefaultConstructor( [NotNull] this Type t ) {
@@ -405,18 +406,18 @@ namespace LibrainianCore.Extensions {
                 var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
 
                 var ilGenerator = dynamicMethod.GetILGenerator(); //can this be optimized any further?
-                ilGenerator.Emit( OpCodes.Nop ); //why nop here? alignment?
+                ilGenerator.Emit( OpCodes.Nop );                  //why nop here? alignment?
 
                 ilGenerator.Emit( OpCodes.Newobj,
                     type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
 
                 ilGenerator.Emit( OpCodes.Ret );
 
-                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
                 ObjectActivators.Add( type, activator );
             }
 
-            return ( T )activator.Invoke();
+            return ( T ) activator.Invoke();
         }
 
         [NotNull]
@@ -506,19 +507,19 @@ namespace LibrainianCore.Extensions {
                 if ( underlyingType == typeof( Guid ) ) {
                     switch ( value ) {
                         case String s: {
-                                value = new Guid( s );
+                            value = new Guid( s );
 
-                                break;
-                            }
+                            break;
+                        }
                         case Byte[] bytes: {
-                                value = new Guid( bytes );
+                            value = new Guid( bytes );
 
-                                break;
-                            }
+                            break;
+                        }
                     }
                 }
 
-                result = ( T )Convert.ChangeType( value, underlyingType );
+                result = ( T ) Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -599,5 +600,7 @@ namespace LibrainianCore.Extensions {
         //            }
         //    }
         //}
+
     }
+
 }

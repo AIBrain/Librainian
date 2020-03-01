@@ -41,6 +41,7 @@ namespace LibrainianCore.Measurement.Physics {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using LibrainianCore.Extensions;
     using Rationals;
 
@@ -111,6 +112,7 @@ namespace LibrainianCore.Measurement.Physics {
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+        [NotNull]
         public override String ToString() => $"{this.Value} GeV";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );

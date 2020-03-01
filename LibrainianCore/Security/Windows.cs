@@ -51,9 +51,9 @@ namespace LibrainianCore.Security {
         public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
             try {
                 using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
-                    var windowsPrincipal = new WindowsPrincipal( ntIdentity: windowsIdentity );
+                    var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
 
-                    return windowsPrincipal.IsInRole( role: role );
+                    return windowsPrincipal.IsInRole( role );
                 }
             }
             catch ( SecurityException ) { }

@@ -42,18 +42,15 @@ namespace LibrainianCore.Maths.Ranges {
     using System;
     using Newtonsoft.Json;
 
-#pragma warning disable IDE0015 // Use framework type
-
-    /// <summary>Represents a <see cref="ulong" /> range with minimum and maximum values.</summary>
+    /// <summary>Represents a <see cref="UInt64" /> range with minimum and maximum values.</summary>
     /// <remarks>
     ///     <para>Modified from the AForge Library</para>
     ///     <para>Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com</para>
     /// </remarks>
     [JsonObject]
-#pragma warning restore IDE0015 // Use framework type
     public struct UInt64Range {
 
-        public static readonly UInt64Range MinMax = new UInt64Range( min: UInt64.MinValue, max: UInt64.MaxValue );
+        public static readonly UInt64Range MinMax = new UInt64Range( UInt64.MinValue, UInt64.MaxValue );
 
         /// <summary>Length of the range (difference between maximum and minimum values)</summary>
         [JsonProperty]
@@ -90,5 +87,7 @@ namespace LibrainianCore.Maths.Ranges {
         /// <param name="range">Range to check for overlapping</param>
         /// <returns><b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.</returns>
         public Boolean IsOverlapping( UInt64Range range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
+
     }
+
 }

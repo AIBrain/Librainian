@@ -118,7 +118,7 @@ namespace LibrainianCore.Magic {
 
         // ReSharper disable once UnusedParameter.Local
         public static void ThrowIfNull<TKey>( [CanBeNull] this TKey obj ) {
-            if ( null == obj ) {
+            if ( obj is null ) {
                 throw new ArgumentNullException();
             }
         }

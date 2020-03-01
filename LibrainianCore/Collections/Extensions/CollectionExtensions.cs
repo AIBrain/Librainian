@@ -60,7 +60,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
-            collection.TryAdd( item: item );
+            collection.TryAdd( item );
         }
 
         public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] IEnumerable<T> items ) {
@@ -72,7 +72,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
-            Parallel.ForEach( source: items.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, collection.Add );
+            Parallel.ForEach( items.AsParallel(), CPU.AllCPUExceptOne, collection.Add );
         }
 
         /// <summary>Determines whether or not the given sequence contains any duplicate elements.</summary>
@@ -84,7 +84,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( self ), "AnyDuplicates<T> called on a null IEnumerable<T>." );
             }
 
-            return AnyRelationship( self: self, relationshipFunc: ( arg1, arg2 ) => Equals( arg1, arg2 ) );
+            return AnyRelationship( self, ( arg1, arg2 ) => Equals( arg1, arg2 ) );
         }
 
         /// <summary>Determines whether or not a given relationship exists between any two elements in the sequence.</summary>
@@ -99,8 +99,8 @@ namespace LibrainianCore.Collections.Extensions {
 
             var enumerable = self as T[] ?? self.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) => enumerable.Skip( count: aIndex + 1 ).Any( b =>
-                ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Any( value => value );
+            return enumerable.Select( ( a, aIndex ) => enumerable.Skip( aIndex + 1 ).Any( b =>
+                ( relationshipFunc?.Invoke( a, b ) ?? default ) || ( relationshipFunc?.Invoke( b, a ) ?? default ) ) ).Any( value => value );
         }
 
         /// <summary>Returns whether or not there are at least <paramref name="minInstances" /> elements in the source sequence that satisfy the given <paramref name="predicate" />.</summary>
@@ -163,7 +163,7 @@ namespace LibrainianCore.Collections.Extensions {
             }
 
             while ( !bag.IsEmpty ) {
-                bag.TryTake( result: out _ );
+                bag.TryTake( out _ );
             }
         }
 
@@ -244,7 +244,7 @@ namespace LibrainianCore.Collections.Extensions {
                 return default;
             }
 
-            if ( a.Any( item => !b.Remove( item: item ) ) ) {
+            if ( a.Any( item => !b.Remove( item ) ) ) {
                 return default;
             }
 
@@ -259,7 +259,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( items ) );
             }
 
-            return items.Aggregate( seed: BigInteger.Zero, func: ( current, item ) => current + BigInteger.One );
+            return items.Aggregate( BigInteger.Zero, ( current, item ) => current + BigInteger.One );
         }
 
         /// <summary>
@@ -277,12 +277,14 @@ namespace LibrainianCore.Collections.Extensions {
 
             IDictionary<T, Int32> result = new Dictionary<T, Int32>();
 
-            foreach ( var element in self.Where( t => t != null ) ) {
-                if ( result.ContainsKey( element ) ) {
-                    ++result[ element ];
-                }
-                else {
-                    result[ element ] = 1;
+            foreach ( var element in self ) {
+                if ( !( element is null ) ) {
+                    if ( result.ContainsKey( element ) ) {
+                        ++result[ element ];
+                    }
+                    else {
+                        result[ element ] = 1;
+                    }
                 }
             }
 
@@ -301,8 +303,8 @@ namespace LibrainianCore.Collections.Extensions {
 
             var enumerable = self as T[] ?? self.ToArray();
 
-            return enumerable.Select( selector: ( a, aIndex ) => enumerable.Skip( count: aIndex + 1 ).Any( b =>
-                ( relationshipFunc?.Invoke( arg1: a, arg2: b ) ?? default ) || ( relationshipFunc?.Invoke( arg1: b, arg2: a ) ?? default ) ) ).Count( value => value );
+            return enumerable.Select( ( a, aIndex ) => enumerable.Skip( aIndex + 1 ).Any( b =>
+                ( relationshipFunc?.Invoke( a, b ) ?? default ) || ( relationshipFunc?.Invoke( b, a ) ?? default ) ) ).Count( value => value );
         }
 
         /// <summary>Returns duplicate items found in the <see cref="sequence" /> .</summary>
@@ -316,7 +318,7 @@ namespace LibrainianCore.Collections.Extensions {
 
             var set = new HashSet<T>();
 
-            return new HashSet<T>( collection: sequence.Where( item => !set.Add( item: item ) ) );
+            return new HashSet<T>( sequence.Where( item => !set.Add( item ) ) );
         }
 
         [Pure]
@@ -390,7 +392,7 @@ namespace LibrainianCore.Collections.Extensions {
 
             foreach ( var a in enumerable ) {
 
-                foreach ( var b in enumerable.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) {
+                foreach ( var b in enumerable.Skip( ++aIndex ).Where( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ) {
                     return new KeyValuePair<T, T>( a, b );
                 }
             }
@@ -425,6 +427,7 @@ namespace LibrainianCore.Collections.Extensions {
         /// <param name="added">    </param>
         /// <returns></returns>
         [Pure]
+        [CanBeNull]
         public static TValue GetOrAdd<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dict, [NotNull] TKey key, [NotNull] Func<TKey, TValue> generator,
             out Boolean added ) {
             if ( generator is null ) {
@@ -482,7 +485,7 @@ namespace LibrainianCore.Collections.Extensions {
         }
 
         [Pure]
-        public static Int32 IndexOf<T>( [NotNull] this T[] self, [CanBeNull] T item ) => Array.IndexOf( array: self, item );
+        public static Int32 IndexOf<T>( [NotNull] this T[] self, [CanBeNull] T item ) => Array.IndexOf( self, item );
 
         /// <summary></summary>
         /// <typeparam name="T"></typeparam>
@@ -500,7 +503,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( sequence ) );
             }
 
-            return source.IndexOfSequence( sequence: sequence, EqualityComparer<T>.Default );
+            return source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
         }
 
         /// <summary></summary>
@@ -537,15 +540,15 @@ namespace LibrainianCore.Collections.Extensions {
                 // Remove bad prospective matches
                 var item1 = item;
                 var p1 = p;
-                prospects.RemoveAll( match: k => !comparer.Equals( x: item1, y: seq[ p1 - k ] ) );
+                prospects.RemoveAll( k => !comparer.Equals( item1, seq[ p1 - k ] ) );
 
                 // Is it the start of a prospective match ?
-                if ( comparer.Equals( x: item, y: seq[ 0 ] ) ) {
-                    prospects.Add( item: p );
+                if ( comparer.Equals( item, seq[ 0 ] ) ) {
+                    prospects.Add( p );
                 }
 
                 // Does current character continues partial match ?
-                if ( comparer.Equals( x: item, y: seq[ i ] ) ) {
+                if ( comparer.Equals( item, seq[ i ] ) ) {
                     i++;
 
                     // Do we have a complete match ?
@@ -561,7 +564,7 @@ namespace LibrainianCore.Collections.Extensions {
                     if ( prospects.Count > 0 ) {
 
                         // Yes, use the first one
-                        var k = prospects[ index: 0 ];
+                        var k = prospects[ 0 ];
                         i = p - k + 1;
                     }
                     else {
@@ -600,7 +603,7 @@ namespace LibrainianCore.Collections.Extensions {
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]
-        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( seed: 0L, func: ( current, u ) => current + ( Int64 )u );
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
         [CanBeNull]
         [Pure]
@@ -615,7 +618,7 @@ namespace LibrainianCore.Collections.Extensions {
         [NotNull]
         [Pure]
         public static IEnumerable<T> OrderBy<T>( [NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> guide ) {
-            var toBeSorted = new HashSet<T>( collection: list );
+            var toBeSorted = new HashSet<T>( list );
 
             return guide.Where( member => toBeSorted.Contains( member ) );
         }
@@ -642,7 +645,7 @@ namespace LibrainianCore.Collections.Extensions {
                     continue;
                 }
 
-                yield return new ReadOnlyCollection<T>( list: array );
+                yield return new ReadOnlyCollection<T>( array );
                 array = null;
                 count = 0;
             }
@@ -651,9 +654,9 @@ namespace LibrainianCore.Collections.Extensions {
                 yield break;
             }
 
-            Array.Resize( array: ref array, newSize: count );
+            Array.Resize( ref array, count );
 
-            yield return new ReadOnlyCollection<T>( list: array );
+            yield return new ReadOnlyCollection<T>( array );
         }
 
         /// <summary>untested</summary>
@@ -691,7 +694,7 @@ namespace LibrainianCore.Collections.Extensions {
             }
 
             var result = self.First();
-            self.Remove( item: result );
+            self.Remove( result );
 
             return result;
         }
@@ -708,7 +711,7 @@ namespace LibrainianCore.Collections.Extensions {
             }
 
             var result = self.Last();
-            self.Remove( item: result );
+            self.Remove( result );
 
             return result;
         }
@@ -749,7 +752,7 @@ namespace LibrainianCore.Collections.Extensions {
 
             var rank = 0;
             var itemCount = 0;
-            var ordered = source.OrderBy(  keySelector ).ToArray();
+            var ordered = source.OrderBy( keySelector ).ToArray();
             var previous = keySelector( ordered[ 0 ] );
 
             foreach ( var t in ordered ) {
@@ -760,7 +763,7 @@ namespace LibrainianCore.Collections.Extensions {
                     rank = itemCount;
                 }
 
-                yield return selector( arg1: t, arg2: rank );
+                yield return selector( t, rank );
                 previous = current;
             }
         }
@@ -772,7 +775,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
-            return collection.TryTake( item: out var result ) ? result : default;
+            return collection.TryTake( out var result ) ? result : default;
         }
 
         [Pure]
@@ -805,12 +808,12 @@ namespace LibrainianCore.Collections.Extensions {
             while ( sanity.Any() && collection.Contains( specificItem ) ) {
                 --sanity;
 
-                if ( collection.TryTake( item: out var temp ) ) {
+                if ( collection.TryTake( out var temp ) ) {
                     if ( Equals( temp, specificItem ) ) {
                         return specificItem;
                     }
 
-                    collection.TryAdd( item: temp );
+                    collection.TryAdd( temp );
                 }
             }
 
@@ -825,7 +828,7 @@ namespace LibrainianCore.Collections.Extensions {
             var removed = 0;
 
             while ( collection.Any() ) {
-                while ( collection.TryTake( item: out _ ) ) {
+                while ( collection.TryTake( out _ ) ) {
                     ++removed;
                 }
             }
@@ -833,12 +836,13 @@ namespace LibrainianCore.Collections.Extensions {
             return removed;
         }
 
+        [ItemCanBeNull]
         public static IEnumerable<T> RemoveEach<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
             if ( collection is null ) {
                 throw new ArgumentNullException( nameof( collection ) );
             }
 
-            while ( collection.TryTake( item: out var result ) ) {
+            while ( collection.TryTake( out var result ) ) {
                 yield return result;
             }
         }
@@ -905,8 +909,8 @@ namespace LibrainianCore.Collections.Extensions {
                 return default;
             }
 
-            item = list[ index: 0 ];
-            list.RemoveAt( index: 0 );
+            item = list[ 0 ];
+            list.RemoveAt( 0 );
 
             return true;
         }
@@ -927,8 +931,8 @@ namespace LibrainianCore.Collections.Extensions {
                 return default;
             }
 
-            var item = list[ index: 0 ];
-            list.RemoveAt( index: 0 );
+            var item = list[ 0 ];
+            list.RemoveAt( 0 );
 
             return item;
         }
@@ -953,8 +957,8 @@ namespace LibrainianCore.Collections.Extensions {
                 return default;
             }
 
-            item = list[ index: index ];
-            list.RemoveAt( index: index );
+            item = list[ index ];
+            list.RemoveAt( index );
 
             return true;
         }
@@ -977,8 +981,8 @@ namespace LibrainianCore.Collections.Extensions {
                 return null;
             }
 
-            var item = list[ index: index ];
-            list.RemoveAt( index: index );
+            var item = list[ index ];
+            list.RemoveAt( index );
 
             return item;
         }
@@ -999,8 +1003,8 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentOutOfRangeException( nameof( capacity ) );
             }
 
-            var list = new List<TSource>( capacity: capacity );
-            list.AddRange( collection: source );
+            var list = new List<TSource>( capacity );
+            list.AddRange( source );
 
             return list;
         }
@@ -1019,13 +1023,13 @@ namespace LibrainianCore.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( count: ( Int32 )( x * sources.Count ) );
+            return sources.Take( ( Int32 )( x * sources.Count ) );
         }
 
         [NotNull]
         [Pure]
         public static List<T> ToSortedList<T>( [NotNull] this IEnumerable<T> values ) {
-            var list = new List<T>( collection: values );
+            var list = new List<T>( values );
             list.Sort();
 
             return list;
@@ -1034,7 +1038,7 @@ namespace LibrainianCore.Collections.Extensions {
         [NotNull]
         [Pure]
         public static String ToStrings( [NotNull] this IEnumerable<Object> enumerable, Char c ) =>
-            ToStrings( items: enumerable, separator: new String( new[] {
+            ToStrings( enumerable, new String( new[] {
                 c
             } ) );
 
@@ -1057,10 +1061,10 @@ namespace LibrainianCore.Collections.Extensions {
             }
 
             if ( String.IsNullOrEmpty( atTheEnd ) ) {
-                return String.Join( separator: separator, values: items ).TrimEnd();
+                return String.Join( separator, items ).TrimEnd();
             }
 
-            return $"{String.Join( separator: separator, values: items )}{separator}{atTheEnd}".TrimEnd();
+            return $"{String.Join( separator, items )}{separator}{atTheEnd}".TrimEnd();
         }
 
         /// <summary>Extension to aomtically remove a KVP.</summary>
@@ -1085,7 +1089,7 @@ namespace LibrainianCore.Collections.Extensions {
         /// <param name="item"> </param>
         /// <returns></returns>
         [Pure]
-        public static Boolean TryTake<T>( [NotNull] this ConcurrentQueue<T> queue, out T item ) {
+        public static Boolean TryTake<T>( [NotNull] this ConcurrentQueue<T> queue, [CanBeNull] out T item ) {
             if ( queue is null ) {
                 throw new ArgumentNullException( nameof( queue ) );
             }
@@ -1094,7 +1098,7 @@ namespace LibrainianCore.Collections.Extensions {
                 throw new ArgumentNullException( nameof( queue ) );
             }
 
-            return queue.TryDequeue( result: out item );
+            return queue.TryDequeue( out item );
         }
 
         /// <summary>Wrapper for <see cref="ConcurrentStack{T}.TryPop" /></summary>
@@ -1103,12 +1107,12 @@ namespace LibrainianCore.Collections.Extensions {
         /// <param name="item"> </param>
         /// <returns></returns>
         [Pure]
-        public static Boolean TryTake<T>( [NotNull] this ConcurrentStack<T> stack, out T item ) {
+        public static Boolean TryTake<T>( [NotNull] this ConcurrentStack<T> stack, [CanBeNull] out T item ) {
             if ( null == stack ) {
                 throw new ArgumentNullException( nameof( stack ) );
             }
 
-            return stack.TryPop( result: out item );
+            return stack.TryPop( out item );
         }
 
         [Pure]
@@ -1151,7 +1155,7 @@ namespace LibrainianCore.Collections.Extensions {
 
             foreach ( var a in enumerable ) {
 
-                foreach ( var b in enumerable.Skip( count: ++aIndex ).Where( b => relationshipFunc( arg1: a, arg2: b ) || relationshipFunc( arg1: b, arg2: a ) ) ) {
+                foreach ( var b in enumerable.Skip( ++aIndex ).Where( b => relationshipFunc( a, b ) || relationshipFunc( b, a ) ) ) {
                     yield return new KeyValuePair<T, T>( a, b );
                 }
             }

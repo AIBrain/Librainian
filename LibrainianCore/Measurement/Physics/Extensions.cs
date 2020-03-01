@@ -59,7 +59,7 @@ namespace LibrainianCore.Measurement.Physics {
                 volts.ToMilliElectronVolts().ToString()
             };
 
-            return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
+            return list.OrderBy( s => s.Length ).First();
         }
 
         [NotNull]
@@ -72,7 +72,7 @@ namespace LibrainianCore.Measurement.Physics {
                 volts.ToMilliElectronVolts().ToString()
             };
 
-            return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
+            return list.OrderBy( s => s.Length ).First();
         }
 
         [NotNull]
@@ -85,7 +85,7 @@ namespace LibrainianCore.Measurement.Physics {
                 volts.ToMilliElectronVolts().ToString()
             };
 
-            return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
+            return list.OrderBy( s => s.Length ).First();
         }
 
         [NotNull]
@@ -98,7 +98,7 @@ namespace LibrainianCore.Measurement.Physics {
                 volts.ToMilliElectronVolts().ToString()
             };
 
-            return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
+            return list.OrderBy( s => s.Length ).First();
         }
 
         [NotNull]
@@ -111,7 +111,7 @@ namespace LibrainianCore.Measurement.Physics {
                 volts.ToMilliElectronVolts().ToString()
             };
 
-            return list.OrderBy( s => s.Length ).FirstOrDefault() ?? "n/a";
+            return list.OrderBy( s => s.Length ).First();
         }
 
         public static MegaElectronVolts Sum( [NotNull] this IEnumerable<ElectronVolts> volts ) {
@@ -119,9 +119,7 @@ namespace LibrainianCore.Measurement.Physics {
                 throw new ArgumentNullException( nameof( volts ) );
             }
 
-            var result = volts.Aggregate( MegaElectronVolts.Zero, ( current, electronVolts ) => current + electronVolts.ToMegaElectronVolts() );
-
-            return result;
+            return volts.Aggregate( MegaElectronVolts.Zero, ( current, electronVolts ) => current + electronVolts.ToMegaElectronVolts() );
         }
 
         public static GigaElectronVolts Sum( [NotNull] this IEnumerable<MegaElectronVolts> volts ) {

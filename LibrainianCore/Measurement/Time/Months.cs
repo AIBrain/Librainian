@@ -43,7 +43,6 @@ namespace LibrainianCore.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
-    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -52,7 +51,7 @@ namespace LibrainianCore.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Months : IComparable<Months>, IQuantityOfTime {
+    public struct Months : IComparable<Months>, IQuantityOfTime {
 
         /// <summary>12</summary>
         public const Byte InOneCommonYear = 12;
@@ -82,13 +81,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public Months( Byte value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Months Combine( [CanBeNull] Months left, Months right ) => Combine( left, right.Value );
+        public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
-        [NotNull]
         public static Months Combine( Months left, Rational months ) => new Months( left.Value + months );
 
-        [NotNull]
         public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
 
         /// <summary>
@@ -99,38 +95,31 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Months months ) => new SpanOfTime( months: months );
+        public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months );
 
-        [CanBeNull]
         public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
-        [NotNull]
         public static Months operator -( Months days ) => new Months( days.Value * -1 );
 
-        [CanBeNull]
-        public static Months operator -( [CanBeNull] Months left, [CanBeNull] Months right ) => Combine( left: left, right: -right );
+        public static Months operator -( Months left, Months right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Months operator -( [CanBeNull] Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
+        public static Months operator -( Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
 
-        public static Boolean operator !=( [CanBeNull] Months left, [CanBeNull] Months right ) => !Equals( left, right );
+        public static Boolean operator !=( Months left, Months right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static Months operator +( [CanBeNull] Months left, [CanBeNull] Months right ) => Combine( left, right );
+        public static Months operator +( Months left, Months right ) => Combine( left, right );
 
-        [NotNull]
-        public static Months operator +( [CanBeNull] Months left, Rational months ) => Combine( left, months );
+        public static Months operator +( Months left, Rational months ) => Combine( left, months );
 
         public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( [CanBeNull] Months left, [CanBeNull] Months right ) => Equals( left, right );
+        public static Boolean operator ==( Months left, Months right ) => Equals( left, right );
 
         public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Months other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( [CanBeNull] Months other ) => Equals( this, other );
+        public Boolean Equals( Months other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -144,7 +133,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMonth * this.Value );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
 
         public override String ToString() {
@@ -163,7 +151,6 @@ namespace LibrainianCore.Measurement.Time {
 
         //public static implicit operator Years( Months months ) => months.ToYears();
 
-        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneMonth );
     }
 }

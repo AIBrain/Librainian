@@ -146,6 +146,7 @@ namespace LibrainianCore.Measurement.Spatial {
         public Radians ToRadians() => ToRadians( this );
 
         [Pure]
+        [NotNull]
         public override String ToString() => $"{this.Value} °";
     }
 }

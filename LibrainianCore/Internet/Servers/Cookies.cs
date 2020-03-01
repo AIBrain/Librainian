@@ -47,6 +47,7 @@ namespace LibrainianCore.Internet.Servers {
 
     public class Cookies {
 
+        [NotNull]
         private readonly SortedList<String, Cookie> _cookieCollection = new SortedList<String, Cookie>();
 
         /// <summary>
@@ -103,13 +104,13 @@ namespace LibrainianCore.Internet.Servers {
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
         [CanBeNull]
-        public Cookie Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
+        public Cookie? Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
         /// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
         [CanBeNull]
-        public String GetValue( [NotNull] String name ) {
+        public String? GetValue( [NotNull] String name ) {
             var cookie = this.Get( name );
 
             if ( cookie is null ) {
@@ -121,6 +122,7 @@ namespace LibrainianCore.Internet.Servers {
 
         /// <summary>Returns a String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n". There is no leading or trailing "\r\n".</summary>
         /// <returns>A String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n". There is no leading or trailing "\r\n".</returns>
+        [NotNull]
         public override String ToString() {
             var cookiesStr = this._cookieCollection.Values.Select( cookie =>
                 $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 )cookie.Expire.TotalSeconds )}; Path=/" );

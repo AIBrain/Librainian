@@ -55,7 +55,8 @@ namespace LibrainianCore.Measurement.Currency {
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-        //TODO TODO add in support for automatic persisting?
+        //TODO add in support for automatic persisting?
+
         [JsonProperty]
         private Decimal _balance;
 
@@ -75,19 +76,19 @@ namespace LibrainianCore.Measurement.Currency {
         }
 
         [CanBeNull]
-        public Action<Decimal> OnAfterDeposit { get; set; }
+        public Action<Decimal>? OnAfterDeposit { get; set; }
 
         [CanBeNull]
-        public Action<Decimal> OnAfterWithdraw { get; set; }
+        public Action<Decimal>? OnAfterWithdraw { get; set; }
 
         [CanBeNull]
-        public Action<Decimal> OnAnyUpdate { get; set; }
+        public Action<Decimal>? OnAnyUpdate { get; set; }
 
         [CanBeNull]
-        public Action<Decimal> OnBeforeDeposit { get; set; }
+        public Action<Decimal>? OnBeforeDeposit { get; set; }
 
         [CanBeNull]
-        public Action<Decimal> OnBeforeWithdraw { get; set; }
+        public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
@@ -144,12 +145,13 @@ namespace LibrainianCore.Measurement.Currency {
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as SimpleWallet );
+        public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleWallet );
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this._access.GetHashCode();
 
+        [NotNull]
         public override String ToString() => $"{this.Balance:F8}";
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>

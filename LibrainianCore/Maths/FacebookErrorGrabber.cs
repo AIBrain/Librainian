@@ -54,7 +54,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [CanBeNull]
         public static Task<FaceBookRootObject> GetError() {
-            var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
+            var uri = new Uri( "http://graph.facebook.com/microsoft" );
 
             return uri.DeserializeJson<FaceBookRootObject>();
         }
@@ -109,13 +109,16 @@ namespace LibrainianCore.Maths {
             public Int32 Code { get; set; }
 
             [JsonProperty( "fbtrace_id" )]
-            public String FbtraceID { get; set; }
+            [CanBeNull]
+            public String? FbtraceID { get; set; }
 
             [JsonProperty( "message" )]
-            public String Message { get; set; }
+            [CanBeNull]
+            public String? Message { get; set; }
 
             [JsonProperty( "type" )]
-            public String Type { get; set; }
+            [CanBeNull]
+            public String? Type { get; set; }
         }
 
         [JsonObject]

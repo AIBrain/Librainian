@@ -48,13 +48,16 @@ namespace LibrainianCore.Threading {
     /// <see cref="http://stackoverflow.com/a/4749401/956364" />
     public sealed class AbandonableTask {
 
-        private Action _beginWork { get; }
+        [CanBeNull]
+        private Action? _beginWork { get; }
 
-        private Action _blockingWork { get; }
+        [CanBeNull]
+        private Action? _blockingWork { get; }
 
         private CancellationToken _cancellationToken { get; }
 
-        public Action<Task> AfterComplete { get; }
+        [CanBeNull]
+        public Action<Task>? AfterComplete { get; }
 
         private AbandonableTask( CancellationToken cancellationToken, [CanBeNull] Action beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task> afterComplete ) {
             this._cancellationToken = cancellationToken;

@@ -51,27 +51,8 @@ namespace LibrainianCore.Measurement.Time.Clocks {
     public class PauseableClock : IStandardClock {
 
         /// <summary></summary>
-        private volatile Boolean _isPaused;
-
-        /// <summary></summary>
-        [NotNull]
-        private Timer Timer { get; } = new Timer( interval: ( Double )Milliseconds.One.Value ) {
-            AutoReset = false
-        };
-
-        [JsonProperty]
-        public Day Day { get; private set; }
-
-        /// <summary></summary>
         [JsonProperty]
         public Hour Hour { get; private set; }
-
-        [JsonProperty]
-        public Boolean IsPaused {
-            get => this._isPaused;
-
-            private set => this._isPaused = value;
-        }
 
         /// <summary></summary>
         [JsonProperty]
@@ -81,26 +62,51 @@ namespace LibrainianCore.Measurement.Time.Clocks {
         [JsonProperty]
         public Minute Minute { get; private set; }
 
-        [JsonProperty]
-        public Month Month { get; private set; }
-
-        public Action<DateAndTime> OnDay { get; set; }
-
-        public Action<DateAndTime> OnHour { get; set; }
-
-        public Action<DateAndTime> OnMillisecond { get; set; }
-
-        public Action<DateAndTime> OnMinute { get; set; }
-
-        public Action<DateAndTime> OnMonth { get; set; }
-
-        public Action<DateAndTime> OnSecond { get; set; }
-
-        public Action<DateAndTime> OnYear { get; set; }
-
         /// <summary></summary>
         [JsonProperty]
         public Second Second { get; private set; }
+
+        public Boolean IsAm() => !this.IsPm();
+
+        public Boolean IsPm() => this.Hour >= 12;
+
+        public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
+
+        /// <summary></summary>
+        private volatile Boolean _isPaused;
+
+        /// <summary></summary>
+        [NotNull]
+        private Timer Timer { get; } = new Timer( ( Double ) Milliseconds.One.Value ) {
+            AutoReset = false
+        };
+
+        [JsonProperty]
+        public Day Day { get; private set; }
+
+        [JsonProperty]
+        public Boolean IsPaused {
+            get => this._isPaused;
+
+            private set => this._isPaused = value;
+        }
+
+        [JsonProperty]
+        public Month Month { get; private set; }
+
+        public Action<DateAndTime>? OnDay { get; set; }
+
+        public Action<DateAndTime>? OnHour { get; set; }
+
+        public Action<DateAndTime>? OnMillisecond { get; set; }
+
+        public Action<DateAndTime>? OnMinute { get; set; }
+
+        public Action<DateAndTime>? OnMonth { get; set; }
+
+        public Action<DateAndTime> ?OnSecond { get; set; }
+
+        public Action<DateAndTime> ?OnYear { get; set; }
 
         [JsonProperty]
         public Year Year { get; private set; }
@@ -215,7 +221,7 @@ namespace LibrainianCore.Measurement.Time.Clocks {
             return true;
         }
 
-        private void OnTimerElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs elapsedEventArgs ) {
+        private void OnTimerElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs elapsedEventArgs ) {
             this.Pause();
 
             try {
@@ -299,7 +305,7 @@ namespace LibrainianCore.Measurement.Time.Clocks {
                 var right = amount.Value;
 
                 while ( right > Rational.Zero ) {
-                    this.TickTock( fireEvents: false );
+                    this.TickTock( false );
                     right--;
                 }
 
@@ -313,10 +319,6 @@ namespace LibrainianCore.Measurement.Time.Clocks {
         public Date Date() => new Date( this.Year, this.Month, this.Day );
 
         public DateAndTime DateAndTime() => new DateAndTime( this.Date(), this.Time() );
-
-        public Boolean IsAm() => !this.IsPm();
-
-        public Boolean IsPm() => this.Hour >= 12;
 
         public Boolean Pause() {
             this.Timer.Stop();
@@ -350,6 +352,6 @@ namespace LibrainianCore.Measurement.Time.Clocks {
             }
         }
 
-        public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
     }
+
 }

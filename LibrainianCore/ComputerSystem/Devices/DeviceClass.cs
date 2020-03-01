@@ -101,7 +101,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
         }
 
         [CanBeNull]
-        internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
+        internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
 
             const Int32 propertyBufferSize = 1024;
 

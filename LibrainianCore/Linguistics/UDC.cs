@@ -55,7 +55,7 @@ namespace LibrainianCore.Linguistics {
         public static UDC Unknown { get; } = new UDC( String.Empty );
 
         [CanBeNull]
-        public String Notation { get; }
+        public String? Notation { get; }
 
         public UDC( [NotNull] String notation ) => this.Notation = notation.Trimmed();
 

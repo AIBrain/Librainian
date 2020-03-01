@@ -54,15 +54,13 @@ namespace LibrainianCore.Measurement.Time {
     [Immutable]
     [JsonObject]
     [DebuggerDisplay( "ToString()" )]
-    public class UniversalDateTime : IComparable<UniversalDateTime> {
+    public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-        [NotNull]
         public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
 
         /// <summary>
         ///     <para>1 planck times</para>
         /// </summary>
-        [NotNull]
         public static UniversalDateTime One { get; } = new UniversalDateTime( BigInteger.One );
 
         /// <summary>
@@ -74,10 +72,8 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>
         ///     <para>0 planck times</para>
         /// </summary>
-        [NotNull]
         public static UniversalDateTime TheBeginning { get; } = new UniversalDateTime( BigInteger.Zero );
 
-        [NotNull]
         public static UniversalDateTime Unix { get; } = new UniversalDateTime( Epochs.Unix );
 
         /// <summary></summary>
@@ -96,7 +92,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
-            var span = new SpanOfTime( planckTimes: this.Value );
+            var span = new SpanOfTime( this.Value );
 
             //TODO
             this.Date = new Date( span );
@@ -113,28 +109,23 @@ namespace LibrainianCore.Measurement.Time {
             //this.Time = new Time();
         }
 
-        [NotNull]
         private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
 
-        [NotNull]
-        private static UniversalDateTime Combine( [CanBeNull] UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
+        private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
 
         /// <summary>Given a <see cref="DateTime" />, calculate the <see cref="SpanOfTime" />.</summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
-        [NotNull]
         public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
             var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
             var plancksSinceThen = sinceThen.CalcTotalPlanckTimes();
-            var span = new SpanOfTime( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
+            var span = new SpanOfTime( PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
 
             return span;
         }
 
-        [NotNull]
-        public static UniversalDateTime operator -( [CanBeNull] UniversalDateTime left, [CanBeNull] UniversalDateTime right ) => Combine( left, -right );
+        public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
 
-        [NotNull]
         public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new UniversalDateTime( universalDateTime.Value * -1 );
 
         public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) => left.Value < right.Value;
@@ -145,6 +136,7 @@ namespace LibrainianCore.Measurement.Time {
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+        [CanBeNull]
         public override String ToString() => this.Value.ToString();
     }
 }

@@ -47,19 +47,19 @@ namespace LibrainianCore.Measurement.Currency {
         Decimal Balance { get; }
 
         [CanBeNull]
-        Action<Decimal> OnAfterDeposit { get; set; }
+        Action<Decimal>? OnAfterDeposit { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnAfterWithdraw { get; set; }
+        Action<Decimal>? OnAfterWithdraw { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnAnyUpdate { get; set; }
+        Action<Decimal>? OnAnyUpdate { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnBeforeDeposit { get; set; }
+        Action<Decimal>? OnBeforeDeposit { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnBeforeWithdraw { get; set; }
+        Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>

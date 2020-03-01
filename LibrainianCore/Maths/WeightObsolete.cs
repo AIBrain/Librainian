@@ -113,6 +113,7 @@ namespace LibrainianCore.Maths {
 
         public Boolean IsNeither() => !this.IsFor() && !this.IsAgainst();
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
     }
 }

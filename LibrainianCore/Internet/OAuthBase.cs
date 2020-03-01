@@ -208,19 +208,19 @@ namespace LibrainianCore.Internet {
             [CanBeNull] String tokenSecret, [NotNull] String httpMethod, [CanBeNull] String timeStamp, [CanBeNull] String nonce, [CanBeNull] out String normalizedUrl,
             [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
             return this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl,
@@ -245,19 +245,19 @@ namespace LibrainianCore.Internet {
             [CanBeNull] String tokenSecret, [NotNull] String httpMethod, [CanBeNull] String timeStamp, [CanBeNull] String nonce, SignatureTypes signatureType,
             [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
             normalizedUrl = null;

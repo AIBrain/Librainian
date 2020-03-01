@@ -64,7 +64,7 @@ namespace LibrainianCore.Threading {
             try {
                 var consume = this.MessageQueue.GetConsumingEnumerable( this.Token );
 
-                if ( consume is null || this._quit ) {
+                if ( this._quit ) {
                     return;
                 }
 

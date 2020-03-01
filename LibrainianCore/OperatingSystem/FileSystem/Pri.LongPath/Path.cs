@@ -135,7 +135,7 @@
         [NotNull]
         public static String Combine( [NotNull] [ItemNotNull] params String[] paths ) {
             if ( paths == null ) {
-                throw new ArgumentNullException( paramName: nameof( paths ) );
+                throw new ArgumentNullException( nameof( paths ) );
             }
 
             switch ( paths.Length ) {
@@ -144,7 +144,7 @@
                         var z = paths[ 0 ];
 
                         if ( z == null ) {
-                            throw new ArgumentException( message: "Value cannot be null or whitespace." );
+                            throw new ArgumentException( "Value cannot be null or whitespace." );
                         }
 
                         return z.CheckInvalidPathChars().ThrowIfBlank();
@@ -153,7 +153,7 @@
                         var z = paths[ 0 ];
 
                         if ( z == null ) {
-                            throw new ArgumentException( message: "Value cannot be null or whitespace." );
+                            throw new ArgumentException( "Value cannot be null or whitespace." );
                         }
 
                         var path = z.CheckInvalidPathChars().ThrowIfBlank();
@@ -373,7 +373,7 @@
         }
 
         public static Boolean TryNormalizeLongPath( [NotNull]  this String path, [CanBeNull] out String result ) {
-            if ( !String.IsNullOrWhiteSpace( value: path ) ) {
+            if ( !String.IsNullOrWhiteSpace( path ) ) {
                 try {
                     result = path.NormalizeLongPath();
 

@@ -99,11 +99,11 @@ namespace LibrainianCore.Financial.Containers.Wallets {
             }
 
             foreach ( var pair in bankNotes ?? Enumerable.Empty<KeyValuePair<IBankNote, UInt64>>() ) {
-                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+                wallet.Deposit( pair.Key, pair.Value );
             }
 
             foreach ( var pair in coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>() ) {
-                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+                wallet.Deposit( pair.Key, pair.Value );
             }
         }
 
@@ -192,7 +192,7 @@ namespace LibrainianCore.Financial.Containers.Wallets {
                 var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
                 denominations.Remove( highestBill );
 
-                var count = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
+                var count = ( UInt64 ) ( leftOverAmount / highestBill.FaceValue );
 
                 if ( count.Any() ) {
                     optimal[ highestBill ] += count;
@@ -298,5 +298,7 @@ namespace LibrainianCore.Financial.Containers.Wallets {
 
             return block.Completion;
         }
+
     }
+
 }

@@ -37,7 +37,7 @@
 //
 // Project: "Librainian", "CommonExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
 
-namespace LibrainianCore.Extensions {
+namespace LibrainianCore {
 
     using System;
     using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace LibrainianCore.Extensions {
     using System.Runtime.CompilerServices;
     using JetBrains.Annotations;
 
-    public static class CommonExtensions {
+    public static class Common {
 
         /// <summary>Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.</summary>
         /// <typeparam name="T"></typeparam>
@@ -74,14 +74,6 @@ namespace LibrainianCore.Extensions {
             return target.CompareTo( startInclusive ) >= 0 && target.CompareTo( endInclusive ) <= 0;
         }
 
-        [DebuggerStepThrough]
-        [Conditional( "DEBUG" )]
-        public static void BreakIfDebug<T>( [CanBeNull] this T obj ) {
-            if ( Debugger.IsAttached ) {
-                Debugger.Break();
-            }
-        }
-
         /// <summary>Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between <paramref name="min" /> and <paramref name="max" />.</summary>
         /// <param name="self">The extended T.</param>
         /// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
@@ -101,11 +93,11 @@ namespace LibrainianCore.Extensions {
                 throw new ArgumentNullException( nameof( max ) );
             }
 
-            if ( self.CompareTo( other: min ) < 0 ) {
+            if ( self.CompareTo( min ) < 0 ) {
                 return min;
             }
 
-            return self.CompareTo( other: max ) > 0 ? max : self;
+            return self.CompareTo( max ) > 0 ? max : self;
         }
 
         [ItemCanBeNull]

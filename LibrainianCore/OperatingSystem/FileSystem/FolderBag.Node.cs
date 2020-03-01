@@ -55,7 +55,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             [JsonProperty]
             [CanBeNull]
-            public String Data { get; }
+            public String? Data { get; }
 
             public Boolean IsEmpty => !this.SubFolders.Any();
 
@@ -66,9 +66,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             [NotNull]
             public List<Node> SubFolders { get; } = new List<Node>();
 
-            public Node( [CanBeNull] String data ) => this.Data = data;
+            public Node( [CanBeNull] String? data ) => this.Data = data;
 
-            public Node( [CanBeNull] String data, [CanBeNull] Node parent ) {
+            public Node( [CanBeNull] String? data, [CanBeNull] Node parent ) {
                 this.Data = data;
                 this.Parent = parent;
             }
@@ -96,10 +96,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             /// <summary>Determines whether the specified object is equal to the current object.</summary>
             /// <param name="obj">The object to compare with the current object.</param>
             /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-            public override Boolean Equals( Object obj ) => Equals( this, obj as Node );
+            public override Boolean Equals( Object? obj ) => Equals( this, obj as Node );
 
             public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
 
+            [NotNull]
             public override String ToString() => this.Data ?? Symbols.Null;
         }
     }

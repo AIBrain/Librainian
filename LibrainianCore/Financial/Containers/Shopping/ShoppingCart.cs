@@ -49,26 +49,24 @@ namespace LibrainianCore.Financial.Containers.Shopping {
     using Newtonsoft.Json;
     using Utilities;
 
+    /// <summary>
+    /// Just a concept class.
+    /// </summary>
     [JsonObject]
     public class ShoppingCart : ABetterClassDispose {
 
         [JsonProperty]
         private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>(); //TODO make this a dictionary of Item.Counts
 
-        public Boolean AddItem( [CanBeNull] ShoppingItem item ) => item != null && this.Items.TryAdd( item );
+        public Boolean AddItem( [CanBeNull] ShoppingItem item ) => !(item is null) && this.Items.TryAdd( item );
 
         public UInt32 AddItems( [CanBeNull] params ShoppingItem[] items ) {
-            UInt32 added = 0;
 
             if ( null == items ) {
-                return added;
+                return 0;
             }
 
-            foreach ( var item in items.Where( this.AddItem ) ) {
-                added++;
-            }
-
-            return added;
+            return (UInt32)items.Count( this.AddItem );
         }
 
         public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
@@ -104,11 +102,13 @@ namespace LibrainianCore.Financial.Containers.Shopping {
             var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 
             foreach ( var shoppingItem in this.Items ) {
-                if ( !items.ContainsKey( shoppingItem ) ) {
-                    items.TryAdd( shoppingItem, 0 );
-                }
+                if ( !( shoppingItem is null ) ) {
+                    if ( !items.ContainsKey( shoppingItem ) ) {
+                        items.TryAdd( shoppingItem, 0 );
+                    }
 
-                items[ shoppingItem ]++;
+                    items[ shoppingItem ]++;
+                }
             }
 
             return items;

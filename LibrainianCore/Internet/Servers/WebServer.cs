@@ -47,15 +47,17 @@ namespace LibrainianCore.Internet.Servers {
 
     public class WebServer : ABetterClassDispose {
 
-        private readonly HttpListener _httpListener;
+        [NotNull]
+        private readonly HttpListener _httpListener = new HttpListener();
 
+        [NotNull]
         private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
 
         public Boolean IsRunning { get; private set; }
 
         public String Prefix { get; set; }
 
-        protected WebServer() => this._httpListener = new HttpListener();
+        
 
         private static void ListenerCallback( [CanBeNull] IAsyncResult ar ) {
 
@@ -63,7 +65,7 @@ namespace LibrainianCore.Internet.Servers {
         }
 
         // Loop here to begin processing of new requests.
-        private void Listen( [CanBeNull] Object state ) {
+        private void Listen( [CanBeNull] Object? state ) {
             while ( this._httpListener.IsListening ) {
                 this._httpListener.BeginGetContext( ListenerCallback, this._httpListener );
                 this._listenForNextRequest.WaitOne();
@@ -76,7 +78,9 @@ namespace LibrainianCore.Internet.Servers {
         }
 
         /// <summary>Dispose any disposable members.</summary>
-        public override void DisposeManaged() => this._listenForNextRequest?.Dispose();
+        public override void DisposeManaged() {
+            using ( this._listenForNextRequest ) { }
+        }
 
         public void Start() {
             if ( String.IsNullOrEmpty( this.Prefix ) ) {

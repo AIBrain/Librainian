@@ -76,6 +76,6 @@ namespace LibrainianCore.Measurement.Time.Clocks {
 
         public Boolean IsPm() => this.Hour.Value >= 12;
 
-        public Time Time() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
+        public Time Time() => new Time( this.Hour, this.Minute, this.Second );
     }
 }

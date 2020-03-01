@@ -46,11 +46,11 @@ namespace LibrainianCore.Maths.Numbers {
     using Newtonsoft.Json;
 
     /// <summary>Restricts the value to between 0.0 and 1.0
-    /// <para>Uses the <see cref="float" /> type.</para>
+    /// <para>Uses the <see cref="Single" /> type.</para>
     /// </summary>
     [Immutable]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject( memberSerialization: MemberSerialization.Fields )]
+    [JsonObject( MemberSerialization.Fields )]
     public class ZeroToOne {
 
         /// <summary>ONLY used in the getter and setter.</summary>
@@ -102,7 +102,7 @@ namespace LibrainianCore.Maths.Numbers {
         ///     <para>Else <see cref="MinValue" /> will be assigned.</para>
         /// </summary>
         /// <param name="randomValue"></param>
-        public ZeroToOne( Boolean randomValue ) => this.Value = randomValue ? Randem.NextSingle( min: MinValue, max: MaxValue ) : MinValue;
+        public ZeroToOne( Boolean randomValue ) => this.Value = randomValue ? Randem.NextSingle( MinValue, MaxValue ) : MinValue;
 
         /// <summary>Return a new <see cref="ZeroToOne" /> with the value of <paramref name="value1" /> moved closer to the value of <paramref name="value2" /> .</summary>
         /// <param name="value1">The current value.</param>
@@ -122,7 +122,7 @@ namespace LibrainianCore.Maths.Numbers {
         public static implicit operator ZeroToOne( Double value ) => new ZeroToOne( value );
 
         [NotNull]
-        public static ZeroToOne Parse( [NotNull] String value ) => new ZeroToOne( Single.Parse( s: value ) );
+        public static ZeroToOne Parse( [NotNull] String value ) => new ZeroToOne( Single.Parse( value ) );
 
         /// <summary>Attempt to parse <paramref name="value" />, otherwise return <see cref="MinValue" />.</summary>
         /// <param name="value"></param>
@@ -130,6 +130,7 @@ namespace LibrainianCore.Maths.Numbers {
         [NotNull]
         public static ZeroToOne TryParse( [NotNull] String value ) => Single.TryParse( value, out var result ) ? result : MinValue;
 
+        [NotNull]
         public override String ToString() => $"{this.Value:P}";
     }
 }

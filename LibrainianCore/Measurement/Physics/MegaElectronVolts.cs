@@ -41,6 +41,7 @@ namespace LibrainianCore.Measurement.Physics {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using LibrainianCore.Extensions;
     using Rationals;
 
@@ -108,6 +109,7 @@ namespace LibrainianCore.Measurement.Physics {
 
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
 
+        [NotNull]
         public override String ToString() => $"{this.Value} MeV";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );

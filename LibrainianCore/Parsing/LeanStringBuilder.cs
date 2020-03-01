@@ -51,7 +51,7 @@ namespace System.Text {
     /// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
     /// <para>Won't throw exceptions on null or empty strings being added.</para>
     /// </summary>
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Serializable]
     public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
@@ -80,7 +80,7 @@ namespace System.Text {
         /// <para>Won't throw exceptions on null or empty strings being added.</para>
         /// </summary>
         [NotNull]
-        public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new LeanStringBuilder( initialCapacity: initialCapacity );
+        public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new LeanStringBuilder( initialCapacity );
 
         /// <summary>static comparison of <paramref name="left" /> <see cref="LeanStringBuilder" /> vs <paramref name="right" /> <see cref="LeanStringBuilder" />.</summary>
         /// <param name="left"></param>
@@ -166,6 +166,7 @@ namespace System.Text {
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this._parts.GetHashCode();
 
+        [NotNull]
         public override String ToString() {
             if ( !String.IsNullOrEmpty( this.compiled ) ) {
                 return this.compiled;

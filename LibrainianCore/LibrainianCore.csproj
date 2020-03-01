@@ -31,8 +31,9 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="PooledAwait" Version="1.0.45" />
     <PackageReference Include="Rationals" Version="1.3.3" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
   </ItemGroup>
 

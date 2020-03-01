@@ -75,8 +75,8 @@ namespace LibrainianCore.Persistence.InIFiles {
         }
 
         public Boolean Add( [NotNull] String key, [CanBeNull] String value ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( key ) );
+            if ( String.IsNullOrEmpty( key ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
             }
 
             this.lines.Add( new IniLine( key, value ) );
@@ -85,7 +85,7 @@ namespace LibrainianCore.Persistence.InIFiles {
         }
 
         public Boolean Exists( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
+            if ( String.IsNullOrEmpty( key ) ) {
                 return default;
             }
 

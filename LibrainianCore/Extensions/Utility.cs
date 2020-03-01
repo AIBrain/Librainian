@@ -79,9 +79,9 @@ namespace LibrainianCore.Extensions {
                         yOffset--;
                     }
 
-                    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: yOffset );
+                    Console.SetCursorPosition( Console.WindowWidth - ( text.Length + 2 ), yOffset );
                     Console.Write( text );
-                    Console.SetCursorPosition( left: oldLeft, top: oldTop );
+                    Console.SetCursorPosition( oldLeft, oldTop );
                     Console.CursorVisible = true;
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
@@ -117,7 +117,7 @@ namespace LibrainianCore.Extensions {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
             Console.Write( text );
-            Console.SetCursorPosition( left: oldLeft, top: oldTop );
+            Console.SetCursorPosition( oldLeft, oldTop );
         }
 
         //public static void TopRight( String text ) {
@@ -175,9 +175,9 @@ namespace LibrainianCore.Extensions {
                 try {
                     ConsoleOutputSynch.EnterWriteLock();
                     Console.CursorVisible = false;
-                    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: 0 );
+                    Console.SetCursorPosition( Console.WindowWidth - ( text.Length + 2 ), 0 );
                     Console.Write( text );
-                    Console.SetCursorPosition( left: oldLeft, top: oldTop );
+                    Console.SetCursorPosition( oldLeft, oldTop );
                     Console.CursorVisible = true;
                 }
                 finally {
@@ -244,5 +244,7 @@ namespace LibrainianCore.Extensions {
                 }
             }
         }
+
     }
+
 }

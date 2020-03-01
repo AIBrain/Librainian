@@ -45,7 +45,6 @@ namespace LibrainianCore.Graphics.Moving {
     using System.Linq;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Maths.Hashings;
     using Newtonsoft.Json;
 
     /// <summary> Experimental Full Video </summary>
@@ -65,9 +64,11 @@ namespace LibrainianCore.Graphics.Moving {
         /// <summary>For each item here, draw them too.</summary>
         /// <remarks>I need to stop coding while I'm asleep.</remarks>
         [JsonProperty]
+        [NotNull]
         public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples = new ConcurrentDictionary<UInt64, IList<UInt64>>();
 
         [JsonProperty]
+        [NotNull]
         public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new ConcurrentDictionary<UInt64, Pixelyx>();
 
         /// <summary>Checksum guard</summary>
@@ -114,7 +115,7 @@ namespace LibrainianCore.Graphics.Moving {
         public Task<UInt64> CalculateChecksumAsync() =>
             Task.Run( () => {
                 unchecked {
-                    return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
+                    return ( UInt64 )this.Pixels.GetHashCode();
                 }
             } );
 

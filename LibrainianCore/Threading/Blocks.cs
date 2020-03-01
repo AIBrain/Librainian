@@ -49,10 +49,7 @@ namespace LibrainianCore.Threading {
     public static class Blocks {
 
         [NotNull]
-        public static IPropagatorBlock<T, T> CreateDelayBlock<T>( [NotNull] SpanOfTime delay ) {
-            if ( delay is null ) {
-                throw new ArgumentNullException( nameof( delay ) );
-            }
+        public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
 
             var lastItem = DateTime.MinValue;
 

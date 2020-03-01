@@ -42,6 +42,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using JetBrains.Annotations;
     using OperatingSystem;
     using OperatingSystem.FileSystem;
 
@@ -50,6 +51,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
     /// <remarks>written by Simon Mourier &lt;email: simon [underscore] mourier [at] hotmail [dot] com&gt;</remarks>
     public class VolumeDeviceClass : DeviceClass {
 
+        [NotNull]
         protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
 
         /// <summary>Initializes a new instance of the VolumeDeviceClass class.</summary>
@@ -63,9 +65,9 @@ namespace LibrainianCore.ComputerSystem.Devices {
                     continue;
                 }
 
-                this.LogicalDrives[ sb.ToString() ] = drive.Replace( @"\", "" );
-
-                //Debug.WriteLine( drive + " ==> " + sb );
+                if ( drive != null ) {
+                    this.LogicalDrives[ sb.ToString() ] = drive.Replace( @"\", "" );
+                }
             }
         }
 

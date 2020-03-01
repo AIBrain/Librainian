@@ -45,13 +45,11 @@ namespace LibrainianCore.Persistence {
     using System.Diagnostics;
     using System.Linq;
     using Collections.Extensions;
-    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Parsing;
 
     public static class Cache {
-
 
         /// <summary>Build a key from combining 1 or more <see cref="T" /> (converted to Strings).</summary>
         /// <typeparam name="T"></typeparam>
@@ -64,10 +62,10 @@ namespace LibrainianCore.Persistence {
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( things ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
             }
 
-            var parts = things.Where( o => o != null ).Select( o => {
+            var parts = things.Select( o => {
                 if ( o is IEnumerable<SqlParameter> parameters ) {
                     var kvp = parameters.Where( parameter => parameter != default ).Select( parameter => new {
                         parameter.ParameterName,
@@ -77,7 +75,7 @@ namespace LibrainianCore.Persistence {
                     return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
                 }
 
-                var s = Convert.ToString( o ).Trim().NullIf( String.Empty );
+                var s = o.Trimmed().NullIfEmpty();
 
                 if ( s != null ) {
                     return s;
@@ -99,7 +97,7 @@ namespace LibrainianCore.Persistence {
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", nameof( things ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
             }
 
             var parts = things.Where( o => o != null ).Select( o => {
@@ -118,8 +116,5 @@ namespace LibrainianCore.Persistence {
 
             return parts.ToStrings( Symbols.TwoPipes ).Trim();
         }
-
-
-
     }
 }

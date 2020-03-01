@@ -445,7 +445,7 @@ namespace LibrainianCore.Security {
                     Int32 c3;
 
                     for ( c3 = 0; c3 < 26; c3++ ) {
-                        Sigma += Get( i1: c1, i2: c2, i3: c3 );
+                        Sigma += Get( c1, c2, c3 );
                     }
                 }
             }

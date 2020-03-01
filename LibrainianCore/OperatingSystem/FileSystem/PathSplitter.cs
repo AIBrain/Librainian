@@ -69,7 +69,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            newExtension = newExtension.Trimmed() ?? document.Extension() ?? String.Empty;
+            newExtension = newExtension.Trimmed() ?? document.Extension();
 
             if ( !newExtension.StartsWith( "." ) ) {
                 newExtension = $".{newExtension}";
@@ -90,8 +90,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         [NotNull]
         private static IEnumerable<String> Split( [NotNull] String path ) {
-            if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return path.Split( new[] {
@@ -102,7 +102,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public Boolean AddSubFolder( [NotNull] String subfolder ) {
             subfolder = Folder.CleanPath( subfolder.Trim() );
 
-            if ( String.IsNullOrWhiteSpace( value: subfolder ) ) {
+            if ( String.IsNullOrWhiteSpace( subfolder ) ) {
                 return default;
             }
 

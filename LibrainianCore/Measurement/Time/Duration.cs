@@ -78,7 +78,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public Duration( Milliseconds milliseconds ) => this.Microseconds = ( Double )milliseconds.Value * MicrosecondsPerMillisecond;
 
-        public Duration( [NotNull] Seconds seconds ) => this.Microseconds = ( Double )seconds.Value * MicrosecondsPerSecond;
+        public Duration( Seconds seconds ) => this.Microseconds = ( Double )seconds.Value * MicrosecondsPerSecond;
 
         public Duration( Minutes minutes ) => this.Microseconds = ( Double )minutes.Value * MicrosecondsPerMinute;
 
@@ -92,7 +92,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public Duration( Int64 ticks ) => this.Microseconds = ticks / 10.0;
 
-        public Duration( TimeSpan time ) : this( ticks: time.Ticks ) { }
+        public Duration( TimeSpan time ) : this( time.Ticks ) { }
 
         public Duration( [NotNull] params TimeSpan[] times ) {
             if ( times is null ) {
@@ -116,7 +116,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public static Duration FromSeconds( Double value ) => new Duration( new Seconds( ( Rational )value ) );
 
-        public static Duration FromTicks( Int64 value ) => new Duration( ticks: value );
+        public static Duration FromTicks( Int64 value ) => new Duration( value );
 
         public static Duration FromWeeks( Double value ) => new Duration( new Weeks( ( Rational )value ) );
 
@@ -155,6 +155,7 @@ namespace LibrainianCore.Measurement.Time {
         public Double Seconds() => ( Byte )( this.Milliseconds() / Measurement.Time.Milliseconds.InOneSecond % Measurement.Time.Milliseconds.InOneSecond );
 
         [Pure]
+        [NotNull]
         public override String ToString() => this.Simpler();
 
         [Pure]

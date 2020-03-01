@@ -111,15 +111,15 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, [NotNull] Object userToken ) {
             if ( ping == null ) {
-                throw new ArgumentNullException( paramName: nameof( ping ) );
+                throw new ArgumentNullException( nameof( ping ) );
             }
 
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             if ( userToken == null ) {
-                throw new ArgumentNullException( paramName: nameof( userToken ) );
+                throw new ArgumentNullException( nameof( userToken ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
@@ -136,8 +136,8 @@ namespace LibrainianCore.Internet {
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
@@ -153,7 +153,7 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
@@ -171,8 +171,8 @@ namespace LibrainianCore.Internet {
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
@@ -192,15 +192,15 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             if ( buffer == null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
@@ -223,15 +223,15 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
             if ( buffer == null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
@@ -253,15 +253,15 @@ namespace LibrainianCore.Internet {
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, [CanBeNull] PingOptions options,
             Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             if ( buffer == null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
@@ -286,15 +286,15 @@ namespace LibrainianCore.Internet {
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer,
             [CanBeNull] PingOptions options, Object userToken ) {
             if ( buffer == null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
+                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
             }
 
             return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );

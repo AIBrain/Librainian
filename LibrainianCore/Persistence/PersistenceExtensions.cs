@@ -1,20 +1,20 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived) from
 // our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "PersistenceExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by
 // formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -22,15 +22,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "LibrainianCore", File: "PersistenceExtensions.cs" was last formatted by Protiguous on 2020/02/01 at 10:44 AM.
 
 namespace LibrainianCore.Persistence {
@@ -57,12 +57,8 @@ namespace LibrainianCore.Persistence {
     using Threading;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
     using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class PersistenceExtensions {
@@ -102,6 +98,7 @@ namespace LibrainianCore.Persistence {
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
         }, true );
+
         /// <summary></summary>
         /// <typeparam name="TType"></typeparam>
         /// <param name="storedAsString"></param>
@@ -204,7 +201,7 @@ namespace LibrainianCore.Persistence {
             using ( var memoryStream = new MemoryStream( bytes ) ) {
                 var binaryFormatter = new BinaryFormatter();
 
-                return ( T ) binaryFormatter.Deserialize( memoryStream );
+                return ( T )binaryFormatter.Deserialize( memoryStream );
             }
         }
 
@@ -214,17 +211,17 @@ namespace LibrainianCore.Persistence {
         /// <returns></returns>
         public static Boolean FileCanBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
             if ( isf is null ) {
-                throw new ArgumentNullException( paramName: nameof( isf ) );
+                throw new ArgumentNullException( nameof( isf ) );
             }
 
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             try {
-                using ( var stream = isf.OpenFile( document.FileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                using ( var stream = isf.OpenFile( document.FileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
                     try {
-                        return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0;
+                        return stream.Seek( 0, SeekOrigin.End ) > 0;
                     }
                     catch ( ArgumentException exception ) {
                         exception.Log();
@@ -255,11 +252,11 @@ namespace LibrainianCore.Persistence {
 
         public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
             if ( isf is null ) {
-                throw new ArgumentNullException( paramName: nameof( isf ) );
+                throw new ArgumentNullException( nameof( isf ) );
             }
 
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return !isf.FileCanBeRead( document );
@@ -283,7 +280,7 @@ namespace LibrainianCore.Persistence {
         /// has not been applied to the type.
         /// </exception>
         /// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [CanBeNull]
         public static String Serialize<T>( [NotNull] this T obj ) {
             if ( Equals( obj, default ) ) {
@@ -332,12 +329,12 @@ namespace LibrainianCore.Persistence {
 
                 //Report.Enter();
                 var stopwatch = Stopwatch.StartNew();
-               
+
                 if ( !folder.Create() ) {
                     throw new DirectoryNotFoundException( folder.FullPath );
                 }
 
-                var itemCount = ( UInt64 ) dictionary.LongCount();
+                var itemCount = ( UInt64 )dictionary.LongCount();
 
                 String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -356,7 +353,7 @@ namespace LibrainianCore.Persistence {
                 foreach ( var pair in dictionary ) {
                     currentLine++;
 
-                    var data = ( pair.Key, pair.Value ).Serialize();
+                    var data = (pair.Key, pair.Value).Serialize();
 
                     var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -400,18 +397,19 @@ namespace LibrainianCore.Persistence {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Byte[] Serializer<T>( [NotNull] this T self ) {
+        public static Byte[]? Serializer<T>( [NotNull] this T self ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException( nameof( self ) );
             }
 
             try {
-                using ( var memoryStream = new MemoryStream() ) {
-                    var binaryFormatter = new BinaryFormatter();
-                    binaryFormatter.Serialize( memoryStream, self );
+                using var memoryStream = new MemoryStream();
 
-                    return memoryStream.ToArray();
-                }
+                var binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize( memoryStream, self );
+
+                return memoryStream.ToArray();
+
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -463,9 +461,9 @@ namespace LibrainianCore.Persistence {
         /// <param name="obj">       </param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [CanBeNull]
-        public static String ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
+        public static String? ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
 
         /*
 
@@ -536,7 +534,8 @@ namespace LibrainianCore.Persistence {
 
                         //see also http://stackoverflow.com/a/8711702/956364
                         var serializer = new JsonSerializer {
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            PreserveReferencesHandling = PreserveReferencesHandling.All
                         };
 
                         serializer.Serialize( jw, self );
@@ -559,9 +558,6 @@ namespace LibrainianCore.Persistence {
 
                 return list;
             }
-
         }
-
     }
-
 }

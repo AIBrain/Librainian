@@ -53,7 +53,7 @@ namespace LibrainianCore.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Obsolete( "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
-    public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
+    public struct StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
 
         [JsonProperty]
         private Int64 _endTimeStamp;
@@ -68,7 +68,7 @@ namespace LibrainianCore.Measurement.Time {
 
         public const Int64 TicksPerMillisecond = 10000;
 
-        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+        public TimeSpan Elapsed => new TimeSpan( this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -94,8 +94,6 @@ namespace LibrainianCore.Measurement.Time {
             private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
 
-        public StopWatch() => this.Reset();
-
         private Int64 GetElapsedTicks() {
             if ( this.IsRunning ) {
                 return DateTime.UtcNow.Ticks - this.StartTimeStamp;
@@ -104,9 +102,8 @@ namespace LibrainianCore.Measurement.Time {
             return this.EndTimeStamp - this.StartTimeStamp;
         }
 
-        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
+        public static implicit operator TimeSpan( StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
 
-        [NotNull]
         public static StopWatch StartNew() {
             var stopWatch = new StopWatch();
             stopWatch.Start();
@@ -124,7 +121,7 @@ namespace LibrainianCore.Measurement.Time {
         /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
+        public Int32 CompareTo( StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -177,6 +174,7 @@ namespace LibrainianCore.Measurement.Time {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() => this.Elapsed.ToString( "g" );
     }
 }

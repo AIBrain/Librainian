@@ -67,6 +67,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         [NotNull]
         private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
 
+        [CanBeNull]
         private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
 
         /// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
@@ -78,12 +79,14 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         public Guid ID { get; }
 
+        [CanBeNull]
         public Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
 
+        [CanBeNull]
         public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
 
         [JsonProperty]
-        [NotNull]
+        [CanBeNull]
         public WalletStatistics Statistics { get; } = new WalletStatistics();
 
         /// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
@@ -121,7 +124,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 id = Guid.NewGuid();
             }
 
-            return new CoinWallet( id: id.Value );
+            return new CoinWallet( id.Value );
         }
 
         public Boolean Contains( ICoin coin ) {
@@ -166,8 +169,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                     this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
                 }
 
-                var onDeposit = this.OnDeposit;
-                onDeposit?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
+                this.OnDeposit.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
             }
         }
 
@@ -178,6 +180,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
 
+        [NotNull]
         public override String ToString() {
 
             var coins = this._coins.Aggregate( 0UL, ( current, pair ) => current + pair.Value );
@@ -190,7 +193,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         /// <param name="quantity"></param>
         /// <returns></returns>
         /// <remarks>Locks the wallet.</remarks>
-        public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
+        public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
             if ( coin is null ) {
                 throw new ArgumentNullException( nameof( coin ) );
             }
@@ -207,8 +210,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 this._coins[ coin ] -= quantity;
             }
 
-            var onWithdraw = this.OnWithdraw;
-            onWithdraw?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
+            this.OnWithdraw.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );
 
             return true;
         }
@@ -224,16 +226,14 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             possibleCoins.Shuffle();
             var coin = possibleCoins.First();
 
-            return this.TryWithdraw( coin.Key, 1 ) ? coin.Key : default;
+            return this.TryWithdraw( coin.Key ?? throw new InvalidOperationException(), 1 ) ? coin.Key : default;
         }
 
         [CanBeNull]
         public ICoin TryWithdrawSmallestCoin() {
             var coin = this._coins.Where( pair => pair.Value > 0 ).Select( pair => pair.Key ).OrderBy( coin1 => coin1.FaceValue ).FirstOrDefault();
 
-            if ( coin == default( ICoin ) ) {
-                return default;
-            }
+            //if ( coin == default( ICoin ) ) { return default; }   //wtf?
 
             return this.TryWithdraw( coin, 1 ) ? coin : default;
         }

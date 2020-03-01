@@ -79,7 +79,7 @@ namespace LibrainianCore.Graphics.Imaging {
         /// <returns>A hash code for the current object.</returns>
 
         // ReSharper disable 3 NonReadonlyMemberInGetHashCode
-        public override Int32 GetHashCode() => (this.Count, this.Pixels, this._checksum).GetHashCode();
+        public override Int32 GetHashCode() => ( this.Count, this.Pixels, this._checksum ).GetHashCode();
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="Line" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
@@ -127,11 +127,11 @@ namespace LibrainianCore.Graphics.Imaging {
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
             if ( pixels is null ) {
-                throw new ArgumentNullException( paramName: nameof( pixels ) );
+                throw new ArgumentNullException( nameof( pixels ) );
             }
 
             this.Pixels = pixels.ToArray();
-            this.Count = ( UInt64 )this.Pixels.LongLength;
+            this.Count = ( UInt64 ) this.Pixels.LongLength;
         }
 
         private UInt64? _checksum;
@@ -153,19 +153,18 @@ namespace LibrainianCore.Graphics.Imaging {
         }
 
         [NotNull]
-        private Task<UInt64> CalculateChecksumAsync() {
-            return Task.Run( () => {
-                var checksum = ( UInt64 )0;
+        private Task<UInt64> CalculateChecksumAsync() =>
+            Task.Run( () => {
+                var checksum = ( UInt64 ) 0;
 
                 foreach ( var pixel in this.Pixels ) {
                     unchecked {
-                        checksum += ( UInt64 )pixel.GetHashCode();
+                        checksum += ( UInt64 ) pixel.GetHashCode();
                     }
                 }
 
                 return checksum;
             } );
-        }
 
         /// <summary>Static comparison type.</summary>
         /// <param name="left"> </param>
@@ -186,5 +185,7 @@ namespace LibrainianCore.Graphics.Imaging {
 
             return left.Pixels.SequenceEqual( right.Pixels );
         }
+
     }
+
 }

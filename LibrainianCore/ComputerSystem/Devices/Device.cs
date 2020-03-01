@@ -52,15 +52,16 @@ namespace LibrainianCore.ComputerSystem.Devices {
 
         private DeviceCapabilities _capabilities = DeviceCapabilities.Unknown;
 
-        private String _class;
+        private String? _class;
 
-        private String _classGuid;
+        private String? _classGuid;
 
-        private String _description;
+        private String? _description;
 
-        private String _friendlyName;
+        private String? _friendlyName;
 
-        private Device _parent;
+        [CanBeNull]
+        private Device? _parent;
 
         private NativeMethods.SP_DEVINFO_DATA DeviceInfoData { get; }
 
@@ -74,12 +75,13 @@ namespace LibrainianCore.ComputerSystem.Devices {
         public Int32 Index { get; }
 
         /// <summary>Gets the device's path.</summary>
-        public String Path { get; }
+        [CanBeNull]
+        public String? Path { get; }
 
-        public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
+        public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA? deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
             this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
             this.Path = path; // may be null
-            this.DeviceInfoData = deviceInfoData;
+            this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
             this.Index = index;
             this.DiskNumber = diskNumber;
         }
@@ -99,11 +101,11 @@ namespace LibrainianCore.ComputerSystem.Devices {
         /// <param name="allowUI">Pass true to allow the Windows shell to display any related UI element, false otherwise.</param>
         /// <returns>null if no error occured, otherwise a contextual text.</returns>
         [CanBeNull]
-        public String Eject( Boolean allowUI ) {
+        public String? Eject( Boolean allowUI ) {
             foreach ( var device in this.GetRemovableDevices() ) {
                 if ( allowUI ) {
-                    NativeMethods.CM_Request_Device_Eject_NoUi( dnDevInst: device.GetInstanceHandle(), pVetoType: IntPtr.Zero, pszVetoName: null, ulNameLength: 0,
-                        ulFlags: 0 );
+                    NativeMethods.CM_Request_Device_Eject_NoUi( device.GetInstanceHandle(), IntPtr.Zero, null, 0,
+                        0 );
 
                     // don't handle errors, there should be a UI for this
                 }
@@ -136,34 +138,37 @@ namespace LibrainianCore.ComputerSystem.Devices {
 
         /// <summary>Gets the device's class name.</summary>
         [CanBeNull]
-        public String GetClass() => this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null );
+        public String? GetClass() => this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null );
 
         /// <summary>Gets the device's class Guid as a string.</summary>
         [CanBeNull]
-        public String GetClassGuid() => this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null );
+        public String? GetClassGuid() => this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null );
 
         /// <summary>Gets the device's description.</summary>
         [CanBeNull]
-        public String GetDescription() => this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null );
+        public String? GetDescription() => this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null );
 
         /// <summary>Gets the device's friendly name.</summary>
         [CanBeNull]
-        public String GetFriendlyName() => this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null );
+        public String? GetFriendlyName() => this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null );
 
         /// <summary>Gets the device's instance handle.</summary>
         public UInt32 GetInstanceHandle() => this.DeviceInfoData.devInst;
 
         /// <summary>Gets this device's list of removable devices. Removable devices are parent devices that can be removed.</summary>
+        [ItemNotNull]
         public virtual IEnumerable<Device> GetRemovableDevices() {
             if ( ( this.GetCapabilities() & DeviceCapabilities.Removable ) != 0 ) {
                 yield return this;
             }
             else {
-                if ( this.Parent() is null ) {
+                var parent = this.Parent();
+
+                if ( parent is null ) {
                     yield break;
                 }
 
-                foreach ( var device in this.Parent().GetRemovableDevices() ) {
+                foreach ( var device in parent.GetRemovableDevices() ) {
                     yield return device;
                 }
             }
@@ -175,12 +180,12 @@ namespace LibrainianCore.ComputerSystem.Devices {
                 return true;
             }
 
-            return this.Parent()?.IsUsb() == true && this.Parent().IsUsb();
+            return this.Parent()?.IsUsb() == true;
         }
 
         /// <summary>Gets the device's parent device or null if this device has not parent.</summary>
         [CanBeNull]
-        public Device Parent() {
+        public Device? Parent() {
             if ( this._parent != null ) {
                 return this._parent;
             }
@@ -189,6 +194,9 @@ namespace LibrainianCore.ComputerSystem.Devices {
             var hr = NativeMethods.CM_Get_Parent( ref parentDevInst, this.DeviceInfoData.devInst, 0 );
 
             if ( hr == 0 ) {
+                if ( this.DeviceClass is null ) {
+                    return default;
+                }
                 this._parent = new Device( this.DeviceClass, this.DeviceClass.GetInfo( parentDevInst ), null, -1 );
             }
 

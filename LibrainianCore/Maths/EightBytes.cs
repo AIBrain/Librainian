@@ -43,7 +43,7 @@ namespace LibrainianCore.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>8 byte struct.</summary>
-    [StructLayout( layoutKind: LayoutKind.Sequential )]
+    [StructLayout( LayoutKind.Sequential )]
     public struct EightBytes {
 
         public Byte A { get; set; }

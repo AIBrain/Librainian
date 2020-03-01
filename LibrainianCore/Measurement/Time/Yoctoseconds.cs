@@ -54,7 +54,7 @@ namespace LibrainianCore.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
+    public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
         /// <summary>1000</summary>
         public const UInt16 InOneZeptosecond = 1000;
@@ -99,27 +99,9 @@ namespace LibrainianCore.Measurement.Time {
 
         public Yoctoseconds( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Yoctoseconds Combine( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Combine( left, right.Value );
-        }
-
-        [NotNull]
-        public static Yoctoseconds Combine( [NotNull] Yoctoseconds left, Rational yoctoseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Yoctoseconds( left.Value + yoctoseconds );
-        }
+        public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -127,160 +109,45 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Yoctoseconds left, [CanBeNull] Yoctoseconds right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
-
-            if ( left is null || right is null ) {
-                return default;
-            }
-
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value == right.Value;
 
         /// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.</summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
-        public static implicit operator PlanckTimes( [NotNull] Yoctoseconds yoctoseconds ) {
-            if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( nameof( yoctoseconds ) );
-            }
+        public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
-            return ToPlanckTimes( yoctoseconds );
-        }
-
-        [NotNull]
-        public static implicit operator SpanOfTime( [NotNull] Yoctoseconds yoctoseconds ) {
-            if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( nameof( yoctoseconds ) );
-            }
-
-            return new SpanOfTime( yoctoseconds: yoctoseconds );
-        }
+        public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds );
 
         /// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.</summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static implicit operator Zeptoseconds( [NotNull] Yoctoseconds yoctoseconds ) {
-            if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( nameof( yoctoseconds ) );
-            }
+        public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
 
-            return yoctoseconds.ToZeptoseconds();
-        }
+        public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new Yoctoseconds( yoctoseconds.Value * -1 );
 
-        [NotNull]
-        public static Yoctoseconds operator -( [NotNull] Yoctoseconds yoctoseconds ) {
-            if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( nameof( yoctoseconds ) );
-            }
+        public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left, -right );
 
-            return new Yoctoseconds( yoctoseconds.Value * -1 );
-        }
+        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
 
-        [CanBeNull]
-        public static Yoctoseconds operator -( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left, right );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
 
-            return Combine( left: left, right: -right );
-        }
+        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational )yoctoseconds );
 
-        [NotNull]
-        public static Yoctoseconds operator -( [NotNull] Yoctoseconds left, Decimal seconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
 
-            return Combine( left, ( Rational )( -seconds ) );
-        }
+        public static Boolean operator ==( Yoctoseconds left, Yoctoseconds right ) => Equals( left, right );
 
-        public static Boolean operator !=( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-            return !Equals( left, right );
-        }
+        public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
-        [CanBeNull]
-        public static Yoctoseconds operator +( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Combine( left, right );
-        }
-
-        [NotNull]
-        public static Yoctoseconds operator +( [NotNull] Yoctoseconds left, Decimal yoctoseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return Combine( left, ( Rational )yoctoseconds );
-        }
-
-        public static Boolean operator <( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value < right.Value;
-        }
-
-        public static Boolean operator ==( [CanBeNull] Yoctoseconds left, [CanBeNull] Yoctoseconds right ) => Equals( left, right );
-
-        public static Boolean operator >( [NotNull] Yoctoseconds left, [NotNull] Yoctoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public static PlanckTimes ToPlanckTimes( [NotNull] Yoctoseconds yoctoseconds ) {
-            if ( yoctoseconds is null ) {
-                throw new ArgumentNullException( nameof( yoctoseconds ) );
-            }
-
-            return new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
-        }
-
-        public Int32 CompareTo( [NotNull] Yoctoseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public Boolean Equals( [CanBeNull] Yoctoseconds other ) => Equals( this, other );
-
-        public override Boolean Equals( Object obj ) {
+        public override Boolean Equals( [CanBeNull] Object? obj ) {
             if ( obj is null ) {
                 return default;
             }
@@ -292,7 +159,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
 
         public override String ToString() {
@@ -309,7 +175,6 @@ namespace LibrainianCore.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-        [NotNull]
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
     }
 }

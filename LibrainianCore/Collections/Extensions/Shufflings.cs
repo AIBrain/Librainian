@@ -190,31 +190,31 @@ namespace LibrainianCore.Collections.Extensions {
 
                 switch ( shufflingType ) {
                     case ShufflingType.ByGuid: {
-                            ShuffleByGuid( list: ref list, iterations: iterations );
+                            ShuffleByGuid( ref list, iterations );
 
                             break;
                         }
 
                     case ShufflingType.ByRandom: {
-                            ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
+                            ShuffleByRandomThenByRandom( ref list, iterations );
 
                             break;
                         }
 
                     case ShufflingType.ByHarker: {
-                            ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, token: token );
+                            ShuffleByHarker( list, iterations, forHowLong, token );
 
                             break;
                         }
 
                     case ShufflingType.ByBags: {
-                            ShuffleByBags( list: ref list, iterations: iterations );
+                            ShuffleByBags( ref list, iterations );
 
                             break;
                         }
 
                     case ShufflingType.BestChoice: {
-                            ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, token: token );
+                            ShuffleByHarker( list, iterations, forHowLong, token );
 
                             break;
                         }
@@ -337,7 +337,7 @@ namespace LibrainianCore.Collections.Extensions {
 
             while ( iterations.Any() ) {
                 iterations--;
-                list = list.OrderBy(  o => Randem.Next() ).ThenBy(  o => Randem.Next() ).ToList();
+                list = list.OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
             }
         }
     }

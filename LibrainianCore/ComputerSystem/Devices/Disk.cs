@@ -102,6 +102,7 @@ namespace LibrainianCore.ComputerSystem.Devices {
             return root.GetFolders( searchPattern );
         }
 
+        [NotNull]
         public override String ToString() => this.DriveLetter.ToString();
     }
 }

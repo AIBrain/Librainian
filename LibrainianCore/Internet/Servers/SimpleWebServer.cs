@@ -82,19 +82,19 @@ namespace LibrainianCore.Internet.Servers {
             this.ImNotReady( String.Empty );
 
             if ( !HttpListener.IsSupported ) {
-                this.ImNotReady( because: "HttpListener is not supported." );
+                this.ImNotReady( "HttpListener is not supported." );
 
                 return;
             }
 
             if ( prefixes?.Any() != true ) {
-                this.ImNotReady( because: "URI prefixes are required." );
+                this.ImNotReady( "URI prefixes are required." );
 
                 return;
             }
 
             if ( method is null ) {
-                this.ImNotReady( because: "A responder method is required" );
+                this.ImNotReady( "A responder method is required" );
 
                 return;
             }
@@ -110,7 +110,7 @@ namespace LibrainianCore.Internet.Servers {
                 this.IsReadyForRequests = true;
             }
             catch {
-                this.ImNotReady( because: "The httpListener did not Start()." );
+                this.ImNotReady( "The httpListener did not Start()." );
             }
         }
 
@@ -191,5 +191,7 @@ namespace LibrainianCore.Internet.Servers {
                 this._httpListener.Close();
             }
         }
+
     }
+
 }

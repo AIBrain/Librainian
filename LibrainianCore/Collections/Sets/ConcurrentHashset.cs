@@ -47,7 +47,6 @@ namespace LibrainianCore.Collections.Sets {
     using System.Linq;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using LibrainianCore.Extensions;
     using Newtonsoft.Json;
 
     /// <summary>Threadsafe set. Does not allow nulls inside the set.
@@ -141,11 +140,11 @@ namespace LibrainianCore.Collections.Sets {
         /// <returns></returns>
         public void Replace( [CanBeNull] T left, [CanBeNull] T right ) {
 
-            if ( left != null ) {
+            if ( !(left is null) ) {
                 this.Remove( left );
             }
 
-            if ( right != null ) {
+            if ( !(right is null) ) {
                 this.Add( right );
             }
         }
@@ -154,7 +153,7 @@ namespace LibrainianCore.Collections.Sets {
         /// <param name="item"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public Boolean Tag( [NotNull] T item, [CanBeNull] Object tag ) {
+        public Boolean Tag( [NotNull] T item, [CanBeNull] Object? tag ) {
             if ( item is null ) {
                 throw new ArgumentNullException( nameof( item ) );
             }

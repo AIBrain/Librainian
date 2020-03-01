@@ -120,9 +120,9 @@ namespace LibrainianCore.Persistence.InIFiles {
             return left.Data.OrderBy( pair => pair.Key ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ) ); //will this work?
         }
 
-        public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left, right );
 
-        public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left, right );
 
         /// <summary>Remove any key where there is no value.</summary>
         /// <returns></returns>
@@ -136,9 +136,9 @@ namespace LibrainianCore.Persistence.InIFiles {
                 }
             } );
 
-        public Boolean Equals( [CanBeNull] Section other ) => Equals( left: this, right: other );
+        public Boolean Equals( [CanBeNull] Section other ) => Equals( this, other );
 
-        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this, right: obj as Section );
+        public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Section );
 
         public override Int32 GetHashCode() => this.Data.GetHashCode();
 
@@ -171,6 +171,7 @@ namespace LibrainianCore.Persistence.InIFiles {
             return Task.FromResult( false );
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
 
         /// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>

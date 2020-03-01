@@ -171,7 +171,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
+        private static String? InternalGetTarget( [NotNull] SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -335,9 +335,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             using ( var handle = OpenReparsePoint( path, FileAccess.Read ) ) {
-                var target = InternalGetTarget( handle );
 
-                return target != null;
+                return InternalGetTarget( handle ) != null;
             }
         }
 

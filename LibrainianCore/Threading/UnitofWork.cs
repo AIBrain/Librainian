@@ -82,7 +82,7 @@ namespace LibrainianCore.Threading {
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
         /// <param name="state">An object representing data to be used by the action.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state ) : base( action, state ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state ) : base( action, state ) { }
 
         /// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -90,7 +90,7 @@ namespace LibrainianCore.Threading {
         /// <param name="cancellationToken">The <see cref="TaskFactory.CancellationToken" /> that that the new task will observe.</param>
         /// <exception cref="ObjectDisposedException">The <see cref="CancellationTokenSource" /> that created <paramref name="cancellationToken" /> has already been disposed.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
 
         /// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -98,7 +98,7 @@ namespace LibrainianCore.Threading {
         /// <param name="creationOptions">The <see cref="TaskCreationOptions" /> used to customize the task's behavior.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The <paramref name="creationOptions" /> argument specifies an invalid value for <see cref="TaskCreationOptions" />.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
 
         /// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
         /// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -108,7 +108,7 @@ namespace LibrainianCore.Threading {
         /// <exception cref="ObjectDisposedException">The <see cref="CancellationTokenSource" /> that created <paramref name="cancellationToken" /> has already been disposed.</exception>
         /// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The <paramref name="creationOptions" /> argument specifies an invalid value for <see cref="TaskCreationOptions" />.</exception>
-        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object state, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base(
+        public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base(
             action, state, cancellationToken, creationOptions ) { }
 
         [DllImport( "user32.dll", ExactSpelling = true, CharSet = CharSet.Auto )]

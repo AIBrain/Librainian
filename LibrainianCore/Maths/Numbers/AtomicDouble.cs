@@ -91,6 +91,7 @@ namespace LibrainianCore.Maths.Numbers {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
     }
 }

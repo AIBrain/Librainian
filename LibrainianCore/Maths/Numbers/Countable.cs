@@ -67,7 +67,7 @@ namespace LibrainianCore.Maths.Numbers {
         /// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
         [NotNull]
         private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } =
-            new ConcurrentDictionary<Byte, ReaderWriterLockSlim>( concurrencyLevel: Environment.ProcessorCount, capacity: 1 );
+            new ConcurrentDictionary<Byte, ReaderWriterLockSlim>( Environment.ProcessorCount, 1 );
 
         /// <summary>Count of each <see cref="TKey" />.</summary>
         [JsonProperty]
@@ -98,7 +98,7 @@ namespace LibrainianCore.Maths.Numbers {
                 var bucket = this.Bucket( key );
 
                 try {
-                    if ( bucket.TryEnterReadLock( timeout: this.ReadTimeout ) ) {
+                    if ( bucket.TryEnterReadLock( this.ReadTimeout ) ) {
                         return this.Dictionary.TryGetValue( key, out var result ) ? result : default;
                     }
                 }
@@ -127,7 +127,7 @@ namespace LibrainianCore.Maths.Numbers {
                 var bucket = this.Bucket( key );
 
                 try {
-                    if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
+                    if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
                         this.Dictionary.TryAdd( key, value.Value );
                     }
                 }
@@ -139,7 +139,7 @@ namespace LibrainianCore.Maths.Numbers {
             }
         }
 
-        public Countable() : this( readTimeout: Minutes.One, writeTimeout: Minutes.One ) { }
+        public Countable() : this( Minutes.One, Minutes.One ) { }
 
         public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
             this.ReadTimeout = readTimeout;
@@ -158,7 +158,7 @@ namespace LibrainianCore.Maths.Numbers {
                 return bucket;
             }
 
-            bucket = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
+            bucket = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
             if ( this.Buckets.TryAdd( hash, bucket ) ) {
                 return bucket;
@@ -168,7 +168,7 @@ namespace LibrainianCore.Maths.Numbers {
         }
 
         [NotNull]
-        private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( selector: Hash );
+        private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
 
         public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
             if ( keys is null ) {
@@ -179,7 +179,7 @@ namespace LibrainianCore.Maths.Numbers {
                 return default;
             }
 
-            var result = Parallel.ForEach( source: keys.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, body: key => {
+            var result = Parallel.ForEach( keys.AsParallel(), CPU.AllCPUExceptOne, key => {
                 if ( !( key is null ) ) {
                     this.Add( key );
                 }
@@ -193,7 +193,7 @@ namespace LibrainianCore.Maths.Numbers {
                 throw new ArgumentNullException( nameof( key ) );
             }
 
-            return this.Add( key, amount: BigInteger.One );
+            return this.Add( key, BigInteger.One );
         }
 
         public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
@@ -208,7 +208,7 @@ namespace LibrainianCore.Maths.Numbers {
             var bucket = this.Bucket( key );
 
             try {
-                if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
+                if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
                     if ( !this.Dictionary.ContainsKey( key ) ) {
                         this.Dictionary.TryAdd( key, BigInteger.Zero );
                     }
@@ -260,7 +260,7 @@ namespace LibrainianCore.Maths.Numbers {
             var bucket = this.Bucket( key );
 
             try {
-                if ( bucket.TryEnterWriteLock( timeout: this.WriteTimeout ) ) {
+                if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
                     if ( !this.Dictionary.ContainsKey( key ) ) {
                         this.Dictionary.TryAdd( key, BigInteger.Zero );
                     }
@@ -281,11 +281,11 @@ namespace LibrainianCore.Maths.Numbers {
 
         /// <summary>Return the sum of all values.</summary>
         /// <returns></returns>
-        public BigInteger Sum() => this.Dictionary.Aggregate( seed: BigInteger.Zero, func: ( current, pair ) => current + pair.Value );
+        public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
 
         public void Trim() =>
-                    Parallel.ForEach( source: this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ),
-                        parallelOptions: CPU.AllCPUExceptOne, body: pair => {
+                    Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ),
+                        CPU.AllCPUExceptOne, pair => {
                             if ( !( pair.Key is null ) ) {
                                 this.Dictionary.TryRemove( pair.Key, out var dummy );
                             }

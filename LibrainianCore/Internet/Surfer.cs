@@ -109,7 +109,7 @@ namespace LibrainianCore.Internet {
             var urls = new[] { "http://www.google.com", "http://www.yahoo.com" };
 
             Task.Factory.ContinueWhenAll(
-                urls.Select( url => Task.Factory.StartNew( u => {
+                urls.Select( url => Task.Run( u => {
                     using ( var client = new WebClient() ) {
                         return client.DownloadString( ( String )u );
                     }
@@ -122,7 +122,7 @@ namespace LibrainianCore.Internet {
             */
         }
 
-        public static IEnumerable<UriLinkItem> ParseLinks( Uri baseUri, [NotNull] String webpage ) {
+        public static IEnumerable<UriLinkItem> ParseLinks( [CanBeNull] Uri baseUri, [NotNull] String webpage ) {
 
             // ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
@@ -135,7 +135,7 @@ namespace LibrainianCore.Internet {
 
                 var i = new UriLinkItem {
                     Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
-                    Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
+                    Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
                 };
 
                 yield return i;
@@ -151,12 +151,12 @@ namespace LibrainianCore.Internet {
             }
 
             try {
-                var uri = new Uri( uriString: address );
+                var uri = new Uri( address );
 
-                return this.Surf( address: uri );
+                return this.Surf( uri );
             }
             catch ( UriFormatException ) {
-                String.Format( format: "Surf(): Unable to parse address {0}", arg0: address ).Info();
+                $"Surf(): Unable to parse address {address}".Info();
 
                 return false;
             }
@@ -175,7 +175,7 @@ namespace LibrainianCore.Internet {
                     return false;
                 }
 
-                this._urls.Enqueue( item: address );
+                this._urls.Enqueue( address );
 
                 return true;
             }
@@ -184,9 +184,9 @@ namespace LibrainianCore.Internet {
             }
         }
 
-        internal void webclient_DownloadStringCompleted( Object sender, [NotNull] DownloadStringCompletedEventArgs e ) {
+        internal void webclient_DownloadStringCompleted( [CanBeNull] Object? sender, [NotNull] DownloadStringCompletedEventArgs e ) {
             if ( e.UserState is Uri userState ) {
-                String.Format( format: "Surf(): Download completed on {0}", arg0: userState ).Info();
+                $"Surf(): Download completed on {userState}".Info();
                 this._pastUrls.Add( userState );
                 this.DownloadInProgress = false;
             }
@@ -195,20 +195,20 @@ namespace LibrainianCore.Internet {
         }
 
         private void StartNextDownload() =>
-            Task.Factory.StartNew( () => {
+            Task.Run( () => {
                 Thread.Yield();
 
                 if ( this.DownloadInProgress ) {
                     return;
                 }
 
-                if ( !this._urls.TryDequeue( result: out var address ) ) {
+                if ( !this._urls.TryDequeue( out var address ) ) {
                     return;
                 }
 
                 this.DownloadInProgress = true;
                 $"Surf(): Starting download: {address.AbsoluteUri}".Info();
-                this._webclient.DownloadStringAsync( address: address, userToken: address );
+                this._webclient.DownloadStringAsync( address, address );
             } ).ContinueWith( t => {
                 if ( this._urls.Any() ) {
                     this.StartNextDownload();

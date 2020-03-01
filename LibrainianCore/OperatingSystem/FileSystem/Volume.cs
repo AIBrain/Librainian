@@ -124,19 +124,20 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [ItemNotNull]
         public IEnumerable<Device> GetDisks() {
 
-            var disks = new DiskDeviceClass();
-            var devices = disks.GetDevices().ToList();
+            using var disks = new DiskDeviceClass();
 
-            foreach ( var disk in devices ) {
-                foreach ( var _ in this.GetDiskNumbers().Where( index => disk.DiskNumber == index ) ) {
-                    yield return disk;
+            foreach ( var device in disks.GetDevices() ) {
+                if ( !( device is null ) ) {
+                    foreach ( var _ in this.GetDiskNumbers().Where( index => device.DiskNumber == index ) ) {
+                        yield return device;
+                    }
                 }
             }
         }
 
         /// <summary>Gets the volume's logical drive in the form [letter]:\</summary>
         [CanBeNull]
-        public String GetLogicalDrive() {
+        public String? GetLogicalDrive() {
             var volumeName = this.GetVolumeName();
             String logicalDrive = null;
 
@@ -148,24 +149,13 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         /// <summary>Gets a list of removable devices for this volume.</summary>
-        public override IEnumerable<Device> GetRemovableDevices() {
-            if ( this.GetDisks() is null ) {
-                foreach ( var removableDevice in base.GetRemovableDevices() ) {
-                    yield return removableDevice;
-                }
-            }
-            else {
-                foreach ( var disk in this.GetDisks() ) {
-                    foreach ( var device in disk.GetRemovableDevices() ) {
-                        yield return device;
-                    }
-                }
-            }
-        }
+        [ItemNotNull]
+        [NotNull]
+        public override IEnumerable<Device> GetRemovableDevices() => this.GetDisks().SelectMany( disk => disk.GetRemovableDevices() );
 
         /// <summary>Gets the volume's name.</summary>
         [CanBeNull]
-        public String GetVolumeName() {
+        public String? GetVolumeName() {
             var sb = new StringBuilder( 1024 );
 
             if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
@@ -178,6 +168,6 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         /// <summary>Gets a value indicating whether this volume is a based on USB devices.</summary>
-        public override Boolean IsUsb() => this.GetDisks()?.Any( disk => disk.IsUsb() ) == true;
+        public override Boolean IsUsb() => this.GetDisks().Any( disk => disk.IsUsb() );
     }
 }

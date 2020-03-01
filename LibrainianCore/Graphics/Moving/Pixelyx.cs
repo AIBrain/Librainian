@@ -42,7 +42,6 @@ namespace LibrainianCore.Graphics.Moving {
     using System;
     using System.Runtime.InteropServices;
     using JetBrains.Annotations;
-    using Maths.Hashings;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -91,7 +90,7 @@ namespace LibrainianCore.Graphics.Moving {
             this.X = x;
             this.Y = y;
             this.Timestamp = timestamp;
-            this.Checksum = HashingExtensions.GetHashCodes( this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y );
+            this.Checksum = ( this.Blue, this.Red, this.Alpha, this.Timestamp, this.X, this.Y ).GetHashCode();
         }
 
         //public static explicit operator Pixelyx( Color pixel ) {

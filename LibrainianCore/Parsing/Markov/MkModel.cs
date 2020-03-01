@@ -58,8 +58,8 @@ namespace LibrainianCore.Parsing.Markov {
         private MkModel() => throw new NotImplementedException();
 
         public MkModel( [NotNull] String name ) {
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             this.Name = name;
@@ -80,7 +80,7 @@ namespace LibrainianCore.Parsing.Markov {
                 var randomChain = this.Nexts( word ).Where( w => !String.IsNullOrEmpty( w ) ).OrderBy( o => Randem.Next() );
 
                 foreach ( var w in randomChain ) {
-                    corpus.Append( $"{w}{Symbols.Singlespace}" );
+                    corpus.Append( $"{w}{ParsingConstants.Singlespace}" );
 
                     word = w;
                     numberOfWords -= 1;

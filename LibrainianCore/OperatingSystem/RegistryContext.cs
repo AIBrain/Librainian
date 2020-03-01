@@ -58,12 +58,12 @@ namespace LibrainianCore.OperatingSystem {
         /// <param name="command"></param>
         /// <param name="action"></param>
         public static Boolean AddRegistryContext( [NotNull] String menuName, [NotNull] String menuPath, [CanBeNull] String command = null, [CanBeNull] String action = null ) {
-            if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( menuPath ) );
+            if ( String.IsNullOrWhiteSpace( menuPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuPath ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: menuName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( menuName ) );
+            if ( String.IsNullOrWhiteSpace( menuName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuName ) );
             }
 
             try {
@@ -78,6 +78,7 @@ namespace LibrainianCore.OperatingSystem {
 
                     action.ThrowIfNull();
                     if ( String.IsNullOrEmpty( action ) ) {
+
                         //action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
                     }
 
@@ -102,12 +103,12 @@ namespace LibrainianCore.OperatingSystem {
         }
 
         public static void RemoveRegistryContext( [NotNull] String menuPath, [NotNull] String registryCommand ) {
-            if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuPath ) );
+            if ( String.IsNullOrWhiteSpace( menuPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuPath ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: registryCommand ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( registryCommand ) );
+            if ( String.IsNullOrWhiteSpace( registryCommand ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( registryCommand ) );
             }
 
             try {

@@ -47,7 +47,7 @@ namespace LibrainianCore.Parsing.Validation {
     public static class EmailExtensions {
 
         public static Boolean IsEmailValid( [NotNull] this String email ) {
-            if ( String.IsNullOrWhiteSpace( value: email ) ) {
+            if ( String.IsNullOrWhiteSpace( email ) ) {
                 return default;
             }
 
@@ -72,9 +72,9 @@ namespace LibrainianCore.Parsing.Validation {
         public static implicit operator Email( [NotNull] String str ) => new Email( str );
 
         [NotNull]
-        public static implicit operator String( [NotNull] Email email ) => email.Value;
+        public static implicit operator MailAddress( [NotNull] Email email ) => new MailAddress( email );
 
         [NotNull]
-        public static implicit operator MailAddress( [NotNull] Email email ) => new MailAddress( email );
+        public static implicit operator String( [NotNull] Email email ) => email.Value;
     }
 }

@@ -43,7 +43,6 @@ namespace LibrainianCore.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
-    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -52,7 +51,7 @@ namespace LibrainianCore.Measurement.Time {
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
-    public class Hours : IComparable<Hours>, IQuantityOfTime {
+    public struct Hours : IComparable<Hours>, IQuantityOfTime {
 
         /// <summary>24</summary>
         public const SByte InOneDay = 24;
@@ -83,13 +82,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public Hours( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Hours Combine( [CanBeNull] Hours left, Hours right ) => Combine( left, right.Value );
+        public static Hours Combine( Hours left, Hours right ) => Combine( left, right.Value );
 
-        [NotNull]
         public static Hours Combine( Hours left, Rational hours ) => new Hours( left.Value + hours );
 
-        [NotNull]
         public static Hours Combine( Hours left, BigInteger hours ) => new Hours( left.Value + hours );
 
         /// <summary>
@@ -103,53 +99,44 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.</summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Days( Hours hours ) => hours.ToDays();
 
         /// <summary>Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.</summary>
         /// <param name="hours"></param>
         /// <returns></returns>
-        [CanBeNull]
         public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Hours hours ) => new SpanOfTime( hours );
+        public static implicit operator SpanOfTime( Hours hours ) => new SpanOfTime( hours );
 
         public static implicit operator TimeSpan( Hours hours ) => TimeSpan.FromHours( ( Double )hours.Value );
 
-        [NotNull]
         public static Hours operator -( Hours hours ) => new Hours( hours.Value * -1 );
 
-        [CanBeNull]
-        public static Hours operator -( [CanBeNull] Hours left, [CanBeNull] Hours right ) => Combine( left: left, right: -right );
+        public static Hours operator -( Hours left, Hours right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Hours operator -( [CanBeNull] Hours left, Decimal hours ) => Combine( left, ( Rational )( -hours ) );
+        public static Hours operator -( Hours left, Decimal hours ) => Combine( left, ( Rational )( -hours ) );
 
-        public static Boolean operator !=( [CanBeNull] Hours left, [CanBeNull] Hours right ) => !Equals( left, right );
+        public static Boolean operator !=( Hours left, Hours right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static Hours operator +( [CanBeNull] Hours left, [CanBeNull] Hours right ) => Combine( left, right );
+        public static Hours operator +( Hours left, Hours right ) => Combine( left, right );
 
-        [NotNull]
-        public static Hours operator +( [CanBeNull] Hours left, Decimal hours ) => Combine( left, ( Rational )hours );
+        public static Hours operator +( Hours left, Decimal hours ) => Combine( left, ( Rational )hours );
 
-        [NotNull]
-        public static Hours operator +( [CanBeNull] Hours left, BigInteger hours ) => Combine( left, hours );
+        public static Hours operator +( Hours left, BigInteger hours ) => Combine( left, hours );
 
         public static Boolean operator <( Hours left, Hours right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Hours left, [CanBeNull] Minutes right ) => left < ( Hours )right;
+        public static Boolean operator <( Hours left, Minutes right ) => left < ( Hours )right;
 
-        public static Boolean operator ==( [CanBeNull] Hours left, [CanBeNull] Hours right ) => Equals( left, right );
+        public static Boolean operator ==( Hours left, Hours right ) => Equals( left, right );
 
-        public static Boolean operator >( [CanBeNull] Hours left, [CanBeNull] Minutes right ) => left > ( Hours )right;
+        public static Boolean operator >( Hours left, Minutes right ) => left > ( Hours )right;
 
         public static Boolean operator >( Hours left, Hours right ) => left.Value > right.Value;
 
         public Int32 CompareTo( Hours other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( [CanBeNull] Hours other ) => Equals( this, other );
+        public Boolean Equals( Hours other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -161,15 +148,12 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Days ToDays() => new Days( this.Value / InOneDay );
 
-        [NotNull]
         public Minutes ToMinutes() => new Minutes( this.Value * Minutes.InOneHour );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value.WholePart * ( BigInteger )PlanckTimes.InOneHour );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.Value / Seconds.InOneHour );
 
         public override String ToString() {

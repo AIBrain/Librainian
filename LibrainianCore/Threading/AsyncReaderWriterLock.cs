@@ -65,8 +65,8 @@ namespace LibrainianCore.Threading {
         private Task<Releaser> _writerReleaser { get; }
 
         public AsyncReaderWriterLock() {
-            this._readerReleaser = Task.FromResult( result: new Releaser( toRelease: this, writer: false ) );
-            this._writerReleaser = Task.FromResult( result: new Releaser( toRelease: this, writer: true ) );
+            this._readerReleaser = Task.FromResult( new Releaser( this, false ) );
+            this._writerReleaser = Task.FromResult( new Releaser( this, true ) );
         }
 
         [NotNull]
@@ -135,7 +135,7 @@ namespace LibrainianCore.Threading {
                 }
             }
 
-            toWake?.SetResult( result: new Releaser( toRelease: this, writer: toWakeIsWriter ) );
+            toWake?.SetResult( new Releaser( this, toWakeIsWriter ) );
         }
     }
 }

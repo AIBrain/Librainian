@@ -54,6 +54,8 @@ namespace LibrainianCore.Measurement.Time {
         private static Regex Regex { get; } = new Regex( "(?<Value>[\\-0-9]+)\\s*(?<Unit>[a-z]+)",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant );
 
+        //TODO (re)create this. should be /fun/.
+
         ///// <summary>Parses a duration of time from a string.</summary>
         ///// <param name="str">
         ///// The string representation of the time duration. See <see cref="DurationParser" /> for

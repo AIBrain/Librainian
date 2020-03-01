@@ -48,7 +48,6 @@ namespace LibrainianCore.Measurement.Time {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
-    using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
@@ -170,7 +169,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="date"></param>
         /// <returns></returns>
         public static DateTime BeginningOfDay( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 0, minute: 0, second: 0, millisecond: 0, kind: date.Kind );
+            new DateTime( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
 
         /// <summary>Example: Console.WriteLine( 3.Days().FromNow() );</summary>
         /// <param name="days"></param>
@@ -209,7 +208,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="date"></param>
         /// <returns></returns>
         public static DateTime EndOfDay( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 23, minute: 59, second: 59, millisecond: 999, kind: date.Kind );
+            new DateTime( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
 
         /// <summary>Return a quick estimation of the time remaining [on a download for example].</summary>
         /// <param name="timeElapsed">Time elapsed so far.</param>
@@ -239,7 +238,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns>given <see cref="DateTime" /> with the day part set to the first day in that month.</returns>
         public static DateTime FirstDayOfMonth( this DateTime current ) => current.SetDay( 1 );
 
-        public static DateTime FirstDayOfTheMonth( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: 1 );
+        public static DateTime FirstDayOfTheMonth( this DateTime date ) => new DateTime( date.Year, date.Month, 1 );
 
         /// <summary>Returns a DateTime adjusted to the beginning of the week.</summary>
         /// <param name="dateTime">The DateTime to adjust</param>
@@ -279,11 +278,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         public static DateTime FromUNIXTimestamp( this Int64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
 
-        /// <summary>Return how many years old the person is in <see cref="Years" />.</summary>
-        /// <param name="dateOfBirth"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static Years YearsFrom( this DateTime dateOfBirth ) => new Seconds( (DateTime.UtcNow - dateOfBirth).TotalSeconds).ToYears();
+        public static Int32 GetQuarter( this DateTime date ) => ( date.Month - 1 ) / 3 + 1;
 
         //var today = DateTime.Today;
         //var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
@@ -300,8 +295,6 @@ namespace LibrainianCore.Measurement.Time {
 
             return AverageTimePrecision.GetValueOrDefault( Measurement.Time.Milliseconds.One );
         }
-
-        public static Int32 GetQuarter( this DateTime date ) => ( date.Month - 1 ) / 3 + 1;
 
         /// <summary>Accurate to within how many nanoseconds?</summary>
         /// <returns></returns>
@@ -370,7 +363,7 @@ namespace LibrainianCore.Measurement.Time {
         public static DateTime LastDayOfMonth( this DateTime current ) => current.SetDay( DateTime.DaysInMonth( current.Year, current.Month ) );
 
         public static DateTime LastDayOfTheMonth( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: DateTime.DaysInMonth( year: date.Year, month: date.Month ) );
+                    new DateTime( date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ) );
 
         /// <summary>Returns the last day of the week keeping the time component intact. Eg, 2011-12-24T06:40:20.005 =&gt; 2011-12-25T06:40:20.005</summary>
         /// <param name="current">The DateTime to adjust</param>
@@ -415,7 +408,7 @@ namespace LibrainianCore.Measurement.Time {
         /// <summary>Example: Console.WriteLine( 3.Milliseconds().FromNow() );</summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static TimeSpan Milliseconds( [CanBeNull] this Milliseconds milliseconds ) => milliseconds;
+        public static TimeSpan Milliseconds( this Milliseconds milliseconds ) => milliseconds;
 
         /// <summary>Example: Console.WriteLine( 3.Minutes().FromNow() );</summary>
         /// <param name="minutes"></param>
@@ -505,8 +498,8 @@ namespace LibrainianCore.Measurement.Time {
         /// <param name="culture"></param>
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate( [NotNull] this String input, [CanBeNull] CultureInfo culture ) {
-            if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( input ) );
+            if ( String.IsNullOrWhiteSpace( input ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
             }
 
             input = input.Replace( "\n", "" );
@@ -869,7 +862,6 @@ namespace LibrainianCore.Measurement.Time {
         public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks * scalar ) );
 
         // if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
-        [NotNull]
         public static SpanOfTime TimeStatement( [CanBeNull] this Action action ) {
             var one = Stopwatch.StartNew();
 
@@ -932,7 +924,7 @@ namespace LibrainianCore.Measurement.Time {
         public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
             try {
                 if ( date.Year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-                    dateTime = new DateTime( year: ( Int32 )date.Year.Value, month: date.Month.Value, day: date.Day.Value );
+                    dateTime = new DateTime( ( Int32 )date.Year.Value, date.Month.Value, date.Day.Value );
 
                     return true;
                 }
@@ -943,5 +935,10 @@ namespace LibrainianCore.Measurement.Time {
 
             return default;
         }
+
+        /// <summary>Return how many years old the person is in <see cref="Years" />.</summary>
+        /// <param name="dateOfBirth"></param>
+        /// <returns></returns>
+        public static Years YearsFrom( this DateTime dateOfBirth ) => new Seconds( ( DateTime.UtcNow - dateOfBirth ).TotalSeconds ).ToYears();
     }
 }

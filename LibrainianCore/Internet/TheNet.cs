@@ -59,19 +59,15 @@ namespace LibrainianCore.Internet {
                 throw new ArgumentNullException( nameof( uri ) );
             }
 
-            if ( timeout is null ) {
+            if ( timeout == null ) {
                 timeout = Seconds.Seven;
             }
 
-            var grab = GetWebPageAsync( uri, timeout.Value );
+            var response = await GetWebPageAsync( uri, timeout ).ConfigureAwait( false );
 
-            if ( grab != null ) {
-                var response = await grab.ConfigureAwait( false );
+            return JsonConvert.DeserializeObject<T>( response );
 
-                return JsonConvert.DeserializeObject<T>( response );
-            }
 
-            return default;
         }
 
         /// <summary>Convert network bytes to a string</summary>
@@ -80,13 +76,13 @@ namespace LibrainianCore.Internet {
         public static String FromNetworkBytes( [NotNull] this IEnumerable<Byte> data ) {
             var listData = data as IList<Byte> ?? data.ToList();
 
-            var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
+            var len = IPAddress.NetworkToHostOrder( BitConverter.ToInt16( listData.Take( 2 ).ToArray(), 0 ) );
 
             if ( listData.Count < 2 + len ) {
                 throw new ArgumentException( "Too few bytes in packet" );
             }
 
-            return Encoding.UTF8.GetString( bytes: listData.Skip( count: 2 ).Take( count: len ).ToArray() );
+            return Encoding.UTF8.GetString( listData.Skip( 2 ).Take( len ).ToArray() );
         }
 
         /// <summary>Return the machine's hostname</summary>
@@ -121,12 +117,10 @@ namespace LibrainianCore.Internet {
             }
 
             try {
-                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
+                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) && uri != null ) {
                     var task = uri.GetWebPageAsync( timeout );
 
-                    if ( task != null ) {
-                        return await task.ConfigureAwait( false );
-                    }
+                    return await task.ConfigureAwait( false );
                 }
 
                 throw new Exception( $"Unable to parse the url:{url}." );
@@ -139,7 +133,7 @@ namespace LibrainianCore.Internet {
         }
 
         [CanBeNull]
-        public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
+        public static Task<String?> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
             if ( uri is null ) {
                 throw new ArgumentNullException( nameof( uri ) );
             }
@@ -150,7 +144,9 @@ namespace LibrainianCore.Internet {
                     CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
 
-                client.SetTimeout( timeout );
+                if ( timeout.HasValue ) {
+                    client.SetTimeout( timeout.Value );
+                }
 
                 return client.DownloadStringTaskAsync( uri );
             }
@@ -168,11 +164,11 @@ namespace LibrainianCore.Internet {
                 throw new ArgumentException( "Value cannot be null or empty.", nameof( data ) );
             }
 
-            var bytes = Encoding.UTF8.GetBytes( s: data );
+            var bytes = Encoding.UTF8.GetBytes( data );
 
-            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
+            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( ( Int16 )bytes.Length );
 
-            return BitConverter.GetBytes( hostToNetworkOrder ).Concat( second: bytes );
+            return BitConverter.GetBytes( hostToNetworkOrder ).Concat( bytes );
         }
     }
 }

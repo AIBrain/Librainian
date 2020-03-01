@@ -141,6 +141,7 @@ namespace LibrainianCore.Measurement.Spatial {
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         [Pure]
+        [NotNull]
         public override String ToString() => $"{this.Value} ㎭";
     }
 }

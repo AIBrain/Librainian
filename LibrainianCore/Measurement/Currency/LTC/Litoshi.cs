@@ -41,12 +41,14 @@ namespace LibrainianCore.Measurement.Currency.LTC {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
 
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Litoshi : ICoin {
 
         public Decimal FaceValue => 0.00000001M;
 
+        [NotNull]
         public override String ToString() => $"Ł{this.FaceValue:f8}";
     }
 }

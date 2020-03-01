@@ -1,20 +1,20 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 //     PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -22,15 +22,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "LibrainianCore", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/02/09 at 1:54 PM.
 
 namespace LibrainianCore.Converters {
@@ -53,14 +53,11 @@ namespace LibrainianCore.Converters {
     using OperatingSystem.FileSystem;
     using Parsing;
     using Security;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class ConverterExtensions {
@@ -95,7 +92,7 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                return ( T ) Convert.ChangeType( self, typeof( T ) );
+                return ( T )Convert.ChangeType( self, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -124,8 +121,8 @@ namespace LibrainianCore.Converters {
             }
 
             amount = amount.Replace( "$", String.Empty, StringComparison.Ordinal );
-            amount = amount?.Replace( ")", String.Empty, StringComparison.Ordinal );
-            amount = amount?.Replace( "(", "-" , StringComparison.Ordinal);
+            amount = amount.Replace( ")", String.Empty, StringComparison.Ordinal );
+            amount = amount.Replace( "(", "-", StringComparison.Ordinal );
 
             try {
                 if ( Decimal.TryParse( amount, out var v ) ) {
@@ -145,7 +142,7 @@ namespace LibrainianCore.Converters {
         [NotNull]
         [DebuggerStepThrough]
         [Pure]
-        public static String StripLetters( [NotNull] this String s ) {
+        public static String StripLetters( [NotNull] this String? s ) {
             if ( s is null ) {
                 throw new ArgumentNullException( nameof( s ) );
             }
@@ -175,19 +172,18 @@ namespace LibrainianCore.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s.In( TrueStrings ) ) {
-                        return true;
+                        if ( s.In( TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
-                
             }
 
             var t = value.ToString();
@@ -221,26 +217,26 @@ namespace LibrainianCore.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return null;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s is null ) {
-                        return default;
+                        if ( s is null ) {
+                            return default;
+                        }
+
+                        if ( s.In( ParsingConstants.TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( s.In( ParsingConstants.FalseStrings ) ) {
+                            return default;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( s.In( ParsingConstants.TrueStrings ) ) {
-                        return true;
-                    }
-
-                    if ( s.In( ParsingConstants.FalseStrings ) ) {
-                        return default;
-                    }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
             }
 
             var t = value.ToString();
@@ -323,8 +319,8 @@ namespace LibrainianCore.Converters {
             //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-            return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind ) bytes[ 15 ] );
+            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ],
+                bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ), ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -363,11 +359,11 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty , StringComparison.Ordinal)
-                    ?.Replace( ")", String.Empty, StringComparison.Ordinal )
-                    ?.Replace( "(", "-", StringComparison.Ordinal )
-                    ?.Replace( "..", ".", StringComparison.Ordinal )
-                    ?.Replace( " ", String.Empty , StringComparison.Ordinal).Trimmed();
+                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty, StringComparison.Ordinal )
+                    .Replace( ")", String.Empty, StringComparison.Ordinal )
+                    .Replace( "(", "-", StringComparison.Ordinal )
+                    .Replace( "..", ".", StringComparison.Ordinal )
+                    .Replace( " ", String.Empty, StringComparison.Ordinal ).Trimmed();
 
                 if ( String.IsNullOrEmpty( s ) ) {
                     return null;
@@ -401,7 +397,7 @@ namespace LibrainianCore.Converters {
         [NotNull]
         [DebuggerStepThrough]
         [Pure]
-        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ) );
+        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ) );
 
         [DebuggerStepThrough]
         [Pure]
@@ -420,9 +416,9 @@ namespace LibrainianCore.Converters {
         [Pure]
         public static Guid ToGuid( [NotNull] this String word ) {
             var hashedBytes = word.Sha256();
-            Array.Resize( array: ref hashedBytes, newSize: 16 );
+            Array.Resize( ref hashedBytes, 16 );
 
-            return new Guid( b: hashedBytes );
+            return new Guid( hashedBytes );
         }
 
         /// <summary>Converts a datetime to a guid. Returns Guid.Empty if any error occurs.</summary>
@@ -434,17 +430,17 @@ namespace LibrainianCore.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 ) dateTime.Year //0,1,2,3
-                        , b: ( UInt16 ) dateTime.DayOfYear //4,5
-                        , c: ( UInt16 ) dateTime.Millisecond //6,7
-                        , d: ( Byte ) dateTime.DayOfWeek //8
-                        , e: ( Byte ) dateTime.Day //9
-                        , f: ( Byte ) dateTime.Hour //10
-                        , g: ( Byte ) dateTime.Minute //11
-                        , h: ( Byte ) dateTime.Second //12
-                        , i: ( Byte ) dateTime.Month //13
-                        , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte ) dateTime.Kind ); //15
+                    var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
+                        , ( UInt16 )dateTime.DayOfYear //4,5
+                        , ( UInt16 )dateTime.Millisecond //6,7
+                        , ( Byte )dateTime.DayOfWeek //8
+                        , ( Byte )dateTime.Day //9
+                        , ( Byte )dateTime.Hour //10
+                        , ( Byte )dateTime.Minute //11
+                        , ( Byte )dateTime.Second //12
+                        , ( Byte )dateTime.Month //13
+                        , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
+                        , ( Byte )dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -463,11 +459,11 @@ namespace LibrainianCore.Converters {
         /// <returns></returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high: high, low: low ).guid;
+        public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high, low ).guid;
 
         [DebuggerStepThrough]
         [Pure]
-        public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( high: values.high, low: values.low ).guid;
+        public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( values.high, values.low ).guid;
 
         /// <summary>Returns the value converted to an <see cref="Int32" /> or null.</summary>
         /// <param name="value"></param>
@@ -484,11 +480,11 @@ namespace LibrainianCore.Converters {
                 var s = value.ToString();
 
                 s = s?.StripLetters();
-                s = s?.Replace( "$", String.Empty , StringComparison.Ordinal);
-                s = s?.Replace( ")", String.Empty , StringComparison.Ordinal);
-                s = s?.Replace( "(", "-" , StringComparison.Ordinal);
-                s = s?.Replace( "..", "." , StringComparison.Ordinal);
-                s = s?.Replace( " ", String.Empty , StringComparison.Ordinal);
+                s = s?.Replace( "$", String.Empty, StringComparison.Ordinal );
+                s = s?.Replace( ")", String.Empty, StringComparison.Ordinal );
+                s = s?.Replace( "(", "-", StringComparison.Ordinal );
+                s = s?.Replace( "..", ".", StringComparison.Ordinal );
+                s = s?.Replace( " ", String.Empty, StringComparison.Ordinal );
                 s = s?.Trimmed() ?? String.Empty;
 
                 var pos = s.LastIndexOf( '.' );
@@ -551,11 +547,11 @@ namespace LibrainianCore.Converters {
         [Pure]
         public static Decimal? ToMoneyOrNull( [NotNull] this SqlDataReader bob, [NotNull] String columnName ) {
             if ( bob == null ) {
-                throw new ArgumentNullException( paramName: nameof( bob ) );
+                throw new ArgumentNullException( nameof( bob ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: columnName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( columnName ) );
+            if ( String.IsNullOrWhiteSpace( columnName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( columnName ) );
             }
 
             try {
@@ -628,8 +624,9 @@ namespace LibrainianCore.Converters {
         [DebuggerStepThrough]
         [CanBeNull]
         [Pure]
-        public static String ToStringOrNull<T>( [CanBeNull] this T self ) =>
-            self switch {
+        public static String? ToStringOrNull<T>( [CanBeNull] this T self ) =>
+            self switch
+            {
                 null => default,
                 DBNull _ => default,
                 String s => s.Trimmed(),
@@ -650,18 +647,12 @@ namespace LibrainianCore.Converters {
         /// <returns></returns>
         [DebuggerStepThrough]
         [Pure]
-        public static UBigInteger ToUBigInteger( this Guid guid ) {
-            var bigInteger = new UBigInteger( bytes: guid.ToByteArray() );
-
-            return bigInteger;
-        }
+        public static UBigInteger ToUBigInteger( this Guid guid ) => new UBigInteger( guid.ToByteArray() );
 
         /// <summary>Returns a 'Y' for true, or an 'N' for false.</summary>
         /// <param name="value"></param>
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
-
     }
-
 }

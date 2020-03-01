@@ -61,7 +61,7 @@ namespace LibrainianCore.Maths.Numbers {
         private UInt64 _votesYes;
 
         /// <summary>No vote for either.</summary>
-        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
+        public static readonly VotallyI Zero = new VotallyI( 0, 0 );
 
         public UInt64 No {
             get => Thread.VolatileRead( ref this._votesNo );
@@ -147,7 +147,7 @@ namespace LibrainianCore.Maths.Numbers {
         }
 
         [NotNull]
-        public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
+        public VotallyI Clone() => new VotallyI( this.Yes, this.No );
 
         public UInt64 HalfOfVotes() => this.Votes / 2;
 
@@ -163,6 +163,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Boolean IsYesWinning() => this.Yes > this.No && this.Yes > 1 && this.No > 1;
 
+        [NotNull]
         public override String ToString() => $"{this.ChanceYes():P1} yes vs {this.ChanceNo():p1} no of {this.Votes} votes.";
 
         /// <summary>

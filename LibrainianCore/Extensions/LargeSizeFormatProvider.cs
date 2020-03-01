@@ -57,11 +57,11 @@ namespace LibrainianCore.Extensions {
         [NotNull]
         public String Format( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( arg == null ) {
-                throw new ArgumentNullException( paramName: nameof( arg ) );
+                throw new ArgumentNullException( nameof( arg ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: format ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( format ) );
+            if ( String.IsNullOrWhiteSpace( format ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
             }
 
             if ( format.StartsWith( FileSizeFormat ) != true ) {

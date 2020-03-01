@@ -77,7 +77,7 @@ namespace LibrainianCore.Measurement.Time {
                     return this._elapsedCounts;
                 }
 
-                StopwatchExtensions.QueryPerformanceCounter( out var timestamp );
+                StopwatchDLLs.QueryPerformanceCounter( out var timestamp );
 
                 return this._elapsedCounts + ( timestamp - this._startTimestamp );
             }
@@ -87,7 +87,7 @@ namespace LibrainianCore.Measurement.Time {
         public Boolean IsRunning { get; private set; }
 
         static StopwatchStruct() {
-            if ( !StopwatchExtensions.QueryPerformanceFrequency( out var countsPerSecond ) ) {
+            if ( !StopwatchDLLs.QueryPerformanceFrequency( out var countsPerSecond ) ) {
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace LibrainianCore.Measurement.Time {
             }
 
             this.IsRunning = true;
-            StopwatchExtensions.QueryPerformanceCounter( out this._startTimestamp );
+            StopwatchDLLs.QueryPerformanceCounter( out this._startTimestamp );
         }
 
         /// <summary>Stops the stopwatch, if it was running. Calculates the elapsed ticks since it was last started, and adds them to <see cref="ElapsedCounts" />.</summary>
@@ -114,20 +114,20 @@ namespace LibrainianCore.Measurement.Time {
                 return;
             }
 
-            StopwatchExtensions.QueryPerformanceCounter( out var timestamp );
+            StopwatchDLLs.QueryPerformanceCounter( out var timestamp );
             this.IsRunning = false;
             this._elapsedCounts += timestamp - this._startTimestamp;
         }
     }
 
-    public static class StopwatchExtensions {
+    public static class StopwatchDLLs {
 
         /// <summary>Calls the WinAPI QueryPerformanceCounter method (the Windows high-resolution time). See: https://msdn.microsoft.com/en-us/library/windows/desktop/ms644904(v=vs.85).aspx</summary>
         /// <param name="lpPerformanceCount">The current high-resolution time value in ticks.</param>
         /// <returns>True if the call succeeded.</returns>
         [ResourceExposure( ResourceScope.None )]
         [DllImport( ExternDll.Kernel32, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto, BestFitMapping = false, ExactSpelling = false )]
-        public static extern Boolean QueryPerformanceCounter( out Int64 lpPerformanceCount );
+        internal static extern Boolean QueryPerformanceCounter( out Int64 lpPerformanceCount );
 
         /// <summary>
         /// Calls the WinAPI QueryPerformanceFrequency method. This method allows you to determine the resolution of QueryPerformanceCounter. See:
@@ -137,6 +137,6 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns>True if the call succeeded.</returns>
         [ResourceExposure( ResourceScope.None )]
         [DllImport( ExternDll.Kernel32, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto, BestFitMapping = false, ExactSpelling = false )]
-        public static extern Boolean QueryPerformanceFrequency( out Int64 lpFrequency );
+        internal static extern Boolean QueryPerformanceFrequency( out Int64 lpFrequency );
     }
 }

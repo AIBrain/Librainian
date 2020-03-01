@@ -55,6 +55,7 @@ namespace LibrainianCore.Collections.Lists {
 
         private Int32 _count { get; }
 
+        [CanBeNull]
         private Func<Int32, T> GetValueForIndex { get; }
 
         Int32 ICollection.Count => this._count;
@@ -72,15 +73,15 @@ namespace LibrainianCore.Collections.Lists {
         Object ICollection.SyncRoot => this;
 
         [CanBeNull]
-        Object IList.this[ Int32 index ] {
-            get => this.GetValueForIndex( arg: index );
+        Object? IList.this[ Int32 index ] {
+            get => this.GetValueForIndex( index );
 
             set => throw new NotSupportedException();
         }
 
         [CanBeNull]
         T IList<T>.this[ Int32 index ] {
-            get => this.GetValueForIndex( arg: index );
+            get => this.GetValueForIndex( index );
 
             set => throw new NotSupportedException();
         }
@@ -90,7 +91,7 @@ namespace LibrainianCore.Collections.Lists {
             this._count = count;
         }
 
-        Int32 IList.Add( Object value ) => throw new NotSupportedException();
+        Int32 IList.Add( Object? value ) => throw new NotSupportedException();
 
         void ICollection<T>.Add( T item ) => throw new NotSupportedException();
 
@@ -98,7 +99,7 @@ namespace LibrainianCore.Collections.Lists {
 
         void ICollection<T>.Clear() => throw new NotSupportedException();
 
-        Boolean IList.Contains( Object value ) => throw new NotSupportedException();
+        Boolean IList.Contains( Object? value ) => throw new NotSupportedException();
 
         Boolean ICollection<T>.Contains( T item ) => throw new NotSupportedException();
 
@@ -110,19 +111,19 @@ namespace LibrainianCore.Collections.Lists {
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() {
             for ( var i = 0; i < this._count; i++ ) {
-                yield return this.GetValueForIndex( arg: i );
+                yield return this.GetValueForIndex( i );
             }
         }
 
-        Int32 IList.IndexOf( Object value ) => throw new NotSupportedException();
+        Int32 IList.IndexOf( Object? value ) => throw new NotSupportedException();
 
         Int32 IList<T>.IndexOf( T item ) => throw new NotSupportedException();
 
-        void IList.Insert( Int32 index, Object value ) => throw new NotSupportedException();
+        void IList.Insert( Int32 index, Object? value ) => throw new NotSupportedException();
 
         void IList<T>.Insert( Int32 index, T item ) => throw new NotSupportedException();
 
-        void IList.Remove( Object value ) => throw new NotSupportedException();
+        void IList.Remove( Object? value ) => throw new NotSupportedException();
 
         Boolean ICollection<T>.Remove( T item ) => throw new NotSupportedException();
 

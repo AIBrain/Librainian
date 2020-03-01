@@ -43,23 +43,25 @@ namespace LibrainianCore.Converters {
     using System.Runtime.InteropServices;
     using Maths;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct DecimalTo {
 
-        [field: FieldOffset( offset: 0 )]
+        [field: FieldOffset( 0 )]
         public Guid Guid { get; set; }
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public Decimal Decimal;
 
         /// <summary>Access the first four bytes.</summary>
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public FourBytes Bytes4;
 
         /// <summary>Access all eight bytes.</summary>
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public EightBytes Bytes8;
+
     }
+
 }

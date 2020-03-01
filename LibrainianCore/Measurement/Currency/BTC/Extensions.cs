@@ -67,7 +67,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
 
             foreach ( var pair in coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>() ) {
-                coinWallet.Deposit( coin: pair.Key, quantity: pair.Value );
+                coinWallet.Deposit( pair.Key, pair.Value );
             }
         }
 
@@ -190,7 +190,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             //as μbtc
 
             //as satoshi
-            var chosen = list.OrderBy( s => s.Length ).FirstOrDefault() ?? String.Empty;
+            var chosen = list.OrderBy( s => s.Length ).FirstOrDefault();
 
             return chosen;
         }

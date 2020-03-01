@@ -113,6 +113,7 @@ namespace LibrainianCore.Graphics {
         [NotNull]
         public static Matrix operator *( [NotNull] Matrix m1, [NotNull] Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
 
+        [NotNull]
         public override String ToString() {
             var res = "";
 

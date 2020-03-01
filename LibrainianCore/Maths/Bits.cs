@@ -50,7 +50,7 @@ namespace LibrainianCore.Maths {
 
         private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return BitConverter.ToUInt64( Order( value ), startIndex );
@@ -80,7 +80,7 @@ namespace LibrainianCore.Maths {
         [NotNull]
         public static Byte[] Order( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return IsLittleEndian ? value : value.Reverse().ToArray();
@@ -88,7 +88,7 @@ namespace LibrainianCore.Maths {
 
         public static Int32 ToInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return BitConverter.ToInt32( Order( value ), startIndex );
@@ -97,7 +97,7 @@ namespace LibrainianCore.Maths {
         [NotNull]
         public static String ToString( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return BitConverter.ToString( Order( value ), startIndex );
@@ -105,7 +105,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt16 ToUInt16( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return BitConverter.ToUInt16( Order( value ), startIndex );
@@ -113,7 +113,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt256 ToUInt256( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return new UInt256( value );
@@ -121,7 +121,7 @@ namespace LibrainianCore.Maths {
 
         public static UInt32 ToUInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return BitConverter.ToUInt32( Order( value ), startIndex );

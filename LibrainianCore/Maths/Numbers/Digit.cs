@@ -40,13 +40,13 @@
 namespace LibrainianCore.Maths.Numbers {
 
     using System;
+    using System.Runtime.CompilerServices;
     using Extensions;
     using JetBrains.Annotations;
 
     /// <summary>Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</summary>
-    /// <remarks>All functions should be atomic.</remarks>
     [Immutable]
-    public struct Digit : IComparable<Digit> {
+    public struct Digit : IComparable<Digit>, IEquatable<Digit>, IEquatable<Byte> {
 
         public const Byte Maximum = 9;
 
@@ -74,17 +74,24 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Byte Value { get; }
 
-        public Digit( SByte value ) {
-            if ( value < Minimum || value > Maximum ) {
+        public Digit( Byte value ) {
+            if ( value > Maximum ) {
                 throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
             }
 
-            this.Value = ( Byte )value;
+            this.Value = value;
         }
 
-        public Digit( Byte value ) : this( ( SByte )value ) { }
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static Boolean Equals( Digit left, Digit right ) => left.Value == right.Value;
 
         public static implicit operator Byte( Digit digit ) => digit.Value;
+
+        /// <summary>Returns a value that indicates whether two <see cref="Digit" /> objects have different values.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+        public static Boolean operator !=( Digit left, Digit right ) => !Equals( left, right );
 
         public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
 
@@ -105,6 +112,12 @@ namespace LibrainianCore.Maths.Numbers {
         public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
 
         public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
+
+        /// <summary>Returns a value that indicates whether the values of two <see cref="Digit" /> objects are equal.</summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+        public static Boolean operator ==( Digit left, Digit right ) => Equals( left, right );
 
         public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
 
@@ -134,9 +147,29 @@ namespace LibrainianCore.Maths.Numbers {
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
 
+        /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+        public Boolean Equals( Digit other ) => Equals( this, other );
+
+        /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+        public Boolean Equals( Byte other ) => this.Value.Equals( other );
+
+        /// <summary>Indicates whether this instance and a specified object are equal.</summary>
+        /// <param name="obj">The object to compare with the current instance.</param>
+        /// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
+        public override Boolean Equals( Object? obj ) => obj is Digit other && Equals( this, other );
+
+        /// <summary>Returns the hash code for this instance.</summary>
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
+
         [NotNull]
         public String Number() => this.Value.ToString();
 
+        [NotNull]
         public override String ToString() {
             switch ( this.Value ) {
                 case 0: return nameof( Zero );
@@ -162,5 +195,7 @@ namespace LibrainianCore.Maths.Numbers {
                 default: return String.Empty;
             }
         }
+
     }
+
 }

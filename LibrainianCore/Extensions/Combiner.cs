@@ -118,7 +118,7 @@ namespace LibrainianCore.Extensions {
 
             IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
 
-            return input.Aggregate( result, ( current, item ) => item != null ? current?.Combine( item.Combinations() ) : default );
+            return input.Aggregate( result, ( current, item ) => !(item is null) ? current?.Combine( item.Combinations() ) : default );
         }
 
         [NotNull]
@@ -127,6 +127,7 @@ namespace LibrainianCore.Extensions {
                 item
             } );
 
+        [ItemCanBeNull]
         public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
             var found = false;
 
@@ -224,10 +225,6 @@ namespace LibrainianCore.Extensions {
 
                 for ( var j = 0; j < count; j++ ) {
                     var source = powerSet[ j ];
-
-                    if ( source is null ) {
-                        continue;
-                    }
 
                     var sourceLength = source.Length;
 

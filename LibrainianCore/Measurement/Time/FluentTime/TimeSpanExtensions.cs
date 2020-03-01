@@ -41,7 +41,6 @@ namespace LibrainianCore.Measurement.Time.FluentTime {
 
     using System;
     using System.Linq;
-    using JetBrains.Annotations;
     using Maths;
 
     /// <summary>Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.</summary>
@@ -61,7 +60,7 @@ namespace LibrainianCore.Measurement.Time.FluentTime {
         ///     <para>Calculates the Estimated Time Remaining</para>
         /// </summary>
         /// <param name="etaCalculator"></param>
-        public static TimeSpan Etr( [NotNull] this EtaCalculator etaCalculator ) {
+        public static TimeSpan Etr( this EtaCalculator etaCalculator ) {
             if ( !etaCalculator.DoWeHaveAnEta() ) {
                 return TimeSpan.MaxValue;
             }

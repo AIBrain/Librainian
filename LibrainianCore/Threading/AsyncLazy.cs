@@ -49,6 +49,6 @@ namespace LibrainianCore.Threading {
 
         public AsyncLazy( [NotNull] Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
 
-        public AsyncLazy( [NotNull] Func<Task<T>> taskFactory ) : base( () => Task.Factory.StartNew( taskFactory ).Unwrap() ) { }
+        public AsyncLazy( [NotNull] Func<Task<T>> taskFactory ) : base( () => Task.Run( taskFactory ) ) { }
     }
 }

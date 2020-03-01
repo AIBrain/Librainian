@@ -89,6 +89,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public Object Clone() => new Minus1To1Ts( this.Value );
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
     }
 }

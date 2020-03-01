@@ -1,19 +1,15 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "DatabaseExtensions.cs" was last formatted by Protiguous on 2020/02/17 at 3:14 PM.
 
 namespace LibrainianCore.Databases {
 
@@ -56,9 +52,9 @@ namespace LibrainianCore.Databases {
     using static Persistence.Cache;
     using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
-
     public static class DatabaseExtensions {
 
+        [NotNull]
         private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
         [CanBeNull]
@@ -170,8 +166,8 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( builderToTest ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
+            if ( String.IsNullOrWhiteSpace( command ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
             }
 
             try {
@@ -193,8 +189,8 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( builderToTest ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
+            if ( String.IsNullOrWhiteSpace( command ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
             }
 
             try {
@@ -259,8 +255,6 @@ namespace LibrainianCore.Databases {
             }
         }
 
-
-
         [CanBeNull]
         public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
             Boolean throwIfNotFound = true ) {
@@ -268,8 +262,8 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( file ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             if ( file.TryGetValue( key, out var connection ) ) {
@@ -284,7 +278,6 @@ namespace LibrainianCore.Databases {
 
             return default;
         }
-
 
         /// <summary>method extracts the instance name from the service name</summary>
         /// <param name="serviceName"></param>
@@ -306,6 +299,11 @@ namespace LibrainianCore.Databases {
         [CanBeNull]
         public static IList<PropertyInfo> GetPropertiesForType<T>() {
             var type = typeof( T );
+
+            if ( TypeDictionary.TryGetValue( type, out var props ) && props != null ) {
+                return props!;
+            }
+
             return TypeDictionary[ type ] = type.GetProperties();
         }
 
@@ -318,8 +316,8 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( reader ) );
             }
 
-            if ( String.IsNullOrEmpty( value: columnName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( columnName ) );
+            if ( String.IsNullOrEmpty( columnName ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( columnName ) );
             }
 
             var dictionary = reader.GetDict();
@@ -355,12 +353,12 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( file ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( connectionString ) );
+            if ( String.IsNullOrWhiteSpace( connectionString ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
             }
 
             file[ key ] = connectionString;
@@ -385,13 +383,7 @@ namespace LibrainianCore.Databases {
                 return default;
             }
 
-            var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
-
-            if ( connectionStringBuilder == default ) {
-                return default;
-            }
-
-            var connectionString = connectionStringBuilder.ConnectionString;
+            var connectionString = sqlServer.ConnectionStringBuilder.ConnectionString;
 
             file.Set( connectionString, key );
 
@@ -403,7 +395,7 @@ namespace LibrainianCore.Databases {
                 throw new ArgumentNullException( nameof( exception ) );
             }
 
-            return exception.Message?.Contains( "The server was not found or was not accessible", StringComparison.CurrentCultureIgnoreCase ) == true;
+            return exception.Message.Contains( "The server was not found or was not accessible", StringComparison.CurrentCultureIgnoreCase );
         }
 
         /// <summary>Convert our IList to a DataSet</summary>
@@ -501,7 +493,7 @@ namespace LibrainianCore.Databases {
                     icolType = icolType.GetGenericArguments()[ 0 ];
                 }
 
-                table.Columns.Add( column: new DataColumn( columnName: getProperty.Name, dataType: icolType ) );
+                table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
             }
 
             foreach ( var record in list.Where( record => !( record is null ) ) ) {
@@ -511,7 +503,7 @@ namespace LibrainianCore.Databases {
                     dr[ p.Name ] = p.GetValue( record, default ) ?? DBNull.Value;
                 }
 
-                table.Rows.Add( row: dr );
+                table.Rows.Add( dr );
             }
 
             return table;
@@ -559,13 +551,8 @@ namespace LibrainianCore.Databases {
 
             var properties = GetPropertiesForType<T>();
 
-            if ( properties is null ) {
-                return Enumerable.Empty<T>();
-            }
-
             return from Object row in table.Rows select CreateItemFromRow<T>( row as DataRow, properties );
         }
-
 
         /*
                 private static List<T> MapList<T>( DataTable dt ) {
@@ -699,7 +686,7 @@ namespace LibrainianCore.Databases {
                 }
 
                 var serverDateTime = getdate.Value; //should already be utc.
-                var now = DateTime.UtcNow; //get this computer's utc
+                var now = DateTime.UtcNow;          //get this computer's utc
 
                 if ( serverDateTime.Date == now.Date ) {
                     ( $"Opened a connection to {test.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +

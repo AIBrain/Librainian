@@ -41,6 +41,7 @@ namespace LibrainianCore.Measurement {
 
     using System;
     using Extensions;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary><see cref="Temperature" /> in <see cref="Celsius" />, with properties in <see cref="Fahrenheit" /> and <see cref="Kelvin" />.</summary>
@@ -61,6 +62,7 @@ namespace LibrainianCore.Measurement {
         /// <summary><see cref="Temperature" /> in <see cref="Celsius" />, with properties in <see cref="Fahrenheit" /> and <see cref="Kelvin" />.</summary>
         public Temperature( Single celsius ) => this.Celsius = celsius;
 
+        [NotNull]
         public override String ToString() => $"{this.Celsius} °C";
     }
 }

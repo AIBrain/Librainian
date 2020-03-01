@@ -129,7 +129,7 @@ namespace LibrainianCore.Extensions {
 
         // This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
         [CanBeNull]
-        public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
+        public static T? GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
             var type = value.GetType();
             var memberInfo = type.GetMember( value.ToString() );
             var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( T ), false );
@@ -138,15 +138,14 @@ namespace LibrainianCore.Extensions {
         }
 
         [CanBeNull]
-        public static String GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
+        public static String? GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
             if ( !( e is Enum ) ) {
                 return default;
             }
 
             var type = e.GetType();
-            var values = Enum.GetValues( type );
 
-            foreach ( Int32 val in values ) {
+            foreach ( Int32 val in Enum.GetValues( type ) ) {
                 if ( val != e.ToInt32( CultureInfo.InvariantCulture ) ) {
                     continue;
                 }

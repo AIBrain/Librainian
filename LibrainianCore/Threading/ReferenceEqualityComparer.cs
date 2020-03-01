@@ -45,8 +45,8 @@ namespace LibrainianCore.Threading {
 
     public class ReferenceEqualityComparer : EqualityComparer<Object> {
 
-        public override Boolean Equals( [CanBeNull] Object x, [CanBeNull] Object y ) => ReferenceEquals( x, y );
+        public override Boolean Equals( [CanBeNull] Object? x, [CanBeNull] Object? y ) => ReferenceEquals( x, y );
 
-        public override Int32 GetHashCode( [CanBeNull] Object obj ) => obj?.GetHashCode() ?? 0;
+        public override Int32 GetHashCode( [CanBeNull] Object? obj ) => obj?.GetHashCode() ?? 0;
     }
 }

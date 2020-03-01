@@ -51,23 +51,20 @@ namespace LibrainianCore.Graphics.DDD {
     using Newtonsoft.Json;
     using static Maths.Hashings.HashingExtensions;
 
-#pragma warning disable IDE0015 // Use framework type
-
     /// <summary>
-    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="float" />).</para>
+    ///     <para>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> (as <see cref="Single" />).</para>
     /// </summary>
     /// <remarks>Code towards speed.</remarks>
     [Immutable]
-#pragma warning restore IDE0015 // Use framework type
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject( MemberSerialization.Fields )]
     public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
 
         /// <summary>Compares the current object with another object of the same type.</summary>
         /// <returns>
-        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is
-        /// less than the <paramref name="other" /> parameter. Zero This object is equal to <paramref name="other" /> . Greater than zero This object is greater than <paramref name="other" />
-        /// .
+        /// A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This
+        /// object is less than the <paramref name="other" /> parameter. Zero This object is equal to <paramref name="other" /> . Greater than zero This object is greater than
+        /// <paramref name="other" /> .
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
         public Int32 CompareTo( [NotNull] CoordinateF other ) => this.SquareLength.CompareTo( other.SquareLength );
@@ -76,9 +73,9 @@ namespace LibrainianCore.Graphics.DDD {
 
         public static CoordinateF Empty { get; }
 
-        public static CoordinateF One { get; } = new CoordinateF( x: 1, y: 1, z: 1 );
+        public static CoordinateF One { get; } = new CoordinateF( 1, 1, 1 );
 
-        public static CoordinateF Zero { get; } = new CoordinateF( x: 0, y: 0, z: 0 );
+        public static CoordinateF Zero { get; } = new CoordinateF( 0, 0, 0 );
 
         [JsonProperty]
         public Single SquareLength { get; }
@@ -96,8 +93,8 @@ namespace LibrainianCore.Graphics.DDD {
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="z"></param>
-        public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( x: Randem.NextFloat( x.Min, x.Max ), y: Randem.NextFloat( y.Min, y.Max ),
-            z: Randem.NextFloat( z.Min, z.Max ) ) { }
+        public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( Randem.NextFloat( x.Min, x.Max ), Randem.NextFloat( y.Min, y.Max ),
+            Randem.NextFloat( z.Min, z.Max ) ) { }
 
         /// <summary></summary>
         /// <param name="x"></param>
@@ -174,9 +171,9 @@ namespace LibrainianCore.Graphics.DDD {
         [NotNull]
         public static CoordinateF operator -( [NotNull] CoordinateF v1, [NotNull] CoordinateF v2 ) => new CoordinateF( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => !Equals( left, right );
 
-        public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( [CanBeNull] CoordinateF left, [CanBeNull] CoordinateF right ) => Equals( left, right );
 
         public Double DistanceTo( [CanBeNull] CoordinateF to ) {
             if ( to == default ) {
@@ -200,6 +197,7 @@ namespace LibrainianCore.Graphics.DDD {
 
         public override Int32 GetHashCode() => GetHashCodes( this.X, this.Y, this.Z );
 
+        [NotNull]
         public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
     }
 }

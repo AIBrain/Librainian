@@ -67,19 +67,19 @@ namespace LibrainianCore.Maths.Numbers {
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
-        public override int GetHashCode() => this.Quotient.GetHashCode();
+        public override Int32 GetHashCode() => this.Quotient.GetHashCode();
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="T:LibrainianCore.Maths.Numbers.Percentage" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static bool operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
 
         /// <summary>Returns a value that indicates whether two <see cref="T:LibrainianCore.Maths.Numbers.Percentage" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static bool operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
 
         /// <summary></summary>
         /// <param name="numerator">The part of a fraction that is above the line and signifies the number to be divided by the denominator.</param>

@@ -79,7 +79,7 @@ namespace LibrainianCore {
                 Parser.Default?.ParseArguments<TOpts>( arguments ).WithParsed( runParsedOptions ).WithNotParsed( HandleErrors );
             }
             catch ( Exception exception ) {
-                exception.Log( breakinto: true );
+                exception.Log( true );
             }
 
             static void HandleErrors( IEnumerable<Error> errors ) {
@@ -109,7 +109,7 @@ namespace LibrainianCore {
         }
 
         private static void RunInternalCommon() {
-            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( breakinto: true );
+            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( true );
 
             Debug.AutoFlush = true;
             Trace.AutoFlush = true;
@@ -139,7 +139,5 @@ namespace LibrainianCore {
                 GC.Collect( 2, GCCollectionMode.Forced, true, true );
             }
         }
-
-        
     }
 }

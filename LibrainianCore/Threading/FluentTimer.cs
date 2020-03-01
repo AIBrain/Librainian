@@ -62,7 +62,7 @@ namespace LibrainianCore.Threading {
         }
 
         [NotNull]
-        public static Timer Create( [CanBeNull] this Hertz frequency, [CanBeNull] Action onTick ) => Create( ( TimeSpan )frequency, onTick );
+        public static Timer Create( [CanBeNull] this Hertz frequency, [CanBeNull] Action onTick ) => Create( ( TimeSpan ) frequency, onTick );
 
         /// <summary>
         ///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
@@ -88,7 +88,7 @@ namespace LibrainianCore.Threading {
                 mills = 1;
             }
 
-            var timer = new Timer( interval: mills ) {
+            var timer = new Timer( mills ) {
                 AutoReset = false
             };
 
@@ -150,5 +150,7 @@ namespace LibrainianCore.Threading {
 
             return timer;
         }
+
     }
+
 }

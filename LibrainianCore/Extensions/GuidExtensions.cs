@@ -48,12 +48,8 @@ namespace LibrainianCore.Extensions {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
     using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</summary>
@@ -62,9 +58,8 @@ namespace LibrainianCore.Extensions {
 
         public static readonly Regex InGuidFormat =
             new Regex(
-                pattern: "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
-                         "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$",
-                options: RegexOptions.Compiled );
+                "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
+                "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", RegexOptions.Compiled );
 
         /// <summary>
         ///     <see cref="Converters.ConverterExtensions.ToPath" />
@@ -73,7 +68,7 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
             if ( path == null ) {
-                throw new ArgumentNullException( paramName: nameof( path ) );
+                throw new ArgumentNullException( nameof( path ) );
             }
 
             var s = path.ToPaths().ToList();
@@ -122,7 +117,7 @@ namespace LibrainianCore.Extensions {
                 throw new ArgumentNullException( nameof( s ) );
             }
 
-            var match = InGuidFormat.Match( input: s );
+            var match = InGuidFormat.Match( s );
 
             return match.Success;
         }
@@ -139,11 +134,11 @@ namespace LibrainianCore.Extensions {
 
             for ( var i = 0; i < bytecount; i++ ) {
                 unchecked {
-                    destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                    destByte[ i ] = ( Byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
                 }
             }
 
-            return new Guid( b: destByte );
+            return new Guid( destByte );
         }
 
         /// <summary>Untested.</summary>
@@ -152,11 +147,11 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid Next( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes: bytes );
+            var uBigInteger = new UBigInteger( bytes );
             uBigInteger += amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( array: ref array, newSize: 16 );
-            var next = new Guid( b: array );
+            Array.Resize( ref array, 16 );
+            var next = new Guid( array );
 
             return next;
         }
@@ -167,13 +162,15 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes: bytes );
+            var uBigInteger = new UBigInteger( bytes );
             uBigInteger -= amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( array: ref array, newSize: 16 );
-            var next = new Guid( b: array );
+            Array.Resize( ref array, 16 );
+            var next = new Guid( array );
 
             return next;
         }
+
     }
+
 }

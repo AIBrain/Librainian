@@ -46,7 +46,7 @@ namespace LibrainianCore.Measurement.Time {
     using Newtonsoft.Json;
     using Threading;
 
-    /// <summary>The 'reverse' of the Stopwatch class. //TODO needs unit testing.</summary>
+    /// <summary>The 'reverse' of the Stopwatch struct. //TODO needs unit testing.</summary>
     [JsonObject( MemberSerialization.Fields )]
     public class CountDownWatch {
 

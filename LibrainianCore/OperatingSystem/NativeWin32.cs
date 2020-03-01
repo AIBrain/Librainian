@@ -26,6 +26,7 @@ namespace LibrainianCore.OperatingSystem {
     using System.Text;
     using System.Threading;
     using FileSystem;
+    using JetBrains.Annotations;
     using Microsoft.Win32.SafeHandles;
 
     public static class NativeWin32 {
@@ -355,6 +356,7 @@ namespace LibrainianCore.OperatingSystem {
         [DllImport( "kernel32.dll", SetLastError = true, PreserveSig = true )]
         public static extern UInt32 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector, out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters );
 
+        [NotNull]
         public static String GetErrorMessage( Int32 code ) {
             var message = new StringBuilder( 255 );
 

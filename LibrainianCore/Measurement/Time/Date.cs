@@ -104,7 +104,7 @@ namespace LibrainianCore.Measurement.Time {
             this.Day = day;
         }
 
-        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( SByte )dateTime.Month, day: ( SByte )dateTime.Day ) { }
+        public Date( DateTime dateTime ) : this( dateTime.Year, ( SByte )dateTime.Month, ( SByte )dateTime.Day ) { }
 
         public Date( SpanOfTime spanOfTime ) {
             this.Year = new Year( spanOfTime.GetWholeYears() );

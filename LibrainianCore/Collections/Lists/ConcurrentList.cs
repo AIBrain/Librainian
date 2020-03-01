@@ -50,7 +50,6 @@ namespace LibrainianCore.Collections.Lists {
     using System.Threading.Tasks;
     using Extensions;
     using JetBrains.Annotations;
-    using LibrainianCore.Extensions;
     using Logging;
     using Maths;
     using Newtonsoft.Json;
@@ -70,11 +69,6 @@ namespace LibrainianCore.Collections.Lists {
     [JsonObject( MemberSerialization.Fields )]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class ConcurrentList<T> : ABetterClassDispose, IList<T>, IPossibleThrowable /*, IEquatable<IEnumerable<T>>*/ {
-
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
-        [NotNull]
-        public override String ToString() => $"{this.Take( 30 ).ToStrings( atTheEnd: this.Count > 30 ? "..." : String.Empty )}";
 
         private volatile Boolean _isReadOnly;
 
@@ -140,7 +134,7 @@ namespace LibrainianCore.Collections.Lists {
                     return default;
                 }
 
-                return this.Read( func: () => this.TheList[ index: index ] );
+                return this.Read( () => this.TheList[ index ] );
             }
 
             set {
@@ -150,7 +144,7 @@ namespace LibrainianCore.Collections.Lists {
                     return;
                 }
 
-                this.Write( func: () => {
+                this.Write( () => {
                     if ( !this.AllowModifications() ) {
                         this.IfDisallowedModificationsThrow();
 
@@ -158,7 +152,7 @@ namespace LibrainianCore.Collections.Lists {
                     }
 
                     try {
-                        this.TheList[ index: index ] = value;
+                        this.TheList[ index ] = value;
 
                         return true;
                     }
@@ -177,12 +171,12 @@ namespace LibrainianCore.Collections.Lists {
         /// <param name="writeTimeout">Defaults to 60 seconds.</param>
         public ConcurrentList( [CanBeNull] IEnumerable<T> enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
 
-            this.ReaderWriter = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
+            this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
             this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
             this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
 
             if ( !( enumerable is null ) ) {
-                this.AddRange( items: enumerable );
+                this.AddRange( enumerable );
             }
         }
 
@@ -234,7 +228,7 @@ namespace LibrainianCore.Collections.Lists {
 
             this.CatchUp();
 
-            if ( this.ReaderWriter.TryEnterUpgradeableReadLock( timeout: this.TimeoutForReads ) ) {
+            if ( this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
                 try {
                     return func();
                 }
@@ -289,7 +283,7 @@ namespace LibrainianCore.Collections.Lists {
                 }
             }
 
-            if ( this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
+            if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
                 try {
                     this.ThrowIfDisposed();
 
@@ -312,7 +306,7 @@ namespace LibrainianCore.Collections.Lists {
                 return default;
             }
 
-            return ReferenceEquals( left, right ) || left.SequenceEqual( second: right );
+            return ReferenceEquals( left, right ) || left.SequenceEqual( right );
         }
 
         /// <summary>
@@ -321,7 +315,7 @@ namespace LibrainianCore.Collections.Lists {
         ///     to the end of this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         /// <param name="item"></param>
-        public void Add( T item ) => this.Add( item: item, afterAdd: null );
+        public void Add( T item ) => this.Add( item, null );
 
         /// <summary>
         ///     <para>Add the
@@ -340,10 +334,10 @@ namespace LibrainianCore.Collections.Lists {
                 return default;
             }
 
-            return this.Write( func: () => {
+            return this.Write( () => {
                 try {
                     this.ThrowIfDisposed();
-                    this.TheList.Add( item: item );
+                    this.TheList.Add( item );
 
                     return true;
                 }
@@ -354,14 +348,14 @@ namespace LibrainianCore.Collections.Lists {
             } );
         }
 
-        public Boolean AddAndWait( [CanBeNull] T item ) => this.Add( item: item, afterAdd: this.CatchUp );
+        public Boolean AddAndWait( [CanBeNull] T item ) => this.Add( item, this.CatchUp );
 
         /// <summary>Creates a hot task that needs to be awaited.</summary>
         /// <param name="item"></param>
         /// <param name="afterAdd"></param>
         /// <returns></returns>
         [NotNull]
-        public Task<Boolean> AddAsync( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => Task.Run( function: () => this.TryAdd( item: item, afterAdd: afterAdd ) );
+        public Task<Boolean> AddAsync( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
 
         /// <summary>Add a collection of items.</summary>
         /// <param name="items">          </param>
@@ -384,11 +378,11 @@ namespace LibrainianCore.Collections.Lists {
 
             try {
                 if ( useParallelism.Any() ) {
-                    items.AsParallel().WithDegreeOfParallelism( degreeOfParallelism: useParallelism ).ForAll( item => this.TryAdd( item: item, afterAdd: afterEachAdd ) );
+                    items.AsParallel().WithDegreeOfParallelism( useParallelism ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
                 }
                 else {
                     foreach ( var item in items ) {
-                        this.TryAdd( item: item, afterAdd: afterEachAdd );
+                        this.TryAdd( item, afterEachAdd );
                     }
                 }
             }
@@ -412,7 +406,7 @@ namespace LibrainianCore.Collections.Lists {
                 this.ThrowIfDisposed();
 
                 if ( items != null ) {
-                    this.AddRange( items: items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded, useParallelism: useParallelism );
+                    this.AddRange( items, afterEachAdd: afterEachAdd, afterRangeAdded: afterRangeAdded, useParallelism: useParallelism );
                 }
             }, token );
 
@@ -431,13 +425,13 @@ namespace LibrainianCore.Collections.Lists {
 
             this.ThrowIfDisposed();
 
-            if ( this.ReaderWriter.TryEnterWriteLock( timeout: this.TimeoutForWrites ) ) {
+            if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
                 try {
                     this.ThrowIfDisposed();
 
-                    while ( this.InputBuffer.TryDequeue( result: out var item ) ) {
+                    while ( this.InputBuffer.TryDequeue( out var item ) ) {
                         this.ThrowIfDisposed();
-                        this.TheList.Add( item: item );
+                        this.TheList.Add( item );
                         this.AnItemHasBeenAdded();
                     }
                 }
@@ -455,7 +449,7 @@ namespace LibrainianCore.Collections.Lists {
                 return;
             }
 
-            this.Write( func: () => {
+            this.Write( () => {
                 this.TheList.Clear();
                 this.ResetCount();
 
@@ -468,7 +462,7 @@ namespace LibrainianCore.Collections.Lists {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        public IList<T> Clone() => this.Read( func: () => this.TheList ) ?? throw new InvalidOperationException( "Possible timeout when waiting to read list." );
+        public IList<T> Clone() => this.Read( () => this.TheList );
 
         /// <summary>Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
         /// <para>Blocking.</para>
@@ -488,7 +482,7 @@ namespace LibrainianCore.Collections.Lists {
         /// <summary>
         ///     <para>Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this moment in time.</para>
         /// </summary>
-        public Boolean Contains( T item ) => this.Read( func: () => this.TheList.Contains( item: item ) );
+        public Boolean Contains( T item ) => this.Read( () => this.TheList.Contains( item ) );
 
         /// <summary>Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified index in the target array.</summary>
         /// <param name="array">     </param>
@@ -498,8 +492,8 @@ namespace LibrainianCore.Collections.Lists {
                 throw new ArgumentNullException( nameof( array ) );
             }
 
-            this.Read( func: () => {
-                this.TheList.CopyTo( array: array, arrayIndex: arrayIndex );
+            this.Read( () => {
+                this.TheList.CopyTo( array, arrayIndex );
 
                 return true;
             } );
@@ -523,14 +517,15 @@ namespace LibrainianCore.Collections.Lists {
         ///     <para>Returns an enumerator that iterates through a <see cref="Clone" /> of this <see cref="ConcurrentList{TType}" /> .</para>
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+        public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
         /// <summary>
         ///     <para>Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the zero-based index, or -1 if not found.</para>
         /// </summary>
         /// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
-        public Int32 IndexOf( T item ) => this.Read( func: () => this.TheList.IndexOf( item: item ) );
+        public Int32 IndexOf( T item ) => this.Read( () => this.TheList.IndexOf( item ) );
 
+        //is this the proper way?
         /// <summary>
         ///     <para>Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the specified <paramref name="index" />.</para>
         /// </summary>
@@ -543,9 +538,9 @@ namespace LibrainianCore.Collections.Lists {
                 return;
             }
 
-            this.Write( func: () => {
+            this.Write( () => {
                 try {
-                    this.TheList.Insert( index: index, item: item );
+                    this.TheList.Insert( index, item );
                     this.AnItemHasBeenAdded();
 
                     return true;
@@ -563,7 +558,7 @@ namespace LibrainianCore.Collections.Lists {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean Remove( T item ) => this.Remove( item: item, afterRemoval: default );
+        public Boolean Remove( T item ) => this.Remove( item, default );
 
         /// <summary>
         ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
@@ -580,8 +575,8 @@ namespace LibrainianCore.Collections.Lists {
 
             this.ThrowIfDisposed();
 
-            return this.Write( func: () => {
-                var result = this.TheList.Remove( item: item );
+            return this.Write( () => {
+                var result = this.TheList.Remove( item );
 
                 if ( result ) {
                     this.AnItemHasBeenRemoved( afterRemoval );
@@ -608,10 +603,10 @@ namespace LibrainianCore.Collections.Lists {
                 return;
             }
 
-            this.Write( func: () => {
+            this.Write( () => {
                 try {
                     if ( index <= this.TheList.Count ) {
-                        this.TheList.RemoveAt( index: index );
+                        this.TheList.RemoveAt( index );
                         this.AnItemHasBeenRemoved();
 
                         return true;
@@ -625,25 +620,30 @@ namespace LibrainianCore.Collections.Lists {
             } );
         }
 
+        /// <summary>Returns a string that represents the current object.</summary>
+        /// <returns>A string that represents the current object.</returns>
+        [NotNull]
+        public override String ToString() => $"{this.Take( 30 ).ToStrings( this.Count > 30 ? "..." : String.Empty )}";
+
         /// <summary>The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.</summary>
         public void TrimExcess() =>
-            this.Write( func: () => {
+            this.Write( () => {
                 this.TheList.TrimExcess();
 
                 return true;
             } );
 
-        public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => this.Add( item: item, afterAdd: afterAdd );
+        public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action afterAdd = null ) => this.Add( item, afterAdd );
 
         public Boolean TryCatchup( TimeSpan timeout ) {
             if ( !this.AnyWritesPending() ) {
                 return true;
             }
 
-            if ( this.ReaderWriter.TryEnterWriteLock( timeout: timeout ) ) {
+            if ( this.ReaderWriter.TryEnterWriteLock( timeout ) ) {
                 try {
-                    while ( this.InputBuffer.TryDequeue( result: out var bob ) ) {
-                        this.TheList.Add( item: bob );
+                    while ( this.InputBuffer.TryDequeue( out var bob ) ) {
+                        this.TheList.Add( bob );
                         this.AnItemHasBeenAdded();
                     }
 
@@ -668,14 +668,14 @@ namespace LibrainianCore.Collections.Lists {
                 return default;
             }
 
-            return this.Read( func: () => {
+            return this.Read( () => {
                 if ( index >= this.TheList.Count ) {
                     this.ThrowOutOfRange( index );
 
                     return default;
                 }
 
-                var result = this.TheList[ index: index ];
+                var result = this.TheList[ index ];
                 afterGet?.Invoke( result );
 
                 return true;

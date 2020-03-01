@@ -53,12 +53,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Parsing;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
     using DirectoryInfo = Pri.LongPath.DirectoryInfo;
     using FileInfo = Pri.LongPath.FileInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Directory = Pri.LongPath.Directory;
-    using File = Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>
@@ -80,17 +77,17 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
         public static readonly Unique Empty = new Unique();
 
-        /// <summary>Just an easier to use mnemonic.</summary>
-        [NotNull]
-        [JsonIgnore]
-        public String AbsolutePath => this.U.AbsolutePath;
-
         /// <summary>The location/directory/path/file/name/whatever.ext
         /// <para>Has been filtered through Uri.AbsoluteUri already.</para>
         /// </summary>
         [NotNull]
         [JsonIgnore]
         public Uri U => this.u;
+
+        /// <summary>Just an easier to use mnemonic.</summary>
+        [NotNull]
+        [JsonIgnore]
+        public String AbsolutePath => this.U.AbsolutePath;
 
         /// <summary>What effect will this have down the road?</summary>
         private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -135,7 +132,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public static Boolean TryCreate( TrimmedString location, [NotNull] out Unique unique ) {
             if ( !location.IsEmpty() ) {
                 try {
-                    unique = new Unique( location: location );
+                    unique = new Unique( location );
 
                     return true;
                 }
@@ -161,7 +158,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             if ( uri.IsAbsoluteUri ) {
-                unique = new Unique( location: uri.AbsoluteUri );
+                unique = new Unique( uri.AbsoluteUri );
 
                 return true;
             }
@@ -285,7 +282,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         public Boolean Equals( Unique other ) => Equals( this, other );
 
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Unique );
+        public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
 
         public override Int32 GetHashCode() => this.U.GetHashCode();
 
@@ -330,7 +327,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public DirectoryInfo ToDirectoryInfo() {
+        public DirectoryInfo? ToDirectoryInfo() {
             try {
                 if ( this.U.IsFile ) {
                     return new DirectoryInfo( this.AbsolutePath );
@@ -344,7 +341,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public FileInfo ToFileInfo() {
+        public FileInfo? ToFileInfo() {
             try {
                 if ( this.U.IsFile ) {
                     return new FileInfo( this.AbsolutePath );
@@ -359,6 +356,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() => $"{this.AbsolutePath}";
     }
 }

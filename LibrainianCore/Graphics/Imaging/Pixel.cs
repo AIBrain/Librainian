@@ -143,6 +143,7 @@ namespace LibrainianCore.Graphics.Imaging {
         [Pure]
         public override Int32 GetHashCode() => this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
 
+        [NotNull]
         public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
         [CanBeNull]

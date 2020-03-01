@@ -65,7 +65,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
             [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
             using ( var reader = new StreamReader( source.FullPath ) ) {
-                using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
+                await using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
                     Int32 numRead;
 
                     while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
@@ -208,37 +208,31 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return default;
             }
 
-            using ( var stream = new FileStream( path: document.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+            await using ( var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan ) ) {
 
                 if ( !stream.CanRead ) {
-                    throw new NotSupportedException( message: $"Cannot read from file stream on {document.FullPath}" );
+                    throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
                 }
 
                 var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                using var buffered = new BufferedStream( stream: stream );
+                await using var buffered = new BufferedStream( stream );
 
-                var bytesRead = 0;
+                Int32 bytesRead;
 
                 do {
-                    var readTask = buffered.ReadAsync( buffer, offset: 0, count: buffer.Length );
+                    var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
 
-                    if ( readTask != null ) {
-                        bytesRead = await readTask.ConfigureAwait( false );
+                    bytesRead = await readTask.ConfigureAwait( false );
 
-                        if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-                            return default;
-                        }
+                    if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+                        return default;
                     }
                 } while ( bytesRead.Any() );
 
                 return true;
             }
         }
-
-
     }
-
-
 }

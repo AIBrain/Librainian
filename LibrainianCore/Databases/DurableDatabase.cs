@@ -44,14 +44,14 @@ namespace LibrainianCore.Databases {
     using System.Data;
     using System.Data.Common;
     using System.Data.SqlClient;
-    
+
     using System.Threading;
     using System.Threading.Tasks;
     using Extensions;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
-    
+
     using Parsing;
     using Utilities;
 
@@ -72,8 +72,8 @@ namespace LibrainianCore.Databases {
         /// <param name="retries">         </param>
         /// <exception cref="InvalidOperationException"></exception>
         public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
-            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( connectionString ) );
+            if ( String.IsNullOrWhiteSpace( connectionString ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
             }
 
             this.Retries = retries;
@@ -117,7 +117,7 @@ namespace LibrainianCore.Databases {
         /// <summary>Return true if connected.</summary>
         /// <param name="sender"></param>
         /// <returns></returns>
-        private Boolean ReOpenConnection( [CanBeNull] Object sender ) {
+        private Boolean ReOpenConnection( [CanBeNull] Object? sender ) {
             if ( this.CancelConnection.IsCancellationRequested ) {
                 return default;
             }
@@ -153,7 +153,7 @@ namespace LibrainianCore.Databases {
             return default;
         }
 
-        private void SqlConnection_StateChange( [CanBeNull] Object sender, [NotNull] StateChangeEventArgs e ) {
+        private void SqlConnection_StateChange( [CanBeNull] Object? sender, [NotNull] StateChangeEventArgs e ) {
             switch ( e.CurrentState ) {
                 case ConnectionState.Closed:
                     this.ReOpenConnection( sender );
@@ -323,7 +323,7 @@ namespace LibrainianCore.Databases {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                await using ( var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = commandType
                 } ) {
                     if ( null != parameters ) {
@@ -445,14 +445,14 @@ namespace LibrainianCore.Databases {
             try {
                 DataTable table;
 
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                await using ( var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = commandType
                 } ) {
                     if ( null != parameters ) {
                         command.Parameters.AddRange( parameters );
                     }
 
-                    using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+                    await using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
                     table = reader.ToDataTable();
                 }
 
@@ -479,7 +479,7 @@ namespace LibrainianCore.Databases {
             var table = new DataTable();
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                await using ( var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = commandType
                 } ) {
                     if ( null != parameters ) {
@@ -488,7 +488,7 @@ namespace LibrainianCore.Databases {
 
                     table.BeginLoadData();
 
-                    using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
+                    await using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
                         table.Load( reader );
                     }
 
@@ -569,7 +569,7 @@ namespace LibrainianCore.Databases {
             }
 
             try {
-                using ( var command = new SqlCommand( query, this.OpenConnection() ) {
+                await using ( var command = new SqlCommand( query, this.OpenConnection() ) {
                     CommandType = commandType,
                     CommandTimeout = 0
                 } ) {

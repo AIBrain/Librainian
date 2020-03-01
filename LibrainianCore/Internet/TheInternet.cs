@@ -83,7 +83,7 @@ namespace LibrainianCore.Internet {
                 };
 
                 webclient.DownloadProgressChanged += ( sender, args ) => {
-                    var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+                    var progress = args.BytesReceived / ( Double ) args.TotalBytesToReceive;
                     reportProgress?.Report( progress );
                 };
 
@@ -124,8 +124,8 @@ namespace LibrainianCore.Internet {
                 throw new ArgumentNullException( nameof( locationClues ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( filename ) );
+            if ( String.IsNullOrWhiteSpace( filename ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
             }
 
             foreach ( var locationClue in locationClues ) {
@@ -138,5 +138,7 @@ namespace LibrainianCore.Internet {
                 yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
             }
         }
+
     }
+
 }

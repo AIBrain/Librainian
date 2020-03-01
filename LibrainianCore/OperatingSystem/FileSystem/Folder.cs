@@ -57,11 +57,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Pri.LongPath.Path;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
+
     // ReSharper restore RedundantUsingDirective
 
     public interface IFolder : IEquatable<IFolder> {
@@ -218,14 +219,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( String fullPath ) {
-            if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fullPath ) );
+            if ( String.IsNullOrWhiteSpace( fullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
             }
 
             fullPath = CleanPath( fullPath ); //replace any invalid path chars with a separator
 
-            if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fullPath ) );
+            if ( String.IsNullOrWhiteSpace( fullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
             }
 
             if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
@@ -269,7 +270,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [DebuggerStepThrough]
         public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, [NotNull] params String[] subFolders ) :
             this( Path.Combine( Environment.GetFolderPath( specialFolder ),
-                companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName)}." ),
+                companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName )}." ),
                 applicationName ?? throw new InvalidOperationException( $"Empty {nameof( applicationName )}." ),
                 subFolders.ToStrings( @"\" ) ) ) { }
 
@@ -597,7 +598,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
         public void OpenWithExplorer() {
-            using var _ = Windows.OpenWithExplorer( value: this.FullPath );
+            using var _ = Windows.OpenWithExplorer( this.FullPath );
         }
 
         public void Refresh() => this.Info.Refresh();

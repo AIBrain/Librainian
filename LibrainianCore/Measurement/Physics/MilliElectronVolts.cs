@@ -113,6 +113,7 @@ namespace LibrainianCore.Measurement.Physics {
 
         public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
 
+        [NotNull]
         public override String ToString() => $"{this.Value} meV";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );

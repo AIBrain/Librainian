@@ -60,15 +60,15 @@ namespace LibrainianCore.OperatingSystem {
 
         private const String PATH = "PATH";
 
-        [CanBeNull]
+        [NotNull]
         public static readonly Lazy<Document> CommandPrompt =
-            new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "cmd.exe" ) ), isThreadSafe: true );
+            new Lazy<Document>( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
-        [CanBeNull]
+        [NotNull]
         public static readonly Lazy<Document> IrfanView64 =
             new Lazy<Document>(
-                () => FindDocument( fullname: Path.Combine( path1: Environment.GetFolderPath( folder: Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\",
-                    path2: "i_view64.exe" ) ), isThreadSafe: true );
+                () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\",
+                    "i_view64.exe" ) ), true );
 
         public static readonly Char[] PathSeparator = {
             ';'
@@ -76,36 +76,40 @@ namespace LibrainianCore.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Document> PowerShell = new Lazy<Document>( () => {
-            var document = FindDocument( fullname: Path.Combine( path1: PowerShellFolder.Value.FullPath, path2: "powershell.exe" ) );
+            var document = FindDocument( Path.Combine( PowerShellFolder.Value.FullPath, "powershell.exe" ) );
 
             if ( null == document ) {
                 throw new FileNotFoundException( "Unable to locate powershell.exe." );
             }
 
             return document;
-        }, isThreadSafe: true );
+        }, true );
 
         [NotNull]
         public static readonly Lazy<Folder> PowerShellFolder = new Lazy<Folder>( () => {
-            var folder = FindFolder( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: @"WindowsPowerShell\v1.0" ) );
+            var folder = FindFolder( Path.Combine( WindowsSystem32Folder.Value.FullPath, @"WindowsPowerShell\v1.0" ) );
 
-            if ( null == folder ) {
+            if ( folder is null ) {
                 throw new DirectoryNotFoundException( "Unable to locate Windows PowerShell folder." );
             }
 
             return folder;
-        }, isThreadSafe: true );
+        }, true );
 
         [NotNull]
         public static readonly Lazy<Folder> WindowsFolder = new Lazy<Folder>( () => {
-            var folder = FindFolder( fullname: Environment.GetFolderPath( folder: Environment.SpecialFolder.Windows ) );
+            var folder = FindFolder( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) );
+
+            if ( folder is null ) {
+                throw new DirectoryNotFoundException( "Unable to locate Windows folder." );
+            }
 
             return folder;
-        }, isThreadSafe: true );
+        }, true );
 
         [NotNull]
         public static readonly Lazy<Folder> WindowsSystem32Folder =
-            new Lazy<Folder>( () => FindFolder( fullname: Path.Combine( path1: WindowsFolder.Value.FullPath, path2: "System32" ) ), isThreadSafe: true );
+            new Lazy<Folder>( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
 
         /// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
         /// <returns></returns>
@@ -126,16 +130,16 @@ namespace LibrainianCore.OperatingSystem {
                 return;
             }
 
-            var justpaths = currentPath.Split( separator: PathSeparator, options: StringSplitOptions.RemoveEmptyEntries ).ToHashSet();
+            var justpaths = currentPath.Split( PathSeparator, StringSplitOptions.RemoveEmptyEntries ).ToHashSet();
 
             if ( reportToConsole ) {
                 $"Found PATH list with {justpaths.Count} entries.".Info();
             }
 
-            var pathsData = new ConcurrentDictionary<String, Folder>( concurrencyLevel: Environment.ProcessorCount, capacity: justpaths.Count );
+            var pathsData = new ConcurrentDictionary<String, Folder>( Environment.ProcessorCount, justpaths.Count );
 
             foreach ( var s in justpaths ) {
-                pathsData[ s ] = new Folder( fullPath: s );
+                pathsData[ s ] = new Folder( s );
             }
 
             if ( reportToConsole ) {
@@ -164,30 +168,29 @@ namespace LibrainianCore.OperatingSystem {
                 "Applying new PATH entries...".Info();
             }
 
-            Environment.SetEnvironmentVariable( variable: PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
+            Environment.SetEnvironmentVariable( PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
         }
-
 
         [NotNull]
         public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String arguments ) =>
             Task.Run( () => {
                 try {
-                    if ( CommandPrompt != null ) {
-                        var proc = new ProcessStartInfo {
-                            UseShellExecute = false,
-                            WorkingDirectory = WindowsSystem32Folder.Value.FullPath,
-                            FileName = CommandPrompt.Value.FullPath,
-                            Verb = "runas", //demand elevated permissions
-                            Arguments = $"/C \"{arguments}\"",
-                            CreateNoWindow = false,
-                            ErrorDialog = true,
-                            WindowStyle = ProcessWindowStyle.Normal
-                        };
 
-                        $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Blue );
+                    var proc = new ProcessStartInfo {
+                        UseShellExecute = false,
+                        WorkingDirectory = WindowsSystem32Folder.Value.FullPath,
+                        FileName = CommandPrompt.Value.FullPath,
+                        Verb = "runas", //demand elevated permissions
+                        Arguments = $"/C \"{arguments}\"",
+                        CreateNoWindow = false,
+                        ErrorDialog = true,
+                        WindowStyle = ProcessWindowStyle.Normal
+                    };
 
-                        return Process.Start( startInfo: proc );
-                    }
+                    $"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
+
+                    return Process.Start( proc );
+
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -211,9 +214,9 @@ namespace LibrainianCore.OperatingSystem {
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running PowerShell command '{arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Green );
+                    $"Running PowerShell command '{arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Green );
 
-                    var process = Process.Start( startInfo: startInfo );
+                    var process = Process.Start( startInfo );
 
                     if ( null == process ) {
                         "failure.".Info();
@@ -221,7 +224,7 @@ namespace LibrainianCore.OperatingSystem {
                         return default;
                     }
 
-                    process.WaitForExit( milliseconds: ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
+                    process.WaitForExit( ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
                     "success.".Info();
 
                     return true;
@@ -236,11 +239,11 @@ namespace LibrainianCore.OperatingSystem {
         [NotNull]
         public static Task<Process> ExecuteProcessAsync( [NotNull] Document filename, [NotNull] Folder workingFolder, [CanBeNull] String arguments, Boolean elevate ) {
             if ( filename == null ) {
-                throw new ArgumentNullException( paramName: nameof( filename ) );
+                throw new ArgumentNullException( nameof( filename ) );
             }
 
             if ( workingFolder == null ) {
-                throw new ArgumentNullException( paramName: nameof( workingFolder ) );
+                throw new ArgumentNullException( nameof( workingFolder ) );
             }
 
             return Task.Run( () => {
@@ -256,9 +259,9 @@ namespace LibrainianCore.OperatingSystem {
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running process '{filename} {proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Blue );
+                    $"Running process '{filename} {proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
 
-                    return Process.Start( startInfo: proc );
+                    return Process.Start( proc );
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -269,7 +272,7 @@ namespace LibrainianCore.OperatingSystem {
         }
 
         [CanBeNull]
-        public static Document FindDocument( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
+        public static Document? FindDocument( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
             if ( !String.IsNullOrEmpty( okayMessage ) ) {
                 $"Finding {fullname}...".Info();
             }
@@ -288,7 +291,7 @@ namespace LibrainianCore.OperatingSystem {
         }
 
         [CanBeNull]
-        public static Folder FindFolder( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
+        public static Folder? FindFolder( [NotNull] String fullname, [CanBeNull] String okayMessage = null, [CanBeNull] String errorMessage = null ) {
             if ( String.IsNullOrWhiteSpace( fullname ) ) {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullname ) );
             }
@@ -297,7 +300,7 @@ namespace LibrainianCore.OperatingSystem {
                 $"Finding {fullname}...".Info();
             }
 
-            var mainFolder = new Folder( fullPath: fullname );
+            var mainFolder = new Folder( fullname );
 
             if ( !mainFolder.Exists() ) {
                 errorMessage.Error();
@@ -313,7 +316,7 @@ namespace LibrainianCore.OperatingSystem {
         }
 
         [NotNull]
-        public static String GetCurrentPATH() => Environment.GetEnvironmentVariable( variable: PATH, EnvironmentVariableTarget.Machine ) ?? String.Empty;
+        public static String GetCurrentPATH() => Environment.GetEnvironmentVariable( PATH, EnvironmentVariableTarget.Machine ) ?? String.Empty;
 
         public static Boolean IsServer() => GCSettings.IsServerGC;
 
@@ -321,10 +324,10 @@ namespace LibrainianCore.OperatingSystem {
 
         [NotNull]
         public static Task<Boolean> MirrorFolderStructureAsync( [NotNull] Folder folder, [NotNull] Folder baseFolder ) =>
-            ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
+            ExecutePowershellCommandAsync( $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
 
         [CanBeNull]
-        public static Process OpenWithExplorer( [CanBeNull] String value ) {
+        public static Process? OpenWithExplorer( [CanBeNull] String value ) {
             try {
 
                 //Verb = "runas", //demand elevated permissions
@@ -338,9 +341,9 @@ namespace LibrainianCore.OperatingSystem {
                     WindowStyle = ProcessWindowStyle.Normal
                 };
 
-                $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
+                $"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Cyan );
 
-                return Process.Start( startInfo: proc );
+                return Process.Start( proc );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -349,22 +352,19 @@ namespace LibrainianCore.OperatingSystem {
             return default;
         }
 
-
-
-
         [CanBeNull]
-        public static Task<Process> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
+        public static Task<Process?> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
             if ( inDocument == null ) {
-                throw new ArgumentNullException( paramName: nameof( inDocument ) );
+                throw new ArgumentNullException( nameof( inDocument ) );
             }
 
             if ( outDocument == null ) {
-                throw new ArgumentNullException( paramName: nameof( outDocument ) );
+                throw new ArgumentNullException( nameof( outDocument ) );
             }
 
             return Task.Run( () => {
 
-                if ( IrfanView64?.Value.Exists() != true ) {
+                if ( IrfanView64.Value?.Exists() != true ) {
                     return null;
                 }
 
@@ -385,7 +385,7 @@ namespace LibrainianCore.OperatingSystem {
 
                     $"Running irfanview command '{proc.Arguments}'...".Info();
 
-                    return Process.Start( startInfo: proc );
+                    return Process.Start( proc );
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -395,9 +395,7 @@ namespace LibrainianCore.OperatingSystem {
             } );
         }
 
-        
         public static void Yield() {
-            
 
             if ( Randem.NextBooleanFast() ) {
                 Thread.Yield();

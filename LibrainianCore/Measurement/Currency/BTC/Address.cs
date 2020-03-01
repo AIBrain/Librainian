@@ -167,6 +167,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         public override Int32 GetHashCode() => this.EitherHash.GetHashCode();
 
+        [NotNull]
         public override String ToString() {
             if ( this._address is null ) {
                 this.CalcBase58();

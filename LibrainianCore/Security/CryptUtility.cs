@@ -95,14 +95,14 @@ namespace LibrainianCore.Security {
             var keyStreams = new MemoryStream[ keys.Count ];
 
             for ( var n = 0; n < keys.Count; n++ ) {
-                keyStreams[ n ] = CreateKeyStream( keys[ index: n ] );
+                keyStreams[ n ] = CreateKeyStream( keys[ n ] );
             }
 
             //Buffer for the resulting stream
             var resultKeyStream = new MemoryStream();
 
             //Find length of longest stream
-            var maxLength = keyStreams.Select( selector: stream => stream.Length ).Concat( second: new Int64[] {
+            var maxLength = keyStreams.Select( stream => stream.Length ).Concat( new Int64[] {
                 0
             } ).Max();
 
@@ -136,11 +136,11 @@ namespace LibrainianCore.Security {
 
             //jump to reverse-read position and read from the end of the stream
             var keyPosition = keyStream.Position;
-            keyStream.Seek( offset: -keyPosition, origin: SeekOrigin.End );
+            keyStream.Seek( -keyPosition, SeekOrigin.End );
             var reverseKeyByte = ( Byte )keyStream.ReadByte();
 
             //jump back to normal read position
-            keyStream.Seek( offset: keyPosition, origin: SeekOrigin.Begin );
+            keyStream.Seek( keyPosition, SeekOrigin.Begin );
 
             return reverseKeyByte;
         }
@@ -167,17 +167,17 @@ namespace LibrainianCore.Security {
         private static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
             switch ( colorComponent ) {
                 case 0:
-                    pixelColor = Color.FromArgb( red: newValue, green: pixelColor.G, blue: pixelColor.B );
+                    pixelColor = Color.FromArgb( newValue, pixelColor.G, pixelColor.B );
 
                     break;
 
                 case 1:
-                    pixelColor = Color.FromArgb( red: pixelColor.R, green: newValue, blue: pixelColor.B );
+                    pixelColor = Color.FromArgb( pixelColor.R, newValue, pixelColor.B );
 
                     break;
 
                 case 2:
-                    pixelColor = Color.FromArgb( red: pixelColor.R, green: pixelColor.G, blue: newValue );
+                    pixelColor = Color.FromArgb( pixelColor.R, pixelColor.G, newValue );
 
                     break;
             }
@@ -188,7 +188,7 @@ namespace LibrainianCore.Security {
             var difference = desiredLength - color.Length;
 
             if ( difference > 0 ) {
-                color = new String( c: '0', count: difference ) + color;
+                color = new String( '0', difference ) + color;
             }
 
             return color;
@@ -199,7 +199,7 @@ namespace LibrainianCore.Security {
         /// <returns>The stream created from key and password</returns>
         [NotNull]
         public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
-            var fileStream = new FileStream( key.FileName, mode: FileMode.Open );
+            var fileStream = new FileStream( key.FileName, FileMode.Open );
             var resultStream = new MemoryStream();
             var passwordIndex = 0;
             Int32 currentByte;
@@ -207,7 +207,7 @@ namespace LibrainianCore.Security {
             while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
 
                 //combine the key-byte with the corresponding password-byte
-                currentByte ^= key.Password[ index: passwordIndex ];
+                currentByte ^= key.Password[ passwordIndex ];
 
                 //add the result to the key stream
                 resultStream.WriteByte( ( Byte )currentByte );
@@ -222,10 +222,9 @@ namespace LibrainianCore.Security {
 
             fileStream.Close();
 
-            resultStream.Seek( offset: 0, loc: SeekOrigin.Begin );
+            resultStream.Seek( 0, SeekOrigin.Begin );
 
             return resultStream;
         }
-
     }
 }

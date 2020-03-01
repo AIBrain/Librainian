@@ -172,6 +172,7 @@ namespace LibrainianCore.Measurement.Physics {
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+        [NotNull]
         public override String ToString() => $"{this.Value} u";
 
         public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );

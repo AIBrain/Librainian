@@ -62,7 +62,7 @@ namespace LibrainianCore.Internet {
         /// </summary>
         [NotNull]
         public static ThreadLocal<Lazy<WebClient>> ThreadSafeWebClients { get; } =
-            new ThreadLocal<Lazy<WebClient>>( valueFactory: () => new Lazy<WebClient>( valueFactory: () => new WebClient() ), trackAllValues: true );
+            new ThreadLocal<Lazy<WebClient>>( () => new Lazy<WebClient>( () => new WebClient() ), true );
 
         /// <summary>
         ///     <para>Register to cancel the <paramref name="client" /> with a <see cref="CancellationToken" />.</para>
@@ -93,8 +93,8 @@ namespace LibrainianCore.Internet {
                 throw new ArgumentNullException( nameof( webClient ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( address ) );
+            if ( String.IsNullOrWhiteSpace( address ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
             }
 
             return DownloadDataTaskAsync( webClient.Add( token ), new Uri( address ) );
@@ -139,8 +139,8 @@ namespace LibrainianCore.Internet {
                 throw new ArgumentNullException( nameof( address ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fileName ) );
+            if ( String.IsNullOrWhiteSpace( fileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
             }
 
             var tcs = new TaskCompletionSource<Object>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -197,7 +197,7 @@ namespace LibrainianCore.Internet {
             }
 
             if ( address.IsEmpty() ) {
-                throw new ArgumentEmptyException( message: "Value cannot be null or whitespace.", nameof( address ) );
+                throw new ArgumentEmptyException( "Value cannot be null or whitespace.", nameof( address ) );
             }
 
             return OpenReadTaskAsync( webClient, new Uri( address ) );
@@ -260,7 +260,7 @@ namespace LibrainianCore.Internet {
             }
 
             if ( method.IsEmpty() ) {
-                throw new ArgumentEmptyException( message: "Value cannot be empty.", nameof( method ) );
+                throw new ArgumentEmptyException( "Value cannot be empty.", nameof( method ) );
             }
 
             var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
@@ -328,19 +328,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] Byte[] data ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
             if ( data == null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            if ( String.IsNullOrWhiteSpace( address ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
             return UploadDataTask( webClient, new Uri( address ), method, data );
@@ -355,19 +355,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] Byte[] data ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             if ( data == null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
             // Create the task to be returned
@@ -403,19 +403,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String fileName ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            if ( String.IsNullOrWhiteSpace( address ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+            if ( String.IsNullOrWhiteSpace( fileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
             }
 
             return UploadFileTask( webClient, new Uri( address ), method, fileName );
@@ -430,19 +430,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String fileName ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fileName ) );
+            if ( String.IsNullOrWhiteSpace( fileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
             }
 
             // Create the task to be returned
@@ -478,19 +478,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String data ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
             if ( data == null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: address ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( address ) );
+            if ( String.IsNullOrWhiteSpace( address ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
             return UploadStringTask( webClient, new Uri( address ), method, data );
@@ -505,19 +505,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String data ) {
             if ( webClient == null ) {
-                throw new ArgumentNullException( paramName: nameof( webClient ) );
+                throw new ArgumentNullException( nameof( webClient ) );
             }
 
             if ( address == null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             if ( data == null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: method ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( method ) );
+            if ( String.IsNullOrWhiteSpace( method ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
             }
 
             // Create the task to be returned

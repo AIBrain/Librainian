@@ -94,6 +94,7 @@ namespace LibrainianCore.Persistence {
             this.U = u;
         }
 
+        [NotNull]
         public override String ToString() => this.K.Length > 42 ? $"{Strings.Left( this.K, 20 )}..{Strings.Right( this.K, 20 )}={this.U}" : $"{this.K}";
     }
 }

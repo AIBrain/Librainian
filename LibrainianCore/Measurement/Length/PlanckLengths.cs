@@ -42,6 +42,7 @@ namespace LibrainianCore.Measurement.Length {
     using System;
     using System.Diagnostics;
     using System.Numerics;
+    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary></summary>
@@ -51,13 +52,13 @@ namespace LibrainianCore.Measurement.Length {
     public struct PlanckLengths : IComparable<PlanckLengths> {
 
         /// <summary>One <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths One = new PlanckLengths( planckLengths: 1 );
+        public static readonly PlanckLengths One = new PlanckLengths( 1 );
 
         /// <summary>One <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths Two = new PlanckLengths( planckLengths: 2 );
+        public static readonly PlanckLengths Two = new PlanckLengths( 2 );
 
         /// <summary>Zero <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
+        public static readonly PlanckLengths Zero = new PlanckLengths( 0 );
 
         [JsonProperty]
         public BigInteger Value { get; }
@@ -71,6 +72,7 @@ namespace LibrainianCore.Measurement.Length {
         //}
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public override String ToString() => $"{this.Value}";
 
         //public static implicit operator Span( PlanckUnits milliseconds ) {

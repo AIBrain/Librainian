@@ -11,12 +11,6 @@
     using JetBrains.Annotations;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Path;
-    using DirectoryInfo = DirectoryInfo;
-    using FileInfo = FileInfo;
-    using FileSystemInfo = FileSystemInfo;
-    using Directory = Directory;
-    using File = File;
     // ReSharper restore RedundantUsingDirective
 
     public static class Common {
@@ -54,7 +48,7 @@
                 if ( !String.IsNullOrWhiteSpace( normalizedPath ) ) {
                     var errorCode = TryGetFileAttributes( normalizedPath, out var attributes );
 
-                    if ( errorCode == 0 && ( Int32 )attributes != NativeMethods.INVALID_FILE_ATTRIBUTES ) {
+                    if ( errorCode == 0 && ( Int32 ) attributes != NativeMethods.INVALID_FILE_ATTRIBUTES ) {
                         isDirectory = attributes.IsDirectory();
 
                         return true;
@@ -67,7 +61,7 @@
             return false;
         }
 
-        public static FileAttributes GetAttributes( [NotNull]  this String path ) {
+        public static FileAttributes GetAttributes( [NotNull] this String path ) {
             var normalizedPath = path.NormalizeLongPath();
 
             var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
@@ -79,7 +73,7 @@
             return fileAttributes;
         }
 
-        public static FileAttributes GetAttributes( [NotNull]  this String path, out Int32 errorCode ) {
+        public static FileAttributes GetAttributes( [NotNull] this String path, out Int32 errorCode ) {
             path = path.ThrowIfBlank();
 
             var normalizedPath = path.NormalizeLongPath();
@@ -121,7 +115,7 @@
             }
         }
 
-        public static FileAttributes GetFileAttributes( [NotNull]  this String path ) {
+        public static FileAttributes GetFileAttributes( [NotNull] this String path ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
@@ -134,32 +128,30 @@
             return fileAttributes;
         }
 
-        public static Boolean IsPathDots( [NotNull]  this String path ) {
+        public static Boolean IsPathDots( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             return path == "." || path == "..";
         }
 
-        public static Boolean IsPathUnc( [NotNull]  this String path ) {
+        public static Boolean IsPathUnc( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
-            if ( path.StartsWith( LongPath.Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
+            if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
                 return true;
             }
 
             return Uri.TryCreate( path.ThrowIfBlank(), UriKind.Absolute, out var uri ) && uri.IsUnc;
         }
 
-        /// <summary>
-        ///     Capture the <see cref="Uri" /> from <paramref name="path" />
-        /// </summary>
+        /// <summary>Capture the <see cref="Uri" /> from <paramref name="path" /></summary>
         /// <param name="path"></param>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public static Boolean IsPathUnc( [NotNull]  this String path, [CanBeNull] out Uri uri ) {
+        public static Boolean IsPathUnc( [NotNull] this String path, [CanBeNull] out Uri uri ) {
             path = path.ThrowIfBlank();
 
-            if ( path.StartsWith( LongPath.Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
+            if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
                 uri = null;
 
                 return true;
@@ -172,7 +164,7 @@
         public static String NormalizeSearchPattern( [CanBeNull] [NotNull] this String searchPattern ) =>
             String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
 
-        public static void SetAttributes( [NotNull]  this String path, FileAttributes fileAttributes ) {
+        public static void SetAttributes( [NotNull] this String path, FileAttributes fileAttributes ) {
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
             if ( !NativeMethods.SetFileAttributes( normalizedPath, fileAttributes ) ) {
@@ -180,18 +172,17 @@
             }
         }
 
-        public static Int32 SetSecurityInfo( ResourceType type, [NotNull] String name, SecurityInfos securityInformation,
-            [CanBeNull] SecurityIdentifier owner, [CanBeNull] SecurityIdentifier group, [CanBeNull] GenericAcl sacl, [CanBeNull] GenericAcl dacl ) {
+        public static Int32 SetSecurityInfo( ResourceType type, [NotNull] String name, SecurityInfos securityInformation, [CanBeNull] SecurityIdentifier owner,
+            [CanBeNull] SecurityIdentifier group, [CanBeNull] GenericAcl sacl, [CanBeNull] GenericAcl dacl ) {
 
             name = name.ThrowIfBlank();
 
-            if ( !Enum.IsDefined( enumType: typeof( ResourceType ), type ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( type ), invalidValue: ( Int32 )type, enumClass: typeof( ResourceType ) );
+            if ( !Enum.IsDefined( typeof( ResourceType ), type ) ) {
+                throw new InvalidEnumArgumentException( nameof( type ), ( Int32 ) type, typeof( ResourceType ) );
             }
 
-            if ( !Enum.IsDefined( enumType: typeof( SecurityInfos ), securityInformation ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( securityInformation ), invalidValue: ( Int32 )securityInformation,
-                    enumClass: typeof( SecurityInfos ) );
+            if ( !Enum.IsDefined( typeof( SecurityInfos ), securityInformation ) ) {
+                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 ) securityInformation, typeof( SecurityInfos ) );
             }
 
             Int32 errorCode;
@@ -250,17 +241,15 @@
                     }
                 }
 
-                errorCode = ( Int32 )NativeMethods.SetSecurityInfoByName( name, ( UInt32 )type, ( UInt32 )securityInformation, OwnerBinary, GroupBinary, DaclBinary,
+                errorCode = ( Int32 ) NativeMethods.SetSecurityInfoByName( name, ( UInt32 ) type, ( UInt32 ) securityInformation, OwnerBinary, GroupBinary, DaclBinary,
                     SaclBinary );
 
                 switch ( errorCode ) {
                     case NativeMethods.ERROR_NOT_ALL_ASSIGNED:
                     case NativeMethods.ERROR_PRIVILEGE_NOT_HELD:
-
                         throw new PrivilegeNotHeldException( Privilege.Security );
                     case NativeMethods.ERROR_ACCESS_DENIED:
                     case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
-
                         throw new UnauthorizedAccessException();
                 }
 
@@ -290,9 +279,7 @@
             return errorCode;
         }
 
-        /// <summary>
-        /// Returns the trimmed string or throws <see cref="ArgumentNullException"/> if null, whitespace, or empty.
-        /// </summary>
+        /// <summary>Returns the trimmed string or throws <see cref="ArgumentNullException" /> if null, whitespace, or empty.</summary>
         /// <param name="path"></param>
         /// <exception cref="ArgumentNullException">Gets thrown if the <paramref name="path" /> is null, whitespace, or empty.</exception>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -300,7 +287,7 @@
         [Pure]
         public static String ThrowIfBlank( this String path ) {
             if ( String.IsNullOrWhiteSpace( path = path?.Trim() ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return path;
@@ -321,26 +308,23 @@
                 switch ( errorCode ) {
                     case NativeMethods.ERROR_NOT_ALL_ASSIGNED:
                     case NativeMethods.ERROR_PRIVILEGE_NOT_HELD:
-
                         throw new PrivilegeNotHeldException( "SeSecurityPrivilege" );
                     case NativeMethods.ERROR_ACCESS_DENIED:
                     case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
                     case NativeMethods.ERROR_LOGON_FAILURE:
-
                         throw new UnauthorizedAccessException();
                     case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
                     case NativeMethods.ERROR_BAD_NETPATH:
                     case NativeMethods.ERROR_NETNAME_DELETED:
                     default:
-
                         throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
                 }
             }
         }
 
         public static void ThrowIOError( Int32 errorCode, [NotNull] String maybeFullPath ) {
-            if ( String.IsNullOrWhiteSpace( value: maybeFullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( maybeFullPath ) );
+            if ( String.IsNullOrWhiteSpace( maybeFullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( maybeFullPath ) );
             }
 
             // This doesn't have to be perfect, but is a perf optimization.
@@ -434,7 +418,8 @@
             return securityInfos;
         }
 
-        public static Int32 TryGetDirectoryAttributes( [NotNull]  this String normalizedPath, out FileAttributes attributes ) => TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
+        public static Int32 TryGetDirectoryAttributes( [NotNull] this String normalizedPath, out FileAttributes attributes ) =>
+            TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
 
         public static Int32 TryGetFileAttributes( [NotNull] String normalizedPath, out FileAttributes attributes ) {
 
@@ -454,9 +439,11 @@
                 NativeMethods.SetErrorMode( errorMode );
             }
 
-            attributes = ( FileAttributes )NativeMethods.INVALID_FILE_ATTRIBUTES;
+            attributes = ( FileAttributes ) NativeMethods.INVALID_FILE_ATTRIBUTES;
 
             return Marshal.GetLastWin32Error();
         }
+
     }
+
 }

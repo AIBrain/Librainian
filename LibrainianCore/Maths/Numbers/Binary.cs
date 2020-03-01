@@ -145,6 +145,7 @@ namespace LibrainianCore.Maths.Numbers {
 
         public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
 
+        [NotNull]
         public override String ToString() {
             var stringBuilder = new StringBuilder( this.Length );
 

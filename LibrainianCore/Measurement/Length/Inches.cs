@@ -51,10 +51,10 @@ namespace LibrainianCore.Measurement.Length {
         //public static readonly Inches MinValue = new Inches( inches: Decimal.MinValue );
 
         /// <summary>One <see cref="Inches" /> .</summary>
-        public static readonly Inches One = new Inches( inches: 1 );
+        public static readonly Inches One = new Inches( 1 );
 
         /// <summary>Two <see cref="Inches" /> .</summary>
-        public static readonly Inches Two = new Inches( inches: 2 );
+        public static readonly Inches Two = new Inches( 2 );
 
         [JsonProperty]
         public readonly Rational Value;

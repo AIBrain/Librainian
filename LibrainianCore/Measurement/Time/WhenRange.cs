@@ -39,7 +39,6 @@
 
 namespace LibrainianCore.Measurement.Time {
 
-    using JetBrains.Annotations;
     using Newtonsoft.Json;
 
     /// <summary>Represents a <see cref="UniversalDateTime" /> range with minimum and maximum values.</summary>
@@ -58,10 +57,10 @@ namespace LibrainianCore.Measurement.Time {
         [JsonProperty]
         public UniversalDateTime Min;
 
-        /// <summary>Initializes a new instance of the <see cref="WhenRange" /> class</summary>
+        /// <summary>Initializes a new instance of the <see cref="WhenRange" /> struct</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
-        public WhenRange( [CanBeNull] UniversalDateTime min, [CanBeNull] UniversalDateTime max ) {
+        public WhenRange( UniversalDateTime min, UniversalDateTime max ) {
             if ( min < max ) {
                 this.Min = min;
                 this.Max = max;
@@ -72,7 +71,7 @@ namespace LibrainianCore.Measurement.Time {
             }
 
             var δ = this.Max.Value - this.Min.Value;
-            this.Length = new SpanOfTime( planckTimes: δ );
+            this.Length = new SpanOfTime( δ );
         }
     }
 }

@@ -146,7 +146,6 @@ namespace LibrainianCore.Internet {
             return networkComputers;
         }
 
-
         [NotNull]
         public static IEnumerable<NativeMethods.ServerInfo101> GetServerListAlt( NativeMethods.Sv101Types serverType ) {
             Int32 entriesread = 0, totalentries = 0;
@@ -156,8 +155,8 @@ namespace LibrainianCore.Internet {
 
                 // Buffer to store the available servers Filled by the NetServerEnum function
 
-                var ret = NativeMethods.NetServerEnum( servername: null, level: 101, bufptr: out var buf, prefmaxlen: -1, entriesread: ref entriesread,
-                    totalentries: ref totalentries, servertype: serverType, domain: null, resumeHandle: IntPtr.Zero );
+                var ret = NativeMethods.NetServerEnum( null, 101, out var buf, -1, ref entriesread,
+                    ref totalentries, serverType, null, IntPtr.Zero );
 
                 // if the function returned any data, fill the tree view
                 if ( ret == NativeMethods.ErrorSuccess || ret == NativeMethods.ErrorMoreData || entriesread > 0 ) {

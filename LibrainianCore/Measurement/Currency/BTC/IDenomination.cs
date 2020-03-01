@@ -45,12 +45,14 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         using System;
         using System.Diagnostics;
+        using JetBrains.Annotations;
 
         [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct Btc : ICoin {
 
             public Decimal FaceValue => 1.00M;
 
+            [NotNull]
             public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
@@ -59,6 +61,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
             public Decimal FaceValue => 0.001M;
 
+            [NotNull]
             public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
@@ -67,6 +70,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
             public Decimal FaceValue => 0.00000001M;
 
+            [NotNull]
             public override String ToString() => $"฿{this.FaceValue:f8}";
         }
 
@@ -75,6 +79,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
             public Decimal FaceValue => 0.000001M;
 
+            [NotNull]
             public override String ToString() => $"฿{this.FaceValue:f8}";
         }
     }

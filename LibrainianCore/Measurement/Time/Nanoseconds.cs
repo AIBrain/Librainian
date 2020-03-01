@@ -43,7 +43,6 @@ namespace LibrainianCore.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
-    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -52,7 +51,7 @@ namespace LibrainianCore.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public class Nanoseconds : IComparable<Nanoseconds>, IQuantityOfTime {
+    public struct Nanoseconds : IComparable<Nanoseconds>, IQuantityOfTime {
 
         /// <summary>1000</summary>
         public const UInt16 InOneMicrosecond = 1000;
@@ -110,13 +109,10 @@ namespace LibrainianCore.Measurement.Time {
 
         public Nanoseconds( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Nanoseconds Combine( [CanBeNull] Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
+        public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 
-        [NotNull]
         public static Nanoseconds Combine( Nanoseconds left, Rational nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
-        [NotNull]
         public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
 
         /// <summary>
@@ -127,48 +123,39 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         public static Boolean Equals( Nanoseconds left, Nanoseconds right ) => left.Value == right.Value;
 
-        [CanBeNull]
         public static implicit operator Microseconds( Nanoseconds nanoseconds ) => nanoseconds.ToMicroseconds();
 
-        [CanBeNull]
         public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [CanBeNull] Nanoseconds nanoseconds ) => new SpanOfTime( nanoseconds: nanoseconds );
+        public static implicit operator SpanOfTime( Nanoseconds nanoseconds ) => new SpanOfTime( nanoseconds:nanoseconds );
 
-        [NotNull]
         public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
 
-        [CanBeNull]
-        public static Nanoseconds operator -( [CanBeNull] Nanoseconds left, [CanBeNull] Nanoseconds right ) => Combine( left, -right );
+        public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );
 
-        [NotNull]
-        public static Nanoseconds operator -( [CanBeNull] Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
+        public static Nanoseconds operator -( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
 
-        public static Boolean operator !=( [CanBeNull] Nanoseconds left, [CanBeNull] Nanoseconds right ) => !Equals( left, right );
+        public static Boolean operator !=( Nanoseconds left, Nanoseconds right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static Nanoseconds operator +( [CanBeNull] Nanoseconds left, [CanBeNull] Nanoseconds right ) => Combine( left, right );
+        public static Nanoseconds operator +( Nanoseconds left, Nanoseconds right ) => Combine( left, right );
 
-        [NotNull]
-        public static Nanoseconds operator +( [CanBeNull] Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
+        public static Nanoseconds operator +( Nanoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
 
-        [NotNull]
-        public static Nanoseconds operator +( [CanBeNull] Nanoseconds left, BigInteger nanoseconds ) => Combine( left, nanoseconds );
+        public static Nanoseconds operator +( Nanoseconds left, BigInteger nanoseconds ) => Combine( left, nanoseconds );
 
         public static Boolean operator <( Nanoseconds left, Nanoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Nanoseconds left, [CanBeNull] Microseconds right ) => ( Microseconds )left < right;
+        public static Boolean operator <( Nanoseconds left, Microseconds right ) => ( Microseconds )left < right;
 
-        public static Boolean operator ==( [CanBeNull] Nanoseconds left, [CanBeNull] Nanoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( Nanoseconds left, Nanoseconds right ) => Equals( left, right );
 
         public static Boolean operator >( Nanoseconds left, Nanoseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator >( [CanBeNull] Nanoseconds left, [CanBeNull] Microseconds right ) => ( Microseconds )left > right;
+        public static Boolean operator >( Nanoseconds left, Microseconds right ) => ( Microseconds )left > right;
 
         public Int32 CompareTo( Nanoseconds other ) => this.Value.CompareTo( other.Value );
 
-        public Boolean Equals( [CanBeNull] Nanoseconds other ) => Equals( this, other );
+        public Boolean Equals( Nanoseconds other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
@@ -180,10 +167,8 @@ namespace LibrainianCore.Measurement.Time {
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Microseconds ToMicroseconds() => new Microseconds( this.Value / InOneMicrosecond );
 
-        [NotNull]
         public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneNanosecond * this.Value );

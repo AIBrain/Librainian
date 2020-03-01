@@ -45,14 +45,13 @@ namespace LibrainianCore.Internet.RandomOrg {
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
-    using Extensions;
     using JetBrains.Annotations;
     using Measurement.Time;
     using Parsing;
 
     public static class RandomDotOrg {
 
-        internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( valueFactory: () => new IntegerGenerator( 1, CancellationTokenSource.Token ) );
+        internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( () => new IntegerGenerator( 1, CancellationTokenSource.Token ) );
 
         public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
@@ -60,18 +59,18 @@ namespace LibrainianCore.Internet.RandomOrg {
         public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
 
             if ( maxValue < minValue ) {
-                CommonExtensions.Swap( ref minValue, ref maxValue );
+                Common.Swap( ref minValue, ref maxValue );
             }
 
-            if ( maxValue - minValue + 1 > Math.Pow( x: 10, y: 3 ) ) {
+            if ( maxValue - minValue + 1 > Math.Pow( 10, 3 ) ) {
                 throw new ArgumentException( "Range requested cannot be larger than 10,000" );
             }
 
-            if ( minValue < -Math.Pow( x: 10, y: 8 ) || minValue > Math.Pow( x: 10, y: 8 ) ) {
+            if ( minValue < -Math.Pow( 10, 8 ) || minValue > Math.Pow( 10, 8 ) ) {
                 throw new ArgumentException( "Value of min must be between -1e9 and 1e9", nameof( minValue ) );
             }
 
-            if ( maxValue < -Math.Pow( x: 10, y: 8 ) || maxValue > Math.Pow( x: 10, y: 8 ) ) {
+            if ( maxValue < -Math.Pow( 10, 8 ) || maxValue > Math.Pow( 10, 8 ) ) {
                 throw new ArgumentException( "Value of max must be between -1e9 and 1e9", nameof( maxValue ) );
             }
 
@@ -103,9 +102,7 @@ namespace LibrainianCore.Internet.RandomOrg {
 
             private List<Int32> Ints { get; } = new List<Int32>();
 
-            public IntegerGenerator( CancellationToken token ) {
-                this.Init( NumMax, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
-            }
+            public IntegerGenerator( CancellationToken token ) => this.Init( NumMax, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
 
             public IntegerGenerator( Int32 num, CancellationToken token ) => this.Init( num, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
 

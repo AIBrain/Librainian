@@ -45,16 +45,19 @@ namespace LibrainianCore.Persistence {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Measurement.Time;
-    using Utilities;
     using Threading;
+    using Utilities;
 
     public sealed class DeserializeReportStats : ABetterClassDispose {
 
-        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( trackAllValues: true );
+        [NotNull]
+        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( true );
 
+        [NotNull]
         private Action<DeserializeReportStats> Handler { get; }
 
-        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( trackAllValues: true );
+        [NotNull]
+        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( true );
 
         public Boolean Enabled { get; set; }
 
@@ -80,13 +83,7 @@ namespace LibrainianCore.Persistence {
                 return;
             }
 
-            var handler = this.Handler;
-
-            if ( handler is null ) {
-                return;
-            }
-
-            handler( this );
+            this.Handler( this );
 
             if ( this.Enabled ) {
                 await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?

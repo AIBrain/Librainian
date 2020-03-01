@@ -41,6 +41,7 @@ namespace LibrainianCore.Measurement {
 
     using System;
     using System.Diagnostics;
+    using JetBrains.Annotations;
     using Time;
 
     /// <summary>Represents the result of a benchmarking session.</summary>
@@ -69,6 +70,7 @@ namespace LibrainianCore.Measurement {
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+        [NotNull]
         public override String ToString() => this.TotalTime.Simpler();
     }
 }

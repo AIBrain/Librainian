@@ -62,7 +62,7 @@ namespace LibrainianCore.Measurement.Time {
         [JsonProperty]
         public readonly TimeSpan Min;
 
-        /// <summary>Initializes a new instance of the <see cref="TimeSpanRange" /> class</summary>
+        /// <summary>Initializes a new instance of the <see cref="TimeSpanRange" /> struct</summary>
         /// <param name="min">Minimum value of the range</param>
         /// <param name="max">Maximum value of the range</param>
         public TimeSpanRange( TimeSpan min, TimeSpan max ) {

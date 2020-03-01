@@ -125,9 +125,9 @@ namespace LibrainianCore.Parsing {
         /// <param name="formatProvider">An object that supplies format information about the current instance.</param>
         /// <returns>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</returns>
         [NotNull]
-        public override String Format( [NotNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
+        public override String Format( [NotNull] String format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( format == null ) {
-                throw new ArgumentNullException( paramName: nameof( format ) );
+                throw new ArgumentNullException( nameof( format ) );
             }
 
             Int64 bytes;

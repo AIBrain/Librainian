@@ -73,11 +73,11 @@ namespace LibrainianCore.Internet.FTP {
 
         /// <summary>This method downloads the given file name from the FTP Server and returns a byte array containing its contents. Throws a WebException on encountering a network error.</summary>
         [CanBeNull]
-        public Byte[] DownloadData( [CanBeNull] String path ) {
+        public Byte[]? DownloadData( [CanBeNull] String path ) {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+                Credentials = new NetworkCredential( this.Username, this.Password )
             };
 
             // Logon to the Server using username + password
@@ -109,7 +109,7 @@ namespace LibrainianCore.Internet.FTP {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+                Credentials = new NetworkCredential( this.Username, this.Password )
             };
 
             // Logon to the Server using username + password

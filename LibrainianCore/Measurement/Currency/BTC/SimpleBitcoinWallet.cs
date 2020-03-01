@@ -41,7 +41,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
     using System;
     using System.Diagnostics;
-    
+
     using System.Threading;
     using JetBrains.Annotations;
     using Maths;
@@ -58,7 +58,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         [NonSerialized]
         [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
         private readonly Int32 _hashcode;
 
@@ -92,7 +92,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         public Decimal Balance {
             get {
                 try {
-                    return this._access.TryEnterReadLock( timeout: this.Timeout ) ? this._balance : Decimal.Zero;
+                    return this._access.TryEnterReadLock( this.Timeout ) ? this._balance : Decimal.Zero;
                 }
                 finally {
                     if ( this._access.IsReadLockHeld ) {
@@ -102,15 +102,20 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
         }
 
-        public Action<Decimal> OnAfterDeposit { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAfterDeposit { get; set; }
 
-        public Action<Decimal> OnAfterWithdraw { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-        public Action<Decimal> OnAnyUpdate { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAnyUpdate { get; set; }
 
-        public Action<Decimal> OnBeforeDeposit { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-        public Action<Decimal> OnBeforeWithdraw { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
@@ -119,19 +124,19 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         /// <summary>Initialize the wallet with the specified amount of satoshi.</summary>
         /// <param name="satoshi"></param>
-        public SimpleBitcoinWallet( Int64 satoshi ) : this( balance: satoshi.ToBTC() ) { }
+        public SimpleBitcoinWallet( Int64 satoshi ) : this( satoshi.ToBTC() ) { }
 
-        public SimpleBitcoinWallet( [NotNull] ISimpleWallet wallet ) : this( balance: wallet.Balance ) { }
+        public SimpleBitcoinWallet( [NotNull] ISimpleWallet wallet ) : this( wallet.Balance ) { }
 
-        /// <summary>Initialize the wallet with the specified <paramref name="balance" /> .</summary>
-        /// <param name="balance"></param>
-        public SimpleBitcoinWallet( Decimal balance ) {
-            this._balance = balance.Sanitize();
+        /// <summary>Initialize the wallet with the specified <paramref name="btcbalance" /> .</summary>
+        /// <param name="btcbalance"></param>
+        public SimpleBitcoinWallet( Decimal btcbalance ) {
+            this._balance = btcbalance;
             this.Timeout = Minutes.One;
             this._hashcode = Randem.NextInt32();
         }
 
-        public SimpleBitcoinWallet() : this( balance: 0.0m ) { }
+        public SimpleBitcoinWallet() : this( 0.0m ) { }
 
         /// <summary>
         ///     <para>Static comparison.</para>
@@ -173,10 +178,11 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as SimpleBitcoinWallet );
+        public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as SimpleBitcoinWallet );
 
         public override Int32 GetHashCode() => this._hashcode;
 
+        [NotNull]
         public override String ToString() => $"฿ {this.Balance:F8}";
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
@@ -184,10 +190,9 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         /// <returns></returns>
         public Boolean TryAdd( Decimal amount ) {
             try {
-                if ( this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
                     try {
                         this._balance += amount;
-                        
                     }
                     finally {
                         this._access.ExitWriteLock();
@@ -209,14 +214,13 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
-            return this.TryAdd( amount: wallet.Balance );
+            return this.TryAdd( wallet.Balance );
         }
 
         /// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" /> .</summary>
         /// <param name="amount">  </param>
-        /// <param name="sanitize"></param>
         /// <returns></returns>
-        public Boolean TryDeposit( Decimal amount, Boolean sanitize = true ) {
+        public Boolean TryDeposit( Decimal amount ) {
 
             if ( amount <= Decimal.Zero ) {
                 return default;
@@ -224,7 +228,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
             this.OnBeforeDeposit?.Invoke( amount );
 
-            if ( !this.TryAdd( amount: amount ) ) {
+            if ( !this.TryAdd( amount ) ) {
                 return default;
             }
 
@@ -233,19 +237,14 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             return true;
         }
 
-        public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet intoWallet, Boolean sanitize = true ) {
-            if ( sanitize ) {
-                amount = amount.Sanitize();
-            }
+        public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet intoWallet ) {
 
             if ( amount <= Decimal.Zero ) {
                 return default;
             }
 
-            Decimal? withdrewAmount = null;
-
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return default;
                 }
 
@@ -254,18 +253,14 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 }
 
                 this._balance -= amount;
-                
-                withdrewAmount = amount;
+
+                intoWallet?.TryDeposit( amount );   //shouldn't this be outside of lock?
 
                 return true;
             }
             finally {
                 if ( this._access.IsWriteLockHeld ) {
                     this._access.ExitWriteLock();
-                }
-
-                if ( withdrewAmount.HasValue ) {
-                    intoWallet.TryDeposit( amount: withdrewAmount.Value, sanitize: false );
                 }
 
                 this.OnAfterWithdraw?.Invoke( amount );
@@ -281,13 +276,11 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         /// <returns></returns>
         public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return default;
                 }
 
                 this._balance = sanitize ? amount.Sanitize() : amount;
-
-                
 
                 return true;
             }
@@ -300,7 +293,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
         }
 
-        public void TryUpdateBalance( [NotNull] SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( amount: simpleBitcoinWallet.Balance );
+        public void TryUpdateBalance( [NotNull] SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( simpleBitcoinWallet.Balance );
 
         /// <summary>
         ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -319,7 +312,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             }
 
             try {
-                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
                     return default;
                 }
 
@@ -328,7 +321,6 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 }
 
                 this._balance -= amount;
-                
 
                 return true;
             }
@@ -350,7 +342,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
                 throw new ArgumentNullException( nameof( wallet ) );
             }
 
-            return this.TryWithdraw( amount: wallet.Balance );
+            return this.TryWithdraw( wallet.Balance );
         }
     }
 }

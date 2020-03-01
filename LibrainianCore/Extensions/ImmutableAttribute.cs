@@ -93,7 +93,7 @@ namespace LibrainianCore.Extensions {
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
             var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
 
-            return immutableAttribute?.OnFaith == true;
+            return immutableAttribute.OnFaith;
         }
 
         // in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
@@ -161,7 +161,7 @@ namespace LibrainianCore.Extensions {
             }
 
             if ( whiteList == null ) {
-                throw new ArgumentNullException( paramName: nameof( whiteList ) );
+                throw new ArgumentNullException( nameof( whiteList ) );
             }
 
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;

@@ -42,7 +42,6 @@ namespace LibrainianCore.Logging {
     using System;
     using System.Diagnostics;
     using System.Drawing;
-    using Extensions;
     using JetBrains.Annotations;
     using NLog;
     using NLog.Targets;
@@ -59,16 +58,16 @@ namespace LibrainianCore.Logging {
         ///     <para>Then calls <see cref="Debugger.Break" />.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="s"></param>
+        /// <param name="self"></param>
         /// <param name="message"></param>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String Break<T>( [CanBeNull] this T s, [CanBeNull] String message = null ) {
+        public static String Break<T>( [CanBeNull] this T self, [CanBeNull] String message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
 
-            s.BreakIfDebug();
+            self.BreakIfDebug();
 
             return message;
         }
@@ -85,47 +84,47 @@ namespace LibrainianCore.Logging {
 
             switch ( loggingLevel ) {
                 case LoggingLevel.Divine: {
-                        return (Color.Blue, Color.Aqua);
-                    }
+                    return ( Color.Blue, Color.Aqua );
+                }
 
                 case LoggingLevel.SubspaceTear: {
-                        return (Color.HotPink, Color.Aqua); //hotpink might actually look okay..
-                    }
+                    return ( Color.HotPink, Color.Aqua ); //hotpink might actually look okay..
+                }
 
                 case LoggingLevel.Fatal: {
 
-                        return (Color.DarkRed, Color.Aqua);
-                    }
+                    return ( Color.DarkRed, Color.Aqua );
+                }
 
                 case LoggingLevel.Critical: {
 
-                        return (Color.Red, Color.Aqua);
-                    }
+                    return ( Color.Red, Color.Aqua );
+                }
 
                 case LoggingLevel.Error: {
 
-                        return (Color.Red, Color.White);
-                    }
+                    return ( Color.Red, Color.White );
+                }
 
                 case LoggingLevel.Warning: {
 
-                        return (Color.Goldenrod, Color.White);
-                    }
+                    return ( Color.Goldenrod, Color.White );
+                }
 
                 case LoggingLevel.Diagnostic: {
 
-                        return (Color.Green, Color.White);
-                    }
+                    return ( Color.Green, Color.White );
+                }
 
                 case LoggingLevel.Debug: {
 
-                        return (Color.DarkSeaGreen, Color.White);
-                    }
+                    return ( Color.DarkSeaGreen, Color.White );
+                }
 
                 case LoggingLevel.Exception: {
 
-                        return (Color.DarkOliveGreen, Color.AntiqueWhite);
-                    }
+                    return ( Color.DarkOliveGreen, Color.AntiqueWhite );
+                }
 
                 default: throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null );
             }
@@ -200,7 +199,7 @@ namespace LibrainianCore.Logging {
                 }
             }
             else {
-                message.ToString().Log( breakinto: breakinto );
+                message.ToString().Log( breakinto );
             }
 
             return message;
@@ -253,7 +252,6 @@ namespace LibrainianCore.Logging {
                 throw new ArgumentNullException( nameof( maxLogLevel ) );
             }
 
-
             if ( target is null ) {
                 $"Unable to set up target for {minLogLevel} to {maxLogLevel}".Break();
 
@@ -261,7 +259,7 @@ namespace LibrainianCore.Logging {
             }
 
             LogManager.Configuration?.AddTarget( target );
-            LogManager.Configuration?.AddRule( minLevel: minLogLevel, maxLevel: maxLogLevel, target: target, loggerNamePattern: "*" );
+            LogManager.Configuration?.AddRule( minLogLevel, maxLogLevel, target, "*" );
 
             return LogManager.Configuration?.AllTargets?.Contains( target ) == true;
         }
@@ -294,5 +292,15 @@ namespace LibrainianCore.Logging {
 
         [DebuggerStepThrough]
         public static void Warn<T>( [CanBeNull] this T message ) => Logger.Warn( message );
+
+        [DebuggerStepThrough]
+        [Conditional( "DEBUG" )]
+        public static void BreakIfDebug<T>( [CanBeNull] this T _ ) {
+            if ( Debugger.IsAttached ) {
+                Debugger.Break();
+            }
+        }
+
     }
+
 }

@@ -60,6 +60,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
+    using PooledAwait;
     using Security;
     using Utilities;
 
@@ -196,7 +197,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="progress">   </param>
         /// <param name="eta">        </param>
         /// <returns></returns>
-        Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
+        PooledValueTask<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token, [CanBeNull] IProgress<Single> progress = null,
             [CanBeNull] IProgress<TimeSpan> eta = null );
 
         /// <summary>Returns the <see cref="WebClient" /> if a file copy was started.</summary>
@@ -234,11 +235,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source );
+        PooledValueTask<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source );
 
         /// <summary>
         ///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
         /// </summary>
+        [NotNull]
         String Extension();
 
         /// <summary>Returns the size of the file, if it exists.</summary>
@@ -250,6 +252,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         ///     <para>Then the <paramref name="text" /> is appended to the file.</para>
         /// </summary>
         /// <param name="text"></param>
+        [NotNull]
         IDocument AppendText( String text );
 
         /// <summary>
@@ -279,7 +282,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="verb">     "runas" is elevated</param>
         /// <param name="useShell"></param>
         /// <returns></returns>
-        Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false );
+        PooledValueTask<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false );
 
         /// <summary>Attempt to return an object Deserialized from this JSON text file.</summary>
         /// <typeparam name="T"></typeparam>
@@ -304,8 +307,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="IOException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        [NotNull]
-        Task<Boolean> SameContent( [CanBeNull] Document right );
+        PooledValueTask<Boolean> SameContent( [CanBeNull] Document right );
 
         /// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
         /// <returns></returns>
@@ -317,7 +319,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
         /// <returns></returns>
-        Task<String> ToJSON();
+        PooledValueTask<String> ToJSON();
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
@@ -329,15 +331,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="delayBetweenRetries"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token );
+        PooledValueTask<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token );
 
         /// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
         /// <param name="destination"></param>
         /// <returns></returns>
-        Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
+        PooledValueTask<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination );
 
-        [NotNull]
-        Task<Boolean> IsAll( Byte number );
+        PooledValueTask<Boolean> IsAll( Byte number );
 
         /// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.</summary>
         /// <see cref="Document.op_Implicit" />
@@ -717,7 +718,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="eta">        </param>
         /// <returns></returns>
         [Pure]
-        public async Task<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
+        public async PooledValueTask<(Boolean success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
             [CanBeNull] IProgress<Single> progress = null, [CanBeNull] IProgress<TimeSpan> eta = null ) {
             if ( destination is null ) {
                 throw new ArgumentNullException( nameof( destination ) );
@@ -729,12 +730,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 if ( this.Length.Any() ) {
                     if ( Uri.TryCreate( this.FullPath, UriKind.Absolute, out var sourceAddress ) ) {
 
-                        using var client = new WebClient().Add( token );
+                        if ( sourceAddress != null ) {
+                            using var client = new WebClient().Add( token );
 
-                        var task = client.DownloadFileTaskAsync( sourceAddress, destination.FullPath );
+                            var task = client.DownloadFileTaskAsync( sourceAddress, destination.FullPath );
 
-                        if ( task != null ) {
-                            await task.ConfigureAwait( false );
+                            if ( task != null ) {
+                                await task.ConfigureAwait( false );
+                            }
                         }
 
                         return (true, stopwatch.Elapsed);
@@ -754,8 +757,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         [Pure]
-        public Task Copy( [NotNull] IDocument destination, [CanBeNull] Action<(UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress,
-            [CanBeNull] Action onCompleted ) {
+        [CanBeNull]
+        public Task Copy( [NotNull] IDocument destination, [CanBeNull] Action<(UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress, [CanBeNull] Action onCompleted ) {
             if ( destination == null ) {
                 throw new ArgumentNullException( nameof( destination ) );
             }
@@ -810,8 +813,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return null;
         }
 
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<Int32?> CRC32Async( CancellationToken token ) => Task.Run( this.CRC32, token );
 
         /// <summary></summary>
@@ -863,8 +866,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Returns a lowercase hex-string of the hash.</summary>
         /// <returns></returns>
-        [CanBeNull]
         [Pure]
+        [NotNull]
         public Task<String> CRC32HexAsync( CancellationToken token ) => Task.Run( this.CRC32Hex, token );
 
         [Pure]
@@ -905,8 +908,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return null;
         }
 
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<Int64?> CRC64Async( CancellationToken token ) => Task.Run( this.CRC64, token );
 
         /// <summary>Returns a lowercase hex-string of the hash.</summary>
@@ -938,12 +941,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Returns a lowercase hex-string of the hash.</summary>
         /// <returns></returns>
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( this.CRC64Hex, token );
 
         [Pure]
-        public async Task<Boolean> IsAll( Byte number ) {
+        public async PooledValueTask<Boolean> IsAll( Byte number ) {
             if ( !this.IsBufferLoaded ) {
                 var result = await this.LoadDocumentIntoBuffer().ConfigureAwait( false );
 
@@ -980,7 +983,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="source"></param>
         /// <returns></returns>
         [Pure]
-        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
+        public async PooledValueTask<(Exception exception, WebHeaderCollection responseHeaders)> DownloadFile( [NotNull] Uri source ) {
             if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -1056,7 +1059,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="other"></param>
         /// <returns></returns>
         [Pure]
-        public override Boolean Equals( Object other ) => other is IDocument document && Equals( this, document );
+        public override Boolean Equals( Object? other ) => other is IDocument document && Equals( this, document );
 
         /// <summary>(file name, not contents)</summary>
         /// <returns></returns>
@@ -1068,7 +1071,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         [Pure]
-        public String JustName() => Path.GetFileNameWithoutExtension( this.FileName ) ?? this.FileName;
+        public String JustName() => Path.GetFileNameWithoutExtension( this.FileName );
 
         /// <summary>
         ///     <para>Could we allocate a full 2GB buffer if we wanted? that'd be really nice for the <see cref="IDocument" /> copy routines...</para>
@@ -1096,9 +1099,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="verb">     "runas" is elevated</param>
         /// <param name="useShell"></param>
         /// <returns></returns>
-        [NotNull]
         [Pure]
-        public Task<Process> Launch( [CanBeNull] String arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
+        public PooledValueTask<Process> Launch( [CanBeNull] String arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( this.FullPath ) {
                     Arguments = arguments ?? String.Empty,
@@ -1106,12 +1108,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     Verb = verb
                 };
 
-                return Task.Run( () => Process.Start( info ) );
+                return new PooledValueTask<Process>( Process.Start( info ) );
             }
             catch ( Exception exception ) {
                 exception.Log();
 
-                return Task.FromException<Process>( exception );
+                return default;
             }
         }
 
@@ -1142,8 +1144,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return default;
         }
 
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<T> LoadJSONAsync<T>( CancellationToken token ) => Task.Run( this.LoadJSON<T>, token );
 
         
@@ -1156,6 +1158,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public String Name => this.FileName;
 
         [Pure]
+        [NotNull]
         public Task<String> ReadStringAsync() {
             using var reader = new StreamReader( this.FullPath );
 
@@ -1177,7 +1180,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [Pure]
-        public async Task<Boolean> SameContent( [CanBeNull] Document right ) {
+        public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document right ) {
 
             if ( right is null || !this.Exists() || !right.Exists() || this.Size() != right.Size() ) {
                 return default;
@@ -1234,7 +1237,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
         /// <returns></returns>
         [Pure]
-        public async Task<String> ToJSON() {
+        public async PooledValueTask<String> ToJSON() {
             using ( var reader = new StreamReader( this.FullPath ) ) {
                 return await reader.ReadToEndAsync().ConfigureAwait( false );
             }
@@ -1243,6 +1246,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         [Pure]
+        [NotNull]
         public override String ToString() => this.FullPath;
 
         /// <summary>
@@ -1251,7 +1255,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="delayBetweenRetries"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token ) {
+        public async PooledValueTask<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token ) {
             await Task.Run( async () => {
                 while ( !token.IsCancellationRequested && this.Exists() ) {
                     try {
@@ -1278,7 +1282,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="destination"></param>
         /// <returns></returns>
         [Pure]
-        public async Task<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
+        public async PooledValueTask<(Exception exception, WebHeaderCollection responseHeaders)> UploadFile( [NotNull] Uri destination ) {
             if ( destination is null ) {
                 throw new ArgumentNullException( nameof( destination ) );
             }
@@ -1337,24 +1341,24 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [Pure]
         public FileInfo GetFreshInfo() => this; //use the implicit operator
 
-        private Folder _containingFolder;
+        private Folder? _containingFolder;
 
         [CanBeNull]
-        public Byte[] Buffer { get; set; }
+        public Byte[]? Buffer { get; set; }
 
         public Boolean IsBufferLoaded { get; [Pure] private set; }
 
         [CanBeNull]
-        public FileStream Writer { get; set; }
+        public FileStream? Writer { get; set; }
 
         [CanBeNull]
-        public StreamWriter WriterStream { get; set; }
+        public StreamWriter? WriterStream { get; set; }
 
         [CanBeNull]
-        private Lazy<FileSystemWatcher> Watcher { get; }
+        private Lazy<FileSystemWatcher>? Watcher { get; }
 
         [CanBeNull]
-        private Lazy<FileWatchingEvents> WatchEvents { get; }
+        private Lazy<FileWatchingEvents>? WatchEvents { get; }
 
         [NotNull]
         public static String InvalidFileNameCharacters { get; } = new String( Path.InvalidFileNameChars );
@@ -1470,7 +1474,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
         /// <returns></returns>
-        public async Task<Status> LoadDocumentIntoBuffer() {
+        public async PooledValueTask<Status> LoadDocumentIntoBuffer() {
 
             var size = this.Size();
 
@@ -1492,7 +1496,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             var offset = 0;
 
-            using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan ) ) {
+            await using ( var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan ) ) {
 
                 if ( !stream.CanRead ) {
 
@@ -1500,7 +1504,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     return Status.Exception;
                 }
 
-                using ( var buffered = new BufferedStream( stream ) ) {
+                await using ( var buffered = new BufferedStream( stream ) ) {
                     Int32 bytesRead;
 
                     do {
@@ -1521,8 +1525,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             return Status.Failure;
         }
 
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<Int32> CalculateHarkerHashInt32Async() {
             this.ThrowIfNotExists();
 
@@ -1553,20 +1557,19 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
         }
 
-        [NotNull]
         [Pure]
+        [NotNull]
         public Task<Int64> CalculateHarkerHashInt64Async() {
             this.ThrowIfNotExists();
 
             return Task.Run( this.CalculateHarkerHashInt64 );
         }
 
-        [NotNull]
         [Pure]
-        public Task<Decimal> CalculateHarkerHashDecimalAsync() {
+        public PooledValueTask<Decimal> CalculateHarkerHashDecimalAsync() {
             this.ThrowIfNotExists();
 
-            return new Task<Decimal>( this.CalculateHarkerHashDecimal, TaskCreationOptions.LongRunning );
+            return new PooledValueTask<Decimal>( this.CalculateHarkerHashDecimal() );
         }
 
         /// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
@@ -1662,7 +1665,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="onComplete"></param>
         /// <returns></returns>
         [Pure]
-        public async Task<(WebClient downloader, Boolean exists)> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
+        public async PooledValueTask<(WebClient downloader, Boolean exists)> Copy( [NotNull] IDocument destination, [CanBeNull] Action<DownloadProgressChangedEventArgs> progress = null,
             [CanBeNull] Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)> onComplete = null ) {
             if ( destination is null ) {
                 throw new ArgumentNullException( nameof( destination ) );
@@ -1681,7 +1684,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             if ( !this.Length.HasValue || !this.Length.Any() ) {
-                using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
+                await using ( File.Create( destination.FullPath, 1, FileOptions.None ) ) {
                     return (default, true); //just create an empty file?
                 }
             }
@@ -1790,9 +1793,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="fileName"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        [ItemNotNull]
         [Pure]
-        public static async Task<WebClient> DownloadFileTaskAsync( [NotNull] Uri address, [NotNull] String fileName,
+        public static async PooledValueTask<WebClient> DownloadFileTaskAsync( [NotNull] Uri address, [NotNull] String fileName,
             [CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
 
             if ( address is null ) {

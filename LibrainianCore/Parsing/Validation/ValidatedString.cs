@@ -77,18 +77,18 @@ namespace LibrainianCore.Parsing.Validation {
             comparisonType == StringComparison.Ordinal ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
 
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length ) =>
-            String.Compare( left.Value, leftIndex, right.Value ?? throw new InvalidOperationException(), rightIndex, length );
+            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length );
 
         [SecuritySafeCritical]
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length,
             StringComparison comparisonType ) =>
-            String.Compare( left.Value, leftIndex, right.Value ?? throw new InvalidOperationException(), rightIndex, length, comparisonType );
+            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, comparisonType );
 
         public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, [NotNull] IValidatedString right ) => String.CompareOrdinal( strA.Value, right.Value );
 
         [SecuritySafeCritical]
         public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, Int32 indexA, [NotNull] IValidatedString strB, Int32 indexB, Int32 length ) =>
-            String.CompareOrdinal( strA.Value, indexA, strB.Value ?? throw new InvalidOperationException(), indexB, length );
+            String.CompareOrdinal( strA.Value, indexA, strB.Value, indexB, length );
 
         /// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
         /// <param name="left"></param>
@@ -175,15 +175,16 @@ namespace LibrainianCore.Parsing.Validation {
 
         public Boolean Equals( IValidatedString other ) => Equals( this.Value, other );
 
-        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this.Value, obj as IValidatedString );
+        public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this.Value, obj as IValidatedString );
 
         public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
+        [NotNull]
         public override String ToString() => this.Value;
 
-        Int32 IComparable.CompareTo( [CanBeNull] Object obj ) => this.Value.CompareTo( obj );
+        Int32 IComparable.CompareTo( [CanBeNull] Object? obj ) => this.Value.CompareTo( obj );
 
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
     }

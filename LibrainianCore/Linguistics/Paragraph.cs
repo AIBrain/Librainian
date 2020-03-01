@@ -99,6 +99,7 @@ namespace LibrainianCore.Linguistics {
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Sentences.GetHashCode();
 
+        [NotNull]
         public override String ToString() {
             var sb = new StringBuilder();
 

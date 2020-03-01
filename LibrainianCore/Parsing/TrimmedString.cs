@@ -50,7 +50,7 @@ namespace LibrainianCore.Parsing {
     using Maths;
     using Newtonsoft.Json;
 
-    /// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
+    /// <summary>This <see cref="String" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
     [JsonObject]
@@ -120,7 +120,7 @@ namespace LibrainianCore.Parsing {
         /// <summary>Calls <see cref="Object.ToString" /> on the <paramref name="value" /> and calls <see cref="String.Trim(Char[])" />.</summary>
         /// <param name="value"></param>
         [DebuggerStepThrough]
-        public TrimmedString( [CanBeNull] Object value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
+        public TrimmedString( [CanBeNull] Object? value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
 
         /// <summary>Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)</summary>
         /// <param name="left"> </param>
@@ -173,58 +173,59 @@ namespace LibrainianCore.Parsing {
         }
 
         [DebuggerStepThrough]
-        public Boolean ToBoolean( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToBoolean( provider: provider );
+        public Boolean ToBoolean( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToBoolean( provider );
 
         [DebuggerStepThrough]
-        public Byte ToByte( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToByte( provider: provider );
+        public Byte ToByte( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToByte( provider );
 
         [DebuggerStepThrough]
-        public Char ToChar( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToChar( provider: provider );
+        public Char ToChar( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToChar( provider );
 
         [DebuggerStepThrough]
-        public DateTime ToDateTime( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDateTime( provider: provider );
+        public DateTime ToDateTime( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDateTime( provider );
 
         [DebuggerStepThrough]
-        public Decimal ToDecimal( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDecimal( provider: provider );
+        public Decimal ToDecimal( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDecimal( provider );
 
         [DebuggerStepThrough]
-        public Double ToDouble( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDouble( provider: provider );
+        public Double ToDouble( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToDouble( provider );
 
         [DebuggerStepThrough]
-        public Int16 ToInt16( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt16( provider: provider );
+        public Int16 ToInt16( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt16( provider );
 
         [DebuggerStepThrough]
-        public Int32 ToInt32( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt32( provider: provider );
+        public Int32 ToInt32( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt32( provider );
 
         [DebuggerStepThrough]
-        public Int64 ToInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt64( provider: provider );
+        public Int64 ToInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToInt64( provider );
 
         public TrimmedString ToLower() => this.Value.ToLower( CultureInfo.CurrentCulture );
 
         [DebuggerStepThrough]
-        public SByte ToSByte( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToSByte( provider: provider );
+        public SByte ToSByte( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToSByte( provider );
 
         [DebuggerStepThrough]
-        public Single ToSingle( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToSingle( provider: provider );
+        public Single ToSingle( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToSingle( provider );
 
         [DebuggerStepThrough]
+        [NotNull]
         public override String ToString() => this.Value;
 
         [DebuggerStepThrough]
-        public String ToString( [CanBeNull] IFormatProvider provider ) => this.Value.ToString( provider: provider );
+        public String ToString( [CanBeNull] IFormatProvider provider ) => this.Value.ToString( provider );
 
         [DebuggerStepThrough]
         public Object ToType( Type conversionType, [CanBeNull] IFormatProvider provider ) =>
-            ( this.Value as IConvertible ).ToType( conversionType: conversionType, provider: provider );
+            ( this.Value as IConvertible ).ToType( conversionType, provider );
 
         [DebuggerStepThrough]
-        public UInt16 ToUInt16( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt16( provider: provider );
+        public UInt16 ToUInt16( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt16( provider );
 
         [DebuggerStepThrough]
-        public UInt32 ToUInt32( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt32( provider: provider );
+        public UInt32 ToUInt32( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt32( provider );
 
         [DebuggerStepThrough]
-        public UInt64 ToUInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt64( provider: provider );
+        public UInt64 ToUInt64( [CanBeNull] IFormatProvider provider ) => ( this.Value as IConvertible ).ToUInt64( provider );
 
         [DebuggerStepThrough]
         public TrimmedString ToUpper() => this.Value.ToUpper( CultureInfo.CurrentCulture );

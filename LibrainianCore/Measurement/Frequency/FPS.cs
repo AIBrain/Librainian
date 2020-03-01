@@ -130,7 +130,6 @@ namespace LibrainianCore.Measurement.Frequency {
         /// <param name="fps"></param>
         public Fps( Double fps ) : this( ( Decimal )fps ) { }
 
-        [NotNull]
         public static implicit operator SpanOfTime( Fps fps ) => new Seconds( 1.0m / fps.Value );
 
         public static implicit operator TimeSpan( Fps fps ) => TimeSpan.FromSeconds( ( Double )( 1.0m / fps.Value ) );
@@ -139,6 +138,7 @@ namespace LibrainianCore.Measurement.Frequency {
 
         public static Boolean operator >( Fps left, Fps right ) => left.Value.CompareTo( right.Value ) > 0;
 
+        [NotNull]
         public override String ToString() => $"{this.Value} FPS ({( ( TimeSpan )this ).Simpler()})";
     }
 }

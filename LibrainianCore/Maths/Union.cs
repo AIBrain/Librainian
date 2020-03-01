@@ -42,7 +42,7 @@ namespace LibrainianCore.Maths {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct Union {
 
         public Union( UInt64 value ) {
@@ -57,13 +57,13 @@ namespace LibrainianCore.Maths {
             this.Low = low;
         }
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly UInt64 Value;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly UInt32 High;
 
-        [FieldOffset( offset: 4 )]
+        [FieldOffset( 4 )]
         public readonly UInt32 Low;
     }
 }
