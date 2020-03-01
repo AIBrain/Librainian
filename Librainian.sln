@@ -15,8 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianCore Tests", "Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0212244B-6438-4E5F-91EB-3E84A88DDC34}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Code of Conduct.md = Code of Conduct.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianStandard", "LibrainianStandard\LibrainianStandard.csproj", "{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +79,18 @@ Global
 		{4CE02369-2341-45AD-BEFC-35950F0D9BE6}.Single Image|Any CPU.Build.0 = Debug|Any CPU
 		{4CE02369-2341-45AD-BEFC-35950F0D9BE6}.Single Image|x64.ActiveCfg = Debug|Any CPU
 		{4CE02369-2341-45AD-BEFC-35950F0D9BE6}.Single Image|x64.Build.0 = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Release|x64.Build.0 = Release|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Single Image|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Single Image|Any CPU.Build.0 = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Single Image|x64.ActiveCfg = Debug|Any CPU
+		{D2F2047A-8EE3-451A-95B2-AA767D0FCAC9}.Single Image|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
