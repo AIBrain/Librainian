@@ -81,7 +81,7 @@ namespace Librainian.Databases.MMF {
         public String Server { get; } = "127.0.0.1";
 
         public void Connect() {
-        
+
             this._tcpClient.Connect( hostname: this.Server, port: this.Port );
             this._networkStream = this._tcpClient.GetStream();
         }
@@ -254,14 +254,14 @@ namespace Librainian.Databases.MMF {
 
             var obj = this.Get( key );
 
-            if ( !(obj is null) ) {
+            if ( !( obj is null ) ) {
                 return obj;
             }
 
             if ( cacheMiss != null ) {
                 obj = cacheMiss.Invoke();
 
-                if ( !(obj is null) ) {
+                if ( !( obj is null ) ) {
                     this.Set( key, obj, expire: expire );
                 }
             }
@@ -299,9 +299,12 @@ namespace Librainian.Databases.MMF {
 
             var obj = this.Get( key );
 
-            if ( obj is null ) {
+            if ( obj is null && !( cacheMiss is null ) ) {
                 obj = cacheMiss.Invoke();
-                this.Set( key, obj, size: size, expire: expire );
+
+                if ( !( obj is null ) ) {
+                    this.Set( key, obj, size: size, expire: expire );
+                }
             }
 
             return obj;
